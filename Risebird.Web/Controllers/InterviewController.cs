@@ -2928,6 +2928,10 @@ namespace Risebird.Web.Controllers
                     {
                         if (await _meetingService.UnassignYourself(id, email.ToLower(), isPenalty))
                         {
+                            var result = new TransInterviewersReliabilityScoresVm();
+                            result.InterviewMeetingId = id;
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.UnassignmentInterviewPenalty;
+                            await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                             TempData["SuccessErrorMessageMyInterview"] = "Unassignment has been done Successfully!";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
                         }
@@ -3205,6 +3209,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (await _meetingService.AddInterviewReport(model, emailid))
                         {
+                            await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
                                 //Send mail to client for report
@@ -6257,6 +6262,16 @@ namespace Risebird.Web.Controllers
                             _model.Interviewid = model.Interviewid;
                             _model.ClientAction = "";
                             var result = await _meetingService.SaveRatingDetails(_model);
+                            var data = new TransInterviewersReliabilityScoresVm();
+                            data.InterviewMeetingId =model.Interviewid;
+                            if (model.Redflags != 0)
+                            {
+                                data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerRedFlagByQCTeam;
+                            }
+                            else {
+                                data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.NoRedFlagsByQCTeam;
+                            }
+                            await _meetingService.AddTransInterviewersReliabilityScoresService(data);
                             TempData["SuccessErrorMessageQCForm"] = "QC Form successfully saved.";
                         }
                         else
@@ -7857,6 +7872,13 @@ namespace Risebird.Web.Controllers
                     model.CreatedBy = emailId;
                     if (await _meetingService.AddorUpdatePaymentSLADetails(model))
                     {
+                        if(model.isapprovedchecked)
+                        {
+                            var result = new TransInterviewersReliabilityScoresVm();
+                            result.InterviewMeetingId = model.Interviewid;
+                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerPaymentSLA;
+                            await _meetingService.AddTransInterviewersReliabilityScoresService(result);
+                        }
                         TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
                         return RedirectToAction("Index", "Interview");
                     }

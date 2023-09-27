@@ -6982,7 +6982,119 @@ right:315px;
 #InterviewerInsightsModel .modal-lg {
     max-width:850px !important;
 }
+
+.accordion-group .accordion-body {
+    padding: 0px !important;
+}
+
+ul.ks-cboxtags {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+    ul.ks-cboxtags li {
+        display: inline;
+    }
+
+        ul.ks-cboxtags li label {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, .9);
+            border: 2px solid rgba(139, 139, 139, .3);
+            color: #adadad;
+            border-radius: 25px;
+            white-space: nowrap;
+            margin: 3px 0px;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: all .2s;
+            font-size: 12px;
+        }
+
+        ul.ks-cboxtags li label {
+            padding: 0px 6px;
+            cursor: pointer;
+        }
+
+            ul.ks-cboxtags li label::before {
+                display: inline-block;
+                font-style: normal;
+                font-variant: normal;
+                text-rendering: auto;
+                -webkit-font-smoothing: antialiased;
+                font-family: "Font Awesome 5 Free";
+                font-weight: 900;
+                font-size: 12px;
+                padding: 2px 6px 2px 2px;
+                /* content: "\f067";*/
+                transition: transform .3s ease-in-out;
+            }
+
+        ul.ks-cboxtags li input[type="checkbox"]:checked + label::before {
+            content: "\f00c";
+            transform: rotate(-360deg);
+            transition: transform .3s ease-in-out;
+        }
+
+        ul.ks-cboxtags li input[type="checkbox"]:checked + label {
+            border: 1px solid #d5dadb7d;
+            background-color: #c0c2c27d;
+            color: #878282;
+            transition: all .2s;
+            FONT-WEIGHT: 500;
+            font-size: 12px;
+        }
+
+        ul.ks-cboxtags li input[type="checkbox"] {
+            display: absolute;
+        }
+
+        ul.ks-cboxtags li input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+.label-name {
+    color: grey !important;
+    font-family: system-ui !important;
+    font-size: 14px !important;
+    font-weight: 600;
+}
+
+.accordion-toggle:after {
+    font-family: 'FontAwesome';
+    content: "\f077";
+    float: right;
+    color: grey;
+}
+
+.accordion-toggle.collapsed:after {
+    content: "\f078";
+}
 /***** action arrow *****/
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
+            position: absolute;
+            right: -6px !important;
+        }
+
+        .top-h {
+            height: auto !important;
+        }
+
+        .staffclose-btn {
+            border-radius: 5px !important;
+            font-size: 12px !important;
+            background-color: #42A5F6 !important;
+            position: absolute !important;
+            bottom: 132px !important;
+            right: -660% !important;
+        }
 
 .accordion-group .accordion-body {
     padding: 0px!important;
@@ -7047,1936 +7159,1954 @@ right:315px;
         right: -660% !important;
     }
 
-    [data-id="candidatetimeline"] .allmeetingnext-btn {
-        right: -653% !important;
-        bottom: 135px !important;
-    }
-
-    [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
-        right: -400% !important;
-        bottom: 138px !important;
-    }
-
-    [data-id="candidatefeedback_table"] .allmeetingnext-btn {
-        bottom: 90px !important;
-        right: -653% !important;
-    }
-
-    .next-btn {
-        position: absolute !important;
-        right: -230% !important;
-        bottom: 827% !important;
-    }
-
-    .allmeetingnext-btn {
-        bottom: 96px !important;
-        right: -705% !important;
-    }
-
-    .skillnext-btn {
-        bottom: 62px !important;
-        right: -48% !important;
-    }
-
-    .skillnext-btn {
-        bottom: 130px !important;
-        right: 0% !important;
-    }
-
-    .risetubenext-btn {
-        bottom: 60px !important;
-        right: -200% !important;
-    }
-
-    .tabCon .tab-menu ul li a {
-        font-size: 17px !important;
-        padding: 10px 12px;
-    }
-
-    .ntschnext-btn {
-        bottom: 130px !important;
-        right: -655% !important;
-    }
-
-    .staffntschnext-btn {
-        bottom: 130px !important;
-        right: -655% !important;
-    }
-
-    .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
-        right: 16px !important;
-    }
-
-    .tab-menu ul li:nth-child(3) .skillcount {
-        right: 25px !important;
-    }
-
-    .tab-menu ul li:nth-child(4) .skillcount {
-        right: 22px !important;
-    }
-
-    .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
-        right: 25px !important;
-    }
-
-    .tab-menu ul li:nth-child(5) .skillcount {
-        right: 4px !important;
-    }
-
-    .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
-        right: 6px !important;
-    }
-
-    .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
-        right: 4px !important;
-    }
-
-    .tab-menu ul li:nth-child(6) .skillcount {
-        right: 0px !important;
-    }
-
-    .tab-menu ul li:nth-child(7) .skillcount {
-        right: 22px !important;
-    }
-
-    .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
-        right: 12px !important;
-    }
-
-    .tab-menu ul li:nth-child(8) .skillcount {
-        right: 18px !important;
-    }
-
-    .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
-        right: 5px !important;
-    }
-
-    .tab-menu ul li:nth-child(9) .skillcount {
-        right: 32px !important;
-    }
-
-    .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
-        right: 16px !important;
-    }
-
-    .tab-menu ul li:nth-child(10) .skillcount {
-        right: 0px !important;
-    }
-
-    .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
-        right: 8px !important;
-    }
-
-    .tab-menu ul li:nth-child(11) .skillcount {
-        right: 11px !important;
-    }
-
-    .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
-        right: 10px !important;
-    }
-}
-
-@media only screen and (max-width: 1920px) {
-    .top-h {
-        height: auto;
-    }
-    .allmeeting .candidate-details {
-        width: 25%
-    }
-
-    .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
-        width: 22%
-    }
-
-    .selectedmeeting .candidate-client {
-        width: 22%
-    }
-
-    .rejectedmeeting .candidate-client {
-        width: 22%
-    }
-
-    .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
-        width: 30%
-    }
-
-    .tab-teaser {
-        max-width: 100%
-    }
-
-    [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
-        right: -400% !important;
-        bottom: 138px !important;
-    }
-
-    [data-id="candidatetimeline"] .allmeetingnext-btn {
-        right: -458% !important;
-        bottom: 138px !important;
-    }
-
-    .candidate-hr .hrname {
-        width: 250px !important
-    }
-
-    .hrname, .chrname {
-        width: 290px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        top: 7px;
-        position: relative;
-    }
-
-    .notschedulemeeting .candidate-hr .hrname {
-        width: 190px !important
-    }
-
-    .notschedulemeeting .candidate-hr .chrname {
-        width: 200px !important
-    }
-}
-
-@media only screen and (max-width: 1400px) {
-    /* table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 120px;
-    }*/
-    .single-video-left .video-title [data-tooltip] {
-        top: 15px;
-    }
-
-    .single-video-left .join-time {
-        width: 125px;
-    }
-
-    .video-title .candidate {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-    }
-
-    .laptop-view {
-        display: block !important;
-        height: 5px;
-    }
-
-    .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
-        width: 36%
-    }
-
-    .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
-        width: 18%
-    }
-
-    .selectedmeeting .candidate-details {
-        width: 30%
-    }
-
-    .instanext-btn {
-        right: -270% !important;
-    }
-
-    .skillnext-btn {
-        bottom: 66px !important;
-        right: -70% !important;
-    }
-
-    .cjd {
-        width: 100px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        top: 7px;
-        position: relative;
-    }
-
-    .rbpay .modal .form-control {
-        height: 40px;
-        border: 0px;
-        border-radius: 2px;
-        margin-bottom: 10px;
-    }
-
-        .rbpay .modal .form-control.invoicecomment {
-            height: 79px;
+        [data-id="candidatetimeline"] .allmeetingnext-btn {
+            right: -653% !important;
+            bottom: 135px !important;
         }
 
-    .rbpay .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    table .journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        /* max-width: 133px;*/
-    }
-
-    .intEmail {
-        width: 90px !important;
-    }
-
-    .intName {
-        width: 58px !important;
-    }
-
-    .rbpay .sb-scrollbar {
-        position: absolute;
-        right: 0px !important;
-    }
-
-    .notschedulemeeting .candidate-hr .hrname {
-        width: 230px !important
-    }
-
-    .notschedulemeeting .candidate-hr .chrname {
-        width: 230px !important
-    }
-
-    .candidate-hr .hrname {
-        width: 250px !important
-    }
-
-    .candidate-hr {
-        width: 25% !important;
-    }
-
-    .hrname {
-        width: 290px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        top: 7px;
-        position: relative;
-    }
-
-    .hremail {
-        width: 260px !important
-    }
-
-    .join-time {
-        width: 160px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-    }
-
-    .info-detail {
-        font-size: 14px !important;
-        position: relative;
-        top: -24px;
-        right: -10px
-    }
-
-    .commonpool .join-time {
-        width: 95px !important;
-        top: 0px !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-    }
-
-    .single-video-left .join-time {
-        top: -1px !important;
-    }
-
-    .allmeeting .table > tbody > tr > td {
-        padding: 5px 5px !important;
-    }
-
-    .allmeeting .cname {
-        width: 127px;
-    }
-
-    .clname {
-        width: 197px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        top: 7px;
-        position: relative;
-    }
-
-    .skillname {
-        width: 170px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        top: 7px;
-        position: relative;
-    }
-
-    .cname {
-        width: 170px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        top: 7px;
-        position: relative;
-    }
-
-    .rejectedmeeting .s_cname {
-        width: 247px;
-    }
-
-    .selectedmeeting .s_cname {
-        width: 220px;
-    }
-
-    .s_cname {
-        width: 236px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        top: 7px;
-        position: relative;
-    }
-}
-
-
-@media only screen and (max-width: 1024px) {
-    .top-h {
-        height: 60px!important;
-    }
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        width: 285px !important;
-        height: 160px !important;
-    }
-
-    .select-selected {
-        padding: 6px 6px !important;
-    }
-
-    #calenderTimeslot {
-        width: 180px !important;
-        height: auto !important;
-    }
-
-    .support .divider-rm {
-        position: relative;
-        left: -75px;
-        top: 2px;
-    }
-
-    #calender h4 {
-        font-size: 19px !important;
-    }
-
-    .calendar-con table {
-        width: 100% !important;
-    }
-
-    .txttimezone-con {
-        background: #dbdbdb8c;
-        width: 100% !important;
-        display: block !important;
-        margin: 10px auto 20px auto !important;
-    }
-
-    body.sidebar-mini .top-panel {
-        padding: 0px 10px 0px 10px !important;
-        margin-bottom: 0px !important;
-    }
-
-    #tblbodyCandidate .action {
-        max-width: 100% !important;
-    }
-
-    .tab-menu ul li:nth-child(3) .skillcount {
-        right: 1px !important;
-    }
-
-    .tab-menu ul li:nth-child(4) .skillcount {
-        right: -1px !important;
-    }
-
-    .tab-menu ul li:nth-child(5) .skillcount {
-        right: -11px !important;
-    }
-
-    .tab-menu ul li:nth-child(6) .skillcount {
-        right: -15px !important;
-    }
-
-    .tab-menu ul li:nth-child(8) .skillcount {
-        right: -6px !important;
-    }
-
-    .tab-menu ul li:nth-child(9) .skillcount {
-        right: 9px !important;
-    }
-
-    .tab-menu ul li:last-child .skillcount {
-        right: -10px !important;
-    }
-
-    .razorpay_details {
-        width: 60% !important;
-    }
-
-    .s_cname {
-        width: 165px !important;
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-        min-height: .01%;
-        padding-bottom: 10px;
-    }
-
-    .hrname {
-        top: 2px !important;
-        position: relative !important;
-        line-height: 100% !important;
-    }
-
-    .clname, .skillname {
-        width: 170px !important;
-    }
-
-    .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
-        width: 100% !important;
-        display: block;
-        white-space: initial;
-    }
-
-        .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
-            line-height: 15px;
+        [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+            right: -400% !important;
+            bottom: 138px !important;
         }
 
-    .candidate-hr .hrname {
-        width: 205px !important
-    }
-
-    #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-        color: red !important;
-        margin-left: 0 !important;
-        font-size: 12px !important;
-        width: 100%;
-        position: relative;
-        text-align: right;
-    }
-
-    .tabCon .tab-menu ul li a {
-        font-size: 11px !important;
-        padding: 10px 0px;
-    }
-
-    .user.user-r .main-notification-title {
-        padding-top: 0px !important;
-        position: relative;
-        right: -39px;
-        top: -52px !important;
-    }
-
-    .user .main-notification-title {
-        padding-top: 0px !important;
-        position: relative;
-        right: -6px;
-        top: -46px !important;
-    }
-
-    .user.user-r {
-        right: 60px !important;
-    }
-
-    .user {
-        position: absolute;
-        top: 54px;
-        right: 160px !important;
-    }
-
-        .user .user-menu {
-            top: -17px !important;
-            left: auto;
-            right: -17px !important;
+        [data-id="candidatefeedback_table"] .allmeetingnext-btn {
+            bottom: 90px !important;
+            right: -653% !important;
         }
 
-    .main-img-user {
-        display: block;
-        position: relative;
-        width: 25px !important;
-        height: 25px !important;
-        margin: 0px 0px 0px 30px;
-        right: -60px !important;
-        border-radius: 100%;
-        left: -10px;
-        top: -78px !important;
-        float: right;
+        .next-btn {
+            position: absolute !important;
+            right: -230% !important;
+            bottom: 827% !important;
+        }
+
+        .allmeetingnext-btn {
+            bottom: 96px !important;
+            right: -705% !important;
+        }
+
+        .skillnext-btn {
+            bottom: 62px !important;
+            right: -48% !important;
+        }
+
+        .skillnext-btn {
+            bottom: 130px !important;
+            right: 0% !important;
+        }
+
+        .risetubenext-btn {
+            bottom: 60px !important;
+            right: -200% !important;
+        }
+
+        .tabCon .tab-menu ul li a {
+            font-size: 17px !important;
+            padding: 10px 12px;
+        }
+
+        .ntschnext-btn {
+            bottom: 130px !important;
+            right: -655% !important;
+        }
+
+        .staffntschnext-btn {
+            bottom: 130px !important;
+            right: -655% !important;
+        }
+
+        .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
+            right: 16px !important;
+        }
+
+        .tab-menu ul li:nth-child(3) .skillcount {
+            right: 25px !important;
+        }
+
+        .tab-menu ul li:nth-child(4) .skillcount {
+            right: 22px !important;
+        }
+
+        .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
+            right: 25px !important;
+        }
+
+        .tab-menu ul li:nth-child(5) .skillcount {
+            right: 4px !important;
+        }
+
+        .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
+            right: 6px !important;
+        }
+
+        .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
+            right: 4px !important;
+        }
+
+        .tab-menu ul li:nth-child(6) .skillcount {
+            right: 0px !important;
+        }
+
+        .tab-menu ul li:nth-child(7) .skillcount {
+            right: 22px !important;
+        }
+
+        .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
+            right: 12px !important;
+        }
+
+        .tab-menu ul li:nth-child(8) .skillcount {
+            right: 18px !important;
+        }
+
+        .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
+            right: 5px !important;
+        }
+
+        .tab-menu ul li:nth-child(9) .skillcount {
+            right: 32px !important;
+        }
+
+        .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
+            right: 16px !important;
+        }
+
+        .tab-menu ul li:nth-child(10) .skillcount {
+            right: 0px !important;
+        }
+
+        .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
+            right: 8px !important;
+        }
+
+        .tab-menu ul li:nth-child(11) .skillcount {
+            right: 11px !important;
+        }
+
+        .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
+            right: 10px !important;
+        }
     }
 
-    .nav-open .navbar {
-        left: 260px;
-    }
+    @media only screen and (max-width: 1920px) {
+        .top-h {
+            height: auto;
+        }
 
-    /* .top-panel {
-        padding: 0px 0px 0px 0px !important;
-    }*/
+        .allmeeting .candidate-details {
+            width: 25%
+        }
 
-    .page-container .page-sidebar {
-        position: relative;
-        float: left;
-        width: 100%;
-    }
+        .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
+            width: 22%
+        }
 
-        .page-container .page-sidebar.scroll {
+        .selectedmeeting .candidate-client {
+            width: 22%
+        }
+
+        .rejectedmeeting .candidate-client {
+            width: 22%
+        }
+
+        .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
+            width: 30%
+        }
+
+        .tab-teaser {
+            max-width: 100%
+        }
+
+        [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+            right: -400% !important;
+            bottom: 138px !important;
+        }
+
+        [data-id="candidatetimeline"] .allmeetingnext-btn {
+            right: -458% !important;
+            bottom: 138px !important;
+        }
+
+        .candidate-hr .hrname {
+            width: 250px !important
+        }
+
+        .hrname, .chrname {
+            width: 290px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
             position: relative;
         }
 
-    .page-container .page-content {
-        margin-left: 0px;
+        .notschedulemeeting .candidate-hr .hrname {
+            width: 190px !important
+        }
+
+        .notschedulemeeting .candidate-hr .chrname {
+            width: 200px !important
+        }
     }
 
-        .page-container .page-content .content-frame .content-frame-left,
-        .page-container .page-content .content-frame .content-frame-right {
-            width: 100%;
-            display: none;
+    @media only screen and (max-width: 1400px) {
+        /* table.journey td.cadName, table.journey td.cadEmail {
+        max-width: 120px;
+    }*/
+        .single-video-left .video-title [data-tooltip] {
+            top: 15px;
         }
 
-        .page-container .page-content .content-frame .content-frame-body {
-            margin-left: 0px;
-            margin-right: 0px;
+        .single-video-left .join-time {
+            width: 125px;
         }
 
-            .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
-                margin-right: 0px;
-            }
-
-        .page-container .page-content .content-frame .content-frame-left-toggle,
-        .page-container .page-content .content-frame .content-frame-right-toggle {
+        .video-title .candidate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             display: inline-block;
         }
 
-    .page-container.page-navigation-toggled .page-content {
-        margin-left: 0px;
-    }
-
-    .page-container.page-mode-rtl .page-content {
-        margin-right: 0px;
-    }
-
-    .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
-        padding-right: 0px;
-        position: relative;
-    }
-
-    .page-container.page-navigation-top-fixed .page-content {
-        padding-top: 0px;
-    }
-
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 200px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 160px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .selected-priority table.journey td.cadName {
-        max-width: 250px;
-    }
-
-    .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
-    }
-
-    .selected-priority .journey td.interview-com {
-        max-width: 300px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 160px;
-    }
-
-    .x-navigation {
-        max-height: 50px;
-        overflow: hidden;
-        background: #1b1e24;
-    }
-
-        .x-navigation.x-navigation-panel {
-            height: 50px;
-            max-height: auto;
-            overflow: visible;
+        .laptop-view {
+            display: block !important;
+            height: 5px;
         }
 
-            .x-navigation.x-navigation-panel li.xn-icon-button {
-                width: 50px;
+        .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
+            width: 36%
+        }
+
+        .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
+            width: 18%
+        }
+
+        .selectedmeeting .candidate-details {
+            width: 30%
+        }
+
+        .instanext-btn {
+            right: -270% !important;
+        }
+
+        .skillnext-btn {
+            bottom: 66px !important;
+            right: -70% !important;
+        }
+
+        .cjd {
+            width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .rbpay .modal .form-control {
+            height: 40px;
+            border: 0px;
+            border-radius: 2px;
+            margin-bottom: 10px;
+        }
+
+            .rbpay .modal .form-control.invoicecomment {
+                height: 79px;
             }
 
-            .x-navigation.x-navigation-panel li.xn-search {
-                width: auto;
+        .rbpay .border-rv {
+            border-right: 1px dotted #ccc;
+        }
+
+        table .journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            /* max-width: 133px;*/
+        }
+
+        .intEmail {
+            width: 90px !important;
+        }
+
+        .intName {
+            width: 58px !important;
+        }
+
+        .rbpay .sb-scrollbar {
+            position: absolute;
+            right: 0px !important;
+        }
+
+        .notschedulemeeting .candidate-hr .hrname {
+            width: 230px !important
+        }
+
+        .notschedulemeeting .candidate-hr .chrname {
+            width: 230px !important
+        }
+
+        .candidate-hr .hrname {
+            width: 250px !important
+        }
+
+        .candidate-hr {
+            width: 25% !important;
+        }
+
+        .hrname {
+            width: 290px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .hremail {
+            width: 260px !important
+        }
+
+        .join-time {
+            width: 160px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+
+        .info-detail {
+            font-size: 14px !important;
+            position: relative;
+            top: -24px;
+            right: -10px
+        }
+
+        .commonpool .join-time {
+            width: 95px !important;
+            top: 0px !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+
+        .single-video-left .join-time {
+            top: -1px !important;
+        }
+
+        .allmeeting .table > tbody > tr > td {
+            padding: 5px 5px !important;
+        }
+
+        .allmeeting .cname {
+            width: 127px;
+        }
+
+        .clname {
+            width: 197px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .skillname {
+            width: 170px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .cname {
+            width: 170px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .rejectedmeeting .s_cname {
+            width: 247px;
+        }
+
+        .selectedmeeting .s_cname {
+            width: 220px;
+        }
+
+        .s_cname {
+            width: 236px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+    }
+
+
+    @media only screen and (max-width: 1024px) {
+        .top-h {
+            height: 60px !important;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 285px !important;
+            height: 160px !important;
+        }
+
+        .select-selected {
+            padding: 6px 6px !important;
+        }
+
+        #calenderTimeslot {
+            width: 180px !important;
+            height: auto !important;
+        }
+
+        .support .divider-rm {
+            position: relative;
+            left: -75px;
+            top: 2px;
+        }
+
+        #calender h4 {
+            font-size: 19px !important;
+        }
+
+        .calendar-con table {
+            width: 100% !important;
+        }
+
+        .txttimezone-con {
+            background: #dbdbdb8c;
+            width: 100% !important;
+            display: block !important;
+            margin: 10px auto 20px auto !important;
+        }
+
+        body.sidebar-mini .top-panel {
+            padding: 0px 10px 0px 10px !important;
+            margin-bottom: 0px !important;
+        }
+
+        #tblbodyCandidate .action {
+            max-width: 100% !important;
+        }
+
+        .tab-menu ul li:nth-child(3) .skillcount {
+            right: 1px !important;
+        }
+
+        .tab-menu ul li:nth-child(4) .skillcount {
+            right: -1px !important;
+        }
+
+        .tab-menu ul li:nth-child(5) .skillcount {
+            right: -11px !important;
+        }
+
+        .tab-menu ul li:nth-child(6) .skillcount {
+            right: -15px !important;
+        }
+
+        .tab-menu ul li:nth-child(8) .skillcount {
+            right: -6px !important;
+        }
+
+        .tab-menu ul li:nth-child(9) .skillcount {
+            right: 9px !important;
+        }
+
+        .tab-menu ul li:last-child .skillcount {
+            right: -10px !important;
+        }
+
+        .razorpay_details {
+            width: 60% !important;
+        }
+
+        .s_cname {
+            width: 165px !important;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+            padding-bottom: 10px;
+        }
+
+        .hrname {
+            top: 2px !important;
+            position: relative !important;
+            line-height: 100% !important;
+        }
+
+        .clname, .skillname {
+            width: 170px !important;
+        }
+
+        .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
+            width: 100% !important;
+            display: block;
+            white-space: initial;
+        }
+
+            .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
+                line-height: 15px;
             }
 
-        .x-navigation .xn-search input {
+        .candidate-hr .hrname {
+            width: 205px !important
+        }
+
+        #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+            color: red !important;
+            margin-left: 0 !important;
+            font-size: 12px !important;
+            width: 100%;
+            position: relative;
+            text-align: right;
+        }
+
+        .tabCon .tab-menu ul li a {
+            font-size: 11px !important;
+            padding: 10px 0px;
+        }
+
+        .user.user-r .main-notification-title {
+            padding-top: 0px !important;
+            position: relative;
+            right: -39px;
+            top: -52px !important;
+        }
+
+        .user .main-notification-title {
+            padding-top: 0px !important;
+            position: relative;
+            right: -6px;
+            top: -46px !important;
+        }
+
+        .user.user-r {
+            right: 60px !important;
+        }
+
+        .user {
+            position: absolute;
+            top: 54px;
+            right: 160px !important;
+        }
+
+            .user .user-menu {
+                top: -17px !important;
+                left: auto;
+                right: -17px !important;
+            }
+
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 25px !important;
+            height: 25px !important;
+            margin: 0px 0px 0px 30px;
+            right: -60px !important;
+            border-radius: 100%;
+            left: -10px;
+            top: -78px !important;
+            float: right;
+        }
+
+        .nav-open .navbar {
+            left: 260px;
+        }
+
+        /* .top-panel {
+        padding: 0px 0px 0px 0px !important;
+    }*/
+
+        .page-container .page-sidebar {
+            position: relative;
+            float: left;
             width: 100%;
         }
 
-        .x-navigation.x-navigation-open {
-            max-height: 1200px;
-            overflow: visible;
+            .page-container .page-sidebar.scroll {
+                position: relative;
+            }
+
+        .page-container .page-content {
+            margin-left: 0px;
         }
 
-        .x-navigation .x-navigation-control {
+            .page-container .page-content .content-frame .content-frame-left,
+            .page-container .page-content .content-frame .content-frame-right {
+                width: 100%;
+                display: none;
+            }
+
+            .page-container .page-content .content-frame .content-frame-body {
+                margin-left: 0px;
+                margin-right: 0px;
+            }
+
+                .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
+                    margin-right: 0px;
+                }
+
+            .page-container .page-content .content-frame .content-frame-left-toggle,
+            .page-container .page-content .content-frame .content-frame-right-toggle {
+                display: inline-block;
+            }
+
+        .page-container.page-navigation-toggled .page-content {
+            margin-left: 0px;
+        }
+
+        .page-container.page-mode-rtl .page-content {
+            margin-right: 0px;
+        }
+
+        .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
+            padding-right: 0px;
+            position: relative;
+        }
+
+        .page-container.page-navigation-top-fixed .page-content {
+            padding-top: 0px;
+        }
+
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
+
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
+
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
+
+        .selected-priority .journey td.interview-com {
+            max-width: 300px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
+
+        .x-navigation {
+            max-height: 50px;
+            overflow: hidden;
+            background: #1b1e24;
+        }
+
+            .x-navigation.x-navigation-panel {
+                height: 50px;
+                max-height: auto;
+                overflow: visible;
+            }
+
+                .x-navigation.x-navigation-panel li.xn-icon-button {
+                    width: 50px;
+                }
+
+                .x-navigation.x-navigation-panel li.xn-search {
+                    width: auto;
+                }
+
+            .x-navigation .xn-search input {
+                width: 100%;
+            }
+
+            .x-navigation.x-navigation-open {
+                max-height: 1200px;
+                overflow: visible;
+            }
+
+            .x-navigation .x-navigation-control {
+                display: block;
+            }
+
+        .x-navigation-minimize {
+            display: none !important;
+        }
+
+        .x-navigation-horizontal > li > ul ul,
+        .x-navigation-horizontal > li > ul.xn-drop-left ul {
+            position: relative;
+            left: auto;
+            right: auto;
+            margin-left: 0px;
+            margin-right: 0px;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+            .x-navigation-horizontal > li > ul ul:after {
+                display: none;
+            }
+        /* XNAV PANEL */
+        .x-navigation li > .panel {
+            width: 250px;
+        }
+        /* END XNAV PANEL */
+        /* list icons */
+        .icons-list li {
+            width: 100%;
+        }
+        /* END list icons */
+        /* Gallery */
+        .gallery .gallery-item {
+            width: 50%;
+        }
+        /* End Gallery */
+        /* Timeline */
+        .timeline .timeline-item .timeline-item-content {
+            width: 90%;
+        }
+
+            .timeline .timeline-item .timeline-item-content:before,
+            .timeline .timeline-item .timeline-item-content:after {
+                left: 90%;
+            }
+
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
+            right: 90%;
+        }
+        /* END Timeline */
+        /* Error */
+        .error-container {
+            width: 100%;
+        }
+        /* End Error */
+        /* Settings */
+        .theme-settings {
+            display: none;
+        }
+        /* End Settings */
+        .post-image {
+            width: 300px;
+        }
+
+
+        .dashboard-cat-title {
+            left: 12px !important;
+            font-size: 12px !important;
+        }
+    }
+
+    @media (min-width: 992px) and (max-width: 1199px) {
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
+
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
+
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
+
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
+
+
+        .selected-priority .journey td.interview-com, .journey td.interview-com {
+            max-width: 300px;
+        }
+    }
+
+    @media only screen and (max-width:991px) {
+        .tabCon .tab-main-box {
+            padding: 20px 10px;
+            margin-bottom: 10px;
+        }
+
+        .nodata {
+            text-align: center;
+            font-size: 17px !important;
+        }
+
+            .nodata img {
+                width: 26px !important;
+            }
+
+        .logo-cm {
+            position: relative;
+            top: -1px;
+            width: 11% !important;
+            left: 10px;
+        }
+
+        .support .divider-rm {
+            display: none;
+        }
+
+        .mob_h {
+            width: 63% !important
+        }
+
+        .single-video {
+            margin-bottom: 0px !important;
+        }
+
+        #calenderTimeslot {
+            width: 190px !important;
+        }
+
+        .tabCon .tabs {
+            display: none;
+        }
+
+        .calendar-con {
+            padding: 40px 0px 0px 0px !important;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 350px !important;
+            height: 200px !important;
+        }
+
+        #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+            color: red !important;
+            margin-left: 0 !important;
+            font-size: 12px !important;
+            width: 100%;
+            position: relative;
+            text-align: right;
+        }
+
+        .user {
+            top: -2px !important;
+            right: 160px !important;
+        }
+
+            .user.user-r .main-img-user {
+                top: -27px !important;
+                right: -65px;
+            }
+
+            .user.user-r .main-notification-title {
+                top: 0px !important;
+            }
+
+        .recommendation .dropdown-toggle::after {
+            border-top: .3em solid;
+            border-right: .3em solid transparent;
+            border-bottom: 0;
+            border-left: .3em solid transparent;
+        }
+
+        .navbar .container-fluid {
+            height: 100%;
+        }
+
+        .user.user-r {
+            top: 4px !important;
+        }
+
+
+
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 20px;
+            height: 20px;
+            margin: 0px 0px 0px 30px;
+            top: -73px !important;
+            border-radius: 100%;
+            left: -10px;
+            float: right;
+        }
+
+        .recommendation .multiselect.dropdown-toggle:after {
+            left: 1% !important;
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 991px) {
+        .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+            font-size: 11px !important;
+        }
+
+        .w60 {
+            width: 55%;
+            float: left;
+        }
+
+        .w40 {
+            width: 45%;
+            float: right;
+        }
+
+        #calenderTimeslot {
+            left: 20px;
+        }
+
+        .interview-status {
+            position: absolute !important;
+            top: -56px !important;
+        }
+
+        .event .calendar-con {
+            min-width: 90% !important;
+            max-width: 90% !important;
+            margin: 40px auto 40px auto;
+            padding: 20px 20px !important;
+        }
+
+        .candidate .journey td.cadEmail {
+            width: 130px !important;
+        }
+
+        .filter-note {
+            right: 15%
+        }
+
+        .tabCon .tab_drawer_heading {
+            background-color: #ececec;
+            color: #5a5757cc;
+            border-bottom: 1px solid #ccc;
+            margin: 0 0 5px 0;
+            padding: 5px 20px;
+            display: block;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
+
+        .user-r .user {
+            position: absolute;
+            top: 4px !important;
+            right: 71px !important;
+        }
+
+        .nav-open .navbar {
+            left: 260px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
+
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
+
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 270px;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            position: absolute;
+            left: 30px !important;
+        }
+    }
+
+
+    @media only screen and (max-width: 768px) {
+        [class^='col-xs-'],
+        [class^='col-sm-'],
+        [class^='col-md-'],
+        [class^='col-lg-'] {
+            margin-bottom: 10px;
+        }
+
+        .logo-cm {
+            position: relative;
+            top: 4px !important;
+            left: 10px !important;
+        }
+
+        #userProfileForm .tab-menu ul li a {
+            font-size: 15px;
+        }
+
+        .public-url #candidateTable_length {
+            display: none;
+        }
+
+        #calender {
+            padding-left: 25px !important;
+        }
+
+        .time-btn {
+            width: 110px !important;
+        }
+
+        .calendar-con table {
+            width: 300px !important;
+        }
+
+        #calenderTimeslot {
+            margin-top: 40px;
+            height: 320px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            width: 155px !important;
+        }
+
+        .edit_request [class*="pl-"] {
+            padding-left: 13px !important;
+        }
+        /* LOGIN */
+        .login-container {
+            padding: 0px 10px;
+        }
+
+            .login-container .login-box {
+                padding-top: 10px;
+                width: 100%;
+            }
+        /* END LOGIN */
+        /* TOCIFY */
+        .tocify {
+            display: none;
+        }
+        /* END TOCIFY */
+
+        .recommendation .multiselect.dropdown-toggle:after {
+            left: 1% !important;
+        }
+
+        .edit_request {
+            width: 100% !important;
+            float: left;
+            padding: 0px !important;
+        }
+
+        .next-btn {
+            bottom: 735% !important;
+            right: 0% !important;
+        }
+
+
+        .mc-button-area.text-left .mdc-button {
+            margin-top: 2px;
+            margin-bottom: 5px;
+        }
+
+        .tab_drawer_heading {
+            background-color: #ececec;
+            color: #5a5757cc;
+            border-bottom: 1px solid #ccc;
+            margin: 0 0 5px 0;
+            padding: 5px 20px;
+            display: block;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /* TIMELINE */
+        .timeline.timeline-right:before {
+            left: 60px;
+        }
+
+        .timeline.timeline-right .timeline-item {
+            padding-left: 110px;
+        }
+
+            .timeline.timeline-right .timeline-item.timeline-main {
+                width: 60px;
+            }
+
+            .timeline.timeline-right .timeline-item .timeline-item-icon {
+                left: 40px;
+            }
+
+            .timeline.timeline-right .timeline-item .timeline-item-info {
+                top: 45px;
+                width: 70px;
+                left: 25px;
+                padding: 7px 0px;
+            }
+        /* END TIMELINE */
+        .post-image {
+            width: 100%;
+        }
+
+        .razorpay_details {
+            width: 41% !important;
+        }
+
+        .user.user-r {
+            top: 4px;
+            right: -259px !important;
+        }
+
+        .main-notification-title span {
+            top: 0px !important
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            position: absolute;
+            left: 40px !important;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 270px !important;
+            height: 164px !important;
+        }
+
+        .instainterview .multiple_row > h2, #reportForm .multiple_row > h3 {
+            top: 10px !important;
+        }
+
+        .divider-lm {
+            display: none;
+        }
+
+        .navbar .navbar-brand {
+            font-size: 10px;
+        }
+
+        .topbar-item {
+            top: 3px !important;
+            position: relative;
+            right: 0px !important;
+        }
+
+        .user.user-r .main-img-user {
+            top: -34px !important;
+        }
+
+        .tabCon .tab-main-box {
+            padding: 20px 10px;
+        }
+
+        .tab-main-box .col-md-4.col-sm-4 {
+            padding-right: 5px !important;
+            padding-left: 5px !important;
+        }
+
+        .tab-box label {
+            padding: 0px 0px 0px 5px !important;
+            font-size: 12px !important;
+        }
+
+        .tab-main-box .mdc-radio {
+            width: 13px !important;
+            height: 13px !important;
+        }
+
+        .tab-box .form-group {
+            margin-bottom: 0px !important;
+        }
+
+        #CalendlyLinkDiv {
+            position: relative;
+            top: -6px;
+        }
+    }
+
+    @media only screen and (max-width: 767px) {
+        #clientduser li {
+            width: 100%;
+            float: left;
+        }
+
+        #reportForm video {
+            width: calc(100% - 4px) !important;
+            padding: 0px !important;
+        }
+
+        .generate-pdf {
+            position: relative !important;
+            left: 17px !important;
+        }
+
+        #userProfileForm .avatar-upload {
+            margin: 0px auto !important;
+        }
+
+        .irf-radiowrap {
+            padding: 0px 5px 0px 5px;
+            float: left;
+        }
+
+        #clientduser li:nth-child(5) .dtr-title {
+            float: left;
+        }
+
+        #clientduser li:nth-child(5) .dtr-data {
+            float: left;
+        }
+
+        .action-btn {
+            width: 100px;
+            margin: 0px auto;
+        }
+
+        .candidate .journey td.cadEmail {
+            width: 130px !important;
+        }
+
+        .scheduling .action {
+            position: inherit;
+        }
+
+        .custom-select {
+            font-size: 12px !important;
+        }
+
+        .select-selected {
+            padding: 6px 0px !important;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 350px !important;
+            height: 200px !important;
+        }
+
+        .event .calendar-con table {
+            width: 100% !important;
+            float: right;
+        }
+
+        .txttimezone-con {
+            position: initial;
+            left: 6px !important;
+            background: #dbdbdb8c;
+            width: 100% !important;
+            border-radius: 200px;
+            text-align: center;
+            color: #686363;
+            padding: 10px 0px 0px 10px;
+            margin: 0px auto !important;
+            display: block !important;
+        }
+
+        #calender table {
+            width: 100% !important;
+        }
+
+        #calender {
+            border: 0px !important;
+        }
+
+        .support svg {
+            position: relative;
+            left: 10px;
+            width: 16px;
+            top: -4px;
+        }
+
+        .mob-txt .clientName {
+            width: 211px;
+        }
+
+        .mob-img {
+            width: 15%;
+            float: left;
+        }
+
+        .mob-txt {
+            width: 85%;
+            float: left;
+        }
+
+        .mob-mb-0 {
+            margin-bottom: 0px;
+        }
+
+        .interviewer_2 {
+            width: 335px;
+            float: left;
             display: block;
         }
 
-    .x-navigation-minimize {
-        display: none !important;
-    }
+        .searchCon.mb-10, .mb-10 {
+            margin-bottom: 10px !important;
+        }
 
-    .x-navigation-horizontal > li > ul ul,
-    .x-navigation-horizontal > li > ul.xn-drop-left ul {
-        position: relative;
-        left: auto;
-        right: auto;
-        margin-left: 0px;
-        margin-right: 0px;
-        -moz-box-shadow: none;
-        -webkit-box-shadow: none;
-        box-shadow: none;
-    }
+        .interviewerMemberModal
+        .navbar-toggle {
+            top: -5px;
+        }
 
-        .x-navigation-horizontal > li > ul ul:after {
+        .jd .skillname {
+            width: 100% !important;
+            text-align: center;
+        }
+
+        .jd .card-header-buttons.action.text-right {
+            text-align: center !important;
+        }
+
+        .canvas_div_pdf .card-body {
+            padding: 0px !important;
+        }
+
+        #tblbodyCandidate .action {
+            max-width: 100% !important;
+        }
+
+        .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
+            border: 0;
+            border-radius: 30px !important;
+            transition: all .3s;
+            padding: 0px 0px;
+            margin: 0px 1px !important;
+            min-width: 20px !important;
+            text-align: center;
+            height: 22px !important;
+            line-height: 24px;
+            color: #2c2c2c;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase;
+            background: transparent;
+            outline: none;
+        }
+
+        #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+            padding-right: 10px !important;
+            padding-left: 10px !important;
+        }
+
+        #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
+            display: none !important;
+        }
+
+        .mob_canvas-height {
+            height: 400px;
+        }
+
+        #SkillTable select.form-control {
+            width: auto !important;
+        }
+
+        #InterviewerTable .form-control {
+            width: 200px !important;
+        }
+
+        .recommendation .multiselect.dropdown-toggle:after {
+            left: 1% !important;
+        }
+
+        .page-container .page-content .page-content-wrap {
+            float: left;
+            width: 100%;
+            margin-top: -10px !important;
+            padding: 0px 15px;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+            color: red !important;
+            margin-left: 0 !important;
+            font-size: 12px !important;
+            width: 100%;
+            position: relative;
+            text-align: right;
+        }
+
+        .mob_h {
+            height: 2px;
+            width: auto;
+        }
+
+
+        .myinterview_modal .btn-group {
+            width: 100% !important;
+        }
+
+        .tabCon .tabs {
             display: none;
         }
-    /* XNAV PANEL */
-    .x-navigation li > .panel {
-        width: 250px;
-    }
-    /* END XNAV PANEL */
-    /* list icons */
-    .icons-list li {
-        width: 100%;
-    }
-    /* END list icons */
-    /* Gallery */
-    .gallery .gallery-item {
-        width: 50%;
-    }
-    /* End Gallery */
-    /* Timeline */
-    .timeline .timeline-item .timeline-item-content {
-        width: 90%;
-    }
 
-        .timeline .timeline-item .timeline-item-content:before,
-        .timeline .timeline-item .timeline-item-content:after {
-            left: 90%;
-        }
-
-    .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
-    .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
-        right: 90%;
-    }
-    /* END Timeline */
-    /* Error */
-    .error-container {
-        width: 100%;
-    }
-    /* End Error */
-    /* Settings */
-    .theme-settings {
-        display: none;
-    }
-    /* End Settings */
-    .post-image {
-        width: 300px;
-    }
-
-
-    .dashboard-cat-title {
-        left: 12px !important;
-        font-size: 12px !important;
-    }
-}
-
-@media (min-width: 992px) and (max-width: 1199px) {
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 200px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 160px;
-    }
-
-    .selected-priority table.journey td.cadName {
-        max-width: 250px;
-    }
-
-    .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 160px;
-    }
-
-
-    .selected-priority .journey td.interview-com, .journey td.interview-com {
-        max-width: 300px;
-    }
-}
-
-@media only screen and (max-width:991px) {
-    .tabCon .tab-main-box {
-        padding: 20px 10px;
-        margin-bottom: 10px;
-    }
-    .nodata {
-        text-align: center;
-        font-size: 17px!important;
-    }
-        .nodata img {
-        width: 26px!important;
-    }
-    .logo-cm {
-        position: relative;
-        top: -1px;
-         width: 11%!important;
-        left: 10px;
-    }
-    .support .divider-rm {
-        display: none;
-    }
-
-    .mob_h {
-        width: 63% !important
-    }
-
-    .single-video {
-        margin-bottom: 0px !important;
-    }
-
-    #calenderTimeslot {
-        width: 190px !important;
-    }
-
-    .tabCon .tabs {
-        display: none;
-    }
-
-    .calendar-con {
-        padding: 40px 0px 0px 0px !important;
-    }
-
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        width: 350px !important;
-        height: 200px !important;
-    }
-
-    #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-        color: red !important;
-        margin-left: 0 !important;
-        font-size: 12px !important;
-        width: 100%;
-        position: relative;
-        text-align: right;
-    }
-
-    .user {
-        top: -2px !important;
-        right: 160px !important;
-    }
-
-        .user.user-r .main-img-user {
-            top: -27px !important;
-            right: -65px;
+        .main-notification-title {
+            right: 9px !important;
+            padding-top: 0px !important;
+            position: relative;
+            top: 2px;
         }
 
         .user.user-r .main-notification-title {
             top: 0px !important;
         }
 
-    .recommendation .dropdown-toggle::after {
-        border-top: .3em solid;
-        border-right: .3em solid transparent;
-        border-bottom: 0;
-        border-left: .3em solid transparent;
-    }
-
-    .navbar .container-fluid {
-        height: 100%;
-    }
-
-    .user.user-r {
-        top: 4px !important;
-    }
-
-
-
-    .main-img-user {
-        display: block;
-        position: relative;
-        width: 20px;
-        height: 20px;
-        margin: 0px 0px 0px 30px;
-        top: -73px !important;
-        border-radius: 100%;
-        left: -10px;
-        float: right;
-    }
-
-    .recommendation .multiselect.dropdown-toggle:after {
-        left: 1% !important;
-    }
-   
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        font-size: 11px !important;
-    }
-
-    .w60 {
-        width: 55%;
-        float: left;
-    }
-
-    .w40 {
-        width: 45%;
-        float: right;
-    }
-
-    #calenderTimeslot {
-        left: 20px;
-    }
-    .interview-status {
-        position: absolute!important;
-        top: -56px!important;
-    }
-        .event .calendar-con {
-        min-width: 90% !important;
-        max-width: 90% !important;
-        margin: 40px auto 40px auto;
-        padding: 20px 20px !important;
-    }
-
-    .candidate .journey td.cadEmail {
-        width: 130px !important;
-    }
-
-    .filter-note {
-        right: 15%
-    }
-
-    .tabCon .tab_drawer_heading {
-        background-color: #ececec;
-        color: #5a5757cc;
-        border-bottom: 1px solid #ccc;
-        margin: 0 0 5px 0;
-        padding: 5px 20px;
-        display: block;
-        font-size: 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    table.journey td.cadName, table.journey td.cadEmail {
-        max-width: 200px;
-    }
-
-    .user-r .user {
-        position: absolute;
-        top: 4px !important;
-        right: 71px !important;
-    }
-
-    .nav-open .navbar {
-        left: 260px;
-    }
-
-    .candidate table.journey td.cadEmail {
-        max-width: 160px;
-    }
-
-    table.journey td.cadSkill {
-        max-width: 150px;
-    }
-
-    .selected-priority table.journey td.cadName {
-        max-width: 250px;
-    }
-
-    .selected-priority table.journey td.cadSkill {
-        max-width: 235px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 160px;
-    }
-
-    .selected-priority table.journey td.interviewdate {
-        max-width: 270px;
-    }
-
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        position: absolute;
-        left: 30px !important;
-    }
-  
-}
-
-
-@media only screen and (max-width: 768px) {
-    [class^='col-xs-'],
-    [class^='col-sm-'],
-    [class^='col-md-'],
-    [class^='col-lg-'] {
-        margin-bottom: 10px;
-    }
-    .logo-cm {
-        position: relative;
-        top: 4px !important;
-        left: 10px!important;
-    }
-    #userProfileForm .tab-menu ul li a {
-        font-size: 15px;
-    }
-    .public-url #candidateTable_length {
-      
-        display: none;
-    }
-    #calender {
-        padding-left: 25px !important;
-    }
-
-    .time-btn {
-        width: 110px !important;
-    }
-
-    .calendar-con table {
-        width: 300px !important;
-    }
-
-    #calenderTimeslot {
-        margin-top: 40px;
-        height: 320px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        width: 155px !important;
-    }
-
-    .edit_request [class*="pl-"] {
-        padding-left: 13px !important;
-    }
-    /* LOGIN */
-        .login-container {
-        padding: 0px 10px;
-    }
-
-        .login-container .login-box {
-            padding-top: 10px;
-            width: 100%;
-        }
-    /* END LOGIN */
-    /* TOCIFY */
-    .tocify {
-        display: none;
-    }
-    /* END TOCIFY */
-
-    .recommendation .multiselect.dropdown-toggle:after {
-        left: 1% !important;
-    }
-
-    .edit_request {
-        width: 100% !important;
-        float: left;
-        padding: 0px !important;
-    }
-
-    .next-btn {
-        bottom: 735% !important;
-        right: 0% !important;
-    }
-
-
-    .mc-button-area.text-left .mdc-button {
-        margin-top: 2px;
-        margin-bottom: 5px;
-    }
-
-    .tab_drawer_heading {
-        background-color: #ececec;
-        color: #5a5757cc;
-        border-bottom: 1px solid #ccc;
-        margin: 0 0 5px 0;
-        padding: 5px 20px;
-        display: block;
-        font-size: 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-    /* TIMELINE */
-    .timeline.timeline-right:before {
-        left: 60px;
-    }
-
-    .timeline.timeline-right .timeline-item {
-        padding-left: 110px;
-    }
-
-        .timeline.timeline-right .timeline-item.timeline-main {
-            width: 60px;
+        .user.user-r {
+            top: -28px !important;
+            left: -42px !important;
         }
 
-        .timeline.timeline-right .timeline-item .timeline-item-icon {
-            left: 40px;
+        .user {
+            position: relative !important;
+            top: 52px;
+            right: 0px !important;
+            left: 0px !important;
         }
 
-        .timeline.timeline-right .timeline-item .timeline-item-info {
-            top: 45px;
-            width: 70px;
-            left: 25px;
-            padding: 7px 0px;
-        }
-    /* END TIMELINE */
-    .post-image {
-        width: 100%;
-    }
-
-    .razorpay_details {
-        width: 41% !important;
-    }
-
-    .user.user-r {
-        top: 4px;
-        right: -259px !important;
-    }
-
-    .main-notification-title span {
-        top: 0px !important
-    }
-
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        position: absolute;
-        left: 40px !important;
-    }
-
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        width: 270px !important;
-        height: 164px !important;
-    }
-
-    .instainterview .multiple_row > h2, #reportForm .multiple_row > h3 {
-        top: 10px !important;
-    }
-
-    .divider-lm {
-        display: none;
-    }
-
-    .navbar .navbar-brand {
-        font-size: 10px;
-    }
-
-    .topbar-item {
-        top: 3px !important;
-        position: relative;
-        right: 0px !important;
-    }
-
-    .user.user-r .main-img-user {
-        top: -34px !important;
-    }
-
-    .tabCon .tab-main-box {
-        padding: 20px 10px;
-    }
-
-    .tab-main-box .col-md-4.col-sm-4 {
-        padding-right: 5px !important;
-        padding-left: 5px !important;
-    }
-
-    .tab-box label {
-        padding: 0px 0px 0px 5px !important;
-        font-size: 12px !important;
-    }
-
-    .tab-main-box .mdc-radio {
-        width: 13px !important;
-        height: 13px !important;
-    }
-
-    .tab-box .form-group {
-        margin-bottom: 0px !important;
-    }
-
-    #CalendlyLinkDiv {
-        position: relative;
-        top: -6px;
-    }
-}
-
-@media only screen and (max-width: 767px) {
-    #clientduser li {
-        width: 100%;
-        float: left;
-    }
-
-    #reportForm video {
-        width: calc(100% - 4px) !important;
-        padding: 0px !important;
-    }
-
-    .generate-pdf {
-        position: relative !important;
-        left: 17px !important;
-    }
-
-    #userProfileForm .avatar-upload {
-        margin: 0px auto !important;
-    }
-
-    .irf-radiowrap {
-        padding: 0px 5px 0px 5px;
-        float: left;
-    }
-
-    #clientduser li:nth-child(5) .dtr-title {
-        float: left;
-    }
-
-    #clientduser li:nth-child(5) .dtr-data {
-        float: left;
-    }
-
-    .action-btn {
-        width: 100px;
-        margin: 0px auto;
-    }
-
-    .candidate .journey td.cadEmail {
-        width: 130px !important;
-    }
-
-    .scheduling .action {
-        position: inherit;
-    }
-
-    .custom-select {
-        font-size: 12px !important;
-    }
-
-    .select-selected {
-        padding: 6px 0px !important;
-    }
-
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        width: 350px !important;
-        height: 200px !important;
-    }
-
-    .event .calendar-con table {
-        width: 100% !important;
-        float: right;
-    }
-
-    .txttimezone-con {
-        position: initial;
-        left: 6px !important;
-        background: #dbdbdb8c;
-        width: 100% !important;
-        border-radius: 200px;
-        text-align: center;
-        color: #686363;
-        padding: 10px 0px 0px 10px;
-        margin: 0px auto !important;
-        display: block !important;
-    }
-
-    #calender table {
-        width: 100% !important;
-    }
-
-    #calender {
-        border: 0px !important;
-    }
-
-    .support svg {
-        position: relative;
-        left: 10px;
-        width: 16px;
-        top: -4px;
-    }
-
-    .mob-txt .clientName {
-        width: 211px;
-    }
-
-    .mob-img {
-        width: 15%;
-        float: left;
-    }
-
-    .mob-txt {
-        width: 85%;
-        float: left;
-    }
-
-    .mob-mb-0 {
-        margin-bottom: 0px;
-    }
-
-    .interviewer_2 {
-        width: 335px;
-        float: left;
-        display: block;
-    }
-
-    .searchCon.mb-10, .mb-10 {
-        margin-bottom: 10px !important;
-    }
-
-    .interviewerMemberModal
-    .navbar-toggle {
-        top: -5px;
-    }
-
-    .jd .skillname {
-        width: 100% !important;
-        text-align: center;
-    }
-
-    .jd .card-header-buttons.action.text-right {
-        text-align: center !important;
-    }
-
-    .canvas_div_pdf .card-body {
-        padding: 0px !important;
-    }
-
-    #tblbodyCandidate .action {
-        max-width: 100% !important;
-    }
-
-    .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
-        border: 0;
-        border-radius: 30px !important;
-        transition: all .3s;
-        padding: 0px 0px;
-        margin: 0px 1px !important;
-        min-width: 20px !important;
-        text-align: center;
-        height: 22px !important;
-        line-height: 24px;
-        color: #2c2c2c;
-        cursor: pointer;
-        font-size: 14px;
-        text-transform: uppercase;
-        background: transparent;
-        outline: none;
-    }
-
-    #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
-        padding-right: 10px !important;
-        padding-left: 10px !important;
-    }
-
-    #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
-        display: none !important;
-    }
-
-    .mob_canvas-height {
-        height: 400px;
-    }
-
-    #SkillTable select.form-control {
-        width: auto !important;
-    }
-
-    #InterviewerTable .form-control {
-        width: 200px !important;
-    }
-
-    .recommendation .multiselect.dropdown-toggle:after {
-        left: 1% !important;
-    }
-
-    .page-container .page-content .page-content-wrap {
-        float: left;
-        width: 100%;
-        margin-top: -10px !important;
-        padding: 0px 15px;
-        font-family: 'Open Sans', sans-serif;
-    }
-
-    #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-        color: red !important;
-        margin-left: 0 !important;
-        font-size: 12px !important;
-        width: 100%;
-        position: relative;
-        text-align: right;
-    }
-
-    .mob_h {
-        height: 2px;
-        width: auto;
-    }
-
-
-    .myinterview_modal .btn-group {
-        width: 100% !important;
-    }
-
-    .tabCon .tabs {
-        display: none;
-    }
-
-    .main-notification-title {
-        right: 9px !important;
-        padding-top: 0px !important;
-        position: relative;
-        top: 2px;
-    }
-
-    .user.user-r .main-notification-title {
-        top: 0px !important;
-    }
-
-    .user.user-r {
-        top: -28px !important;
-        left: -42px !important;
-    }
-
-    .user {
-        position: relative !important;
-        top: 52px;
-        right: 0px !important;
-        left: 0px !important;
-    }
-
-    #txtpageHeader {
-        display: none;
-    }
-
-    .note-meeting {
-        width: 54%;
-        left: 30px;
-        position: absolute;
-        top: 12px !important;
-        font-size: 15px;
-    }
-
-    .nav-open .navbar {
-        left: 260px;
-    }
-
-    .top-panel {
-        padding: 0px 5px !important
-    }
-
-    .timer {
-        font-size: 15px !important;
-    }
-
-    .rbpay .modal-dialog {
-        max-width: 100% !important
-    }
-
-    .mobpad {
-        padding: 0px !important;
-    }
-
-    .mobpad {
-        padding: 0px !important;
-    }
-
-    .navbar {
-        padding-top: 0;
-    }
-
-        .navbar.navbar-no-bg {
-            background: #333;
-            background: rgba(51, 51, 51, 0.9);
+        #txtpageHeader {
+            display: none;
         }
 
-    .navbar-brand {
-        height: 60px;
-        margin-left: 0px;
-    }
+        .note-meeting {
+            width: 54%;
+            left: 30px;
+            position: absolute;
+            top: 12px !important;
+            font-size: 15px;
+        }
 
-    .navbar-collapse {
-        border: 0;
-    }
+        .nav-open .navbar {
+            left: 260px;
+        }
 
-    .navbar-toggle {
-        margin-top: 12px;
-    }
+        .top-panel {
+            padding: 0px 5px !important
+        }
 
-    .top-content {
-        padding: 40px 0 110px 0;
-    }
+        .timer {
+            font-size: 15px !important;
+        }
 
-    .user-r .user-menu {
-        top: -15px;
-        left: auto;
-        right: -19px;
-    }
+        .rbpay .modal-dialog {
+            max-width: 100% !important
+        }
 
+        .mobpad {
+            padding: 0px !important;
+        }
 
-    .dashboard-icon {
-        margin: 0px auto !important;
-        float: none !important;
-        position: relative !important;
-        left: 0px !important;
-    }
+        .mobpad {
+            padding: 0px !important;
+        }
 
-    .click-arrow {
-        position: relative !important;
-        top: 8px !important;
-        left: -10px !important;
-    }
+        .navbar {
+            padding-top: 0;
+        }
 
-    .dashboard-cat-title {
-        position: relative;
-        top: 0px !important;
-        text-align: center !important;
-    }
-    .fixed-header {
-        width: calc(100% - 30px);
-    }
-    .candidatename-sla{
-        float:none;
-        margin:0px;
-    }
+            .navbar.navbar-no-bg {
+                background: #333;
+                background: rgba(51, 51, 51, 0.9);
+            }
 
-   .public-url div.dataTables_wrapper div.dataTables_filter {
-        text-align: right;
-        position: absolute;
-        left: 193px;
-        top: -34px;
-    }
-    .public-url #candidateTable_length {
-        top: 17px;
-        position: relative;
-        display:block;
-    }
-}
+        .navbar-brand {
+            height: 60px;
+            margin-left: 0px;
+        }
 
+        .navbar-collapse {
+            border: 0;
+        }
 
+        .navbar-toggle {
+            margin-top: 12px;
+        }
 
-@media only screen and (max-width: 480px) {
-    .candidate-tab .card-block h1 {
-        font-size: 13px !important;
-        background: url(../../img/interview.svg) -20px 37px no-repeat !important;
-    }
-    .public-url #candidateTable_length {
-        left: -22px;
-        position: relative;
-    }
-    .public-url div.dataTables_wrapper div.dataTables_filter {
-        text-align: right;
-        position: absolute;
-        left: 104px;
-        top: -45px;
-    }
-    .public-url #candidateTable_length{
-        top:9px;
-    }
-    .sharp.btn-xs {
-        width: 2.1rem;
-        height: 2.1rem;
-        min-width: 2.1rem;
-        min-height: 2.1rem;
-    }
-    .pad7 {
-        padding: 0px!important;
-    }
-    .note-filter {
-        font-size: 13px !important;
-        padding: 5px 0px !important;
-    }
-    .logo-cm {
-        position: relative;
-        top: -1px !important;
-        width: 23% !important;
-        left: 10px !important;
-    }
+        .top-content {
+            padding: 40px 0 110px 0;
+        }
 
-    #scoreChart tspan {
-        font-size: 11.5px;
-    }
-
-    .custom-select {
-        line-height: 17px !important;
-    }
-
-    .txttimezone-con {
-        width: 300px !important;
-        min-height: 30px;
-    }
-
-    .currMonth {
-        padding: 0px 12px !important;
-    }
-
-    #calender table {
-        border-collapse: separate;
-        border-spacing: 4px 9px !important;
-    }
-
-    #calender {
-        width: 100% !important;
-    }
-
-    #calenderTimeslot {
-        width: 120px !important;
-    }
-
-    .time-btn {
-        width: 95px !important;
-        left: 9px !important;
-    }
-
-    #calender {
-        width: 325px !important;
-        padding-left: 10px !important;
-    }
-
-    .filter-note {
-        width: 100% !important;
-        float: left;
-        color: #2a9e2a;
-        padding-top: 4px;
-        position: absolute;
-        right: 20% !important;
-        top: 34px !important;
-        line-height: 16px;
-    }
-
-    .note-meeting {
-        left: 7px !important;
-        position: absolute;
-        top: -5px !important;
-        font-size: 15px;
-        width: 100% !important;
-    }
-
-    .popup-text {
-        right: 60px !important;
-        top: 24px !important;
-        font-size: 16px !important;
-    }
-
-    .single-video-left h1 .mdc-button {
-        height: 30px !important;
-    }
-
-    .single-video-left .join-time {
-        top: 8px !important;
-    }
-
-    .mob_canvas-height {
-        height: 300px;
-    }
-
-    .overall-rate {
-        position: absolute;
-        right: 25px;
-        top: -26px;
-        color: #7eb38e;
-        font-weight: normal;
-    }
-
-    .main-notification-title {
-        right: 9px !important;
-        padding-top: 0px !important;
-        position: relative;
-        top: 2px;
-    }
-
-    .user-r .user-menu {
-        top: -15px;
-        left: auto;
-        right: -19px;
-    }
-
-    .click-arrow {
-        position: relative !important;
-        top: 10px !important;
-        left: -10px !important;
-    }
-
-    .dashboard-cat-title {
-        position: relative;
-        top: 0px !important;
-        text-align: center !important;
-    }
-
-    .topheader-link-wrap {
-        width: 248px;
-        font-size: 10px;
-        margin: 0px !important;
-        padding: 0px !important;
-    }
-
-    .topheader-link {
-        width: 23px;
-        height: 23px;
-    }
-}
-
-@media only screen and (min-width: 480px) {
-
-    .dashboard-icon {
-        margin: 0px auto !important;
-        float: none !important;
-        position: relative !important;
-        left: 0px !important;
-    }
-}
-
-@media only screen and (max-width: 415px) {
+        .user-r .user-menu {
+            top: -15px;
+            left: auto;
+            right: -19px;
+        }
 
 
-    .popup-text {
-        display: none !important;
-    }
+        .dashboard-icon {
+            margin: 0px auto !important;
+            float: none !important;
+            position: relative !important;
+            left: 0px !important;
+        }
 
-    #calenderTimeslot {
-        width: 100% !important;
-        margin-top: 0px !important;
-    }
+        .click-arrow {
+            position: relative !important;
+            top: 8px !important;
+            left: -10px !important;
+        }
 
-    #scoreChart tspan {
-        font-size: 11px;
-    }
+        .dashboard-cat-title {
+            position: relative;
+            top: 0px !important;
+            text-align: center !important;
+        }
 
-    .time-btn {
-        width: 100% !important;
-    }
+        .fixed-header {
+            width: calc(100% - 30px);
+        }
 
-    .filter-note {
-        width: 252px;
-        right: 30% !important;
-        top: 40px !important;
-        line-height: 16px;
-    }
+        .candidatename-sla {
+            float: none;
+            margin: 0px;
+        }
 
-    h1, h2 {
-        font-size: 32px;
-    }
+        .public-url div.dataTables_wrapper div.dataTables_filter {
+            text-align: right;
+            position: absolute;
+            left: 193px;
+            top: -34px;
+        }
 
-    .interview-status {
-        position: absolute;
-        top: -16px !important;
-        font-size: 14px !important;
-    }
-
-    .f1 {
-        padding-bottom: 20px;
-    }
-
-    .f1-buttons button {
-        margin-bottom: 5px;
-    }
-
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        width: 310px !important;
-        height: 180px !important;
-        left: 7px !important;
-    }
-
-    .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
-        font-size: 14px;
-    }
-
-    .candidate-tab .card-block {
-        height: 150px !important;
-        width: 30% !important;
-        margin: 10px 6px !important;
-    }
-
-    .step {
-        width: 40px !important;
-        height: 20px !important;
-        font-size: 13px !important;
+        .public-url #candidateTable_length {
+            top: 17px;
+            position: relative;
+            display: block;
+        }
     }
 
 
-    .dashboard-cat-title {
-        position: relative;
-        top: 0px;
-        text-align: center;
-    }
 
-    .dashboard-count {
-        margin: 0px auto;
-        position: relative;
-        left: 80px;
-    }
-}
-
-@media only screen and (max-width: 375px) {
-    .scheduling .action {
-        position: absolute;
-        top: 6px;
-        right: 95px;
-    }
-
-    .candidate-tab .card-block {
-        height: 140px !important;
-    }
-
+    @media only screen and (max-width: 480px) {
         .candidate-tab .card-block h1 {
+            font-size: 13px !important;
+            background: url(../../img/interview.svg) -20px 37px no-repeat !important;
+        }
+
+        .public-url #candidateTable_length {
+            left: -22px;
+            position: relative;
+        }
+
+        .public-url div.dataTables_wrapper div.dataTables_filter {
+            text-align: right;
+            position: absolute;
+            left: 104px;
+            top: -45px;
+        }
+
+        .public-url #candidateTable_length {
+            top: 9px;
+        }
+
+        .sharp.btn-xs {
+            width: 2.1rem;
+            height: 2.1rem;
+            min-width: 2.1rem;
+            min-height: 2.1rem;
+        }
+
+        .pad7 {
+            padding: 0px !important;
+        }
+
+        .note-filter {
+            font-size: 13px !important;
+            padding: 5px 0px !important;
+        }
+
+        .logo-cm {
+            position: relative;
+            top: -1px !important;
+            width: 23% !important;
+            left: 10px !important;
+        }
+
+        #scoreChart tspan {
+            font-size: 11.5px;
+        }
+
+        .custom-select {
+            line-height: 17px !important;
+        }
+
+        .txttimezone-con {
+            width: 300px !important;
+            min-height: 30px;
+        }
+
+        .currMonth {
+            padding: 0px 12px !important;
+        }
+
+        #calender table {
+            border-collapse: separate;
+            border-spacing: 4px 9px !important;
+        }
+
+        #calender {
+            width: 100% !important;
+        }
+
+        #calenderTimeslot {
+            width: 120px !important;
+        }
+
+        .time-btn {
+            width: 95px !important;
+            left: 9px !important;
+        }
+
+        #calender {
+            width: 325px !important;
+            padding-left: 10px !important;
+        }
+
+        .filter-note {
+            width: 100% !important;
+            float: left;
+            color: #2a9e2a;
+            padding-top: 4px;
+            position: absolute;
+            right: 20% !important;
+            top: 34px !important;
+            line-height: 16px;
+        }
+
+        .note-meeting {
+            left: 7px !important;
+            position: absolute;
+            top: -5px !important;
+            font-size: 15px;
+            width: 100% !important;
+        }
+
+        .popup-text {
+            right: 60px !important;
+            top: 24px !important;
+            font-size: 16px !important;
+        }
+
+        .single-video-left h1 .mdc-button {
+            height: 30px !important;
+        }
+
+        .single-video-left .join-time {
+            top: 8px !important;
+        }
+
+        .mob_canvas-height {
+            height: 300px;
+        }
+
+        .overall-rate {
+            position: absolute;
+            right: 25px;
+            top: -26px;
+            color: #7eb38e;
+            font-weight: normal;
+        }
+
+        .main-notification-title {
+            right: 9px !important;
+            padding-top: 0px !important;
+            position: relative;
+            top: 2px;
+        }
+
+        .user-r .user-menu {
+            top: -15px;
+            left: auto;
+            right: -19px;
+        }
+
+        .click-arrow {
+            position: relative !important;
+            top: 10px !important;
+            left: -10px !important;
+        }
+
+        .dashboard-cat-title {
+            position: relative;
+            top: 0px !important;
+            text-align: center !important;
+        }
+
+        .topheader-link-wrap {
+            width: 248px;
+            font-size: 10px;
+            margin: 0px !important;
+            padding: 0px !important;
+        }
+
+        .topheader-link {
+            width: 23px;
+            height: 23px;
+        }
+    }
+
+    @media only screen and (min-width: 480px) {
+
+        .dashboard-icon {
+            margin: 0px auto !important;
+            float: none !important;
+            position: relative !important;
+            left: 0px !important;
+        }
+    }
+
+    @media only screen and (max-width: 415px) {
+
+
+        .popup-text {
+            display: none !important;
+        }
+
+        #calenderTimeslot {
+            width: 100% !important;
+            margin-top: 0px !important;
+        }
+
+        #scoreChart tspan {
+            font-size: 11px;
+        }
+
+        .time-btn {
+            width: 100% !important;
+        }
+
+        .filter-note {
+            width: 252px;
+            right: 30% !important;
+            top: 40px !important;
+            line-height: 16px;
+        }
+
+        h1, h2 {
+            font-size: 32px;
+        }
+
+        .interview-status {
+            position: absolute;
+            top: -16px !important;
+            font-size: 14px !important;
+        }
+
+        .f1 {
+            padding-bottom: 20px;
+        }
+
+        .f1-buttons button {
+            margin-bottom: 5px;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 310px !important;
+            height: 180px !important;
+            left: 7px !important;
+        }
+
+        .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
+            font-size: 14px;
+        }
+
+        .candidate-tab .card-block {
+            height: 150px !important;
+            width: 30% !important;
+            margin: 10px 6px !important;
+        }
+
+        .step {
+            width: 40px !important;
+            height: 20px !important;
+            font-size: 13px !important;
+        }
+
+
+        .dashboard-cat-title {
+            position: relative;
+            top: 0px;
+            text-align: center;
+        }
+
+        .dashboard-count {
+            margin: 0px auto;
+            position: relative;
+            left: 80px;
+        }
+    }
+
+    @media only screen and (max-width: 375px) {
+        .scheduling .action {
+            position: absolute;
+            top: 6px;
+            right: 95px;
+        }
+
+        .candidate-tab .card-block {
+            height: 140px !important;
+        }
+
+            .candidate-tab .card-block h1 {
+                font-size: 11px !important;
+            }
+
+        #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
+            margin-bottom: 10px;
+        }
+
+        .filter-note {
+            width: 210px !important;
+            right: 40% !important;
+            top: 40px !important;
+            line-height: 16px;
+        }
+
+        .support {
+            position: absolute;
+            left: auto;
+            right: 25px !important;
+            top: 12px !important;
+        }
+
+        .logo-cm {
+            position: relative;
+            top: 3px;
+            left: 10px;
+        }
+
+        .dashboard-cat-title {
+            position: relative !important;
+            top: 0px !important;
+            text-align: center !important;
+        }
+
+        .dashboard-count {
+            position: relative !important;
+            left: 80px !important;
+            text-align: center !important;
+        }
+    }
+
+    @media only screen and (max-width: 360px) {
+        .logo-cm {
+            position: relative;
+            top: 4px !important;
+            left: 10px !important;
+        }
+
+        #scoreChart tspan {
+            font-size: 9.3px;
+        }
+
+        #calenderTimeslot {
+            left: 0px !important;
+        }
+
+        .note-meeting {
+            width: 100% !important;
+            top: -11px !important;
+            font-size: 13px !important;
+        }
+
+        .single-video-left h1 .mdc-button {
+            height: 30px !important;
+        }
+
+        .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
             font-size: 11px !important;
         }
 
-    #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
-        margin-bottom: 10px;
-    }
+        #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+            padding-right: 5px !important;
+            padding-left: 5px !important;
+        }
 
-    .filter-note {
-        width: 210px !important;
-        right: 40% !important;
-        top: 40px !important;
-        line-height: 16px;
-    }
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 285px !important;
+            height: 160px !important;
+            left: 7px !important;
+        }
 
-    .support {
-        position: absolute;
-        left: auto;
-        right: 25px !important;
-        top: 12px !important;
-    }
+        .support {
+            position: absolute;
+            left: auto;
+        }
 
-    .logo-cm {
-        position: relative;
-        top: 3px;
-        left: 10px;
-    }
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 20px !important;
+            height: 20px !important;
+            margin: 0px 0px 0px 30px;
+            top: -43px !important;
+            border-radius: 100%;
+            left: -145px !important;
+            float: right;
+        }
 
-    .dashboard-cat-title {
-        position: relative !important;
-        top: 0px !important;
-        text-align: center !important;
-    }
+        .main-notification-title {
+            padding-top: 0px !important;
+            position: relative;
+            right: 9px !important;
+            top: -19px !important;
+            width: 100%;
+            text-align: center !important;
+            margin: 0px;
+            padding: 0px;
+        }
 
-    .dashboard-count {
-        position: relative !important;
-        left: 80px !important;
-        text-align: center !important;
-    }
-}
+        .user {
+            left: -110px !important;
+            top: 14px !important;
+            width: 100%;
+        }
 
-@media only screen and (max-width: 360px) {
-    .logo-cm {
-        position: relative;
-        top: 4px !important;
-        left: 10px !important;
+        .click-arrow {
+            position: relative !important;
+            top: 8px !important;
+            left: -25px !important;
+        }
     }
-
-    #scoreChart tspan {
-        font-size: 9.3px;
-    }
-
-    #calenderTimeslot {
-        left: 0px !important;
-    }
-
-    .note-meeting {
-        width: 100% !important;
-        top: -11px !important;
-        font-size: 13px !important;
-    }
-
-    .single-video-left h1 .mdc-button {
-        height: 30px !important;
-    }
-
-    .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
-        font-size: 11px !important;
-    }
-
-    #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
-        padding-right: 5px !important;
-        padding-left: 5px !important;
-    }
-
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        width: 285px !important;
-        height: 160px !important;
-        left: 7px !important;
-    }
-
-    .support {
-        position: absolute;
-        left: auto;
-    }
-
-    .main-img-user {
-        display: block;
-        position: relative;
-        width: 20px !important;
-        height: 20px !important;
-        margin: 0px 0px 0px 30px;
-        top: -43px !important;
-        border-radius: 100%;
-        left: -145px !important;
-        float: right;
-    }
-
-    .main-notification-title {
-        padding-top: 0px !important;
-        position: relative;
-        right: 9px !important;
-        top: -19px !important;
-        width: 100%;
-        text-align: center !important;
-        margin: 0px;
-        padding: 0px;
-    }
-
-    .user {
-        left: -110px !important;
-        top: 14px !important;
-        width: 100%;
-    }
-
-    .click-arrow {
-        position: relative !important;
-        top: 8px !important;
-        left: -25px !important;
-    }
-}
-
-/* EOF BUTTONS */
-        /* FORM ELEMENTS */
-        .fa, .fas, .far {
+    /* EOF BUTTONS */
+    /* FORM ELEMENTS */
+    .fa, .fas, .far {
     font-family: "Font Awesome 5 Pro";
     font-weight: 500;
 }

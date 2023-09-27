@@ -57,26 +57,32 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
 				left join InterviewComments ic on ic.InterviewId= im.id 
+				left join UserList uli on uli.EmailId=im.interviewer
+				left join UserList ulc on ulc.id=IRF.RisebirdHr
 				where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid and interviewdate<@currentdate
 			end
 			else
 			begin
-				select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				left join InterviewComments ic on ic.InterviewId= im.id 
+				left join UserList uli on uli.EmailId=im.interviewer
+				left join UserList ulc on ulc.id=IRF.RisebirdHr
 				where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and interviewdate<@currentdate
 			end
 		end
 		else
 		begin
-			select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			select distinct im.*,irf.*,cl.*,ic.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 			left join InterviewComments ic on ic.InterviewId= im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
+			left join UserList uli on uli.EmailId=im.interviewer left join UserList ulc on ulc.id=IRF.RisebirdHr
 			where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ul.EmailId=@emailID and interviewdate<@currentdate
 			union 
-			select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			select distinct im.*,irf.*,cl.*,ic.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 			left join InterviewComments ic on ic.InterviewId= im.id join Userlist ul on ul.id=irf.RisebirdHr 
+			left join UserList uli on uli.EmailId=im.interviewer left join UserList ulc on ulc.id=IRF.RisebirdHr
 			where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ul.Emailid =@emailID and interviewdate<@currentdate
 		end
 	end
@@ -351,32 +357,31 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-
-				select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName, ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy ,ip.ResumeLink as ResumeLink,
+				select (ul.FirstName +' '+ ul.LastName) as SuspiciousName, ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy ,ip.ResumeLink as ResumeLink,
 				si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				join SeniorHr sh on ul.id=sh.Userid
-				where si.CreatedBy=@Emailid and si.SuspiciousStatus=0
+				where si.CreatedBy=@Emailid and si.SuspiciousStatus=1
 			end
 			else
 			begin
-				select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
+				select (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
 				ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,
 				si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
-				where si.SuspiciousStatus=0
+				where si.SuspiciousStatus=1
 			end
 		end
 		else
 		begin
-			select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
+			select (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
 			ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber 
 			from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				join SeniorHr sh on ul.id=sh.Userid
-				where si.CreatedBy=@Emailid and si.SuspiciousStatus=0
+				where si.CreatedBy=@Emailid and si.SuspiciousStatus=1
 			union 
-			select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,ip.ResumeLink as ResumeLink,
+			select (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,ip.ResumeLink as ResumeLink,
 			si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				join SeniorHr sh on ul.id=sh.Userid
-				where si.CreatedBy=@Emailid and si.SuspiciousStatus=0
+				where si.CreatedBy=@Emailid and si.SuspiciousStatus=1
 				end
 	end
 	else If(@actionstatus ='CancelledInterviewCount')

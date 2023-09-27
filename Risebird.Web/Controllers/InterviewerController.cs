@@ -3772,6 +3772,11 @@ namespace Risebird.Web.Controllers
                 var data = await _interviewerService.AddSuspiciousTypeService(model);
                 if (data == true)
                 {
+                    var result = new TransInterviewersReliabilityScoresVm();
+                    result.InterviewMeetingId = 0;
+                    result.InterviewerEmail = Email;
+                    result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.SuspiciousInterviewer;
+                    await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                     return Json("Suspicious Interviewer marked Successfully");
                 }
                 else
@@ -3858,8 +3863,17 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> InterviewerInsights(string interviewer)
         {
             var result = await _interviewerService.GetInterviewerInsights(interviewer);
+            if (result == null)
+            {
+                result = new InterviewerInsightsVM();
+            }
             return PartialView(result);
-        }  
+        }
+        public async Task<IActionResult> ReliabilityScoreDetails(string interviewer)
+        {
+            var result = await _interviewerService.GetReliabilityScoreDetails(interviewer);
+            return PartialView(result);
+        }
         #endregion
     }
 }

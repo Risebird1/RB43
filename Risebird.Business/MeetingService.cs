@@ -4004,6 +4004,20 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> AddTransReliabilityScoresSelectAndRejectService(int InterviewMeetingId)
+        {
+            try
+            {
+                return await _meetingRespository.AddTransReliabilityScoresSelectAndReject(InterviewMeetingId);
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
 

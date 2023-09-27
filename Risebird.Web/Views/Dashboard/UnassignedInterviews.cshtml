@@ -86,6 +86,14 @@
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span data-toggle="tooltip" data-placement="top" title="Click here to Send Open Interview Notification" onclick="SendOpenInterview(null)" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;">Send Open Interview</font></span>
                             </button>
+
+                            @if(ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement")
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="Click here to Send Open Interview Notification as per Skill Channel" onclick="location.href = '@Url.Action("SendOpenInterviewsNotification", "Dashboard" , new { actionstatus = RibbonActionType.InterviewCount})'" data-original-title="Tooltip on top"><svg class="broadcast-icon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M21 6h-7.59l3.29-3.29L16 2l-4 4-4-4-.71.71L10.59 6H3c-1.1 0-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.11-.9-2-2-2zm0 14H3V8h18v12zM9 10v8l7-4z" /></svg><font style="font-family: Roboto, sans-serif; font-size:12px;">Send Open Interview Mail(Skillwise clubbed)</font></span>
+                                </button>
+                            }
+                            
                         }
                     </div>
                 </div>
@@ -262,7 +270,7 @@
                                                     {
                                                         <th>Candidate Name</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
@@ -274,7 +282,7 @@
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
@@ -283,11 +291,11 @@
                                                     //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "InterviewCount")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink")
+                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus")
                                                             {
                                                                 <th>Meeting Status</th>
                                                             }
-                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity")
+                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus")
                                                             {
                                                                 <th>Interview Status</th>
                                                             }
@@ -306,7 +314,7 @@
                                                     @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -391,7 +399,7 @@
                                                         <th>Channel Owner</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Action</th>
                                                     }
@@ -461,7 +469,7 @@
                                                     {
                                                         <th>Candidate Name</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Candidate Contact</th>
                                                     }
@@ -473,7 +481,7 @@
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                    @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Interviewer Contact</th>
                                                     }
@@ -483,11 +491,11 @@
                                                     //PotentialRiskInterviewCount not allow
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                         {
-                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink")
+                                                            @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus")
                                                             {
                                                                 <th>Meeting Status</th>
                                                             }
-                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity")
+                                                            @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus")
                                                             {
                                                                 <th>Interview Status</th>
                                                             }
@@ -506,7 +514,7 @@
                                                     @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -595,7 +603,7 @@
                                                         <th>Action</th>
                                                     }
 
-                                                    @if ((ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport"))
+                                                    @if ((ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus"))
                                                     {
                                                         <th>
                                                             Action
@@ -638,7 +646,7 @@
 
                                                                 <span>
                                                                     <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
-                                                                        <span onclick="javascript:OpenInterviewerFlagDetails('@item.InterviewerEmailId');" title="Interviewer Flags details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001" /></svg></span>
+                                                                        <span onclick="javascript:OpenInterviewerFlagDetails('@item.SuspiciousEmail');" title="Interviewer Flags details" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12.435 12.435 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A19.626 19.626 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a19.587 19.587 0 0 0 1.349-.476l.019-.007.004-.002h.001" /></svg></span>
                                                                     </button>
                                                                 </span>
                                                         </td>
@@ -773,6 +781,17 @@
                                                                 </td>
                                                             }
                                                         }
+                                                        @if (ViewBag.actionstatus == "MeetingStatus")
+                                                        {
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <td>
+                                                                    <span  aria-label="Click here to call the candidate">
+                                                                        <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
+                                                                    </span>@item.MobileNumber
+                                                                </td>
+                                                            }
+                                                        }
                                                         @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             <td> @item.candidateEmail<input type="text" hidden id="txtcandidateemail_@item.imid" value="@item.candidateEmail" /></td>
@@ -791,20 +810,27 @@
                                                             }
 
                                                         }
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink"  || ViewBag.actionstatus == "MeetingStatus" )
                                                         {
-                                                            <td>@item.InterviewerMobileNumber</td>
-                                                        }
 
+                                                             <td><span  aria-label="Click here to call the candidate">
+                                                                    <span onclick="CommonCallButtonClick('@item.InterviewerName','@item.InterviewerMobileNumber', '@item.interviewer',null, null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
+                                                                    </span>@item.InterviewerMobileNumber</td>
+                                                          
+                                                        }
+                                                           
+
+                                                           
+                                                                
                                                         @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "InterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                         //PotentialRiskInterviewCount not allow
                                                             @if (ViewBag.actionstatus != "PotentialRiskInterviewCount")
                                                             {
-                                                                @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink")
+                                                                @if (ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "MeetingStatus")
                                                                 {
                                                                     @if (@item.interviewDate > DateTime.Now && item.confirmationStatus.Trim() != "Cancelled")
-                                                                    {
+                                                                    { 
                                                                         <td>Scheduled</td>
                                                                     }
                                                                     else
@@ -820,7 +846,7 @@
                                                                     }
                                                                 }
 
-                                                                @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity")
+                                                                @if (ViewBag.actionstatus != "UnAttendedZoomLink" && ViewBag.actionstatus != "NeedClarity" && ViewBag.actionstatus != "MeetingStatus")
                                                                 {
                                                                     @if (item.intervieweStatusStatDesc != "0")
                                                                     {
@@ -856,7 +882,7 @@
                                                         @*PotentialRiskInterviewCount not allow*@
                                                         @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
-                                                            @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
+                                                            @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
                                                             {
                                                                 <td>@item.ChannelOwner</td>
                                                             }
@@ -1276,14 +1302,23 @@
                                                                         <span onclick="ReschuduleMeeting(@item.imid,'@item.scheduleUniqueid',@item.irfIntId,'@item.candidateEmail')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
                                                                     </div>
 
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability" style="position:relative;top:3px">
+                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability" style="position:relative;top:3px">
                                                                         <span onclick="javascript:CheckIntervieweravailbility('@item.irfIntId', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
                                                                                 <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
                                                                                 <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
                                                                             </svg>
                                                                         </span>
-                                                                    </button>
+                                                                    </button>*@
+                                                                    @if(ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement")
+                                                                    {
+                                                                        <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { irfId = item.irfIntId, irfName = item.IRFId})" title="Client Interview Report">
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity For Availability" style="margin: 0px 3px;">
+                                                                                <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                            </button>
+                                                                        </a>
+                                                                    }
+                                                                    
 
                                                                     @*<button class="mdc-fab app-fab--absolute" aria-label="Send email communication all open interviews that are available to be taken up." style="position:relative;top:3px;">
                                                                         <span onclick="javascript:SendOpenInterview('@item.irfIntId');" title="Send email communication all open interviews that are available to be taken up." class="mdc-fab__icon material-icons">
@@ -1325,6 +1360,25 @@
 
 
 
+                                                        }
+
+                                                         @if (ViewBag.actionstatus == "MeetingStatus")
+                                                        {
+                                                            <td>
+                                                               <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                    <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
+                                                                    </button>
+
+                                                                    @if (!string.IsNullOrWhiteSpace(item.interviewer))
+                                                                {
+                                                                    <span>
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
+
+                                                            </td>
                                                         }
 
                                                         @if (ViewBag.actionstatus == RibbonActionType.InterviewerChurn)
@@ -1594,7 +1648,7 @@
         </div>
     </div>
 </div>
-
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
 <script src="~/js/Aadhaar.js"></script>

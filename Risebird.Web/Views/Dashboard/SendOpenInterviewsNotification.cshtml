@@ -1,0 +1,371 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Send Open Interviews Notification";
+    ViewBag.PageHeader = "Send Open Interviews Notification";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    //string[] TemplateName = new string[] { };
+    //string[] CompetencyLevel = new string[] { };
+    //string[] SeniorityLevel = new string[] { };
+    //string[] CountryType = new string[] { };
+    //string[] CompanyType = new string[] { };
+    //string[] EmploymentType = new string[] { };
+    //string[] DifficultyLevel = new string[] { };
+    string AssessmentGroupTemplate = string.Empty;
+    string SeniorityLevel = string.Empty;
+    string CountryType = string.Empty;
+    string CompanyType = string.Empty;
+    string EmploymentType = string.Empty;
+    string DifficultyLevel = string.Empty;
+    string Category = string.Empty;
+    string[] PrimarySkills = new string[] { };
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContextAccessor.HttpContext.Session.GetString("ClonableTemplatesFilters"));
+    //TemplateName = filter.TemplateName != null ? filter.TemplateName : new string[] { };
+    //CompetencyLevel = filter.CompetencyLevel != null ? filter.CompetencyLevel : new string[] { };
+    SeniorityLevel = filter.SeniorityLevel != null ? filter.SeniorityLevel : string.Empty;
+    CountryType = filter.CountryType != null ? filter.CountryType : string.Empty;
+    CompanyType = filter.CompanyType != null ? filter.CompanyType : string.Empty;
+    EmploymentType = filter.EmploymentType != null ? filter.EmploymentType : string.Empty;
+    DifficultyLevel = filter.DifficultyLevel != null ? filter.DifficultyLevel : string.Empty;
+    AssessmentGroupTemplate = filter.AssessmentGroupTemplate != null ? filter.AssessmentGroupTemplate : string.Empty;
+    Category = filter.Category != null ? filter.Category : string.Empty;
+    PrimarySkills = filter.PrimarySkills != null ? filter.PrimarySkills : string.Empty;
+}
+
+@*<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />*@
+
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
+
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Send Open Interviews Notification</h4></div>
+                </div>
+
+                @*<div class="pull-right">
+                    <div>
+                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button>
+
+                    </div>
+                </div>*@
+            </div>
+        </div>
+    </div>
+    <div class="content  client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                                
+                                <div>
+
+                                    <div id="tableID" class="second" style="overflow-x:scroll">
+                                        <table id="meetingsTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Skill Channel</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Channel Owner</th>
+                                                    @*<th>Client Name</th>*@
+                                                    <th>Candidate Response</th>
+                                                    <th>JD Title</th>
+                                                    <th>Actions</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Skill Channel</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Channel Owner</th>
+                                                    @*<th>Client Name</th>*@
+                                                    <th>Candidate Response</th>
+                                                    <th>JD Title</th>
+                                                    <th>Actions</th>
+
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+
+                                                @if (Model != null && Model.Count() > 0)
+                                                {
+                                                    foreach (var item in Model.Select(x=>x.irfIntId).Distinct())
+                                                    {
+                                                        int rowSpan= Model.Where(x=>x.irfIntId == item).Count();
+                                                        int maxCount = rowSpan - 1;
+                                                        var subModel = Model.Where(x => x.irfIntId == item).ToList();
+                                                        for (int i = 0; i <= maxCount; i++)
+                                                        {
+                                                            <tr>
+                                                                <td title="@subModel[i].IRFId">@subModel[i].IRFId</td>
+                                                                <td>@subModel[i].interviewDate</td>
+                                                                <td title="@subModel[i].candidateName">@subModel[i].candidateName</td>
+                                                                <td title="@subModel[i].candidateEmail">@subModel[i].candidateEmail</td>
+                                                                <td title="@subModel[i].ChannelOwner">@subModel[i].ChannelOwner</td>
+                                                                
+                                                                
+                                                                @if (subModel[i].IsCandidateResponsed)
+                                                                {
+                                                                    @if (subModel[i].CandidateResponse == 1)
+                                                                    {
+                                                                        <td>Responded (Yes)</td>
+                                                                    }
+                                                                    else if (subModel[i].CandidateResponse == 3)
+                                                                    {
+                                                                        <td title="Candidate Request to Reschedule">Responded (Reschedule)</td>
+                                                                    }
+                                                                    else if (subModel[i].CandidateResponse == 4)
+                                                                    {
+                                                                        <td>Responded (Need More Clarity)</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>Responded (No)</td>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Response</td>
+                                                                }
+
+                                                                <td>@subModel[i].JDTiltle</td>
+                                                                
+                                                                
+
+                                                                @if(i == 0)
+                                                                {
+                                                                    <td rowspan="@rowSpan">
+
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability" style="position:relative;top:3px">
+                                                                                            <span onclick="javascript:CheckIntervieweravailbility('@item', '@subModel[i].IRFId', '@subModel[i].AssessmentGroupId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                                                                    <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                                                                                    <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                                                                </svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Send email communication all open interviews that are available to be taken up." style="position:relative;top:3px;">
+                                                                                <span onclick="javascript:SendOpenInterview('@item', '@subModel[i].IRFId');" title="Send email communication all open interviews that are available to be taken up." class="mdc-fab__icon material-icons">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M2 5.5V3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V19h18V7.3l-8 7.2-10-9zM0 10h5v2H0v-2zm0 5h8v2H0v-2z"></path> </g> </svg>
+                                                                                </span>
+                                                                        </button>
+
+                                                                    </td>
+                                                                }
+                                                            </tr>
+                                                            
+                                                        }
+
+                                                    }
+                                                }
+
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+                                </div>
+
+                            <!-- end content-->
+                        </div>
+
+                        <!-- end col-md-12 -->
+                    </div>
+
+
+
+
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+</div>
+
+<script src="~/js/checkintervieweravailabilitybymail.js"></script>
+
+<script>
+    function SendOpenInterview(irfId = null, irfName = null) {
+        debugger;
+        swal.fire({
+            title: 'Are you sure you want to send open interview notification for skill channel ' + irfName+'?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, send!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Interviewer/SendOpenURLNotification',
+                        type: 'POST',
+                        data: { 'irfId': irfId },
+                        success: function (result) {
+                            if (result == "Success") {
+                                swal.fire({
+                                    title: 'Sent!',
+                                    type: 'success',
+                                    html: '<p>Mails sent successfully.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            } else {
+                                swal.fire({
+                                    title: 'Fail to sent!',
+                                    type: 'error',
+                                    html: '<p>Failed to send the mails, Please try again.</p>',
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#3085d6',
+                                    confirmButtonText: 'Close!',
+                                    allowOutsideClick: false
+                                });
+                            }
+                        },
+                        error: function () {
+                            swal.fire("Error Sending!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        })
+    }
+</script>
+<script>
+
+    $(document).ready(function () {
+        debugger;
+
+        //applyDataTable();
+        //$('#meetingsTable').DataTable();
+    });
+
+    function applyDataTable() {
+        debugger;
+        $('#meetingsTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+            //,
+            //"columnDefs": [
+            //    {
+            //        "targets": 7, // Specify the column index containing rowspan/colspan cells
+            //        "orderable": false, // Disable sorting for this column
+            //        "visible": false,
+            //        "searchable": false // Disable searching for this column
+            //        // Add custom sorting and searching functions if needed
+            //    }
+            //]
+        });
+    }
+    //function applyDataTable() {
+    //    var table = $('#meetingsTable').DataTable({
+    //        language: {
+    //            search: "_INPUT_",
+    //            searchPlaceholder: "Search records",
+    //        },
+    //        order: [[2, 'desc']]
+    //    });
+    //    $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+    //    $(".dataTables_filter").keyup(function (e) {
+    //        if ($('#txtmeeting_filter').val() == "") {
+    //            $("#x").hide();
+    //        }
+    //        else {
+    //            $("#x").show();
+    //        }
+    //    });
+    //    $("#x").click(function (e) {
+    //        $(".dataTables_filter input").val('');
+    //        $(this).hide();
+    //        //searchResult();
+    //    });
+
+    //};
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meetingsTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meetingsTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meetingsTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+
+
+
+
+
+
+
+
