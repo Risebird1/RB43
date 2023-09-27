@@ -18,46 +18,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>Survey - Risebird</title>
     <style>
-        .rating {
-            /*border: solid 1px #ccc;*/
-            border: solid 1px white;
-            display: flex;
-            flex-direction: row-reverse;
-            font-size: 2.0em;
-            justify-content: space-around;
-            padding: 0 .2em;
-            text-align: center;
-             grid-column: span 2;
-           display: flex;
-           justify-content: center;
-            margin-bottom: 10px;
- 
-        }
-
-            .rating input {
-                display: none;
-            }
-
-            .rating label {
-              width: 40px;
-              height: 40px;
-              margin-top: auto;
-               background-image:url(../../img/grey-star.svg);
-               background-repeat: no-repeat;
-               background-position: center;
-                background-size: 76%;
-               transition: 0.3s;
-                cursor: pointer;
-            }
-
-            .rating :checked ~ label {
-           background-image:url(../../img/yellow-star.svg);
-            }
-
-            .rating label:hover,
-            .rating label:hover ~ label {
-               background-image:url(../../img/yellow-star.svg);
-            }
 
         .card-title-space {
             margin: 20px 0px;
@@ -67,39 +27,6 @@
         .mb10 {
             margin-bottom: 10px
         }
-        .feedbackcontainer{
-     text-align:center;
-    grid-template-columns: 1fr 1fr;
-    padding-block: 5vh;
-    gap: 0.57rem;
-    width:685px;
-    margin:0px auto;
-    position:relative;
-    padding:0px;
-        }
-     .feedbackcontainer .avatar {
-    grid-column: span 2;
-    display: inline-block;
-    justify-content: center;
-    width: 100px;
-    height:100px;
-    border-radius:100%;
-    background:grey;
-}
-.feedbackcontainer .username {
-    grid-column: span 2;
-    margin-block-start: 0.75rem;
-    margin-block-end: 2rem;
-   color: #878181;
-    padding-top: 15px;
-}
-.divider{
-     width: 100%;
-    text-align: center;
-    grid-column: span 2;
-    display: flex;
-}
-
      
     </style>
 
@@ -689,12 +616,12 @@
                         </div>
                         </div>
                             <hr class="divider" style="border-color: #c8c4c447;height: auto;position:relative;top:-36px;" />
-                            <h4 style="clear:both;position:relative;top:-36px;clear:both;">
-                                <b>Too bad interviewer?</b>&nbsp;Please raise a interview redo request <button type="button" class="redobtn">
+                            <h4 class="redo-text">
+                                <b>Too bad interviewer?</b>&nbsp;Please raise a interview redo request 
+                            </h4><button type="button" class="redobtn">
                                     Redo Interview
 
                                 </button>
-                            </h4>
                             <div class="submit-wrapper">
                                 <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="formsubmit()" />
                             </div>
@@ -744,9 +671,6 @@
 
 
 <script>
-    /**
-      * EFECTO PARA FLECHAS EN ACORDEON
-      */
 
     $(document).on('show', '.accordion', function (e) {
         $(e.target).prev('.accordion-heading').addClass('accordion-opened');
@@ -757,148 +681,7 @@
     });
 </script>
 
-<style>
-    ul.ks-cboxtags {
-        list-style: none;
-        padding: 0px;
-        margin: 0px;
-    }
 
-        ul.ks-cboxtags li {
-            display: inline;
-        }
-
-            ul.ks-cboxtags li label {
-                display: inline-block;
-                background-color: rgba(255, 255, 255, .9);
-                border: 2px solid rgba(139, 139, 139, .3);
-                color: #adadad;
-                border-radius: 25px;
-                white-space: nowrap;
-                margin: 3px 0px;
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-                -webkit-tap-highlight-color: transparent;
-                transition: all .2s;
-                font-size: 12px;
-            }
-
-            ul.ks-cboxtags li label {
-                padding: 0px 12px;
-                cursor: pointer;
-            }
-
-                ul.ks-cboxtags li label::before {
-                    display: inline-block;
-                    font-style: normal;
-                    font-variant: normal;
-                    text-rendering: auto;
-                    -webkit-font-smoothing: antialiased;
-                    font-family: "Font Awesome 5 Free";
-                    font-weight: 900;
-                    font-size: 12px;
-                    padding: 2px 6px 2px 2px;
-                    /* content: "\f067";*/
-                    transition: transform .3s ease-in-out;
-                }
-
-            ul.ks-cboxtags li input[type="checkbox"]:checked + label::before {
-                content: "\f00c";
-                transform: rotate(-360deg);
-                transition: transform .3s ease-in-out;
-            }
-
-            ul.ks-cboxtags li input[type="checkbox"]:checked + label {
-                border: 1px solid #d5dadb7d;
-                background-color: #c0c2c27d;
-                color: #878282;
-                transition: all .2s;
-                FONT-WEIGHT: 500;
-                font-size: 12px;
-            }
-
-            ul.ks-cboxtags li input[type="checkbox"] {
-                display: absolute;
-            }
-
-            ul.ks-cboxtags li input[type="checkbox"] {
-                position: absolute;
-                opacity: 0;
-            }
-
-
- .feedbackcontainer .accordion-heading a {
-        width:auto;
-        background-color: transparent;
-        color: #000;
-        border: 1.5px solid #000;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 5px 10px;
-        margin:0px 8px 0px 0px;
-        border-radius: 5px;
-        cursor: pointer;
-        text-decoration:none;
-        transition: color 0.3s, background-color 0.8s;
-    }
-  
-    .page {
-        position: absolute;
-        inset: auto;
-        top:-10px;
-        margin-bottom:20px;
-        left:-9px;
-        overflow-y: auto;
-        transform: scale(0);
-        transition: transform 0.3s;
-        background-color: #eff2f5;
-        color: #1d1e22;
-        width:100%;
-        z-index:100;
-        
-    }
-
-    .page--active {
-        transform: scale(1);
-    }
-
-    .page__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 5vw;
-        background-color: #fff;
-        font-weight: bold;
-        box-shadow: 0px 5px 5px 0px #e5e5e5;
-    }
-    .page__title{
-        font-size:15px;
-    }
-    .page__close {
-        display: flex;
-        cursor: pointer;
-    }
-
-    .page__body {
-        padding: 1rem 2vw;
-        overflow-y: auto;
-    }
-    .w-auto{
-        width:auto;
-        float:left;
-    }
-
-    .feedbackcontainer ul.ks-cboxtags li label {
-        padding: 6px 12px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-</style>
 
 
 <script>
