@@ -2897,12 +2897,13 @@
 </script>
 <script>
     $(document).ready(function () {
+        debugger;
         var isNewSkillChannel = @Html.Raw(Json.Serialize(@Model.IsNewSkillChannel));
         UpdateInterviewerRateVariable();
         if(isNewSkillChannel)
         {
             var firstinterviewerRateElement = document.getElementById('InterviewerCollection_0__PerSuccessRate');
-            if(firstinterviewerRateElement != null  && (firstinterviewerRateElement.value != "" || firstinterviewerRateElement.value != 0))
+            if(firstinterviewerRateElement != null  && (firstinterviewerRateElement.value == "" || firstinterviewerRateElement.value == 0))
             {
                 if(firstinterviewerRateElement.readOnly == true)
                 {

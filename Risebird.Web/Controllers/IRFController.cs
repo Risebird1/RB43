@@ -1,4 +1,5 @@
 ﻿using Google.Apis.Drive.v3.Data;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,8 +21,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
@@ -58,10 +61,13 @@ namespace Risebird.Web.Controllers
         private readonly string codeapiendpoint;
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly HttpClient _httpClient;
+        private readonly CancellationToken _cancellationToken;
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
-            IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper)
+            IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
+            HttpClientHelper factory)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -86,6 +92,7 @@ namespace Risebird.Web.Controllers
             _encryptionHelper = encryptionHelper;
             _whatsAppHelper = whatsAppHelper;
             codeapiendpoint = _configuration["CodeApiEndPoint"];
+            _httpClient = factory.GetHttpClient();
         }
 
 
@@ -867,6 +874,8 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
+                            //call fire and forget method here to send emails and whatsapp for availability
+                            FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite);
                             TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!";
                             return RedirectToAction("Index");
                         }
@@ -1004,6 +1013,17 @@ namespace Risebird.Web.Controllers
         //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
         //    }
         //}
+
+
+        private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite)
+        {
+            var dto = new AvailabilityCheckDTO{ id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite };
+            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
+            //var path = $"http://localhost:7169/api/UploadAndVerifyCandidateImage";
+            var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
+            await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
+        }
+
 
         [HttpGet]
         public string GetInterviewerSkills(int id)
