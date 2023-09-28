@@ -1015,9 +1015,9 @@ namespace Risebird.Web.Controllers
         //}
 
 
-        private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId)
+        private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite)
         {
-            var dto = new AvailabilityCheckDTO{ id = irfId, AssessmentGroupId = assessmentGroupId };
+            var dto = new AvailabilityCheckDTO{ id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite };
             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
             //var path = $"http://localhost:7169/api/UploadAndVerifyCandidateImage";
             var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
