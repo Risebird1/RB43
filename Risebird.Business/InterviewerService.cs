@@ -1491,5 +1491,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type)
+        {
+            try
+            {
+                return await _interviewerRepository.GetInterviewerInsightsMarkersDetails(Emailid, type);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
