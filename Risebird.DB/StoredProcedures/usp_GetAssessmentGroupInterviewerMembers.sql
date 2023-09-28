@@ -17,7 +17,7 @@ Select Distinct 'Interviewer' as [Type],CTE.UserId,CTE.AssessmentGroupId, ul.Ema
 (ul.FirstName+ space(1) +ul.LastName) as InterviewerName,
 count(im.id) as TotalInterviews, CTE.ResumeLink,CTE.Isavailable as AvailableStatus,ul.IsActive,
 iav.MCQCandidateid,ag.AssessmentVerificationType,ag.CodeLanguage,ms.PartitionKey as MCQSetsValue,cid.inviteId,
-msl.PartitionKey as SMCQId,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate         
+msl.PartitionKey as SMCQId,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,CTE.RedMarker         
 From CTE join Userlist ul on CTE.Userid=ul.id       
 left join InterviewMeetings im on im.interviewer=ul.EmailId  and (im.confirmationStatus=1 or im.confirmationStatus is null)      
 left join InterviewerAssessmentVerifications iav on iav.UserId=ul.id and iav.AssessmentId=CTE.value  
@@ -26,7 +26,8 @@ left join MCQSets ms on ms.id=ag.MCQSetsValue
 left join CodeInviteDetails cid on cid.ProgrammingLanguage= ag.CodeLanguage and cid.candidateEmail=ul.EmailId
 left join MCQShareList msl on msl.MCQId=ms.PartitionKey and msl.EmailAddress=ul.EmailId
 where CTE.value = @Assessmentid and ul.IsActive=1    
-group by CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,iav.MCQCandidateid,ag.AssessmentVerificationType,ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate 
+group by CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,ul.FirstName+space(1)+ul.LastName,CTE.ResumeLink,CTE.Isavailable,ul.IsActive,iav.MCQCandidateid,ag.AssessmentVerificationType,
+ag.CodeLanguage,ms.PartitionKey,cid.inviteId,msl.PartitionKey,CTE.isVerified,CTE.IsEmployed,CTE.CompanyName,CTE.EmploymentComment,CTE.AvailabilityResponseDate,CTE.RedMarker  
 END
 GO
 

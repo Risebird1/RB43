@@ -23,6 +23,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using static iTextSharp.text.pdf.AcroFields;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -1588,13 +1589,16 @@ namespace Risebird.Web.Controllers
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
                         ViewBag.PaymentSLAConfirmation = model.PaymentSLAConfirmation;
+                        
                         if (model.VideoConfirmation == 0)
                         {
                             ViewBag.VideoConfirmationPopup = true;
+                           
                         }
                         else
                         {
                             ViewBag.VideoConfirmationPopup = false;
+                       
                         }
                         //Boradcastmessage
                         return View(model);
