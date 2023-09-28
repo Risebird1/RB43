@@ -3851,6 +3851,21 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 var result = await _interviewerService.UpdateVideoConfirmationStatus(responsestatus, emailid);
+                if (result)
+                {
+                    var resultReliability = new TransInterviewersReliabilityScoresVm();
+                    resultReliability.InterviewMeetingId = 0;
+                    resultReliability.InterviewerEmail = emailid;
+                    if (responsestatus == 1)
+                    {
+                        resultReliability.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationYes;
+                    }
+                    else
+                    {
+                        resultReliability.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationNo;
+                    }
+                    await _meetingService.AddTransInterviewersReliabilityScoresService(resultReliability);
+                }
                 return Json("Successfully updated youir response.");
             }
             else

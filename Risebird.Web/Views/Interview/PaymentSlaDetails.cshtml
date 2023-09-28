@@ -68,6 +68,8 @@
                                                     <td>Interviewer Call</td>
                                                     <td>Payment Deduction</td>
                                                     <td>Channel Owner</td>
+                                                    <td>Created By</td>
+                                                    <td>Created Date</td>
                                                     @if (ViewBag.actionstatus == "SLACompleted"){
                                                         <td>Status</td>
                                                     }
@@ -92,6 +94,8 @@
                                                     <td>Interviewer Call</td>
                                                     <td>Payment Deduction</td>
                                                     <td>Channel Owner</td>
+                                                    <td>Created By</td>
+                                                    <td>Created Date</td>
                                                      @if (ViewBag.actionstatus == "SLACompleted"){
                                                         <td>Status</td>
                                                     }
@@ -144,6 +148,8 @@
                                                         </td>
                                                         <td>@item.PaymentDeduction %</td>
                                                         <td>@item.ChannelOwner</td>
+                                                        <td>@item.CreatedBy</td>
+                                                        <td>@item.CreatedOn</td>
                                                         @if (ViewBag.actionstatus == "SLACompleted")
                                                         {
                                                             if (item.isapproved==1)
