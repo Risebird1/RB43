@@ -59,6 +59,11 @@ begin try
   declare @irfIntId int  
   set @irfIntId = 0  
   
+  declare @flatRate int = 0
+  set @flatRate = (select rate from PlanTypeChargesMaster where CountryType = @JobCountry and PlanTypeEnumValue =@Heuristicsscore and CompanyType = @CompanyType)
+
+
+
   if not exists (select 1 from IRF where [IRFId] = @IRFId)       
   Begin     
   
@@ -97,7 +102,8 @@ begin try
   ,[IsCandidateavailability]
   ,[IsMeetingAutoCancelled]
   ,[IsMeetingNotificationSend]
-  ,[IsNewSkillChannel])              
+  ,[IsNewSkillChannel]
+  ,[FlatRate])
   VALUES              
   (@IRFId,              
   @clientName,              
@@ -133,7 +139,8 @@ begin try
   @IsCandidateavailability,
   @IsMeetingAutoCancelled,
   @IsMeetingNotificationSend,
-  @IsNewSkillChannel)                                                                           
+  @IsNewSkillChannel,
+  @flatRate)                                                                           
          
       
   select @irfIntId = SCOPE_IDENTITY()      
@@ -171,7 +178,7 @@ Insert into @temptable Select Userid from InterviewerProfile cross apply string_
  [IsAvailable],  
  [InterviewerId])    
       
- SELECT @irfIntId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
+ SELECT @irfIntId, ibd.UserId, @flatRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
  as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
   
   
