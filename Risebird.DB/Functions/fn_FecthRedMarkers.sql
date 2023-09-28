@@ -10,7 +10,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-          
+       
 CREATE FUNCTION fn_FecthRedMarkers (@Emailid varchar(200))              
 RETURNS int          
 as          
@@ -27,8 +27,11 @@ Declare @RedFlags int
 Declare @Redorequests int          
 Declare @SuspiciousCount int          
 Declare @UnassignInterviews int          
-Declare @JoinLateMeeting int          
-          
+Declare @JoinLateMeeting int
+Declare @RejectedComment int   
+Declare @SelectedComment int   
+Declare @LessQuestions int   
+              
 Select @TotalInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid           
           
 Select @CompletedInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid           
@@ -56,6 +59,17 @@ Select @UnassignInterviews=Count(ip.id) From InterviewPoints ip join InterviewMe
 where points<0 and ic.MeetingStatus!=5 and ic.MeetingStatus!=2 and ul.EmailId=@Emailid           
           
 Select @JoinLateMeeting=Count(imj.id) from InterviewMeetingsJoinTime imj join InterviewMeetings im on im.id=imj.interviewid where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and im.interviewer=@Emailid           
+
+Select @SelectedComment=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid     
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4)  and Len(ic.InterviewerComment)<500   
+  
+Select @RejectedComment=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid     
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=3 or InterviewStatus=1) and Len(ic.InterviewerComment)<250   
+  
+ ;with CTE(Interviewid,totalQuestions) as  (select qd.Interviewid,Count(qd.id) as totalQuestions from QuestionsDiscussed qd join InterviewMeetings im on im.id=qd.InterviewId  group by qd.Interviewid having Count(qd.id)<5)  
+ Select @LessQuestions=Count(im.id) From CTE join Interviewmeetings im on im.id=CTE.Interviewid join InterviewComments ic on im.id=ic.InterviewId   
+where confirmationStatus=1 and  interviewer=@Emailid   
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)  
           
 --Start: Completed Interview greter than 0          
 if(@CompletedInterviews>0)          
@@ -108,8 +122,24 @@ END
 if(@SuspiciousCount>0)          
 BEGIN          
 Set @redflagMarker=@redflagMarker+1          
-END          
+END 
+
+if(@RejectedComment>0)          
+BEGIN          
+Set @redflagMarker=@redflagMarker+1          
+END 
+
+if(@SelectedComment>0)          
+BEGIN          
+Set @redflagMarker=@redflagMarker+1          
+END 
+
+if(@LessQuestions>0)          
+BEGIN          
+Set @redflagMarker=@redflagMarker+1          
+END 
           
 Return @redflagMarker;          
 END     
+
 GO
