@@ -1589,20 +1589,17 @@ namespace Risebird.Web.Controllers
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
                         ViewBag.PaymentSLAConfirmation = model.PaymentSLAConfirmation;
-                        var result = new TransInterviewersReliabilityScoresVm();
-                        result.InterviewMeetingId = 0;
-                        result.InterviewerEmail =emailid;
+                        
                         if (model.VideoConfirmation == 0)
                         {
                             ViewBag.VideoConfirmationPopup = true;
-                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationYes;
+                           
                         }
                         else
                         {
                             ViewBag.VideoConfirmationPopup = false;
-                            result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationNo;
+                       
                         }
-                        await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                         //Boradcastmessage
                         return View(model);
                     }
