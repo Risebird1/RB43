@@ -194,9 +194,9 @@
                         <th class="text-center">Late CandidateNoshow</th>
                         <th class="text-center">Unassigned Interviews</th>
                         <th class="text-center">Suspicious</th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
+                        <th class="text-center">Less Questions</th>
+                        <th class="text-center">Reject small Comment</th>
+                        <th class="text-center">Select small Comment</th>
                     </tr>
                 </thead>
                 <tr>
@@ -225,9 +225,30 @@
                         {
                         <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span></td>
                         }
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
+                        @if (Model.LessQuestions > 0)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.LessQuestions</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.LessQuestions</span></td>
+                        }
+                        @if (Model.RejectedComment > 0)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedComment</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedComment</span></td>
+                        }
+                        @if (Model.SelectedComment > 0)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedComment</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedComment</span></td>
+                        }
                 </tr>
                 }
             </tbody>

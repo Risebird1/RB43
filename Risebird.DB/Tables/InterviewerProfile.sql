@@ -38,7 +38,8 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[EmploymentComment] [varchar](50) NULL,
 	[AvailabilityResponseDate] [datetime] NULL,
 	[VideoConfirmation] [int] NULL,
-	[PaymentSLAConfirmation] [bit] NULL
+	[PaymentSLAConfirmation] [bit] NULL,
+	[RedMarker] [int] NULL
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -368,6 +369,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add PaymentSLAConfirmation bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RedMarker')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add RedMarker int
 END
 
 End
