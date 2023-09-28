@@ -73,6 +73,7 @@ namespace Risebird.Business
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
                 {
+                    irfDetails.id = irfId;
                     //if(!string.IsNullOrEmpty(irfDetails.AssessmentGroupId))
                     //{
                     //    //List<string> interviewers = new List<string>();
