@@ -37,5 +37,8 @@ namespace Risebird.Entities.ViewModel
         public int JoinLateCandidateNoShow { get; set; }
         public int UnassignInterviews { get; set; }
         public int SuspiciousCount { get; set; }
+        public int SelectedComment { get; set; }
+        public int RejectedComment { get; set; }
+        public int LessQuestions { get; set; }
     }
 }

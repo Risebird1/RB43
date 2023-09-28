@@ -28,6 +28,9 @@ Declare @RedFlags int
 Declare @JoinLateMeeting int,@JoinLateCandidateNoShow int   
 Declare @UnassignInterviews int  
 Declare @SuspiciousCount int  
+Declare @RejectedComment int 
+Declare @SelectedComment int 
+Declare @LessQuestions int 
   
 Select @TotalInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
   
@@ -71,12 +74,24 @@ Select @UnassignInterviews=Count(ip.id) From InterviewPoints ip join InterviewMe
 where points<0 and ic.MeetingStatus!=5 and ic.MeetingStatus!=2 and ul.EmailId=@Emailid   
   
 Select @SuspiciousCount=Count(si.Id) From SuspiciousInterviewer si join UserList ul on ul.id=si.UserId where SuspiciousStatus=1 and ul.EmailId=@Emailid  
+
+Select @SelectedComment=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4)  and Len(ic.InterviewerComment)<500 
+
+Select @RejectedComment=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=3 or InterviewStatus=1) and Len(ic.InterviewerComment)<250 
+
+ ;with CTE(Interviewid,totalQuestions) as  (select qd.Interviewid,Count(qd.id) as totalQuestions from QuestionsDiscussed qd join InterviewMeetings im on im.id=qd.InterviewId  group by qd.Interviewid having Count(qd.id)<5)
+ Select @LessQuestions=Count(im.id) From CTE join Interviewmeetings im on im.id=CTE.Interviewid join InterviewComments ic on im.id=ic.InterviewId 
+where confirmationStatus=1 and  interviewer=@Emailid 
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)
   
 Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Sum(ti.Point) as ReliabilityScore,  
 @TotalInterviews as TotalInterviews,@CompletedInterviews as CompletedInterviews,@SelectedInterviews as SelectedInterviews,@RejectedInterviews as RejectedInterviews,  
 @NoShowInterviews as NoShowInterviews,@NoShowCandidateInterviews as NoShowCandidateInterviews,@DroppedInterviews as DroppedInterviews,Isnull(ul.FirstName,'') as interviewerName,  
 Case When Isnull(si.id,0)>0 then 1 else 0 end as IsSuspicious,@PaymentSLA as PaymentSLA,@Penalty as Penalty,@CandidateRating as CandidateRating,@CustomerRating as CustomerRating,  
-@Redorequests as Redorequests,@RedFlags as RedFlags,@JoinLateMeeting as JoinLateMeeting,@JoinLateCandidateNoShow as JoinLateCandidateNoShow,@UnassignInterviews as UnassignInterviews,@SuspiciousCount as SuspiciousCount  
+@Redorequests as Redorequests,@RedFlags as RedFlags,@JoinLateMeeting as JoinLateMeeting,@JoinLateCandidateNoShow as JoinLateCandidateNoShow,@UnassignInterviews as UnassignInterviews,@SuspiciousCount as SuspiciousCount,
+@SelectedComment as SelectedComment,@RejectedComment as RejectedComment,@LessQuestions as LessQuestions
 from InterviewerProfile ip join UserList ul on ul.id=ip.Userid   
 left join TransInterviewersReliabilityScores ti on ti.InterviewerId=ip.id  
 left join SuspiciousInterviewer si on si.UserId=ul.id and si.SuspiciousStatus=1  
@@ -84,6 +99,5 @@ where ul.EmailId=@Emailid
 Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Isnull(ul.FirstName,''),Case When Isnull(si.id,0)>0 then 1 else 0 end  
   
 END  
-  
   
 Go
