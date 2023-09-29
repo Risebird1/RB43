@@ -3889,6 +3889,11 @@ namespace Risebird.Web.Controllers
             var result = await _interviewerService.GetReliabilityScoreDetails(interviewer);
             return PartialView(result);
         }
+        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer,string type)
+        {
+            var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer,type);
+            return PartialView(result);
+        }
         #endregion
     }
 }
