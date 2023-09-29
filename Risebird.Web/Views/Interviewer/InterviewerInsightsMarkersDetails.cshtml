@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerInsightsMarkersDetailsVM>
+
+<div class="col-md-12 pull-left">
+    <div id="tableID" class="second">
+        <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width:50%">Comment</th>
+                    <th class="text-center">Marked by</th>
+                    <th class="text-center">Marked Date</th>
+                    <th class="text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Comments</td>
+                        <td>@item.CreatedBy</td>
+                        <td>@item.Createdon</td>
+                        <td>@item.MeetingStatus</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
