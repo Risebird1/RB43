@@ -5666,7 +5666,7 @@ namespace Risebird.Repository
                     parameters.Add("@IsReportBlocked", model.IsReportBlocked);
                     parameters.Add("@VideoEnable", model.VideoEnable);
                     parameters.Add("@Payment", model.Payment);
-
+                    parameters.Add("@QCReward", model.QCReward);
                     var result = await SqlMapper.QueryAsync(con, "usp_AddorUpdateQCFormReport", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                     return true;

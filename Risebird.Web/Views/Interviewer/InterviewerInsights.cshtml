@@ -157,7 +157,7 @@
                 <thead>
                     <tr>
                         <th class="text-center">Reliability Score</th>
-                        <th class="text-center">Payment SLA</th>
+                        <th class="text-center">Penalty</th>
                         <th class="text-center">Penalty Count</th>
                         <th class="text-center">Candidate Rating</th>
                         <th class="text-center">Client  Rating</th>
@@ -169,15 +169,15 @@
                     <td class="text-center"> <span onclick="ReliabilityScoreDetails('@Model.Emailid')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.ReliabilityScore</span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.PaymentSLA</span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Penalty</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CandidateRating</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CustomerRating</span></td>
+                    <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Candidate Rating Details')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.CandidateRating</span></td>
+                    <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Client Rating Details')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.CustomerRating</span></td>
                         @if (Model.Redorequests > 0)
                         {
-                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
+                        <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Redo Details')" style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.Redorequests</span></td>
                         }
                         else
                         {
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
+                        <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Redo Details')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
                         }
                         @if ((Model.RedFlags * 100 / Model.CompletedInterviews) > 10)
                         {
@@ -219,11 +219,11 @@
                         }
                         @if (Model.SuspiciousCount > 0)
                         {
-                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span></td>
+                        <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Suspicious Details')" style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.SuspiciousCount</span></td>
                         }
                         else
                         {
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span></td>
+                        <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Suspicious Details')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span></td>
                         }
                         @if (Model.LessQuestions > 0)
                         {
