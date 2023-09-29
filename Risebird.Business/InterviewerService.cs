@@ -1449,7 +1449,7 @@ namespace Risebird.Business
             {
                 return await _interviewerRepository.SaveInterviewerEmploymentVerification(_interviewer);
             }
-            catch (SqlTypeException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
@@ -1461,7 +1461,7 @@ namespace Risebird.Business
             {
                 return await _interviewerRepository.UpdateVideoConfirmationStatus(status, Emailid);
             }
-            catch (SqlTypeException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
@@ -1473,7 +1473,7 @@ namespace Risebird.Business
             {
                 return await _interviewerRepository.GetInterviewerInsights(Emailid);
             }
-            catch (SqlTypeException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
@@ -1485,7 +1485,19 @@ namespace Risebird.Business
             {
                 return await _interviewerRepository.GetReliabilityScoreDetails(Emailid);
             }
-            catch (SqlTypeException ex)
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type)
+        {
+            try
+            {
+                return await _interviewerRepository.GetInterviewerInsightsMarkersDetails(Emailid, type);
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;

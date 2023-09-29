@@ -41,4 +41,11 @@ namespace Risebird.Entities.ViewModel
         public int RejectedComment { get; set; }
         public int LessQuestions { get; set; }
     }
+    public class InterviewerInsightsMarkersDetailsVM
+    {
+        public string Comments { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? Createdon { get; set; }
+        public string MeetingStatus { get; set; }
+    }
 }
