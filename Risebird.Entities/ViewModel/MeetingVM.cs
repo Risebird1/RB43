@@ -84,6 +84,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Preferred Location")]
 
         public string preferredLocation { get; set; }
+        public DateTime? Joinedon { get; set; }
         [Display(Name = "Staffing Agency")]
 
         public string staffingAgency { get; set; }
