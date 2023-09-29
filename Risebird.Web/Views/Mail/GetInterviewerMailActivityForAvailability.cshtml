@@ -8,7 +8,7 @@
 
 @{
     ViewData["Title"] = "Interviewer Mail Activity For Availability";
-    ViewBag.PageHeader = "Interviewer Mail Activity For Availability";
+    ViewBag.PageHeader = "Mail Activity For Availability";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     //string[] TemplateName = new string[] { };
@@ -174,7 +174,23 @@
                                                                         <td rowspan="@rowSpan" title="@subModel[i].SentBy">@subModel[i].SentBy</td>
 
                                                                     }
-                                                                    <td title="@subModel[i].email">@subModel[i].email</td>
+                                                                  @*  <td title="@subModel[i].email">@subModel[i].email</td>*@
+
+                                                                    @if (!string.IsNullOrWhiteSpace(@subModel[i].email)){
+
+                                                                        @if (@subModel[i].email.Length > 20)
+                                                                        {
+                                                                            <td  title="@subModel[i].email">@subModel[i].email.Substring(0,18) ....</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td >@subModel[i].email</td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
 
                                                                     <td>
                                                                         @if (subModel[i].MobileNumber != null && subModel[i].MobileNumber != string.Empty)
@@ -226,21 +242,7 @@
                                                                         <td>
                                                                         </td>
                                                                     }
-                                                                    @if (subModel[i].VideoConfirmation.HasValue)
-                                                                    {
-                                                                        @if (subModel[i].VideoConfirmation == 1)
-                                                                        {
-                                                                            <td>Yes</td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>No</td>
-                                                                        }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>No Response</td>
-                                                                    }
+                                                              
                                                                     @if (subModel[i].ResumeLink != null && subModel[i].ResumeLink != "")
                                                                     {
                                                                         <td>
@@ -252,7 +254,21 @@
                                                                     {
                                                                         <td>No Resume</td>
                                                                     }
-
+                                                                    @if (subModel[i].VideoConfirmation.HasValue)
+                                                                    {
+                                                                        @if (subModel[i].VideoConfirmation == 1)
+                                                                        {
+                                                                            <td class="text-center">Yes</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="text-center">No</td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td class="text-center">No Response</td>
+                                                                    }
                                                                 </tr>
 
                                                             }
