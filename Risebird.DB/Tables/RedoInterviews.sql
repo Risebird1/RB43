@@ -15,11 +15,22 @@ CREATE TABLE [dbo].[RedoInterviews](
 	[CreatedBy] [varchar](200) NULL,
 	[ModifiedOn] [datetime] NULL,
 	[ModifiedBy] [varchar](200) NULL,
+	[Approved][bit],
  CONSTRAINT [PK_RedoInterviews] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Approved')
+      AND Object_ID = Object_ID(N'RedoInterviews'))
+BEGIN
+    ALTER TABLE AadhaarDetails
+    Add Approved bit
 END
 GO
 
