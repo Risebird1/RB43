@@ -22,17 +22,17 @@ Begin
 
   
   select distinct smd.MailSubject, smd.MailBody, smd.CreatedAt , sge.email, sge.[event] as eventType, sge.[timestamp], sge.[url],
-  smd.InterviewId, smd.SentBy, irf.IRFId as SkillChannelName, @irfId as IRFId, ipr.CompanyName, ipr.ResumeLink, ipr.VideoConfirmation,
-  smd.SentBy, ul.MobileNumber, ul.FirstName + ' ' + ul.LastName as RecipientName--im.interviewDate, 
+  smd.InterviewId, smd.SentBy, irf.IRFId as SkillChannelName, @irfId as IRFId, ipr.CompanyName, ipr.ResumeLink, ipr.VideoConfirmation,ipr.RedMarker,   
+  smd.SentBy, ul.MobileNumber, im.interviewer, ul.FirstName + ' ' + ul.LastName as RecipientName--im.interviewDate, 
   from SendgridEventData sge 
   join SentMailDetails smd on smd.sg_message_id = sge.Split_Message_Id
   join UserList ul on ul.EmailId = sge.email
   join InterviewerProfile ipr on ipr.UserId  = ul.id
   left join IRF on IRF.id = smd.IRFId
-  --left join InterviewMeetings im on im.id = smd.InterviewId 
+  left join InterviewMeetings im on im.interviewer = ul.EmailId
   where  sge.[event] = 'open' and ul.idProfile = 3--profile id for Interviewer and irf.id =@irfId and
-  and charindex('Risebird: Availability check for Skill Channel ' + @irfName, smd.MailSubject) > 0 --and smd.MailSubject like '%Risebird: Availability check for Skill Channel%' 
-  order by smd.CreatedAt desc
+  and (charindex('Risebird: Availability check for Skill Channel ' + @irfName, smd.MailSubject) > 0 
+  or charindex('Current availability (2 days) check for Skill Channel ' + @irfName, smd.MailSubject) > 0)--and smd.MailSubject like '%Risebird: Availability check for Skill Channel%'   order by smd.CreatedAt desc
  
 End  
   

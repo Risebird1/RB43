@@ -100,7 +100,7 @@
                                                     <th>Company Name</th>
                                                     <th>Resume</th>
                                                     <th>Video Confirmation</th>
-                                                    
+                                                    <th>Red Marker</th>
 
                                                 </tr>
                                             </thead>
@@ -116,6 +116,7 @@
                                                     <th>Company Name</th>
                                                     <th>Resume</th>
                                                     <th>Video Confirmation</th>
+                                                    <th>Red Marker</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -131,7 +132,7 @@
                                                         {
                                                             var first = firstValue.Value;
                                                             var sameGroupOfMails = workingModel.Where(x => Convert.ToInt32((x.CreatedAt - first).TotalMinutes) <= 2 && Convert.ToInt32((x.CreatedAt - first).TotalMinutes) >= -1).ToList();
-                                                            var subModel = sameGroupOfMails.Select(x => new { MailSubject = x.MailSubject, MailBody = x.MailBody, SentBy = x.SentBy, email = x.email, MobileNumber = x.MobileNumber, RecipientName = x.RecipientName, ResumeLink =  x.ResumeLink, CompanyName = x.CompanyName, VideoConfirmation = x.VideoConfirmation}).Distinct().ToList();
+                                                            var subModel = sameGroupOfMails.Select(x => new { MailSubject = x.MailSubject, MailBody = x.MailBody, SentBy = x.SentBy, email = x.email, MobileNumber = x.MobileNumber, RecipientName = x.RecipientName, ResumeLink =  x.ResumeLink, CompanyName = x.CompanyName, x.RedMarker, x.interviewer, VideoConfirmation = x.VideoConfirmation}).Distinct().ToList();
                                                             int rowSpan = subModel.Count();
                                                             int maxCount = rowSpan - 1;
                                                             for (int i = 0; i <= maxCount; i++)
@@ -247,7 +248,7 @@
                                                                     {
                                                                         <td>
 
-                                                                            <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Resume" href=@subModel[i].ResumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
+                                                                            <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;padding:0px;" id="resumeId" target="_blank" title="Resume" href=@subModel[i].ResumeLink><img style="position:relative;left:-5px;width:17px" src="/img/resume-icon.png" width="21"><span style="font-size:13px;">Resume</span></a>
                                                                         </td>
                                                                     }
                                                                     else
@@ -269,6 +270,17 @@
                                                                     {
                                                                         <td class="text-center">No Response</td>
                                                                     }
+
+
+                                                                   
+                                                                        @if (subModel[i].interviewer != null || subModel[i].interviewer != "")
+                                                                        {
+                                                                        <td style="color:red;text-align:center"><d onclick="InsightsDetails('@subModel[i].interviewer')" style="cursor:pointer">@subModel[i].RedMarker</d></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <td style="color:red;text-align:center">@subModel[i].RedMarker</td>
+                                                                        }
                                                                 </tr>
 
                                                             }
@@ -301,6 +313,7 @@
                 </div>
 
                     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+                    @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 
 
             </div>
