@@ -1393,6 +1393,73 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper20">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="RedoRequest()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+
+                                                        <div class="col-md-3 pull-left"><span><img src="~/img/redo-request.png" style="max-width:51px;" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Redo Request</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="color: #74c0fc">
+                                                                <span id="ribbonRedoRequestCount" onclick="RedoRequest()">@Model.NotUpdatedMeetingsObj.RedoRequestCount</span>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="RedoRequest()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="RedoRequest()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon cancel"><img class="icons-dash" src="~/img/cancel-int.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Redo Request</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span id="ribbonRedoRequestCount_1" class="card-title" onclick="RedoRequest()">@Model.NotUpdatedMeetingsObj.RedoRequestCount</span>
+                                                                </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="RedoRequest()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
 
                         </div>
@@ -1421,6 +1488,9 @@
     }
     function PaymentSlacompliance(){
         window.location.href = "/Interview/PaymentSlaDetails";
+    }
+    function RedoRequest() {
+        window.location.href = "/Dashboard/RedoRequest";
     }
 </script>
 <script type="text/javascript">
@@ -1576,6 +1646,13 @@
                     $(".flipper19").removeClass("flipper");
                 }
 
+                if (parseInt(data.redoRequestCount) != parseInt($("#ribbonRedoRequestCount").text())) {
+                    $(".flipper20").addClass("flipper");
+                }
+                else {
+                    $(".flipper20").removeClass("flipper");
+                }
+
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
                 $("#ribbonnotprocessedcandidateresume").text(data.notProcessedCandidateResume);
@@ -1595,6 +1672,7 @@
                 $("#ribbonBlackListCompanyCount").text(data.blackListCompanyCount);
                 $("#ribbonPaymentSlacomplianceCount").text(data.paymentSlacomplianceCount);
                 $("#ribbonInterviewerChurnCount").text(data.interviewerChurnCount);
+                $("#ribbonRedoRequestCount").text(data.redoRequestCount);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -1615,6 +1693,7 @@
                 $("#ribbonBlackListCompanyCount_1").text(data.blackListCompanyCount);
                 $("#ribbonPaymentSlacomplianceCount_1").text(data.paymentSlacomplianceCount);
                 $("#ribbonInterviewerChurnCount_1").text(data.interviewerChurnCount);
+                $("#ribbonRedoRequestCount_1").text(data.reoRequestCount);
                 $(".flipper").toggleClass("flip");
             }
         });
