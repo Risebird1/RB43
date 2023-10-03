@@ -695,5 +695,32 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> ApprovedRedoInterviewsService(int InterviewId,string modifyBy,DateTime modifyDate)
+        {
+            try
+            {
+                await _dashboardRespository.ApprovedRedoIntervies(InterviewId,modifyBy,modifyDate);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<MeetingVM>> GetRedoRequestService()
+        {
+            try
+            {
+                return await _dashboardRespository.GetRedoRrquest();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

@@ -1244,5 +1244,50 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> ApprovedRedoIntervies(int InterviewId, string modifyBy, DateTime modifyDate)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@InterviewId", InterviewId);
+                dynamicParam.Add("@ModifyDate", modifyDate);
+                dynamicParam.Add("@ModifyBy",modifyBy);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_ApproveRedoInterviews", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<MeetingVM>> GetRedoRrquest()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_ShowRedoRequestLit", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

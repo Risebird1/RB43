@@ -30,10 +30,11 @@ Begin
   join UserList ul on ul.EmailId = sge.email
   join InterviewerProfile ipr on ipr.UserId  = ul.id
   left join IRF on IRF.id = smd.IRFId
-  left join InterviewMeetings im on im.interviewer = ul.EmailId
+  --left join InterviewMeetings im on im.interviewer = ul.EmailId
   where  sge.[event] = 'open' and ul.idProfile = 3--profile id for Interviewer and irf.id =@irfId and
   and (charindex('Risebird: Availability check for Skill Channel ' + @irfName, smd.MailSubject) > 0 
-  or charindex('Current availability (2 days) check for Skill Channel ' + @irfName, smd.MailSubject) > 0)--and smd.MailSubject like '%Risebird: Availability check for Skill Channel%'   order by smd.CreatedAt desc
+  or charindex('Current availability (2 days) check for Skill Channel ' + @irfName, smd.MailSubject) > 0)--and smd.MailSubject like '%Risebird: Availability check for Skill Channel%' 
+  order by smd.CreatedAt desc
  
 End  
   
