@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Twilio.Rest.Trunking.V1;
 using X.PagedList;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 
@@ -3889,10 +3890,15 @@ namespace Risebird.Web.Controllers
             var result = await _interviewerService.GetReliabilityScoreDetails(interviewer);
             return PartialView(result);
         }
-        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer,string type)
+        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type)
         {
-            var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer,type);
+            var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer, type);
             return PartialView(result);
+        }
+        public async Task<JsonResult> AcknowledgeRedmarkers(string uniqueid)
+        {
+            var result = await _interviewerService.updateRedmarkerAcknowledge(uniqueid);
+            return Json("Acknowledgement updated successfully");
         }
         #endregion
     }
