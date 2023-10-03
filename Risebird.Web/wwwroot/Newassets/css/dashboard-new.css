@@ -6965,7 +6965,9 @@ right:315px;
     font-weight: 600;
     margin: 13px 50px 0px 0px;
 }
-
+#PaymentSLAModel{
+    overflow:auto;
+}
 #PaymentSLAModel .modal-lg {
     max-width: 800px !important;
 }
@@ -7063,6 +7065,7 @@ ul.ks-cboxtags {
     font-family: system-ui !important;
     font-size: 14px !important;
     font-weight: 600;
+    
 }
 
 .accordion-toggle:after {
@@ -7070,6 +7073,7 @@ ul.ks-cboxtags {
     content: "\f077";
     float: right;
     color: grey;
+    display: none;
 }
 
 .accordion-toggle.collapsed:after {

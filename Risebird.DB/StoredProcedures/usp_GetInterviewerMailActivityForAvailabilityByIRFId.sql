@@ -23,7 +23,8 @@ Begin
   
   select distinct smd.MailSubject, smd.MailBody, smd.CreatedAt , sge.email, sge.[event] as eventType, sge.[timestamp], sge.[url],
   smd.InterviewId, smd.SentBy, irf.IRFId as SkillChannelName, @irfId as IRFId, ipr.CompanyName, ipr.ResumeLink, ipr.VideoConfirmation,ipr.RedMarker,   
-  smd.SentBy, ul.MobileNumber, im.interviewer, ul.FirstName + ' ' + ul.LastName as RecipientName--im.interviewDate, 
+  smd.SentBy, ul.MobileNumber,  dbo.fn_GetInterviewerOrQCMeetingsCount(IRF.IRFId, ul.EmailId, 'I') as TotalInterviews,      
+ im.interviewer, ul.FirstName + ' ' + ul.LastName as RecipientName--im.interviewDate, 
   from SendgridEventData sge 
   join SentMailDetails smd on smd.sg_message_id = sge.Split_Message_Id
   join UserList ul on ul.EmailId = sge.email

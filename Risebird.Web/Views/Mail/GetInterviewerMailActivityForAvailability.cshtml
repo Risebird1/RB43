@@ -101,6 +101,7 @@
                                                     <th>Resume</th>
                                                     <th>Video Confirmation</th>
                                                     <th>Red Marker</th>
+                                                    <th>Total Interviews</th>
 
                                                 </tr>
                                             </thead>
@@ -117,6 +118,8 @@
                                                     <th>Resume</th>
                                                     <th>Video Confirmation</th>
                                                     <th>Red Marker</th>
+                                                    <th>Total Interviews</th>
+
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -132,7 +135,7 @@
                                                         {
                                                             var first = firstValue.Value;
                                                             var sameGroupOfMails = workingModel.Where(x => Convert.ToInt32((x.CreatedAt - first).TotalMinutes) <= 2 && Convert.ToInt32((x.CreatedAt - first).TotalMinutes) >= -1).ToList();
-                                                            var subModel = sameGroupOfMails.Select(x => new { MailSubject = x.MailSubject, MailBody = x.MailBody, SentBy = x.SentBy, email = x.email, MobileNumber = x.MobileNumber, RecipientName = x.RecipientName, ResumeLink =  x.ResumeLink, CompanyName = x.CompanyName, x.RedMarker, x.interviewer, VideoConfirmation = x.VideoConfirmation}).Distinct().ToList();
+                                                            var subModel = sameGroupOfMails.Select(x => new { MailSubject = x.MailSubject, MailBody = x.MailBody, SentBy = x.SentBy, email = x.email, MobileNumber = x.MobileNumber, RecipientName = x.RecipientName, ResumeLink =  x.ResumeLink, CompanyName = x.CompanyName, x.RedMarker, x.TotalInterviews, x.interviewer, VideoConfirmation = x.VideoConfirmation}).Distinct().ToList();
                                                             int rowSpan = subModel.Count();
                                                             int maxCount = rowSpan - 1;
                                                             for (int i = 0; i <= maxCount; i++)
@@ -281,6 +284,9 @@
                                                                         {
                                                                         <td style="color:red;text-align:center">@subModel[i].RedMarker</td>
                                                                         }
+                                                                                          <td class="text-center">
+                                                <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">@subModel[i].TotalInterviews</span>
+                                            </td>
                                                                 </tr>
 
                                                             }
