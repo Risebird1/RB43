@@ -44,8 +44,12 @@ Begin
     Select @UserId=id from UserList where uniqueid=@uniqueid  
     Select @InterviewerId=id From InterviewerProfile where UserId=@UserId  
   
-    Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, PerSuccessRate)   
+	if not exists(select top 1 id from TransInterviewer where IRFId =@IRFId and UserId = @UserId)
+	Begin
+	Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, PerSuccessRate)   
     values(@IRFId,@InterviewerId,@UserId,1,1, (select FlatRate from IRF where id=@IRFId))  
+	End
+    
   
     update InterviewerProfile set  AvailabilityResponseDate = @timeNow, Isavailable = 1 where UserId = (Select id from UserList where uniqueid=@uniqueid)   
   
