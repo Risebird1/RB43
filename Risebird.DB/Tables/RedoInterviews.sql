@@ -29,7 +29,7 @@ IF NOT EXISTS(
     WHERE Name IN (N'Approved')
       AND Object_ID = Object_ID(N'RedoInterviews'))
 BEGIN
-    ALTER TABLE AadhaarDetails
+    ALTER TABLE RedoInterviews
     Add Approved bit
 END
 GO
