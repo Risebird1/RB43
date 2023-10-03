@@ -22,7 +22,8 @@ CREATE TABLE [dbo].[RedoInterviews](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 END
-
+ELSE
+BEGIN
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
@@ -31,6 +32,7 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE RedoInterviews
     Add Approved bit
+END
 END
 GO
 
