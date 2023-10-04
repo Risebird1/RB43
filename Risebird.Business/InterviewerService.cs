@@ -1455,7 +1455,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> UpdateVideoConfirmationStatus(int status,string Emailid)
+        public async Task<bool> UpdateVideoConfirmationStatus(int status, string Emailid)
         {
             try
             {
@@ -1501,6 +1501,18 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<bool> updateRedmarkerAcknowledge(string uniqueid)
+        {
+            try
+            {
+                return await _interviewerRepository.updateRedmarkerAcknowledge(uniqueid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

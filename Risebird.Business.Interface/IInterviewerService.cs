@@ -88,6 +88,7 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateVideoConfirmationStatus(int status, string Emailid);
         Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid);
         Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid);
-        Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid,string type);
+        Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type);
+        Task<bool> updateRedmarkerAcknowledge(string uniqueid);
     }
 }
