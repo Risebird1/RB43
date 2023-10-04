@@ -5373,7 +5373,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueId, int irfId)
+        public async Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueId, int irfId, string rsc = null)
         {
             try
             {
@@ -5381,6 +5381,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@irfId", irfId);
                 dynamicParameters.Add("@uniqueId", uniqueId);
                 dynamicParameters.Add("@Status", status);
+                dynamicParameters.Add("@rsc", rsc);
                 dynamicParameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

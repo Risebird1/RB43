@@ -201,9 +201,10 @@ BEGIN
 	[Surcharge],
 	[IsActive],
 	[IsAvailable],
-	[InterviewerId])  
+	[InterviewerId],
+	[Source])  
     
-	SELECT ibd.*, InterviewerProfile.id as InterviewerId FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+	SELECT ibd.*, InterviewerProfile.id, @ModifiedBy as InterviewerId FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
   
  End
  else
@@ -214,9 +215,10 @@ BEGIN
 	[PerSuccessRate], 
 	[IsActive],
 	[IsAvailable],
-	[InterviewerId])  
+	[InterviewerId],
+	[Source])  
     
-	SELECT ibd.*, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+	SELECT ibd.*, InterviewerProfile.id as InterviewerId, @ModifiedBy FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
   
  End
 	
