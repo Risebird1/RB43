@@ -22,6 +22,7 @@ Begin
 
 	declare @flatRate int = (select FlatRate from IRF where id = @irfId)
 	declare @basicSkill varchar(200) = (select PrimarySkillInvite from IRF where id = @irfId)
+	set @basicSkill = (select JDTiltle from IRF where id = @irfId)
 	declare @lastSentOn datetime = (select SendIntervieweravailbilityOn from IRF where id = @irfId)
 	declare @isNewSkillChannel bit = (select IsNewSkillChannel from IRF where id = @irfId)
 	--declare @companyType int = (select CompanyType from IRF where id = @irfId)

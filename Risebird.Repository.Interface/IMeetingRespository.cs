@@ -206,7 +206,7 @@ namespace Risebird.Repository.Interface
         Task<IRFVm> GetIRFNameAndJoinability(int id);
         Task<bool> SaveProctorReport(int id, string reporturl);
         Task<bool> UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid);
-        Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueId, int irfId);
+        Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueId, int irfId, string rsc = null);
         string SetInterviewerAvailability(int transid, int isavailable);
         Task<List<InterviewerRating>> FetchFeedbackDetails();
         Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId);
