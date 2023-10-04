@@ -6599,7 +6599,7 @@ namespace Risebird.Web.Controllers
                                 Mail _mail = new Mail
                                 {
                                     TO = item.EmailId,
-                                    Subject = "Current Availability (2 days) check for Skill Channel " + IRFName + " Risebird Interviews"
+                                    Subject = "Current Availability (2 days) check for  " + item.BasicSkill + " Risebird Interviews"
                                 };
                                 var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), item.FlatRate, dropMyProfileButton + "&rsc=" + source, item.BasicSkill, irfId);
                                 

@@ -49,4 +49,10 @@ namespace Risebird.Entities.ViewModel
         public string MeetingStatus { get; set; }
         public int id { get; set; }
     }
+    public class InterviewerRedmarkers
+    {
+        public string EmailId { get; set; }
+        public string uniqueid { get; set; }
+        public int id { get; set; }
+    }
 }
