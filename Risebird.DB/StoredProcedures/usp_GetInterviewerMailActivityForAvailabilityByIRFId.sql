@@ -19,6 +19,7 @@ AS
 Begin
 
 	declare @irfName varchar(100) = (select irfid from irf where id = @irfId)
+   declare @basicSkill varchar(200) = (select JDTiltle from IRF where id = @irfId)
 
   
   select distinct smd.MailSubject, smd.MailBody, smd.CreatedAt , sge.email, sge.[event] as eventType, sge.[timestamp], sge.[url],
@@ -32,8 +33,8 @@ Begin
   left join IRF on IRF.id = smd.IRFId
   --left join InterviewMeetings im on im.interviewer = ul.EmailId
   where  sge.[event] = 'open' and ul.idProfile = 3--profile id for Interviewer and irf.id =@irfId and
-  and (charindex('Risebird: Availability check for Skill Channel ' + @irfName, smd.MailSubject) > 0 
-  or charindex('Current availability (2 days) check for Skill Channel ' + @irfName, smd.MailSubject) > 0)--and smd.MailSubject like '%Risebird: Availability check for Skill Channel%' 
+  and (charindex('Risebird: Availability check for ' + @basicSkill, smd.MailSubject) > 0 
+  or charindex('Current availability (2 days) check for ' + @basicSkill, smd.MailSubject) > 0)--and smd.MailSubject like '%Risebird: Availability check for Skill Channel%' 
   order by smd.CreatedAt desc
  
 End  
