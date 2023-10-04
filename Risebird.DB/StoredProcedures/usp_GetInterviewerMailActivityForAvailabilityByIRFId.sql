@@ -24,14 +24,13 @@ Begin
   
   select distinct smd.MailSubject, smd.MailBody, smd.CreatedAt , sge.email, sge.[event] as eventType, sge.[timestamp], sge.[url],
   smd.InterviewId, smd.SentBy, irf.IRFId as SkillChannelName, @irfId as IRFId, ipr.CompanyName, ipr.ResumeLink, ipr.VideoConfirmation,ipr.RedMarker,   
-  smd.SentBy, ul.MobileNumber,  dbo.fn_GetInterviewerOrQCMeetingsCount(IRF.IRFId, ul.EmailId, 'I') as TotalInterviews,      
- im.interviewer, ul.FirstName + ' ' + ul.LastName as RecipientName--im.interviewDate, 
+  smd.SentBy, ul.MobileNumber,  dbo.fn_GetInterviewerOrQCMeetingsCount(IRF.IRFId, ul.EmailId, 'I') as TotalInterviews, im.interviewer, ul.FirstName + ' ' + ul.LastName as RecipientName--im.interviewDate, 
   from SendgridEventData sge 
   join SentMailDetails smd on smd.sg_message_id = sge.Split_Message_Id
   join UserList ul on ul.EmailId = sge.email
   join InterviewerProfile ipr on ipr.UserId  = ul.id
   left join IRF on IRF.id = smd.IRFId
-  --left join InterviewMeetings im on im.interviewer = ul.EmailId
+  left join InterviewMeetings im on im.interviewer = ul.EmailId
   where  sge.[event] = 'open' and ul.idProfile = 3--profile id for Interviewer and irf.id =@irfId and
   and (charindex('Risebird: Availability check for ' + @basicSkill, smd.MailSubject) > 0 
   or charindex('Current availability (2 days) check for ' + @basicSkill, smd.MailSubject) > 0)--and smd.MailSubject like '%Risebird: Availability check for Skill Channel%' 
