@@ -91,12 +91,12 @@ Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,u
 @NoShowInterviews as NoShowInterviews,@NoShowCandidateInterviews as NoShowCandidateInterviews,@DroppedInterviews as DroppedInterviews,Isnull(ul.FirstName,'') as interviewerName,  
 Case When Isnull(si.id,0)>0 then 1 else 0 end as IsSuspicious,@PaymentSLA as PaymentSLA,@Penalty as Penalty,@CandidateRating as CandidateRating,@CustomerRating as CustomerRating,  
 @Redorequests as Redorequests,@RedFlags as RedFlags,@JoinLateMeeting as JoinLateMeeting,@JoinLateCandidateNoShow as JoinLateCandidateNoShow,@UnassignInterviews as UnassignInterviews,@SuspiciousCount as SuspiciousCount,
-@SelectedComment as SelectedComment,@RejectedComment as RejectedComment,@LessQuestions as LessQuestions
+@SelectedComment as SelectedComment,@RejectedComment as RejectedComment,@LessQuestions as LessQuestions,ul.uniqueid
 from InterviewerProfile ip join UserList ul on ul.id=ip.Userid   
 left join TransInterviewersReliabilityScores ti on ti.InterviewerId=ip.id  
 left join SuspiciousInterviewer si on si.UserId=ul.id and si.SuspiciousStatus=1  
 where ul.EmailId=@Emailid  
-Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Isnull(ul.FirstName,''),Case When Isnull(si.id,0)>0 then 1 else 0 end  
+Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Isnull(ul.FirstName,''),Case When Isnull(si.id,0)>0 then 1 else 0 end,ul.uniqueid  
   
 END  
   

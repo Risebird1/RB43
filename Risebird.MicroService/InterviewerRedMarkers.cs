@@ -107,13 +107,13 @@ namespace Risebird.MicroService
             {
                 templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Late Join:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + calculatedValue + "</td></tr>";
             }
-            if (model.SelectedComment > 0)
-            {
-                templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Less than 250 characters for Rejected:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + model.SelectedComment + "</td></tr>";
-            }
             if (model.RejectedComment > 0)
             {
-                templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Less than 500 characters for Selected:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + model.RejectedComment + "</td></tr> ";
+                templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Less than 250 characters for Rejected:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + model.RejectedComment + "</td></tr>";
+            }
+            if (model.SelectedComment > 0)
+            {
+                templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Less than 500 characters for Selected:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + model.SelectedComment + "</td></tr> ";
             }
             if (model.LessQuestions > 0)
             {
