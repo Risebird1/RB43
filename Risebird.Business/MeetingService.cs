@@ -3308,11 +3308,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid)
+        public async Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid, string rsc = null)
         {
             try
             {
-                return await _meetingRespository.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid);
+                return await _meetingRespository.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc);
             }
             catch (Exception ex)
             {

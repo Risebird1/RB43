@@ -875,7 +875,7 @@ namespace Risebird.Web.Controllers
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
                             //call fire and forget method here to send emails and whatsapp for availability
-                            FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite);
+                            FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId);
                             TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!";
                             return RedirectToAction("Index");
                         }
@@ -1015,9 +1015,9 @@ namespace Risebird.Web.Controllers
         //}
 
 
-        private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite)
+        private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName)
         {
-            var dto = new AvailabilityCheckDTO{ id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite };
+            var dto = new AvailabilityCheckDTO{ id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName };
             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
             //var path = $"http://localhost:7169/api/UploadAndVerifyCandidateImage";
             var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
@@ -6589,6 +6589,8 @@ namespace Risebird.Web.Controllers
                                 //string yesbutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
                                 //string nobutton = "https://portal.risebird.io/IRF/UpdateCheckIntervieweravailbilityStatus?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId;
 
+                                string source = "ml";
+
                                 var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
                                 string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
                                 string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + item.uniqueid + "&Irfid=" + irfId + "&dec=" + encryptedDate;
@@ -6599,8 +6601,11 @@ namespace Risebird.Web.Controllers
                                     TO = item.EmailId,
                                     Subject = "Current Availability (2 days) check for Skill Channel " + IRFName + " Risebird Interviews"
                                 };
-                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton, nobutton, sb.ToString(), item.FlatRate, dropMyProfileButton, item.BasicSkill, irfId);
+                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), item.FlatRate, dropMyProfileButton + "&rsc=" + source, item.BasicSkill, irfId);
+                                
+                                source = "wp";
 
+                                yesbutton = yesbutton + "&rsc=" + source;
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = item.EmailId;
                                 _whatsAppVM.PrimarySkill = item.BasicSkill;
@@ -6646,7 +6651,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid, string dec)
+        public async Task<JsonResult> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid, string dec, string rsc = null)
         {
             //check link expiry befire hitting db
 
@@ -6656,7 +6661,7 @@ namespace Risebird.Web.Controllers
                 var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
                 if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
                 {
-                    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid))
+                    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
                     {
                         return Json("Status updated successfully.");
                     }

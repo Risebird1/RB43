@@ -12,7 +12,8 @@ Create PROCEDURE usp_UpdateInterviewerAvailbilityStatusForIRF
 @IRFId int,  
 @uniqueid varchar(50),  
 @Status int,  
-@timeNow datetime  
+@timeNow datetime,
+@source varchar(75) = null
 AS  
 BEGIN  
 Declare @Count int  
@@ -44,8 +45,12 @@ Begin
     Select @UserId=id from UserList where uniqueid=@uniqueid  
     Select @InterviewerId=id From InterviewerProfile where UserId=@UserId  
   
-    Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, PerSuccessRate)   
-    values(@IRFId,@InterviewerId,@UserId,1,1, (select FlatRate from IRF where id=@IRFId))  
+	if not exists(select top 1 id from TransInterviewer where IRFId =@IRFId and UserId = @UserId)
+	Begin
+	Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, PerSuccessRate, [Source])   
+    values(@IRFId,@InterviewerId,@UserId,1,1, (select FlatRate from IRF where id=@IRFId), @source)  
+	End
+    
   
     update InterviewerProfile set  AvailabilityResponseDate = @timeNow, Isavailable = 1 where UserId = (Select id from UserList where uniqueid=@uniqueid)   
   
@@ -55,7 +60,7 @@ Begin
  BEGIN  
   if(@Status=1)  
   begin  
-   Update ti set ti.IsAvailable=1 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid  
+   Update ti set ti.IsAvailable=1, ti.ModifiedBy = @source from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid  
    update InterviewerProfile set  AvailabilityResponseDate = @timeNow, Isavailable = 1 where UserId = (Select id from UserList where uniqueid=@uniqueid)   
   
   end  
@@ -69,14 +74,14 @@ End
   
 if(@timeDifference < 60 and @Status != 1)  
 Begin  
- Update ti set ti.IsActive=0,IsAvailable=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid  
+ Update ti set ti.IsActive=0,IsAvailable=0, ModifiedBy = @source from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid  
    
  update InterviewerProfile set  AvailabilityResponseDate = @timeNow where UserId = (Select id from UserList where uniqueid=@uniqueid)   
   
 End  
 if(@timeDifference > 60 and @Status != 1)  
 Begin  
- Update ti set ti.IsActive=0,IsAvailable=0 from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid  
+ Update ti set ti.IsActive=0,IsAvailable=0, ModifiedBy = @source from TransInterviewer ti join UserList ul on ul.id=ti.Userid Where IRFId=@IRFId and ul.uniqueid=@uniqueid  
    
  update InterviewerProfile set  AvailabilityResponseDate = @timeNow where UserId = (Select id from UserList where uniqueid=@uniqueid)   
   
