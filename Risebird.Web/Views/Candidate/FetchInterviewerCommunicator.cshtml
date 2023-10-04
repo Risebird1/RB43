@@ -151,7 +151,7 @@
                                                                 }
                                                                 <td class="text-center">
                                                                     <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
-                                                                        <span onclick="javascript:OpenuploadResumesModal('@item.id', '@item.IRFId');" title="Upload Resumes">
+                                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId', 'public');" title="Upload Resumes">
                                                                             <span class="fas fa-upload"></span>
                                                                         </span>
                                                                     </button>
@@ -395,6 +395,10 @@
 
 <script src="~/js/FeedbackRecorder/Record.js"></script>
 <script>
+    var irfId = 0;
+    var irfName = '';
+</script>
+<script>
     function openSkillpopup(id) {
         $.ajax({
             type: "POST",
@@ -481,8 +485,7 @@
             }
 
         }
-
-        //window.onload = my_code();
+        
     </script>
 }
 <script>
@@ -568,22 +571,25 @@
         var modalBct = document.getElementById("uploadResumesModal");
         modalBct.style.display = "none";
     }
-    function OpenuploadResumesModal(irfid, Irfname) {
-        var modalBct = document.getElementById("uploadResumesModal");
-        modalBct.style.display = "block";
-        $("#txtIRFId").val(irfid);
-        $("#txtIRFName").val(Irfname);
-    }
+    //function OpenuploadResumesModal(irfid, Irfname) {
+    //    var modalBct = document.getElementById("uploadResumesModal");
+    //    modalBct.style.display = "block";
+    //    irfId = irfid;
+    //    irfName = Irfname;
+    //    //$("#txtIRFId").val(irfid);
+    //    //$("#txtIRFName").val(Irfname);
+    //}
     function UploadCandidateResume() {
-        if ($("#txtIRFId").val().trim() != "" && $("#txtIRFName").val().trim() != "" && document.getElementById("ResumeFiles").files.length > 0) {
+        debugger;
+        if (irfId != 0 && irfName.trim() != "" && document.getElementById("ResumeFiles").files.length > 0) {
             $(".loader").show();
             var files = $("#ResumeFiles").prop("files");
             var form_data = new FormData();
             for (var i = 0; i < files.length; i++) {
                 form_data.append(files[i].name, files[i]);
             }
-            form_data.append("IRFId", $("#txtIRFId").val());
-            form_data.append("IRFName", $("#txtIRFName").val());
+            form_data.append("IRFId", irfId);
+            form_data.append("IRFName", irfName);
 
             $.ajax({
                 type: "POST",
@@ -615,6 +621,7 @@
     }
 
     $(document).ready(function () {
+        
         applyDataTable();
     });
 
