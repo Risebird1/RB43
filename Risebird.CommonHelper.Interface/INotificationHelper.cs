@@ -109,5 +109,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendIRFCreatedFromTemplateNotificationToChannelOwner(string channelOwnerEmail, string skillChannelName, string templateName, string jdTitle, string client);
         Task<string> SendCandidateNeedClerityClientNotification(string message, string subject, string clienthr, string candidateemail);
         Task<string> SendReScheduleInterviewInfo(Mail model, DateTime interviewdatetime, string timezonevalue, DateTime newinterviewdatetime, string newtimezonevalue, string CandidateName, string ClientName, string JDTiltle, int? interviewId);
+        Task<string> SendInterviewerRedMarkersNotification(Mail model, string _template, string acklink);
     }
 }

@@ -82,6 +82,8 @@ namespace Risebird.MicroService
                     {
                         if (!string.IsNullOrEmpty(interviewer.EmailId))
                         {
+                            string source = "ml";
+
                             var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
                             string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=1&uniqueid=" + interviewer.uniqueid + "&Irfid=" + obj.id + "&dec=" + encryptedDate;
                             string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForIRF?status=2&uniqueid=" + interviewer.uniqueid + "&Irfid=" + obj.id + "&dec=" + encryptedDate;
@@ -91,7 +93,13 @@ namespace Risebird.MicroService
                                 TO = interviewer.EmailId,
                                 Subject = "Risebird: Availability check for Skill Channel " + obj.IRFId + " Interviews"
                             };
-                            var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton, nobutton, sb.ToString(), obj.FlatRate, dropMyProfileButton, obj.PrimarySkillInvite, obj.id);//item.PerSuccessRate
+                            
+                            var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), obj.FlatRate, dropMyProfileButton + "&rsc=" + source, obj.PrimarySkillInvite, obj.id);//item.PerSuccessRate
+
+                            source = "wp";
+
+                            yesbutton = yesbutton + "&rsc=" + source;
+
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = interviewer.EmailId;
                             _whatsAppVM.PrimarySkill = obj.PrimarySkillInvite;//irf.JDTiltle;
