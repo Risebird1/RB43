@@ -6299,6 +6299,9 @@ input[type="date"].form-control {
 .cancel {
     background: #eb5454;
 }
+.risk-int {
+    background: #e9bce2;
+}
 .click-arrow {
     border-radius: 100%;
     width: 30px;
