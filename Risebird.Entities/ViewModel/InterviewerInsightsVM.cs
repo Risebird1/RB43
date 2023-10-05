@@ -40,6 +40,7 @@ namespace Risebird.Entities.ViewModel
         public int SelectedComment { get; set; }
         public int RejectedComment { get; set; }
         public int LessQuestions { get; set; }
+        public string uniqueid { get; set; }
     }
     public class InterviewerInsightsMarkersDetailsVM
     {
@@ -54,5 +55,12 @@ namespace Risebird.Entities.ViewModel
         public string EmailId { get; set; }
         public string uniqueid { get; set; }
         public int id { get; set; }
+        public string IRFId { get; set; }
+        public DateTime? interviewDate { get; set; }
+        public string interviewer { get; set; }
+        public int RedMarker { get; set; }
+        public string candidateName {  get; set; }
+        public string candidateEmail { get; set; }
+        public string ResumeLink { get; set; }
     }
 }

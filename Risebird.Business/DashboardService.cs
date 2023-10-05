@@ -19,12 +19,14 @@ namespace Risebird.Business
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRepository;
         private readonly IZoomHelper _zoomHelper;
-        public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRepository, IZoomHelper zoomHelper)
+        private readonly IInterviewerRepository _interviewerRepository; 
+        public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRepository, IZoomHelper zoomHelper, IInterviewerRepository interviewerRepository)
         {
             _dashboardRespository = dashboardRespository;
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRepository = meetingRepository;
             _zoomHelper = zoomHelper;
+            _interviewerRepository = interviewerRepository;
         }
 
         public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date, string Emailid)
@@ -714,6 +716,19 @@ namespace Risebird.Business
             try
             {
                 return await _dashboardRespository.GetRedoRrquest();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<InterviewerRedmarkers>> GetHighRiskInterviewersService()
+        {
+            try
+            {
+                return await _interviewerRepository.FecthUpcomingInterviewsRedMarkers();
             }
             catch (Exception e)
             {
