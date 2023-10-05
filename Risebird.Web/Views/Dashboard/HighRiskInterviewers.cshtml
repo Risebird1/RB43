@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerRedmarkers>
 @{
     ViewData["Title"] = "HighRiskInterviewers";
 }
@@ -121,26 +121,8 @@
     </div>
     <!-- end col-md-12 -->
 </div>
-<div id="InterviewerInsightsModel" class="modal modal-bg" style="z-index:3">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document" style="max-width: 1050px !important;">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span>
-                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-lightbulb" viewBox="0 0 16 16"> <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" fill="white"></path> </svg>
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Insights </h5><p style="float:right"><span style="position:relative;top:14px;font-size:13px;padding:5px;font-weight:bold">Last Login:</span><span class="candidatename-sla" id="hidlastlogin" style="position:relative;top:1px;font-size:14px;"></span></p><span class="candidatename-sla" id="txtheaderInsights" style="margin-right:25px;"></span>
-            </div>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                <span onclick="closeInterviewerInsightsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body" id="divInsightsmodel">
-            </div>
-        </div>
-    </div>
-</div>
+
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 <script src="~/js/TwilioCallMaker.js"></script>
 <script>
     $(document).ready(function () {
@@ -162,28 +144,5 @@
                 searchPlaceholder: "Search records",
             }
         });
-    }
-
-    function InsightsDetails(interviewer) {
-        $.ajax({
-            url: '/Interviewer/InterviewerInsights',
-            data: { 'interviewer': interviewer },
-            type: "GET",
-            success: function (data) {
-                openInterviewerInsightsModel();
-                $('#divInsightsmodel').html('');
-                $('#divInsightsmodel').html(data);
-                $("#txtheaderInsights").text('( ' + interviewer + ' )');
-                $('#hidlastlogin').text($('#LastLogin').val());
-            }
-        });
-    }
-    function closeInterviewerInsightsModel() {
-        var modal = document.getElementById("InterviewerInsightsModel");
-        modal.style.display = "none";
-    }
-    function openInterviewerInsightsModel() {
-        var modal = document.getElementById("InterviewerInsightsModel");
-        modal.style.display = "block";
     }
 </script>

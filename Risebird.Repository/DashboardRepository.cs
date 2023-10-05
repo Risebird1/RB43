@@ -1289,30 +1289,5 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetHighRiskInterviewers()
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                   
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@CurrentDate", DateTime.Now);
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FecthUpcomingInterviewsRedMarkers", parameters,
-                        commandType: CommandType.StoredProcedure);
-                    return result;
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
-
     }
 }
