@@ -1295,8 +1295,10 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                   
                     var parameters = new DynamicParameters();
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_HighRiskInterviewers", parameters,
+                    parameters.Add("@CurrentDate", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FecthUpcomingInterviewsRedMarkers", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }

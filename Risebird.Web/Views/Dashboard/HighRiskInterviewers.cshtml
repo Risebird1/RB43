@@ -54,7 +54,6 @@
                                                 <th>Skill Channel ID</th>
                                                 <th>Interview Date</th>
                                                 <th>Interviewer</th>
-                                                <th>Mobile Number</th>
                                                 <th>Red Markers</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
@@ -66,7 +65,6 @@
                                                 <th>Skill Channel ID</th>
                                                 <th>Interview Date</th>
                                                 <th>Interviewer</th>
-                                                <th>Mobile Number</th>
                                                 <th>Red Markers</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
@@ -83,15 +81,6 @@
                                                         <td>@item.IRFId</td>
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.interviewer</td>
-                                                        <td style="padding:0px 7px;">
-                                                            <span class="call-area">
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                {
-                                                                    <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
-                                                                }
-                                                            </span>
-                                                            @item.MobileNumber
-                                                        </td>
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {
                                                             <td style="color:red"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
