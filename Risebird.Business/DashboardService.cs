@@ -722,5 +722,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<MeetingVM>> GetHighRiskInterviewersService()
+        {
+            try
+            {
+                return await _dashboardRespository.GetHighRiskInterviewers();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

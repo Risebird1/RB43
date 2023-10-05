@@ -313,7 +313,7 @@
                                 </div>
                             </div>
                            
-                            <div class="col-lg-3 col-md-4 col-sm-6">
+                            @* <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper14">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.RedoInterview')">
@@ -379,7 +379,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> *@
                             
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper1">
@@ -1459,6 +1459,72 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper21">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="HighRiskInterviewers()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon unassign"><img src="~/img/unassign.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>High Risk Interviewers</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>  <span style="cursor:pointer" id="ribbonHighRiskInterviewersCount" class="card-title">@Model.NotUpdatedMeetingsObj.HighRiskInterviewers</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="HighRiskInterviewers()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="HighRiskInterviewers()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon unassign"><img src="~/img/unassign.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>High Risk Interviewers</strong></span></h3>
+                                                            </div>
+
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong> <span style="cursor:pointer" id="ribbonunHighRiskInterviewersCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.HighRiskInterviewers</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="HighRiskInterviewers()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -1490,6 +1556,9 @@
     function RedoRequest() {
         window.location.href = "/Dashboard/RedoRequest";
     }
+    function HighRiskInterviewers() {
+        window.location.href = "/Dashboard/HighRiskInterviewers";
+    }
 </script>
 <script type="text/javascript">
     var setRibbonCalledCount = 0;
@@ -1497,7 +1566,6 @@
     $(document).ready(function () {
         // TimeInterval();
         setRibbon();
-        // $('[data-toggle="tooltip"]').tooltip();
     });
 
     function TimeIntervalUrl() {
@@ -1650,6 +1718,12 @@
                 else {
                     $(".flipper20").removeClass("flipper");
                 }
+                if (parseInt(data.highRiskInterviewers) != parseInt($("#ribbonHighRiskInterviewersCount").text())) {
+                    $(".flipper21").addClass("flipper");
+                }
+                else {
+                    $(".flipper21").removeClass("flipper");
+                }
 
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
@@ -1671,6 +1745,7 @@
                 $("#ribbonPaymentSlacomplianceCount").text(data.paymentSlacomplianceCount);
                 $("#ribbonInterviewerChurnCount").text(data.interviewerChurnCount);
                 $("#ribbonRedoRequestCount").text(data.redoRequestCount);
+                $("#ribbonHighRiskInterviewersCount").text(data.highRiskInterviewers);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -1692,6 +1767,7 @@
                 $("#ribbonPaymentSlacomplianceCount_1").text(data.paymentSlacomplianceCount);
                 $("#ribbonInterviewerChurnCount_1").text(data.interviewerChurnCount);
                 $("#ribbonRedoRequestCount_1").text(data.reoRequestCount);
+                $("#ribbonunHighRiskInterviewersCount_1").text(data.highRiskInterviewers);
                 $(".flipper").toggleClass("flip");
             }
         });

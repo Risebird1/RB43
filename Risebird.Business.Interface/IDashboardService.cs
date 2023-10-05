@@ -56,5 +56,6 @@ namespace Risebird.Business.Interface
         Task<bool> UndoSuspiciousInterviewerService(int InterviewerProfileId);
         Task<bool> ApprovedRedoInterviewsService(int InterviewId, string modifyBy, DateTime modifyDate);
         Task<IEnumerable<MeetingVM>> GetRedoRequestService();
+        Task<IEnumerable<MeetingVM>> GetHighRiskInterviewersService();
     }
 }
