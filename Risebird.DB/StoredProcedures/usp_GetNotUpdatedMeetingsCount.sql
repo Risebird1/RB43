@@ -87,6 +87,7 @@ declare @PotentialRiskByClient int=(select Count(ccfr.id) from  ClientCommentsFo
 
 declare @PaymentSlacomplianceCount int=(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)
 declare @RedoRequestCount int=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id where Approved=0)
+declare @HighRiskInterviewers int=(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)
 --select (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
 -- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
 --(select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId          
@@ -124,8 +125,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @BlackListCompanyCount as BlackListCompanyCount,
 @PaymentSlacomplianceCount as PaymentSlacomplianceCount,
 @interviewerChurnCount as InterviewerChurnCount,
-@RedoRequestCount as RedoRequestCount
-
+@RedoRequestCount as RedoRequestCount,
+@HighRiskInterviewers as HighRiskInterviewers
 END        
 ELSE        
 BEGIN  
@@ -180,7 +181,7 @@ set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps l
 
  set @interviewerChurnCount=(select COUNT(Id) from InterviewerProfile where Isavailable in (3,4))
  set @RedoRequestCount=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id where Approved=0)
-
+ set @HighRiskInterviewers =(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink, 
 @MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,
@@ -195,8 +196,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @BlackListCompanyCount as BlackListCompanyCount,
 @PaymentSlacomplianceCount as PaymentSlacomplianceCount,
 @interviewerChurnCount as InterviewerChurnCount,
-@RedoRequestCount as RedoRequestCount
-
+@RedoRequestCount as RedoRequestCount,
+@HighRiskInterviewers as HighRiskInterviewers
 --select (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 ) as UnassignedInterviewsCount,                                  
 --(select Count(im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledMeetingStatusCount,                                  
 --(select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and isAutoCancelled=1 and DATEDIFF(DAY, interviewDate, @currentdate)<7 ) as UnfilledCommentsCount,                                  

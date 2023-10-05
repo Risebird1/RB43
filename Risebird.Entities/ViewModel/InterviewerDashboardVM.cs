@@ -12,6 +12,7 @@
         public bool FirstTimePopupDisplayed { get; set; }
         public int VideoConfirmation { get; set; }
         public bool PaymentSLAConfirmation { get; set; }
+        public bool RedmarkerAcknowledge { get; set; }
     }
 
 }

@@ -21,6 +21,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Twilio.Rest.Trunking.V1;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
@@ -3899,6 +3900,21 @@ namespace Risebird.Web.Controllers
         {
             var result = await _interviewerService.updateRedmarkerAcknowledge(uniqueid);
             return Json("Acknowledgement updated successfully");
+        }
+        [HttpPost]
+        public async Task<IActionResult> InterviewerRedMarkerReport()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var _redmarkers = await _interviewerRepository.GetInterviewerInsights(emailId);
+                return PartialView(_redmarkers);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
         #endregion
     }
