@@ -41,6 +41,8 @@ namespace Risebird.Entities.ViewModel
         public int RejectedComment { get; set; }
         public int LessQuestions { get; set; }
         public string ResumeLink { get; set; }
+        public string uniqueid { get; set; }
+      
     }
     public class InterviewerInsightsMarkersDetailsVM
     {
