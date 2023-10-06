@@ -30,7 +30,6 @@ namespace Risebird.MicroService
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var _list = await _interviewerRepository.FecthUpcomingInterviewsRedMarkers();
-            _list = _list.Where(x => x.RedmarkerAcknowledge == false).ToList();
             foreach (var item in _list)
             {
                 try
