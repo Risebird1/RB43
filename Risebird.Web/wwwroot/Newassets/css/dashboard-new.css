@@ -7082,6 +7082,7 @@ ul.ks-cboxtags {
 .accordion-toggle.collapsed:after {
     content: "\f078";
 }
+
 /***** action arrow *****/
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
