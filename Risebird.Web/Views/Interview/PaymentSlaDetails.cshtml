@@ -203,11 +203,11 @@
                                                         @if (ViewBag.actionstatus != "SLACompleted")
                                                         {
                                                             <td>
-                                                                @if (!string.IsNullOrWhiteSpace(item.Interviewer))
+                                                                @if (!string.IsNullOrWhiteSpace(item.interviewer))
                                                                 {
                                                                     <span>
                                                                         <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
-                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.Interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
                                                                         </button>
                                                                     </span>
                                                                 }
