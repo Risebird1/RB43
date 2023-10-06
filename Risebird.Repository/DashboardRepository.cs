@@ -1059,6 +1059,7 @@ namespace Risebird.Repository
                         _resultVM.FirstTimePopupDisplayed = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToBoolean(dt.Rows[0][0]) : false;
                         _resultVM.VideoConfirmation = !string.IsNullOrEmpty(dt.Rows[0][1].ToString()) ? Convert.ToInt32(dt.Rows[0][1]) : 0;
                         _resultVM.PaymentSLAConfirmation = !string.IsNullOrEmpty(dt.Rows[0][2].ToString()) ? Convert.ToBoolean(dt.Rows[0][2]) : false;
+                        _resultVM.RedmarkerAcknowledge = !string.IsNullOrEmpty(dt.Rows[0][3].ToString()) ? Convert.ToBoolean(dt.Rows[0][3]) : false;
                     }
                     return _resultVM;
                 }
