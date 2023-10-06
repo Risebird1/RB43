@@ -1289,5 +1289,25 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<InterviewerRedmarkers>> FecthHighRiskInterviews()
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@CurrentDate", DateTime.Now);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InterviewerRedmarkers>(conChange, "usp_HighRiskInterviews", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }

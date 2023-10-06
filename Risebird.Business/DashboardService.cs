@@ -19,14 +19,14 @@ namespace Risebird.Business
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRepository;
         private readonly IZoomHelper _zoomHelper;
-        private readonly IInterviewerRepository _interviewerRepository; 
-        public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRepository, IZoomHelper zoomHelper, IInterviewerRepository interviewerRepository)
+        private readonly IMeetingRespository _meetingRespository;
+        public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRepository, IZoomHelper zoomHelper, IMeetingRespository meetingRespository)
         {
             _dashboardRespository = dashboardRespository;
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRepository = meetingRepository;
             _zoomHelper = zoomHelper;
-            _interviewerRepository = interviewerRepository;
+            _meetingRespository = meetingRespository;
         }
 
         public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date, string Emailid)
@@ -728,12 +728,26 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.FecthUpcomingInterviewsRedMarkers();
+                return await _dashboardRespository.FecthHighRiskInterviews();
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        public async Task<bool> MoveToUnassignService(int meetingId)
+        {
+            try
+            {
+                await _meetingRespository.UnassignYourself(meetingId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
 
