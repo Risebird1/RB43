@@ -62,5 +62,6 @@ namespace Risebird.Entities.ViewModel
         public string candidateName {  get; set; }
         public string candidateEmail { get; set; }
         public string ResumeLink { get; set; }
+        public bool RedmarkerAcknowledge { get; set; }
     }
 }

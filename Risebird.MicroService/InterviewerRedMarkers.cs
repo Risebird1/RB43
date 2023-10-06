@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -29,6 +30,7 @@ namespace Risebird.MicroService
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var _list = await _interviewerRepository.FecthUpcomingInterviewsRedMarkers();
+            _list = _list.Where(x => x.RedmarkerAcknowledge == false).ToList();
             foreach (var item in _list)
             {
                 try
