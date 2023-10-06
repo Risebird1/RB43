@@ -6,6 +6,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
+<style>
+    .w-half {
+        width: 50%;
+    }
+</style>
 <script>
     var Header = "<div>QC Form</div>";
     $('#txtpageHeader').empty().html(Header);
@@ -52,7 +57,67 @@
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
-                                                <h3 class="mb-0"><span>Interviewer Video Enable Check</span></h3>
+                                                <h3 class="mb-0"><span>Details</span></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-wrap">
+                                        <div class="row">
+
+                                            <div class="col-md-6 col-sm-6 border-rv pull-left">
+                                                <div class="form-group pull-left w-half">
+                                                  <div> @Html.LabelFor(model => model.candidateName, htmlAttributes: new { @class = "control-label desp-label" })</div>
+
+                                                    <div class="pull-left">
+                                                        <span style="padding:0px 10px;"> @Model.candidateName</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group pull-left w-half">
+                                                    <div> @Html.LabelFor(model => model.candidateEmail, htmlAttributes: new { @class = "control-label desp-label" })</div>
+
+                                                    <div class="pull-left">
+                                                        <span style="padding:0px 10px;"> @Model.candidateEmail</span>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group pull-left w-half">
+                                                    <div> @Html.LabelFor(model => model.Interviewer, htmlAttributes: new { @class = "control-label desp-label" })</div>
+
+                                                    <div class="pull-left">
+                                                      <span style="padding:0px 10px;">  @Model.Interviewer</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group pull-left w-half">
+                                                    <div> @Html.LabelFor(model => model.InterviewDate, htmlAttributes: new { @class = "control-label desp-label" })</div>
+
+                                                    <div class="pull-left">
+                                                       <span style="padding:0px 10px;"> @Model.InterviewDate</span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                           
+
+                                            
+
+
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                                <div class="report-full-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h3 class="mb-0"><span>Video Enable</span></h3>
                                             </div>
                                         </div>
                                     </div>
@@ -72,7 +137,7 @@
 
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    <div class=" control-label pull-left desp-label" style="padding:15px;">Incentive(In % as per their Payout)</div>
+                                                    <div class=" control-label pull-left desp-label" style="padding:15px;">Incentive(%)</div>
                                                     <div class="custom-select pull-left" style="padding:10px;">
                                                         @Html.DropDownListFor(model=>model.Payment,new List<SelectListItem>{
                                                         new SelectListItem{Value="10",Text="10"},

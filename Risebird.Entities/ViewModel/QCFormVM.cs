@@ -78,5 +78,9 @@ namespace Risebird.Entities.ViewModel
         public bool IsSuspiciousappfound { get; set; }
         [Display(Name = "Lip-sync issue noticed")]
         public bool IsLipsyncissue { get; set; }
+        [Display(Name = "Candidate Name")]
+        public string candidateName { get; set; }
+        [Display(Name = "Candidate Email")]
+        public string candidateEmail { get; set; }
     }
 }
