@@ -6299,6 +6299,9 @@ input[type="date"].form-control {
 .cancel {
     background: #eb5454;
 }
+.risk-int {
+    background: #b380ab;
+}
 .click-arrow {
     border-radius: 100%;
     width: 30px;
@@ -7079,6 +7082,7 @@ ul.ks-cboxtags {
 .accordion-toggle.collapsed:after {
     content: "\f078";
 }
+
 /***** action arrow *****/
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {

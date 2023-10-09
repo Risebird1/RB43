@@ -8,12 +8,12 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create Procedure usp_FecthUpcomingInterviewsRedMarkers
-@CurrentDate datetime
-AS
-BEGIN
-Select distinct ul.EmailId,ul.uniqueid,ip.id From InterviewerProfile ip join UserList ul on ul.id=ip.Userid 
-join InterviewMeetings im on im.interviewer=ul.EmailId 
-where interviewDate>@CurrentDate and ip.RedMarker>0 and IsNull(ip.RedmarkerAcknowledge,0)=0
+CREATE Procedure [dbo].[usp_FecthUpcomingInterviewsRedMarkers]    
+@CurrentDate datetime    
+AS    
+BEGIN    
+Select distinct ip.id,ul.EmailId,ul.uniqueid From InterviewerProfile ip join UserList ul on ul.id=ip.Userid     
+join InterviewMeetings im on im.interviewer=ul.EmailId     
+where interviewDate>@CurrentDate and ip.RedMarker>0 and IsNull(ip.RedmarkerAcknowledge,0)=0    
 END
 Go

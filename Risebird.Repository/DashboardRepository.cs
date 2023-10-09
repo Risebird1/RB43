@@ -1059,6 +1059,7 @@ namespace Risebird.Repository
                         _resultVM.FirstTimePopupDisplayed = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToBoolean(dt.Rows[0][0]) : false;
                         _resultVM.VideoConfirmation = !string.IsNullOrEmpty(dt.Rows[0][1].ToString()) ? Convert.ToInt32(dt.Rows[0][1]) : 0;
                         _resultVM.PaymentSLAConfirmation = !string.IsNullOrEmpty(dt.Rows[0][2].ToString()) ? Convert.ToBoolean(dt.Rows[0][2]) : false;
+                        _resultVM.RedmarkerAcknowledge = !string.IsNullOrEmpty(dt.Rows[0][3].ToString()) ? Convert.ToBoolean(dt.Rows[0][3]) : false;
                     }
                     return _resultVM;
                 }
@@ -1287,6 +1288,26 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<IEnumerable<InterviewerRedmarkers>> FecthHighRiskInterviews()
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@CurrentDate", DateTime.Now);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InterviewerRedmarkers>(conChange, "usp_HighRiskInterviews", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
 
     }

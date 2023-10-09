@@ -1,0 +1,205 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerRedmarkers>
+@{
+    ViewData["Title"] = "HighRiskInterviewers";
+}
+<script>
+    var Header = "<div>High Risk Interviewers</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<style>
+    .swal2-popup .swal2-title {
+        font-size: 1.5em !important;
+        text-transform: none !important;
+        font-weight: 400 !important;
+        line-height: 28px;
+    }
+    </style>
+
+<div class="main-panel" id="main-panel">
+    <div>
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+
+                        <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title">BlackList Company</h4></div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+
+                            <div style="overflow-x:scroll" class="scrollbar">
+                                <div id="tableID" class="second">
+                                         <table id="detailsTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Skill Channel ID</th>
+                                                <th>Interview Date</th>
+                                                <th>Interviewer</th>
+                                                <th>Company Name</th>
+                                                <th>Mobile Number</th>
+                                                <th>Red Markers</th>
+                                                <th>Candidate Name</th>
+                                                <th>Candidate Email</th>
+                                                <th>Resume</th>
+                                                <th>Channel Owner</th>
+                                                <th>Primary Skill</th>
+                                                <th>Action</th>
+                                            </tr>
+                                           </thead>
+                                           <tfoot>
+                                            <tr>
+                                                <th>Skill Channel ID</th>
+                                                <th>Interview Date</th>
+                                                <th>Interviewer</th>
+                                                <th>Company Name</th>
+                                                <th>Mobile Number</th>
+                                                <th>Red Markers</th>
+                                                <th>Candidate Name</th>
+                                                <th>Candidate Email</th>
+                                                <th>Resume</th>
+                                                <th>Channel Owner</th>
+                                                <th>Primary Skill</th>
+                                                <th>Action</th>
+                                            </tr>
+                                           </tfoot>
+                                           <tbody>
+
+                                              @if (Model != null && Model.Count() > 0)
+                                            {
+                                                foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        <td>@item.IRFId</td>
+                                                        <td>@item.interviewDate</td>
+                                                        <td>@item.interviewer</td>
+                                                        <td>@item.CompanyName</td>
+                                                        <td style="padding:0px 7px;">
+                                                            <span class="call-area">
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
+                                                                    <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.IRFId')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
+                                                                }
+                                                            </span>
+                                                            @item.MobileNumber
+                                                        </td>
+                                                        @if (@item.interviewer != null || @item.interviewer != "")
+                                                        {
+                                                            <td style="color:red"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="color:red">@item.RedMarker</td>
+                                                        }
+
+                                                        <td>@item.candidateName</td>
+                                                        <td>@item.candidateEmail</td>
+                                                        @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                            {
+                                                                <td>
+
+                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No Resume</td>
+                                                            }
+                                                            <td>@item.ChannelOwner</td>
+                                                            <td>@item.PrimarySkill</td>
+                                                            <td>
+                                                            @if (!string.IsNullOrWhiteSpace(item.interviewer))
+                                                            {
+                                                                <span>
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                        <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                    </button>
+                                                                </span>
+
+                                                            }
+                                                            @if (item.meetingId > 0)
+                                                            {
+                                                                <span>
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Move To Unassign">
+                                                                        <span onclick="javascript:MoveToUnassign('@item.meetingId');" title="Move To Unassign" class="mdc-fab__icon touch"><img width="17" src="/img/unassign.png" /></span>
+                                                                    </button>
+                                                                </span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                           </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end content-->
+        </div>
+        <!--  end card  -->
+    </div>
+    <!-- end col-md-12 -->
+</div>
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+<script src="~/js/TwilioCallMaker.js"></script>
+<script>
+    $(document).ready(function () {
+        applyDataTable();
+        //$('#detailsTable').DataTable();
+    });
+
+    function applyDataTable() {
+        $('#detailsTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+    }
+    function MoveToUnassign(meetingId)
+    {
+        if (meetingId>0) {
+            $.ajax({
+                url: '/Dashboard/MoveToUnassign',
+                data: { 'meetingId': meetingId },
+                type: "POST",
+                success: function (data) {
+                    alert(data);
+                }
+            });
+        }
+        else {
+            
+        }
+    }
+</script>
