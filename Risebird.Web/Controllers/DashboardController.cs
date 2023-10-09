@@ -2170,6 +2170,30 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> MoveToUnassign(int meetingId)
+        {
+            try
+            {
+                    var data=    await _meetingRespository.UnassignYourself(meetingId);
+                if (data == true)
+                {
+                    return Json("Move to Unassign Successfully");
+                }
+            
+         else
+            {
+                return Json("Fail to marked Move To Unassign, Try again after sometime.");
+            }
+             }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
 
     }
 

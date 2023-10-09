@@ -54,10 +54,15 @@
                                                 <th>Skill Channel ID</th>
                                                 <th>Interview Date</th>
                                                 <th>Interviewer</th>
+                                                <th>Company Name</th>
+                                                <th>Mobile Number</th>
                                                 <th>Red Markers</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Resume</th>
+                                                <th>Channel Owner</th>
+                                                <th>Primary Skill</th>
+                                                <th>Action</th>
                                             </tr>
                                            </thead>
                                            <tfoot>
@@ -65,10 +70,15 @@
                                                 <th>Skill Channel ID</th>
                                                 <th>Interview Date</th>
                                                 <th>Interviewer</th>
+                                                <th>Company Name</th>
+                                                <th>Mobile Number</th>
                                                 <th>Red Markers</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Resume</th>
+                                                <th>Channel Owner</th>
+                                                <th>Primary Skill</th>
+                                                <th>Action</th>
                                             </tr>
                                            </tfoot>
                                            <tbody>
@@ -81,6 +91,16 @@
                                                         <td>@item.IRFId</td>
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.interviewer</td>
+                                                        <td>@item.CompanyName</td>
+                                                        <td style="padding:0px 7px;">
+                                                            <span class="call-area">
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
+                                                                    <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.IRFId')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
+                                                                }
+                                                            </span>
+                                                            @item.MobileNumber
+                                                        </td>
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {
                                                             <td style="color:red"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
@@ -103,6 +123,27 @@
                                                             {
                                                                 <td>No Resume</td>
                                                             }
+                                                            <td>@item.ChannelOwner</td>
+                                                            <td>@item.PrimarySkill</td>
+                                                            <td>
+                                                            @if (!string.IsNullOrWhiteSpace(item.interviewer))
+                                                            {
+                                                                <span>
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                        <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                    </button>
+                                                                </span>
+
+                                                            }
+                                                            @if (item.meetingId > 0)
+                                                            {
+                                                                <span>
+                                                                    <button class="mdc-fab app-fab--absolute " aria-label="Move To Unassign">
+                                                                        <span onclick="javascript:MoveToUnassign('@item.meetingId');" title="Move To Unassign" class="mdc-fab__icon touch"><img width="17" src="/img/unassign.png" /></span>
+                                                                    </button>
+                                                                </span>
+                                                            }
+                                                        </td>
                                                     </tr>
                                                 }
                                             }
@@ -121,7 +162,7 @@
     </div>
     <!-- end col-md-12 -->
 </div>
-
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 <script src="~/js/TwilioCallMaker.js"></script>
 <script>
@@ -144,5 +185,21 @@
                 searchPlaceholder: "Search records",
             }
         });
+    }
+    function MoveToUnassign(meetingId)
+    {
+        if (meetingId>0) {
+            $.ajax({
+                url: '/Dashboard/MoveToUnassign',
+                data: { 'meetingId': meetingId },
+                type: "POST",
+                success: function (data) {
+                    alert(data);
+                }
+            });
+        }
+        else {
+            
+        }
     }
 </script>
