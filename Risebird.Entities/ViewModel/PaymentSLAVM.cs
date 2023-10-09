@@ -29,6 +29,7 @@ namespace Risebird.Entities.ViewModel
         public string uniqueid { get; set; }
         public bool QCStatus { get; set; }
         public int Redflags { get; set; }
+        public int PaymentComplianceCount { get; set; }
         public DateTime CreatedOn { get; set; }
 
         [Display(Name = "Payment Deduction")]

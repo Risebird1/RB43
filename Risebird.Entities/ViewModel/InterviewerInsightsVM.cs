@@ -69,5 +69,6 @@ namespace Risebird.Entities.ViewModel
         public string ChannelOwner { get; set; }
         public string PrimarySkill { get; set; }
         public int meetingId { get; set; }
+        public bool RedmarkerAcknowledge { get; set; }
     }
 }
