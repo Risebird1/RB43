@@ -198,7 +198,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 6].Value = "Late Report Penalty";
                         Sheet.Cells[1, 7].Value = "Variable Pay";
                         Sheet.Cells[1, 8].Value = "QC Amt";
-                        Sheet.Cells[1, 9].Value = "Payment SLA";
+                        Sheet.Cells[1, 9].Value = "Payment Deductions";
                         Sheet.Cells[1, 10].Value = "Video Rewards";
                         Sheet.Cells[1, 11].Value = "Amount";
                         Sheet.Cells[1, 12].Value = "Video Link";

@@ -20,6 +20,7 @@ CREATE TABLE [dbo].[PaymentSLADetails](
 	[CreatedOn] [datetime] NULL,
 	[PaymentDeduction] [int] NULL,
 	[IsApproved] [int] NULL,
+	[PaymentComplianceCount] [int] NULL,
 	[ModifiedBy] [varchar](150) NULL,
 	[ModifiedOn] [datetime] NULL,
  CONSTRAINT [PK_PaymentSLADetails] PRIMARY KEY CLUSTERED 
@@ -27,6 +28,18 @@ CREATE TABLE [dbo].[PaymentSLADetails](
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PaymentComplianceCount')
+      AND Object_ID = Object_ID(N'PaymentSLADetails'))
+BEGIN
+    ALTER TABLE PaymentSLADetails
+    Add PaymentComplianceCount INT
+END
 END
 GO
 

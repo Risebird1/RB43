@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -82,30 +83,37 @@ namespace Risebird.MicroService
             {
                 templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-weight: bold; text-transform: uppercase; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Redo Request</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'><a style='text-decoration: none; color: #0061B7;' href='{6}'>" + model.Redorequests + "</a></td></tr>";
             }
-            var calculatedValue = (model.SelectedInterviews * 100 / model.CompletedInterviews);
-            if (calculatedValue >= 50)
+            var calculatedValue = 0;
+            if (model.CompletedInterviews > 0)
             {
-                templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Selected Interviews:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + calculatedValue + " %</td></tr>";
+                calculatedValue = (model.SelectedInterviews * 100 / model.CompletedInterviews);
+                if (calculatedValue >= 50)
+                {
+                    templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Selected Interviews:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + calculatedValue + " %</td></tr>";
+                }
+                calculatedValue = (model.RejectedInterviews * 100 / model.CompletedInterviews);
+                if (calculatedValue >= 80)
+                {
+                    templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Rejected Interviews:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + calculatedValue + "</td></tr>";
+                }
             }
-            calculatedValue = (model.RejectedInterviews * 100 / model.CompletedInterviews);
-            if (calculatedValue >= 80)
+            if (model.TotalInterviews > 0)
             {
-                templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Rejected Interviews:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + calculatedValue + "</td></tr>";
-            }
-            calculatedValue = (model.UnassignInterviews * 100 / model.TotalInterviews);
-            if (calculatedValue > 5)
-            {
-                templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Unassigned Interviews :</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>{9}</td></tr>";
-            }
-            calculatedValue = (model.NoShowInterviews * 100 / model.TotalInterviews);
-            if (calculatedValue > 5)
-            {
-                templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important;'>NoShow Interviewer :</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + calculatedValue + "</td></tr>";
-            }
-            calculatedValue = (model.JoinLateMeeting * 100 / model.TotalInterviews);
-            if (calculatedValue > 2)
-            {
-                templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Late Join:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + calculatedValue + "</td></tr>";
+                calculatedValue = (model.UnassignInterviews * 100 / model.TotalInterviews);
+                if (calculatedValue > 5)
+                {
+                    templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Unassigned Interviews :</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>{9}</td></tr>";
+                }
+                calculatedValue = (model.NoShowInterviews * 100 / model.TotalInterviews);
+                if (calculatedValue > 5)
+                {
+                    templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important;'>NoShow Interviewer :</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + calculatedValue + "</td></tr>";
+                }
+                calculatedValue = (model.JoinLateMeeting * 100 / model.TotalInterviews);
+                if (calculatedValue > 2)
+                {
+                    templatehtml += "<tr><td align='left' valign='top' width='40%' style='border: 1px solid #D9D9D9; font-size: 13px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; text-transform: uppercase; font-weight: bold; color: #003851; font-family: 'AvenirNextLTPro-Regular', 'Avenir Next', 'HelveticaNeue', 'Helvetica Neue', 'Avenir', Helvetica, Arial, Lucida Grande, sans-serif !important; '>Late Join:</td><td align='left' valign='top' width='60%' style='border: 1px solid #D9D9D9; font-size: 14px; padding-top: 4px; padding-bottom: 4px; line-height: 28px; font-family: Arial;'>" + calculatedValue + "</td></tr>";
+                }
             }
             if (model.RejectedComment > 0)
             {
