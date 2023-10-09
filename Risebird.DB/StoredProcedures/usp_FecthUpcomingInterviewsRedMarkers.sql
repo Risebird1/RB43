@@ -12,7 +12,7 @@ Create Procedure usp_FecthUpcomingInterviewsRedMarkers
 @CurrentDate datetime
 AS
 BEGIN
-Select  ul.EmailId,ul.uniqueid
+Select distinct ul.EmailId,ul.uniqueid
 From InterviewerProfile ip join UserList ul on ul.id=ip.Userid   
 join InterviewMeetings im on im.interviewer=ul.EmailId   
 where interviewDate>@CurrentDate and ip.RedMarker>0 and IsNull(ip.RedmarkerAcknowledge,0)=0
