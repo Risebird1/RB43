@@ -84,6 +84,22 @@
         }
     </p>
 </div>
+
+<div class="col-md-4 pull-left">
+    <p class="clearfix">
+        <span class="pull-left" style="margin-right:10px;"><strong>Resume Link:</strong></span>
+        @if (Model.ResumeLink != null && Model.ResumeLink != "")
+        {
+                <span class="pull-left" style="color:brown;font-size:12px;"> <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Resume</a></span>  
+        }
+        else
+        {
+            <span class="pull-left" style="color:brown;font-size:12px;"> No Resume</span>
+        }
+        
+    </p>
+ </div>
+
 <div class="col-md-12 pull-left">
     <div id="tableID" class="second">
         <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
