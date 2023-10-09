@@ -5610,7 +5610,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select tq.*,IRF.id as IRFId From Trans_QCFormReport tq left join InterviewMeetings im on tq.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where tq.Interviewid=@Interviewid";
+               // var query = "Select tq.*,IRF.id as IRFId, im.interviewDate, im.candidateEmail,im.candidateName,im.interviewer From Trans_QCFormReport tq left join InterviewMeetings im on tq.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where tq.Interviewid=@Interviewid";
+                var query = "Select tq.*,IRF.id as IRFId, im.interviewDate, im.candidateEmail,im.candidateName,im.interviewer From InterviewMeetings im left join Trans_QCFormReport tq  on tq.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where im.id=@Interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Interviewid", interviewid);
                 using (SqlConnection con = new SqlConnection(connectionString))
