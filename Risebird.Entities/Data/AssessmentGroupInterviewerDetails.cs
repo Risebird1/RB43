@@ -22,7 +22,12 @@ namespace Risebird.Entities.Data
         public int AvailbilityHour { get; set; }
         public int FlatRate { get; set; }
         public string BasicSkill { get; set; }
-        
-        
+        public string CountryTypeDesc { get; set; }
+        public string CompanyTypeDesc { get; set; }
+        public string PlanTypeDesc { get; set; }
+        public int SelectedDurationMin { get; set; }
+        public int RejectedDurationMin { get; set; }
+
+
     }
 }
