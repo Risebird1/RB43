@@ -19,7 +19,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Twilio.Rest.Trunking.V1;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
@@ -3851,6 +3853,21 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 var result = await _interviewerService.UpdateVideoConfirmationStatus(responsestatus, emailid);
+                if (result)
+                {
+                    var resultReliability = new TransInterviewersReliabilityScoresVm();
+                    resultReliability.InterviewMeetingId = 0;
+                    resultReliability.InterviewerEmail = emailid;
+                    if (responsestatus == 1)
+                    {
+                        resultReliability.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationYes;
+                    }
+                    else
+                    {
+                        resultReliability.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.VideoConfirmationNo;
+                    }
+                    await _meetingService.AddTransInterviewersReliabilityScoresService(resultReliability);
+                }
                 return Json("Successfully updated youir response.");
             }
             else
@@ -3873,6 +3890,31 @@ namespace Risebird.Web.Controllers
         {
             var result = await _interviewerService.GetReliabilityScoreDetails(interviewer);
             return PartialView(result);
+        }
+        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type)
+        {
+            var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer, type);
+            return PartialView(result);
+        }
+        public async Task<JsonResult> AcknowledgeRedmarkers(string uniqueid)
+        {
+            var result = await _interviewerService.updateRedmarkerAcknowledge(uniqueid);
+            return Json("Acknowledgement updated successfully");
+        }
+        [HttpPost]
+        public async Task<IActionResult> InterviewerRedMarkerReport()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var _redmarkers = await _interviewerRepository.GetInterviewerInsights(emailId);
+                return PartialView(_redmarkers);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
         #endregion
     }

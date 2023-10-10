@@ -50,7 +50,7 @@ left join UserList ul on ul.EmailId = im.candidateEmail
 join  CandidatesMaster cm on ul.id=cm.UserId              
 join Candidate ca on irf.id=ca.IRFId and cm.id = ca.CandidateMasterId              
 left join UserList ulh on ulh.EmailId = im.HRCoordinatorEmailId              
-where interviewer =@emailID and confirmationStatus = 1 and (ic.MeetingStatus is null or ic.MeetingStatus=2)  
+where interviewer =@emailID and confirmationStatus = 1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and im.interviewDate<=@timeNow 
 
 Select Count(*) as QCReportCount from Trans_QCFormReport tq join InterviewMeetings im on tq.Interviewid=im.id 
 where im.interviewer=@emailID
@@ -61,7 +61,7 @@ Select Avg(ic.VideoDuration) VideoDuration from InterviewMeetings im join Interv
 where interviewer=@emailID and im.Confirmationstatus=1 and ic.MeetingStatus in(4,6,7,8) 
 and ic.VideoDuration is not null
 
-Select ip.FirstTimePopupDisplayed,ip.VideoConfirmation,ip.PaymentSLAConfirmation from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID
+Select ip.FirstTimePopupDisplayed,ip.VideoConfirmation,ip.PaymentSLAConfirmation,ip.RedmarkerAcknowledge from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID
 
 update ip set ip.FirstTimePopupDisplayed=1 from InterviewerProfile ip join userlist ul on ip.userid=ul.id where ul.EmailId=@emailID and Isnull(ip.FirstTimePopupDisplayed,0)=0
 

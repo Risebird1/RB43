@@ -23,6 +23,8 @@ namespace Risebird.Entities.ViewModel
         public int Payment { get; set; }
         [Display(Name = "Video Enable")]
         public bool VideoEnable { get; set; }
+        [Display(Name = "QC Reward")]
+        public bool QCReward { get; set; }
         public SelectList paymentList { get; set; }
 
         [Display(Name = "Report Blocked for Client")]
@@ -76,5 +78,9 @@ namespace Risebird.Entities.ViewModel
         public bool IsSuspiciousappfound { get; set; }
         [Display(Name = "Lip-sync issue noticed")]
         public bool IsLipsyncissue { get; set; }
+        [Display(Name = "Candidate Name")]
+        public string candidateName { get; set; }
+        [Display(Name = "Candidate Email")]
+        public string candidateEmail { get; set; }
     }
 }

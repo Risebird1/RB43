@@ -8,7 +8,7 @@
 
 @{
     ViewData["Title"] = "Interviewer Mail Activity For Availability";
-    ViewBag.PageHeader = "Interviewer Mail Activity For Availability";
+    ViewBag.PageHeader = "Mail Activity For Availability";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     //string[] TemplateName = new string[] { };
@@ -94,12 +94,16 @@
                                                     <th>Mail Body</th>
                                                     <th>Sent On</th>
                                                     <th>Sent By</th>
-                                                    <th>Opened By</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Activity</th>
                                                     <th>Call</th>
                                                     <th>Mobile Number</th>
                                                     <th>Company Name</th>
                                                     <th>Resume</th>
                                                     <th>Video Confirmation</th>
+                                                    <th>Red Marker</th>
+                                                    <th>Total Interviews</th>
+                                                    <th>Action</th>
                                                     
 
                                                 </tr>
@@ -110,12 +114,17 @@
                                                     <th>Mail Body</th>
                                                     <th>Sent On</th>
                                                     <th>Sent By</th>
-                                                    <th>Opened By</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Activity</th>
                                                     <th>Call</th>
                                                     <th>Mobile Number</th>
                                                     <th>Company Name</th>
                                                     <th>Resume</th>
                                                     <th>Video Confirmation</th>
+                                                    <th>Red Marker</th>
+                                                    <th>Total Interviews</th>
+
+                                                    <th>Action</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -131,7 +140,7 @@
                                                         {
                                                             var first = firstValue.Value;
                                                             var sameGroupOfMails = workingModel.Where(x => Convert.ToInt32((x.CreatedAt - first).TotalMinutes) <= 2 && Convert.ToInt32((x.CreatedAt - first).TotalMinutes) >= -1).ToList();
-                                                            var subModel = sameGroupOfMails.Select(x => new { MailSubject = x.MailSubject, MailBody = x.MailBody, SentBy = x.SentBy, email = x.email, MobileNumber = x.MobileNumber, RecipientName = x.RecipientName, ResumeLink =  x.ResumeLink, CompanyName = x.CompanyName, VideoConfirmation = x.VideoConfirmation}).Distinct().ToList();
+                                                            var subModel = sameGroupOfMails.Select(x => new { MailSubject = x.MailSubject, MailBody = x.MailBody, SentBy = x.SentBy, email = x.email, MobileNumber = x.MobileNumber, RecipientName = x.RecipientName, ResumeLink = x.ResumeLink, CompanyName = x.CompanyName, x.RedMarker, x.TotalInterviews, x.interviewer, VideoConfirmation = x.VideoConfirmation, eventType = x.eventType }).Distinct().ToList();
                                                             int rowSpan = subModel.Count();
                                                             int maxCount = rowSpan - 1;
                                                             for (int i = 0; i <= maxCount; i++)
@@ -174,7 +183,26 @@
                                                                         <td rowspan="@rowSpan" title="@subModel[i].SentBy">@subModel[i].SentBy</td>
 
                                                                     }
-                                                                    <td title="@subModel[i].email">@subModel[i].email</td>
+                                                                  @*  <td title="@subModel[i].email">@subModel[i].email</td>*@
+
+                                                                    @if (!string.IsNullOrWhiteSpace(@subModel[i].email)){
+
+                                                                        @if (@subModel[i].email.Length > 20)
+                                                                        {
+                                                                            <td  title="@subModel[i].email">@subModel[i].email.Substring(0,18) ....</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td >@subModel[i].email</td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+                                                                    <td>
+                                                                        @subModel[i].eventType
+                                                                    </td>
 
                                                                     <td>
                                                                         @if (subModel[i].MobileNumber != null && subModel[i].MobileNumber != string.Empty)
@@ -197,14 +225,14 @@
                                                                     {
                                                                         <td>
 
-                                                                            @if (subModel[i].CompanyName.Length > 20)
+                                                                            @if (subModel[i].CompanyName.Length > 17)
                                                                             {
                                                                                 <div class="article">
                                                                                     <p style="margin-bottom:0px;">
-                                                                                        @subModel[i].CompanyName.Substring(0, 20)
+                                                                                        @subModel[i].CompanyName.Substring(0, 17)
                                                                                     </p>
                                                                                     <p class="moretext_@i moretext">
-                                                                                        @subModel[i].CompanyName.Substring(20, @subModel[i].CompanyName.Length - 20)
+                                                                                        @subModel[i].CompanyName.Substring(17, @subModel[i].CompanyName.Length - 17)
                                                                                     </p>
                                                                                 </div>
                                                                                 <a onclick="moreless('@i')" class="moreless-button" value="Readmore" id="read_@i" href="#">Read more</a>
@@ -226,33 +254,57 @@
                                                                         <td>
                                                                         </td>
                                                                     }
-                                                                    @if (subModel[i].VideoConfirmation.HasValue)
-                                                                    {
-                                                                        @if (subModel[i].VideoConfirmation == 1)
-                                                                        {
-                                                                            <td>Yes</td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td>No</td>
-                                                                        }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <td>No Response</td>
-                                                                    }
+                                                              
                                                                     @if (subModel[i].ResumeLink != null && subModel[i].ResumeLink != "")
                                                                     {
                                                                         <td>
 
-                                                                            <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Resume" href=@subModel[i].ResumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
+                                                                            <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;padding:0px;" id="resumeId" target="_blank" title="Resume" href=@subModel[i].ResumeLink><img style="position:relative;left:-5px;width:17px" src="/img/resume-icon.png" width="21"><span style="font-size:13px;">Resume</span></a>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
                                                                         <td>No Resume</td>
                                                                     }
+                                                                    @if (subModel[i].VideoConfirmation.HasValue)
+                                                                    {
+                                                                        @if (subModel[i].VideoConfirmation == 1)
+                                                                        {
+                                                                            <td class="text-center">Yes</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="text-center">No</td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td class="text-center">No Response</td>
+                                                                    }
 
+
+                                                                   
+                                                                        @if (subModel[i].interviewer != null || subModel[i].interviewer != "")
+                                                                        {
+                                                                        <td style="color:red;text-align:center"><d onclick="InsightsDetails('@subModel[i].interviewer')" style="cursor:pointer">@subModel[i].RedMarker</d></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <td style="color:red;text-align:center">@subModel[i].RedMarker</td>
+                                                                        }
+                                                                                          <td class="text-center">
+                                                <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">@subModel[i].TotalInterviews</span>
+                                            </td>
+                                                                        <td>
+                                                                        @if (!string.IsNullOrWhiteSpace(@subModel[i].interviewer))
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                                    <span onclick="javascript:SuspiciousTypeDetails('@subModel[i].interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                        </td>
                                                                 </tr>
 
                                                             }
@@ -285,6 +337,9 @@
                 </div>
 
                     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+                    @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+                    @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+
 
 
             </div>
@@ -297,6 +352,25 @@
 
 </div>
 
+
+<div id="interviewerFlagDetailsModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+            </div>
+            <button onclick="closeinterviewerFlagDetailsModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="FlagDetailsTablebody" style="overflow:auto;max-height:30vw">
+            </div>
+        </div>
+    </div>
+</div>
 <script src="~/js/common.js"></script>
 <script src="~/js/TwilioCallMaker.js"></script>
 
@@ -311,7 +385,6 @@
     });
 
     function applyDataTable() {
-        debugger;
         $('#mailsTable').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
@@ -389,6 +462,27 @@
         }, 2000);
     };
     //// script for loader ends here
+</script>
+
+
+<script>
+    function closeinterviewerFlagDetailsModal() {
+        var modal = document.getElementById("interviewerFlagDetailsModal");
+        modal.style.display = "none";
+    }
+    function OpenInterviewerFlagDetails(Emailid) {
+        $.ajax({
+            url: '/Interviewer/FetchInterviewerFlagDetails',
+            data: { 'InterviewerEmailid': Emailid },
+            success: function (data) {
+                var modal = document.getElementById("interviewerFlagDetailsModal");
+                modal.style.display = "block";
+                $('#FlagDetailsTablebody').html('');
+                $('#FlagDetailsTablebody').html(data);
+            }
+        });
+    }
+
 </script>
 
 

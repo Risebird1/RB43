@@ -231,8 +231,8 @@
 .int-heading {
     background-image: url(../../img/person-circle-outline-custom.svg);
     background-repeat: no-repeat;
-    background-position: 1px 5px;
-    background-size: 7%;
+    background-position: 1px 7px;
+    background-size: 6%;
     padding: 10px 20px 10px 38px;
     font-size: 16px;
 }
@@ -240,8 +240,8 @@
 .skill-heading {
     background-image: url(../../img/user-gear-icon.svg);
     background-repeat: no-repeat;
-    background-position: -1px 5px;
-    background-size: 30%;
+    background-position: 6px 5px;
+    background-size: 27%;
     padding: 10px 20px 10px 38px;
     font-size: 16px;
 }
@@ -249,8 +249,8 @@
 .question-heading {
     background-image: url(../../img/question-icon.svg);
     background-repeat: no-repeat;
-    background-position: 0px 5px;
-    background-size: 14%;
+    background-position: 0px 10px;
+    background-size: 13%;
     padding: 10px 20px 10px 38px;
     font-size: 16px;
 }

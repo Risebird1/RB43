@@ -23,6 +23,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using static iTextSharp.text.pdf.AcroFields;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -1191,8 +1192,8 @@ namespace Risebird.Web.Controllers
                         }
 
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.QCStatusStatusDesc = x.QCStatus.HasValue ? ((QCStatus)x.QCStatus).GetDescription() : string.Empty; return x; }).ToList();
-                         modelList = modelList.OrderBy(x => x.interviewDate).ToList();
-                        
+                        modelList = modelList.OrderBy(x => x.interviewDate).ToList();
+
                         return View(modelList);
                     }
                     else
@@ -1588,13 +1589,16 @@ namespace Risebird.Web.Controllers
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
                         ViewBag.PaymentSLAConfirmation = model.PaymentSLAConfirmation;
+                        ViewBag.InterviewerRedMarkerReport = model.RedmarkerAcknowledge;
                         if (model.VideoConfirmation == 0)
                         {
                             ViewBag.VideoConfirmationPopup = true;
+
                         }
                         else
                         {
                             ViewBag.VideoConfirmationPopup = false;
+
                         }
                         //Boradcastmessage
                         return View(model);
@@ -2049,7 +2053,7 @@ namespace Risebird.Web.Controllers
 
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-               // int interviewerProfileid = InterviewerProfileId;
+                // int interviewerProfileid = InterviewerProfileId;
                 var data = await _dashboardService.UndoSuspiciousInterviewerService(UserId);
                 if (data == true)
                 {
@@ -2067,6 +2071,130 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> ApprovedRedoInterviews(int InterviewId)
+        {
+            try
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var modifyDate = DateTime.Now;
+                var modifyBy = emailId;
+                var data = await _dashboardService.ApprovedRedoInterviewsService(InterviewId, modifyBy, modifyDate);
+                if (data == true)
+                {
+                    return Json("Approved Redo Interview has been marked successfully");
+                }
+                else
+                {
+                    return Json("Failed to mark whether approved Redo Interview.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> RedoRequest()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
+                    {
+                        var model = await _dashboardService.GetRedoRequestService();
+
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> HighRiskInterviewers()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
+                    {
+                        var model = await _dashboardService.GetHighRiskInterviewersService();
+
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> MoveToUnassign(int meetingId)
+        {
+            try
+            {
+                    var data=    await _meetingRespository.UnassignYourself(meetingId);
+                if (data == true)
+                {
+                    return Json("Move to Unassign Successfully");
+                }
+            
+         else
+            {
+                return Json("Fail to marked Move To Unassign, Try again after sometime.");
+            }
+             }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+
     }
 
 }

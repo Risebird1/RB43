@@ -23,5 +23,8 @@ namespace Risebird.Entities.ViewModel
         public string CompanyName { get; set; }
         public string ResumeLink { get; set; }
         public int? VideoConfirmation { get; set; }
+        public int RedMarker { get; set; }
+		public string interviewer { get; set; }
+        public int TotalInterviews { get; set; }
     }
 }

@@ -39,6 +39,8 @@ namespace Risebird.Entities.ViewModel
         public string JDTitle { get; set; }
         public string Interviewduration { get; set; }
         public int? VideoConfirmation { get; set; }
+        public int RedMarker { get; set; }
+        public string Source { get; set; }
     }
     public class AssessmentIRFListVM
     {
