@@ -849,16 +849,32 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CandidateFeedbackForm()
+        public async Task<IActionResult> CandidateFeedbackForm(int id)
         {
          var model = new PaymentSLAVM();
+            model.Interviewid = id;
             await SetInitialValue(model);
 
             return View(model);
 
         }
+        [HttpPost]
+        public async Task<IActionResult> CandidateFeedbackForm(PaymentSLAVM model)
+        {
+            try
+            {
+             
+                await _surveyService.CandidateFeedbackFormDetailsService(model);
+                await SetInitialValue(model);
+                return View(model);
+            }
+            catch ( Exception ex){
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
 
-        public async Task SetInitialValue(PaymentSLAVM model)
+            public async Task SetInitialValue(PaymentSLAVM model)
         {
             if (string.IsNullOrEmpty(model.Inaccuratedecisionmaking))
             {

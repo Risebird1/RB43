@@ -58,6 +58,7 @@ namespace Risebird.Entities.ViewModel
         public string UnethicalPractices { get; set; }
         [Display(Name = "Poor Communication Skills")]
         public string PoorCommunicationSkills { get; set; }
+        public int Rating { get; set; }
     }
     public class PaymentSlabsVM
     {

@@ -1,5 +1,4 @@
 ﻿
-
 @model Risebird.Entities.ViewModel.PaymentSLAVM
 @{
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
@@ -36,11 +35,13 @@
     <div class="container">
        <div class="col-md-12">
            <div class="feedbackcontainer">
-               
+                <form action="/Survey/CandidateFeedbackForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm" />
                 <div class="username">
                     <h3 style="font-size:18px;margin:0px;line-height:30px;font-weight:bold;color:#000">Rate your interviewer</h3>
     </div>
+                @Html.HiddenFor(m => m.Rating)
      <div class="rating">
+                    
                     <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
                     <label for="Q1_5" class="star"></label>
                     <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeQuestion1(4)" />
@@ -51,12 +52,12 @@
                     <label for="Q1_2" class="star"></label>
                     <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
                     <label for="Q1_1" class="star"></label>
-                     
+                    <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
                 </div>
                    <hr class="divider"/>
                    <h4 style="color:#bfbaba;line-height:30px;">What went wrong?</h4>
 
-                  <form action="/Interview/GetPaymentSlaDetails" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm"/>
+@* <form action="/Survey/CandidateFeedbackForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm"/> *@
                     @Html.HiddenFor(m => m.Interviewid)
                     @Html.HiddenFor(m => m.Interviewer)
                     @Html.HiddenFor(m => m.Isedit)
@@ -623,22 +624,13 @@
 
                                 </button>
                             <div class="submit-wrapper">
-                                <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="formsubmit()" />
-                            </div>
-                        
-                        
-                      
-                            
-
-                          
+                                <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
                             </div>
 
-
+                            </div>
 
                         </div>
                         </div>
-          
-       
 
   </div>
            </div>
@@ -681,9 +673,6 @@
     });
 </script>
 
-
-
-
 <script>
     $(".accordion-heading a").on("click", function () {
         $($(this).data("target")).addClass("page--active");
@@ -694,6 +683,19 @@
 
     });
 
+</script>
+<script>
+    function AddCandidateFeedbackForm()
+    { 
+        $('#reportForm').submit();
+    }
+
+    function ChangeQuestion1(id) {
+        debugger;
+        alert(id);
+      var dd=  $("#Rating").val(id);
+        alert(dd);
+    }
 </script>
 
 
