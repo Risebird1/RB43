@@ -77,7 +77,11 @@ namespace Risebird.MicroService
                             candidate.Name = documentData.data.name.raw;
                             if (documentData.data.emails != null && documentData.data.emails.Count() > 0)
                             {
-                                candidate.EmailId = documentData.data.emails[0];
+                                candidate.EmailId = documentData.data.emails[0].Trim();
+                                if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
+                                {
+                                    candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
+                                }
 
                             }
                             else

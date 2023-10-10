@@ -911,7 +911,6 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         private async Task SetAddIRFProperties(IRFVm model)
         {
-            var skills = await _irfRepository.GetSkills();
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             var interviewers = new List<Interviewer>();
             if (string.IsNullOrEmpty(model.AssessmentGroupId))
@@ -950,12 +949,13 @@ namespace Risebird.Web.Controllers
             }
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
             ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
-            var Skillset = skills;
-            if (Skillset != null)
-            {
-                Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
-            }
-            ViewBag.Skill = new SelectList(Skillset, "id", "Name");
+
+            var Skillset = await _irfRepository.GetSkills();
+            //if (Skillset != null)
+            //{
+            //    Skillset = Skillset.OrderBy(x => x.Name.Trim()).ToList();
+            //}
+            ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
             //ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
             ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(clients.FirstOrDefault().id), "id", "EmailId");
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
@@ -1018,9 +1018,10 @@ namespace Risebird.Web.Controllers
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName)
         {
             var dto = new AvailabilityCheckDTO{ id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName };
-            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
-            //var path = $"http://localhost:7169/api/UploadAndVerifyCandidateImage";
+            //var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
+            var path = $"http://localhost:7071/api/CheckIRFAvailability";
             var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
+            functionKey = string.Empty;
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
         }
 
@@ -6601,7 +6602,7 @@ namespace Risebird.Web.Controllers
                                     TO = item.EmailId,
                                     Subject = "Current Availability (2 days) check for  " + item.BasicSkill + " Risebird Interviews"
                                 };
-                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), item.FlatRate, dropMyProfileButton + "&rsc=" + source, item.BasicSkill, irfId);
+                                var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), item.FlatRate, dropMyProfileButton + "&rsc=" + source, item.BasicSkill, irfId, item.CompanyTypeDesc, item.CountryTypeDesc, item.PlanTypeDesc, item.SelectedDurationMin, item.RejectedDurationMin);
                                 
                                 source = "wp";
 
