@@ -7217,9 +7217,14 @@ ul.ks-cboxtags {
     padding: 0px 12px;
     cursor: pointer;
     font-size: 14px;
-    line-height:35px;
+    line-height: 35px;
+    border: 2px solid rgb(115 111 111 / 30%);
+    color: #999292;
 }
-.rating {
+    .feedbackcontainer .label-name {
+        color: #000!important;
+    }
+    .rating {
     /*border: solid 1px #ccc;*/
     border: solid 1px white;
     display: flex;
