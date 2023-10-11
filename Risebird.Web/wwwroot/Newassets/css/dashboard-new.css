@@ -7174,7 +7174,9 @@ ul.ks-cboxtags {
 
 .page__close {
     display: flex;
-    cursor: pointer;
+    cursor: pointer;position:relative;
+    right:-25px;
+
 }
 
 .page__body {
