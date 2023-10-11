@@ -11,6 +11,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -4360,11 +4361,11 @@ namespace Risebird.Web.Controllers
                             await _clientService.AddUpdateClientCommentsForReport(model);
                             var data = new TransInterviewersReliabilityScoresVm();
                             data.InterviewMeetingId = model.InterviewId;
-                            if (model.Rating <=4)
+                            if (model.Rating <= 4)
                             {
                                 data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.CustomerRating4OrLess;
                             }
-                           else
+                            else
                             {
                                 data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.CustomerRating5;
                             }
@@ -4752,6 +4753,25 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
+        #region Money Protection wellet
+        public async Task<IActionResult> MoneyProtection(string actionstatus)
+        {
+            ViewBag.Type = "Pending";
+            string type = "Pending";
+            if (actionstatus == "Completed")
+            {
+                ViewBag.Type = "Completed";
+                type = "Completed";
+            }
+            var model = await _clientService.GetMoneyProtectionList(type);
+            return View(model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> MoneyProtectionDetailsView(string type, int Clientid)
+        {
+            var model = await _clientService.GetMoneyProtectionDetails(type, Clientid);
+            return PartialView(model);
+        }
+        #endregion
     }
 }

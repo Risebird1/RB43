@@ -31,6 +31,7 @@ namespace Risebird.Entities.ViewModel
         public int Redflags { get; set; }
         public int PaymentComplianceCount { get; set; }
         public DateTime CreatedOn { get; set; }
+        public DateTime Joinedon { get; set; }
 
         [Display(Name = "Payment Deduction")]
         public int PaymentDeduction { get; set; }
