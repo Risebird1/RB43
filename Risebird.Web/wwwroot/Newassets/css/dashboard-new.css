@@ -7212,10 +7212,10 @@ ul.ks-cboxtags {
     display: flex;
 }
 .feedbackcontainer ul.ks-cboxtags li label {
-    padding: 6px 12px;
+    padding: 0px 12px;
     cursor: pointer;
     font-size: 14px;
-    line-height:30px;
+    line-height:35px;
 }
 .rating {
     /*border: solid 1px #ccc;*/
