@@ -7270,8 +7270,8 @@ ul.ks-cboxtags {
     clear: both;
     float: left;
 }
-.qc-form .card label {
-    color: #9b9797 !important;
+.qc-form .control-label {
+    color: #858181!important;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
