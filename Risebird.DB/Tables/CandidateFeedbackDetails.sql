@@ -25,7 +25,7 @@ BEGIN
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'ClientId')
+    WHERE Name IN (N'InterviewId')
       AND Object_ID = Object_ID(N'CandidateFeedbackDetails'))
 BEGIN
     ALTER TABLE CandidateFeedbackDetails

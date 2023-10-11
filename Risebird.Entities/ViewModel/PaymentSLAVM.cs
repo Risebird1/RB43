@@ -29,6 +29,8 @@ namespace Risebird.Entities.ViewModel
         public string uniqueid { get; set; }
         public bool QCStatus { get; set; }
         public int Redflags { get; set; }
+        public int PaymentComplianceCount { get; set; }
+        public DateTime CreatedOn { get; set; }
 
         [Display(Name = "Payment Deduction")]
         public int PaymentDeduction { get; set; }
@@ -59,6 +61,10 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Poor Communication Skills")]
         public string PoorCommunicationSkills { get; set; }
         public int Rating { get; set; }
+        public string ResumeLink { get; set; }
+        public int RedMarker { get; set; }
+        public string interviewer { get; set; }
+
     }
     public class PaymentSlabsVM
     {
