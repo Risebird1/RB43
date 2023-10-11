@@ -62,22 +62,22 @@ namespace Risebird.MicroService
                 var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(obj.AssessmentGroupId), obj.id);
                 var skills = await _irfService.GetTechSkillswithWeightage(obj.id);
 
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
+                sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
+                foreach (var item in skills)
+                {
+                    sb.Append("<tr><td style='border: 1px solid black'>");
+                    sb.Append(item.SkillName);
+                    sb.Append("</td>");
+                    sb.Append("<td style='border: 1px solid black'>");
+                    sb.Append(item.Weightage);
+                    sb.Append("</td></tr>");
+                }
+                sb.Append("</table>");
+
                 foreach (var interviewer in interviewers)
                 {
-                    
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("<table style='width: 100%; text-align: center;border-collapse:collapse'>");
-                    sb.Append("<tr><td style='border: 1px solid black'>Skills</td><td style='border: 1px solid black'>Weightage</td></tr>");
-                    foreach (var item in skills)
-                    {
-                        sb.Append("<tr><td style='border: 1px solid black'>");
-                        sb.Append(item.SkillName);
-                        sb.Append("</td>");
-                        sb.Append("<td style='border: 1px solid black'>");
-                        sb.Append(item.Weightage);
-                        sb.Append("</td></tr>");
-                    }
-                    sb.Append("</table>");
                     try
                     {
                         if (!string.IsNullOrEmpty(interviewer.EmailId))
@@ -94,7 +94,7 @@ namespace Risebird.MicroService
                                 Subject = "Risebird: Availability check for Skill Channel " + obj.IRFId + " Interviews"
                             };
                             
-                            var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), obj.FlatRate, dropMyProfileButton + "&rsc=" + source, obj.PrimarySkillInvite, obj.id);//item.PerSuccessRate
+                            var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), obj.FlatRate, dropMyProfileButton + "&rsc=" + source, obj.PrimarySkillInvite, obj.id, interviewer.CompanyTypeDesc, interviewer.CountryTypeDesc, interviewer.PlanTypeDesc, interviewer.SelectedDurationMin, interviewer.RejectedDurationMin);//item.PerSuccessRate
 
                             source = "wp";
 

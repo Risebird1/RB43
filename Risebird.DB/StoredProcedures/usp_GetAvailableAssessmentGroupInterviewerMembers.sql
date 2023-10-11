@@ -25,10 +25,46 @@ Begin
 	set @basicSkill = (select JDTiltle from IRF where id = @irfId)
 	declare @lastSentOn datetime = (select SendIntervieweravailbilityOn from IRF where id = @irfId)
 	declare @isNewSkillChannel bit = (select IsNewSkillChannel from IRF where id = @irfId)
-	--declare @companyType int = (select CompanyType from IRF where id = @irfId)
-	--declare @planType int = (select Heuristicsscore from IRF where id = @irfId)
-	--declare @countryType int = (select JobCountry from IRF where id = @irfId)
+	declare @companyType int = (select CompanyType from IRF where id = @irfId)
+	declare @planType int = (select Heuristicsscore from IRF where id = @irfId)
+	declare @countryType int = (select JobCountry from IRF where id = @irfId)
+	declare @companyTypeDesc varchar(200), @planTypeDesc varchar(75), @countryTypeDesc varchar(75)
+	declare @selectedDuration int, @rejectedDuration int
 
+	set  @selectedDuration = (select DurationSelectedMin from PlanTypeChargesMaster where CompanyType = @companyType and PlanTypeEnumValue = @planType and CountryType = @countryType)
+	set  @rejectedDuration = (select DurationRejectedMin from PlanTypeChargesMaster where CompanyType = @companyType and PlanTypeEnumValue = @planType and CountryType = @countryType)
+
+
+	if(@companyType = 1)
+	Begin
+		set @companyTypeDesc = 'Product'
+	End
+	else if(@companyType = 2)
+	begin
+		set @companyTypeDesc = 'Service'
+	End
+
+	if(@countryType = 1)
+	Begin
+		set @countryTypeDesc = 'Offshore'
+	End
+	else if(@countryType = 2)
+	begin
+		set @countryTypeDesc = 'Onsite'
+	End
+
+	if(@planType = 2)
+	Begin
+		set @planTypeDesc = 'Standard'
+	End
+	else if(@planType = 4)
+	begin
+		set @planTypeDesc = 'Pro'
+	End
+	else if (@planType = 5)
+	begin
+		set @planTypeDesc = 'Advanced'
+	End
 	--declare  @calculatedFlatRate int = (select Rate from PlanTypeChargesMaster where CompanyType = @companyType and PlanTypeEnumValue = @planType and CountryType = @countryType)
 
 	if(@isNewSkillChannel = 1)
@@ -36,7 +72,8 @@ Begin
 		;With CTE AS(      
 		Select UserId, value from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',') where ipr.Isavailable in (1,2,3) or ipr.Isavailable is null)--where ipr.Isavailable = 1, global availability check removed for a while   
 		Select distinct ul.EmailId, ul.uniqueid, (ul.FirstName+' '+ul.LastName) as InterviewerName, IsNull(DATEDIFF(SECOND, @lastSentOn, @timeNow), 0) as AvailbilityHour, @basicSkill as BasicSkill,
-		@flatRate  as FlatRate
+		@flatRate  as FlatRate, @countryTypeDesc as CountryTypeDesc, @companyTypeDesc as CompanyTypeDesc,
+		@planTypeDesc as PlanTypeDesc, @selectedDuration as SelectedDurationMin, @rejectedDuration as RejectedDurationMin
 		From CTE join Userlist ul on CTE.Userid=ul.id       
 		where CTE.value = @assessmentGroupId and ul.IsActive=1 
 	End
