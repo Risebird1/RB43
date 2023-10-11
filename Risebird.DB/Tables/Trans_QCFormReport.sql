@@ -32,7 +32,8 @@ CREATE TABLE [dbo].[Trans_QCFormReport](
 	[ModifiedBy] [int] NULL,
 	[InterviewerAction] [bit] NULL,
 	[VideoEnable] [bit] NULL,
-	[Payment] [int] NULL
+	[Payment] [int] NULL,
+	[QCReward] [bit] NULL
  CONSTRAINT [PK_Trans_QCFormReport] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -86,6 +87,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Trans_QCFormReport
     Add IsReportBlocked bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'QCReward')
+      AND Object_ID = Object_ID(N'Trans_QCFormReport'))
+BEGIN
+    ALTER TABLE Trans_QCFormReport
+    Add QCReward bit
 END
 END
 GO

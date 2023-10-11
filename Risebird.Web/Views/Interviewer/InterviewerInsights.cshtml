@@ -84,6 +84,22 @@
         }
     </p>
 </div>
+
+<div class="col-md-4 pull-left">
+    <p class="clearfix">
+        <span class="pull-left" style="margin-right:10px;"><strong>Resume Link:</strong></span>
+        @if (Model.ResumeLink != null && Model.ResumeLink != "")
+        {
+                <span class="pull-left" style="color:brown;font-size:12px;"> <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Resume</a></span>  
+        }
+        else
+        {
+            <span class="pull-left" style="color:brown;font-size:12px;"> No Resume</span>
+        }
+        
+    </p>
+ </div>
+
 <div class="col-md-12 pull-left">
     <div id="tableID" class="second">
         <table class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
@@ -157,8 +173,8 @@
                 <thead>
                     <tr>
                         <th class="text-center">Reliability Score</th>
-                        <th class="text-center">Payment SLA</th>
-                        <th class="text-center">Penalty Count</th>
+                        <th class="text-center">Payment Deduction</th>
+                        <th class="text-center">Late Report Count</th>
                         <th class="text-center">Candidate Rating</th>
                         <th class="text-center">Client  Rating</th>
                         <th class="text-center">Redo requests</th>
@@ -169,15 +185,15 @@
                     <td class="text-center"> <span onclick="ReliabilityScoreDetails('@Model.Emailid')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.ReliabilityScore</span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.PaymentSLA</span></td>
                     <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Penalty</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CandidateRating</span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.CustomerRating</span></td>
+                    <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Candidate Rating Details')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.CandidateRating</span></td>
+                    <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Client Rating Details')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.CustomerRating</span></td>
                         @if (Model.Redorequests > 0)
                         {
-                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
+                        <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Redo Details')" style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.Redorequests</span></td>
                         }
                         else
                         {
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
+                        <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Redo Details')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Redorequests</span></td>
                         }
                         @if ((Model.RedFlags * 100 / Model.CompletedInterviews) > 10)
                         {
@@ -194,9 +210,9 @@
                         <th class="text-center">Late CandidateNoshow</th>
                         <th class="text-center">Unassigned Interviews</th>
                         <th class="text-center">Suspicious</th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
-                        <th class="text-center"></th>
+                        <th class="text-center">Less Questions</th>
+                        <th class="text-center">Reject small Comment</th>
+                        <th class="text-center">Select small Comment</th>
                     </tr>
                 </thead>
                 <tr>
@@ -219,15 +235,36 @@
                         }
                         @if (Model.SuspiciousCount > 0)
                         {
-                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span></td>
+                        <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Suspicious Details')" style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center;cursor:pointer">@Model.SuspiciousCount</span></td>
                         }
                         else
                         {
-                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span></td>
+                        <td class="text-center"><span onclick="InsightsDetailsMarkersView('@Model.Emailid','Suspicious Details')" style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SuspiciousCount</span></td>
                         }
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
-                    <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center"></span></td>
+                        @if (Model.LessQuestions > 0)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.LessQuestions</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.LessQuestions</span></td>
+                        }
+                        @if (Model.RejectedComment > 0)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedComment</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.RejectedComment</span></td>
+                        }
+                        @if (Model.SelectedComment > 0)
+                        {
+                        <td class="text-center"><span style="color:red;width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedComment</span></td>
+                        }
+                        else
+                        {
+                        <td class="text-center"><span style="width: 30px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.SelectedComment</span></td>
+                        }
                 </tr>
                 }
             </tbody>

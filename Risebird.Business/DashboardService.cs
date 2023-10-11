@@ -19,12 +19,14 @@ namespace Risebird.Business
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRepository;
         private readonly IZoomHelper _zoomHelper;
-        public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRepository, IZoomHelper zoomHelper)
+        private readonly IMeetingRespository _meetingRespository;
+        public DashboardService(IDashboarRepository dashboardRespository, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRepository, IZoomHelper zoomHelper, IMeetingRespository meetingRespository)
         {
             _dashboardRespository = dashboardRespository;
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRepository = meetingRepository;
             _zoomHelper = zoomHelper;
+            _meetingRespository = meetingRespository;
         }
 
         public async Task<IEnumerable<Meeting>> GetDateWiseMeetings(DateTime date, string Emailid)
@@ -686,6 +688,60 @@ namespace Risebird.Business
             try
             {
                 await _dashboardRespository.UndoSuspiciousInterviewer(InterviewerProfileId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> ApprovedRedoInterviewsService(int InterviewId,string modifyBy,DateTime modifyDate)
+        {
+            try
+            {
+                await _dashboardRespository.ApprovedRedoIntervies(InterviewId,modifyBy,modifyDate);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<MeetingVM>> GetRedoRequestService()
+        {
+            try
+            {
+                return await _dashboardRespository.GetRedoRrquest();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<InterviewerRedmarkers>> GetHighRiskInterviewersService()
+        {
+            try
+            {
+                return await _dashboardRespository.FecthHighRiskInterviews();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> MoveToUnassignService(int meetingId)
+        {
+            try
+            {
+                await _meetingRespository.UnassignYourself(meetingId);
                 return true;
             }
             catch (Exception e)

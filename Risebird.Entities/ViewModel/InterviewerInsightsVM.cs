@@ -37,5 +37,38 @@ namespace Risebird.Entities.ViewModel
         public int JoinLateCandidateNoShow { get; set; }
         public int UnassignInterviews { get; set; }
         public int SuspiciousCount { get; set; }
+        public int SelectedComment { get; set; }
+        public int RejectedComment { get; set; }
+        public int LessQuestions { get; set; }
+        public string ResumeLink { get; set; }
+        public string uniqueid { get; set; }
+      
+    }
+    public class InterviewerInsightsMarkersDetailsVM
+    {
+        public string Comments { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? Createdon { get; set; }
+        public string MeetingStatus { get; set; }
+        public int id { get; set; }
+    }
+    public class InterviewerRedmarkers
+    {
+        public string EmailId { get; set; }
+        public string uniqueid { get; set; }
+        public int id { get; set; }
+        public string IRFId { get; set; }
+        public DateTime? interviewDate { get; set; }
+        public string interviewer { get; set; }
+        public int RedMarker { get; set; }
+        public string candidateName {  get; set; }
+        public string candidateEmail { get; set; }
+        public string ResumeLink { get; set; }
+        public string MobileNumber { get; set; }
+        public string CompanyName { get; set; }
+        public string ChannelOwner { get; set; }
+        public string PrimarySkill { get; set; }
+        public int meetingId { get; set; }
+        public bool RedmarkerAcknowledge { get; set; }
     }
 }

@@ -6299,6 +6299,9 @@ input[type="date"].form-control {
 .cancel {
     background: #eb5454;
 }
+.risk-int {
+    background: #b380ab;
+}
 .click-arrow {
     border-radius: 100%;
     width: 30px;
@@ -6965,7 +6968,9 @@ right:315px;
     font-weight: 600;
     margin: 13px 50px 0px 0px;
 }
-
+#PaymentSLAModel{
+    overflow:auto;
+}
 #PaymentSLAModel .modal-lg {
     max-width: 850px !important;
 }
@@ -6980,7 +6985,7 @@ right:315px;
 }
 
 #InterviewerInsightsModel .modal-lg {
-    max-width:850px !important;
+    max-width:1050px !important;
 }
 
 .accordion-group .accordion-body {
@@ -7063,6 +7068,7 @@ ul.ks-cboxtags {
     font-family: system-ui !important;
     font-size: 14px !important;
     font-weight: 600;
+    
 }
 
 .accordion-toggle:after {
@@ -7070,6 +7076,7 @@ ul.ks-cboxtags {
     content: "\f077";
     float: right;
     color: grey;
+    display: none;
 }
 
 .accordion-toggle.collapsed:after {

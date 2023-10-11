@@ -19,11 +19,18 @@ Create Procedure usp_AddRedoInterviewDetails
 @ModifiedBy varchar(200)
 AS
 BEGIN
+IF EXISTS(select * from RedoInterviews where interviewid=@interviewid)
+BEGIN
+Update RedoInterviews set  interviewid=@interviewid,CandidateFace=@CandidateFace,Inappropriate=@Inappropriate,RequiredDuration=@RequiredDuration,
+ActualDuration=@ActualDuration,HandsOfCoding=@HandsOfCoding,Comments=@Comments,RejectionComment=@RequiredDuration,ModifiedOn=GETDATE(),ModifiedBy=@ModifiedBy
+where interviewid=@interviewid
+END
+ELSE
+BEGIN
 Insert into RedoInterviews(interviewid,CandidateFace,Inappropriate,RequiredDuration,ActualDuration,HandsOfCoding,Comments,
 RejectionComment,Createdon,CreatedBy,ModifiedOn,ModifiedBy) values
 (@interviewid,@CandidateFace,@Inappropriate,@RequiredDuration,@ActualDuration,@HandsOfCoding,@Comments,
 null,Getdate(),@ModifiedBy,Getdate(),@ModifiedBy)
-
-Update InterviewMeetings set RedoInterview=1 where id=@interviewid  
+END 
 END
 Go

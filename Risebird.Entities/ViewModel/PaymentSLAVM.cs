@@ -60,6 +60,9 @@ namespace Risebird.Entities.ViewModel
         public string UnethicalPractices { get; set; }
         [Display(Name = "Poor Communication Skills")]
         public string PoorCommunicationSkills { get; set; }
+        public string ResumeLink { get; set; }
+        public int RedMarker { get; set; }
+        public string interviewer { get; set; }
         public int Rating { get; set; }
         public string ResumeLink { get; set; }
         public int RedMarker { get; set; }

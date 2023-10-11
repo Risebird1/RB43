@@ -65,9 +65,14 @@
                                                     <td>Candidate</td>
                                                     <td>Interviewer</td>
                                                     <td>Company Name</td>
+                                                    <td>Resume</td>
                                                     <td>Interviewer Call</td>
+                                                    <td>Red Marker</td>
                                                     <td>Payment Deduction</td>
+                                                    <td>Payment Compliance</td>
                                                     <td>Channel Owner</td>
+                                                    <td>Created By</td>
+                                                    <td>Created Date</td>
                                                     @if (ViewBag.actionstatus == "SLACompleted"){
                                                         <td>Status</td>
                                                     }
@@ -89,9 +94,14 @@
                                                     <td>Candidate</td>
                                                     <td>Interviewer</td>
                                                     <td>Company Name</td>
+                                                    <td>Resume</td>
                                                     <td>Interviewer Call</td>
+                                                    <td>Red Marker</td>
                                                     <td>Payment Deduction</td>
+                                                    <td>Payment Compliance</td>
                                                     <td>Channel Owner</td>
+                                                    <td>Created By</td>
+                                                    <td>Created Date</td>
                                                      @if (ViewBag.actionstatus == "SLACompleted"){
                                                         <td>Status</td>
                                                     }
@@ -118,7 +128,7 @@
                                                             <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFId" />
                                                         </td>
                                                         <td>@item.candidateEmail</td>
-                                                        <td>@item.Interviewer</td>
+                                                        <td>@item.interviewer</td>
                                                          @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                                                          {
                                                              @if (item.CompanyName.Length > 30)
@@ -134,6 +144,17 @@
                                                          {
                                                                 <td></td>
                                                          }
+                                                        @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                        {
+                                                            <td>
+
+                                                                <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;padding:0px;" id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink><img style="position:relative;left:-5px;width:17px" src="/img/resume-icon.png" width="21"><span style="font-size:13px;">Resume</span></a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Resume</td>
+                                                        }
                                                         <td class="text-center flex-w">
                                                             <span class="call-area">
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
@@ -142,8 +163,19 @@
                                                                 }
                                                             </span>@item.MobileNumber
                                                         </td>
+                                                        @if (item.interviewer != null || item.interviewer != "")
+                                                        {
+                                                            <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="color:red;text-align:center">@item.RedMarker</td>
+                                                        }
                                                         <td>@item.PaymentDeduction %</td>
+                                                        <td>@item.PaymentComplianceCount</td>
                                                         <td>@item.ChannelOwner</td>
+                                                        <td>@item.CreatedBy</td>
+                                                        <td>@item.CreatedOn</td>
                                                         @if (ViewBag.actionstatus == "SLACompleted")
                                                         {
                                                             if (item.isapproved==1)
@@ -174,11 +206,11 @@
                                                         @if (ViewBag.actionstatus != "SLACompleted")
                                                         {
                                                             <td>
-                                                                @if (!string.IsNullOrWhiteSpace(item.Interviewer))
+                                                                @if (!string.IsNullOrWhiteSpace(item.interviewer))
                                                                 {
                                                                     <span>
                                                                         <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
-                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.Interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
                                                                         </button>
                                                                     </span>
                                                                 }
@@ -263,6 +295,8 @@
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+
 <script src="~/js/TwilioCallMaker.js"></script>
 <script>
     function RefreshSearch() {

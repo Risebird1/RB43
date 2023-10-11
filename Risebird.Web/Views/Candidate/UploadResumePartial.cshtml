@@ -2,11 +2,15 @@
 
 <script>
 
-        function OpenUploadResumeModal(irfid, Irfname) {
+        function OpenUploadResumeModal(irfid, Irfname, type = null) {
             var modalBct = document.getElementById("uploadResumesModal");
             modalBct.style.display = "block";
             $('#IRFId').val(irfid);
             $('#IRFName').val(Irfname)
+            if(type != null && type.toLowerCase() == 'public')
+            {
+                document.getElementById('form_id').action = '/Candidate/UploadResumesPublicly';
+            }
         }
 
     function closeUploadResumeModal() {
@@ -30,7 +34,7 @@
             </button>
             <!--form-->
 
-            <form action="/Candidate/UploadResumes" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
+            <form action="/Candidate/UploadResumes" id="form_id" multiple enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" onsubmit="return CheckIfFileSelected()">
                 @Html.AntiForgeryToken()
                 <div class="upload_resume">
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
