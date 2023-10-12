@@ -4,6 +4,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -130,6 +131,34 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        public async Task<bool> CandidateFedbackForm(PaymentSLAVM model)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@CreatedOn",DateTime.Now);
+                parameters.Add("@Rating",model.Rating);
+                parameters.Add("@CandidateInteractionQuality", model.CandidateInteractionQuality);
+                parameters.Add("@LimitedHandoncoding", model.LimitedHandoncoding);
+                parameters.Add("@UnethicalPractices", model.UnethicalPractices);
+                parameters.Add("@TimeManagement", model.TimeManagement);
+                parameters.Add("@PoorCommunicationSkills", model.PoorCommunicationSkills);
+                parameters.Add("@WeakInfrastructure", model.WeakInfrastructure);
+                parameters.Add("@InterviewId", model.Interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_CandidateFeedbackDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

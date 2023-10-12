@@ -57,5 +57,6 @@ namespace Risebird.Repository.Interface
         Task<bool> ApprovedRedoIntervies(int InterviewId, string modifyBy, DateTime modifyDate);
         Task<IEnumerable<MeetingVM>> GetRedoRrquest();
         Task<IEnumerable<InterviewerRedmarkers>> FecthHighRiskInterviews();
+        Task<bool> AddRedoIntervies(int InterviewId, string Type);
     }
 }
