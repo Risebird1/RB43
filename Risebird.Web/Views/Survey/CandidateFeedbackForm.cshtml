@@ -31,18 +31,23 @@
 
 </head>
 <body>
+    <div id="thankMessage" style="display:none;">
+        Thank you for your feedback
+    </div>
    
     <div class="container">
+       
        <div class="col-md-12">
            <div class="feedbackcontainer">
                 <form action="/Survey/CandidateFeedbackForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm" />
+                <div id="containerHide">
                 <div class="username">
                     <h3 style="font-size:18px;margin:0px;line-height:30px;font-weight:bold;color:#000">Rate your interviewer</h3>
     </div>
                 @Html.HiddenFor(m => m.Rating)
      <div class="rating">
                     
-                    <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
+                    <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)"/>
                     <label for="Q1_5" class="star"></label>
                     <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeQuestion1(4)" />
                     <label for="Q1_4" class="star"></label>
@@ -54,10 +59,12 @@
                     <label for="Q1_1" class="star"></label>
                     <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
                 </div>
+                </div>
+                <div id="candidateFeedbackHide" style="display:none;">
                    <hr class="divider"/>
+                  
                    <h4 style="color:#bab8b8;line-height:30px;">What went wrong?</h4>
 
-@* <form action="/Survey/CandidateFeedbackForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm"/> *@
                     @Html.HiddenFor(m => m.Interviewid)
                     @Html.HiddenFor(m => m.Interviewer)
                     @Html.HiddenFor(m => m.Isedit)
@@ -608,14 +615,18 @@
                                                             }
                                                         </li>
                                                     </ul>
+                                                   
                                                 </div>
+                                               
                                             </div>
 
                                         </div>
                                     </div>
-
+                                    
                         </div>
+                                
                         </div>
+                        <div id="redoWrap">
                             <hr class="divider" style="border-color: #c8c4c447;height: auto;position:relative;top:-36px;" />
                             <h4 class="redo-text">
                                 <b>Too bad interviewer?</b>&nbsp;Please raise a interview redo request 
@@ -623,6 +634,7 @@
                                     Redo Interview
 
                                 </button>
+                                </div>
                             <div class="submit-wrapper">
                                 <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
                             </div>
@@ -631,7 +643,7 @@
 
                         </div>
                         </div>
-
+                </div>
   </div>
            </div>
        </div>
@@ -685,14 +697,61 @@
 
 </script>
 <script>
+     // $(document).ready(function () {
+     //     debugger;
+     // $("#candidateFeedbackHide").hide();
+     //    $("#thankMessage").hide();
+     // });
     function AddCandidateFeedbackForm()
     { 
-        $('#reportForm').submit();
+        var Rating = $("#Rating").val();
+        var CandidateInteractionQuality = $("#CandidateInteractionQuality").val();
+        var LimitedHandoncoding = $("#LimitedHandoncoding").val();
+        var WeakInfrastructure = $("#WeakInfrastructure").val();
+        var UnethicalPractices = $("#UnethicalPractices").val();
+        var PoorCommunicationSkills = $("#PoorCommunicationSkills").val();
+        var TimeManagement = $("#TimeManagement").val();
+        var Interviewid = $("#Interviewid").val();
+        $.ajax({
+            type: "POST",
+            data: { Rating: Rating, 
+                TimeManagement: TimeManagement,
+                CandidateInteractionQuality: CandidateInteractionQuality,
+                LimitedHandoncoding: LimitedHandoncoding,
+                WeakInfrastructure:WeakInfrastructure,
+                UnethicalPractices:UnethicalPractices,
+                PoorCommunicationSkills: PoorCommunicationSkills,
+                Interviewid:Interviewid
+            },
+            url: "/Survey/CandidateFeedbackForm",
+            success: function () {
+
+                $("#thankMessage").show();
+                $("#candidateFeedbackHide").hide();
+                $("#containerHide").hide();
+            }
+        });
     }
 
     function ChangeQuestion1(id)
     {
-     $("#Rating").val(id);
+   var  Rating= $("#Rating").val(id);
+        if (Rating.val() == 5) {
+           document.getElementById("containerHide").style.display = "none";
+            AddCandidateFeedbackForm();
+            $("#candidateFeedbackHide").hide();
+           
+        }
+        else if ( Rating.val() == 4)
+        {
+            $("#candidateFeedbackHide").show();
+        }
+        else 
+        {
+            $("#candidateFeedbackHide").show();
+            $("#redoWrap").hide();
+        }
+        
     }
 </script>
 
