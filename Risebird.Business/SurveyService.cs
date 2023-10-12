@@ -85,5 +85,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> CandidateFeedbackFormDetailsService(PaymentSLAVM model)
+        {
+            try
+            {
+                return await _surveyRepository.CandidateFedbackForm(model);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
