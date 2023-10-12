@@ -841,11 +841,90 @@ namespace Risebird.Web.Controllers
                 return View(result);
             }
             catch (Exception ex)
-            {
+            { 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Error, ex);
                 var result = new List<LogData>();
                 return View(result);
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CandidateFeedbackForm(int id)
+        {
+         var model = new PaymentSLAVM();
+            model.Interviewid = id;
+            await SetInitialValue(model);
+
+            return View(model);
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> CandidateFeedbackForm(PaymentSLAVM model)
+        {
+            try
+            {
+             
+                await _surveyService.CandidateFeedbackFormDetailsService(model);
+                await SetInitialValue(model);
+                return View(model);
+            }
+            catch ( Exception ex){
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+            public async Task SetInitialValue(PaymentSLAVM model)
+        {
+            if (string.IsNullOrEmpty(model.Inaccuratedecisionmaking))
+            {
+                model.Inaccuratedecisionmaking = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.TimeManagement))
+            {
+                model.TimeManagement = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.QuestionsRelevance))
+            {
+                model.QuestionsRelevance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.ScoreRubricIgnorance))
+            {
+                model.ScoreRubricIgnorance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.PoorFeedbackComments))
+            {
+                model.PoorFeedbackComments = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.CandidateInteractionQuality))
+            {
+                model.CandidateInteractionQuality = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.LimitedHandoncoding))
+            {
+                model.LimitedHandoncoding = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.WrongStatusUpdates))
+            {
+                model.WrongStatusUpdates = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.WeakInfrastructure))
+            {
+                model.WeakInfrastructure = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.ProctoringIgnorance))
+            {
+                model.ProctoringIgnorance = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.UnethicalPractices))
+            {
+                model.UnethicalPractices = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.PoorCommunicationSkills))
+            {
+                model.PoorCommunicationSkills = string.Empty;
+            }
+        }
     }
+
 }
