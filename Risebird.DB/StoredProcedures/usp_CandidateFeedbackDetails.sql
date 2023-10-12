@@ -23,9 +23,19 @@ CREATE PROCEDURE [dbo].[usp_CandidateFeedbackDetails]
 @InterviewId int
 AS
 Begin
+if Exists(Select * from CandidateFeedbackDetails where InterviewId=@InterviewId)
+Begin
+Update CandidateFeedbackDetails set Rating=@Rating,CandidateInteractionQuality=@CandidateInteractionQuality,LimitedHandoncoding=@LimitedHandoncoding, 
+WeakInfrastructure=@WeakInfrastructure,UnethicalPractices=@UnethicalPractices,TimeManagement=@TimeManagement,PoorCommunicationSkills=@PoorCommunicationSkills,
+CreatedOn=@CreatedOn
+Where InterviewId=@InterviewId
+End
+Else
+Begin
 Insert into CandidateFeedbackDetails(Rating,CandidateInteractionQuality,LimitedHandoncoding,WeakInfrastructure,UnethicalPractices,
 TimeManagement,PoorCommunicationSkills,CreatedOn,InterviewId)values(@Rating,@CandidateInteractionQuality,@LimitedHandoncoding,@WeakInfrastructure,@UnethicalPractices,
 @TimeManagement,@PoorCommunicationSkills,@CreatedOn,@InterviewId)
+End
 End
 
 GO

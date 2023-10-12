@@ -17,7 +17,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>Survey - Risebird</title>
     <style>
-
+        #thankMessage{
+            display: table;
+            text-align: center;
+            height: 500px;
+            width: 100%;
+        }
         .card-title-space {
             margin: 20px 0px;
             float: right
@@ -26,23 +31,59 @@
         .mb10 {
             margin-bottom: 10px
         }
-     
+
+        .wrapper-1 {
+            height: initial;
+            max-width: 620px;
+            margin: 0 auto;
+            margin-top: 50px;
+            text-align: center;
+            height: 100%;
+            display: table-cell;
+            vertical-align: middle;
+        }
+        .wrapper-1 p {
+                margin: 0;
+                font-size: 1.3em;
+                line-height: 30px;
+                color: #aaa;
+                font-family: 'Source Sans Pro', sans-serif;
+}
+
+            .wrapper-1 h1 {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 4em;
+            letter-spacing: 3px;
+            color: #000;
+            font-weight:600;
+            margin: 0;
+            margin-bottom: 20px;
+        }
     </style>
 
 </head>
 <body>
-   
+
+    <div id="thankMessage" style="display:none;">
+        <div class="wrapper-1">
+            <h1>Thank you!</h1>
+            <p>We appreciate you taking the time to provide your feedback. </p>
+            <p>Your valuable feedback helps us <br/>to improve the process. </p>
+    </div>
+   </div>
     <div class="container">
+       
        <div class="col-md-12">
            <div class="feedbackcontainer">
                 <form action="/Survey/CandidateFeedbackForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm" />
+                <div id="containerHide" style="padding-top:40px;">
                 <div class="username">
-                    <h3 style="font-size:18px;margin:0px;line-height:30px;font-weight:bold;color:#000">Rate your interviewer</h3>
+                  <h3 style="font-size:23px;margin:0px;line-height:30px;font-weight:bold;color:#000">Rate your interviewer</h3>
     </div>
                 @Html.HiddenFor(m => m.Rating)
-     <div class="rating">
+                    <div id="ratingInterviewer" class="rating">
                     
-                    <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
+                    <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)"/>
                     <label for="Q1_5" class="star"></label>
                     <input type="radio" id="Q1_4" name="rating1" value="4" onclick="ChangeQuestion1(4)" />
                     <label for="Q1_4" class="star"></label>
@@ -54,10 +95,16 @@
                     <label for="Q1_1" class="star"></label>
                     <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
                 </div>
+                    <p style="
+    color: lightslategrey;
+    font-size: 14.5px;line-height: 25px;
+">This Rating will never be shared with your interviewer and will not affect your interview result. This is only for Risebird to improvise the Quality of interviews and make sure that you had a right experience. So, Give as honest and direct feedback as possible.</p>
+                </div>
+                <div id="candidateFeedbackHide" style="display:none;">
                    <hr class="divider"/>
+                  
                    <h4 style="color:#bab8b8;line-height:30px;">What went wrong?</h4>
 
-@* <form action="/Survey/CandidateFeedbackForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm"/> *@
                     @Html.HiddenFor(m => m.Interviewid)
                     @Html.HiddenFor(m => m.Interviewer)
                     @Html.HiddenFor(m => m.Isedit)
@@ -608,21 +655,26 @@
                                                             }
                                                         </li>
                                                     </ul>
+                                                   
                                                 </div>
+                                               
                                             </div>
 
                                         </div>
                                     </div>
-
+                                    
                         </div>
+                                
                         </div>
+                        <div id="redoWrap">
                             <hr class="divider" style="border-color: #c8c4c447;height: auto;position:relative;top:-36px;" />
                             <h4 class="redo-text">
                                 <b>Too bad interviewer?</b>&nbsp;Please raise a interview redo request 
-                            </h4><button type="button" class="redobtn">
+                            </h4><button type="button" class="redobtn" onclick="RedoInterview()">
                                     Redo Interview
 
                                 </button>
+                                </div>
                             <div class="submit-wrapper">
                                 <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
                             </div>
@@ -631,7 +683,7 @@
 
                         </div>
                         </div>
-
+                </div>
   </div>
            </div>
        </div>
@@ -687,12 +739,70 @@
 <script>
     function AddCandidateFeedbackForm()
     { 
-        $('#reportForm').submit();
+        var Rating = $("#Rating").val();
+        var CandidateInteractionQuality = $("#CandidateInteractionQuality").val();
+        var LimitedHandoncoding = $("#LimitedHandoncoding").val();
+        var WeakInfrastructure = $("#WeakInfrastructure").val();
+        var UnethicalPractices = $("#UnethicalPractices").val();
+        var PoorCommunicationSkills = $("#PoorCommunicationSkills").val();
+        var TimeManagement = $("#TimeManagement").val();
+        var Interviewid = $("#Interviewid").val();
+        $.ajax({
+            type: "POST",
+            data: { Rating: Rating, 
+                TimeManagement: TimeManagement,
+                CandidateInteractionQuality: CandidateInteractionQuality,
+                LimitedHandoncoding: LimitedHandoncoding,
+                WeakInfrastructure:WeakInfrastructure,
+                UnethicalPractices:UnethicalPractices,
+                PoorCommunicationSkills: PoorCommunicationSkills,
+                Interviewid:Interviewid
+            },
+            url: "/Survey/CandidateFeedbackForm",
+            success: function () {
+
+                $("#thankMessage").show();
+                $("#candidateFeedbackHide").hide();
+                $("#containerHide").hide();
+            }
+        });
     }
 
     function ChangeQuestion1(id)
     {
-     $("#Rating").val(id);
+
+   var  Rating= $("#Rating").val(id);
+        if (Rating.val() == 5) {
+           document.getElementById("containerHide").style.display = "none";
+            AddCandidateFeedbackForm();
+            $("#candidateFeedbackHide").hide();
+           
+        }
+        else if ( Rating.val() == 4)
+        {
+           
+            $("#candidateFeedbackHide").show();
+        }
+        else 
+        {
+            $("#candidateFeedbackHide").show();
+            $("#redoWrap").hide();
+        }
+        $('#ratingInterviewer input:radio').attr('disabled','disabled');
+       
+    }
+    
+    function RedoInterview() {
+        var Interviewid = $("#Interviewid").val();
+        $.ajax({
+            type: "POST",
+            data: {
+                Interviewid: Interviewid
+            },
+            url: "/Dashboard/AddRedoInterviews",
+            success: function () {
+            }
+        });
     }
 </script>
 

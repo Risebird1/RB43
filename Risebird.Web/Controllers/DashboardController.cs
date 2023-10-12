@@ -2193,6 +2193,29 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> AddRedoInterviews(int InterviewId)
+        {
+            try
+            {
+                string Type = "Candidate";
+                var data = await _dashboardService.AddRedoInterviewsService(InterviewId,Type);
+                if (data == true)
+                {
+                    return Json(" Redo Interview has been marked successfully");
+                }
+                else
+                {
+                    return Json("Failed to mark whether  Redo Interview.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
 
     }

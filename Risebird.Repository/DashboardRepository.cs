@@ -1310,5 +1310,26 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> AddRedoIntervies(int InterviewId, string Type)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@InterviewId", InterviewId);
+                dynamicParam.Add("@Type", Type);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_addRedoInterview", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }

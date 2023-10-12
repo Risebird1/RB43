@@ -16,6 +16,7 @@ CREATE TABLE [dbo].[RedoInterviews](
 	[ModifiedOn] [datetime] NULL,
 	[ModifiedBy] [varchar](200) NULL,
 	[Approved][bit],
+	[Type][varchar](100) NULL,
  CONSTRAINT [PK_RedoInterviews] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -33,6 +34,17 @@ BEGIN
     ALTER TABLE RedoInterviews
     Add Approved bit
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Type')
+      AND Object_ID = Object_ID(N'RedoInterviews'))
+BEGIN
+    ALTER TABLE RedoInterviews
+    Add Type varchar(100)
+END
+
 END
 GO
 
