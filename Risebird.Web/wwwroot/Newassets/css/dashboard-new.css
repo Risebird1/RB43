@@ -6972,7 +6972,7 @@ right:315px;
     overflow:auto;
 }
 #PaymentSLAModel .modal-lg {
-    max-width: 800px !important;
+    max-width: 850px !important;
 }
 
 #PaymentSLAModel input[type='radio'] {
@@ -7083,26 +7083,209 @@ ul.ks-cboxtags {
     content: "\f078";
 }
 
-/***** action arrow *****/
-    /***** Media queries *****/
-    @media only screen and (min-width: 1920px) {
-        .rbpay .sb-scrollbar {
-            position: absolute;
-            right: -6px !important;
-        }
+.submit-wrapper {
+    width: 100%;
+    text-align: center;
+    grid-column: span 2;
+    display: flex;
+    justify-content: center
+}
+.submit-feedback {
+    width: 220px;
+    padding: 10px;
+    text-transform: uppercase;
+    background: #000;
+    color: #fff;
+    margin: 0px 0px 0px 0px;
+    border:0px;
+}
+.feebdackcontainer .label-name {
+    color: #000000ad!important;
+}
+.feedbackcontainer .accordion-toggle:after {
+    display: none;
+}
+.feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label {
+    font-size:14px;
+    font-weight:600;
+}
+.redobtn {
+    background: #e32f2fe3;
+    color: #fff;
+    border: 0px;
+    padding: 6px 5px;
+    font-size: 13px;
+    border-radius: 3px;
+    position: relative;
+    top: -37px;
+    left: 7px;
+    float:left;
+}
+.feedbackcontainer .accordion-heading {
+    width: auto;
+    background-color: transparent;
+    color: #000;
+    border: 1.5px solid #000;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0px 10px;
+    height:35px;
+    margin: 0px 8px 0px 0px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.3s, background-color 0.8s;
+}
 
-        .top-h {
-            height: auto !important;
-        }
+.page {
+    position: absolute;
+    inset: auto;
+    top: -10px;
+    margin-bottom: 20px;
+    left: -9px;
+    overflow-y: auto;
+    transform: scale(0);
+    transition: transform 0.3s;
+    background-color: #eff2f5;
+    color: #1d1e22;
+    width: 100%;
+    z-index: 100;
+}
 
-        .staffclose-btn {
-            border-radius: 5px !important;
-            font-size: 12px !important;
-            background-color: #42A5F6 !important;
-            position: absolute !important;
-            bottom: 132px !important;
-            right: -660% !important;
-        }
+.page--active {
+    transform: scale(1);
+}
+
+.page__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5vw;
+    background-color: #fff;
+    font-weight: bold;
+    box-shadow: 0px 5px 5px 0px #e5e5e5;
+}
+
+.page__title {
+    font-size: 15px;
+}
+
+.page__close {
+    display: flex;
+    cursor: pointer;position:relative;
+    right:-25px;
+
+}
+
+.page__body {
+    padding: 1rem 2vw;
+    overflow-y: auto;
+}
+
+.w-auto {
+    width: auto;
+    float: left;
+}
+.feedbackcontainer {
+    text-align: center;
+    grid-template-columns: 1fr 1fr;
+    padding-block: 5vh;
+    gap: 0.57rem;
+    width: 685px;
+    margin: 0px auto;
+    position: relative;
+    padding: 0px;
+}
+
+    .feedbackcontainer .username {
+        grid-column: span 2;
+        margin-block-start: 0.75rem;
+        margin-block-end: 2rem;
+        color: #878181;
+        padding-top: 15px;
+    }
+
+.divider {
+    width: 100%;
+    text-align: center;
+    grid-column: span 2;
+    display: flex;
+}
+.feedbackcontainer ul.ks-cboxtags li label {
+    padding: 0px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 35px;
+    border: 2px solid rgb(115 111 111 / 30%);
+    color: #999292;
+}
+    .feedbackcontainer .label-name {
+        color: #000!important;
+    }
+    .rating {
+    /*border: solid 1px #ccc;*/
+    border: solid 1px white;
+    display: flex;
+    flex-direction: row-reverse;
+    font-size: 2.0em;
+    justify-content: space-around;
+    padding: 0 .2em;
+    text-align: center;
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+    .rating input {
+        display: none;
+    }
+
+    .rating label {
+        width: 40px;
+        height: 40px;
+        margin-top: auto;
+        background-image: url(../../img/grey-star.svg);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 85%;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+.rating :checked ~ label {
+    background-image: url(../../img/yellow-star.svg);
+}
+
+.redo-text {
+    clear: both;
+    position: relative;
+    top: -36px;
+    clear: both;
+    float: left;
+}
+.qc-form .control-label {
+    color: #858181!important;
+}
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
+        position: absolute;
+        right: -6px !important;
+    }
+    .top-h {
+        height: auto!important;
+    }
+    .staffclose-btn {
+        border-radius: 5px !important;
+        font-size: 12px !important;
+        background-color: #42A5F6 !important;
+        position: absolute !important;
+        bottom: 132px !important;
+        right: -660% !important;
+    }
 
         [data-id="candidatetimeline"] .allmeetingnext-btn {
             right: -653% !important;
@@ -8306,355 +8489,382 @@ ul.ks-cboxtags {
         }
     }
 
-    @media only screen and (max-width: 767px) {
-        #clientduser li {
-            width: 100%;
-            float: left;
-        }
-
-        #reportForm video {
-            width: calc(100% - 4px) !important;
-            padding: 0px !important;
-        }
-
-        .generate-pdf {
-            position: relative !important;
-            left: 17px !important;
-        }
-
-        #userProfileForm .avatar-upload {
-            margin: 0px auto !important;
-        }
-
-        .irf-radiowrap {
-            padding: 0px 5px 0px 5px;
-            float: left;
-        }
-
-        #clientduser li:nth-child(5) .dtr-title {
-            float: left;
-        }
-
-        #clientduser li:nth-child(5) .dtr-data {
-            float: left;
-        }
-
-        .action-btn {
-            width: 100px;
-            margin: 0px auto;
-        }
-
-        .candidate .journey td.cadEmail {
-            width: 130px !important;
-        }
-
-        .scheduling .action {
-            position: inherit;
-        }
-
-        .custom-select {
-            font-size: 12px !important;
-        }
-
-        .select-selected {
-            padding: 6px 0px !important;
-        }
-
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            width: 350px !important;
-            height: 200px !important;
-        }
-
-        .event .calendar-con table {
-            width: 100% !important;
-            float: right;
-        }
-
-        .txttimezone-con {
-            position: initial;
-            left: 6px !important;
-            background: #dbdbdb8c;
-            width: 100% !important;
-            border-radius: 200px;
-            text-align: center;
-            color: #686363;
-            padding: 10px 0px 0px 10px;
-            margin: 0px auto !important;
-            display: block !important;
-        }
-
-        #calender table {
-            width: 100% !important;
-        }
-
-        #calender {
-            border: 0px !important;
-        }
-
-        .support svg {
-            position: relative;
-            left: 10px;
-            width: 16px;
-            top: -4px;
-        }
-
-        .mob-txt .clientName {
-            width: 211px;
-        }
-
-        .mob-img {
-            width: 15%;
-            float: left;
-        }
-
-        .mob-txt {
-            width: 85%;
-            float: left;
-        }
-
-        .mob-mb-0 {
-            margin-bottom: 0px;
-        }
-
-        .interviewer_2 {
-            width: 335px;
-            float: left;
-            display: block;
-        }
-
-        .searchCon.mb-10, .mb-10 {
-            margin-bottom: 10px !important;
-        }
-
-        .interviewerMemberModal
-        .navbar-toggle {
-            top: -5px;
-        }
-
-        .jd .skillname {
-            width: 100% !important;
-            text-align: center;
-        }
-
-        .jd .card-header-buttons.action.text-right {
-            text-align: center !important;
-        }
-
-        .canvas_div_pdf .card-body {
-            padding: 0px !important;
-        }
-
-        #tblbodyCandidate .action {
-            max-width: 100% !important;
-        }
-
-        .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
-            border: 0;
-            border-radius: 30px !important;
-            transition: all .3s;
-            padding: 0px 0px;
-            margin: 0px 1px !important;
-            min-width: 20px !important;
-            text-align: center;
-            height: 22px !important;
-            line-height: 24px;
-            color: #2c2c2c;
-            cursor: pointer;
-            font-size: 14px;
-            text-transform: uppercase;
-            background: transparent;
-            outline: none;
-        }
-
-        #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
-            padding-right: 10px !important;
-            padding-left: 10px !important;
-        }
-
-        #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
-            display: none !important;
-        }
-
-        .mob_canvas-height {
-            height: 400px;
-        }
-
-        #SkillTable select.form-control {
-            width: auto !important;
-        }
-
-        #InterviewerTable .form-control {
-            width: 200px !important;
-        }
-
-        .recommendation .multiselect.dropdown-toggle:after {
-            left: 1% !important;
-        }
-
-        .page-container .page-content .page-content-wrap {
-            float: left;
-            width: 100%;
-            margin-top: -10px !important;
-            padding: 0px 15px;
-            font-family: 'Open Sans', sans-serif;
-        }
-
-        #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-            color: red !important;
-            margin-left: 0 !important;
-            font-size: 12px !important;
-            width: 100%;
-            position: relative;
-            text-align: right;
-        }
-
-        .mob_h {
-            height: 2px;
-            width: auto;
-        }
-
-
-        .myinterview_modal .btn-group {
-            width: 100% !important;
-        }
-
-        .tabCon .tabs {
-            display: none;
-        }
-
-        .main-notification-title {
-            right: 9px !important;
-            padding-top: 0px !important;
-            position: relative;
-            top: 2px;
-        }
-
-        .user.user-r .main-notification-title {
-            top: 0px !important;
-        }
-
-        .user.user-r {
-            top: -28px !important;
-            left: -42px !important;
-        }
-
-        .user {
-            position: relative !important;
-            top: 52px;
-            right: 0px !important;
-            left: 0px !important;
-        }
-
-        #txtpageHeader {
-            display: none;
-        }
-
-        .note-meeting {
-            width: 54%;
-            left: 30px;
-            position: absolute;
-            top: 12px !important;
-            font-size: 15px;
-        }
-
-        .nav-open .navbar {
-            left: 260px;
-        }
-
-        .top-panel {
-            padding: 0px 5px !important
-        }
-
-        .timer {
-            font-size: 15px !important;
-        }
-
-        .rbpay .modal-dialog {
-            max-width: 100% !important
-        }
-
-        .mobpad {
-            padding: 0px !important;
-        }
-
-        .mobpad {
-            padding: 0px !important;
-        }
-
-        .navbar {
-            padding-top: 0;
-        }
-
-            .navbar.navbar-no-bg {
-                background: #333;
-                background: rgba(51, 51, 51, 0.9);
-            }
-
-        .navbar-brand {
-            height: 60px;
-            margin-left: 0px;
-        }
-
-        .navbar-collapse {
-            border: 0;
-        }
-
-        .navbar-toggle {
-            margin-top: 12px;
-        }
-
-        .top-content {
-            padding: 40px 0 110px 0;
-        }
-
-        .user-r .user-menu {
-            top: -15px;
-            left: auto;
-            right: -19px;
-        }
-
-
-        .dashboard-icon {
-            margin: 0px auto !important;
-            float: none !important;
-            position: relative !important;
-            left: 0px !important;
-        }
-
-        .click-arrow {
-            position: relative !important;
-            top: 8px !important;
-            left: -10px !important;
-        }
-
-        .dashboard-cat-title {
-            position: relative;
-            top: 0px !important;
-            text-align: center !important;
-        }
-
-        .fixed-header {
-            width: calc(100% - 30px);
-        }
-
-        .candidatename-sla {
-            float: none;
-            margin: 0px;
-        }
-
-        .public-url div.dataTables_wrapper div.dataTables_filter {
-            text-align: right;
-            position: absolute;
-            left: 193px;
-            top: -34px;
-        }
-
-        .public-url #candidateTable_length {
-            top: 17px;
-            position: relative;
-            display: block;
-        }
+@media only screen and (max-width: 767px) {
+    #clientduser li {
+        width: 100%;
+        float: left;
     }
+
+    #reportForm video {
+        width: calc(100% - 4px) !important;
+        padding: 0px !important;
+    }
+
+    .generate-pdf {
+        position: relative !important;
+        left: 17px !important;
+    }
+
+    #userProfileForm .avatar-upload {
+        margin: 0px auto !important;
+    }
+
+    .irf-radiowrap {
+        padding: 0px 5px 0px 5px;
+        float: left;
+    }
+
+    #clientduser li:nth-child(5) .dtr-title {
+        float: left;
+    }
+
+    #clientduser li:nth-child(5) .dtr-data {
+        float: left;
+    }
+
+    .action-btn {
+        width: 100px;
+        margin: 0px auto;
+    }
+
+    .candidate .journey td.cadEmail {
+        width: 130px !important;
+    }
+
+    .scheduling .action {
+        position: inherit;
+    }
+
+    .custom-select {
+        font-size: 12px !important;
+    }
+
+    .select-selected {
+        padding: 6px 0px !important;
+    }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 350px !important;
+        height: 200px !important;
+    }
+
+    .event .calendar-con table {
+        width: 100% !important;
+        float: right;
+    }
+
+    .txttimezone-con {
+        position: initial;
+        left: 6px !important;
+        background: #dbdbdb8c;
+        width: 100% !important;
+        border-radius: 200px;
+        text-align: center;
+        color: #686363;
+        padding: 10px 0px 0px 10px;
+        margin: 0px auto !important;
+        display: block !important;
+    }
+
+    #calender table {
+        width: 100% !important;
+    }
+
+    #calender {
+        border: 0px !important;
+    }
+
+    .support svg {
+        position: relative;
+        left: 10px;
+        width: 16px;
+        top: -4px;
+    }
+
+    .mob-txt .clientName {
+        width: 211px;
+    }
+
+    .mob-img {
+        width: 15%;
+        float: left;
+    }
+
+    .mob-txt {
+        width: 85%;
+        float: left;
+    }
+
+    .mob-mb-0 {
+        margin-bottom: 0px;
+    }
+
+    .interviewer_2 {
+        width: 335px;
+        float: left;
+        display: block;
+    }
+
+    .searchCon.mb-10, .mb-10 {
+        margin-bottom: 10px !important;
+    }
+
+    .interviewerMemberModal
+    .navbar-toggle {
+        top: -5px;
+    }
+
+    .jd .skillname {
+        width: 100% !important;
+        text-align: center;
+    }
+
+    .jd .card-header-buttons.action.text-right {
+        text-align: center !important;
+    }
+
+    .canvas_div_pdf .card-body {
+        padding: 0px !important;
+    }
+
+    #tblbodyCandidate .action {
+        max-width: 100% !important;
+    }
+
+    .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
+        border: 0;
+        border-radius: 30px !important;
+        transition: all .3s;
+        padding: 0px 0px;
+        margin: 0px 1px !important;
+        min-width: 20px !important;
+        text-align: center;
+        height: 22px !important;
+        line-height: 24px;
+        color: #2c2c2c;
+        cursor: pointer;
+        font-size: 14px;
+        text-transform: uppercase;
+        background: transparent;
+        outline: none;
+    }
+
+    #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+        padding-right: 10px !important;
+        padding-left: 10px !important;
+    }
+
+    #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
+        display: none !important;
+    }
+
+    .mob_canvas-height {
+        height: 400px;
+    }
+
+    #SkillTable select.form-control {
+        width: auto !important;
+    }
+
+    #InterviewerTable .form-control {
+        width: 200px !important;
+    }
+
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1% !important;
+    }
+
+    .page-container .page-content .page-content-wrap {
+        float: left;
+        width: 100%;
+        margin-top: -10px !important;
+        padding: 0px 15px;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
+    }
+
+    .mob_h {
+        height: 2px;
+        width: auto;
+    }
+
+
+    .myinterview_modal .btn-group {
+        width: 100% !important;
+    }
+
+    .tabCon .tabs {
+        display: none;
+    }
+
+    .main-notification-title {
+        right: 9px !important;
+        padding-top: 0px !important;
+        position: relative;
+        top: 2px;
+    }
+
+    .user.user-r .main-notification-title {
+        top: 0px !important;
+    }
+
+    .user.user-r {
+        top: -28px !important;
+        left: -42px !important;
+    }
+
+    .user {
+        position: relative !important;
+        top: 52px;
+        right: 0px !important;
+        left: 0px !important;
+    }
+
+    #txtpageHeader {
+        display: none;
+    }
+
+    .note-meeting {
+        width: 54%;
+        left: 30px;
+        position: absolute;
+        top: 12px !important;
+        font-size: 15px;
+    }
+
+    .nav-open .navbar {
+        left: 260px;
+    }
+
+    .top-panel {
+        padding: 0px 5px !important
+    }
+
+    .timer {
+        font-size: 15px !important;
+    }
+
+    .rbpay .modal-dialog {
+        max-width: 100% !important
+    }
+
+    .mobpad {
+        padding: 0px !important;
+    }
+
+    .mobpad {
+        padding: 0px !important;
+    }
+
+    .navbar {
+        padding-top: 0;
+    }
+
+        .navbar.navbar-no-bg {
+            background: #333;
+            background: rgba(51, 51, 51, 0.9);
+        }
+
+    .navbar-brand {
+        height: 60px;
+        margin-left: 0px;
+    }
+
+    .navbar-collapse {
+        border: 0;
+    }
+
+    .navbar-toggle {
+        margin-top: 12px;
+    }
+
+    .top-content {
+        padding: 40px 0 110px 0;
+    }
+
+    .user-r .user-menu {
+        top: -15px;
+        left: auto;
+        right: -19px;
+    }
+
+
+    .dashboard-icon {
+        margin: 0px auto !important;
+        float: none !important;
+        position: relative !important;
+        left: 0px !important;
+    }
+
+    .click-arrow {
+        position: relative !important;
+        top: 8px !important;
+        left: -10px !important;
+    }
+
+    .dashboard-cat-title {
+        position: relative;
+        top: 0px !important;
+        text-align: center !important;
+    }
+
+    .fixed-header {
+        width: calc(100% - 30px);
+    }
+
+    .candidatename-sla {
+        float: none;
+        margin: 0px;
+    }
+
+    .public-url div.dataTables_wrapper div.dataTables_filter {
+        text-align: right;
+        position: absolute;
+        left: 193px;
+        top: -34px;
+    }
+
+    .public-url #candidateTable_length {
+        top: 17px;
+        position: relative;
+        display: block;
+    }
+
+    .feedbackcontainer {
+        width: 100%;
+    }
+
+        .feedbackcontainer .accordion-heading a {
+            width: 100%;
+            height:auto;
+            justify-content: center;
+        }
+        .feedbackcontainer .w-auto {
+            width: 100% !important;
+        }
+    .redobtn {
+        float: none;
+        top: -51px;
+    }
+    .redo-text{
+        top:-51px;
+        line-height:31px;
+    }
+    .submit-feedback{
+        position:fixed;
+        bottom:0px;
+        width:100%;
+        z-index:1000;
+    }
+}
 
 
 
@@ -8966,6 +9176,19 @@ ul.ks-cboxtags {
             position: relative !important;
             left: 80px !important;
             text-align: center !important;
+        }
+        .feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label{
+            font-size:12px;
+        }
+        .feedbackcontainer ul.ks-cboxtags li label{
+            font-size:12px;
+        }
+        .page__title{
+            font-size:13px;
+        }
+        .page{
+            top:0px;
+            left:0px;
         }
     }
 

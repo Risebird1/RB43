@@ -11,5 +11,6 @@ namespace Risebird.Business.Interface
         Task<SurveyCandidateInterviewer> AddOrEditCandidateRating(SurveyVM model);
         Task<IEnumerable<SurveyVM>> GetCandidateRating(string emailid, string profileName);
         Task<IEnumerable<SurveyVM>> GetCandidateRatingByIRFId(string IRFId);
+        Task<bool> CandidateFeedbackFormDetailsService(PaymentSLAVM model);
     }
 }

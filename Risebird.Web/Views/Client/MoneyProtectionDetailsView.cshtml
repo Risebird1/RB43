@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MoneyProtectionVM>
+
+<table class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <td>Skill Channel</td>
+            <td>Interview</td>
+            <td>Candidate</td>
+            <td>Points</td>
+            <td>AddedOn</td>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td>Skill Channel</td>
+            <td>Interview</td>
+            <td>Candidate</td>
+            <td>Points</td>
+            <td>AddedOn</td>
+        </tr>
+    </tfoot>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IRFId</td>
+                <td>@item.interviewDate</td>
+                <td>@item.candidateEmail</td>
+                <td>@item.Point</td>
+                <td>@item.AddedOn</td>
+            </tr>
+        }
+    </tbody>
+</table>
