@@ -630,7 +630,7 @@
                             <hr class="divider" style="border-color: #c8c4c447;height: auto;position:relative;top:-36px;" />
                             <h4 class="redo-text">
                                 <b>Too bad interviewer?</b>&nbsp;Please raise a interview redo request 
-                            </h4><button type="button" class="redobtn">
+                            </h4><button type="button" class="redobtn" onclick="RedoInterview()">
                                     Redo Interview
 
                                 </button>
@@ -752,6 +752,19 @@
             $("#redoWrap").hide();
         }
         
+    }
+    
+    function RedoInterview() {
+        var Interviewid = $("#Interviewid").val();
+        $.ajax({
+            type: "POST",
+            data: {
+                Interviewid: Interviewid
+            },
+            url: "/Dashboard/AddRedoInterviews",
+            success: function () {
+            }
+        });
     }
 </script>
 
