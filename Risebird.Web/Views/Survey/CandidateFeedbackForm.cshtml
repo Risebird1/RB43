@@ -78,10 +78,10 @@
                 <form action="/Survey/CandidateFeedbackForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm" />
                 <div id="containerHide" style="padding-top:40px;">
                 <div class="username">
-                    <h3 style="font-size:25px;margin:0px;line-height:30px;font-weight:bold;color:#000">Rate your interviewer</h3>
+                  <h3 style="font-size:23px;margin:0px;line-height:30px;font-weight:bold;color:#000">Rate your interviewer</h3>
     </div>
                 @Html.HiddenFor(m => m.Rating)
-     <div id="rat" class="rating">
+                    <div id="ratingInterviewer" class="rating">
                     
                     <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)"/>
                     <label for="Q1_5" class="star"></label>
@@ -97,7 +97,7 @@
                 </div>
                     <p style="
     color: lightslategrey;
-    font-size: 14px;
+    font-size: 14.5px;line-height: 25px;
 ">This Rating will never be shared with your interviewer and will not affect your interview result. This is only for Risebird to improvise the Quality of interviews and make sure that you had a right experience. So, Give as honest and direct feedback as possible.</p>
                 </div>
                 <div id="candidateFeedbackHide" style="display:none;">
@@ -770,7 +770,7 @@
 
     function ChangeQuestion1(id)
     {
-        document.querySelector('input').readOnly = true;
+
    var  Rating= $("#Rating").val(id);
         if (Rating.val() == 5) {
            document.getElementById("containerHide").style.display = "none";
@@ -788,7 +788,8 @@
             $("#candidateFeedbackHide").show();
             $("#redoWrap").hide();
         }
-        $('#rat input:radio').attr('disabled','disabled');
+        $('#ratingInterviewer input:radio').attr('disabled','disabled');
+       
     }
     
     function RedoInterview() {

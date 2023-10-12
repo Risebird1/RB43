@@ -7250,19 +7250,15 @@ ul.ks-cboxtags {
         background-image: url(../../img/grey-star.svg);
         background-repeat: no-repeat;
         background-position: center;
-        background-size: 76%;
+        background-size: 85%;
         transition: 0.3s;
         cursor: pointer;
     }
 
-    .rating :checked ~ label {
-        background-image: url(../../img/yellow-star.svg);
-    }
+.rating :checked ~ label {
+    background-image: url(../../img/yellow-star.svg);
+}
 
-    .rating label:hover,
-    .rating label:hover ~ label {
-        background-image: url(../../img/yellow-star.svg);
-    }
 .redo-text {
     clear: both;
     position: relative;
