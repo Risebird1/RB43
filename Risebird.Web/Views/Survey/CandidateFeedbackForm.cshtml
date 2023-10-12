@@ -737,11 +737,6 @@
 
 </script>
 <script>
-     // $(document).ready(function () {
-     //     debugger;
-     // $("#candidateFeedbackHide").hide();
-     //    $("#thankMessage").hide();
-     // });
     function AddCandidateFeedbackForm()
     { 
         var Rating = $("#Rating").val();
@@ -793,7 +788,7 @@
             $("#candidateFeedbackHide").show();
             $("#redoWrap").hide();
         }
-        
+        $('#rat input:radio').attr('disabled','disabled');
     }
     
     function RedoInterview() {
