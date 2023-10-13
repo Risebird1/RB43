@@ -30,7 +30,7 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 AS
 BEGIN
 Declare @Userid int       
-Select @Userid=id From UserList where Emailid=@Emailid      
+Select @Userid=id From UserList where Emailid=@Emailid  
 IF EXISTS(Select 1 from PaymentSLADetails where Interviewid=@Interviewid)      
 begin 
 Update PaymentSLADetails set Inaccuratedecisionmaking=@Inaccuratedecisionmaking,TimeManagement=@TimeManagement,QuestionsRelevance=@QuestionsRelevance,
@@ -50,8 +50,11 @@ end
 If(@isapproved=1)
 begin
 Declare @InterviewerUserid int
+Declare @ClientId int
+Select @ClientId=IRF.ClientId From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@Interviewid
 Select @InterviewerUserid=ul.id from UserList ul join InterviewMeetings im on im.interviewer=ul.EmailId where im.id=@Interviewid
-Update InterviewPoints set PaymentSLA=@PaymentDeduction where Interviewid=@Interviewid and Userid=@InterviewerUserid and Type='Interview'    
+Update InterviewPoints set PaymentSLA=@PaymentDeduction where Interviewid=@Interviewid and Userid=@InterviewerUserid and Type='Interview'   
+Insert into MoneyProtectionWallet(Clientid,Points,AddedOn,Interviewid,IsConverted) values(@ClientId,@PaymentDeduction,@CreatedOn,@Interviewid,0)
 end
 END
 GO

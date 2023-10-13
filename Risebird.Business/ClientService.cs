@@ -222,7 +222,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<Tuple<int, string,string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
+        public async Task<Tuple<int, string, string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
         {
             try
             {
@@ -560,6 +560,30 @@ namespace Risebird.Business
             try
             {
                 return (await _clientRepository.GetDateRangeWiseMeetingStatusForClientByIRF(startDate, endDate, emailId, clientId, clientUserEmailId, role));
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionList(string type)
+        {
+            try
+            {
+                return await _clientRepository.GetMoneyProtectionList(type);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionDetails(string type, int Clientid)
+        {
+            try
+            {
+                return await _clientRepository.GetMoneyProtectionDetails(type, Clientid);
             }
             catch (Exception ex)
             {

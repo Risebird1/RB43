@@ -517,7 +517,7 @@ namespace Risebird.Repository
                 return 0;
             }
         }
-        public async Task<Tuple<int, string,string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
+        public async Task<Tuple<int, string, string>> GetClientRoleAndCompanyNameByEmailId(string emailId)
         {
             try
             {
@@ -528,7 +528,7 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync(con, "[usp_GetClientRoleAndCompanyNameByEmailId]", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return new Tuple<int, string,string>(result.FirstOrDefault().ClientId, result.FirstOrDefault().Name, result.FirstOrDefault().LogoLink);
+                    return new Tuple<int, string, string>(result.FirstOrDefault().ClientId, result.FirstOrDefault().Name, result.FirstOrDefault().LogoLink);
                 }
             }
             catch (SqlException e)
@@ -1187,6 +1187,45 @@ namespace Risebird.Repository
                     return result;
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionList(string type)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@type", type);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MoneyProtectionVM>(con, "usp_GetMoneyProtectionList", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionDetails(string type,int Clientid)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@type", type);
+                parameters.Add("@Clientid", Clientid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MoneyProtectionVM>(con, "usp_GetMoneyProtectionDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
             }
             catch (SqlException ex)
             {
