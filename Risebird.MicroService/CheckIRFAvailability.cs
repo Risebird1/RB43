@@ -91,7 +91,8 @@ namespace Risebird.MicroService
                             Mail _mail = new Mail
                             {
                                 TO = interviewer.EmailId,
-                                Subject = "Risebird: Availability check for Skill Channel " + obj.IRFId + " Interviews"
+                                Subject = "Current Availability (2 days) check for  " + obj.JDTitle + " Risebird Interviews"
+
                             };
                             
                             var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), obj.FlatRate, dropMyProfileButton + "&rsc=" + source, obj.PrimarySkillInvite, obj.id, interviewer.CompanyTypeDesc, interviewer.CountryTypeDesc, interviewer.PlanTypeDesc, interviewer.SelectedDurationMin, interviewer.RejectedDurationMin);//item.PerSuccessRate
