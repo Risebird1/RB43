@@ -1,6 +1,7 @@
 ﻿
 @model Risebird.Entities.ViewModel.PaymentSLAVM
 @{
+    ViewData["Title"] = "Feedback";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 <!DOCTYPE html>
@@ -803,8 +804,9 @@
             $("#candidateFeedbackHide").show();
           
         }
-        $('#ratingInterviewer input:radio').attr('disabled','disabled');
-       
+        $('#ratingInterviewer input:radio').attr('disabled', 'disabled');
+        //$('#ratingInterviewer label').attr('disabled', 'disabled');
+
     }
     
     function RedoInterview() {
