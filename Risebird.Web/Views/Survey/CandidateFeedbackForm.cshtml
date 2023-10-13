@@ -778,15 +778,23 @@
             $("#candidateFeedbackHide").hide();
            
         }
-        else if ( Rating.val() == 4)
-        {
-           
-            $("#candidateFeedbackHide").show();
-        }
         else 
         {
+            var Rating = $("#Rating").val();
+            var Interviewid = $("#Interviewid").val();
+            $.ajax({
+                type: "POST",
+                data: {
+                    Rating: Rating,
+                    Interviewid: Interviewid
+                },
+                url: "/Survey/CandidateFeedbackForm",
+                success: function () {
+
+                }
+            });
             $("#candidateFeedbackHide").show();
-            $("#redoWrap").hide();
+           $("#redoWrap").show();
         }
         $('#ratingInterviewer input:radio').attr('disabled','disabled');
        

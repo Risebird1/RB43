@@ -852,6 +852,7 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> CandidateFeedbackForm(int id)
         {
          var model = new PaymentSLAVM();
+            id = 7854;
             model.Interviewid = id;
             await SetInitialValue(model);
 
