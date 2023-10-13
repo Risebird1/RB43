@@ -19,6 +19,7 @@ namespace Risebird.Entities.Data
         
         //public int PerSuccessRate { get; set; }
         public string JDLink { get; set; }
+        public string JDTitle { get; set; }
         public int AvailbilityHour { get; set; }
         public int FlatRate { get; set; }
         public string BasicSkill { get; set; }
