@@ -674,7 +674,7 @@
                                     Redo Interview
 
                                 </button>
-                                </div>
+                           </div>
                             <div class="submit-wrapper">
                                 <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
                             </div>
@@ -780,7 +780,14 @@
         }
         else 
         {
+           
             var Rating = $("#Rating").val();
+            if (Rating == 4) {
+                $("#redoWrap").hide();
+            }
+            else {
+                $("#redoWrap").show();
+            }
             var Interviewid = $("#Interviewid").val();
             $.ajax({
                 type: "POST",
@@ -794,7 +801,7 @@
                 }
             });
             $("#candidateFeedbackHide").show();
-           $("#redoWrap").show();
+          
         }
         $('#ratingInterviewer input:radio').attr('disabled','disabled');
        
