@@ -13,5 +13,6 @@ namespace Risebird.Entities.Data
         public string AssessmentGroupId { get; set; }
         public int FlatRate { get; set; }
         public string PrimarySkillInvite { get; set; }
+        public string JDTitle { get; set; }
     }
 }
