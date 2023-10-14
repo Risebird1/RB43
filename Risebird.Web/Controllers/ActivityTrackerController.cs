@@ -151,7 +151,7 @@ namespace Risebird.Web.Controllers
             string userEmailId = string.Empty;
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
-            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_ActivityTracker" + ".xlsx";
             try
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -202,7 +202,7 @@ namespace Risebird.Web.Controllers
 
                         if (!string.IsNullOrEmpty(item.ResourceUrl))
                         {
-                            Sheet.Cells[i, 2].Hyperlink = new Uri(item.FileUrl, UriKind.Absolute);
+                            Sheet.Cells[i, 2].Hyperlink = new Uri(item.ResourceUrl, UriKind.Absolute);
                             Sheet.Cells[i, 2].Style.Font.UnderLine = true;
                             Sheet.Cells[i, 2].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
