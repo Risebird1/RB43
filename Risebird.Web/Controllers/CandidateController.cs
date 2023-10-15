@@ -24,6 +24,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using X.PagedList;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -857,6 +858,91 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPublicCandidates(int id, string irfName, string profileName, string emailid, int? Page, string searchValue)
+        {
+            try
+            {
+                
+                ViewBag.IRFName = irfName;
+                ViewBag.IRFId = id;
+                ViewBag.profile = profileName;
+                
+                var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
+                var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
+                
+                ViewBag.ButtonAccess = true;
+                ViewBag.IsClientCancelInterview = true;
+                if (profileName == "Client")
+                {
+                    var client = await _userRepository.GetClientUserDetailsByIRF(emailid, id);
+                    if (client == null || (client != null && !client.IsRecruiterActive))
+                    {
+                        ViewBag.ButtonAccess = false;
+                    }
+                    ViewBag.IsClientCancelInterview = client?.IsClientCancelInterview;
+                    var ClientRole = client?.Role;
+                    ViewBag.ClientRole = ClientRole;
+                }
+                if (candidateList != null && candidateList.Count > 0)
+                {
+
+                    candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
+                    candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());
+                    candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); x.HeuristicsscoreDesc = ((Heuristicsscorelevel)x.Heuristicsscore).GetDescription(); });
+                }
+
+                if (TempData["SuccessErrorMessageCandidate"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                    TempData.Remove("SuccessErrorMessageCandidate");
+                }
+                if (!string.IsNullOrEmpty(searchValue))
+                {
+                    searchValue = searchValue.ToUpper().Trim();
+                    candidateList = candidateList.Where(x => (!string.IsNullOrEmpty(x.Name) ? x.Name.ToUpper().Contains(searchValue) : x.Name == "") || (!string.IsNullOrEmpty(x.EmailId) ? x.EmailId.ToUpper().Contains(searchValue) : x.EmailId == "")).ToList();
+
+                }
+
+                ViewBag.TotalCount = candidateList.Count;
+
+                ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                int a = candidateList.Count / 10;
+                if (candidateList.Count % 10 == 0)
+                {
+                    ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                }
+                else
+                {
+                    a = a + 1;
+                    if (a == Page)
+                    {
+                        ViewBag.PageEndCount = candidateList.Count;
+                    }
+                    else
+                    {
+                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+
+                    }
+
+                }
+                if (candidateList.Count == 0)
+                {
+                    ViewBag.PageStartCount = 0;
+                    ViewBag.PageEndCount = 0;
+                }
+                _candidateModelDetails = candidateList;
+                return View("GetCandidates", candidateList.ToPagedList(Page ?? 1, 10));
+
             }
             catch (Exception ex)
             {
