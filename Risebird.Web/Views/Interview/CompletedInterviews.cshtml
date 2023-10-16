@@ -283,19 +283,25 @@
                                                             </button>
                                                             @if (ViewBag.PageFrom == "Completed")
                                                             {
+
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
-                                                                    <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,type="Completed" })'" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                    <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,type="Completed" })" title="QC Form" class="mdc-fab__icon material-icons">
+
                                                                         <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                    </span>
-                                                                </button>
+                                                                    </a>
+                                                                    </button>
+                                                               
                                                             }
                                                             else
                                                             {
+
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -3px;">
-                                                                    <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,type="Resloved" })'" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                    <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,type="Resloved" })" title="QC Form" class="mdc-fab__icon material-icons">
                                                                         <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
-                                                                    </span>
-                                                                </button>
+                                                                    </a>
+
+                                                                    </button>
+                                                               
                                                             }
                                                             <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview">
                                                                 <span onclick="OpenRedoFormModel('@item.imid','@item.intervieweStatusStatDesc')" title="ReDo Interview" class="mdc-fab__icon material-icons">
@@ -315,7 +321,7 @@
                                                             }
                                                             <span>
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
-                                                                    <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false)" title="Payment Deduction" class="mdc-fab__icon material-icons">
+                                                                    <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false,'CompletedInterview')" title="Payment Deduction" class="mdc-fab__icon material-icons">
                                                                         <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
                                                                     </div>
                                                                 </button>

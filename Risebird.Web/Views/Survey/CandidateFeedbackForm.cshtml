@@ -1,6 +1,7 @@
 ﻿
 @model Risebird.Entities.ViewModel.PaymentSLAVM
 @{
+    ViewData["Title"] = "Feedback";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 <!DOCTYPE html>
@@ -674,7 +675,7 @@
                                     Redo Interview
 
                                 </button>
-                                </div>
+                           </div>
                             <div class="submit-wrapper">
                                 <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
                             </div>
@@ -778,18 +779,34 @@
             $("#candidateFeedbackHide").hide();
            
         }
-        else if ( Rating.val() == 4)
-        {
-           
-            $("#candidateFeedbackHide").show();
-        }
         else 
         {
+           
+            var Rating = $("#Rating").val();
+            if (Rating == 4) {
+                $("#redoWrap").hide();
+            }
+            else {
+                $("#redoWrap").show();
+            }
+            var Interviewid = $("#Interviewid").val();
+            $.ajax({
+                type: "POST",
+                data: {
+                    Rating: Rating,
+                    Interviewid: Interviewid
+                },
+                url: "/Survey/CandidateFeedbackForm",
+                success: function () {
+
+                }
+            });
             $("#candidateFeedbackHide").show();
-            $("#redoWrap").hide();
+          
         }
-        $('#ratingInterviewer input:radio').attr('disabled','disabled');
-       
+        $('#ratingInterviewer input:radio').attr('disabled', 'disabled');
+        //$('#ratingInterviewer label').attr('disabled', 'disabled');
+
     }
     
     function RedoInterview() {

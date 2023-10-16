@@ -22,10 +22,10 @@
 
 
 <script>
-    function PaymentSLADetails(interviewid, candidateEmail,interviewer,isapproved) {
+    function PaymentSLADetails(interviewid, candidateEmail,interviewer,isapproved,pagetype) {
         $.ajax({
             url: '/Interview/GetPaymentSlaDetails',
-            data: { 'interviewid': interviewid,'interviewer':interviewer,'isapproved':isapproved },
+            data: { 'interviewid': interviewid, 'interviewer': interviewer, 'isapproved': isapproved, 'pagetype':pagetype },
             type: "GET",
             success: function (data) {
                 openPaymentSLAModel();

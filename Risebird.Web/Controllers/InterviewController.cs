@@ -3224,7 +3224,7 @@ namespace Risebird.Web.Controllers
                                 //};
                                 //var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer
-                                string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + model.InterviewId;
+                                string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + model.InterviewId;
                                 Mail _mail = new Mail
                                 {
                                     TO = model.CandidateEmail,
@@ -6267,12 +6267,13 @@ namespace Risebird.Web.Controllers
                             _model.ClientAction = "";
                             var result = await _meetingService.SaveRatingDetails(_model);
                             var data = new TransInterviewersReliabilityScoresVm();
-                            data.InterviewMeetingId =model.Interviewid;
+                            data.InterviewMeetingId = model.Interviewid;
                             if (model.Redflags != 0)
                             {
                                 data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerRedFlagByQCTeam;
                             }
-                            else {
+                            else
+                            {
                                 data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.NoRedFlagsByQCTeam;
                             }
                             await _meetingService.AddTransInterviewersReliabilityScoresService(data);
@@ -6802,7 +6803,7 @@ namespace Risebird.Web.Controllers
 
                 if (result)
                 {
-                    var data =new TransInterviewersReliabilityScoresVm();
+                    var data = new TransInterviewersReliabilityScoresVm();
                     data.InterviewMeetingId = model.interviewid;
                     data.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.RedoInterviewInitiated;
                     await _meetingService.AddTransInterviewersReliabilityScoresService(data);
@@ -7551,6 +7552,7 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
+                model.ReportAccepted = true;
                 if (!string.IsNullOrEmpty(uniqueid) || !string.IsNullOrEmpty(publicEmailId))
                 {
                     model.Userid = 0;
@@ -7825,7 +7827,7 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype)
         {
             try
             {
@@ -7848,6 +7850,7 @@ namespace Risebird.Web.Controllers
                     }
                     model.Interviewer = interviewer;
                     model.isapprovedchecked = isapproved;
+                    model.Pagetype = pagetype;
                     await SetPaymentSLADropDown(model);
                     await SetInitialValue(model);
                     return PartialView(model);
@@ -7878,20 +7881,30 @@ namespace Risebird.Web.Controllers
                     model.CreatedBy = emailId;
                     if (await _meetingService.AddorUpdatePaymentSLADetails(model))
                     {
-                        if(model.isapprovedchecked)
+                        TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
+                        if (model.isapprovedchecked)
                         {
                             var result = new TransInterviewersReliabilityScoresVm();
                             result.InterviewMeetingId = model.Interviewid;
                             result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerPaymentSLA;
                             await _meetingService.AddTransInterviewersReliabilityScoresService(result);
                         }
-                        TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
-                        return RedirectToAction("Index", "Interview");
                     }
                     else
                     {
                         TempData["SuccessErrorMessageInterview"] = "Fail to update payment Sla, try again after some time.";
+                    }
+                    if (model.Pagetype == "InterviewIndex")
+                    {
                         return RedirectToAction("Index", "Interview");
+                    }
+                    else if (model.Pagetype == "CompletedInterview")
+                    {
+                        return RedirectToAction("CompletedInterviews", "Interview");
+                    }
+                    else
+                    {
+                        return RedirectToAction("PaymentSlaDetails", "Interview");
                     }
                 }
                 else

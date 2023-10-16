@@ -295,60 +295,56 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		end
 	end
 	else If(@actionstatus ='PotentialRiskInterviewCount')
-	begin
+ begin
 		if (@actiontype = 0)
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,
-				cl.Name as Name,
-				cr.Comment
+				select  im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,
+				cl.Name as Name
 				from
-				 candidateRatings cr
-				 inner join InterviewMeetings im on cr.interviewid=im.id
+				 CandidateFeedbackDetails cfd
+				 inner join InterviewMeetings im on cfd.interviewid=im.id
 				 join IRF on im.IRFId=irf.IRFId
 				join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
 				join UserList ul on ul.id=  irf.RisebirdHr 
-				where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ulsh.Emailid= @Emailid
+				where (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ulsh.Emailid= @Emailid
 			end
 			else
 			begin
-				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,
-				cl.Name as Name,
-				cr.Comment
+				select  im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,
+				cl.Name as Name
 				from
-				candidateRatings cr
-				inner join InterviewMeetings im  on cr.interviewid=im.id
+				CandidateFeedbackDetails cfd
+				inner join InterviewMeetings im  on cfd.interviewid=im.id
 				join IRF on im.IRFId=irf.IRFId
 				join Client cl on irf.ClientId=cl.id 
 				join UserList ul on ul.id=  irf.RisebirdHr
-				where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
+				where (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate())
 			end
 		end
 		else
 		begin
-			select distinct im.*,irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,
-			cl.Name as Name,
-			cr.Comment
-			from candidateRatings cr
-			inner join InterviewMeetings im on cr.interviewid=im.id
+			select  im.*,irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,
+			cl.Name as Name
+			from CandidateFeedbackDetails cfd
+			inner join InterviewMeetings im on cfd.interviewid=im.id
 			 join IRF on im.IRFId=irf.IRFId
 			
 			join Client cl on irf.ClientId=cl.id 
 			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
 			join UserList ulc on ulc.id=  irf.RisebirdHr
-			where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID 
+			where  (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID 
 			union 
-			select distinct im.*,irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,
-			cl.Name as Name,
-			cr.Comment
-			from candidateRatings cr
-			inner join InterviewMeetings im on cr.interviewid=im.id
+			select  im.*,irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,
+			cl.Name as Name
+			from CandidateFeedbackDetails cfd
+			inner join InterviewMeetings im on cfd.interviewid=im.id
 			join IRF on im.IRFId=irf.IRFId 
 			join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
 			join UserList ulc on ulc.id=  irf.RisebirdHr
-			where cr.Question2<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID
+			where (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID
 		end
 	end
 	else If(@actionstatus ='SuspeciousInterviewerCount')
