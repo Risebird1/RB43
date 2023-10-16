@@ -22,7 +22,7 @@ CREATE TABLE [dbo].[Client](
             [IsClientCancelInterview] [bit] NULL,
             [PaymentTerm] [int] NULL,
             [GSTApplicable] [bit] NULL,
-            [ClientType] [bit] NULL, -- standard, pro, elite
+            [ClientType] [bit] NULL, -- service, product, elite
             [CountryType] [int] NULL -- onsite offshore
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
