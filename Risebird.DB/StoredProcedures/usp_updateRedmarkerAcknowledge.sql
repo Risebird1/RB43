@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_updateRedmarkerAcknowledge
 @CurrentDate datetime,
-@uniqueid varchar(17)
+@uniqueid varchar(50)
 AS
 BEGIN
 Update ip set RedmarkerAcknowledge=1 from InterviewerProfile ip join UserList ul on ul.id=ip.Userid where ul.uniqueid=@uniqueid
