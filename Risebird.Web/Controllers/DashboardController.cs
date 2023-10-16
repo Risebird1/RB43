@@ -2176,7 +2176,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                    var data=    await _meetingRespository.UnassignYourself(meetingId);
+                    var data= await _dashboardService.MoveToUnassignService(meetingId);
                 if (data == true)
                 {
                     return Json("Move to Unassign Successfully");

@@ -7224,7 +7224,10 @@ ul.ks-cboxtags {
     .feedbackcontainer .label-name {
         color: #000!important;
     }
-    .rating {
+#ratingInterviewer.rating{
+    border:0px!important;
+}
+.rating {
     /*border: solid 1px #ccc;*/
     border: solid 1px white;
     display: flex;
@@ -7258,7 +7261,13 @@ ul.ks-cboxtags {
 .rating :checked ~ label {
     background-image: url(../../img/yellow-star.svg);
 }
-
+    .rating label:hover,
+    .rating label:hover ~ label {
+        background-image: url(../../img/yellow-star.svg);
+    }
+    .rating input[type='radio'][disabled]:hover, .rating input[type='radio'][disabled]:hover ~ label {
+        cursor: not-allowed;
+    }
 .redo-text {
     clear: both;
     position: relative;

@@ -7,7 +7,17 @@
 @{
     ViewData["Title"] = "Candidates";
     ViewBag.PageHeader = "";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (ViewBag.AccessType != null && ViewBag.AccessType == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+
+    }
+
 }
 <script>
     var Header = "Candidates for <strong>@ViewBag.IRFName</strong>";
