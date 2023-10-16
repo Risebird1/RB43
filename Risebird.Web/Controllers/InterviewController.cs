@@ -6173,9 +6173,8 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.profile = profileName;
                         var model = await _meetingService.FetchQCFormDetailsById(interviewid);
-                        if (model == null)
+                        if (model.id == 0)
                         {
-                            model = new QCFormVM();
                             setDefaultFlagsValue(model);
                             model.Isedit = false;
                         }
