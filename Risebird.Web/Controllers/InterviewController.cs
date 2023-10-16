@@ -3224,7 +3224,7 @@ namespace Risebird.Web.Controllers
                                 //};
                                 //var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer
-                                string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + model.InterviewId;
+                                string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + model.InterviewId;
                                 Mail _mail = new Mail
                                 {
                                     TO = model.CandidateEmail,
