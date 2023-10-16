@@ -8,16 +8,16 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create Procedure usp_ShowRedoRequestLit
-AS
-BEGIN
-Select im.*,case when ulc.LastName is null then ulc.FirstName                
-  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                
-  end as candidateName ,
-  ulc.EmailId as ChannelOwner
-  from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id
-inner join IRF on im.IRFId=irf.IRFId
-left join UserList ulc on im.candidateEmail= ulc.EmailId 
-where Approved=0
-END
+Create Procedure usp_ShowRedoRequestLit  
+AS  
+BEGIN  
+Select im.*,case when ulc.LastName is null then ulc.FirstName                  
+  else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                  
+  end as candidateName ,  
+  ulc.EmailId as ChannelOwner  
+  from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id  
+inner join IRF on im.IRFId=irf.IRFId  
+left join UserList ulc on im.candidateEmail= ulc.EmailId   
+where ISNULL(Approved,0)=0  
+END  
 GO
