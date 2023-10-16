@@ -33,6 +33,8 @@
 
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<input type="hidden" id="txtrate" value="@Model.Count()" />
+
 <div class="main-panel" id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -645,6 +647,9 @@
                                                 </tr>
                                             </tfoot>
                                             <tbody>
+                                                @{
+                                                    var i = 0;
+                                                }
                                                 @foreach (var item in Model)
                                                 {
 
@@ -1514,14 +1519,31 @@
 
                                                          @if (item.interviewer != null || item.interviewer != "")
                                                         {
-                                                            <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                                <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
                                                         }
                                                         else
                                                         {
                                                             <td style="color:red;text-align:center">@item.RedMarker</td>
                                                         }
-                                                    
-                                                        <td>@item.Rating</td>
+                                                       
+                                                     <td class="interviewer">
+                                                           
+                                                                <input type="hidden" id="Rating_@i" value="@item.Rating" />
+                                                                <div class="star-rating" style="pointer-events:none;">
+                                                                <input type="radio" id="Rating_5_@i" name="rating1_@i" readonly value="5" />
+                                                                <label for="Rating_5_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_4_@i" name="rating1_@i" readonly value="4" />
+                                                                <label for="Rating_4_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_3_@i" name="rating1_@i" readonly value="3" />
+                                                                <label for="Rating_3_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_2_@i" name="rating1_@i" readonly value="2" />
+                                                                <label for="Rating_2_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_1_@i" name="rating1_@i" readonly value="1" />
+                                                                <label for="Rating_1_@i" class="star">&#9733;</label></div>
+                                                               
+
+                                                        </td>
+                                             
                                                         <td>@item.RateAddedOn</td>
                                                          <td align="center">
                                                                 @if (!string.IsNullOrWhiteSpace(item.interviewer))
@@ -1535,7 +1557,9 @@
                                                          </td>
                                                     }
                                                     </tr>
+                                                    i++;
                                                 }
+                                              
                                             </tbody>
                                         </table>
                                     </div>
@@ -1842,13 +1866,12 @@
     }
 
 
-
-
+ 
 </script>
 
 
 <script>
-
+ 
     function RefreshSearch() {
         $('#meetingTable').DataTable().destroy();
 
@@ -1857,11 +1880,12 @@
         }, 2000);
     }
 
-    $(document).ready(function () {
+  
+        $(document).ready(function () {
+       // SetRating();
         applyDataTable();
 
     });
-
 
 
     function applyDataTable() {
@@ -1948,6 +1972,8 @@
             $('#read_' + id).val('Readmore');
         }
     }
+
+
     function FetchHistory(meetingid) {
         $.ajax({
             type: "POST",
@@ -2184,6 +2210,16 @@
         }
     }
 </script>
-
+<script>
+    function SetRating() {
+        var indexCount = $('#txtrate').val();
+        for (var i = 0; i < indexCount; i++) {
+            var Rating_Value = document.getElementById("Rating_" + i).value;
+            if (Rating_Value != null && Rating_Value != "" && parseInt(Rating_Value) > 0) {
+                $('#Rating_' + Rating_Value + '_' + i).attr('checked', 'checked');
+            }
+        }
+    }
+</script>
 <script src="~/js/twiliocallmaker.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>

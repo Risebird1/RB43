@@ -308,7 +308,8 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				 join IRF on im.IRFId=irf.IRFId
 				join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
-				join UserList ul on ul.id=  irf.RisebirdHr 
+				join UserList ul on ul.id=  irf.RisebirdHr
+				left join UserList uli on im.interviewer= uli.EmailId 
 				left join InterviewerProfile itp on itp.UserId = ul.id        
 				where cfd.Rating>=4 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ulsh.Emailid= @Emailid
 			end
@@ -335,12 +336,11 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			from CandidateFeedbackDetails cfd
 			inner join InterviewMeetings im on cfd.interviewid=im.id
 			 join IRF on im.IRFId=irf.IRFId
-			
 			join Client cl on irf.ClientId=cl.id 
 			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
 			join UserList ulc on ulc.id=  irf.RisebirdHr
 			left join UserList uli on im.interviewer= uli.EmailId  
-				left join InterviewerProfile itp on itp.UserId = uli.id         
+			left join InterviewerProfile itp on itp.UserId = uli.id         
 
 			where cfd.Rating>=4 and  (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID 
 			union 
@@ -352,7 +352,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
 			join UserList ulc on ulc.id=  irf.RisebirdHr
 			left join UserList uli on im.interviewer= uli.EmailId  
-				left join InterviewerProfile itp on itp.UserId = uli.id          
+			left join InterviewerProfile itp on itp.UserId = uli.id          
 
 			where cfd.Rating>=4 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()) and ul.EmailId=@emailID
 		end
