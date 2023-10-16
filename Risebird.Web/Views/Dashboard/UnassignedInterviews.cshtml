@@ -317,9 +317,9 @@
                                                         <th>Red Flags</th>
                                                     }
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -426,6 +426,12 @@
                                                         <th>Action</th>
 
                                                     }
+                                                    @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
+                                                    {  <th>Red Marker</th>
+                                                        <th>Rating</th>
+                                                        <th>Rated</th>
+                                                         <th>Action</th>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -518,9 +524,9 @@
                                                     }
 
                                                     @*PotentialRiskInterviewCount not allow*@
-                                                    @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                    @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -628,7 +634,13 @@
 
                                                     }
 
-
+                                                    @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
+                                                    {
+                                                        <th>Red Marker</th>
+                                                        <th>Rating</th>
+                                                        <th>Rated</th>
+                                                        <th>Action</th>
+                                                    }
 
                                                 </tr>
                                             </tfoot>
@@ -894,9 +906,9 @@
                                                             }
                                                         }
                                                         @*PotentialRiskInterviewCount not allow*@
-                                                        @if (ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
+                                                        @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
-                                                            @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
+                                                            @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount")
                                                             {
                                                                 <td>@item.ChannelOwner</td>
                                                             }
@@ -1497,8 +1509,31 @@
                                                             {
                                                                 <td></td>
                                                             }
-                                                        }
+                                                        } @if (ViewBag.actionstatus == "PotentialRiskInterviewCount")
+                                                    { 
 
+                                                         @if (item.interviewer != null || item.interviewer != "")
+                                                        {
+                                                            <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="color:red;text-align:center">@item.RedMarker</td>
+                                                        }
+                                                    
+                                                        <td>@item.Rating</td>
+                                                        <td>@item.RateAddedOn</td>
+                                                         <td align="center">
+                                                                @if (!string.IsNullOrWhiteSpace(item.interviewer))
+                                                                {
+                                                                    <span>
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
+                                                         </td>
+                                                    }
                                                     </tr>
                                                 }
                                             </tbody>
@@ -2133,7 +2168,7 @@
      function undoSuspiciousInterviewer(UserId) {
 
         if (UserId != '') {
-           $.ajax({
+           $.ajax({suspicious interviewer
                 url: '/Dashboard/UndoSuspiciousInterviewer',
                 data: { 'UserId':UserId},
                 type: "POST",

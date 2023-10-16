@@ -276,10 +276,12 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Channel Owner")]
         public string ChannelOwner { get; set; }
+        public string RateAddedOn { get; set; }
         public string CalendlyLink { get; set; }
         public bool IsQCRequired { get; set; }
         public bool IsCandidateResponsed { get; set; }
         public int CandidateResponse { get; set; }
+        public int Rating { get; set; }
         public int interviewtimedifference { get; set; }
         public bool IsJoinabilitySelectabilityRequired { get; set; }
         public string ProctorReport { get; set; }
