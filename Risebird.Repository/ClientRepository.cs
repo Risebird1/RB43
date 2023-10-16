@@ -199,7 +199,12 @@ namespace Risebird.Repository
             var parameters = new DynamicParameters();
 
             if (entity.id > 0)
+            {
                 parameters.Add("@id", entity.id);
+                parameters.Add("@ClientType", entity.ClientType);
+                parameters.Add("@CountryType", entity.CountryType);
+
+            }
 
             parameters.Add("@clientName", entity.Name);
             parameters.Add("@clientDescr", entity.Description);

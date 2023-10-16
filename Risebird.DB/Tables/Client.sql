@@ -21,7 +21,9 @@ CREATE TABLE [dbo].[Client](
             [IsRedoInterview] [bit] NULL,
             [IsClientCancelInterview] [bit] NULL,
             [PaymentTerm] [int] NULL,
-            [GSTApplicable] [bit] NULL
+            [GSTApplicable] [bit] NULL,
+            [ClientType] [bit] NULL, -- standard, pro, elite
+            [CountryType] [int] NULL -- onsite offshore
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -216,6 +218,28 @@ BEGIN
     ALTER TABLE Client
     Add GSTApplicable bit
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ClientType')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add ClientType int
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CountryType')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add CountryType int
+END
+
+
 END
 
 GO
