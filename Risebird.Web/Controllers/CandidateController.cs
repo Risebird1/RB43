@@ -941,6 +941,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.PageEndCount = 0;
                 }
                 _candidateModelDetails = candidateList;
+                ViewBag.AccessType = "Public";
                 return View("GetCandidates", candidateList.ToPagedList(Page ?? 1, 10));
 
             }
