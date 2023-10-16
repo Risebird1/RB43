@@ -13,11 +13,13 @@ Create PROCEDURE [dbo].[usp_ClientUserDetailByIRF]
   @Irfid int    
 AS          
 BEGIN          
-Select cu.id, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber,ul.idProfile,tc.IsActive as IsRecruiterActive,cl.IsClientCancelInterview   
+Select cu.id, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber,ul.idProfile,tc.IsActive as IsRecruiterActive,
+cl.IsClientCancelInterview, cr.[Name] as [Role]
 From TransClientUser tc join IRF on IRF.id=tc.IRFId   
 join UserList ul on ul.id=tc.ClientUserId    
 join ClientUser cu on ul.id=cu.UserId   
 join Client cl on cl.id=cu.ClientId
+join ClientRole cr on cr.id = cu.RoleId
 Where ul.EmailId=@Email and IRF.id=@Irfid          
 END
   
