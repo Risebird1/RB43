@@ -6177,9 +6177,8 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.profile = profileName;
                         var model = await _meetingService.FetchQCFormDetailsById(interviewid);
-                        if (model == null)
+                        if (model.id == 0)
                         {
-                            model = new QCFormVM();
                             setDefaultFlagsValue(model);
                             model.Isedit = false;
                         }
@@ -7831,34 +7830,22 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                if (model == null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailId = HttpContext.Session.GetString("email")?.Trim();
-                    emailId = emailId.Replace("\"", "");
-                    ViewBag.emailid = emailId;
-                    var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
-                    if (model == null)
-                    {
-                        model = new PaymentSLAVM();
-                        model.Isedit = false;
-                    }
-                    else
-                    {
-                        model.Isedit = true;
-                    }
-                    model.Interviewer = interviewer;
-                    model.isapprovedchecked = isapproved;
-                    model.Pagetype = pagetype;
-                    await SetPaymentSLADropDown(model);
-                    await SetInitialValue(model);
-                    return PartialView(model);
+                    model = new PaymentSLAVM();
+                    model.Isedit = false;
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    model.Isedit = true;
                 }
+                model.Interviewer = interviewer;
+                model.isapprovedchecked = isapproved;
+                model.Pagetype = pagetype;
+                await SetPaymentSLADropDown(model);
+                await SetInitialValue(model);
+                return PartialView(model);
             }
             catch (Exception ex)
             {
