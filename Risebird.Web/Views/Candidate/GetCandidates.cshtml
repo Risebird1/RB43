@@ -187,7 +187,7 @@
                                                             <th width="25%"> Actions </th>
                                                             <th style="text-align:center">Schedule Call</th>
                                                             <th style="text-align:center">Call</th>
-                                                            <th title="Communication attempts count">Communication</th>
+                                                           
 
                                                         </tr>
                                                     </thead>
@@ -213,7 +213,7 @@
                                                             <th style="text-align:center">Schedule Call</th>
 
                                                             <th style="text-align:center">Call</th>
-                                                            <th title="Communication attempts count">Communication</th>
+                                                          
 
                                                         </tr>
                                                     </tfoot>
@@ -401,7 +401,7 @@
                                                                         </button>
                                                                      
                                                                     }
-                                                                    <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
+                                                                    <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer;">
                                                                         <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                     </a>
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
@@ -433,7 +433,7 @@
 
 
 
-                                                                    @*@if (ViewBag.profile != "Client")
+                                                                    @if (ViewBag.AccessType != null && ViewBag.AccessType == "Public")
                                                                 {
 
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
@@ -441,11 +441,10 @@
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
                                                                 </span>
                                                                 </button>
-                                                                }*@
+                                                                }
 
 
                                                                 </td>
-
                                                                 <td class="text-center">
                                                                     @if (item.Phone != null && item.Phone != string.Empty)
                                                                     {

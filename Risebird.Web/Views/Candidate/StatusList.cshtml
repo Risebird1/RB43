@@ -8,6 +8,7 @@
     var Header = "Status for <strong>@(Model.CandidateName)(@(Model.IRFName))</strong>";
     $('#txtpageHeader').empty().html(Header);
 </script>
+
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 
@@ -60,7 +61,7 @@
                                                 <th>Date</th>
                                                 <th>Status</th>
                                                 <th>Comments</th>
-                                                <th>Play</th>
+                                                @*<th>Play</th>*@
                                                 <th class="text-center">Actions</th>
 
                                             </tr>
@@ -71,7 +72,7 @@
                                                 <th>Date</th>
                                                 <th>Status</th>
                                                 <th>Comments</th>
-                                                <th>Play</th>
+                                               @* <th>Play</th>*@
                                                 <th class="text-center">Actions</th>
 
                                             </tr>
@@ -84,24 +85,36 @@
                                                     <td> @item.Date</td>
                                                     @if (item.StatusValue == "In Progress")
                                                     {
-                                                        <td style="color:green;font-weight:500"> @item.StatusValue</td>
+                                                        <td><span class="current progress">@item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "New")
                                                     {
-                                                        <td style="color: dodgerblue;font-weight: 500"> @item.StatusValue</td>
+                                                        <td><span class="current new"> @item.StatusValue</span></td>
                                                     }
 
+                                                    else if (item.StatusValue == "Added")
+                                                    {
+                                                        <td><span class="current added"> @item.StatusValue</span></td>
+                                                    }
                                                     else if (item.StatusValue == "Waiting For Response")
                                                     {
-                                                        <td style="color: orange;font-weight: 500"> @item.StatusValue</td>
+                                                        <td><span class="current waiting"> @item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Scheduled")
                                                     {
-                                                        <td style="color: deepskyblue;font-weight: 500"> @item.StatusValue</td>
+                                                        <td><span class="current scheduled"> @item.StatusValue</span></td>
+                                                    }
+                                                    else if (item.StatusValue == "Cancelled")
+                                                    {
+                                                        <td><span class="current cancelled"> @item.StatusValue</span></td>
+                                                    }
+                                                    else if (item.StatusValue == "No Show(Candidate)")
+                                                    {
+                                                        <td><span class="current noshowcandidate">@item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Irrelevant")
                                                     {
-                                                        <td style="color:orange"> @item.StatusValue</td>
+                                                        <td><span class="current irrelevant"> @item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Duplicate")
                                                     {
@@ -113,7 +126,7 @@
                                                     }
                                                     else if (item.StatusValue == "Got Another Offer")
                                                     {
-                                                        <td style=" color: darkgreen;font-weight: 500"> @item.StatusValue</td>
+                                                        <td ><span class="current offer">@item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Hold")
                                                     {
@@ -130,12 +143,12 @@
                                                                 @if (item.Comments != null && item.Comments.Length > 18)
                                                                 {
 
-                                                                    <a href="#" data-tooltip="@item.Comments"><textarea style=" height: 50px;border: 0px; font-size: 14px;width: 100%;resize: none;">@item.Comments</textarea></a>
+                                                                    <a href="#" data-tooltip="@item.Comments"><textarea style=" height: 50px;width: 100%;font-size: 13px!important;resize: none; background:none; border:0px;">@item.Comments</textarea></a>
                                                                 }
 
                                                                 else
                                                                 {
-                                                                    <textarea style=" height: 50px;width: 100%;font-size: 14px;resize: none;">@item.Comments</textarea>
+                                                                    <textarea style=" height: 50px;width: 100%;font-size: 13px!important;resize: none; background:none; border:0px;">@item.Comments</textarea>
                                                                 }
                                                             </div>
                                                         </div>
@@ -153,7 +166,7 @@
 
 
 
-                                                    @if (item.AudioFileLink != null && item.AudioFileLink != "")
+                                                    @*@if (item.AudioFileLink != null && item.AudioFileLink != "")
                                                     {
                                                         <td>
                                                             <audio src='@item.AudioFileLink' asp-append-version="true" controls></audio>
@@ -164,7 +177,7 @@
                                                     {
                                                         <td> </td>
                                                     }
-
+*@
 
 
                                                     <td class="text-center action">
