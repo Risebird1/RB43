@@ -1528,7 +1528,7 @@
                                                        
                                                      <td class="interviewer">
                                                            
-                                                                <input type="hidden" id="Rating_@i" value="@item.Rating" />
+                                                               @*  <input type="hidden" id="Rating_@i" value="@item.Rating" />
                                                                 <div class="star-rating" style="pointer-events:none;">
                                                                 <input type="radio" id="Rating_5_@i" name="rating1_@i" readonly value="5" />
                                                                 <label for="Rating_5_@i" class="star">&#9733;</label>
@@ -1539,9 +1539,9 @@
                                                                 <input type="radio" id="Rating_2_@i" name="rating1_@i" readonly value="2" />
                                                                 <label for="Rating_2_@i" class="star">&#9733;</label>
                                                                 <input type="radio" id="Rating_1_@i" name="rating1_@i" readonly value="1" />
-                                                                <label for="Rating_1_@i" class="star">&#9733;</label></div>
-                                                               
-
+                                                                <label for="Rating_1_@i" class="star">&#9733;</label></div>*@
+                                                               @item.Rating
+                                                
                                                         </td>
                                              
                                                         <td>@item.RateAddedOn</td>
@@ -1882,12 +1882,12 @@
 
   
         $(document).ready(function () {
-       // SetRating();
+        @* SetRating(); *@
         applyDataTable();
 
     });
 
-
+Pt
     function applyDataTable() {
         $('#meetingTable').DataTable({
             "pagingType": "full_numbers",
@@ -2211,7 +2211,7 @@
     }
 </script>
 <script>
-    function SetRating() {
+   @*  function SetRating() {
         var indexCount = $('#txtrate').val();
         for (var i = 0; i < indexCount; i++) {
             var Rating_Value = document.getElementById("Rating_" + i).value;
@@ -2219,7 +2219,7 @@
                 $('#Rating_' + Rating_Value + '_' + i).attr('checked', 'checked');
             }
         }
-    }
+    } *@
 </script>
 <script src="~/js/twiliocallmaker.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
