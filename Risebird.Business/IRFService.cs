@@ -2934,7 +2934,11 @@ namespace Risebird.Business
                     //irfDetails.Heuristicsscore = irfRecommendations.CompetencyLevelId.HasValue ? irfRecommendations.CompetencyLevelId.Value : irfDetails.Heuristicsscore;
                     irfDetails.Heuristicsscore = (int)Heuristicsscorelevel.Standard;
                 }
+                if(irfDetails.MarketPlacePlanType > 0)
+                {
+                    irfDetails.Heuristicsscore = irfDetails.MarketPlacePlanType;
 
+                }
                 //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
 
                 irfDetails.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(irfDetails.CreatedFromTemplateId);

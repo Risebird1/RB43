@@ -440,16 +440,27 @@
 
                     <form action="@Url.Action("CreateInterviewLink","IRF")" method="post" id="formInterviewLink" enctype="multipart/form-data" onsubmit="return ValidateCreateInterviewLinkForm()">
                         @Html.AntiForgeryToken()
+
                         <div class="mb-3 mt-3">
+                            <p>Please select a Plan type based on Duration</p>
+                            <input type="radio" id="id_plan_standard" name="MarketPlacePlanType" value="2" checked onclick="SetRate(this.value)">
+                            <label>Standard </label><br><p>35 min : </p><p id="id_standard_rate"></p>
+                            <input type="radio" id="id_plan_pro" name="MarketPlacePlanType" value="4" onclick="SetRate(this.value)">
+                            <label>Pro </label><br><p>45 min : </p><p id="id_pro_rate"></p>
+                            <input type="radio" id="id_plan_advanced" name="MarketPlacePlanType" value="5" onclick="SetRate(this.value)">
+                            <label>Advanced </label><p>55 min : </p><p id="id_advanced_rate"></p>
+                        </div>
+
+                        @* <div class="mb-3 mt-3">
                             <label for="JDTiltle" class="form-label">Job Title:</label>
                             <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
                             <label id="error_JDTiltle" class="text-danger"></label>
-                        </div>
-                        <div class="mb-3">
+                        </div> *@
+                        @* <div class="mb-3">
                             <label for="JDFile" class="form-label">Job Description:</label>
                             <input type="file" for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
                             <label id="error_JDFile" class="text-danger"></label>
-                        </div>
+                        </div> *@
 
                         <div class="mb-3">
                             <label for="BillingOwner" class="form-label">Billing Owner:</label>
@@ -468,6 +479,8 @@
                         <input type="hidden" for="AssessmentGroupId" name="AssessmentGroupId" id="AssessmentGroupId" />
                         <input type="hidden" for="ClientId" name="ClientId" id="ClientId" />
                         <input type="hidden" for="MeetingPlatform" name="MeetingPlatform" id="MeetingPlatform" />
+                        <input type="hidden" for="JDTiltle" name="JDTiltle" id="JDTiltle" />
+                        <input type="hidden" for="RateComputedForClient" name="RateComputedForClient" id="RateComputedForClient" />
 
                         <button type="submit" class="btn btn-primary">Generate Interview Link</button>
                     </form>
@@ -630,6 +643,10 @@
     let clientId = '@Model.ClientId';
     let isBillingOwnerPopulated = false;
     let isModalOpened = false;
+    let standardRate = 0;
+    let proRate = 0;
+    let advancedRate = 0;
+
     //var closeMember = document.getElementById("interviewLinkModalClose");
     //closeMember.onclick = function () {
     //    var modal = document.getElementById("interviewLinkModal");
@@ -648,9 +665,9 @@
         }
         if (isModalOpened) {
             $('#JDTiltle').val('');
-            $('#JDFile').val('');
-            $('#error_JDTiltle').text('');
-            $('#error_JDFile').text('');
+            //$('#JDFile').val('');
+            //$('#error_JDTiltle').text('');
+            //$('#error_JDFile').text('');
             $('#error_BillingOwner').text('');
         }
 
@@ -658,6 +675,11 @@
         $('#CreatedFromTemplateId').val(templateId);
         $('#AssessmentGroupId').val(assessmentGroupId);
         $('#MeetingPlatform').val(meetingPlatform);
+        $('#JDTiltle').val(templateName);
+
+        document.getElementById('id_standard_rate').innerHTML = "";
+        document.getElementById('id_pro_rate').innerHTML = "";
+        document.getElementById('id_advanced_rate').innerHTML = "";
 
         if (!isBillingOwnerPopulated) {
             PopulateBillingOwner();
@@ -666,36 +688,40 @@
         if (!isModalOpened && clientId !== undefined) {
             isModalOpened = true;
             $('#ClientId').val(clientId);
+
+        }
+        if (clientId !== undefined && clientId != 0) {
+            GenerateDynamicRateByCurrentTimeOfWeek(clientId);
         }
     }
 
     function ValidateCreateInterviewLinkForm() {
 
-        var jobProfile = $('#JDTiltle').val();
-        var jdFile = $('#JDFile').val();
+        //var jobProfile = $('#JDTiltle').val();
+        //var jdFile = $('#JDFile').val();
         var billingOwner = $('#BillingOwner').val();
 
         var flag = true;
 
 
-        if (jobProfile == null || jobProfile == '') {
-            document.getElementById('error_JDTiltle').innerHTML = "Job Title is required.";
-            flag = false;
-        }
-        else if (jobProfile.length > 40) {
-            document.getElementById("error_JDTiltle").innerHTML = "The Job Title should not be more than 40 characters long.";
-            flag = false;
-        }
-        else {
-            document.getElementById('error_JDTiltle').innerHTML = "";
-        }
-        if (jdFile == null || jdFile == '') {
-            document.getElementById('error_JDFile').innerHTML = "Kindly upload a file here.";
-            flag = false;
-        }
-        else {
-            document.getElementById('error_JDFile').innerHTML = "";
-        }
+        // if (jobProfile == null || jobProfile == '') {
+        //     document.getElementById('error_JDTiltle').innerHTML = "Job Title is required.";
+        //     flag = false;
+        // }
+        // else if (jobProfile.length > 40) {
+        //     document.getElementById("error_JDTiltle").innerHTML = "The Job Title should not be more than 40 characters long.";
+        //     flag = false;
+        // }
+        // else {
+        //     document.getElementById('error_JDTiltle').innerHTML = "";
+        // }
+        // if (jdFile == null || jdFile == '') {
+        //     document.getElementById('error_JDFile').innerHTML = "Kindly upload a file here.";
+        //     flag = false;
+        // }
+        // else {
+        //     document.getElementById('error_JDFile').innerHTML = "";
+        // }
         if (billingOwner == null || billingOwner == '') {
             document.getElementById('error_BillingOwner').innerHTML = "Billing owner is required.";
             flag = false;
@@ -745,6 +771,56 @@
                 }
             }
         });
+    }
+
+    function GenerateDynamicRateByCurrentTimeOfWeek(clientId) {
+        $.ajax({
+            type: "GET",
+            url: "/Client/GenerateDynamicRateByCurrentTimeOfWeek",
+            data: { 'clientId': clientId},
+            async: true,
+            success: function (data) {
+                if (data != null && data != '') {
+                    document.getElementById('id_standard_rate').innerHTML = 'INR ' + data.standardPlanRate;
+                    document.getElementById('id_pro_rate').innerHTML = 'INR ' + data.proPlanRate;
+                    document.getElementById('id_advanced_rate').innerHTML = 'INR ' + data.advancedPlanRate;
+                    standardRate = data.standardPlanRate;
+                    proRate = data.proPlanRate;
+                    advancedRate = data.advancedPlanRate;
+                    checkRadioValue();
+                    // document.getElementById('id_plan_standard').value = data.standardPlanRate;
+                    // document.getElementById('id_plan_pro').value = data.proPlanRate;
+                    // document.getElementById('id_plan_advanced').value = data.advancedPlanRate;
+                }
+            }
+        });
+    }
+
+    function checkRadioValue() {
+        var ele = document.getElementsByName('MarketPlacePlanType');
+
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked)
+            {
+                SetRate(ele[i].value);
+            }
+               
+        }
+    }
+
+    function SetRate(planType) {
+        if(planType == 2)//standard
+        {
+            document.getElementById("RateComputedForClient").value = standardRate;
+        }
+        if(planType == 4)//pro
+        {
+            document.getElementById("RateComputedForClient").value = proRate;
+        }
+        if (planType == 5)//advanced
+        {
+            document.getElementById("RateComputedForClient").value = advancedRate;
+        }
     }
 </script>
 <script>

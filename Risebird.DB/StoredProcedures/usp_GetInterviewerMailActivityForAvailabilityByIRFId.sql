@@ -34,7 +34,7 @@ Begin
   where  (sge.[event] = 'open' or sge.[event]='click') and ul.idProfile = 3--profile id for Interviewer and irf.id =@irfId and
   and (charindex('Risebird: Availability check for Skill Channel ' + @irfName, smd.MailSubject) > 0 
   or charindex('Current availability (2 days) check for Skill Channel ' + @irfName, smd.MailSubject) > 0
-  or charindex('Current availability (2 days) check for Skill Channel ' + @jdTitle, smd.MailSubject) > 0)--and smd.MailSubject like '%Risebird: Availability check for Skill Channel%' 
+  or charindex('Current availability (2 days) check for  ' + @jdTitle, smd.MailSubject) > 0)--and smd.MailSubject like '%Risebird: Availability check for Skill Channel%' 
   order by smd.CreatedAt desc
  
 End  

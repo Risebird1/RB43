@@ -46,6 +46,7 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplate]
 @IsMeetingAutoCancelled bit,
 @IsMeetingNotificationSend bit,
 @IsNewSkillChannel bit = null,
+@RateComputedForClient int,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
 @InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,  
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  
@@ -103,7 +104,8 @@ begin try
   ,[IsMeetingAutoCancelled]
   ,[IsMeetingNotificationSend]
   ,[IsNewSkillChannel]
-  ,[FlatRate])
+  ,[FlatRate]
+  ,[RateComputedForClient])
   VALUES              
   (@IRFId,              
   @clientName,              
@@ -140,7 +142,8 @@ begin try
   @IsMeetingAutoCancelled,
   @IsMeetingNotificationSend,
   @IsNewSkillChannel,
-  @flatRate)                                                                           
+  @flatRate,
+  @RateComputedForClient)                                                                           
          
       
   select @irfIntId = SCOPE_IDENTITY()      

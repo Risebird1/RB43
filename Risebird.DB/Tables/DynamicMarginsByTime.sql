@@ -19,6 +19,19 @@ CREATE TABLE [dbo].[DynamicMarginsByTime](
 ) ON [PRIMARY]
 
 End
+Go
+
+SET IDENTITY_INSERT [dbo].[DynamicMarginsByTime] ON 
+
+INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (1, N'Mon', 1, 20, 30, 40, 50)
+INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (2, N'Tue', 2, 20, 30, 40, 50)
+INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (3, N'Wed', 3, 20, 30, 40, 50)
+INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (4, N'Thu', 4, 20, 30, 40, 50)
+INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (5, N'Fri', 5, 20, 30, 40, 50)
+INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (6, N'Sat', 6, 20, 30, 40, 50)
+INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (7, N'Sun', 7, 20, 30, 40, 50)
+
+SET IDENTITY_INSERT [dbo].[DynamicMarginsByTime] OFF
 
 GO
 

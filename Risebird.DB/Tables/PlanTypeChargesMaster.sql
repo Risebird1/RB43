@@ -55,18 +55,23 @@ END
 End
 GO
 
+SET IDENTITY_INSERT [dbo].[PlanTypeChargesMaster] ON 
 
-GO
-SET IDENTITY_INSERT [dbo].[DynamicMarginsByTime] ON 
 
-INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (1, N'Mon', 1, 20, 30, 40, 50)
-INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (2, N'Tue', 2, 20, 30, 40, 50)
-INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (3, N'Wed', 3, 20, 30, 40, 50)
-INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (4, N'Thu', 4, 20, 30, 40, 50)
-INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (5, N'Fri', 5, 20, 30, 40, 50)
-INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (6, N'Sat', 6, 20, 30, 40, 50)
-INSERT [dbo].[DynamicMarginsByTime] ([id], [Day], [WeekDay], [Session1], [Session2], [Session3], [Session4]) VALUES (7, N'Sun', 7, 20, 30, 40, 50)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (1, N'Standard', N'India', 350, 1, 35, 25, 2, 60, 2)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (2, N'Standard', N'Outside India', 500, 2, 35, 25, 2, 60, 2)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (3, N'Pro', N'India', 420, 1, 45, 35, 4, 60, 2)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (4, N'Pro', N'Outside India', 840, 2, 45, 35, 4, 60, 2)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (5, N'Advanced', N'India', 500, 1, 55, 45, 5, 60, 2)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (6, N'Advanced', N'Outside India', 1000, 2, 55, 45, 5, 60, 2)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (7, N'Standard', N'India', 1000, 1, 35, 25, 2, 60, 1)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (8, N'Standard', N'Outside India', 2000, 2, 35, 25, 2, 60, 1)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (9, N'Pro', N'India', 1400, 1, 45, 35, 4, 60, 1)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (10, N'Pro', N'Outside India', 2500, 2, 45, 35, 4, 60, 1)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (11, N'Advanced', N'India', 1800, 1, 55, 45, 5, 60, 1)
+INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (12, N'Advanced', N'Outside India', 3500, 2, 55, 45, 5, 60, 1)
 
-SET IDENTITY_INSERT [dbo].[DynamicMarginsByTime] OFF
+
+SET IDENTITY_INSERT [dbo].[PlanTypeChargesMaster] OFF
 GO
-GO
+

@@ -6214,6 +6214,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = true;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RateComputedForClient", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@RateComputedForClient"].Value = true;
+
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
                     techSkillDt.Columns.Add("LevelId", typeof(int));
