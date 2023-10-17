@@ -441,28 +441,35 @@
                     <form action="@Url.Action("CreateInterviewLink","IRF")" method="post" id="formInterviewLink" enctype="multipart/form-data" onsubmit="return ValidateCreateInterviewLinkForm()">
                         @Html.AntiForgeryToken()
 
-                        <div class="mb-3 mt-3">
-                            <p>Please select a Plan type based on Duration</p>
-                            <input type="radio" id="id_plan_standard" name="MarketPlacePlanType" value="2" checked onclick="SetRate(this.value)">
-                            <label>Standard </label><br><p>35 min : </p><p id="id_standard_rate"></p>
-                            <input type="radio" id="id_plan_pro" name="MarketPlacePlanType" value="4" onclick="SetRate(this.value)">
-                            <label>Pro </label><br><p>45 min : </p><p id="id_pro_rate"></p>
-                            <input type="radio" id="id_plan_advanced" name="MarketPlacePlanType" value="5" onclick="SetRate(this.value)">
-                            <label>Advanced </label><p>55 min : </p><p id="id_advanced_rate"></p>
+                        <div class="col-md-12" style="float:left">
+                            <p style="font-size:15px;color:green;text-align:left">Please select a Plan type based on Duration</p>
+                        </div>
+                        <div class="col-md-4 mb-3 mt-3" style="float:left">
+
+                            <input type="radio" id="id_plan_standard" name="MarketPlacePlanType" value="2" checked onclick="SetRate(this.value)" style="position:relative;top:3px;">
+                            <label>Standard ( 35 min ) </label><p class="rate-type" id="id_standard_rate"></p>
+                        </div>
+                        <div class="col-md-4 mb-3 mt-3" style="float:left">
+                            <input type="radio" id="id_plan_pro" name="MarketPlacePlanType" value="4" onclick="SetRate(this.value)" style="position:relative;top:3px;">
+                            <label>Pro ( 45 min )</label><p class="rate-type" id="id_pro_rate"></p>
+                        </div>
+                        <div class="col-md-4 mb-3 mt-3" style="float:left">
+                            <input type="radio" id="id_plan_advanced" name="MarketPlacePlanType" value="5" onclick="SetRate(this.value)" style="position:relative;top:3px;">
+                            <label>(Advanced ( 55 min )</label><p class="rate-type" id="id_advanced_rate"></p>
                         </div>
 
                         @* <div class="mb-3 mt-3">
-                            <label for="JDTiltle" class="form-label">Job Title:</label>
-                            <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
-                            <label id="error_JDTiltle" class="text-danger"></label>
+                        <label for="JDTiltle" class="form-label">Job Title:</label>
+                        <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
+                        <label id="error_JDTiltle" class="text-danger"></label>
                         </div> *@
                         @* <div class="mb-3">
-                            <label for="JDFile" class="form-label">Job Description:</label>
-                            <input type="file" for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
-                            <label id="error_JDFile" class="text-danger"></label>
+                        <label for="JDFile" class="form-label">Job Description:</label>
+                        <input type="file" for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
+                        <label id="error_JDFile" class="text-danger"></label>
                         </div> *@
 
-                        <div class="mb-3">
+                        <div class="col-md-12 mb-3" style="float:left">
                             <label for="BillingOwner" class="form-label">Billing Owner:</label>
                             @Html.DropDownList("BillingOwner", new List<SelectListItem>(), "Select", new { @class = "select-css form-control" })
                             <label id="error_BillingOwner" class="text-danger"></label>
@@ -482,7 +489,7 @@
                         <input type="hidden" for="JDTiltle" name="JDTiltle" id="JDTiltle" />
                         <input type="hidden" for="RateComputedForClient" name="RateComputedForClient" id="RateComputedForClient" />
 
-                        <button type="submit" class="btn btn-primary">Generate Interview Link</button>
+                        <button type="submit" class="btn btn-primary" style="margin:0px auto;display:block;border-radius:5px;padding:8px 10px;background:#53a5f5">Generate Interview Link</button>
                     </form>
 
                 </div>
@@ -781,9 +788,9 @@
             async: true,
             success: function (data) {
                 if (data != null && data != '') {
-                    document.getElementById('id_standard_rate').innerHTML = 'INR ' + data.standardPlanRate;
-                    document.getElementById('id_pro_rate').innerHTML = 'INR ' + data.proPlanRate;
-                    document.getElementById('id_advanced_rate').innerHTML = 'INR ' + data.advancedPlanRate;
+                    document.getElementById('id_standard_rate').innerHTML = 'INR: ' + data.standardPlanRate;
+                    document.getElementById('id_pro_rate').innerHTML = 'INR: ' + data.proPlanRate;
+                    document.getElementById('id_advanced_rate').innerHTML = 'INR: ' + data.advancedPlanRate;
                     standardRate = data.standardPlanRate;
                     proRate = data.proPlanRate;
                     advancedRate = data.advancedPlanRate;
