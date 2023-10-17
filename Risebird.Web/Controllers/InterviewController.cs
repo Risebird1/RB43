@@ -3217,29 +3217,18 @@ namespace Risebird.Web.Controllers
                             await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
-                                //Send mail to client for report
-                                //find all IRFowner and Users
-                                //var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
-                                //var maillist = string.Join(";", clientlist);
-                                //string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
-                                //Mail _mail1 = new Mail
-                                //{
-                                //    TO = maillist,
-                                //    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
-                                //};
-                                //var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer
                                 string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + model.InterviewId;
                                 Mail _mail = new Mail
                                 {
                                     TO = model.CandidateEmail,
-                                    Subject = "Risebird: Feedback form"
+                                    Subject = "Risebird: Interview Feedback"
                                 };
                                 var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = model.CandidateEmail;
                                 _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
-                                _whatsAppVM.Event = "Feedback Remainder";
+                                _whatsAppVM.Event = "Risebird: Interview Feedback";
                                 await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
