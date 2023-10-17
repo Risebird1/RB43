@@ -187,7 +187,7 @@
                                                             <th width="25%"> Actions </th>
                                                             <th style="text-align:center">Schedule Call</th>
                                                             <th style="text-align:center">Call</th>
-
+                                                           
 
                                                         </tr>
                                                     </thead>
@@ -213,6 +213,7 @@
                                                             <th style="text-align:center">Schedule Call</th>
 
                                                             <th style="text-align:center">Call</th>
+                                                          
 
                                                         </tr>
                                                     </tfoot>
@@ -369,13 +370,18 @@
                                                                                 <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
                                                                             </button>
                                                                             <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Candidate Status List">
-                                                                                <span onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16" id="IconChangeColor"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" id="mainIconPathAttribute" fill="#ffffff"></path> </svg></span>
+                                                                                <span onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"></path></svg></span>
                                                                             </button>
 
                                                                         }
+                                                                        @if (ViewBag.profile != "Client" || ViewBag.AccessType != null && ViewBag.AccessType == "Public")
+                                                                        {
+                                                                            <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Candidate Status">
+                                                                                <span onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"></path></svg></span>
+                                                                            </button>
+                                                                        }
 
-
-                                                                    }
+                                                                }
                                                                     @if (ViewBag.profile == "Admin")
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">
@@ -400,7 +406,7 @@
                                                                         </button>
 
                                                                     }
-                                                                    <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
+                                                                    <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer;">
                                                                         <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                     </a>
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
@@ -432,7 +438,7 @@
 
 
 
-                                                                    @*@if (ViewBag.profile != "Client")
+                 @*                                                   @if (ViewBag.AccessType != null && ViewBag.AccessType == "Public")
                                                                 {
 
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
@@ -444,7 +450,6 @@
 
 
                                                                 </td>
-
                                                                 <td class="text-center">
                                                                     @if (item.Phone != null && item.Phone != string.Empty)
                                                                     {
@@ -462,7 +467,44 @@
                                                                 </td>
 
 
+                                                                <td>
+                                                                    @if (item.MailCount != 0)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <span class="icon-field"> <img class="icon ml" src="~/img/email.png" />    Emails :</span>    <span class="icon-field">
+                                                                                <a class="icon-link" href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
+                                                                                    @item.MailCount
+                                                                                </a>
+                                                                            </span>
+                                                                        </div>
+                                                                    }
+                                                                    @if (item.CallsCount != 0)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <span class="icon-field">
+                                                                                <img class="icon vc" src="~/img/voice-call.png" />  Voice Calls :
+                                                                            </span>   <span class="icon-field">
+                                                                                <a class="icon-link" href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                    @item.CallsCount
+                                                                                </a>
+                                                                            </span>
+                                                                        </div>
+                                                                    }
 
+                                                                    @if (item.WhatsappCount != 0)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <span class="icon-field">
+                                                                                <img class="icon wp" src="~/img/whatsapp.png" />   Whatsapp Messages :
+                                                                            </span>  <span class="icon-field">
+                                                                                <a class="icon-link" href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                    @item.WhatsappCount
+                                                                                </a>
+                                                                            </span>
+                                                                        </div>
+                                                                    }
+
+                                                                </td>
 
 
                                                             </tr>
