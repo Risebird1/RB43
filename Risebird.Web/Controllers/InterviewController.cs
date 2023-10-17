@@ -3671,7 +3671,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 1].Value = "Interview Date";
                 Sheet.Cells[1, 2].Value = "Candidate name";
                 Sheet.Cells[1, 3].Value = "Client HR";
-                Sheet.Cells[1, 4].Value = "End ";
+                Sheet.Cells[1, 4].Value = "End Client Name";
                 Sheet.Cells[1, 5].Value = "Primary Skill";
                 Sheet.Cells[1, 6].Value = "Confirmation Status";
                 Sheet.Cells[1, 7].Value = "Meeting Status";
