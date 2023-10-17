@@ -305,7 +305,7 @@
                                                                     appendTime = Model.ThumbnailTimeSeconds;
                                                                 }
                                                                 var src = Model.VideoLink + "#t=" + appendTime.ToString();
-                                                                <video controls="controls" preload="metadata" class="vjs-tech interview">
+                                                                <video id="video" controls="controls" controlsList="nodownload" preload="metadata" class="vjs-tech interview">
                                                                     <source src='@Model.VideoLink' type="video/mp4">
                                                                 </video>
                                                             }
@@ -383,7 +383,10 @@
                                                                     {
                                                                         <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                                     }
-                                                                    <label>Rating : @valueslist</label>
+                                                                    @if (Model.ReportAccepted)
+                                                                    {
+                                                                        <label>Rating : @valueslist</label>
+                                                                    }
                                                                 }
                                                             </ul>
                                                         }
@@ -777,11 +780,23 @@
         $(".js-accordion-title:first-of-type").addClass("open");
         $(".js-accordion-title").click(function () {
             $(".open").not(this).removeClass("open").next().slideUp(300);
-
             $(this).toggleClass("open").next().slideToggle(300);
         });
-
     });
-
-
 </script>
+@if (Model.ReportAccepted)
+{
+    <script>
+        var video = document.getElementById('video');
+        var startTime = 0;
+        var endTime = 15 * 60;
+        function checkTime() {
+            if (video.currentTime >= endTime) {
+                video.pause();
+            }
+            setTimeout(checkTime, 100);
+        }
+        video.currentTime = startTime;
+        checkTime();
+    </script>
+}
