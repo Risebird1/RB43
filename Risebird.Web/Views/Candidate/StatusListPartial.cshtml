@@ -32,30 +32,44 @@
                             <td> @item.Date</td>
                             @if (item.StatusValue == "In Progress")
                             {
-                                <td style="color:green;font-weight:500"> @item.StatusValue</td>
+                            <td><span class="current progress" style="font-size:13px;"> @item.StatusValue</span></td>
                             }
                             else if (item.StatusValue == "New")
                             {
-                                <td style="color: dodgerblue;font-weight: 500">
-                                    @item.StatusValue
+                                <td>
+                                <span class="current new" style="font-size:13px;"> @item.StatusValue</span>
                                 </td>
                             }
 
+                        else if (item.StatusValue == "Added")
+                        {
+                            <td><span class="current added" style="font-size:13px;"> @item.StatusValue</span></td>
+                        }
+
                             else if (item.StatusValue == "Waiting For Response")
                             {
-                                <td style="color: orange;font-weight: 500">
-                                    @item.StatusValue
+                                <td>
+                                <span class="current waiting" style="font-size:13px;">    @item.StatusValue</span>
                                 </td>
                             }
                             else if (item.StatusValue == "Scheduled")
                             {
-                                <td style="color: deepskyblue;font-weight: 500">
-                                    @item.StatusValue
+                                <td>
+                                <span class="current scheduled" style="font-size:13px;"> @item.StatusValue</span>
                                 </td>
                             }
-                            else if (item.StatusValue == "Irrelevant")
-                            {
-                                <td style="color:orange"> @item.StatusValue</td>
+                        else if (item.StatusValue == "Cancelled")
+                        {
+                            <td><span class="current cancelled" style="font-size:13px;"> @item.StatusValue</span></td>
+                        }
+                        else if (item.StatusValue == "No Show(Candidate)")
+                        {
+                            <td><span class="current noshowcandidate" style="font-size:13px;">@item.StatusValue</span></td>
+                        }
+                        
+                         else if (item.StatusValue == "Irrelevant")
+                           {
+                                                        <td><span class="current irrelevant" style="font-size:13px;"> @item.StatusValue</span></td>
                             }
                             else if (item.StatusValue == "Duplicate")
                             {
@@ -93,13 +107,13 @@
                                         {
 
                                             <a href="#" data-tooltip="@item.Comments">
-                                                <textarea style=" height: 60px; border: 0px; font-size: 14px;width: 100%; resize: none;">@item.Comments</textarea>
+                                            <textarea style="  height: 50px;width: 100%;font-size: 13px!important;resize: none; background:none; border:0px;">@item.Comments</textarea>
                                             </a>
                                         }
 
                                         else
                                         {
-                                            <textarea style="height: 50px;width: 100%;font-size: 14px;resize: none;">@item.Comments</textarea>
+                                        <textarea style="height: height: 50px;width: 100%;font-size: 13px!important;resize: none; background:none; border:0px;">@item.Comments</textarea>
                                         }
                                     </div>
                                 </div>

@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
-    var Header = "Status for <strong>@(Model.CandidateName)(@(Model.IRFName))</strong>";
+    var Header = "Status for <strong>@(Model.CandidateName)</strong>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 
@@ -31,8 +31,9 @@
                             }*@
 
 
-
-                        @Html.ActionLink("Back", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                  
+                            @Html.ActionLink("Back", "GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })
+                        
                     </div>
                 </div>
             </div>
@@ -62,7 +63,9 @@
                                                 <th>Status</th>
                                                 <th>Comments</th>
                                                 @*<th>Play</th>*@
-                                                <th class="text-center">Actions</th>
+                                              
+                                                        @if (Model.Profile == "Admin" || (Model.Profile == "HR"))
+                                                        {   <th class="text-center">Actions</th>}
 
                                             </tr>
                                         </thead>
@@ -73,7 +76,9 @@
                                                 <th>Status</th>
                                                 <th>Comments</th>
                                                @* <th>Play</th>*@
-                                                <th class="text-center">Actions</th>
+                                              
+                                                        @if (Model.Profile == "Admin" || (Model.Profile == "HR"))
+                                                        {   <th class="text-center">Actions</th>}
 
                                             </tr>
                                         </tfoot>
@@ -85,56 +90,56 @@
                                                     <td> @item.Date</td>
                                                     @if (item.StatusValue == "In Progress")
                                                     {
-                                                        <td><span class="current progress">@item.StatusValue</span></td>
+                                                        <td><span class="current progress" style="font-size:13px;" >@item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "New")
                                                     {
-                                                        <td><span class="current new"> @item.StatusValue</span></td>
+                                                        <td><span class="current new" style="font-size:13px;"> @item.StatusValue</span></td>
                                                     }
 
                                                     else if (item.StatusValue == "Added")
                                                     {
-                                                        <td><span class="current added"> @item.StatusValue</span></td>
+                                                        <td><span class="current added" style="font-size:13px;"> @item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Waiting For Response")
                                                     {
-                                                        <td><span class="current waiting"> @item.StatusValue</span></td>
+                                                        <td><span class="current waiting" style="font-size:13px;"> @item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Scheduled")
                                                     {
-                                                        <td><span class="current scheduled"> @item.StatusValue</span></td>
+                                                        <td><span class="current scheduled" style="font-size:13px;"> @item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Cancelled")
                                                     {
-                                                        <td><span class="current cancelled"> @item.StatusValue</span></td>
+                                                        <td><span class="current cancelled" style="font-size:13px;"> @item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "No Show(Candidate)")
                                                     {
-                                                        <td><span class="current noshowcandidate">@item.StatusValue</span></td>
+                                                        <td><span class="current noshowcandidate" style="font-size:13px;">@item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Irrelevant")
                                                     {
-                                                        <td><span class="current irrelevant"> @item.StatusValue</span></td>
+                                                        <td><span class="current irrelevant" style="font-size:13px;"> @item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Duplicate")
                                                     {
-                                                        <td style=" color: hotpink;font-weight: 500"> @item.StatusValue</td>
+                                                        <td style=" color: hotpink;font-weight: 500;font-size:13px;"> @item.StatusValue</td>
                                                     }
                                                     else if (item.StatusValue == "Not Interested")
                                                     {
-                                                        <td style=" color:purple;font-weight: 500"> @item.StatusValue</td>
+                                                        <td style=" color:purple;font-weight: 500;font-size:13px;"> @item.StatusValue</td>
                                                     }
                                                     else if (item.StatusValue == "Got Another Offer")
                                                     {
-                                                        <td ><span class="current offer">@item.StatusValue</span></td>
+                                                        <td ><span class="current offer" style="font-size:13px;">@item.StatusValue</span></td>
                                                     }
                                                     else if (item.StatusValue == "Hold")
                                                     {
-                                                        <td style="color: orangered;font-weight: 500"> @item.StatusValue</td>
+                                                        <td style="color: orangered;font-weight: 500;font-size:13px;"> @item.StatusValue</td>
                                                     }
                                                     else
                                                     {
-                                                        <td> @item.StatusValue</td>
+                                                        <td style="font-size:13px;"> @item.StatusValue</td>
                                                     }
 
                                                     <td>
@@ -180,10 +185,11 @@
 *@
 
 
-                                                    <td class="text-center action">
+                                                   
 
                                                         @if (Model.Profile == "Admin" || (Model.Profile == "HR" && item.IsManuallyDeletable))
-                                                        {
+                                                        { 
+                                                            <td class="text-center action">
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                 <span onclick="location.href = '@Url.Action("EditStatus", "Candidate", new { id = item.id, candidateId = Model.CandidateId, irfId = Model.IRFId, rfName = Model.IRFName, candidateName = Model.CandidateName})'" title="Edit" class="mdc-fab__icon material-icons">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
@@ -191,14 +197,15 @@
                                                             </button>
 
 
-                                                        }
-                                                        @if (Model.Profile == "Admin" || (Model.Profile == "HR" && item.IsManuallyDeletable))
-                                                        {
+                                                        
+                                                     
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                 <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
                                                                 </span>
                                                             </button>
+                                                        </td>
+
                                                         }
 
 
@@ -206,7 +213,7 @@
 
 
 
-                                                    </td>
+                                                    
 
                                                 </tr>
 
