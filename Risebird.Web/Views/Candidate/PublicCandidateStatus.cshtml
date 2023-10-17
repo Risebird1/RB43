@@ -1409,7 +1409,7 @@
         for (var i = 0; i < data.length; i++) {
             html += '<tr><td>' + data[i].date.replace("T", " ") + '</td>';
             if (data[i].statusValue == "In Progress") {
-                html += '    <td style="color:green;font-weight:500"> ' + data[i].statusValue + '</td>';
+                html += '    <td>span class="current progress"> ' + data[i].statusValue + '</span></td>';
             }
             else if (data[i].statusValue == "New") {
                 html += '<td><span class="current new">' + data[i].statusValue + '</span></td>';

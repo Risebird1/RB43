@@ -168,10 +168,10 @@
                                                                     </button> *@
                                                                     @if (!(bool)(ViewBag.IsClientLogin ?? false))
                                                                     {
-                                                                        <a target="_blank" href="@Url.Action("GetPublicCandidates", "Candidate" , new { id = item.id, irfName = item.IRFId, profileName = "Client", emailid = ViewBag.emailid})" title="Candidate List">
-                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Candidate List" style="position:relative;top:3px;">
-                                                                                <span title="Candidate List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>ionicons-v5-o</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
-                                                                            </button>
+                                                                        <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetPublicCandidates", "Candidate" , new { id = item.id, irfName = item.IRFId, profileName = "Client", emailid = ViewBag.emailid})" title="Candidate List">
+                                                                            <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List" >
+                                                                                <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
+                                                                            </div>
                                                                         </a>                                                                        
                                                                     }
 
