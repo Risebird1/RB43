@@ -274,10 +274,11 @@
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Meeting Platform</th>
-                                                    <th>Tech Skills</th>
+                                                    @* <th>Meeting Platform</th> *@
                                                     @if (Model.Profile != "Client")
                                                     {
+                                                        <th>Tech Skills</th>
+
                                                         <th>Skill Channels</th>
                                                         <th>Interviewers</th>
                                                     }
@@ -288,10 +289,11 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Meeting Platform</th>
-                                                    <th>Tech Skills</th>
+                                                    @* <th>Meeting Platform</th> *@
                                                     @if (Model.Profile != "Client")
                                                     {
+                                                        <th>Tech Skills</th>
+
                                                         <th>Skill Channels</th>
                                                         <th>Interviewers</th>
                                                     }
@@ -317,24 +319,24 @@
                                                         <td></td>
                                                     }
 
-                                                    @if (!string.IsNullOrEmpty(item.MeetingPlatform))
+                                                    @* @if (!string.IsNullOrEmpty(item.MeetingPlatform))
                                                     {
-                                                        @*<td> @item.Name </td>*@
                                                         <td>@item.MeetingPlatform</td>
                                                     }
                                                     else
                                                     {
                                                         <td></td>
-                                                    }
+                                                    } *@
 
-                                                    <td>
-                                                        <button type="button" class="clickhere_btn pull-left">
-                                                            <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
-                                                        </button>
-                                                    </td>
+                                                    
 
                                                     @if (Model.Profile != "Client")
                                                     {
+                                                        <td>
+                                                            <button type="button" class="clickhere_btn pull-left">
+                                                                <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                            </button>
+                                                        </td>
                                                         @if (item.SkillChannelCounts > 0)
                                                         {
                                                             <td title="Template Stats" style="color:blue!important;cursor:pointer" onclick="openTemplatestats('@item.ClonableSkillChannelId', '@item.Name')">@item.SkillChannelCounts</td>
@@ -463,11 +465,11 @@
                         <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
                         <label id="error_JDTiltle" class="text-danger"></label>
                         </div> *@
-                        @* <div class="mb-3">
-                        <label for="JDFile" class="form-label">Job Description:</label>
-                        <input type="file" for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
-                        <label id="error_JDFile" class="text-danger"></label>
-                        </div> *@
+                        <div class="mb-3">
+                            <label for="JDFile" class="form-label">Job Description:</label>
+                            <input type="file" for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
+                            <label id="error_JDFile" class="text-danger"></label>
+                        </div>
 
                         <div class="col-md-12 mb-3" style="float:left">
                             <label for="BillingOwner" class="form-label">Billing Owner:</label>
@@ -475,11 +477,11 @@
                             <label id="error_BillingOwner" class="text-danger"></label>
                         </div>
 
-                        <div class="mb-3 mt-3">
+                        @* <div class="mb-3 mt-3">
                             <label for="ClientName" class="form-label">Project Name:</label>
                             <input type="text" class="form-control" id="ClientName" name="ClientName" for="ClientName">
                             <label id="error_ClientName" class="text-danger"></label>
-                        </div>
+                        </div> *@
 
                         <input type="hidden" for="CreatedFromTemplateId" name="CreatedFromTemplateId" id="CreatedFromTemplateId" />
                         <input type="hidden" for="IRFId" name="IRFId" id="IRFId" />
@@ -672,9 +674,9 @@
         }
         if (isModalOpened) {
             $('#JDTiltle').val('');
-            //$('#JDFile').val('');
+            $('#JDFile').val('');
             //$('#error_JDTiltle').text('');
-            //$('#error_JDFile').text('');
+            $('#error_JDFile').text('');
             $('#error_BillingOwner').text('');
         }
 
@@ -705,7 +707,7 @@
     function ValidateCreateInterviewLinkForm() {
 
         //var jobProfile = $('#JDTiltle').val();
-        //var jdFile = $('#JDFile').val();
+        var jdFile = $('#JDFile').val();
         var billingOwner = $('#BillingOwner').val();
 
         var flag = true;
@@ -722,13 +724,13 @@
         // else {
         //     document.getElementById('error_JDTiltle').innerHTML = "";
         // }
-        // if (jdFile == null || jdFile == '') {
-        //     document.getElementById('error_JDFile').innerHTML = "Kindly upload a file here.";
-        //     flag = false;
-        // }
-        // else {
-        //     document.getElementById('error_JDFile').innerHTML = "";
-        // }
+        if (jdFile == null || jdFile == '') {
+            document.getElementById('error_JDFile').innerHTML = "Kindly upload a file here.";
+            flag = false;
+        }
+        else {
+            document.getElementById('error_JDFile').innerHTML = "";
+        }
         if (billingOwner == null || billingOwner == '') {
             document.getElementById('error_BillingOwner').innerHTML = "Billing owner is required.";
             flag = false;
@@ -780,7 +782,7 @@
         });
     }
 
-    function GenerateDynamicRateByCurrentTimeOfWeek(clientId) {
+    function GenerateDynamicRateByCurrentTimeOfWeek(clientId, autoCall = false) {
         $.ajax({
             type: "GET",
             url: "/Client/GenerateDynamicRateByCurrentTimeOfWeek",
@@ -788,16 +790,29 @@
             async: true,
             success: function (data) {
                 if (data != null && data != '') {
-                    document.getElementById('id_standard_rate').innerHTML = 'INR: ' + data.standardPlanRate;
-                    document.getElementById('id_pro_rate').innerHTML = 'INR: ' + data.proPlanRate;
-                    document.getElementById('id_advanced_rate').innerHTML = 'INR: ' + data.advancedPlanRate;
+                    if(autoCall == false)
+                    {
+                        document.getElementById('id_standard_rate').innerHTML = 'INR: ' + data.standardPlanRate;
+                        document.getElementById('id_pro_rate').innerHTML = 'INR: ' + data.proPlanRate;
+                        document.getElementById('id_advanced_rate').innerHTML = 'INR: ' + data.advancedPlanRate;
+                    }
+                    
                     standardRate = data.standardPlanRate;
                     proRate = data.proPlanRate;
                     advancedRate = data.advancedPlanRate;
-                    checkRadioValue();
-                    // document.getElementById('id_plan_standard').value = data.standardPlanRate;
-                    // document.getElementById('id_plan_pro').value = data.proPlanRate;
-                    // document.getElementById('id_plan_advanced').value = data.advancedPlanRate;
+
+                    if(autoCall ==false)
+                    {
+                        checkRadioValue();
+
+                    }
+
+
+                    if(autoCall)
+                    {
+                        //set the dynamic rates here
+
+                    }
                 }
             }
         });
@@ -903,7 +918,10 @@
 <script>
     var asgGrpPrSkillsCategoryMapArray;
     $(document).ready(function () {
-        //$("#PrimarySkills").multiselect();
+        //get the dynamic rates here
+        GenerateDynamicRateByCurrentTimeOfWeek('@Model.ClientId', true);
+
+        setInterval(GenerateDynamicRateByCurrentTimeOfWeek('@Model.ClientId', true), 60000);
 
         $("#ResetFilter").click(function () {
             ResetFilter();
