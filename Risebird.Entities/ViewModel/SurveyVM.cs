@@ -42,6 +42,7 @@ namespace Risebird.Entities.ViewModel
 
         public bool IsClient { get; set; }
         public DateTime Interviewdate { get; set; }
+        public string ClientName { get; set; }
     }
     public class SurveyCandidateInterviewer
     {
