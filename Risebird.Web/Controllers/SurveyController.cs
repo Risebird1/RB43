@@ -68,40 +68,6 @@ namespace Risebird.Web.Controllers
                     };
                     var resultsetdetails = await _notificationHelper.FeedbackSubmitNotification(_mail, results.CandidateName);
                 }
-                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
-                //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
-                //if (result.Where(x => x.interviewid == model.interviewid).Count() > 0)
-                //{
-                //    var resultset = result.Where(x => x.interviewid == model.interviewid).FirstOrDefault();
-                //    resultset.Question1 = model.Question1;
-                //    resultset.Question2 = model.Question2;
-                //    resultset.Question3 = model.Question3;
-                //    resultset.Question4 = model.Question4;
-                //    resultset.Question5 = model.Question5;
-                //    resultset.Question6 = model.Question6;
-                //    resultset.Name = model.Name;
-                //    resultset.Phone = model.Phone;
-                //    await _azureTableStorageService.InsertEntity("RisebirdSurvey", resultset);
-                //}
-                //else
-                //{
-                //    //FetchCanddiateInterviewer
-                //    var model1 = _meetingService.FetchCanddiateInterviewer(model.interviewid);
-                //    var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
-                //    model.PartitionKey = date;
-                //    model.RowKey = Guid.NewGuid().ToString();
-                //    model.CreatedOn = DateTime.Now;
-                //    model.Interviewerid = model1.id;
-                //    model.PrimarySkill = model1.PrimarySkill;
-                //    await _azureTableStorageService.InsertEntity("RisebirdSurvey", model);
-                //    //Send mail to interviewer with candidate email address
-                //    Mail _mail = new Mail
-                //    {
-                //        TO = model1.Interviewer,
-                //        Subject = "Candidate Interview Feedback"
-                //    };
-                //    var resultsetdetails = await _notificationHelper.FeedbackSubmitNotification(_mail, model1.CandidateName);
-                //}
             }
             catch (Exception ex1)
             {

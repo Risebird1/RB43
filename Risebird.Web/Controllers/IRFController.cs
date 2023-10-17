@@ -5949,7 +5949,8 @@ namespace Risebird.Web.Controllers
                     if (result.Where(x => x.interviewid == item).Count() == 0)
                     {
                         var CandidateEmail = resultset.Where(x => x.interviewid == item).Select(x => x.Intervieweremail).FirstOrDefault();
-                        string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + item;
+                        //string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + item;
+                        string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + item;
                         Mail _mail = new Mail
                         {
                             TO = CandidateEmail,
