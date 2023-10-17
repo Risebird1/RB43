@@ -12,8 +12,8 @@ CREATE Procedure usp_FetchCandidateFeedbackByIRFId
 @irfid varchar(20)
 AS  
 BEGIN  
- Select cr.*,cr.Comment as CommentforInterviewer,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate
- from CandidateRatings cr join InterviewMeetings im on cr.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId 
+ Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate
+ from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId 
  join InterviewComments ic on ic.Interviewid=im.id 
  where im.Irfid=@irfid and ic.MeetingStatus=4
   

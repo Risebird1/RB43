@@ -23,22 +23,21 @@ BEGIN
  where ul.IsActive =1 and ul.emailid =@Emailid    
  Select @UserId=id from UserList where Emailid=@Emailid  
    
- Select cr.*,cr.Comment as CommentforInterviewer,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate from CandidateRatings cr join InterviewMeetings im on cr.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
- join TransClientUser tcu on tcu.IRFId=IRF.id  
+ Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
+ join TransClientUser tcu on tcu.IRFId=IRF.id   
  where IRF.ClientId=@Clientid and tcu.ClientUserId=@UserId and im.confirmationStatus=1  
 END  
 else if(@Profile='SeniorHR' or @Profile='SupportAdmin')  
 BEGIN  
- Select cr.*,cr.Comment as CommentforInterviewer,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate,cl.Name as ClientName from CandidateRatings cr join InterviewMeetings im on cr.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
- join SeniorHR sh on IRF.ClientId=sh.Clientid join Userlist ul on ul.id=Sh.Userid join Client cl on irf.ClientId=cl.id   
+ Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
+ join SeniorHR sh on IRF.ClientId=sh.Clientid join Userlist ul on ul.id=Sh.Userid   
  where ul.Emailid=@Emailid and im.confirmationStatus=1  
 END  
 else  
 BEGIN  
- Select cr.*,cr.Comment as CommentforInterviewer,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate,cl.Name as ClientName from CandidateRatings cr join InterviewMeetings im on cr.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId 
- join Client cl on irf.ClientId=cl.id
+ Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
  where im.confirmationStatus=1  
 END  
   
-END 
+END  
 Go
