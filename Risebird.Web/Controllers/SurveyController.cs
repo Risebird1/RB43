@@ -140,7 +140,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.type = "Candidate";
                         var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
-                       
+
                         if (HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateFeedBackfilters"));
@@ -841,40 +841,37 @@ namespace Risebird.Web.Controllers
                 return View(result);
             }
             catch (Exception ex)
-            { 
+            {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Error, ex);
                 var result = new List<LogData>();
                 return View(result);
             }
         }
-
         [HttpGet]
         public async Task<IActionResult> CandidateFeedbackForm(int id)
         {
-         var model = new PaymentSLAVM();
+            var model = new PaymentSLAVM();
             model.Interviewid = id;
             await SetInitialValue(model);
-
             return View(model);
-
         }
         [HttpPost]
         public async Task<IActionResult> CandidateFeedbackForm(PaymentSLAVM model)
         {
             try
             {
-             
                 await _surveyService.CandidateFeedbackFormDetailsService(model);
                 await SetInitialValue(model);
                 return View(model);
             }
-            catch ( Exception ex){
+            catch (Exception ex)
+            {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
         }
 
-            public async Task SetInitialValue(PaymentSLAVM model)
+        public async Task SetInitialValue(PaymentSLAVM model)
         {
             if (string.IsNullOrEmpty(model.Inaccuratedecisionmaking))
             {
@@ -925,6 +922,7 @@ namespace Risebird.Web.Controllers
                 model.PoorCommunicationSkills = string.Empty;
             }
         }
+        
     }
 
 }

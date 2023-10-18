@@ -1341,7 +1341,8 @@
                                                         }
 
 
-                                                        @if ((ViewBag.actionstatus == "QCReport") && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin"))
+                                                        @*@if ((ViewBag.actionstatus == "QCReport") && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin"))*@
+                                                        @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <td>
                                                                 <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">

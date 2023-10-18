@@ -7522,7 +7522,6 @@ namespace Risebird.Web.Controllers
                         model.IsQCRequired = client.IsQCRequired;
                         model.IsRedoInterview = client.IsRedoInterview;
                     }
-
                 }
                 else
                 {
@@ -8035,5 +8034,26 @@ namespace Risebird.Web.Controllers
             return Json("Success");
         }
         #endregion
+        [HttpGet]
+        public async Task<IActionResult> ClientInterviewReview(int id)
+        {
+            var model = new PaymentSLAVM();
+            model.Interviewid = id;
+            await SetInitialValue(model);
+            return PartialView(model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> ClientInterviewReview(PaymentSLAVM model)
+        {
+            try
+            {
+                return Json("Success");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Success");
+            }
+        }
     }
 }
