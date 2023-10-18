@@ -145,5 +145,9 @@ namespace Risebird.Entities.ViewModel
         public int CandidateResumeId {get; set;}// id from CandidateResume table
         public string AddedByEmailId { get; set;}// id from CandidateResume table
         public string SchedulerUniqueid { get; set;}
+        public int InterviewId { get; set; }
+        public int MailCount { get; set; }
+        public int CallsCount { get; set; }
+        public int WhatsappCount { get; set; }
     }
 }

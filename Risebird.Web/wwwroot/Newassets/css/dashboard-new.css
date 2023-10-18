@@ -6633,6 +6633,17 @@ input[type="date"].form-control {
     background: #f89cbf24;
     color: #94207bbd;
 }
+.progress{
+    background:green;
+    color:#fff;
+}
+.waiting {
+    background: orange;
+    color: #94207bbd;
+}
+.offer {
+  background: darkgreen;color:#fff;
+}
 .candidate-field {
     width: 100%;
     float: left;
