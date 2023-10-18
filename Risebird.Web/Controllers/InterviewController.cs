@@ -7544,6 +7544,7 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
+                
                 if (!string.IsNullOrEmpty(uniqueid) || !string.IsNullOrEmpty(publicEmailId))
                 {
                     model.Userid = 0;
