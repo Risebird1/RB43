@@ -52,6 +52,7 @@ namespace Risebird.Web.Controllers
         private readonly IZoomHelper _zoomHelper;
         private readonly IInterviewerService _interviewerService;
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
+        private readonly IClientService _clientService;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -65,7 +66,7 @@ namespace Risebird.Web.Controllers
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
             IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository)
+            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository, IClientService clientService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -87,6 +88,7 @@ namespace Risebird.Web.Controllers
             _zoomHelper = zoomHelper;
             _interviewerService = interviewerService;
             _interviewSchedulerRepository = interviewSchedulerRepository;
+            _clientService = clientService;
         }
 
 
@@ -8047,6 +8049,17 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                model.CreatedBy = emailId;
+                ClientCommentsForReport ratingmodel = new ClientCommentsForReport();
+                ratingmodel.Comment = "";
+                ratingmodel.Rating = model.Rating;
+                ratingmodel.InterviewId = model.Interviewid;
+                ratingmodel.CreatedBy = emailId;
+                await _clientService.AddUpdateClientCommentsForReport(ratingmodel);
+                //Save Payment Complience
+                var result = await _meetingService.AddorUpdatePaymentSLADetails(model);
                 return Json("Success");
             }
             catch (Exception ex)
