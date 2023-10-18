@@ -199,7 +199,12 @@ namespace Risebird.Repository
             var parameters = new DynamicParameters();
 
             if (entity.id > 0)
+            {
                 parameters.Add("@id", entity.id);
+                parameters.Add("@ClientType", entity.ClientType);
+                parameters.Add("@CountryType", entity.CountryType);
+
+            }
 
             parameters.Add("@clientName", entity.Name);
             parameters.Add("@clientDescr", entity.Description);
@@ -1225,6 +1230,27 @@ namespace Risebird.Repository
                     var result = await SqlMapper.QueryAsync<MoneyProtectionVM>(con, "usp_GetMoneyProtectionDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<DynamicRatesDTO> GenerateDynamicRateByCurrentTimeOfWeek(int clientId, int margin)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@margin", margin);
+                parameters.Add("@clientId", clientId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<DynamicRatesDTO>(con, "usp_GenerateDynamicRateForClient", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)

@@ -274,10 +274,11 @@
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Meeting Platform</th>
-                                                    <th>Tech Skills</th>
+                                                     @* <th>Meeting Platform</th> *@
                                                     @if (Model.Profile != "Client")
                                                     {
+                                                        <th>Tech Skills</th>
+
                                                         <th>Skill Channels</th>
                                                         <th>Interviewers</th>
                                                     }
@@ -288,10 +289,11 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Meeting Platform</th>
-                                                    <th>Tech Skills</th>
+                                                    @* <th>Meeting Platform</th> *@
                                                     @if (Model.Profile != "Client")
                                                     {
+                                                        <th>Tech Skills</th>
+
                                                         <th>Skill Channels</th>
                                                         <th>Interviewers</th>
                                                     }
@@ -300,7 +302,20 @@
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-
+                                                <div class="clearfix" style="position:relative;top:-3px;margin-bottom: 10px;">
+                                                    <div style="float:left;margin-right:20px;">
+                                                        <span style="float:left;">
+                                                            <strong> Standard: ( 35 min )</strong>
+                                                        </span>
+                                                        <span style="float:left;padding-right:11px;padding-left:7px;" class="rate-type" id="id_standard_price"></span>
+                                                </div>
+                                                <div style="float:left;margin-right:20px;">
+                                                        <span style="float:left;"> <strong>Pro: ( 45 min )</strong></span> <span style="padding-right:11px;padding-left:7px;" class="rate-type" id="id_pro_price"></span>
+                                                </div>
+                                                <div style="float:left">
+                                                        <span style="float:left;"> <strong> Advanced: ( 55 min )</strong></span>  <span style="padding-right:11px;padding-left:7px;" class="rate-type" id="id_advanced_price"></span>
+                                                </div>
+                                                </div>
                                                 @if (Model.ClonableTemplates != null && Model.ClonableTemplates.Count() > 0)
                                                 {
                                                     foreach (var item in Model.ClonableTemplates)
@@ -317,24 +332,24 @@
                                                         <td></td>
                                                     }
 
-                                                    @if (!string.IsNullOrEmpty(item.MeetingPlatform))
+                                                     @* @if (!string.IsNullOrEmpty(item.MeetingPlatform))
                                                     {
-                                                        @*<td> @item.Name </td>*@
                                                         <td>@item.MeetingPlatform</td>
                                                     }
                                                     else
                                                     {
                                                         <td></td>
-                                                    }
+                                                    }  *@
 
-                                                    <td>
-                                                        <button type="button" class="clickhere_btn pull-left">
-                                                            <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
-                                                        </button>
-                                                    </td>
+                                                    
 
                                                     @if (Model.Profile != "Client")
                                                     {
+                                                        <td>
+                                                            <button type="button" class="clickhere_btn pull-left">
+                                                                <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                            </button>
+                                                        </td>
                                                         @if (item.SkillChannelCounts > 0)
                                                         {
                                                             <td title="Template Stats" style="color:blue!important;cursor:pointer" onclick="openTemplatestats('@item.ClonableSkillChannelId', '@item.Name')">@item.SkillChannelCounts</td>
@@ -428,8 +443,8 @@
             <div class="modal-content">
 
                 <div class="filheader">
-                    <h5 class="modal-title pull-left" id="interviewLinkModalHeading" style="width:600px">Generate Interview Link<span class="popup-text" id="skill_id_pop"></span></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseIRFPopup()">
+                    <h5 class="modal-title pull-left" id="interviewLinkModalHeading" style="width:100%;font-size:18px!important;padding:0px 0px 0px 40px;">Generate Interview Link<span class="popup-text" id="skill_id_pop"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseIRFPopup()" style="position:relative;top:10px;">
                         <span aria-hidden="true" id="interviewLinkModalClose" style="cursor:pointer;">&times;</span>
                     </button>
                 </div>
@@ -440,36 +455,56 @@
 
                     <form action="@Url.Action("CreateInterviewLink","IRF")" method="post" id="formInterviewLink" enctype="multipart/form-data" onsubmit="return ValidateCreateInterviewLinkForm()">
                         @Html.AntiForgeryToken()
-                        <div class="mb-3 mt-3">
-                            <label for="JDTiltle" class="form-label">Job Title:</label>
-                            <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
-                            <label id="error_JDTiltle" class="text-danger"></label>
+
+                        <div class="col-md-12" style="float:left">
+                            <p style="font-size:15px;color:green;text-align:left">Please select a Plan type based on Duration</p>
                         </div>
-                        <div class="mb-3">
+                        <div class="col-md-4 mb-3 mt-3" style="float:left">
+
+                            <input type="radio" id="id_plan_standard" name="MarketPlacePlanType" value="2" checked onclick="SetRate(this.value)" style="position:relative;top:3px;">
+                            <label>Standard ( 35 min ) </label><p class="rate-type" id="id_standard_rate"></p>
+                        </div>
+                        <div class="col-md-4 mb-3 mt-3" style="float:left">
+                            <input type="radio" id="id_plan_pro" name="MarketPlacePlanType" value="4" onclick="SetRate(this.value)" style="position:relative;top:3px;">
+                            <label>Pro ( 45 min )</label><p class="rate-type" id="id_pro_rate"></p>
+                        </div>
+                        <div class="col-md-4 mb-3 mt-3" style="float:left">
+                            <input type="radio" id="id_plan_advanced" name="MarketPlacePlanType" value="5" onclick="SetRate(this.value)" style="position:relative;top:3px;">
+                            <label>Advanced ( 55 min )</label><p class="rate-type" id="id_advanced_rate"></p>
+                        </div>
+
+                        @* <div class="mb-3 mt-3">
+                        <label for="JDTiltle" class="form-label">Job Title:</label>
+                        <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
+                        <label id="error_JDTiltle" class="text-danger"></label>
+                        </div> *@
+                        <div class="col-md-12 mb-3" style="float:left;">
                             <label for="JDFile" class="form-label">Job Description:</label>
-                            <input type="file" for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
+                            <input type="file" for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile" style="padding:11px 10px;">
                             <label id="error_JDFile" class="text-danger"></label>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="col-md-12 mb-3 mt-3" style="float:left;">
                             <label for="BillingOwner" class="form-label">Billing Owner:</label>
-                            @Html.DropDownList("BillingOwner", new List<SelectListItem>(), "Select", new { @class = "select-css form-control" })
+                            @Html.DropDownList("BillingOwner", new List<SelectListItem>(), "Select", new { @class = "select-css form-control", @style = "font-weight:normal!important;border:1px #ebebeb solid;" })
                             <label id="error_BillingOwner" class="text-danger"></label>
                         </div>
 
-                        <div class="mb-3 mt-3">
+                        @* <div class="mb-3 mt-3">
                             <label for="ClientName" class="form-label">Project Name:</label>
                             <input type="text" class="form-control" id="ClientName" name="ClientName" for="ClientName">
                             <label id="error_ClientName" class="text-danger"></label>
-                        </div>
+                        </div> *@
 
                         <input type="hidden" for="CreatedFromTemplateId" name="CreatedFromTemplateId" id="CreatedFromTemplateId" />
                         <input type="hidden" for="IRFId" name="IRFId" id="IRFId" />
                         <input type="hidden" for="AssessmentGroupId" name="AssessmentGroupId" id="AssessmentGroupId" />
                         <input type="hidden" for="ClientId" name="ClientId" id="ClientId" />
                         <input type="hidden" for="MeetingPlatform" name="MeetingPlatform" id="MeetingPlatform" />
+                        <input type="hidden" for="JDTiltle" name="JDTiltle" id="JDTiltle" />
+                        <input type="hidden" for="RateComputedForClient" name="RateComputedForClient" id="RateComputedForClient" />
 
-                        <button type="submit" class="btn btn-primary">Generate Interview Link</button>
+                        <button type="submit" class="btn btn-primary" style="margin:0px auto;display:block;border-radius:5px;padding:8px 10px;background:#53a5f5">Generate Interview Link</button>
                     </form>
 
                 </div>
@@ -630,6 +665,10 @@
     let clientId = '@Model.ClientId';
     let isBillingOwnerPopulated = false;
     let isModalOpened = false;
+    let standardRate = 0;
+    let proRate = 0;
+    let advancedRate = 0;
+
     //var closeMember = document.getElementById("interviewLinkModalClose");
     //closeMember.onclick = function () {
     //    var modal = document.getElementById("interviewLinkModal");
@@ -649,7 +688,7 @@
         if (isModalOpened) {
             $('#JDTiltle').val('');
             $('#JDFile').val('');
-            $('#error_JDTiltle').text('');
+            //$('#error_JDTiltle').text('');
             $('#error_JDFile').text('');
             $('#error_BillingOwner').text('');
         }
@@ -658,6 +697,11 @@
         $('#CreatedFromTemplateId').val(templateId);
         $('#AssessmentGroupId').val(assessmentGroupId);
         $('#MeetingPlatform').val(meetingPlatform);
+        $('#JDTiltle').val(templateName);
+
+        document.getElementById('id_standard_rate').innerHTML = "";
+        document.getElementById('id_pro_rate').innerHTML = "";
+        document.getElementById('id_advanced_rate').innerHTML = "";
 
         if (!isBillingOwnerPopulated) {
             PopulateBillingOwner();
@@ -666,29 +710,32 @@
         if (!isModalOpened && clientId !== undefined) {
             isModalOpened = true;
             $('#ClientId').val(clientId);
+
+        }
+        if (clientId !== undefined && clientId != 0) {
+            GenerateDynamicRateByCurrentTimeOfWeek(clientId);
         }
     }
-
     function ValidateCreateInterviewLinkForm() {
 
-        var jobProfile = $('#JDTiltle').val();
+        //var jobProfile = $('#JDTiltle').val();
         var jdFile = $('#JDFile').val();
         var billingOwner = $('#BillingOwner').val();
 
         var flag = true;
 
 
-        if (jobProfile == null || jobProfile == '') {
-            document.getElementById('error_JDTiltle').innerHTML = "Job Title is required.";
-            flag = false;
-        }
-        else if (jobProfile.length > 40) {
-            document.getElementById("error_JDTiltle").innerHTML = "The Job Title should not be more than 40 characters long.";
-            flag = false;
-        }
-        else {
-            document.getElementById('error_JDTiltle').innerHTML = "";
-        }
+        // if (jobProfile == null || jobProfile == '') {
+        //     document.getElementById('error_JDTiltle').innerHTML = "Job Title is required.";
+        //     flag = false;
+        // }
+        // else if (jobProfile.length > 40) {
+        //     document.getElementById("error_JDTiltle").innerHTML = "The Job Title should not be more than 40 characters long.";
+        //     flag = false;
+        // }
+        // else {
+        //     document.getElementById('error_JDTiltle').innerHTML = "";
+        // }
         if (jdFile == null || jdFile == '') {
             document.getElementById('error_JDFile').innerHTML = "Kindly upload a file here.";
             flag = false;
@@ -746,6 +793,75 @@
             }
         });
     }
+
+    function GenerateDynamicRateByCurrentTimeOfWeek(clientId, autoCall = false) {
+        $.ajax({
+            type: "GET",
+            url: "/Client/GenerateDynamicRateByCurrentTimeOfWeek",
+            data: { 'clientId': clientId},
+            async: true,
+            success: function (data) {
+                if (data != null && data != '') {
+                    if(autoCall == false)
+                    {
+                        document.getElementById('id_standard_rate').innerHTML = 'INR: ' + data.standardPlanRate;
+                        document.getElementById('id_pro_rate').innerHTML = 'INR: ' + data.proPlanRate;
+                        document.getElementById('id_advanced_rate').innerHTML = 'INR: ' + data.advancedPlanRate;
+                    }
+                    
+                    standardRate = data.standardPlanRate;
+                    proRate = data.proPlanRate;
+                    advancedRate = data.advancedPlanRate;
+
+                    if(autoCall ==false)
+                    {
+                        checkRadioValue();
+
+                    }
+
+
+                    if(autoCall)
+                    {
+                        //set the dynamic rates here
+                        document.getElementById('id_standard_price').innerHTML = "";
+                        document.getElementById('id_pro_price').innerHTML = "";
+                        document.getElementById('id_advanced_price').innerHTML = "";
+
+                        document.getElementById('id_standard_price').innerHTML = 'INR: ' + data.standardPlanRate;
+                        document.getElementById('id_pro_price').innerHTML = 'INR: ' + data.proPlanRate;
+                        document.getElementById('id_advanced_price').innerHTML = 'INR: ' + data.advancedPlanRate;
+                    }
+                }
+            }
+        });
+    }
+
+    function checkRadioValue() {
+        var ele = document.getElementsByName('MarketPlacePlanType');
+
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked)
+            {
+                SetRate(ele[i].value);
+            }
+               
+        }
+    }
+
+    function SetRate(planType) {
+        if(planType == 2)//standard
+        {
+            document.getElementById("RateComputedForClient").value = standardRate;
+        }
+        if(planType == 4)//pro
+        {
+            document.getElementById("RateComputedForClient").value = proRate;
+        }
+        if (planType == 5)//advanced
+        {
+            document.getElementById("RateComputedForClient").value = advancedRate;
+        }
+    }
 </script>
 <script>
 
@@ -763,12 +879,13 @@
         applyDataTable();
     });
     function applyDataTable() {
+        debugger;
         var table = $('#cloneTemplateTable').DataTable({
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
-            },
-            order: [[2, 'desc']]
+            }//,
+            //order: [[2, 'desc']]
         });
         $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
 
@@ -820,7 +937,10 @@
 <script>
     var asgGrpPrSkillsCategoryMapArray;
     $(document).ready(function () {
-        //$("#PrimarySkills").multiselect();
+        //get the dynamic rates here
+        GenerateDynamicRateByCurrentTimeOfWeek('@Model.ClientId', true);
+
+        setInterval(GenerateDynamicRateByCurrentTimeOfWeek('@Model.ClientId', true), 60000);
 
         $("#ResetFilter").click(function () {
             ResetFilter();

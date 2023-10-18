@@ -7009,9 +7009,15 @@ namespace Risebird.Web.Controllers
                         string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
 
                         model.CalendlyLink = _schedulinglink;
+                        var result = await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName);
                         //End: Auto Generate Scheduling Link
-                        if (await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName))
+                        if (result.Item1)
                         {
+
+                            var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
+
+                            FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+
                             TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                             TempData["SuccessErrorMessage2"] = model.CalendlyLink;
                             return RedirectToAction("Index");
@@ -7125,9 +7131,17 @@ namespace Risebird.Web.Controllers
                         string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
 
                         model.CalendlyLink = _schedulinglink;
+                        var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, profileName);
                         //End: Auto Generate Scheduling Link
-                        if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, profileName))
+                        if (result.Item1)
                         {
+
+                            //get irfDetails by irfName
+                            var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
+
+                            FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+
+
                             TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                             TempData["SuccessErrorMessage2"] = model.CalendlyLink;
                             return RedirectToAction("Index");

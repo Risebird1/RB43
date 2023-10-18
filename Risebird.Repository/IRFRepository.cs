@@ -6100,7 +6100,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser = null)
+        public async Task<Tuple<bool, int>> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser = null)
         {
             try
             {
@@ -6214,6 +6214,17 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = true;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RateComputedForClient", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@RateComputedForClient"].Value = true;
+
+                    SqlParameter flatRateParam = new SqlParameter();
+                    flatRateParam.ParameterName = "@flatRate";
+                    flatRateParam.DbType = DbType.Int16;
+                    flatRateParam.Direction = ParameterDirection.Output;
+                    cmdUpdateIRF.Parameters.Add(flatRateParam);
+
+                    int flatRate = 0;
+
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
                     techSkillDt.Columns.Add("LevelId", typeof(int));
@@ -6309,7 +6320,9 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
-                    return true;
+                    flatRate = Convert.ToInt16(cmdUpdateIRF?.Parameters["@flatRate"]?.Value);
+
+                    return new Tuple<bool, int>(true, flatRate);
                 }
             }
 
@@ -6318,7 +6331,7 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
 
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                return new Tuple<bool, int>(false, 0);
             }
 
             catch (Exception ex)
@@ -6326,7 +6339,9 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
 
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                //return false;
+                return new Tuple<bool, int>(false, 0);
+
             }
         }
 
@@ -6461,7 +6476,6 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@ModifiedOn", SqlDbType.DateTime));
                     cmdUpdateIRF.Parameters["@ModifiedOn"].Value = DateTime.Now;
 
-
                     DataTable techSkillDt = new DataTable();
                     techSkillDt.Columns.Add("IRFId", typeof(int));
                     techSkillDt.Columns.Add("LevelId", typeof(int));
@@ -6547,6 +6561,7 @@ namespace Risebird.Repository
                         con.Close();
                     }
 
+
                     return true;
                 }
             }
@@ -6554,6 +6569,7 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
                 return false;
             }
 
@@ -7116,7 +7132,31 @@ namespace Risebird.Repository
             return null;
         }
 
-       
+        public async Task<IRF> GetSkillChannelDetailsByName(string irfName)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfName", irfName);
+                    var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetSkillChannelDetailsByIRFName", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault(); 
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
     }
 }
 
