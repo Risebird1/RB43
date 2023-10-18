@@ -15,7 +15,7 @@
         line-height: 28px;
     }
 </style>
-
+<input type="hidden" id="txtrate" value="@Model.Count()" />
 <div class="main-panel" id="main-panel">
     <div>
         <div class="pt30">
@@ -56,11 +56,12 @@
                                                 <th>Interviewer</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
-                                                <th>CLIENT NAME</th>
+                                                <th>Candidate Contact</th>
+                                                <th>Cient Name</th>
                                                 <th>Channel Owner</th>
                                                 <th>Red Marker</th>
                                                 <th>Rating</th>
-                                                <th>Rated</th>
+                                                <th>Rated On</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -71,21 +72,28 @@
                                                 <th>Interviewer</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
-                                                <th>CLIENT NAME</th>
+                                                <th>Candidate Contact</th>
+                                                <th>Client Name</th>
                                                 <th>Channel Owner</th>
                                                 <th>Red Marker</th>
                                                 <th>Rating</th>
-                                                <th>Rated</th>
+                                                <th>Rated On</th>
                                                 <th>Action</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
-
+                                            @{
+                                                var i = 0;
+                                            }
                                             @if (Model != null && Model.Count() > 0)
                                             {
+                                                 
+                                               
                                                 foreach (var item in Model)
                                                 {
+                                                  
                                                     <tr>
+                                                       
                                                         <td>@item.IRFId</td>
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.interviewer</td>
@@ -101,6 +109,16 @@
 
                                                         <td>@item.candidateName</td>
                                                         <td>@item.candidateEmail</td>
+                                                       
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                            <td>
+                                                                <span aria-label="Click here to call the candidate">
+                                                                    <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
+                                                                </span>@item.MobileNumber
+                                                            </td>
+                                                            }
+                                                        
                                                         <td> @item.Name </td>
                                                         <td>@item.ChannelOwner</td>
                                                         @if (item.interviewer != null || item.interviewer != "")
@@ -112,7 +130,22 @@
                                                             <td style="color:red;text-align:center">@item.RedMarker</td>
                                                         }
 
-                                                        <td>@item.Rating</td>
+                                                        <td class="interviewer">
+                                                           
+                                                           <input type="hidden" id="Rating_@i" value="@item.Rating" />
+                                                    <div class="star-rating" style="pointer-events:none;">
+                                                    <input type="radio" id="Rating_5_@i" name="rating1_@i" readonly value="5" />
+                                                    <label for="Rating_5_@i" class="star">&#9733;</label>
+                                                    <input type="radio" id="Rating_4_@i" name="rating1_@i" readonly value="4" />
+                                                    <label for="Rating_4_@i" class="star">&#9733;</label>
+                                                    <input type="radio" id="Rating_3_@i" name="rating1_@i" readonly value="3" />
+                                                    <label for="Rating_3_@i" class="star">&#9733;</label>
+                                                    <input type="radio" id="Rating_2_@i" name="rating1_@i" readonly value="2" />
+                                                    <label for="Rating_2_@i" class="star">&#9733;</label>
+                                                    <input type="radio" id="Rating_1_@i" name="rating1_@i" readonly value="1" />
+                                                    <label for="Rating_1_@i" class="star">&#9733;</label></div>
+                                                           
+                                                        </td>
                                                         <td>@item.RateAddedOn</td>
 
                                                         <td>
@@ -125,10 +158,17 @@
                                                                 </span>
 
                                                             }
-
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
+                                                                <div onclick="PaymentSLADetails('@item.Interviewid','@item.candidateEmail','@item.interviewer',true,'PaymentSLA')" title="Palyment SLA" class="mdc-fab__icon material-icons">
+                                                                    <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
+                                                                </div>
+                                                            </button>
                                                         </td>
+                                                     
                                                     </tr>
+                                                    i++;
                                                 }
+                                             
                                             }
                                         </tbody>
                                     </table>
@@ -148,9 +188,15 @@
 </div>
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+@await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+
 <script src="~/js/TwilioCallMaker.js"></script>
+
 <script>
     $(document).ready(function () {
+         SetRating();
          applyDataTable();
     });
 
@@ -168,6 +214,19 @@
                 searchPlaceholder: "Search records",
             }
         });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'></span>");
+
     }
 </script>
 
+<script>
+    function SetRating() {
+        var indexCount = $('#txtrate').val();
+        for (var i = 0; i < indexCount; i++) {
+            var Rating_Value = document.getElementById("Rating_" + i).value;
+            if (Rating_Value != null && Rating_Value != "" && parseInt(Rating_Value) > 0) {
+                $('#Rating_' + Rating_Value + '_' + i).attr('checked', 'checked');
+            }
+        }
+    }
+</script>

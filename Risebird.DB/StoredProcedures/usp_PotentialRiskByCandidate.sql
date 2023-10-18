@@ -13,7 +13,7 @@ Create Procedure usp_PotentialRiskByCandidate
 as
 Begin
 select  im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,cfd.Rating,cfd.CreatedOn as RateAddedOn, itp.RedMarker,
-				cl.Name as Name
+				cl.Name as Name, cfd.interviewid
 				from
 				CandidateFeedbackDetails cfd
 				inner join InterviewMeetings im  on cfd.interviewid=im.id

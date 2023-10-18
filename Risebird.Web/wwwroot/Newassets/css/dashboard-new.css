@@ -430,11 +430,14 @@ a.infos {
         height: 70px;
         padding: 0px 10px 0px 0px;
     }
-
+.scrollbar {
+    overflow: auto;
+}
 #style-2::-webkit-scrollbar, .style-2::-webkit-scrollbar {
     width: 4px;
     height: 9px;
     margin-top: 5px;
+ 
 }
 
 #style-2::-webkit-scrollbar-thumb, .style-2::-webkit-scrollbar-thumb {
@@ -7293,6 +7296,12 @@ ul.ks-cboxtags {
     font-size: 15px;
     padding-left: 25px;
 }
+#detailsTable_filter .form-control-sm {
+    border: 1px solid #E3E3E3 !important;
+}
+    #detailsTable_filter #search {
+        top: 3px;
+    }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -8518,7 +8527,9 @@ ul.ks-cboxtags {
         width: 100%;
         float: left;
     }
-
+    .scrollbar{
+        overflow:hidden;
+    }
     #reportForm video {
         width: calc(100% - 4px) !important;
         padding: 0px !important;
@@ -9222,7 +9233,9 @@ ul.ks-cboxtags {
             top: 4px !important;
             left: 10px !important;
         }
-
+        ul.ks-cboxtags li label{
+            font-size:9.5px;
+        }
         #scoreChart tspan {
             font-size: 9.3px;
         }
