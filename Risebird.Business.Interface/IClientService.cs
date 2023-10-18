@@ -51,5 +51,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<StatsDerived>> GetDateRangeWiseMeetingStatusForClientByIRF(DateTime startDate, DateTime endDate, string emailId, int clientId, string clientUserEmailId, string role = null);
         Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionList(string type);
         Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionDetails(string type, int Clientid);
+        Task<DynamicRatesDTO> GenerateDynamicRateByCurrentTimeOfWeek(int clientId);
     }
 }

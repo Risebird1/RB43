@@ -70,5 +70,11 @@ namespace Risebird.Entities.Data
         public int PaymentTerm { get; set; }
         public SelectList GSTApplicableList { get; set; }
 
+        [Display(Name = "Client Type")]
+        public int ClientType { get; set; } // service, product, elite
+
+        [Display(Name = "Country Type")]
+        public int CountryType { get; set; } // onsite, offshore
+
     }
 }

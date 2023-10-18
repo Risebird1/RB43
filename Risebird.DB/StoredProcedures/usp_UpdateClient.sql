@@ -29,7 +29,10 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @IsRedoInterview bit,
 @IsClientCancelInterview bit,
 @PaymentTerm int,
-@GSTApplicable bit
+@GSTApplicable bit,
+@ClientType int,
+@CountryType int
+
 AS          
 Begin          
       
@@ -57,6 +60,8 @@ SET
   ,[IsClientCancelInterview]=@IsClientCancelInterview
   ,[PaymentTerm]=@PaymentTerm
   ,[GSTApplicable]=@GSTApplicable
+  ,[ClientType] = @ClientType
+  ,[CountryType]= @CountryType
 WHERE          
       Id = @id          
 End     
