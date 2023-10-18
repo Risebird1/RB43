@@ -232,6 +232,10 @@ namespace Risebird.Entities.ViewModel
 
         public int FlatRate { get; set; }
 
+        [DisplayName("Plan Type")]
+        public int MarketPlacePlanType { get; set; }
+        public int RateComputedForClient { get; set; }
+
     }
     public class InterviewerIds
     {

@@ -7,6 +7,7 @@ using OfficeOpenXml;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -14,7 +15,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
@@ -34,8 +37,15 @@ namespace Risebird.Web.Controllers
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
         private readonly IClientService _clientService;
         private readonly IAzureStorageHelper _azureStorageHelper;
-
-        public RecommendedIRFController(IApplicationErrorLogger applicationErrorLogger, ISkillService skillService, IConfiguration configuration, IIRFService irfService, IInterviewerService interviewerService, IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice, IUserRepository userRepository, IRecommendedIRFService recommendedIRFService, IFileMimeTypeHelper fileMimeTypeHelper, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, IClientService clientService, IAzureStorageHelper azureStorageHelper)
+        private readonly HttpClient _httpClient;
+        private readonly CancellationToken _cancellationToken;
+        public RecommendedIRFController(IApplicationErrorLogger applicationErrorLogger, 
+            ISkillService skillService, IConfiguration configuration, IIRFService irfService, 
+            IInterviewerService interviewerService, IIRFRepository irfRepository, 
+            IInterviewSchedulerService interviewSchedulerservice, IUserRepository userRepository,
+            IRecommendedIRFService recommendedIRFService, IFileMimeTypeHelper fileMimeTypeHelper, 
+            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService,
+            IClientService clientService, IAzureStorageHelper azureStorageHelper, HttpClientHelper factory)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _skillService = skillService;
@@ -50,6 +60,7 @@ namespace Risebird.Web.Controllers
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
             _clientService = clientService;
             _azureStorageHelper = azureStorageHelper;
+            _httpClient = factory.GetHttpClient();
         }
 
         [HttpGet]
@@ -881,9 +892,12 @@ namespace Risebird.Web.Controllers
                     model.EndDate = DateTime.Now.AddMonths(3);
                     var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                     model.CalendlyLink = _schedulinglink;
+                    var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, "Client");
                     //End: Auto Generate Scheduling Link
-                    if (await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, "Client"))
+                    if (result.Item1)
                     {
+                        FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, model.id, result.Item2, model.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+
                         TempData["SuccessErrorCloneSkillChannnelMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                         TempData["SuccessErrorCloneSkillChannnelMessage2"] = model.CalendlyLink;
                         TempData["SuccessErrorCloneSkillChannnelMessageIRFId"] = model.IRFId;
@@ -906,6 +920,16 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorCloneSkillChannnelMessage"] = "Failed to create Skills Channel!";
                 return RedirectToAction("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = emailid, uniqueid = uniqueid });
             }
+        }
+
+        private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
+        {
+            var dto = new AvailabilityCheckDTO { id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
+            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
+            //var path = $"http://localhost:7071/api/CheckIRFAvailability";
+            var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
+            //functionKey = string.Empty;
+            await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
         }
     }
 }

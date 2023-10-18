@@ -592,5 +592,69 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<DynamicRatesDTO> GenerateDynamicRateByCurrentTimeOfWeek(int clientId)
+        {
+            try
+            {
+                DateTime now = DateTime.Now;
+
+                // Get the current time of the day
+                TimeSpan currentTime = now.TimeOfDay;
+                int margin;
+                if(currentTime.Hours < 6 && currentTime.Hours >= 0)
+                {
+                    margin = 20;
+                }
+                else if(currentTime.Hours < 12 && currentTime.Hours >= 6)
+                {
+                    margin = 30;
+                }
+                else if (currentTime.Hours < 18 && currentTime.Hours >= 12)
+                {
+                    margin = 40;
+                }
+                else
+                {
+                    margin = 50;
+                }
+
+
+                //int day = 3;
+                //string dayName;
+
+                //switch (day)
+                //{
+                //    case 1:
+                //        dayName = "Monday";
+                //        break;
+                //    case 2:
+                //        dayName = "Tuesday";
+                //        break;
+                //    case 3:
+                //        dayName = "Wednesday";
+                //        break;
+                //    case 4:
+                //        dayName = "Thursday";
+                //        break;
+                //    case 5:
+                //        dayName = "Friday";
+                //        break;
+                //    default:
+                //        dayName = "Weekend";
+                //        break;
+                //}
+
+                //// Get the day of the week
+                //DayOfWeek dayOfWeek = now.DayOfWeek;
+
+                return await _clientRepository.GenerateDynamicRateByCurrentTimeOfWeek(clientId, margin);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }
