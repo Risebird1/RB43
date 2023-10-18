@@ -2781,7 +2781,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile)
+        public async Task<Tuple<bool, int>> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile)
         {
             try
             {
@@ -2810,7 +2810,7 @@ namespace Risebird.Business
 
                 //irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
                 var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
-                if (result)
+                if (result.Item1)
                 {
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
@@ -2831,7 +2831,8 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                return new Tuple<bool, int>(false, 0);
+                //return false;
             }
         }
 
@@ -2882,7 +2883,7 @@ namespace Risebird.Business
         /// <param name="loggedInUser"></param>
         /// <param name="profile"></param>
         /// <returns></returns>
-        public async Task<bool> CreateSkillChannelUsingTemplateByInterviewLinkPopUp(IRFVm irfDetails, string loggedInUser, string profile)
+        public async Task<Tuple<bool, int>> CreateSkillChannelUsingTemplateByInterviewLinkPopUp(IRFVm irfDetails, string loggedInUser, string profile)
         {
             try
             {
@@ -2932,7 +2933,11 @@ namespace Risebird.Business
                     //irfDetails.Heuristicsscore = irfRecommendations.CompetencyLevelId.HasValue ? irfRecommendations.CompetencyLevelId.Value : irfDetails.Heuristicsscore;
                     irfDetails.Heuristicsscore = (int)Heuristicsscorelevel.Standard;
                 }
+                if(irfDetails.MarketPlacePlanType > 0)
+                {
+                    irfDetails.Heuristicsscore = irfDetails.MarketPlacePlanType;
 
+                }
                 //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
 
                 irfDetails.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(irfDetails.CreatedFromTemplateId);
@@ -2943,7 +2948,7 @@ namespace Risebird.Business
                 irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = loggedInUser, Role = _irfRepository.GetClientUserRole(clientUserId) });
 
                 var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
-                if (result)
+                if (result.Item1)
                 {
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
@@ -2965,7 +2970,8 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return new Tuple<bool, int>(false, 0);
+                //return false;
             }
         }
 
@@ -2982,7 +2988,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> CreateSkillChannelUsingNewInterviewRequest(IRFVm irfDetails, string loggedInUser, string profile)
+        public async Task<Tuple<bool, int>> CreateSkillChannelUsingNewInterviewRequest(IRFVm irfDetails, string loggedInUser, string profile)
         {
             try
             {
@@ -3012,7 +3018,7 @@ namespace Risebird.Business
                 irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = loggedInUser, Role = _irfRepository.GetClientUserRole(clientUserId) });
 
                 var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
-                if (result)
+                if (result.Item1)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
@@ -3028,7 +3034,9 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return new Tuple<bool, int>(false, 0);
+
+                //return false;
             }
         }
         public async Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid)
@@ -3420,6 +3428,20 @@ namespace Risebird.Business
             }
         }
 
-      
+        public async Task<IRF> GetSkillChannelDetailsByName(string irfName)
+        {
+            try
+            {
+                var result = await _irfRepository.GetSkillChannelDetailsByName(irfName);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
     }
 }

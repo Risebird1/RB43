@@ -149,7 +149,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetInterviewerMailActivityForAvailabilityByIRFId", parameters,
-                        commandType: CommandType.StoredProcedure);
+                        commandType: CommandType.StoredProcedure, commandTimeout:300);
                     return result;
                 }
 

@@ -7289,6 +7289,10 @@ ul.ks-cboxtags {
 .qc-form .control-label {
     color: #858181!important;
 }
+.rate-type {
+    font-size: 15px;
+    padding-left: 25px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

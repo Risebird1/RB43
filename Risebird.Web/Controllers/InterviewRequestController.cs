@@ -246,7 +246,9 @@ namespace Risebird.Web.Controllers
                             model.CalendlyLink = _schedulinglink;
                             if (model.ClientId == 0)
                                 model.ClientId = await _clientService.GetClientByEmailId(emailid);
-                            if (await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailid, "Client"))
+
+                            var result = await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailid, "Client");
+                            if (result.Item1)
                             {
                                 TempData["SuccessMessageInterviewCreation"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
                                 return RedirectToAction("CreateInterviewRequest");
@@ -666,7 +668,8 @@ namespace Risebird.Web.Controllers
                     model.EndDate = DateTime.Now.AddMonths(3);
                     var _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                     model.CalendlyLink = _schedulinglink;
-                    if (await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailId, "Client"))
+                    var result = await _irfService.CreateSkillChannelUsingNewInterviewRequest(model, emailId, "Client");
+                    if (result.Item1)
                     {
                         TempData["SuccessErrorMessageInterview"] = $"Skills Channel '{model.IRFId}' created Successfully! Scheduling Link : {model.CalendlyLink} ";
                         TempData["SuccessErrorMessageInterview2"] = model.CalendlyLink;
