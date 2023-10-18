@@ -48,7 +48,7 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplate]
 @IsNewSkillChannel bit = null,
 @RateComputedForClient int,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
-@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,  
+--@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,  
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 @flatRate int output
             
@@ -165,25 +165,25 @@ begin try
  SELECT @irfIntId, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit FROM @TechSkillBulkData tsbd   
  --interviewers  
  --Start :Delete interviewers
- Declare @Assessmentid int  
-Select @Assessmentid=AssessmentGroupid From IRF where id=@irfIntId  
-Declare @temptable Table(Userid int)  
-Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
- --delete from TransInterviewer where IRFId=@id 
- Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@irfIntId
- --END: Delete interviewers
+-- Declare @Assessmentid int  
+--Select @Assessmentid=AssessmentGroupid From IRF where id=@irfIntId  
+--Declare @temptable Table(Userid int)  
+--Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
+-- --delete from TransInterviewer where IRFId=@id 
+-- Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@irfIntId
+-- --END: Delete interviewers
   
- INSERT INTO [dbo].[TransInterviewer](    
- [IRFId] ,    
- [UserId],    
- [PerSuccessRate],  
- [Surcharge],
- [IsActive],  
- [IsAvailable],  
- [InterviewerId])    
+-- INSERT INTO [dbo].[TransInterviewer](    
+-- [IRFId] ,    
+-- [UserId],    
+-- [PerSuccessRate],  
+-- [Surcharge],
+-- [IsActive],  
+-- [IsAvailable],  
+-- [InterviewerId])    
       
- SELECT @irfIntId, ibd.UserId, @flatRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
- as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
+-- SELECT @irfIntId, ibd.UserId, @flatRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
+-- as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
   
   
  DELETE from TransClientUser where IRFID = @irfIntId  
