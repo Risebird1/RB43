@@ -90,19 +90,18 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
+                       @if (!Model.ReportAccepted && ViewBag.profile == "Client")
+                        {
+                            <div class="rate-interview">
+                                <h1>For complete review the report, plese provide the Interview ratings by click the button:</h1>
+                                <button class="btn" onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
+                            </div>
+                        }
                 </div>
               
                 <div class="pull-right">
 
-                    <div class="pull-left">
-                        @if (!Model.ReportAccepted && ViewBag.profile == "Client")
-                        {
-                            <div class="rate-interview">
-                                <h1>For complete review the report, plese provide the Interview ratings by click the button:</h1>
-                                <button class="btn btn-primary" onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
-                            </div>
-                        }
-                    </div>
+            
 
 
                     @if (ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
@@ -139,11 +138,11 @@
 
                     @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
                     {
-                        <div class="pull-right mt-20"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
+                        <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Generate PDF" onclick="getPDF()"></div>
                     }
                     @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client")
                     {
-                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
+                        <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
                     }
                 </div>
             </div>
