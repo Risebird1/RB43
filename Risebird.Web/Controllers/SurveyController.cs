@@ -459,40 +459,40 @@ namespace Risebird.Web.Controllers
                 {
                     Sheet.Column(a).Width = 30;
                 }
-                Sheet.Cells[1, 1].Value = "Name";
-                Sheet.Cells[1, 2].Value = "Candidate Email";
-                Sheet.Cells[1, 3].Value = "Interviewer";
-                Sheet.Cells[1, 4].Value = "Primary Skill";
-                Sheet.Cells[1, 5].Value = "Overall, how would you rate the video interview experience?";
-                Sheet.Cells[1, 6].Value = "How would you rate the evaluation process of interviewer?";
-                Sheet.Cells[1, 7].Value = "Given a chance would you like to reappear for the video interview?";
-                Sheet.Cells[1, 8].Value = "What did you like about the video interviews event?";
-                Sheet.Cells[1, 9].Value = " did you dislike about the video interviews event?";
-                Sheet.Cells[1, 10].Value = "How friendly was the Risebird staff from scheduling to completion of interviews ?";
-                Sheet.Cells[1, 11].Value = "Please share comment for Interviewer";
+               // Sheet.Cells[1, 1].Value = "Name";
+                Sheet.Cells[1, 1].Value = "Candidate Email";
+                Sheet.Cells[1, 2].Value = "Interviewer";
+                Sheet.Cells[1, 3].Value = "Primary Skill";
+                //Sheet.Cells[1, 4].Value = "Overall, how would you rate the video interview experience?";
+                Sheet.Cells[1, 4].Value = "How would you rate the evaluation process of interviewer?";
+                Sheet.Cells[1, 5].Value = "Given a chance would you like to reappear for the video interview?";
+                //Sheet.Cells[1, 7].Value = "What did you like about the video interviews event?";
+                //Sheet.Cells[1, 8].Value = " did you dislike about the video interviews event?";
+                //Sheet.Cells[1, 9].Value = "How friendly was the Risebird staff from scheduling to completion of interviews ?";
+                Sheet.Cells[1, 10].Value = "Please share comment for Interviewer";
                 int i = 2;
                 if (modelData.Count() > 0)
                 {
                     foreach (var item in modelData)
                     {
-                        Sheet.Cells[i, 1].Value = item.Name;
-                        Sheet.Cells[i, 2].Value = item.EmailAddress;
-                        Sheet.Cells[i, 3].Value = item.interviewerEmail;
-                        Sheet.Cells[i, 4].Value = item.PrimarySkill;
-                        Sheet.Cells[i, 5].Value = item.Question1;
-                        Sheet.Cells[i, 6].Value = item.Question2;
-                        if (item.Question3 == "1")
-                        {
-                            Sheet.Cells[i, 7].Value = "I am satisfied with the interviewer and evaluation process";
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 7].Value = "I didn't get a fair chance and I can do better";
-                        }
-                        Sheet.Cells[i, 8].Value = item.Question4;
-                        Sheet.Cells[i, 9].Value = item.Question5;
-                        Sheet.Cells[i, 10].Value = item.Question6;
-                        Sheet.Cells[i, 11].Value = item.CommentforInterviewer;
+                       // Sheet.Cells[i, 1].Value = item.Name;
+                        Sheet.Cells[i, 1].Value = item.EmailAddress;
+                        Sheet.Cells[i, 2].Value = item.interviewerEmail;
+                        Sheet.Cells[i, 3].Value = item.PrimarySkill;
+                        //Sheet.Cells[i, 4].Value = item.Question1;
+                        Sheet.Cells[i, 5].Value = item.Rating;
+                        //if (item.Question3 == "1")
+                        //{
+                        //    Sheet.Cells[i, 7].Value = "I am satisfied with the interviewer and evaluation process";
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, 7].Value = "I didn't get a fair chance and I can do better";
+                        //}
+                        //Sheet.Cells[i, 7].Value = item.Question4;
+                        //Sheet.Cells[i, 8].Value = item.Question5;
+                        //Sheet.Cells[i, 9].Value = item.Question6;
+                        Sheet.Cells[i, 6].Value = item.CommentforInterviewer;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
