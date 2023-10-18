@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.PaymentSLAVM
 
 <div class="feedbackcontainer">
-    <div id="containerHide" style="padding-top:40px;">
+    <div id="containerHide" style="padding:20px 0px 1px 0px">
         @Html.HiddenFor(m => m.Rating)
         <div id="ratingInterviewer" class="rating">
             <input type="radio" id="Q1_5" name="rating1" value="5" onclick="ChangeQuestion1(5)" />
@@ -18,9 +18,9 @@
         </div>
         @*<p style="color: lightslategrey;font-size: 14.5px;line-height: 25px;">This Rating will never be shared with your interviewer and will not affect your interview result. This is only for Risebird to improvise the Quality of interviews and make sure that you had a right experience. So, Give as honest and direct feedback as possible.</p>*@
     </div>
-    <div id="ClientInterviewFeedbackHide" style="display:none;">
-        <hr class="divider" />
-        <h4 style="color:#bab8b8;line-height:30px;">What went wrong?</h4>
+    <div id="ClientInterviewFeedbackHide" class="ClientInterviewFeedbackHide" style="display:none;">
+        <hr class="divider" style="background-color: #b5afaf;" />
+        <h4 style="color:#bab8b8;line-height:30px;font-size:18px;">What went wrong?</h4>
         @Html.HiddenFor(m => m.Interviewid)
         @Html.HiddenFor(m => m.Interviewer)
         @Html.HiddenFor(m => m.Isedit)
@@ -518,7 +518,7 @@
             </div>
         </div>
     </div>
-    <div id="ClientInterviewbuttonHide" class="submit-wrapper" style="display:none">
+    <div id="ClientInterviewbuttonHide" class="submit-wrapper" style="display:none;position:relative;top:-25px;">
         <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
     </div>
 </div>

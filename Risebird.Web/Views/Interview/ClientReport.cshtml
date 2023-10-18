@@ -91,19 +91,23 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
                 </div>
-                <div class="pull-left">
-                    @if (!Model.ReportAccepted && ViewBag.profile == "Client")
-                    {
-                        <div>
-                            For complete review the report, plese provide the Interview ratings by click the button:
-                            <button onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
-                        </div>
-                    }
-                </div>
+              
                 <div class="pull-right">
+
+                    <div class="pull-left">
+                        @if (!Model.ReportAccepted && ViewBag.profile == "Client")
+                        {
+                            <div class="rate-interview">
+                                <h1>For complete review the report, plese provide the Interview ratings by click the button:</h1>
+                                <button class="btn btn-primary" onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
+                            </div>
+                        }
+                    </div>
+
+
                     @if (ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
                     {
-                        <div class="pull-left mt-20">
+                        <div class="pull-right">
                             <div class="reportdropdown">
                                 <button class="reportdropbtn">Report Quality Issue</button>
                                 <div class="reportdropdown-content">
@@ -543,7 +547,7 @@
             <div class="filheader">
                 <div class="filavatar">
                     <span>
-                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
+                        <img class="rating-star" src="~/img/rating-star-icon.png"/>
 
                     </span>
                 </div>
