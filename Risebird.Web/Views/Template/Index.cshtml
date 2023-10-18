@@ -274,7 +274,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
-                                                     <th>Meeting Platform</th>
+                                                     @* <th>Meeting Platform</th> *@
                                                     @if (Model.Profile != "Client")
                                                     {
                                                         <th>Tech Skills</th>
@@ -289,7 +289,7 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>Name</th>
-                                                    <th>Meeting Platform</th>
+                                                    @* <th>Meeting Platform</th> *@
                                                     @if (Model.Profile != "Client")
                                                     {
                                                         <th>Tech Skills</th>
@@ -332,14 +332,14 @@
                                                         <td></td>
                                                     }
 
-                                                     @if (!string.IsNullOrEmpty(item.MeetingPlatform))
+                                                     @* @if (!string.IsNullOrEmpty(item.MeetingPlatform))
                                                     {
                                                         <td>@item.MeetingPlatform</td>
                                                     }
                                                     else
                                                     {
                                                         <td></td>
-                                                    } 
+                                                    }  *@
 
                                                     
 
@@ -703,11 +703,6 @@
         document.getElementById('id_pro_rate').innerHTML = "";
         document.getElementById('id_advanced_rate').innerHTML = "";
 
-
-        document.getElementById('id_standard_price').innerHTML = "";
-        document.getElementById('id_pro_price').innerHTML = "";
-        document.getElementById('id_advanced_price').innerHTML = "";
-
         if (!isBillingOwnerPopulated) {
             PopulateBillingOwner();
         }
@@ -829,6 +824,10 @@
                     if(autoCall)
                     {
                         //set the dynamic rates here
+                        document.getElementById('id_standard_price').innerHTML = "";
+                        document.getElementById('id_pro_price').innerHTML = "";
+                        document.getElementById('id_advanced_price').innerHTML = "";
+
                         document.getElementById('id_standard_price').innerHTML = 'INR: ' + data.standardPlanRate;
                         document.getElementById('id_pro_price').innerHTML = 'INR: ' + data.proPlanRate;
                         document.getElementById('id_advanced_price').innerHTML = 'INR: ' + data.advancedPlanRate;

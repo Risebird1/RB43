@@ -12,7 +12,7 @@ GO
 Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplate]              
     
 @IRFId nvarchar(200),              
-@ClientName varchar(200),              
+@ClientName varchar(200) = null,              
 @JDTiltle nvarchar(200),              
 @CompanyType varchar(200),              
 @ClientId int,              
@@ -49,7 +49,8 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplate]
 @RateComputedForClient int,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
 @InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,  
-@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  
+@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
+@flatRate int output
             
 AS              
 Begin    
@@ -60,7 +61,7 @@ begin try
   declare @irfIntId int  
   set @irfIntId = 0  
   
-  declare @flatRate int = 0
+  --declare @flatRate int = 0
   set @flatRate = (select rate from PlanTypeChargesMaster where CountryType = @JobCountry and PlanTypeEnumValue =@Heuristicsscore and CompanyType = @CompanyType)
 
 
