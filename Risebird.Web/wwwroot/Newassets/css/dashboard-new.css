@@ -7293,6 +7293,33 @@ ul.ks-cboxtags {
     font-size: 15px;
     padding-left: 25px;
 }
+.template-wrapper {
+    width: 950px;
+    margin: 0px auto;
+}
+.rate-strip {
+    position: absolute;
+    top: -3px;
+    width: 97%;
+    margin-bottom: 10px;
+    background: #eee;
+    padding: 8px;
+    top: -2px;
+}
+.template-top{
+    margin-top:40px;
+}
+.template-name-padding {
+    padding-left: 100px !important;
+    font-size: 15px;
+}
+#cloneTemplateTable_filter .form-control {
+    border: 1px solid #E3E3E3 !important;
+}
+
+#cloneTemplateTable.table-striped tbody tr:nth-of-type(even) {
+    background: rgb(151 139 139 / 2.5%);
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -8518,7 +8545,13 @@ ul.ks-cboxtags {
         width: 100%;
         float: left;
     }
+    .template-wrapper{
+        width:100%;
+    }
 
+    .template-top {
+        margin-top:80px;
+    }
     #reportForm video {
         width: calc(100% - 4px) !important;
         padding: 0px !important;
@@ -13051,7 +13084,7 @@ h4.card-title {
     position: absolute;
     width: 35px;
     height: 35px;
-    top: 5px;
+    top: 3px;
     position: absolute;
     border: 0px;
     background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat center;
