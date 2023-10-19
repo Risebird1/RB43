@@ -7289,16 +7289,17 @@ ul.ks-cboxtags {
         color: green;
         padding-right: 10px;
     }
-    .rate-interview button {
-        padding: 9px 14px;
+    .rate-interview button, .rate-interview button:hover {
+        padding: 7px 17px;
         position: relative;
         border: none;
         font-weight: bold;
-        border-radius: 5px;
+        border-radius: 3px;
         margin: 0px;
         top: -7px;
-        font-size: 12px;
-        background: #42a5f5!important;
+        color:#fff;
+        font-size: 13px;
+        background: #da1111 !important;
         box-shadow: none;
     }
         .rate-interview button:focus{
@@ -7312,8 +7313,16 @@ ul.ks-cboxtags {
     top: 1px;
 }
 .ClientInterviewFeedbackHide .page {
-    top:-70px;
+    top:-88px;
 }
+
+#ClientInterviewbuttonHide .submit-wrapper {
+    position: relative;
+    top: 4px;
+    margin-bottom: 45px;
+    margin-top: 20px;
+}
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -8544,6 +8553,10 @@ ul.ks-cboxtags {
     }
     .page__close {
         right: 0px;
+    }
+    .ClientInterviewFeedbackHide .page {
+        top: -60px;
+        left: 0px;
     }
     #reportForm video {
         width: calc(100% - 4px) !important;
