@@ -6215,7 +6215,7 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = true;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RateComputedForClient", SqlDbType.Int));
-                    cmdUpdateIRF.Parameters["@RateComputedForClient"].Value = true;
+                    cmdUpdateIRF.Parameters["@RateComputedForClient"].Value = irfDetails.RateComputedForClient;
 
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
@@ -6271,42 +6271,42 @@ namespace Risebird.Repository
                     //    }
 
 
-                    DataTable interviewerDt = new DataTable();
+                    //DataTable interviewerDt = new DataTable();
 
-                    if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() != 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
-                    {
-                        interviewerDt.Columns.Add("IRFId", typeof(int));
-                        interviewerDt.Columns.Add("UserId", typeof(int));
-                        interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                        interviewerDt.Columns.Add("Surcharge", typeof(int));
-                        interviewerDt.Columns.Add("IsActive", typeof(bool));
-                        interviewerDt.Columns.Add("IsAvailable", typeof(bool));
+                    //if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() != 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
+                    //{
+                    //    interviewerDt.Columns.Add("IRFId", typeof(int));
+                    //    interviewerDt.Columns.Add("UserId", typeof(int));
+                    //    interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                    //    interviewerDt.Columns.Add("Surcharge", typeof(int));
+                    //    interviewerDt.Columns.Add("IsActive", typeof(bool));
+                    //    interviewerDt.Columns.Add("IsAvailable", typeof(bool));
 
-                        foreach (var item in irfDetails.InterviewerCollection)
-                        {
-                            //if (irfDetails.JobCountry == "2")
-                            //{
-                            //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, false);
-                            //}
-                            //else
-                            //{
-                            //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, false);
-                            //}
-                            interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
+                    //    foreach (var item in irfDetails.InterviewerCollection)
+                    //    {
+                    //        //if (irfDetails.JobCountry == "2")
+                    //        //{
+                    //        //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, false);
+                    //        //}
+                    //        //else
+                    //        //{
+                    //        //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, false);
+                    //        //}
+                    //        interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
 
-                        }
-                    }
+                    //    }
+                    //}
 
                     if (techSkillDt != null && techSkillDt.Rows.Count > 0)
                     {
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
                         cmdUpdateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
                     }
-                    if (interviewerDt != null && interviewerDt.Rows.Count > 0)
-                    {
-                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
-                        cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
-                    }
+                    //if (interviewerDt != null && interviewerDt.Rows.Count > 0)
+                    //{
+                    //    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                    //    cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                    //}
                     if (clientUserDt != null && clientUserDt.Rows.Count > 0)
                     {
                         cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
