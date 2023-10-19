@@ -12,7 +12,7 @@ Create Procedure usp_PotentialRiskByCandidate
 @CurrentDate DateTime
 as
 Begin
-select  im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,cfd.Rating,cfd.CreatedOn as RateAddedOn, itp.RedMarker,
+select  im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,cfd.Rating,cfd.CreatedOn as RatingAddedOn, itp.RedMarker,
 				cl.Name as Name, cfd.interviewid
 				from
 				CandidateFeedbackDetails cfd

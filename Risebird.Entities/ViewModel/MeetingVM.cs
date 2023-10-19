@@ -276,7 +276,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Channel Owner")]
         public string ChannelOwner { get; set; }
-        public string RateAddedOn { get; set; }
+        public string RatingAddedOn { get; set; }
         public string CalendlyLink { get; set; }
         public bool IsQCRequired { get; set; }
         public bool IsCandidateResponsed { get; set; }
