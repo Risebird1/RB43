@@ -90,18 +90,19 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
+                    @if (!Model.ReportAccepted && ViewBag.profile == "Client")
+                    {
+                        <div class="rate-interview">
+                            <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
+                            <button class="btn btn-primary" onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
+                        </div>
+                    }
                 </div>
 
                 <div class="pull-right">
 
                     <div class="pull-left">
-                        @if (!Model.ReportAccepted && ViewBag.profile == "Client")
-                        {
-                            <div class="rate-interview">
-                                <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
-                                <button class="btn btn-primary" onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
-                            </div>
-                        }
+                       
                 </div>
               
                 <div class="pull-right">
