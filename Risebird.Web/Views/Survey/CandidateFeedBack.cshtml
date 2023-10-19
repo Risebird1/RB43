@@ -209,39 +209,31 @@
                                         <table id="interviewer" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                    <th id="cfeedback_4">Candidate Details</th>
-                                                    @*<th>Email</th>*@
+                                                    <th id="cfeedback_4">Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>JD Title</th>
                                                     @if (ViewBag.profileName != "Client")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
                                                     @*<th id="cfeedback_5">JD Title</th>*@
-                                                    <th id='start' title="Overall, how would you rate the video interview experience?">Question1</th>
-                                                    <th title="How would you rate the evaluation process of interviewer?">Question2</th>
-                                                    <th title="Given a chance would you like to reappear for the video interview?">Question3</th>
-                                                    <th title="What did you like about the video interviews event?">Question4</th>
-                                                    <th title="What did you dislike about the video interviews event?">Question5</th>
-                                                    <th title="How friendly was the Risebird staff from scheduling to completion of interviews ?">Question6</th>
-                                                    <th id="cfeedback_6" title="Please share comment for Interviewer">Comment</th>
-
+                                                    <th>Client</th>
+                                                   
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                    <th>Candidate Details</th>
-                                                    @*<th>Email </th>*@
+                                                    <th>Candidate Name</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>JD Title</th>
                                                     @if (ViewBag.profileName != "Client")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
                                                     @*<th>JD Title</th>*@
-                                                    <th title="Overall, how would you rate the video interview experience?">Question1</th>
-                                                    <th title="How would you rate the evaluation process of interviewer?">Question2</th>
-                                                    <th title="Given a chance would you like to reappear for the video interview?">Question3</th>
-                                                    <th title="What did you like about the video interviews event?">Question4</th>
-                                                    <th title="What did you dislike about the video interviews event?">Question5</th>
-                                                    <th title="How friendly was the Risebird staff from scheduling to completion of interviews ?">Question6</th>
-                                                    <th title="Please share comment for Interviewer">Comment</th>
+                                                    <th>Client</th>
+                                                  
+
 
                                                 </tr>
                                             </tfoot>
@@ -258,43 +250,48 @@
                                                                 @if (item.Name.Length > 10)
                                                                 {
                                                                     <div class="cadfName mtop-5 text-left">
-                                                                        <a onclick="" data-tooltip="@item.Name"><strong>Name:</strong> <span class="cname"> @item.Name</span> </a>
+                                                                        <a onclick="" data-tooltip="@item.Name"> <span class="cname"> @item.Name</span> </a>
                                                                     </div>
                                                                 }
                                                                 else
                                                                 {
                                                                     <div class="cadfName text-left">
-                                                                        <a onclick=""><span class="cname"><strong>Name:</strong> @item.Name</span> </a>
+                                                                        <a onclick=""><span class="cname"> @item.Name</span> </a>
                                                                     </div>
                                                                 }
                                                             }
+                                                            </td>
+                                                            <td>
                                                             @if (item.EmailAddress != null && item.EmailAddress != "")
                                                             {
-                                                                @if (item.EmailAddress.Length > 18)
+                                                                @if (item.EmailAddress.Length > 40)
                                                                 {
                                                                     <div class="text-left mtop-5">
-                                                                        <a onclick="" data-tooltip="@item.EmailAddress"><strong>Email:</strong> @item.EmailAddress.Substring(0, 18)... </a>
+                                                                        <a onclick="" data-tooltip="@item.EmailAddress"> @item.EmailAddress.Substring(0, 40)... </a>
                                                                     </div>
                                                                 }
                                                                 else
                                                                 {
                                                                     <div class="text-left mtop-5">
-                                                                        <a onclick=""><strong>Email:</strong> @item.EmailAddress</a>
+                                                                        <a onclick=""> @item.EmailAddress</a>
                                                                     </div>
                                                                 }
                                                             }
+                                                            </td>
+                                                            <td>
+                                                                
                                                             @if (item.PrimarySkill != null && item.PrimarySkill != "")
                                                             {
                                                                 @if (item.PrimarySkill.Length > 18)
                                                                 {
                                                                     <div class="text-left mtop-5">
-                                                                        <a onclick="" data-tooltip="@item.PrimarySkill"><strong>Jd Title:</strong> @item.PrimarySkill.Substring(0, 18)... </a>
+                                                                        <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill.Substring(0, 18)... </a>
                                                                     </div>
                                                                 }
                                                                 else
                                                                 {
                                                                     <div class="text-left mtop-5">
-                                                                        <a onclick=""><strong>Jd Title:</strong> @item.PrimarySkill</a>
+                                                                        <a onclick=""> @item.PrimarySkill</a>
                                                                     </div>
                                                                 }
                                                             }
@@ -312,10 +309,10 @@
                                                             <td>
                                                                 @if (item.interviewerEmail != null && item.interviewerEmail != "")
                                                                 {
-                                                                    @if (item.interviewerEmail.Length > 18)
+                                                                    @if (item.interviewerEmail.Length > 30)
                                                                     {
                                                                         <div class="text-left mtop-5">
-                                                                            <a onclick="" data-tooltip="@item.interviewerEmail"> @item.interviewerEmail.Substring(0, 18)... </a>
+                                                                            <a onclick="" data-tooltip="@item.interviewerEmail"> @item.interviewerEmail.Substring(0, 30)... </a>
                                                                         </div>
                                                                     }
                                                                     else
@@ -328,154 +325,8 @@
                                                             </td>
                                                         }
 
-                                                        <td class="interviewer">
-                                                            @*@item.Question1 out of 5*@
-                                                            <input type="hidden" id="Question1_@i" value="@item.Question1" />
-                                                            <div class="star-rating" style="pointer-events:none;">
-                                                                <input type="radio" id="Question1_5_@i" name="rating1_@i" readonly value="5" />
-                                                                <label for="Question1_5_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question1_4_@i" name="rating1_@i" readonly value="4" />
-                                                                <label for="Question1_4_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question1_3_@i" name="rating1_@i" readonly value="3" />
-                                                                <label for="Question1_3_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question1_2_@i" name="rating1_@i" readonly value="2" />
-                                                                <label for="Question1_2_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question1_1_@i" name="rating1_@i" readonly value="1" />
-                                                                <label for="Question1_1_@i" class="star">&#9733;</label>
-                                                            </div>
-
-                                                        </td>
-                                                        <td class="interviewer">
-                                                            @*@item.Question2 out of 5*@
-                                                            <input type="hidden" id="Question2_@i" value="@item.Question2" />
-                                                            <div class="star-rating" style="pointer-events:none;">
-                                                                <input type="radio" id="Question2_5_@i" name="rating2_@i" value="5" />
-                                                                <label for="Question2_5_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question2_4_@i" name="rating2_@i" value="4" />
-                                                                <label for="Question2_4_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question2_3_@i" name="rating2_@i" value="3" />
-                                                                <label for="Question2_3_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question2_2_@i" name="rating2_@i" value="2" />
-                                                                <label for="Question2_2_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question2_1_@i" name="rating2_@i" value="1" />
-                                                                <label for="Question2_1_@i" class="star">&#9733;</label>
-                                                            </div>
-                                                        </td>
-                                                        @if (item.Question3 == "1")
-                                                        {
-                                                            <td>
-                                                                <div style="width: 150px; white-space: initial;">
-                                                                    <div>
-                                                                        I am satisfied with the interviewer and evaluation process
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>
-                                                                <div style="width: 150px; white-space: initial;">
-                                                                    <div>
-                                                                        I didn't get a fair chance and I can do better
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        }
-
-                                                        <td class="interview-com">
-                                                            <div id="section">
-                                                                @if (item.Question4 != null && item.Question4 != "")
-                                                                {
-                                                                    @if (item.Question4.Length > 60)
-                                                                    {
-                                                                        <div class="article" style="white-space:initial;width:150px;">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.Question4.Substring(0, 60)
-                                                                            </p>
-                                                                            <p class="moretext_@item.interviewid moretext">
-                                                                                @item.Question4.Substring(60, @item.Question4.Length - 60)
-                                                                            </p>
-                                                                        </div>
-                                                                        <a onclick="moreless(@item.interviewid)" class="moreless-button" value="Readmore" id="read_@item.interviewid" href="#">Read more</a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article" style="white-space:initial;width:150px;">
-
-                                                                            <p>
-                                                                                @item.Question4.Substring(0, @item.Question4.Length)
-                                                                            </p>
-                                                                        </div>
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div></div>
-                                                                }
-                                                            </div>
-                                                        </td>
-
-                                                        <td class="interview-com">
-                                                            <div id="section">
-                                                                @if (item.Question5 != null && item.Question5 != "")
-                                                                {
-                                                                    @if (item.Question5.Length > 70)
-                                                                    {
-                                                                        <div class="article" style="white-space:initial;width:150px;">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.Question5.Substring(0, 70)
-                                                                            </p>
-                                                                            <p class="moretext1_@item.interviewid moretext">
-                                                                                @item.Question5.Substring(70, @item.Question5.Length - 70)
-                                                                            </p>
-                                                                        </div>
-                                                                        <a onclick="moreless1(@item.interviewid)" class="moreless-button" value="Readmore" id="read1_@item.interviewid" href="#">Read more</a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article" style="white-space:initial;width:150px;">
-                                                                            <p>
-                                                                                @item.Question5.Substring(0, @item.Question5.Length)
-                                                                            </p>
-                                                                        </div>
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div></div>
-                                                                }
-                                                            </div>
-                                                        </td>
-                                                        <td class="interviewer">
-                                                            @*@item.Question6 out of 5*@
-                                                            <input type="hidden" id="Question6_@i" value="@item.Question6" />
-                                                            <div class="star-rating" style="pointer-events:none;">
-                                                                <input type="radio" id="Question6_5_@i" name="rating3_@i" value="5" />
-                                                                <label for="Question6_5_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question6_4_@i" name="rating3_@i" value="4" />
-                                                                <label for="Question6_4_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question6_3_@i" name="rating3_@i" value="3" />
-                                                                <label for="Question6_3_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question6_2_@i" name="rating3_@i" value="2" />
-                                                                <label for="Question6_2_@i" class="star">&#9733;</label>
-                                                                <input type="radio" id="Question6_1_@i" name="rating3_@i" value="1" />
-                                                                <label for="Question6_1_@i" class="star">&#9733;</label>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            @if (item.CommentforInterviewer != null && item.CommentforInterviewer != "")
-                                                            {
-                                                                <div style="width:250px;">
-                                                                    <div class="talktext">
-                                                                        <blockquote><p class="style-2"> @item.CommentforInterviewer</p></blockquote>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                            else
-                                                            {
-                                                                <div style="width:250px;"></div>
-                                                            }
-                                                        </td>
+                                                        <td>@item.ClientName</td>
+                                                     
                                                     </tr>
                                                     i++;
                                                 }

@@ -244,7 +244,7 @@
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper11">
                                     <div id="survey-feedback">
-                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="PotentialRiskByCandidate()">
                                             <div class="panel-heading" data-position="bottom">
 
                                                 <div id="slotsId">
@@ -257,13 +257,13 @@
                                                             <div class="dashboard-count pull-left">
                                                                 <div class="header-front"></div>
                                                                 <strong>
-                                                                    <strong> <span style="cursor:pointer" id="ribbonPotentialRiskInterviewCount" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
+                                                                    <strong> <span style="cursor:pointer" id="ribbonPotentialRiskInterviewCount" onclick="PotentialRiskByCandidate()"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
                                                                 </strong>
 
                                                             </div>
 
                                                             <div class="pull-right">
-                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')" class="click-arrow" title="Detail View">
+                                                                <button onclick="PotentialRiskByCandidate()" class="click-arrow" title="Detail View">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
                                                                 </button>
                                                             </div>
@@ -279,7 +279,7 @@
 
 
 
-                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')">
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="PotentialRiskByCandidate()">
                                             <div class="panel-heading" data-position="bottom">
 
                                                 <div id="slotsId">
@@ -293,13 +293,13 @@
                                                             <div class="dashboard-count pull-left">
                                                                 <div class="header-back"></div>
                                                                 <strong>
-                                                                    <strong> <span style="cursor:pointer" id="ribbonPotentialRiskInterviewCount_1" class="card-title" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
+                                                                    <strong> <span style="cursor:pointer" id="ribbonPotentialRiskInterviewCount_1" class="card-title" onclick="PotentialRiskByCandidate()"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
                                                                 </strong>
 
                                                             </div>
 
                                                             <div class="pull-right">
-                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskInterviewCount')" class="click-arrow" title="Detail View">
+                                                                <button onclick="PotentialRiskByCandidate()" class="click-arrow" title="Detail View">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
                                                                 </button>
                                                             </div>
@@ -1558,6 +1558,10 @@
     }
     function HighRiskInterviewers() {
         window.location.href = "/Dashboard/HighRiskInterviewers";
+    }
+
+    function PotentialRiskByCandidate() {
+        window.location.href = "/Dashboard/PotentialRiskByCandidate";
     }
 </script>
 <script type="text/javascript">

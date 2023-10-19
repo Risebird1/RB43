@@ -27,7 +27,7 @@ Select cr.id,cr.Comment as Comments,cr.CreatedBy,cr.CreatedAt as Createdon,cr.Ra
 end
 else if(@type Like 'Candidate Rating%')
 begin
-Select  cr.id,cr.Comment as Comments,cr.Question2 as MeetingStatus,cr.Createdon,cr.Name as CreatedBy From CandidateRatings cr join Interviewmeetings im on im.id=cr.Interviewid where im.interviewer=@Emailid    
+Select  cfd.id,cfd.Rating as MeetingStatus,cfd.Createdon From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid    
 end
 END
 GO
