@@ -764,5 +764,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService()
+        {
+            try
+            {
+                return await _dashboardRespository.PotentialRiskByCandidate();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
