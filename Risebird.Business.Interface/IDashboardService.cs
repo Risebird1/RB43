@@ -59,5 +59,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<InterviewerRedmarkers>> GetHighRiskInterviewersService();
         Task<bool> AddRedoInterviewsService(int InterviewId, string Type);
         Task<bool> MoveToUnassignService(int meetingId);
+        Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService();
     }
 }

@@ -54,12 +54,13 @@
                                                 <th>Skill Channel ID</th>
                                                 <th>Interview Date</th>
                                                 <th>Interviewer</th>
+                                                <th>Resume</th>
                                                 <th>Company Name</th>
                                                 <th>Mobile Number</th>
                                                 <th>Red Markers</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
-                                                <th>Resume</th>
+                                                
                                                 <th>Channel Owner</th>
                                                 <th>Primary Skill</th>
                                                 <th>Action</th>
@@ -70,12 +71,13 @@
                                                 <th>Skill Channel ID</th>
                                                 <th>Interview Date</th>
                                                 <th>Interviewer</th>
+                                                <th>Resume</th>
                                                 <th>Company Name</th>
                                                 <th>Mobile Number</th>
                                                 <th>Red Markers</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
-                                                <th>Resume</th>
+                                               
                                                 <th>Channel Owner</th>
                                                 <th>Primary Skill</th>
                                                 <th>Action</th>
@@ -91,6 +93,17 @@
                                                         <td>@item.IRFId</td>
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.interviewer</td>
+                                                        @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                        {
+                                                            <td>
+
+                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Resume</td>
+                                                        }
                                                         <td>@item.CompanyName</td>
                                                         <td style="padding:0px 7px;">
                                                             <span class="call-area">
@@ -103,26 +116,16 @@
                                                         </td>
                                                         @if (@item.interviewer != null || @item.interviewer != "")
                                                         {
-                                                            <td style="color:red"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                            <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
                                                         }
                                                         else
                                                         {
-                                                            <td style="color:red">@item.RedMarker</td>
+                                                            <td style="color:red;text-align:center">@item.RedMarker</td>
                                                         }
 
                                                         <td>@item.candidateName</td>
                                                         <td>@item.candidateEmail</td>
-                                                        @if (item.ResumeLink != null && item.ResumeLink != "")
-                                                            {
-                                                                <td>
-
-                                                                <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>No Resume</td>
-                                                            }
+                                                      
                                                             <td>@item.ChannelOwner</td>
                                                             <td>@item.PrimarySkill</td>
                                                             <td>
