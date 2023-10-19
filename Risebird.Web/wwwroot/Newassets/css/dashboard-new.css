@@ -6633,6 +6633,17 @@ input[type="date"].form-control {
     background: #f89cbf24;
     color: #94207bbd;
 }
+.progress{
+    background:green;
+    color:#fff;
+}
+.waiting {
+    background: orange;
+    color: #94207bbd;
+}
+.offer {
+  background: darkgreen;color:#fff;
+}
 .candidate-field {
     width: 100%;
     float: left;
@@ -7277,6 +7288,37 @@ ul.ks-cboxtags {
 }
 .qc-form .control-label {
     color: #858181!important;
+}
+.rate-type {
+    font-size: 15px;
+    padding-left: 25px;
+}
+.template-wrapper {
+    width: 950px;
+    margin: 0px auto;
+}
+.rate-strip {
+    position: absolute;
+    top: -3px;
+    width: 97%;
+    margin-bottom: 10px;
+    background: #eee;
+    padding: 8px;
+    top: -2px;
+}
+.template-top{
+    margin-top:40px;
+}
+.template-name-padding {
+    padding-left: 100px !important;
+    font-size: 15px;
+}
+#cloneTemplateTable_filter .form-control {
+    border: 1px solid #E3E3E3 !important;
+}
+
+#cloneTemplateTable.table-striped tbody tr:nth-of-type(even) {
+    background: rgb(151 139 139 / 2.5%);
 }
 .rate-interview{
     position:relative;
@@ -8548,16 +8590,7 @@ ul.ks-cboxtags {
         width: 100%;
         float: left;
     }
-    .rate-interview button{
-        top:29px;
-    }
-    .page__close {
-        right: 0px;
-    }
-    .ClientInterviewFeedbackHide .page {
-        top: -60px;
-        left: 0px;
-    }
+
     #reportForm video {
         width: calc(100% - 4px) !important;
         padding: 0px !important;
@@ -13090,7 +13123,7 @@ h4.card-title {
     position: absolute;
     width: 35px;
     height: 35px;
-    top: 5px;
+    top: 3px;
     position: absolute;
     border: 0px;
     background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat center;

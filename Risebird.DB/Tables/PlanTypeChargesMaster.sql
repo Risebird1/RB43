@@ -55,9 +55,8 @@ END
 End
 GO
 
-
-GO
 SET IDENTITY_INSERT [dbo].[PlanTypeChargesMaster] ON 
+
 
 INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (1, N'Standard', N'India', 350, 1, 35, 25, 2, 60, 2)
 INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (2, N'Standard', N'Outside India', 500, 2, 35, 25, 2, 60, 2)
@@ -72,5 +71,7 @@ INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [Coun
 INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (11, N'Advanced', N'India', 1800, 1, 55, 45, 5, 60, 1)
 INSERT [dbo].[PlanTypeChargesMaster] ([id], [PlanType], [Country], [Rate], [CountryType], [DurationSelectedMin], [DurationRejectedMin], [PlanTypeEnumValue], [droppedSorRRate], [CompanyType]) VALUES (12, N'Advanced', N'Outside India', 3500, 2, 55, 45, 5, 60, 1)
 
+
 SET IDENTITY_INSERT [dbo].[PlanTypeChargesMaster] OFF
 GO
+

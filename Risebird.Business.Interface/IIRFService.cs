@@ -112,11 +112,12 @@ namespace Risebird.Business.Interface
         Task<bool> IsClonableTemplateNameInUse(string name);
         IEnumerable<TransInterviewer> GetInterviewersByAssessmentGroupId(int assessmentGroupId);
         //Task<IRFVm> GetClonableSkillChannel(int id);
-        Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile = null);
+        //Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile = null);
+        Task<Tuple<bool, int>> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile = null);
         Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails, string loggedInUser);
-        Task<bool> CreateSkillChannelUsingTemplateByInterviewLinkPopUp(IRFVm irfDetails, string loggedInUser, string profile);
+        Task<Tuple<bool, int>> CreateSkillChannelUsingTemplateByInterviewLinkPopUp(IRFVm irfDetails, string loggedInUser, string profile);
         Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailId, string profileName, IRFFilter filterModel = null);
-        Task<bool> CreateSkillChannelUsingNewInterviewRequest(IRFVm irfDetails, string loggedInUser, string profile);
+        Task<Tuple<bool, int>> CreateSkillChannelUsingNewInterviewRequest(IRFVm irfDetails, string loggedInUser, string profile);
         Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid);
         Task<bool> UpdateIntervieweravailbilityDetails(int irfId);
         Task<List<InterviewDetailsVM>> FetchIRFCompletedInterviewDetails(int id, int type, DateTime startDate, DateTime endDate);
@@ -138,6 +139,7 @@ namespace Risebird.Business.Interface
 
         Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null);
 
+        Task<IRF> GetSkillChannelDetailsByName(string irfName);
 
     }
 }

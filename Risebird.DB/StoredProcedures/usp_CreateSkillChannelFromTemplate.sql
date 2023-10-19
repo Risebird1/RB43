@@ -12,7 +12,7 @@ GO
 Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplate]              
     
 @IRFId nvarchar(200),              
-@ClientName varchar(200),              
+@ClientName varchar(200) = null,              
 @JDTiltle nvarchar(200),              
 @CompanyType varchar(200),              
 @ClientId int,              
@@ -46,9 +46,11 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplate]
 @IsMeetingAutoCancelled bit,
 @IsMeetingNotificationSend bit,
 @IsNewSkillChannel bit = null,
+@RateComputedForClient int,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
-@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,  
-@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  
+--@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,  
+@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
+@flatRate int output
             
 AS              
 Begin    
@@ -59,7 +61,7 @@ begin try
   declare @irfIntId int  
   set @irfIntId = 0  
   
-  declare @flatRate int = 0
+  --declare @flatRate int = 0
   set @flatRate = (select rate from PlanTypeChargesMaster where CountryType = @JobCountry and PlanTypeEnumValue =@Heuristicsscore and CompanyType = @CompanyType)
 
 
@@ -103,7 +105,8 @@ begin try
   ,[IsMeetingAutoCancelled]
   ,[IsMeetingNotificationSend]
   ,[IsNewSkillChannel]
-  ,[FlatRate])
+  ,[FlatRate]
+  ,[RateComputedForClient])
   VALUES              
   (@IRFId,              
   @clientName,              
@@ -140,7 +143,8 @@ begin try
   @IsMeetingAutoCancelled,
   @IsMeetingNotificationSend,
   @IsNewSkillChannel,
-  @flatRate)                                                                           
+  @flatRate,
+  @RateComputedForClient)                                                                           
          
       
   select @irfIntId = SCOPE_IDENTITY()      
@@ -161,25 +165,25 @@ begin try
  SELECT @irfIntId, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit FROM @TechSkillBulkData tsbd   
  --interviewers  
  --Start :Delete interviewers
- Declare @Assessmentid int  
-Select @Assessmentid=AssessmentGroupid From IRF where id=@irfIntId  
-Declare @temptable Table(Userid int)  
-Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
- --delete from TransInterviewer where IRFId=@id 
- Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@irfIntId
- --END: Delete interviewers
+-- Declare @Assessmentid int  
+--Select @Assessmentid=AssessmentGroupid From IRF where id=@irfIntId  
+--Declare @temptable Table(Userid int)  
+--Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
+-- --delete from TransInterviewer where IRFId=@id 
+-- Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@irfIntId
+-- --END: Delete interviewers
   
- INSERT INTO [dbo].[TransInterviewer](    
- [IRFId] ,    
- [UserId],    
- [PerSuccessRate],  
- [Surcharge],
- [IsActive],  
- [IsAvailable],  
- [InterviewerId])    
+-- INSERT INTO [dbo].[TransInterviewer](    
+-- [IRFId] ,    
+-- [UserId],    
+-- [PerSuccessRate],  
+-- [Surcharge],
+-- [IsActive],  
+-- [IsAvailable],  
+-- [InterviewerId])    
       
- SELECT @irfIntId, ibd.UserId, @flatRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
- as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
+-- SELECT @irfIntId, ibd.UserId, @flatRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
+-- as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
   
   
  DELETE from TransClientUser where IRFID = @irfIntId  
