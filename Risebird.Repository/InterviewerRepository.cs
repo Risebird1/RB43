@@ -2154,7 +2154,8 @@ namespace Risebird.Repository
             {
                 if (type == "Candidate")
                 {
-                    var query = "Select cr.*,cr.Comment as CommentforInterviewer,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate from CandidateRatings cr join InterviewMeetings im on cr.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId where im.confirmationStatus=1  and im.Interviewer=@Emailid";
+                    // var query = "Select cr.*,cr.Comment as CommentforInterviewer,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate from CandidateRatings cr join InterviewMeetings im on cr.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId where im.confirmationStatus=1  and im.Interviewer=@Emailid";
+                    var query = "Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId where im.confirmationStatus=1 and im.Interviewer=@Emailid";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         DynamicParameters parametersRecomm = new DynamicParameters();

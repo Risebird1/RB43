@@ -889,7 +889,7 @@ namespace Risebird.Repository
                     var results = await con.QueryAsync<int>(query, dynamicParameters);
                     if (results.FirstOrDefault() == 1)
                     {
-                        return "Interview assigned Successfully. Open your video during the entire length of interview and earn extra 10-20% on this interview. Please click - yes- in my profile section for records.";
+                        return "Interview assigned Successfully. Interviewer video needs to be mandatory on throughout the interview duration. INR 100 will be paid additional for US interviews and INR 50 will be paid additional for India interview. Failing to on the video may result in 100% payment deduction by client. Rest assured your data is 100% private and you will never be mapped to your current company. If you are not comfortable with opening your video, please unassign this interview.";
                     }
                     else
                     {

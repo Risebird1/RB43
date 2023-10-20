@@ -1303,13 +1303,13 @@
             {
                 @if (Model.QCStatus)
                 {
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="NotApproved(@Model.Interviewid)">Not Approved</button>
-                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Approved</button>
+                    <button style="font-size:12px;" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="NotApproved(@Model.Interviewid)">Not Approved</button>
+                    <button style="font-size:12px;" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Approved</button>
                 }
                 else
                 {
-                    <button type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded">Not Approved</button>
-                    <button type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Approved</button>
+                    <button  style="font-size:12px;" type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded">Not Approved</button>
+                    <button  style="font-size:12px;" type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Approved</button>
                 }
             }
             else

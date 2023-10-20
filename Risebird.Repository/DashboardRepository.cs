@@ -1331,5 +1331,25 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IEnumerable<MeetingVM>> PotentialRiskByCandidate()
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@CurrentDate", DateTime.Now);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(conChange, "usp_PotentialRiskByCandidate", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 }
