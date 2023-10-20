@@ -58,5 +58,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetRedoRrquest();
         Task<IEnumerable<InterviewerRedmarkers>> FecthHighRiskInterviews();
         Task<bool> AddRedoIntervies(int InterviewId, string Type);
+        Task<IEnumerable<MeetingVM>> PotentialRiskByCandidate();
     }
 }

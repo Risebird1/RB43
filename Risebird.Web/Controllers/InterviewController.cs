@@ -5078,7 +5078,8 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> ResendFeedbackform(int interviewid, string CandidateEmail)
         {
-            string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + interviewid;
+            //string currenturl = "https://" + Request.Host.ToString() + "/Survey/Index?id=" + interviewid;
+            string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + interviewid;
             Mail _mail = new Mail
             {
                 TO = CandidateEmail,
