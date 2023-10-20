@@ -236,7 +236,7 @@
                                                         <div class="tech-skill-wrapper">
                                                             <div>@Model.TechSkillReportCollection[i].SkillName</div>
                                                             @{
-                                                                var TechSkill_Score = 0;
+                                                                var TechSkill_Score = 0.0;
                                                                 if (Model.ReportAccepted)
                                                                 {
                                                                     TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
