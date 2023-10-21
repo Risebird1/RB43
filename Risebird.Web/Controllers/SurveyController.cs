@@ -106,7 +106,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.type = "Candidate";
                         var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
-                       
+
                         if (HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateFeedBackfilters"));
@@ -459,13 +459,13 @@ namespace Risebird.Web.Controllers
                 {
                     Sheet.Column(a).Width = 30;
                 }
-               // Sheet.Cells[1, 1].Value = "Name";
+                // Sheet.Cells[1, 1].Value = "Name";
                 Sheet.Cells[1, 1].Value = "Candidate Email";
                 Sheet.Cells[1, 2].Value = "Interviewer";
                 Sheet.Cells[1, 3].Value = "Primary Skill";
                 //Sheet.Cells[1, 4].Value = "Overall, how would you rate the video interview experience?";
                 Sheet.Cells[1, 4].Value = "How would you rate the evaluation process of interviewer?";
-               // Sheet.Cells[1, 5].Value = "Given a chance would you like to reappear for the video interview?";
+                // Sheet.Cells[1, 5].Value = "Given a chance would you like to reappear for the video interview?";
                 //Sheet.Cells[1, 7].Value = "What did you like about the video interviews event?";
                 //Sheet.Cells[1, 8].Value = " did you dislike about the video interviews event?";
                 //Sheet.Cells[1, 9].Value = "How friendly was the Risebird staff from scheduling to completion of interviews ?";
@@ -475,7 +475,7 @@ namespace Risebird.Web.Controllers
                 {
                     foreach (var item in modelData)
                     {
-                       // Sheet.Cells[i, 1].Value = item.Name;
+                        // Sheet.Cells[i, 1].Value = item.Name;
                         Sheet.Cells[i, 1].Value = item.EmailAddress;
                         Sheet.Cells[i, 2].Value = item.interviewerEmail;
                         Sheet.Cells[i, 3].Value = item.PrimarySkill;
@@ -807,7 +807,7 @@ namespace Risebird.Web.Controllers
                 return View(result);
             }
             catch (Exception ex)
-            { 
+            {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Error, ex);
                 var result = new List<LogData>();
                 return View(result);
@@ -817,7 +817,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> CandidateFeedbackForm(int id)
         {
-         var model = new PaymentSLAVM();
+            var model = new PaymentSLAVM();
             model.Interviewid = id;
             await SetInitialValue(model);
 
@@ -829,18 +829,18 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-             
                 await _surveyService.CandidateFeedbackFormDetailsService(model);
                 await SetInitialValue(model);
                 return View(model);
             }
-            catch ( Exception ex){
+            catch (Exception ex)
+            {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
         }
 
-            public async Task SetInitialValue(PaymentSLAVM model)
+        public async Task SetInitialValue(PaymentSLAVM model)
         {
             if (string.IsNullOrEmpty(model.Inaccuratedecisionmaking))
             {
