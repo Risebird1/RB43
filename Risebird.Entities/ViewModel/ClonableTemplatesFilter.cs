@@ -19,5 +19,10 @@
         public string DifficultyLevel { get; set; }//this is referred to as ProfileType at some places
         public string Category { get; set; }
         public string[] PrimarySkills { get; set; }
+
+        public string emailId { get; set; }
+        public string uniqueId { get; set; }
+        public string type { get; set; }
+        public string profile { get; set; }
     }
 }

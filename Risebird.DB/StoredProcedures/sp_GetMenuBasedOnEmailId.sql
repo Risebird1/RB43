@@ -25,11 +25,11 @@ IF NOT EXISTS (SELECT 1  FROM  UserSessions usn inner join UserList us on us.id 
 END
 
 
-	DECLARE @lastLogin AS varchar(200), @profile varchar(50), @roleId int;    
+	DECLARE @lastLogin AS varchar(200), @profile varchar(50), @roleId int, @clientId int;    
 	select @lastLogin=LastLogin from [dbo].[UserList] where EmailId = @EmailId  
 	Set @lastLogin=Getdate()
 	set @roleId =0
-	
+	set @clientId =0
 
 	set @profile = (select pr.[Name] from UserList ul join [Profile] pr on pr.id=ul.idProfile where EmailId = @EmailId and ul.IsActive=1)
 	
@@ -37,6 +37,7 @@ END
 	if(@profile = 'Client')
 	begin
 		select @roleId=cu.RoleId from UserList ul join ClientUser cu on cu.UserId =ul.id where ul.EmailId=@EmailId
+		select @clientId = cu.ClientId from UserList ul join ClientUser cu on cu.UserId =ul.id where ul.EmailId=@EmailId
 	end
 
 	update [dbo].[UserList] set LastLogin= getdate(),isonline=1 where EmailId = @EmailId    
@@ -66,8 +67,21 @@ END
 					join [dbo].[UserList] ul on pl.id = ul.idprofile 
 					left join ClientUser cu on cu.UserId=ul.id
 					left join Client c on c.id=cu.ClientId
-					where ul.EmailId = @EmailId AND ul.IsActive=1 and fn.IsStaffingAgencyAccess=1 order by idisplayorder
+					where ul.EmailId = @EmailId AND ul.IsActive=1 and fn.IsStaffingAgencyAccess=1 and (@clientId=23 or (@clientId != 23 and fn.FunctionName != 'Templates'))
+					order by idisplayorder
 			end
+			else if(@profile = 'Client')
+				begin
+					select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
+					pf.dAccess,@lastLogin as NavigationShow,c.LogoLink from [dbo].[Function] fn      
+					join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction      
+					join [dbo].[Profile] pl on pl.id = pf.idprofile      
+					join [dbo].[UserList] ul on pl.id = ul.idprofile 
+					left join ClientUser cu on cu.UserId=ul.id
+					left join Client c on c.id=cu.ClientId 
+					where ul.EmailId = @EmailId AND ul.IsActive=1 and (@clientId=23 or (@clientId != 23 and fn.FunctionName != 'Templates'))
+					order by idisplayorder
+				end
 			else
 				begin
 					select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,    
@@ -76,8 +90,9 @@ END
 					join [dbo].[Profile] pl on pl.id = pf.idprofile      
 					join [dbo].[UserList] ul on pl.id = ul.idprofile 
 					left join ClientUser cu on cu.UserId=ul.id
-					left join Client c on c.id=cu.ClientId
-					where ul.EmailId = @EmailId AND ul.IsActive=1 order by idisplayorder
+					left join Client c on c.id=cu.ClientId 
+					where ul.EmailId = @EmailId AND ul.IsActive=1 
+					order by idisplayorder
 				end
 			      
 		end  
@@ -93,7 +108,7 @@ END
 End   
   
 
-GO 
+GO
 
 
 

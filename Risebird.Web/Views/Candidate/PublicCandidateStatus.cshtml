@@ -170,6 +170,19 @@
                     <div class="pull-right">
                         <div class="topheader-header">
                             <div class="topheader-link-wrap" >
+                                @if(ViewBag.ClientId == 23)//Risebird
+                                {
+                                    var templateUrl = "/Template/Index?emailId=" + @ViewBag.emailid + "&uniqueId=" + @ViewBag.id + "&type=pbc&profile=Client";
+                                    <button title = "Book interviews based on dynamic marketplace rates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl)'"> @* '@Url.Action(action : "Index", controller : "Template", new { emailId = ViewBag.emailid, uniqueId = ViewBag.id, type = "pbc", profile = "client" })' *@
+                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                        <div class="d-lg-inline-flex pad7">
+                                            Book Interviews
+                                        </div>
+
+                                    </button>
+                                    
+                                }
+                                
           
                             <button type="button"  data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'">
                                 <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>

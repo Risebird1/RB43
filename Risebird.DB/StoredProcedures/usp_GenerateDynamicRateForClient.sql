@@ -31,9 +31,9 @@ set @advancedPlanRate = (select rate from PlanTypeChargesMaster where CountryTyp
 
 
 
-select @standardPlanRate * (1 + @margin)/100 as StandardPlanRate, 
-	   @proPlanRate * (1 + @margin)/100 as ProPlanRate,
-	   @advancedPlanRate * (1 + @margin)/100 as AdvancedPlanRate
+select @standardPlanRate + (@standardPlanRate * @margin/100) as StandardPlanRate, 
+	   @proPlanRate + (@proPlanRate * @margin/100) as ProPlanRate,
+	   @advancedPlanRate + (@advancedPlanRate * @margin/100) as AdvancedPlanRate
 End
 GO
 
