@@ -9,7 +9,15 @@
 @{
     ViewData["Title"] = "Templates";
     ViewBag.PageHeader = "Templates";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    if(Model.AccessType == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+
+    }
     dynamic filter = null;
     //string[] TemplateName = new string[] { };
     //string[] CompetencyLevel = new string[] { };
@@ -98,7 +106,7 @@
 
 
 
-                                            <form action="@Url.Action("Index","Template")" method="post" id="formFilter">
+                                            <form action="@Url.Action("Index","Template", new { emailId = Model.PublicUserEmailId, uniqueId = Model.UniqueId, type = "pbc", profile = "Client" })" method="post" id="formFilter">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -302,20 +310,25 @@
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-                                                <div class="clearfix rate-strip">
-                                                    <div style="float:left;margin-right:20px;">
-                                                        <span style="float:left;">
-                                                            <strong> Standard: ( 35 min )</strong>
-                                                        </span>
-                                                        <span style="float:left;padding-right:11px;padding-left:7px;" class="rate-type" id="id_standard_price"></span>
-                                                </div>
-                                                <div style="float:left;margin-right:20px;">
-                                                        <span style="float:left;"> <strong>Pro: ( 45 min )</strong></span> <span style="padding-right:11px;padding-left:7px;" class="rate-type" id="id_pro_price"></span>
-                                                </div>
-                                                <div style="float:left">
-                                                        <span style="float:left;"> <strong> Advanced: ( 55 min )</strong></span>  <span style="padding-right:11px;padding-left:7px;" class="rate-type" id="id_advanced_price"></span>
-                                                </div>
-                                                </div>
+                                                @if(Model.ClientId != null && Model.ClientId.Value>0)
+                                                {
+                                                    <div class="clearfix rate-strip">
+                                                        <div style="float:left;margin-right:20px;">
+                                                            <span style="float:left;">
+                                                                <strong> Standard: ( 35 min )</strong>
+                                                            </span>
+                                                            <span style="float:left;padding-right:11px;padding-left:7px;" class="rate-type" id="id_standard_price"></span>
+                                                        </div>
+                                                        <div style="float:left;margin-right:20px;">
+                                                            <span style="float:left;"> <strong>Pro: ( 45 min )</strong></span> <span style="padding-right:11px;padding-left:7px;" class="rate-type" id="id_pro_price"></span>
+                                                        </div>
+                                                        <div style="float:left">
+                                                            <span style="float:left;"> <strong> Advanced: ( 55 min )</strong></span>  <span style="padding-right:11px;padding-left:7px;" class="rate-type" id="id_advanced_price"></span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                
+                                                
                                                 @if (Model.ClonableTemplates != null && Model.ClonableTemplates.Count() > 0)
                                                 {
                                                     foreach (var item in Model.ClonableTemplates)
@@ -345,7 +358,7 @@
 
                                                     @if (Model.Profile != "Client")
                                                     {
-                                                                <td align="center">
+                                                        <td align="center">
                                                             <button type="button" class="clickhere_btn pull-left">
                                                                 <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
                                                             </button>
@@ -356,9 +369,9 @@
                                                         }
                                                         else
                                                         {
-                                                                    <td align="center">@item.SkillChannelCounts</td>
+                                                            <td align="center">@item.SkillChannelCounts</td>
                                                         }
-                                                                <td align="center">
+                                                        <td align="center">
                                                             <button type="button" class="clickhere_btn pull-left">
                                                                 <span data-toggle="tooltip" data-placement="top" title="" onclick="openInterviewersPopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Interviewers"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
                                                             </button>
@@ -388,7 +401,7 @@
                                                         }
                                                         @if (Model.Profile == "Client")
                                                         {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Create Interview Link">
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Book Interview">
                                                                 <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@item.NameWithoutHtml', '@item.AssessmentGroupName', '@item.AssessmentGroupId', '@item.MeetingPlatform')" title="Create Interview Link" class="mdc-fab__icon material-icons">
                                                                     @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
@@ -504,6 +517,9 @@
                         <input type="hidden" for="MeetingPlatform" name="MeetingPlatform" id="MeetingPlatform" />
                         <input type="hidden" for="JDTiltle" name="JDTiltle" id="JDTiltle" />
                         <input type="hidden" for="RateComputedForClient" name="RateComputedForClient" id="RateComputedForClient" />
+                        <input type="hidden" for="AccessType" name="AccessType" id="AccessType" />
+                        <input type="hidden" for="PublicUserEmailId" name="PublicUserEmailId" id="PublicUserEmailId" />
+                        <input type="hidden" for="UniqueId" name="UniqueId" id="UniqueId" />
 
                         <button type="submit" class="btn btn-primary" style="margin:0px auto;display:block;border-radius:5px;padding:8px 10px;background:#53a5f5">Generate Interview Link</button>
                     </form>
@@ -663,12 +679,15 @@
 </script>
 <script>
     let clientCompanyName = '@Model.ClientCompanyName';
-    let clientId = '@Model.ClientId';
+    var clientId = '@Model.ClientId';
     let isBillingOwnerPopulated = false;
     let isModalOpened = false;
     let standardRate = 0;
     let proRate = 0;
     let advancedRate = 0;
+    var accessType = '@Model.AccessType';
+    var publicUserEmailId = '@Model.PublicUserEmailId'; // the variable is only used when the page is opened as a public user by client
+    var userUniqueId = '@Model.UniqueId'; // the variable is only used when the page is opened as a public user by client
 
     //var closeMember = document.getElementById("interviewLinkModalClose");
     //closeMember.onclick = function () {
@@ -699,6 +718,9 @@
         $('#AssessmentGroupId').val(assessmentGroupId);
         $('#MeetingPlatform').val(meetingPlatform);
         $('#JDTiltle').val(templateName);
+        $('#AccessType').val(accessType)
+        $('#PublicUserEmailId').val(publicUserEmailId);
+        $('#UniqueId').val(userUniqueId);
 
         document.getElementById('id_standard_rate').innerHTML = "";
         document.getElementById('id_pro_rate').innerHTML = "";
@@ -717,10 +739,13 @@
             GenerateDynamicRateByCurrentTimeOfWeek(clientId);
         }
     }
+
     function ValidateCreateInterviewLinkForm() {
 
         //var jobProfile = $('#JDTiltle').val();
-        var jdFile = $('#JDFile').val();
+        //var jdFile = $('#JDFile').val();
+
+
         var billingOwner = $('#BillingOwner').val();
 
         var flag = true;
@@ -737,13 +762,13 @@
         // else {
         //     document.getElementById('error_JDTiltle').innerHTML = "";
         // }
-        if (jdFile == null || jdFile == '') {
-            document.getElementById('error_JDFile').innerHTML = "Kindly upload a file here.";
-            flag = false;
-        }
-        else {
-            document.getElementById('error_JDFile').innerHTML = "";
-        }
+        // if (jdFile == null || jdFile == '') {
+        //     document.getElementById('error_JDFile').innerHTML = "Kindly upload a file here.";
+        //     flag = false;
+        // }
+        // else {
+        //     document.getElementById('error_JDFile').innerHTML = "";
+        // }
         if (billingOwner == null || billingOwner == '') {
             document.getElementById('error_BillingOwner').innerHTML = "Billing owner is required.";
             flag = false;
@@ -939,9 +964,23 @@
     var asgGrpPrSkillsCategoryMapArray;
     $(document).ready(function () {
         //get the dynamic rates here
-        GenerateDynamicRateByCurrentTimeOfWeek('@Model.ClientId', true);
+        if (clientId != null && clientId !== undefined) {
 
-        setInterval(GenerateDynamicRateByCurrentTimeOfWeek('@Model.ClientId', true), 60000);
+            function updateRates() {
+                GenerateDynamicRateByCurrentTimeOfWeek(clientId, true);
+                setTimeout(updateRates, 60000);
+            }
+
+            updateRates();
+
+        
+        }
+        
+
+
+        // GenerateDynamicRateByCurrentTimeOfWeek('@Model.ClientId', true);
+
+        // setInterval(GenerateDynamicRateByCurrentTimeOfWeek('@Model.ClientId', true), 60000);
 
         $("#ResetFilter").click(function () {
             ResetFilter();
