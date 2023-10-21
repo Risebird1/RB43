@@ -236,6 +236,10 @@ namespace Risebird.Entities.ViewModel
         public int MarketPlacePlanType { get; set; }
         public int RateComputedForClient { get; set; }
 
+        public string AccessType { get; set; }
+        public string PublicUserEmailId { get; set; } // set when the Accesstype above is Public
+        public string UniqueId { get; set; } // user's unique id set when the Accesstype above is Public
+
     }
     public class InterviewerIds
     {
