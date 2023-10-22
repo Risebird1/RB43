@@ -4774,33 +4774,15 @@ namespace Risebird.Web.Controllers
         }
         #endregion
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> GenerateDynamicRateByCurrentTimeOfWeek(int clientId)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var Emailid = HttpContext.Session.GetString("email")?.Trim();
-                    Emailid = Emailid.Replace("\"", "");
-                    if (profileName == "Client")
-                    {
-                        var data = new DynamicRatesDTO();
-                        data = await _clientService.GenerateDynamicRateByCurrentTimeOfWeek(clientId);
-                        return Json(data);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    return null;
-                }
+                var data = new DynamicRatesDTO();
+                data = await _clientService.GenerateDynamicRateByCurrentTimeOfWeek(clientId);
+                return Json(data);
 
             }
             catch (Exception ex)
