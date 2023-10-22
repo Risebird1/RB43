@@ -1,0 +1,24 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerInsightsVM
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">Candidate Interaction Quality</th>
+            <th class="text-center">Limited Handon coding / Practical scenarios</th>
+            <th class="text-center">Weak Infrastructure</th>
+            <th class="text-center">Unethical Practices</th>
+            <th class="text-center">Time Management</th>
+            <th class="text-center">Poor Communication Skills</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center">@Model.CandidateInteractionQuality</td>
+            <td class="text-center">@Model.LimitedHandoncoding</td>
+            <td class="text-center">@Model.WeakInfrastructure</td>
+            <td class="text-center">@Model.UnethicalPractices</td>
+            <td class="text-center">@Model.TimeManagement</td>
+            <td class="text-center">@Model.PoorCommunicationSkills</td>
+        </tr>
+</tbody>
+</table>

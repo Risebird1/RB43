@@ -6870,5 +6870,25 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<InterviewerInsightsVM> GetPaymentCompliance(int id)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@id", id);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<InterviewerInsightsVM>(conChange, "usp_FatchPaymentCompliance", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
