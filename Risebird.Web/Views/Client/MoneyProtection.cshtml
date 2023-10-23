@@ -46,6 +46,7 @@
                                                     <th>Client</th>
                                                     <th>Billing Type</th>
                                                     <th>Points</th>
+                                                    <th>Interviews</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -54,6 +55,7 @@
                                                     <th>Client</th>
                                                     <th>Billing Type</th>
                                                     <th>Points</th>
+                                                    <th>Interviews</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </tfoot>
@@ -64,6 +66,7 @@
                                                         <td>@item.ClientName</td>
                                                         <td>@item.BillingType</td>
                                                         <td>@item.Point</td>
+                                                        <td>@item.TotalInterviews</td>
                                                         <td>
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Detail View">
                                                                 <span onclick="DetailedView('@ViewBag.Type','@item.id','@item.ClientName')" title="Detail View" class="mdc-fab__icon material-icons">

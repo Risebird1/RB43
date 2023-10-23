@@ -7479,7 +7479,6 @@ namespace Risebird.Web.Controllers
                             url = "ClientReport/Interview/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected
                         });
                     }
-
                 }
                 var email = HttpContext.Session.GetString("email");
                 email = email.Replace("\"", "");
@@ -7545,6 +7544,7 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
+                model.ReportAccepted = true;
                 
                 if (!string.IsNullOrEmpty(uniqueid) || !string.IsNullOrEmpty(publicEmailId))
                 {
