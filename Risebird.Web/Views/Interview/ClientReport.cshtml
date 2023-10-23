@@ -172,7 +172,7 @@
                                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                     <div class="row">
                                         <div class="col-lg-3 col-md-5">
-                                            @if ((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client")
+                                                @if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
                                             {
                                                 <div>
                                                     @*<label>REPORT DETAILS</label>*@
@@ -227,7 +227,7 @@
                                                 <h3>
                                                     <svg width="32" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>Tech Skill Score:
                                                     <span class="totScore">
-                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client")
+                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
                                                         {
                                                             <strong id="totTechScore"></strong>
                                                         }
@@ -247,7 +247,7 @@
                                                             <div>@Model.TechSkillReportCollection[i].SkillName</div>
                                                             @{
                                                                 var TechSkill_Score = 0.0;
-                                                                if ((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client")
+                                                                if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
                                                                 {
                                                                     TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                                 }
@@ -349,7 +349,7 @@
 
                                                         </div>
                                                     </div>
-                                                    @if ((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client")
+                                                    @if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
                                                     {
                                                         <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
                                                             <h3><svg xmlns="http://www.w3.org/2000/svg" width="33" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment</h3>
@@ -390,7 +390,7 @@
                                                                     {
                                                                         <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                                     }
-                                                                    @if ((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client")
+                                                                    @if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
                                                                     {
                                                                         <label>Rating : @valueslist</label>
                                                                     }
@@ -812,7 +812,7 @@
         });
     });
 </script>
-@if (!Model.ReportAccepted && ViewBag.profile == "Client")
+@if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
 {
     <script>
         var video = document.getElementById('video');
