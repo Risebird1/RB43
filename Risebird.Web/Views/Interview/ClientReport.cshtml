@@ -254,7 +254,7 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@TechSkill_Score %</div>
+                                                                    <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</div>
 
                                                                 }
                                                             </div>
@@ -265,6 +265,7 @@
                                             <p class="note-skill">
                                                 <b> Note:</b> % score for every skill represents difference between candidate actual and required competency. For example 80% in any skill would mean 4/5
                                                 of required competency threshold.
+                                                <b> Note:</b>To understand competency thresholds more, please check Dreyfus model details <a href="https://en.wikipedia.org/wiki/Dreyfus_model_of_skill_acquisition">Click here</a>
                                             </p>
 
                                         </div>

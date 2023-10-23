@@ -7884,6 +7884,10 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("CompletedInterviews", "Interview");
                     }
+                    else if (model.Pagetype == "PotentailRiskCandidate")
+                    {
+                        return RedirectToAction("PotentialRiskByCandidate", "DashBoard");
+                    }
                     else
                     {
                         return RedirectToAction("PaymentSlaDetails", "Interview");
