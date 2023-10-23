@@ -887,14 +887,14 @@ namespace Risebird.Repository
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@EmailId", interviewerMail);
                     var results = await con.QueryAsync<int>(query, dynamicParameters);
-                    if (results.FirstOrDefault() == 1)
-                    {
-                        return "Interview assigned Successfully. Interviewer video needs to be mandatory on throughout the interview duration. INR 100 will be paid additional for US interviews and INR 50 will be paid additional for India interview. Failing to on the video may result in 100% payment deduction by client. Rest assured your data is 100% private and you will never be mapped to your current company. If you are not comfortable with opening your video, please unassign this interview.";
-                    }
-                    else
-                    {
-                        return "Interview assigned Successfully.";
-                    }
+                    //if (results.FirstOrDefault() == 1)
+                    //{
+                    return "Interview assigned Successfully. Interviewer video needs to be mandatory on throughout the interview duration. INR 100 will be paid additional for US interviews and INR 50 will be paid additional for India interview. Failing to on the video may result in 100% payment deduction by client. Rest assured your data is 100% private and you will never be mapped to your current company. If you are not comfortable with opening your video, please unassign this interview.";
+                    //}
+                    //else
+                    //{
+                    //    return "Interview assigned Successfully.";
+                    //}
                 }
             }
             catch (SqlException ex)
@@ -4994,7 +4994,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
                 //var query = "Select IRF.IRFId,JDTiltle,CalendlyLink from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
-                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id,IRF.IsPaused from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
+                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id,IRF.IsPaused from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE()) order by CreatedOn desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SchedulingLinkVM>(query, dynamicParameters);
@@ -5610,7 +5610,7 @@ namespace Risebird.Repository
         {
             try
             {
-               // var query = "Select tq.*,IRF.id as IRFId, im.interviewDate, im.candidateEmail,im.candidateName,im.interviewer From Trans_QCFormReport tq left join InterviewMeetings im on tq.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where tq.Interviewid=@Interviewid";
+                // var query = "Select tq.*,IRF.id as IRFId, im.interviewDate, im.candidateEmail,im.candidateName,im.interviewer From Trans_QCFormReport tq left join InterviewMeetings im on tq.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where tq.Interviewid=@Interviewid";
                 var query = "Select tq.*,IRF.id as IRFId, im.interviewDate, im.candidateEmail,im.candidateName,im.interviewer From InterviewMeetings im left join Trans_QCFormReport tq  on tq.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where im.id=@Interviewid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Interviewid", interviewid);
@@ -5724,7 +5724,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags,int VideoReward)
+        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags, int VideoReward)
         {
             try
             {
@@ -6832,11 +6832,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var dynamicParameters = new DynamicParameters(); 
+                var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@InterviewMeetingId", model.InterviewMeetingId);
                 dynamicParameters.Add("@ReliabilityScoreTypeId", model.ReliabilityScoreTypeId);
-                dynamicParameters.Add("@CreateDate",DateTime.Now);
-                dynamicParameters.Add("@InterviewerEmail",model.InterviewerEmail);
+                dynamicParameters.Add("@CreateDate", DateTime.Now);
+                dynamicParameters.Add("@InterviewerEmail", model.InterviewerEmail);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_TransInterviewersReliabilityScores", dynamicParameters,
@@ -6856,7 +6856,7 @@ namespace Risebird.Repository
             try
             {
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@InterviewMeetingId",InterviewMeetingId);
+                dynamicParameters.Add("@InterviewMeetingId", InterviewMeetingId);
                 dynamicParameters.Add("@CreateDate", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

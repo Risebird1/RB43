@@ -87,38 +87,38 @@
                                             }
                                             @if (Model != null && Model.Count() > 0)
                                             {
-                                                 
-                                               
+
+
                                                 foreach (var item in Model)
                                                 {
-                                                  
+
                                                     <tr>
-                                                       
+
                                                         <td>@item.IRFId</td>
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.interviewer</td>
 
-                                                       @*  @if (@item.interviewer != null || @item.interviewer != "")
-                                                        {
-                                                            <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td style="color:red;text-align:center">@item.RedMarker</td>
-                                                        } *@
+                                                        @*  @if (@item.interviewer != null || @item.interviewer != "")
+                                                {
+                                                <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                }
+                                                else
+                                                {
+                                                <td style="color:red;text-align:center">@item.RedMarker</td>
+                                                } *@
 
                                                         <td>@item.candidateName</td>
                                                         <td>@item.candidateEmail</td>
-                                                       
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
+
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                        {
                                                             <td>
                                                                 <span aria-label="Click here to call the candidate">
                                                                     <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
                                                                 </span>@item.MobileNumber
                                                             </td>
-                                                            }
-                                                        
+                                                        }
+
                                                         <td> @item.Name </td>
                                                         <td>@item.ChannelOwner</td>
                                                         @if (item.interviewer != null || item.interviewer != "")
@@ -131,20 +131,21 @@
                                                         }
 
                                                         <td class="interviewer">
-                                                           
-                                                           <input type="hidden" id="Rating_@i" value="@item.Rating" />
-                                                    <div class="star-rating" style="pointer-events:none;">
-                                                    <input type="radio" id="Rating_5_@i" name="rating1_@i" readonly value="5" />
-                                                    <label for="Rating_5_@i" class="star">&#9733;</label>
-                                                    <input type="radio" id="Rating_4_@i" name="rating1_@i" readonly value="4" />
-                                                    <label for="Rating_4_@i" class="star">&#9733;</label>
-                                                    <input type="radio" id="Rating_3_@i" name="rating1_@i" readonly value="3" />
-                                                    <label for="Rating_3_@i" class="star">&#9733;</label>
-                                                    <input type="radio" id="Rating_2_@i" name="rating1_@i" readonly value="2" />
-                                                    <label for="Rating_2_@i" class="star">&#9733;</label>
-                                                    <input type="radio" id="Rating_1_@i" name="rating1_@i" readonly value="1" />
-                                                    <label for="Rating_1_@i" class="star">&#9733;</label></div>
-                                                           
+
+                                                            <input type="hidden" id="Rating_@i" value="@item.Rating" />
+                                                            <div class="star-rating" style="pointer-events:none;">
+                                                                <input type="radio" id="Rating_5_@i" name="rating1_@i" readonly value="5" />
+                                                                <label for="Rating_5_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_4_@i" name="rating1_@i" readonly value="4" />
+                                                                <label for="Rating_4_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_3_@i" name="rating1_@i" readonly value="3" />
+                                                                <label for="Rating_3_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_2_@i" name="rating1_@i" readonly value="2" />
+                                                                <label for="Rating_2_@i" class="star">&#9733;</label>
+                                                                <input type="radio" id="Rating_1_@i" name="rating1_@i" readonly value="1" />
+                                                                <label for="Rating_1_@i" class="star">&#9733;</label>
+                                                            </div>
+
                                                         </td>
                                                         <td>@item.RatingAddedOn</td>
 
@@ -158,17 +159,22 @@
                                                                 </span>
 
                                                             }
+                                                            <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.Interviewid, irfId=item.irfIntId})">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                                    <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                </button>
+                                                            </a>
                                                             <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
-                                                                <div onclick="PaymentSLADetails('@item.Interviewid','@item.candidateEmail','@item.interviewer',true,'PaymentSLA')" title="Palyment SLA" class="mdc-fab__icon material-icons">
+                                                                <div onclick="PaymentSLADetails('@item.Interviewid','@item.candidateEmail','@item.interviewer',false,'PotentailRiskCandidate')" title="Palyment SLA" class="mdc-fab__icon material-icons">
                                                                     <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
                                                                 </div>
                                                             </button>
                                                         </td>
-                                                     
+
                                                     </tr>
                                                     i++;
                                                 }
-                                             
+
                                             }
                                         </tbody>
                                     </table>
@@ -179,9 +185,9 @@
                     </div>
                 </div>
             </div>
-                                    <!-- end content-->
-                                    
-                                </div>
+            <!-- end content-->
+
+        </div>
         <!--  end card  -->
     </div>
     <!-- end col-md-12 -->
@@ -196,8 +202,8 @@
 
 <script>
     $(document).ready(function () {
-         SetRating();
-         applyDataTable();
+        SetRating();
+        applyDataTable();
     });
 
     function applyDataTable() {

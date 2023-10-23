@@ -5,16 +5,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class TemplateController : Controller
     {
         private readonly ITemplateService _templateService;
@@ -35,11 +37,216 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string emailId = null, string uniqueId = null, string type = null, string profile = null)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (!string.IsNullOrEmpty(uniqueId) && !string.IsNullOrEmpty(emailId) && type == "pbc" && profile == "Client")
+                {
+                    ClonableTemplateListVM model = new ClonableTemplateListVM();
+                    model.AccessType = "Public";
+                    //model.LoggedInUser = emailId;
+                    model.PublicUserEmailId = emailId;
+                    model.UniqueId = uniqueId;
+                    model.ClientId = await _clientService.GetClientByEmailId(emailId);
+                    if (model.ClientId.HasValue)
+                    {
+                        model.ClientCompanyName = (await _clientService.GetClient(model.ClientId.Value))?.Name;
+                    }
+                    else
+                    {
+                        model.ClientId = null;
+                    }
+                    model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
+
+                    if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+
+                        //filter.TemplateName = filter.TemplateName == null ? model.ClonableTemplates.Select(x => x.Name).ToArray() : filter.TemplateName;
+                        //filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
+                        //filter.CompetencyLevel = filter.CompetencyLevel ?? model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).ToArray();
+                        //filter.CompanyType = filter.CompanyType ?? model.ClonableTemplates.Select(x => x.CompanyTypeDesc).ToArray();
+                        //filter.CountryType = filter.CountryType ?? model.ClonableTemplates.Select(x => x.CountryTypeDesc).ToArray();
+                        //filter.SeniorityLevel = filter.SeniorityLevel ?? model.ClonableTemplates.Select(x => x.SeniorityLevelDesc).ToArray();
+
+
+                        if (model.ClonableTemplates != null && model.ClonableTemplates.Count() > 0)
+                        {
+                            bool continueApplyingFilter = true;
+
+                            //if (filter.AssessmentGroup != null )
+                            //{
+                            //    IEnumerable<ClonableSkillChannelVM> templatesFilteredByAssessmentGroup = null;
+
+                            //    templatesFilteredByAssessmentGroup = model.ClonableTemplates.Where(c => filter.AssessmentGroup.Contains(c.AssessmentGroupName));
+                            //    if(templatesFilteredByAssessmentGroup != null)
+                            //    {
+                            //        model.ClonableTemplates = templatesFilteredByAssessmentGroup;
+                            //    }
+                            //}
+
+
+                            if (!string.IsNullOrEmpty(filter.Category))
+                            {
+                                IEnumerable<ClonableSkillChannelVM> templatesFilteredByCategory = null;
+
+                                templatesFilteredByCategory = model.ClonableTemplates.Where(c => !string.IsNullOrEmpty(c.CategoryName) && c.CategoryName == filter.Category);
+                                model.ClonableTemplates = templatesFilteredByCategory;
+                            }
+
+                            if (filter.PrimarySkills != null && filter.PrimarySkills.Count() > 0)
+                            {
+                                IEnumerable<ClonableSkillChannelVM> templatesFilteredByPrimarySkills = null;
+
+                                templatesFilteredByPrimarySkills = model.ClonableTemplates.Where(c => !string.IsNullOrEmpty(c.PrimarySkills) && filter.PrimarySkills.Intersect(c.PrimarySkills.Split(';'))?.Count() > 0);
+                                if (templatesFilteredByPrimarySkills != null && templatesFilteredByPrimarySkills.Count() > 0)
+                                {
+                                    model.ClonableTemplates = templatesFilteredByPrimarySkills;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(filter.CountryType))
+                            {
+                                IEnumerable<ClonableSkillChannelVM> templatesFilteredByCountryType = null;
+
+                                templatesFilteredByCountryType = model.ClonableTemplates.Where(c => c.CountryType.HasValue && c.CountryType.Value == Convert.ToInt16(filter.CountryType));
+                                if (templatesFilteredByCountryType != null && templatesFilteredByCountryType.Count() > 0)
+                                {
+                                    model.ClonableTemplates = templatesFilteredByCountryType;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+
+                            if (!string.IsNullOrEmpty(filter.CompanyType))
+                            {
+                                IEnumerable<ClonableSkillChannelVM> templatesFilteredByCompanyType = null;
+
+                                templatesFilteredByCompanyType = model.ClonableTemplates.Where(c => c.CompanyTypeId.HasValue && c.CompanyTypeId.Value == Convert.ToInt16(filter.CompanyType));
+                                if (templatesFilteredByCompanyType != null && templatesFilteredByCompanyType.Count() > 0)
+                                {
+                                    model.ClonableTemplates = templatesFilteredByCompanyType;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+
+                            if (!string.IsNullOrEmpty(filter.SeniorityLevel) && continueApplyingFilter)
+                            {
+                                IEnumerable<ClonableSkillChannelVM> templatesFilteredBySeniority = null;
+
+                                templatesFilteredBySeniority = model.ClonableTemplates.Where(c => c.SeniorityLevelId != null && c.SeniorityLevelId.Contains(filter.SeniorityLevel));
+                                if (templatesFilteredBySeniority != null && templatesFilteredBySeniority.Count() > 0)
+                                {
+                                    model.ClonableTemplates = templatesFilteredBySeniority;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+
+                            if (!string.IsNullOrEmpty(filter.DifficultyLevel) && continueApplyingFilter)
+                            {
+                                IEnumerable<ClonableSkillChannelVM> templatesFilteredByDifficulty = null;
+
+                                templatesFilteredByDifficulty = model.ClonableTemplates.Where(c => c.DifficultyLevel != null && c.DifficultyLevel.Contains(filter.DifficultyLevel));
+                                if (templatesFilteredByDifficulty != null && templatesFilteredByDifficulty.Count() > 0)
+                                {
+                                    model.ClonableTemplates = templatesFilteredByDifficulty;
+                                }
+                                else
+                                {
+                                    continueApplyingFilter = false;
+                                }
+                            }
+
+
+                            if (!string.IsNullOrEmpty(filter.EmploymentType) && continueApplyingFilter)
+                            {
+                                IEnumerable<ClonableSkillChannelVM> templatesFilteredByEmploymentType = null;
+
+                                templatesFilteredByEmploymentType = model.ClonableTemplates.Where(c => c.EmploymentType != null && c.EmploymentType.Contains(filter.EmploymentType));
+                                if (templatesFilteredByEmploymentType != null && templatesFilteredByEmploymentType.Count() > 0)
+                                {
+                                    model.ClonableTemplates = templatesFilteredByEmploymentType;
+                                }
+                            }
+
+                            if (!string.IsNullOrEmpty(filter.AssessmentGroupTemplate))
+                            {
+                                IEnumerable<ClonableSkillChannelVM> templatesFilteredByAssessmentGroup = null;
+
+                                templatesFilteredByAssessmentGroup = model.ClonableTemplates.Where(c => c.AssessmentGroupName != null && c.AssessmentGroupName.Contains(filter.AssessmentGroupTemplate));
+                                if (templatesFilteredByAssessmentGroup != null && templatesFilteredByAssessmentGroup.Count() > 0)
+                                {
+                                    model.ClonableTemplates = templatesFilteredByAssessmentGroup;
+                                }
+                            }
+
+                        }
+
+                        model.ClonableTemplates = model.ClonableTemplates?.ToList();
+
+                    }
+                    var asmtGrpsPrSkillsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName, x.PrimarySkills))?.Distinct();
+                    if (asmtGrpsPrSkillsMappedToCurrentTemplates != null)
+                    {
+                        model.AsmtGrpsPrSkillsMappedToCurrentTemplates = JsonConvert.SerializeObject(asmtGrpsPrSkillsMappedToCurrentTemplates);
+                    }
+                    if (TempData["SuccessErrorCloneTemplateMessage"] != null)
+                    {
+                        model.Message = TempData["SuccessErrorCloneTemplateMessage"].ToString();
+                        TempData.Remove("SuccessErrorCloneTemplateMessage");
+                    }
+                    model.Profile = profile;
+                    if (model.ClonableTemplates != null)
+                    {
+                        model.ClonableTemplates = model.ClonableTemplates.OrderByDescending(x => x.SkillChannelCounts).ToList();
+                    }
+
+                    //int index = 0;
+                    foreach (var template in model.ClonableTemplates)
+                    {
+                        template.NameWithoutHtml = template.Name;
+
+                        //if (profileName == "Client")
+                        //{
+                        //    if (!string.IsNullOrEmpty(template.TaggedClients))
+                        //    {
+                        //        var clientsMapped = template.TaggedClients.Split(",");
+                        //        if (clientsMapped != null && clientsMapped.Any(x => !string.IsNullOrEmpty(x) && x.ToLower() == model.ClientCompanyName?.ToLower()))
+                        //        {
+                        //            var item = model.ClonableTemplates.ToList()[index];
+
+                        //            item.Name = item.Name + " <span style=\"color:green;\"> (Recommended)<span>";
+                        //            model.ClonableTemplates.ToList().RemoveAt(index);
+                        //            model.ClonableTemplates.ToList().Insert(0, item);
+                        //        }
+                        //    }
+                        //}
+
+
+                        //index++;
+
+                    }
+
+                    return View(model);
+                }
+
+                else if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
@@ -271,7 +478,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (!string.IsNullOrEmpty(filter.uniqueId) && !string.IsNullOrEmpty(filter.emailId) && filter.type == "pbc" && filter.profile == "client")
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("ClonableTemplatesFilters", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("Index", new { emailId = filter.emailId, uniqueId = filter.uniqueId, type = filter.type, profile = "client" });
+                }
+                else if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
