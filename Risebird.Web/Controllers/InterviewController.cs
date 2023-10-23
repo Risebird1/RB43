@@ -8040,10 +8040,18 @@ namespace Risebird.Web.Controllers
             return Json("Success");
         }
         #endregion
-        public async Task<IActionResult> PaymentCompliance(int id)
+        public async Task<IActionResult> PaymentCompliance(int interviewid)
         {
-            var result = await _meetingService.GetPaymentComplianceService(id);
-            return PartialView(result);
+            try
+            {
+                var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                return PartialView(result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

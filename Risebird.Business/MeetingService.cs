@@ -4019,18 +4019,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<InterviewerInsightsVM> GetPaymentComplianceService(int id)
-        {
-            try
-            {
-                return await _meetingRespository.GetPaymentCompliance(id);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
+       
     }
 }
 

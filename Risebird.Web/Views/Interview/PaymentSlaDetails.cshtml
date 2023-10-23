@@ -175,14 +175,14 @@
                                                             <td style="color:red;text-align:center">@item.RedMarker</td>
                                                         }
                                                         <td>@item.PaymentDeduction %</td>
-                                                        @if (item.PaymentComplianceCount > 0)
-                                                        { 
-                                                        <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.id')">@item.PaymentComplianceCount</a></td>
-                                                         }
+                                                      @*   @if (item.PaymentComplianceCount > 0)
+                                                        { *@ 
+                                                        <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
+                                                        @*  }
                                                         else
                                                         {
                                                             <td class="text-center">0</td>
-                                                        } 
+                                                        }  *@
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.CreatedBy</td>
                                                         <td>@item.CreatedOn</td>

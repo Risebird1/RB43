@@ -1,24 +1,15 @@
-﻿@model Risebird.Entities.ViewModel.InterviewerInsightsVM
-<table class="table">
-    <thead>
-        <tr>
-            <th class="text-center">Candidate Interaction Quality</th>
-            <th class="text-center">Limited Handon coding / Practical scenarios</th>
-            <th class="text-center">Weak Infrastructure</th>
-            <th class="text-center">Unethical Practices</th>
-            <th class="text-center">Time Management</th>
-            <th class="text-center">Poor Communication Skills</th>
-        </tr>
-
-    </thead>
-    <tbody>
-        <tr>
-            <td class="text-center">@Model.CandidateInteractionQuality</td>
-            <td class="text-center">@Model.LimitedHandoncoding</td>
-            <td class="text-center">@Model.WeakInfrastructure</td>
-            <td class="text-center">@Model.UnethicalPractices</td>
-            <td class="text-center">@Model.TimeManagement</td>
-            <td class="text-center">@Model.PoorCommunicationSkills</td>
-        </tr>
-</tbody>
-</table>
+﻿@model Risebird.Entities.ViewModel.PaymentSLAVM
+<ul>
+    <li>Inaccurate/ Arbitrary decision making:@Model.Inaccuratedecisionmaking</li>
+    <li>Candidate Interaction Quality: @Model.CandidateInteractionQuality</li>
+    <li>Limited Handon coding / Practical scenarios: @Model.LimitedHandoncoding</li>
+    <li>Weak Infrastructure:@Model.WeakInfrastructure</li>
+    <li>Unethical Practices:@Model.UnethicalPractices</li>
+    <li>Time Management:@Model.TimeManagement</li>
+    <li>Poor Communication Skills:@Model.PoorCommunicationSkills</li>
+    <li>Questions Relevance:QuestionsRelevance</li>
+    <li>Score Rubric Ignorance:@Model.ScoreRubricIgnorance</li>
+    <li>Poor Feedback Comments:@Model.PoorFeedbackComments</li>
+    <li>Wrong Status Updates:@Model.WrongStatusUpdates</li>
+    <li>Proctoring Ignorance:@Model.ProctoringIgnorance</li>
+</ul>
