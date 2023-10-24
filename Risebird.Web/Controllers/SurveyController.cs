@@ -813,16 +813,13 @@ namespace Risebird.Web.Controllers
                 return View(result);
             }
         }
-
         [HttpGet]
         public async Task<IActionResult> CandidateFeedbackForm(int id)
         {
             var model = new PaymentSLAVM();
             model.Interviewid = id;
             await SetInitialValue(model);
-
             return View(model);
-
         }
         [HttpPost]
         public async Task<IActionResult> CandidateFeedbackForm(PaymentSLAVM model)
@@ -891,6 +888,7 @@ namespace Risebird.Web.Controllers
                 model.PoorCommunicationSkills = string.Empty;
             }
         }
+        
     }
 
 }

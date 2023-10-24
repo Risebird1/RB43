@@ -7479,7 +7479,6 @@ namespace Risebird.Web.Controllers
                             url = "ClientReport/Interview/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected
                         });
                     }
-
                 }
                 var email = HttpContext.Session.GetString("email");
                 email = email.Replace("\"", "");
@@ -7523,7 +7522,6 @@ namespace Risebird.Web.Controllers
                         model.IsQCRequired = client.IsQCRequired;
                         model.IsRedoInterview = client.IsRedoInterview;
                     }
-
                 }
                 else
                 {
@@ -7546,7 +7544,7 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                model.ReportAccepted = true;
+                
                 if (!string.IsNullOrEmpty(uniqueid) || !string.IsNullOrEmpty(publicEmailId))
                 {
                     model.Userid = 0;
@@ -8051,6 +8049,32 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ClientInterviewReview(int id)
+        {
+            var model = new PaymentSLAVM();
+            model.Interviewid = id;
+            await SetInitialValue(model);
+            return PartialView(model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> ClientInterviewReview(PaymentSLAVM model)
+        {
+            try
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                model.CreatedBy = emailId;
+                //Save Payment Complience
+                var result = await _meetingService.AddorUpdatePaymentSLADetails(model);
+                return Json("Success");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Success");
             }
         }
     }

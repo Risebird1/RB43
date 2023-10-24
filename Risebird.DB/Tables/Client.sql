@@ -23,7 +23,8 @@ CREATE TABLE [dbo].[Client](
             [PaymentTerm] [int] NULL,
             [GSTApplicable] [bit] NULL,
             [ClientType] [bit] NULL, -- service, product, elite
-            [CountryType] [int] NULL -- onsite offshore
+            [CountryType] [int] NULL, -- onsite offshore,
+            [Reportsnippet][int] Null
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -237,6 +238,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add CountryType int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Reportsnippet')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add Reportsnippet int
 END
 
 
