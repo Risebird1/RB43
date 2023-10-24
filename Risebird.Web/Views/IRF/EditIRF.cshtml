@@ -1212,6 +1212,7 @@
                                                                             <td>
                                                                                 @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                                                 @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
+                                                                                @Html.HiddenFor(m => m.InterviewerCollection[0].Source, new {Value = Model.LoggedEmail})
                                                                             </td>
                                                                             <td class="cadName">
                                                                                 @*<a onclick="" data-tooltip="">No Resume</a>*@
@@ -1275,6 +1276,8 @@
                                                                                 <td>
                                                                                     @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
+                                                                                    @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
+
 
                                                                                 </td>
                                                                                 @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink)) //CodedResumeLink
@@ -2897,7 +2900,6 @@
 </script>
 <script>
     $(document).ready(function () {
-        debugger;
         var isNewSkillChannel = @Html.Raw(Json.Serialize(@Model.IsNewSkillChannel));
         UpdateInterviewerRateVariable();
         if(isNewSkillChannel)
@@ -3712,8 +3714,8 @@
         // Unbind existing validation
         $form.unbind();
         $form.data("validator", null);
-
         $('#InterviewerCollection_' + (parseInt(rowCount) - 1) + '__UserId').attr("disabled", false);
+        $('#InterviewerCollection_' + (parseInt(rowCount) - 1) + '__Source').val('@Model.LoggedEmail');
         // Check document for changes
         //  $.validator.unobtrusive.parse(document);
 
