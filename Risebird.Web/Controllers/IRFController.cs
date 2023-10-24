@@ -1915,7 +1915,7 @@ namespace Risebird.Web.Controllers
                     if (model == null)
                         return RedirectToAction("Index");
                     model.IsClone = isClone;
-
+                    model.LoggedEmail = emailid;
                     int abc;
                     if (!int.TryParse(model.JobCountry, out abc))
                     {
