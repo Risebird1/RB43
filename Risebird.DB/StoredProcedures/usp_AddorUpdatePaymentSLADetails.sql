@@ -26,7 +26,8 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @UnethicalPractices varchar(250),
 @PoorCommunicationSkills varchar(250),
 @isapproved int,
-@PaymentComplianceCount int
+@PaymentComplianceCount int,
+@Rating int
 AS
 BEGIN
 Declare @Userid int       
@@ -56,5 +57,11 @@ Select @InterviewerUserid=ul.id from UserList ul join InterviewMeetings im on im
 Update InterviewPoints set PaymentSLA=@PaymentDeduction where Interviewid=@Interviewid and Userid=@InterviewerUserid and Type='Interview'   
 Insert into MoneyProtectionWallet(Clientid,Points,AddedOn,Interviewid,IsConverted) values(@ClientId,@PaymentDeduction,@CreatedOn,@Interviewid,0)
 end
+if(@Rating>0)
+begin
+Update InterviewComments set ReportAccepted=1,ReportAcceptedBy=@Emailid where Interviewid=@Interviewid
+Insert into ClientCommentsForReport(Comment, InterviewId, CreatedBy, CreatedAt, Rating) values ('', @Interviewid, @Emailid, @CreatedOn, @Rating)  
+end
 END
+
 GO

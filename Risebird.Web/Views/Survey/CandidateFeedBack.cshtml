@@ -211,30 +211,36 @@
                                                 <tr>
                                                     <th id="cfeedback_4">Candidate Name</th>
                                                     <th>Candidate Email</th>
-                                                    <th>JD Title</th>
+                                                    <th>Rating</th>
                                                     @if (ViewBag.profileName != "Client")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @*<th id="cfeedback_5">JD Title</th>*@
                                                     <th>Client</th>
-                                                   
+                                                    <th>Candidate Interaction Quality</th>
+                                                    <th>Limited Handon coding / Practical scenarios</th>
+                                                    <th> Weak Infrastructure</th>
+                                                    <th>Unethical Practices</th>
+                                                    <th>Time Management</th>
+                                                    <th>Poor Communication Skills</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
-                                                    <th>JD Title</th>
+                                                    <th>Rating</th>
                                                     @if (ViewBag.profileName != "Client")
                                                     {
                                                         <th>Interviewer</th>
                                                     }
-                                                    @*<th>JD Title</th>*@
                                                     <th>Client</th>
-                                                  
-
-
+                                                    <th>Candidate Interaction Quality</th>
+                                                    <th>Limited Handon coding / Practical scenarios</th>
+                                                    <th> Weak Infrastructure</th>
+                                                    <th>Unethical Practices</th>
+                                                    <th>Time Management</th>
+                                                    <th>Poor Communication Skills</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -280,7 +286,7 @@
                                                             </td>
                                                             <td>
                                                                 
-                                                            @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                          @*   @if (item.PrimarySkill != null && item.PrimarySkill != "")
                                                             {
                                                                 @if (item.PrimarySkill.Length > 18)
                                                                 {
@@ -294,7 +300,20 @@
                                                                         <a onclick=""> @item.PrimarySkill</a>
                                                                     </div>
                                                                 }
-                                                            }
+                                                            } *@
+                                                            <div>
+                                                                @for (int value = 1; value <= 5; value++)
+                                                            {
+                                                                    @if (value <= item.Rating)
+                                                                    {
+                                                                        <i class="fas fa-star checked" style="background-color:yellow" ></i>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <i class="fa fa-star" ></i>
+                                                                    }
+                                                                }
+                                                            </div>
                                                         </td>
                                                         @*@if (item.IsClient)
                                                     {
@@ -326,7 +345,13 @@
                                                         }
 
                                                         <td>@item.ClientName</td>
-                                                     
+                                                        <td>@item.CandidateInteractionQuality</td>
+                                                        <td>@item.LimitedHandoncoding</td>
+                                                        <td>@item.WeakInfrastructure</td>
+                                                         <td>@item.UnethicalPractices</td>
+                                                        <td>@item.TimeManagement</td>
+                                                        <td>@item.PoorCommunicationSkills</td>
+                                                    @*  <td></td> *@
                                                     </tr>
                                                     i++;
                                                 }
@@ -411,7 +436,7 @@
     }
 
     $(document).ready(function () {
-        SetRating();
+       // SetRating();
         applyDataTable();
 
     });
