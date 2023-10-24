@@ -23,21 +23,53 @@ BEGIN
  where ul.IsActive =1 and ul.emailid =@Emailid    
  Select @UserId=id from UserList where Emailid=@Emailid  
    
- Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
+ --Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
+ --join TransClientUser tcu on tcu.IRFId=IRF.id   
+ --where IRF.ClientId=@Clientid and tcu.ClientUserId=@UserId and im.confirmationStatus=1  
+
+  Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate 
+  ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
+cl.Name as ClientName
+  from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
  join TransClientUser tcu on tcu.IRFId=IRF.id   
+ join Client cl on irf.ClientId=cl.id 
+join UserList uli on uli.id=  irf.RisebirdHr
+left join UserList ul on ul.EmailId= im.candidateEmail
  where IRF.ClientId=@Clientid and tcu.ClientUserId=@UserId and im.confirmationStatus=1  
 END  
 else if(@Profile='SeniorHR' or @Profile='SupportAdmin')  
 BEGIN  
- Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
- join SeniorHR sh on IRF.ClientId=sh.Clientid join Userlist ul on ul.id=Sh.Userid   
- where ul.Emailid=@Emailid and im.confirmationStatus=1  
+ --Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
+ --join SeniorHR sh on IRF.ClientId=sh.Clientid join Userlist ul on ul.id=Sh.Userid   
+ --where ul.Emailid=@Emailid and im.confirmationStatus=1 
+  Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate 
+  ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
+cl.Name as ClientName
+  from 
+  CandidateFeedbackDetails cfd  
+  join InterviewMeetings im on cfd.Interviewid=im.id
+  join IRF on im.IRFId=IRF.IRFId  
+ join SeniorHR sh on IRF.ClientId=sh.Clientid 
+ join Userlist ul on ul.id=Sh.Userid   
+ join Client cl on irf.ClientId=cl.id 
+join UserList uli on uli.id=  irf.RisebirdHr
+left join UserList ulis on ulis.EmailId= im.candidateEmail
+ where ul.Emailid=@Emailid and im.confirmationStatus=1 
 END  
 else  
 BEGIN  
- Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
- where im.confirmationStatus=1  
+ --Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
+ --where im.confirmationStatus=1  
+
+ Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate
+,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
+cl.Name as ClientName
+from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
+join Client cl on irf.ClientId=cl.id 
+join UserList uli on uli.id=  irf.RisebirdHr
+left join UserList ul on ul.EmailId= im.candidateEmail
+where im.confirmationStatus=1
 END  
   
-END  
+END 
 Go

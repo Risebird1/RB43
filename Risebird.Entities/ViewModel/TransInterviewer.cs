@@ -18,5 +18,6 @@
         public bool IsSelect { get; set; }
         public bool IsSMEVerified { get; set; }
         public int Surcharge { get; set; }
+        public string Source { get; set; }
     }
 }

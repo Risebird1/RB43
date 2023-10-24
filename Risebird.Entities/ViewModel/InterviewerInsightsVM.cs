@@ -8,6 +8,7 @@ namespace Risebird.Entities.ViewModel
 {
     public class InterviewerInsightsVM
     {
+        public int id { get; set; }
         public int Userid { get; set; }
         public string Emailid { get; set; }
         public string CompanyName { get; set; }
@@ -42,7 +43,16 @@ namespace Risebird.Entities.ViewModel
         public int LessQuestions { get; set; }
         public string ResumeLink { get; set; }
         public string uniqueid { get; set; }
-      
+        public string CandidateInteractionQuality { get; set; }
+        public string LimitedHandoncoding { get; set; }
+        public string UnethicalPractices { get; set; }
+        public string PoorCommunicationSkills
+        {
+            get; set;
+        }
+ public string WeakInfrastructure { get; set; }
+        public string TimeManagement { get; set; }
+
     }
     public class InterviewerInsightsMarkersDetailsVM
     {
