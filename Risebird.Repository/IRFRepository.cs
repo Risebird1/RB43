@@ -736,6 +736,7 @@ namespace Risebird.Repository
                                     NickName = !string.IsNullOrEmpty(dt.Rows[i]["NickName"].ToString()) ? dt.Rows[i]["NickName"].ToString() : null,
                                     ResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["ResumeLink"].ToString()) ? dt.Rows[i]["ResumeLink"].ToString() : null,
                                     CodedResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["CodedResumeLink"].ToString()) ? dt.Rows[i]["CodedResumeLink"].ToString() : null,
+                                    Source = !string.IsNullOrEmpty(dt.Rows[i]["Source"].ToString()) ? dt.Rows[i]["Source"].ToString() : null,
 
                                 });
                             }
@@ -2140,16 +2141,17 @@ namespace Risebird.Repository
                         }
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
+                        interviewerDt.Columns.Add("Source", typeof(string));
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
                             if (irfDetails.IsNewSkillChannel)
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable, item.Source);
                             }
                             else
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable);
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable, item.Source);
                             }
                         }
                     }
