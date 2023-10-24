@@ -44,6 +44,18 @@ namespace Risebird.Entities.ViewModel
         public DateTime Interviewdate { get; set; }
         public string ClientName { get; set; }
         public int Rating { get; set; }
+        public string CandidateInteractionQuality { get; set; }
+        [Display(Name = "Limited Handon coding / Practical scenarios")]
+        public string LimitedHandoncoding { get; set; }
+        [Display(Name = "Unethical Practices")]
+        public string UnethicalPractices { get; set; }
+        [Display(Name = "Poor Communication Skills")]
+        public string PoorCommunicationSkills { get; set;}
+       [Display(Name = "Weak Infrastructure")]
+       public string WeakInfrastructure { get; set; }
+
+        [Display(Name = "Time Management ")]
+        public string TimeManagement { get; set; }
     }
     public class SurveyCandidateInterviewer
     {

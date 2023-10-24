@@ -3,10 +3,7 @@
 @using Risebird.CommonHelper;
 @using Risebird.Entities.Enum
 @using Microsoft.Extensions.Configuration;
-
 @inject IConfiguration configuration
-
-
 @{
     ViewData["Title"] = "Interview Report";
     ViewBag.PageHeader = "Interview Report";
@@ -93,13 +90,26 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
-                </div>
-                <div class="pull-left">
-                </div>
-                <div class="pull-right">
-                    @if (ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
+                    @if (!Model.ReportAccepted && ViewBag.profile == "Client")
                     {
-                        <div class="pull-left mt-20">
+                        <div class="rate-interview">
+                            <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
+                            <button class="btn btn-primary" onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
+                        </div>
+                    }
+                </div>
+
+                <div class="pull-right">
+
+                    <div class="pull-left">
+                       
+                </div>
+              
+                <div class="pull-right">
+
+                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
+                    {
+                        <div class="pull-right">
                             <div class="reportdropdown">
                                 <button class="reportdropbtn">Report Quality Issue</button>
                                 <div class="reportdropdown-content">
@@ -129,13 +139,13 @@
                         </div>
                     }
 
-                    @if (Model.ReportAccepted && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
+                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
                     {
-                        <div class="pull-right mt-20"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
+                        <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Generate PDF" onclick="getPDF()"></div>
                     }
-                    @if (Model.ReportAccepted && ViewBag.ClientDetails == "client")
+                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client")
                     {
-                        <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
+                        <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
                     }
                 </div>
             </div>
@@ -162,7 +172,7 @@
                                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                     <div class="row">
                                         <div class="col-lg-3 col-md-5">
-                                            @if (Model.ReportAccepted)
+                                                @if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
                                             {
                                                 <div>
                                                     @*<label>REPORT DETAILS</label>*@
@@ -217,7 +227,7 @@
                                                 <h3>
                                                     <svg width="32" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>Tech Skill Score:
                                                     <span class="totScore">
-                                                        @if (Model.ReportAccepted)
+                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
                                                         {
                                                             <strong id="totTechScore"></strong>
                                                         }
@@ -237,7 +247,7 @@
                                                             <div>@Model.TechSkillReportCollection[i].SkillName</div>
                                                             @{
                                                                 var TechSkill_Score = 0.0;
-                                                                if (Model.ReportAccepted)
+                                                                if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
                                                                 {
                                                                     TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                                 }
@@ -306,7 +316,7 @@
                                                                     appendTime = Model.ThumbnailTimeSeconds;
                                                                 }
                                                                 var src = Model.VideoLink + "#t=" + appendTime.ToString();
-                                                                <video controls="controls" preload="metadata" class="vjs-tech interview">
+                                                                <video id="video" controls="controls" controlsList="nodownload" preload="metadata" class="vjs-tech interview">
                                                                     <source src='@Model.VideoLink' type="video/mp4">
                                                                 </video>
                                                             }
@@ -319,11 +329,7 @@
                                                             {
                                                                 <div class="transcript">
                                                                     <h3 style="padding:0px;"><svg width="30" style="color: rgb(150, 145, 145);" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 16C5 15.4477 5.44772 15 6 15H14C14.5523 15 15 15.4477 15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16Z" fill="#969191"></path> <path d="M18 11C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H10C9.44772 13 9 12.5523 9 12C9 11.4477 9.44772 11 10 11H18Z" fill="#969191"></path> <path d="M16 16C16 15.4477 16.4477 15 17 15H18C18.5523 15 19 15.4477 19 16C19 16.5523 18.5523 17 18 17H17C16.4477 17 16 16.5523 16 16Z" fill="#969191"></path> <path d="M7 11C7.55228 11 8 11.4477 8 12C8 12.5523 7.55228 13 7 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11H7Z" fill="#969191"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 3C2.34315 3 1 4.34315 1 6V18C1 19.6569 2.34315 21 4 21H20C21.6569 21 23 19.6569 23 18V6C23 4.34315 21.6569 3 20 3H4ZM20 5H4C3.44772 5 3 5.44772 3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6C21 5.44771 20.5523 5 20 5Z" fill="#969191"></path> </svg> Meeting Transcript</h3>
-
-
-
                                                                     <h4 class="accordion-title js-accordion-title"></h4>
-
                                                                     <div class="accordion-content">
                                                                         <p id="id_transcript" style="margin-bottom:10px;">
 
@@ -343,7 +349,7 @@
 
                                                         </div>
                                                     </div>
-                                                    @if (Model.ReportAccepted)
+                                                    @if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
                                                     {
                                                         <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
                                                             <h3><svg xmlns="http://www.w3.org/2000/svg" width="33" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment</h3>
@@ -384,7 +390,10 @@
                                                                     {
                                                                         <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                                     }
-                                                                    <label>Rating : @valueslist</label>
+                                                                    @if ((Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1) || ViewBag.profile != "Client")
+                                                                    {
+                                                                        <label>Rating : @valueslist</label>
+                                                                    }
                                                                 }
                                                             </ul>
                                                         }
@@ -530,6 +539,27 @@
                         <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="ClientInterviewRatingModel" class="modal modal-bg" style="z-index:3;overflow:auto;">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <img class="rating-star" src="~/img/rating-star-icon.png" />
+
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Rate Interview</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeClientInterviewRating()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;" id="divClientInterviewRating">
             </div>
         </div>
     </div>
@@ -778,11 +808,45 @@
         $(".js-accordion-title:first-of-type").addClass("open");
         $(".js-accordion-title").click(function () {
             $(".open").not(this).removeClass("open").next().slideUp(300);
-
             $(this).toggleClass("open").next().slideToggle(300);
         });
-
     });
-
-
 </script>
+    @if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
+{
+    <script>
+        var video = document.getElementById('video');
+        var startTime = 0;
+        var endTime = 15 * 60;
+        function checkTime() {
+            if (video.currentTime >= endTime) {
+                video.pause();
+                ClientInterviewRating($("#hidtxtinterviewid").val());
+            }
+            setTimeout(checkTime, 100);
+        }
+        video.currentTime = startTime;
+        checkTime();
+
+        function ClientInterviewRating(interviewid) {
+            $.ajax({
+                url: '/Interview/ClientInterviewReview',
+                data: { 'id': interviewid },
+                type: "GET",
+                success: function (data) {
+                    openClientInterviewRating();
+                    $('#divClientInterviewRating').html('');
+                    $('#divClientInterviewRating').html(data);
+                }
+            });
+        }
+        function closeClientInterviewRating() {
+            var modal = document.getElementById("ClientInterviewRatingModel");
+            modal.style.display = "none";
+        }
+        function openClientInterviewRating() {
+            var modal = document.getElementById("ClientInterviewRatingModel");
+            modal.style.display = "block";
+        }
+    </script>
+}
