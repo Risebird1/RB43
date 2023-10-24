@@ -175,7 +175,14 @@
                                                             <td style="color:red;text-align:center">@item.RedMarker</td>
                                                         }
                                                         <td>@item.PaymentDeduction %</td>
-                                                        <td>@item.PaymentComplianceCount</td>
+                                                      @*   @if (item.PaymentComplianceCount > 0)
+                                                        { *@ 
+                                                        <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
+                                                        @*  }
+                                                        else
+                                                        {
+                                                            <td class="text-center">0</td>
+                                                        }  *@
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.CreatedBy</td>
                                                         <td>@item.CreatedOn</td>
@@ -299,6 +306,7 @@
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+@await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
 
 <script src="~/js/TwilioCallMaker.js"></script>
 <script>
