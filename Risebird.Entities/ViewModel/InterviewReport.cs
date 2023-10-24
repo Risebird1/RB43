@@ -355,6 +355,7 @@ namespace Risebird.Entities.ViewModel
         public string Interviewer { get; set; }
         public string AudioTranscriptFileLink { get; set; }
         public bool ReportAccepted { get; set; }
+        public int Reportsnippet { get; set; }
     }
     public class RBInterviewDetails
     {

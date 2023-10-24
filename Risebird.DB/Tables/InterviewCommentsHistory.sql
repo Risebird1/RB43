@@ -45,7 +45,8 @@ CREATE TABLE [dbo].[InterviewCommentsHistory](
 	[ModifiedBy] [varchar](100) NULL,
 	[PerformedAt][datetime] NULL,
 	[PerformedBy][varchar](100) NULL,
-	[ActionType][varchar](15) NULL)
+	[ActionType][varchar](15) NULL,
+	[ReportAccepted][bit])
 
 End
 
@@ -59,6 +60,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewCommentsHistory
     Add ActionType varchar(15)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ReportAccepted')
+      AND Object_ID = Object_ID(N'InterviewCommentsHistory'))
+BEGIN
+    ALTER TABLE InterviewCommentsHistory
+    Add ReportAccepted bit
 END
 
 End

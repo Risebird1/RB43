@@ -18,5 +18,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime? interviewDate { get; set; }
         public string candidateEmail { get; set; }
         public string IRFId { get; set; }
+        public int TotalInterviews { get; set; }
     }
 }
