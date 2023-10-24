@@ -9,6 +9,7 @@ namespace Risebird.Entities.ViewModel
 {
     public class PaymentSLAVM
     {
+        public int id{ get; set; }
         public int Interviewid { get; set; }
         public int Userid { get; set; }
         public string Emailid { get; set; }
