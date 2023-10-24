@@ -4773,7 +4773,6 @@ namespace Risebird.Web.Controllers
             return PartialView(model);
         }
         #endregion
-
         //[Authorize]
         [HttpGet]
         public async Task<IActionResult> GenerateDynamicRateByCurrentTimeOfWeek(int clientId)
@@ -4783,7 +4782,6 @@ namespace Risebird.Web.Controllers
                 var data = new DynamicRatesDTO();
                 data = await _clientService.GenerateDynamicRateByCurrentTimeOfWeek(clientId);
                 return Json(data);
-
             }
             catch (Exception ex)
             {
