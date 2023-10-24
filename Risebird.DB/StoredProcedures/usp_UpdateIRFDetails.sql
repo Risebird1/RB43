@@ -54,8 +54,8 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
 	@TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
-	@InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,
-	@InterviewerSurchargeBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,
+	@InterviewerBulkData AS [dbo].[TransInterviewer_TableTypeV2] READONLY,--[dbo].[TransInterviewer_TableType]
+	@InterviewerSurchargeBulkData AS [dbo].[TransInterviewerSurcharge_TableTypeV2] READONLY, --[dbo].[TransInterviewerSurcharge_TableType]
 	@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 	@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 	--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
@@ -202,9 +202,10 @@ BEGIN
 	[IsActive],
 	[IsAvailable],
 	[InterviewerId],
-	[Source])  
+	[Source],
+	[ModifiedBy])  
     
-	SELECT ibd.*, InterviewerProfile.id, @ModifiedBy as InterviewerId FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source], @ModifiedBy as InterviewerId FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
   
  End
  else
@@ -216,9 +217,10 @@ BEGIN
 	[IsActive],
 	[IsAvailable],
 	[InterviewerId],
-	[Source])  
+	[Source],
+	[ModifiedBy])  
     
-	SELECT ibd.*, InterviewerProfile.id as InterviewerId, @ModifiedBy FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId, ibd.[Source], @ModifiedBy FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
   
  End
 	
