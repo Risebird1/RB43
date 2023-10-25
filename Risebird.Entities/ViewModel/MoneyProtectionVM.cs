@@ -19,5 +19,7 @@ namespace Risebird.Entities.ViewModel
         public string candidateEmail { get; set; }
         public string IRFId { get; set; }
         public int TotalInterviews { get; set; }
+        public int Heuristicsscore { get; set; }
+        public string HeuristicsscoreDesc { get; set; }
     }
 }

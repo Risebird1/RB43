@@ -721,6 +721,7 @@ namespace Risebird.Web.Controllers
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ClientId = client.ClientId;
                     isClientUser = true;
+                    ViewBag.ClientId = ClientId;
                     return View();
                 }
                 else
@@ -4764,12 +4765,26 @@ namespace Risebird.Web.Controllers
                 type = "Completed";
             }
             var model = await _clientService.GetMoneyProtectionList(type);
+            model = model.Select(x => { x.HeuristicsscoreDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription(); return x; }).ToList();
             return View(model);
         }
         [HttpGet]
         public async Task<IActionResult> MoneyProtectionDetailsView(string type, int Clientid)
         {
             var model = await _clientService.GetMoneyProtectionDetails(type, Clientid);
+            model = model.Select(x => { x.HeuristicsscoreDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription(); return x; }).ToList();
+            return PartialView(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> MoneyClientProtectionDetailsView(string type, int Clientid, string actiontype)
+        {
+            var model = await _clientService.GetMoneyProtectionDetails(type, Clientid);
+            model = model.Select(x => { x.HeuristicsscoreDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription(); return x; }).ToList();
+            ViewBag.action = actiontype;
+            if (actiontype == "DEBIT")
+            {
+                model = new List<MoneyProtectionVM>();
+            }
             return PartialView(model);
         }
         #endregion
