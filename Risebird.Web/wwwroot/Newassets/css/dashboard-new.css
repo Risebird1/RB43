@@ -7343,7 +7343,8 @@ ul.ks-cboxtags {
         margin: 0px;
         top: -7px;
         color:#fff;
-        font-size: 13px;
+        font-size: 11px;
+        text-transform:uppercase;
         background: #da1111 !important;
         box-shadow: none;
     }
