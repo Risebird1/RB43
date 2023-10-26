@@ -90,76 +90,77 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
-                    @if (!Model.ReportAccepted && ViewBag.profile == "Client")
-                    {
-                        <div class="rate-interview">
-                            <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
-                            <button class="btn btn-primary" onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
-                        </div>
-                    }
+                   
                 </div>
 
                 <div class="pull-right">
 
                     <div class="pull-left">
-                    </div>
-
-                    <div class="pull-right">
-
-                        @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
+                       
+                </div>
+              
+                <div class="pull-right">
+                        @if (!Model.ReportAccepted && ViewBag.profile == "Client")
                         {
-                            <div class="pull-right">
-                                <div class="reportdropdown">
-                                    <button class="reportdropbtn">Report Quality Issue</button>
-                                    <div class="reportdropdown-content">
-                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
-                                            <text>Rate Interviewer</text>
-                                        </button>
-                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
-                                            <text> Audio Feedback </text>
-                                        </button>
-                                        <button class="dropdown-btn" type="button">
-                                            <span data-toggle="tooltip" data-placement="top" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.InterviewId', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
-                                        </button>
-                                        @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
-                                        {
-                                            <button class="dropdown-btn" type="button">
-                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
-                                            </button>
-                                        }
-                                        @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
-                                        {
-                                            <button class="dropdown-btn">
-                                                <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
-                                            </button>
-                                        }
-                                    </div>
-                                </div>
+                            <div class="rate-interview">
+                                <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
+                                <button  onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
                             </div>
                         }
+                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
+                    {
+                        <div class="pull-right">
+                            <div class="reportdropdown">
+                                <button class="reportdropbtn">Report Quality Issue</button>
+                                <div class="reportdropdown-content">
+                                    <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                                        <text>Rate Interviewer</text>
+                                    </button>
+                                    <button class="dropdown-btn" type="button" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
+                                        <text> Audio Feedback </text>
+                                    </button>
+                                    <button class="dropdown-btn" type="button">
+                                        <span data-toggle="tooltip" data-placement="top" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.InterviewId', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
+                                    </button>
+                                    @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                                    {
+                                        <button class="dropdown-btn" type="button">
+                                            <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
+                                        </button>
+                                    }
+                                    @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                                    {
+                                        <button class="dropdown-btn">
+                                            <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
 
-                        @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
-                        {
-                            <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Generate PDF" onclick="getPDF()"></div>
-                        }
-                        @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client")
-                        {
-                            <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
-                        }
-                    </div>
+                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
+                    {
+                        <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Generate PDF" onclick="getPDF()"></div>
+                    }
+                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client")
+                    {
+                        <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
+                    }
                 </div>
             </div>
         </div>
-        <div class="loader text-center">
-            <img src="~/Newassets/img/lazyload.gif" />
-        </div>
-        @if (ViewBag.SecurelyShared == null || ViewBag.SecurelyShared == "" || (ViewBag.SecurelyShared == "True" && ViewBag.UniqueId != null && ViewBag.IsMatched == "True"))
-        {
-            <div class="content dataloading client">
-                <div class="row bl-bg">
-                    <div class="col-md-12">
-                    </div>
+    </div>
+    <div class="loader text-center">
+        <img src="~/Newassets/img/lazyload.gif" />
+    </div>
+    @if (ViewBag.SecurelyShared == null || ViewBag.SecurelyShared == "" || (ViewBag.SecurelyShared == "True" && ViewBag.UniqueId != null && ViewBag.IsMatched == "True"))
+    {
+        <div class="content dataloading client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
                 </div>
+            </div>
 
                 <div class="row bl-bg" id="pdfdownload">
                     <div class="col-md-12">
