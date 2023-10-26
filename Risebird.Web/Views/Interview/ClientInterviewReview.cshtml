@@ -28,6 +28,7 @@
         @Html.HiddenFor(m => m.uniqueid)
         @Html.HiddenFor(m => m.IRFId)
         @Html.HiddenFor(m => m.isapprovedchecked)
+        @Html.HiddenFor(m => m.PaymentComplianceCount)
         <div class="canvas_div_pdf">
             <div class="report-full-wrap">
                 <div style="margin:10px 0px">
@@ -540,6 +541,7 @@
         else {
             $('#' + groupName).val("");
         }
+        CountCheckBox();
     }
 </script>
 
@@ -573,23 +575,27 @@
         var PoorCommunicationSkills = $("#PoorCommunicationSkills").val();
         var TimeManagement = $("#TimeManagement").val();
         var Interviewid = $("#Interviewid").val();
-        $.ajax({
-            type: "POST",
-            data: {
-                Rating: Rating,
-                TimeManagement: TimeManagement,
-                CandidateInteractionQuality: CandidateInteractionQuality,
-                LimitedHandoncoding: LimitedHandoncoding,
-                WeakInfrastructure: WeakInfrastructure,
-                UnethicalPractices: UnethicalPractices,
-                PoorCommunicationSkills: PoorCommunicationSkills,
-                Interviewid: Interviewid
-            },
-            url: "/Interview/ClientInterviewReview",
-            success: function () {
-                location.reload();
-            }
-        });
+        if ((parseInt($("#PaymentComplianceCount").val()) > 0 && parseInt($("#Rating").val()) < 5) || parseInt($("#Rating").val()) == 5) {
+            $.ajax({
+                type: "POST",
+                data: {
+                    Rating: Rating,
+                    TimeManagement: TimeManagement,
+                    CandidateInteractionQuality: CandidateInteractionQuality,
+                    LimitedHandoncoding: LimitedHandoncoding,
+                    WeakInfrastructure: WeakInfrastructure,
+                    UnethicalPractices: UnethicalPractices,
+                    PoorCommunicationSkills: PoorCommunicationSkills,
+                    Interviewid: Interviewid
+                },
+                url: "/Interview/ClientInterviewReview",
+                success: function () {
+                    location.reload();
+                }
+            });
+        } else {
+            alert('Please select at least a reason.');
+        }
     }
     function ChangeQuestion1(id) {
         var Rating = $("#Rating").val(id);
@@ -599,6 +605,16 @@
             $("#ClientInterviewFeedbackHide").show();
         }
         $("#ClientInterviewbuttonHide").show();
+    }
+    function CountCheckBox() {
+        var countcheck = 0;
+        $('#accordion2').find(':checkbox').each(function () {
+            var vlucheck = $(this)[0].checked;
+            if (vlucheck) {
+                countcheck = countcheck + 1;
+            }
+        });
+        $("#PaymentComplianceCount").val(countcheck);
     }
 </script>
 

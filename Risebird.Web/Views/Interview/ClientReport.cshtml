@@ -162,691 +162,691 @@
                 </div>
             </div>
 
-            <div class="row bl-bg" id="pdfdownload">
-                <div class="col-md-12">
-                    <div class="mdc-card card bl-bg">
-                        <div class="mdc-card-wrapper__text-section">
-                            <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
-                                @Html.AntiForgeryToken()
-                                <div class="canvas_div_pdf">
-                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                    <div class="row">
-                                        <div class="col-lg-3 col-md-5">
-                                                @if ((Model.ReportAccepted && ViewBag.profile == "Client" && (Model.Reportsnippet == 1 || Model.Reportsnippet == 0)) || ViewBag.profile != "Client")
-                                            {
-                                                <div>
-                                                    @*<label>REPORT DETAILS</label>*@
-                                                    @{
-                                                        var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
-                                                        var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
-                                                    }
-                                                    @if (Model.MeetingStatus == 4)
-                                                    {
-                                                        var meetingcolor = "";
-
-                                                        @if (Model.InterviewStatus == 2)
-                                                        {
-                                                            meetingcolor = "green";
+                <div class="row bl-bg" id="pdfdownload">
+                    <div class="col-md-12">
+                        <div class="mdc-card card bl-bg">
+                            <div class="mdc-card-wrapper__text-section">
+                                <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
+                                    @Html.AntiForgeryToken()
+                                    <div class="canvas_div_pdf">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-5">
+                                                @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                {
+                                                    <div>
+                                                        @*<label>REPORT DETAILS</label>*@
+                                                        @{
+                                                            var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
+                                                            var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
                                                         }
-                                                        else if (Model.InterviewStatus == 3)
+                                                        @if (Model.MeetingStatus == 4)
                                                         {
-                                                            meetingcolor = "red";
-                                                        }
-                                                        <h2 class="interview-status">Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h2>
-                                                    }
-                                                    else
-                                                    {
-                                                        <h2 class="interview-status">Interview Status : <strong>@meestingstatusvalue</strong></h2>
-                                                    }
-                                                </div>
-                                            }
-                                            @if (Model.resumeLink != null && Model.resumeLink != "")
+                                                            var meetingcolor = "";
 
-                                            {
-                                                <div class="report-heading">Candidate Name</div>
-                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
-                                            }
-                                            else
-                                            {
-                                                <div class="report-heading">Candidate Name</div>
-                                                <h2>@Model.CandidateName</h2>
-                                            }
-
-                                            <div class="report-heading">
-                                                Position
-                                            </div>
-
-                                            <h4>@Model.JDTiltle</h4>
-                                            <div class="report-heading">
-                                                Date of Interview
-                                            </div>
-                                            <h4>@Model.interviewDate</h4>
-
-                                            <hr />
-                                            <div>
-                                                <h3>
-                                                    <svg width="32" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>Tech Skill Score:
-                                                    <span class="totScore">
-                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client" && (Model.Reportsnippet == 1 || Model.Reportsnippet == 0)) || ViewBag.profile != "Client")
-                                                        {
-                                                            <strong id="totTechScore"></strong>
+                                                            @if (Model.InterviewStatus == 2)
+                                                            {
+                                                                meetingcolor = "green";
+                                                            }
+                                                            else if (Model.InterviewStatus == 3)
+                                                            {
+                                                                meetingcolor = "red";
+                                                            }
+                                                            <h2 class="interview-status">Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h2>
                                                         }
                                                         else
                                                         {
-                                                            <strong id="totTechScore" style="display:none"></strong>
+                                                            <h2 class="interview-status">Interview Status : <strong>@meestingstatusvalue</strong></h2>
                                                         }
-                                                    </span>
-                                                </h3>
-                                            </div>
-                                            <div>
-                                                @if (Model.TechSkillReportCollection != null)
-                                                {
-                                                    @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
-                                                    {
-                                                        <div class="tech-skill-wrapper">
-                                                            <div>@Model.TechSkillReportCollection[i].SkillName</div>
-                                                            @{
-                                                                var TechSkill_Score = 0.0;
-                                                                    if ((Model.ReportAccepted && ViewBag.profile == "Client" && (Model.Reportsnippet == 1 || Model.Reportsnippet == 0)) || ViewBag.profile != "Client")
-                                                                {
-                                                                    TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
-                                                                }
-                                                            }
-                                                            @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                            <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
-                                                            @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
-                                                            @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
-                                                            @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
-                                                            <div class="skillBackground skill-round-xlarge skill-small">
-                                                                @if (TechSkill_Score == 0)
-                                                                {
-                                                                    <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%">@TechSkill_Score %</div>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</div>
-
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    }
+                                                    </div>
                                                 }
-                                            </div>
-                                            <p class="note-skill">
-                                                <b> Note:</b> % score for every skill represents difference between candidate actual and required competency. For example 80% in any skill would mean 4/5
-                                                of required competency threshold.
-                                                <b> Note:</b>To understand competency thresholds more, please check Dreyfus model details <a href="https://en.wikipedia.org/wiki/Dreyfus_model_of_skill_acquisition">Click here</a>
-                                            </p>
+                                                @if (Model.resumeLink != null && Model.resumeLink != "")
 
-                                        </div>
+                                                {
+                                                    <div class="report-heading">Candidate Name</div>
+                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
+                                                }
+                                                else
+                                                {
+                                                    <div class="report-heading">Candidate Name</div>
+                                                    <h2>@Model.CandidateName</h2>
+                                                }
 
-                                        <div class="col-lg-9 col-md-7">
-                                            @if (Model.MeetingStatus == 1)
-                                            {
+                                                <div class="report-heading">
+                                                    Position
+                                                </div>
 
-                                                <div class="row"><div class="nodata-wrapper"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
+                                                <h4>@Model.JDTiltle</h4>
+                                                <div class="report-heading">
+                                                    Date of Interview
+                                                </div>
+                                                <h4>@Model.interviewDate</h4>
 
-                                            }
-                                            else
-                                            {
-                                                <div class="row">
-                                                    <h3><svg width="38" height="38" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#969191" d="M15,16H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2ZM9,10h1a1,1,0,0,0,0-2H9a1,1,0,0,0,0,2Zm6,2H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2Zm4.71,3.29a1,1,0,0,0-.33-.21.92.92,0,0,0-.76,0,1,1,0,0,0-.33.21,1.15,1.15,0,0,0-.21.33,1,1,0,0,0,.21,1.09A1,1,0,0,0,19,17a1,1,0,0,0,.38-.08,1.15,1.15,0,0,0,.33-.21,1,1,0,0,0,.21-1.09A1.15,1.15,0,0,0,19.71,15.29ZM20,8.94a1.31,1.31,0,0,0-.06-.27l0-.09a1.07,1.07,0,0,0-.19-.28h0l-6-6h0a1.07,1.07,0,0,0-.28-.19.32.32,0,0,0-.09,0A.88.88,0,0,0,13.05,2H7A3,3,0,0,0,4,5V19a3,3,0,0,0,3,3h8a1,1,0,0,0,0-2H7a1,1,0,0,1-1-1V5A1,1,0,0,1,7,4h5V7a3,3,0,0,0,3,3h3v2a1,1,0,0,0,2,0V9S20,9,20,8.94ZM15,8a1,1,0,0,1-1-1V5.41L16.59,8Zm4,10a1,1,0,0,0-1,1v2a1,1,0,0,0,2,0V19A1,1,0,0,0,19,18Z" /></svg>Interview Details</h3>
-
-                                                    <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-
-                                                        <div>
-                                                            @Html.HiddenFor(x => Model.VideoLink)
-                                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                <hr />
+                                                <div>
+                                                    <h3>
+                                                        <svg width="32" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>Tech Skill Score:
+                                                        <span class="totScore">
+                                                            @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                             {
-                                                                int appendTime = 0;
-                                                                if (Model.ThumbnailTimeSeconds == 0)
-                                                                {
-                                                                    appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
-                                                                    if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
-                                                                    {
-                                                                        appendTime = (Model.VideoDuration * 60) - 60;
-                                                                    }
-                                                                    else if ((Model.VideoDuration * 60) < 120)
-                                                                    {
-                                                                        appendTime = 0;
-                                                                    }
-                                                                }
-                                                                else
-                                                                {
-                                                                    appendTime = Model.ThumbnailTimeSeconds;
-                                                                }
-                                                                var src = Model.VideoLink + "#t=" + appendTime.ToString();
-                                                                <video id="video" controls="controls" controlsList="nodownload" preload="metadata" class="vjs-tech interview">
-                                                                    <source src='@Model.VideoLink' type="video/mp4">
-                                                                </video>
+                                                                <strong id="totTechScore"></strong>
                                                             }
                                                             else
                                                             {
-                                                                <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
+                                                                <strong id="totTechScore" style="display:none"></strong>
                                                             }
-
-                                                            @if (ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
-                                                            {
-                                                                <div class="transcript">
-                                                                    <h3 style="padding:0px;"><svg width="30" style="color: rgb(150, 145, 145);" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 16C5 15.4477 5.44772 15 6 15H14C14.5523 15 15 15.4477 15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16Z" fill="#969191"></path> <path d="M18 11C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H10C9.44772 13 9 12.5523 9 12C9 11.4477 9.44772 11 10 11H18Z" fill="#969191"></path> <path d="M16 16C16 15.4477 16.4477 15 17 15H18C18.5523 15 19 15.4477 19 16C19 16.5523 18.5523 17 18 17H17C16.4477 17 16 16.5523 16 16Z" fill="#969191"></path> <path d="M7 11C7.55228 11 8 11.4477 8 12C8 12.5523 7.55228 13 7 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11H7Z" fill="#969191"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 3C2.34315 3 1 4.34315 1 6V18C1 19.6569 2.34315 21 4 21H20C21.6569 21 23 19.6569 23 18V6C23 4.34315 21.6569 3 20 3H4ZM20 5H4C3.44772 5 3 5.44772 3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6C21 5.44771 20.5523 5 20 5Z" fill="#969191"></path> </svg> Meeting Transcript</h3>
-                                                                    <h4 class="accordion-title js-accordion-title"></h4>
-                                                                    <div class="accordion-content">
-                                                                        <p id="id_transcript" style="margin-bottom:10px;">
-
-                                                                        </p>
-                                                                        <div style="width: 100%;float:left;background: #cccccc17;padding: 5px;">
-                                                                            <div class="transcript-btn">
-
-                                                                                <a id="idbtnPrevious" style="margin-right:10px;height:30px;pointer-events: none; opacity:0.5" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('p')"><i class="fa fa-chevron-left" aria-hidden="true"></i>  Previous</a>
-                                                                                <a id="idbtnNext" style="height:30px;" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('n')"> Next  <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            }
-
-
-                                                        </div>
-                                                    </div>
-                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client" && (Model.Reportsnippet == 1 || Model.Reportsnippet == 0)) || ViewBag.profile != "Client")
-                                                    {
-                                                        <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                            <h3><svg xmlns="http://www.w3.org/2000/svg" width="33" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment</h3>
-                                                            <div>
-                                                                @if (Model.FeedbackAudioLink != null)
-                                                                {
-                                                                    <audio style="margin-bottom:10px;" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
-                                                                }
-                                                                @if (Model.InterviewerComment != null)
-                                                                {
-                                                                    <p>@Model.InterviewerComment</p>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    }
+                                                        </span>
+                                                    </h3>
                                                 </div>
-
-
-                                                <div class="row">
-                                                    <h3><svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>Questions Discussed</h3>
-
-                                                    <div class="question">
-                                                        @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
+                                                <div>
+                                                    @if (Model.TechSkillReportCollection != null)
+                                                    {
+                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                         {
-                                                            <ul>
-                                                                @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
-                                                                {
-                                                                    var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
-                                                                    @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
+                                                            <div class="tech-skill-wrapper">
+                                                                <div>@Model.TechSkillReportCollection[i].SkillName</div>
+                                                                @{
+                                                                    var TechSkill_Score = 0.0;
+                                                                    if ((Model.ReportAccepted && ViewBag.profile == "Client")|| (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                                     {
-                                                                        <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                        TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
+                                                                    }
+                                                                }
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                                <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
+                                                                <div class="skillBackground skill-round-xlarge skill-small">
+                                                                    @if (TechSkill_Score == 0)
+                                                                    {
+                                                                        <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%">@TechSkill_Score %</div>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
-                                                                    }
-                                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client" && (Model.Reportsnippet == 1 || Model.Reportsnippet == 0)) || ViewBag.profile != "Client")
-                                                                    {
-                                                                        <label>Rating : @valueslist</label>
-                                                                    }
-                                                                }
-                                                            </ul>
-                                                        }
-                                                        else
-                                                        {
-                                                            <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+                                                                        <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</div>
 
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                                <p class="note-skill">
+                                                    <b> Note:</b> % score for every skill represents difference between candidate actual and required competency. For example 80% in any skill would mean 4/5
+                                                    of required competency threshold.
+                                                    <b> Note:</b>To understand competency thresholds more, please check Dreyfus model details <a href="https://en.wikipedia.org/wiki/Dreyfus_model_of_skill_acquisition">Click here</a>
+                                                </p>
+
+                                            </div>
+
+                                            <div class="col-lg-9 col-md-7">
+                                                @if (Model.MeetingStatus == 1)
+                                                {
+
+                                                    <div class="row"><div class="nodata-wrapper"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="row">
+                                                        <h3><svg width="38" height="38" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#969191" d="M15,16H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2ZM9,10h1a1,1,0,0,0,0-2H9a1,1,0,0,0,0,2Zm6,2H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2Zm4.71,3.29a1,1,0,0,0-.33-.21.92.92,0,0,0-.76,0,1,1,0,0,0-.33.21,1.15,1.15,0,0,0-.21.33,1,1,0,0,0,.21,1.09A1,1,0,0,0,19,17a1,1,0,0,0,.38-.08,1.15,1.15,0,0,0,.33-.21,1,1,0,0,0,.21-1.09A1.15,1.15,0,0,0,19.71,15.29ZM20,8.94a1.31,1.31,0,0,0-.06-.27l0-.09a1.07,1.07,0,0,0-.19-.28h0l-6-6h0a1.07,1.07,0,0,0-.28-.19.32.32,0,0,0-.09,0A.88.88,0,0,0,13.05,2H7A3,3,0,0,0,4,5V19a3,3,0,0,0,3,3h8a1,1,0,0,0,0-2H7a1,1,0,0,1-1-1V5A1,1,0,0,1,7,4h5V7a3,3,0,0,0,3,3h3v2a1,1,0,0,0,2,0V9S20,9,20,8.94ZM15,8a1,1,0,0,1-1-1V5.41L16.59,8Zm4,10a1,1,0,0,0-1,1v2a1,1,0,0,0,2,0V19A1,1,0,0,0,19,18Z" /></svg>Interview Details</h3>
+
+                                                        <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+
+                                                            <div>
+                                                                @Html.HiddenFor(x => Model.VideoLink)
+                                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                                {
+                                                                    int appendTime = 0;
+                                                                    if (Model.ThumbnailTimeSeconds == 0)
+                                                                    {
+                                                                        appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
+                                                                        if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
+                                                                        {
+                                                                            appendTime = (Model.VideoDuration * 60) - 60;
+                                                                        }
+                                                                        else if ((Model.VideoDuration * 60) < 120)
+                                                                        {
+                                                                            appendTime = 0;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        appendTime = Model.ThumbnailTimeSeconds;
+                                                                    }
+                                                                    var src = Model.VideoLink + "#t=" + appendTime.ToString();
+                                                                    <video id="video" controls="controls" controlsList="nodownload" preload="metadata" class="vjs-tech interview">
+                                                                        <source src='@Model.VideoLink' type="video/mp4">
+                                                                    </video>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
+                                                                }
+
+                                                                @if (ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+                                                                {
+                                                                    <div class="transcript">
+                                                                        <h3 style="padding:0px;"><svg width="30" style="color: rgb(150, 145, 145);" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 16C5 15.4477 5.44772 15 6 15H14C14.5523 15 15 15.4477 15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16Z" fill="#969191"></path> <path d="M18 11C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H10C9.44772 13 9 12.5523 9 12C9 11.4477 9.44772 11 10 11H18Z" fill="#969191"></path> <path d="M16 16C16 15.4477 16.4477 15 17 15H18C18.5523 15 19 15.4477 19 16C19 16.5523 18.5523 17 18 17H17C16.4477 17 16 16.5523 16 16Z" fill="#969191"></path> <path d="M7 11C7.55228 11 8 11.4477 8 12C8 12.5523 7.55228 13 7 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11H7Z" fill="#969191"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 3C2.34315 3 1 4.34315 1 6V18C1 19.6569 2.34315 21 4 21H20C21.6569 21 23 19.6569 23 18V6C23 4.34315 21.6569 3 20 3H4ZM20 5H4C3.44772 5 3 5.44772 3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6C21 5.44771 20.5523 5 20 5Z" fill="#969191"></path> </svg> Meeting Transcript</h3>
+                                                                        <h4 class="accordion-title js-accordion-title"></h4>
+                                                                        <div class="accordion-content">
+                                                                            <p id="id_transcript" style="margin-bottom:10px;">
+
+                                                                            </p>
+                                                                            <div style="width: 100%;float:left;background: #cccccc17;padding: 5px;">
+                                                                                <div class="transcript-btn">
+
+                                                                                    <a id="idbtnPrevious" style="margin-right:10px;height:30px;pointer-events: none; opacity:0.5" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('p')"><i class="fa fa-chevron-left" aria-hidden="true"></i>  Previous</a>
+                                                                                    <a id="idbtnNext" style="height:30px;" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('n')"> Next  <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+
+                                                            </div>
+                                                        </div>
+                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                        {
+                                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                                                <h3><svg xmlns="http://www.w3.org/2000/svg" width="33" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment</h3>
+                                                                <div>
+                                                                    @if (Model.FeedbackAudioLink != null)
+                                                                    {
+                                                                        <audio style="margin-bottom:10px;" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                                    }
+                                                                    @if (Model.InterviewerComment != null)
+                                                                    {
+                                                                        <p>@Model.InterviewerComment</p>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                                                    }
+                                                                </div>
+                                                            </div>
                                                         }
                                                     </div>
-                                                </div>
-                                            }
+
+
+                                                    <div class="row">
+                                                        <h3><svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>Questions Discussed</h3>
+
+                                                        <div class="question">
+                                                            @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
+                                                            {
+                                                                <ul>
+                                                                    @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                                    {
+                                                                        var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
+                                                                        @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
+                                                                        {
+                                                                            <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                        }
+                                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client")|| (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                                        {
+                                                                            <label>Rating : @valueslist</label>
+                                                                        }
+                                                                    }
+                                                                </ul>
+                                                            }
+                                                            else
+                                                            {
+                                                                <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
                                         </div>
+                                        @Html.HiddenFor(m => m.IsGeneralSkillRequired)
                                     </div>
-                                    @Html.HiddenFor(m => m.IsGeneralSkillRequired)
-                                </div>
 
-                                @Html.HiddenFor(m => m.id)
-                                @Html.HiddenFor(m => m.IRFId)
-                                @Html.HiddenFor(m => m.InterviewId)
-                                @Html.HiddenFor(m => m.IsEdited)
-                                @Html.HiddenFor(m => m.IsQC)
-                                @Html.HiddenFor(m => m.IRFName)
-                                @Html.HiddenFor(m => m.PrimarySkill)
-                                @Html.HiddenFor(m => m.IsQCRequired)
+                                    @Html.HiddenFor(m => m.id)
+                                    @Html.HiddenFor(m => m.IRFId)
+                                    @Html.HiddenFor(m => m.InterviewId)
+                                    @Html.HiddenFor(m => m.IsEdited)
+                                    @Html.HiddenFor(m => m.IsQC)
+                                    @Html.HiddenFor(m => m.IRFName)
+                                    @Html.HiddenFor(m => m.PrimarySkill)
+                                    @Html.HiddenFor(m => m.IsQCRequired)
 
-                                @Html.HiddenFor(x => x.CandidateId)
-                                @Html.HiddenFor(x => x.OldInterviewStatus)
-                                @Html.HiddenFor(x => x.OldMeetingStatus)
-                                @Html.HiddenFor(x => x.OverallScore)
-                                @if (ViewBag.profile == "Interviewer" || ViewBag.profile == "Quality Controller")
-                                {
-                                    @Html.HiddenFor(x => x.ThumbnailTimeSeconds)
-                                    @Html.HiddenFor(x => x.VideoDuration)
-                                }
-                                @Html.HiddenFor(x => x.OldInterviewerComment)
-                                @Html.HiddenFor(x => x.IsEdited)
-                                @Html.HiddenFor(x => x.ResourceUrl)
-                            </form>
+                                    @Html.HiddenFor(x => x.CandidateId)
+                                    @Html.HiddenFor(x => x.OldInterviewStatus)
+                                    @Html.HiddenFor(x => x.OldMeetingStatus)
+                                    @Html.HiddenFor(x => x.OverallScore)
+                                    @if (ViewBag.profile == "Interviewer" || ViewBag.profile == "Quality Controller")
+                                    {
+                                        @Html.HiddenFor(x => x.ThumbnailTimeSeconds)
+                                        @Html.HiddenFor(x => x.VideoDuration)
+                                    }
+                                    @Html.HiddenFor(x => x.OldInterviewerComment)
+                                    @Html.HiddenFor(x => x.IsEdited)
+                                    @Html.HiddenFor(x => x.ResourceUrl)
+                                </form>
+                            </div>
+
+                            <!-- end content-->
                         </div>
-
-                        <!-- end content-->
+                        <!--  end card  -->
                     </div>
-                    <!--  end card  -->
+                    <!-- end col-md-12 -->
                 </div>
-                <!-- end col-md-12 -->
+                <!-- end row -->
+
             </div>
-            <!-- end row -->
-
-        </div>
-    }
-
-
-</div>
-
-<div id="modal_clientComment_placeholder"></div>
-
-@*<div id="modal_clientAudio_placeholder"></div>*@
-
-<div id="modal_clientAudioFeedback_placeholder"></div>
-
-<div id="PublicUrlShareModel" class="modal modal-bg">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
-                </div>
-                <h5 class="modal-title pull-left">Public Share Url</h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div class="col-md-12">
-                    <div class="video-url">
-                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
-                            <p class="special-text">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
-                                <span id="special_text" class="special-text__tooltip">
-                                    Copy Link
-                                </span>
-                            </p>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-md-12 ">
-                    <div class="text-right">
-                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
-    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span class="mdc-fab__icon material-icons">
-                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Candidate Verified Data</h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div style="padding:10px" id="divAadhaarKYC">
-                </div>
-                <div>
-                    <div class="col-md-12 text-right">
-                        <div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="PublicShareVideo" class="modal modal-bg">
-
-    <div class="blk-bg"></div>
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
-                </div>
-                <h5 class="modal-title pull-left">Your Email Id</h5>
-            </div>
-            <div class="modal-body">
-                <div class="col-md-12">
-                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
-                    <div class="text-areadiv">
-                        <input type="text" id="txtEmailid" class="form-control" />
-                    </div>
-                    <div class="mt-10 text-right">
-                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="ClientInterviewRatingModel" class="modal modal-bg" style="z-index:3;overflow:auto;">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span>
-                        <img class="rating-star" src="~/img/rating-star-icon.png" />
-
-                    </span>
-                </div>
-                <h5 class="modal-title pull-left">Rate Interview</h5>
-            </div>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                <span onclick="closeClientInterviewRating()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body" style="padding: 2px 16px;" id="divClientInterviewRating">
-            </div>
-        </div>
-    </div>
-</div>
-
-@await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
-@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
-
-<script src="~/js/ModalFormServerValidation.js"></script>
-<script src="~/js/BroadcastMessage.js"></script>
-
-<script type="text/javascript">
-
-    $(document).ready(function () {
-
-        if ($("#id_SecurelyShared").val() == "True" && ($("#id_UniqueId").val() != null || $("#id_UniqueId").val() != "") && $("#id_IsMatched").val() != "True") {
-            var modal = document.getElementById("PublicShareVideo");
-            modal.style.display = "block";
         }
 
-    })
 
-    function SubmitEmail() {
-        if ($("#txtEmailid").val().trim() != "") {
-            localStorage.setItem('PublicEmailid', $("#txtEmailid").val());
-            $.ajax({
-                type: "POST",
-                url: "/Interview/VerifySharedEmail",
-                data: { uniqueid: $("#id_UniqueId").val(), Emailid: $("#txtEmailid").val().trim(), Interviewid: $("#hidtxtinterviewid").val() },
-                success: function (data) {
-                    if (data == "success") {
-                        window.location = "/Interview/ClientReport?publicEmailId=" + $("#txtEmailid").val() + "&uniqueid=" + $("#id_UniqueId").val() + "&interviewid=" + $("#hidtxtinterviewid").val() + "&irfid=" + $("#hidtxtirfid").val();
-                    } else {
-                        swal.fire(data);
+    </div>
+
+    <div id="modal_clientComment_placeholder"></div>
+
+    @*<div id="modal_clientAudio_placeholder"></div>*@
+
+    <div id="modal_clientAudioFeedback_placeholder"></div>
+
+    <div id="PublicUrlShareModel" class="modal modal-bg">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                    </div>
+                    <h5 class="modal-title pull-left">Public Share Url</h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+                </button>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="video-url">
+                            <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                                <p class="special-text">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                    <span id="special_text" class="special-text__tooltip">
+                                        Copy Link
+                                    </span>
+                                </p>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-12 ">
+                        <div class="text-right">
+                            <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
+        <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span class="mdc-fab__icon material-icons">
+                            <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
+                        </span>
+                    </div>
+                    <h5 class="modal-title pull-left">Candidate Verified Data</h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+                </button>
+                <div class="modal-body">
+                    <div style="padding:10px" id="divAadhaarKYC">
+                    </div>
+                    <div>
+                        <div class="col-md-12 text-right">
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="PublicShareVideo" class="modal modal-bg">
+
+        <div class="blk-bg"></div>
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                    </div>
+                    <h5 class="modal-title pull-left">Your Email Id</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                        <div class="text-areadiv">
+                            <input type="text" id="txtEmailid" class="form-control" />
+                        </div>
+                        <div class="mt-10 text-right">
+                            <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="ClientInterviewRatingModel" class="modal modal-bg" style="z-index:3;overflow:auto;">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span>
+                            <img class="rating-star" src="~/img/rating-star-icon.png" />
+
+                        </span>
+                    </div>
+                    <h5 class="modal-title pull-left">Rate Interview</h5>
+                </div>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span onclick="closeClientInterviewRating()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+                </button>
+                <div class="modal-body" style="padding: 2px 16px;" id="divClientInterviewRating">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
+    @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
+
+    <script src="~/js/ModalFormServerValidation.js"></script>
+    <script src="~/js/BroadcastMessage.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            if ($("#id_SecurelyShared").val() == "True" && ($("#id_UniqueId").val() != null || $("#id_UniqueId").val() != "") && $("#id_IsMatched").val() != "True") {
+                var modal = document.getElementById("PublicShareVideo");
+                modal.style.display = "block";
+            }
+
+        })
+
+        function SubmitEmail() {
+            if ($("#txtEmailid").val().trim() != "") {
+                localStorage.setItem('PublicEmailid', $("#txtEmailid").val());
+                $.ajax({
+                    type: "POST",
+                    url: "/Interview/VerifySharedEmail",
+                    data: { uniqueid: $("#id_UniqueId").val(), Emailid: $("#txtEmailid").val().trim(), Interviewid: $("#hidtxtinterviewid").val() },
+                    success: function (data) {
+                        if (data == "success") {
+                            window.location = "/Interview/ClientReport?publicEmailId=" + $("#txtEmailid").val() + "&uniqueid=" + $("#id_UniqueId").val() + "&interviewid=" + $("#hidtxtinterviewid").val() + "&irfid=" + $("#hidtxtirfid").val();
+                        } else {
+                            swal.fire(data);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
+
+    </script>
+
+
+    @if (ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                my_code();
+            });
+            function my_code() {
+                var msg = '@ViewBag.Message';
+                if (msg.toLowerCase().includes("success")) {
+                    swal.fire("successful", '@ViewBag.Message', "success");
+                }
+                else {
+                    swal.fire("Failed", '@ViewBag.Message', "error");
+                }
+            }
+        </script>
     }
 
-</script>
+    <script src="~/js/transcriptfunctionalities.js"></script>
 
+    @if (ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+    {
+        <script>
 
-@if (ViewBag.Message != null)
-{
+            $(document).ready(function () {
+                GetMeetingAudioText('@Model.InterviewId', '@Model.AudioTranscriptFileLink');
+            });
+
+            openSecureReportNotificationModel();
+        </script>
+    }
+
+    <script>
+        function dropDwnToolTips(id) {
+            if (id.value == 0) {
+                id.title = "";
+            }
+            else {
+                id.title = id.value;
+            }
+        }
+
+    </script>
     <script type="text/javascript">
         $(document).ready(function () {
-            my_code();
-        });
-        function my_code() {
-            var msg = '@ViewBag.Message';
-            if (msg.toLowerCase().includes("success")) {
-                swal.fire("successful", '@ViewBag.Message', "success");
-            }
-            else {
-                swal.fire("Failed", '@ViewBag.Message', "error");
-            }
-        }
-    </script>
-}
-
-<script src="~/js/transcriptfunctionalities.js"></script>
-
-@if (ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
-{
-    <script>
-
-        $(document).ready(function () {
-            GetMeetingAudioText('@Model.InterviewId', '@Model.AudioTranscriptFileLink');
-        });
-
-        openSecureReportNotificationModel();
-    </script>
-}
-
-<script>
-    function dropDwnToolTips(id) {
-        if (id.value == 0) {
-            id.title = "";
-        }
-        else {
-            id.title = id.value;
-        }
-    }
-
-</script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        var meetingStatusElem = document.getElementById('MeetingStatus');
-        if (meetingStatusElem != null) {
-            var meetingStatus = document.getElementById('MeetingStatus').value;
-            if (meetingStatus == null || meetingStatus == '') {
-                document.getElementById('InterviewerComment').disabled = true;
-                document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
-                document.getElementById("InterviewStatus").disabled = true;
-            }
-            else {
-                document.getElementById('InterviewerComment').disabled = false;
-                document.getElementById("interviewerComment_Error").innerHTML = "";
-                if (meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8) {
+            var meetingStatusElem = document.getElementById('MeetingStatus');
+            if (meetingStatusElem != null) {
+                var meetingStatus = document.getElementById('MeetingStatus').value;
+                if (meetingStatus == null || meetingStatus == '') {
+                    document.getElementById('InterviewerComment').disabled = true;
+                    document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
                     document.getElementById("InterviewStatus").disabled = true;
                 }
-            }
-        }
-
-        var hasDistinctParticipants = '@hasDistinctParticipants';
-        if (hasDistinctParticipants != null && hasDistinctParticipants.toLowerCase() == 'false') {
-            document.getElementById("InterviewStatus").disabled = true;
-        }
-    })
-
-</script>
-<script src="https://www.amcharts.com/lib/4/core.js"></script>
-<script src="https://www.amcharts.com/lib/4/charts.js"></script>
-<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-
-<script>
-    function getPDF() {
-        var interviewid = $("#InterviewId").val();
-        var irfid = $("#IRFId").val();
-        var url = "/Interview/GenerateClientReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
-        window.open(url, "_blank");
-    }
-    function GeneratePublicUrl(index) {
-        var modal = document.getElementById("PublicUrlShareModel");
-        modal.style.display = "block";
-        var urlcurrent = window.location.href;
-        if (index == 1) {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
-        }
-        else {
-            urlcurrent = urlcurrent.replace("Public", "");
-            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
-        }
-        $("#txtvideoUrls").text(urlcurrent);
-    }
-    function closePublicUrlShareModel() {
-        var modal = document.getElementById("PublicUrlShareModel");
-        modal.style.display = "none";
-    }
-    function copyToClipboard(element) {
-        var temp = $("<input>");
-        $("body").append(temp);
-        temp.val($(element).text()).select();
-        document.execCommand("copy");
-        temp.remove();
-        $('#special_text').text('Copied');
-    }
-</script>
-
-<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
-<script>
-
-    function switchtoquestionVedio(questiontime) {
-        var time = 1.0;
-        if (questiontime != '') {
-            time = questiontime;
-        }
-        var vid = document.getElementsByClassName("vjs-tech");
-        vid[0].currentTime = time;
-    }
-
-    $(document).ready(function () {
-
-        //shorter/better attempt
-        var weightageItems = $('[id$="WeightageActual"]');
-        for (i = 0; i < weightageItems.length; i++) {
-            var id = weightageItems[i].id;
-            var match = id.match(/\d+/g);
-            var digit = match[0];
-
-            var index = weightageItems[i].id.indexOf(digit);
-            var skillName = weightageItems[i].id.substring(0, index);
-            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
-            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
-
-            var actualWeightage;
-            var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
-            actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
-            if (reqLevel <= actLevel) {
-                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
-                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
-            }
-            else {
-                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
-                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
-            }
-        }
-
-        var items = $('[id$="WeightageActual"]');
-        var totalCount = 0;
-
-        for (i = 0; i < items.length; i++) {
-            totalCount += parseInt(items[i].value);
-        }
-        SetTechReportCalculation('TechSkillReportCollection');
-        var average = 0;
-        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
-            average = totalCount / 4;
-        }
-        else {
-            average = totalCount / 2;
-        }
-        $("#OverallScore").val(average);
-
-    });
-
-    function SetTechReportCalculation(techCollectionIdStartsWith) {
-        var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
-        var techItems = $(idSelector);
-        var totalTechSkillScore = 0;
-        if (techItems != null) {
-            var techItemsLength = 0;
-            if (techCollectionIdStartsWith == 'IreportModel_TechSkillReportCollection') {
-                techItemsLength = techItems.length / 2;
-            }
-            else {
-                techItemsLength = techItems.length;
-            }
-            for (i = 0; i < techItemsLength; i++) {
-                var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
-                var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
-
-                if (actualWeightage != null && actualWeightage != '') {
-                    totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
+                else {
+                    document.getElementById('InterviewerComment').disabled = false;
+                    document.getElementById("interviewerComment_Error").innerHTML = "";
+                    if (meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8) {
+                        document.getElementById("InterviewStatus").disabled = true;
+                    }
                 }
             }
-            document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
-        }
-    }
-</script>
 
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/data.js"></script>
-<script src="https://code.highcharts.com/modules/drilldown.js"></script>
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+            var hasDistinctParticipants = '@hasDistinctParticipants';
+            if (hasDistinctParticipants != null && hasDistinctParticipants.toLowerCase() == 'false') {
+                document.getElementById("InterviewStatus").disabled = true;
+            }
+        })
 
-<script src="~/js/FeedbackRecorder/Record.js"></script>
-<script src="~/js/Aadhaar.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script>
-    $(function () {
-        $(".accordion-content:not(:first-of-type)").css("display", "none");
-        $(".js-accordion-title:first-of-type").addClass("open");
-        $(".js-accordion-title:first-of-type").addClass("open");
-        $(".js-accordion-title").click(function () {
-            $(".open").not(this).removeClass("open").next().slideUp(300);
-            $(this).toggleClass("open").next().slideToggle(300);
-        });
-    });
-</script>
-    @if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
-{
+    </script>
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
     <script>
-        var video = document.getElementById('video');
-        var startTime = 0;
-        var endTime = 15 * 60;
-        function checkTime() {
-            if (video.currentTime >= endTime) {
-                video.pause();
-                ClientInterviewRating($("#hidtxtinterviewid").val());
+        function getPDF() {
+            var interviewid = $("#InterviewId").val();
+            var irfid = $("#IRFId").val();
+            var url = "/Interview/GenerateClientReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
+            window.open(url, "_blank");
+        }
+        function GeneratePublicUrl(index) {
+            var modal = document.getElementById("PublicUrlShareModel");
+            modal.style.display = "block";
+            var urlcurrent = window.location.href;
+            if (index == 1) {
+                urlcurrent = urlcurrent.replace("Public", "");
+                urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
             }
-            setTimeout(checkTime, 100);
+            else {
+                urlcurrent = urlcurrent.replace("Public", "");
+                urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
+            }
+            $("#txtvideoUrls").text(urlcurrent);
         }
-        video.currentTime = startTime;
-        checkTime();
-
-        function ClientInterviewRating(interviewid) {
-            $.ajax({
-                url: '/Interview/ClientInterviewReview',
-                data: { 'id': interviewid },
-                type: "GET",
-                success: function (data) {
-                    openClientInterviewRating();
-                    $('#divClientInterviewRating').html('');
-                    $('#divClientInterviewRating').html(data);
-                }
-            });
-        }
-        function closeClientInterviewRating() {
-            var modal = document.getElementById("ClientInterviewRatingModel");
+        function closePublicUrlShareModel() {
+            var modal = document.getElementById("PublicUrlShareModel");
             modal.style.display = "none";
         }
-        function openClientInterviewRating() {
-            var modal = document.getElementById("ClientInterviewRatingModel");
-            modal.style.display = "block";
+        function copyToClipboard(element) {
+            var temp = $("<input>");
+            $("body").append(temp);
+            temp.val($(element).text()).select();
+            document.execCommand("copy");
+            temp.remove();
+            $('#special_text').text('Copied');
         }
     </script>
-}
+
+    <script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+    <script>
+
+        function switchtoquestionVedio(questiontime) {
+            var time = 1.0;
+            if (questiontime != '') {
+                time = questiontime;
+            }
+            var vid = document.getElementsByClassName("vjs-tech");
+            vid[0].currentTime = time;
+        }
+
+        $(document).ready(function () {
+
+            //shorter/better attempt
+            var weightageItems = $('[id$="WeightageActual"]');
+            for (i = 0; i < weightageItems.length; i++) {
+                var id = weightageItems[i].id;
+                var match = id.match(/\d+/g);
+                var digit = match[0];
+
+                var index = weightageItems[i].id.indexOf(digit);
+                var skillName = weightageItems[i].id.substring(0, index);
+                var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+                var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+
+                var actualWeightage;
+                var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
+                actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
+                if (reqLevel <= actLevel) {
+                    $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+                }
+                else {
+                    $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+                }
+            }
+
+            var items = $('[id$="WeightageActual"]');
+            var totalCount = 0;
+
+            for (i = 0; i < items.length; i++) {
+                totalCount += parseInt(items[i].value);
+            }
+            SetTechReportCalculation('TechSkillReportCollection');
+            var average = 0;
+            if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+                average = totalCount / 4;
+            }
+            else {
+                average = totalCount / 2;
+            }
+            $("#OverallScore").val(average);
+
+        });
+
+        function SetTechReportCalculation(techCollectionIdStartsWith) {
+            var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
+            var techItems = $(idSelector);
+            var totalTechSkillScore = 0;
+            if (techItems != null) {
+                var techItemsLength = 0;
+                if (techCollectionIdStartsWith == 'IreportModel_TechSkillReportCollection') {
+                    techItemsLength = techItems.length / 2;
+                }
+                else {
+                    techItemsLength = techItems.length;
+                }
+                for (i = 0; i < techItemsLength; i++) {
+                    var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
+                    var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
+
+                    if (actualWeightage != null && actualWeightage != '') {
+                        totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
+                    }
+                }
+                document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+            }
+        }
+    </script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+    <script src="~/js/FeedbackRecorder/Record.js"></script>
+    <script src="~/js/Aadhaar.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $(".accordion-content:not(:first-of-type)").css("display", "none");
+            $(".js-accordion-title:first-of-type").addClass("open");
+            $(".js-accordion-title:first-of-type").addClass("open");
+            $(".js-accordion-title").click(function () {
+                $(".open").not(this).removeClass("open").next().slideUp(300);
+                $(this).toggleClass("open").next().slideToggle(300);
+            });
+        });
+    </script>
+    @if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
+    {
+        <script>
+            var video = document.getElementById('video');
+            var startTime = 0;
+            var endTime = 15 * 60;
+            function checkTime() {
+                if (video.currentTime >= endTime) {
+                    video.pause();
+                    ClientInterviewRating($("#hidtxtinterviewid").val());
+                }
+                setTimeout(checkTime, 100);
+            }
+            video.currentTime = startTime;
+            checkTime();
+
+            function ClientInterviewRating(interviewid) {
+                $.ajax({
+                    url: '/Interview/ClientInterviewReview',
+                    data: { 'id': interviewid },
+                    type: "GET",
+                    success: function (data) {
+                        openClientInterviewRating();
+                        $('#divClientInterviewRating').html('');
+                        $('#divClientInterviewRating').html(data);
+                    }
+                });
+            }
+            function closeClientInterviewRating() {
+                var modal = document.getElementById("ClientInterviewRatingModel");
+                modal.style.display = "none";
+            }
+            function openClientInterviewRating() {
+                var modal = document.getElementById("ClientInterviewRatingModel");
+                modal.style.display = "block";
+            }
+        </script>
+    }

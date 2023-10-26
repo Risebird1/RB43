@@ -1212,7 +1212,7 @@
                                                                             <td>
                                                                                 @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                                                 @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
-                                                                                @Html.HiddenFor(m => m.InterviewerCollection[0].Source, new {Value = Model.LoggedEmail})
+                                                                                @Html.Hidden("InterviewerCollection[0].Source", new {Value = Model.LoggedEmail})
                                                                             </td>
                                                                             <td class="cadName">
                                                                                 @*<a onclick="" data-tooltip="">No Resume</a>*@

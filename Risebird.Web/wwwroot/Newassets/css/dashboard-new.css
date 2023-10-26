@@ -7375,6 +7375,9 @@ ul.ks-cboxtags {
     #detailsTable_filter #search {
         top: 3px;
     }
+.razorpay_details .table > tbody > tr > td {
+    padding: 12px 5px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -7772,7 +7775,7 @@ ul.ks-cboxtags {
         }
 
         .rejectedmeeting .s_cname {
-            width: 247px;
+            width: 225px;
         }
 
         .selectedmeeting .s_cname {
