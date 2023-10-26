@@ -179,6 +179,7 @@
                                                             var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
                                                             var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
                                                         }
+
                                                         @if (Model.MeetingStatus == 4)
                                                         {
                                                             var meetingcolor = "";
