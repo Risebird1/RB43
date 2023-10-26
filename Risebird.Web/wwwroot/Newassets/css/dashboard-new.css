@@ -7378,6 +7378,13 @@ ul.ks-cboxtags {
 .razorpay_details .table > tbody > tr > td {
     padding: 12px 5px;
 }
+.razorpay_details .dataTables_filter input[type=search] {
+    border: 1px solid #E3E3E3 !important;
+}
+.razorpay_details #trigger-update {
+    right: 26px;
+    top: 9px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
