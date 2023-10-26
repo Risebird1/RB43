@@ -254,12 +254,12 @@
 
                                                                 @if (item.EmailId != null && item.EmailId != "")
                                                                 {
-                                                                    @if (item.EmailId.Length > 18)
+                                                                    @if (item.EmailId.Length > 20)
                                                                     {
 
 
                                                                         <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="cname">@item.EmailId</span> </a>
+                                                                            <a onclick="" data-tooltip="@item.EmailId"><span>@item.EmailId.Substring(0,20)... </span> </a>
 
                                                                         </td>
                                                                     }
@@ -329,26 +329,27 @@
                                                                     @if (ViewBag.profile != "Recruiter")
 
                                                                     {
-
-                                                                        if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
+                                                                        @if (ViewBag.AccessType != "Public")
                                                                         {
-                                                                            <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
-                                                                                <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                                </span>
-                                                                            </button>
+                                                                            if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
+                                                                            {
+                                                                                <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
+                                                                                    <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            }
+
+                                                                            else
+                                                                            {
+                                                                                <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!">
+                                                                                    <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+
+                                                                            }
                                                                         }
-
-                                                                        else
-                                                                        {
-                                                                            <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!">
-                                                                                <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                                </span>
-                                                                            </button>
-
-                                                                        }
-
 
                                                                         @if ((ViewBag.profile == "Client" && ViewBag.IsClientCancelInterview) || ViewBag.profile != "Client")
                                                                         {
@@ -369,9 +370,7 @@
                                                                             <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
                                                                                 <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
                                                                             </button>
-                                                                            <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Candidate Status List">
-                                                                                <span onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"></path></svg></span>
-                                                                            </button>
+                                                                          
 
                                                                         }
                                                                         @if (ViewBag.profile != "Client" || ViewBag.AccessType != null && ViewBag.AccessType == "Public")
@@ -392,13 +391,15 @@
                                                                         </button>
                                                                     }
 
+                                                                    @if (ViewBag.AccessType != "Public")
+                                                                    {
 
-
-                                                                    <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit" style="top:-2px">
-                                                                        <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                                                                        </span>
-                                                                    </button>
+                                                                        <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit" style="top:-2px">
+                                                                            <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                                            </span>
+                                                                        </button>
+                                                                    }
                                                                     @if (ViewBag.profile != "Client")
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
@@ -406,9 +407,12 @@
                                                                         </button>
 
                                                                     }
-                                                                    <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer;">
-                                                                        <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
-                                                                    </a>
+                                                                    @if (ViewBag.AccessType != "Public")
+                                                                    {
+                                                                        <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer;">
+                                                                            <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                        </a>
+                                                                    }
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
