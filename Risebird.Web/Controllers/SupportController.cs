@@ -303,7 +303,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin")
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
                         if (TempData["SuccessAlertMessage"] != null)
                         {

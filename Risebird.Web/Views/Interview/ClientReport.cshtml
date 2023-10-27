@@ -818,9 +818,11 @@
                 data: { 'id': interviewid },
                 type: "GET",
                 success: function (data) {
-                    openClientInterviewRating();
-                    $('#divClientInterviewRating').html('');
-                    $('#divClientInterviewRating').html(data);
+                    if (document.getElementById("ClientInterviewRatingModel").style.display != "block") {
+                        openClientInterviewRating();
+                        $('#divClientInterviewRating').html('');
+                        $('#divClientInterviewRating').html(data);
+                    }
                 }
             });
         }
@@ -829,10 +831,8 @@
             modal.style.display = "none";
         }
         function openClientInterviewRating() {
-            if (document.getElementById("ClientInterviewRatingModel").style.display != "block") {
-                var modal = document.getElementById("ClientInterviewRatingModel");
-                modal.style.display = "block";
-            }
+            var modal = document.getElementById("ClientInterviewRatingModel");
+            modal.style.display = "block";
         }
     </script>
     @if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
