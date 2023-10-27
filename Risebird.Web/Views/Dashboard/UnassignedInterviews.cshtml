@@ -314,14 +314,14 @@
                                                         <th>Client Name</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCReport")
+                                                    @if (ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PotentialRiskByClient")
                                                     {
                                                         <th>Red Flags</th>
                                                     }
                                                     @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -434,6 +434,15 @@
                                                         <th>Rated</th>
                                                          <th>Action</th>
                                                     }
+
+                                                     @if (ViewBag.actionstatus == "PotentialRiskByClient")
+                                                    {
+                                                        
+                                                        <th>Rating</th>
+                                                        <th>Rated By</th>
+                                                        <th>Rated</th>
+                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -450,6 +459,7 @@
                                                     {
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
+                                                  
                                                     @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
 
@@ -520,7 +530,7 @@
                                                         <th>Client Name</th>
                                                     }
 
-                                                    @if (ViewBag.actionstatus == "QCReport")
+                                                    @if (ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PotentialRiskByClient")
                                                     {
                                                         <th>Red Flags</th>
                                                     }
@@ -528,7 +538,7 @@
                                                     @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient")
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -643,7 +653,14 @@
                                                         <th>Rated</th>
                                                         <th>Action</th>
                                                     }
+                                                    @if (ViewBag.actionstatus == "PotentialRiskByClient")
+                                                    {
 
+                                                        <th>Rating</th>
+                                                        <th>Rated By</th>
+                                                        <th>Rated</th>
+                                                        <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                    }
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -896,7 +913,7 @@
                                                             <td>@item.Name</td>
                                                         }
 
-                                                        @if (ViewBag.actionstatus == "QCReport")
+                                                        @if (ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "PotentialRiskByClient")
                                                         {
                                                             @if (item.Redflags > 0)
                                                             {
@@ -913,7 +930,7 @@
                                                         @*PotentialRiskInterviewCount not allow*@
                                                         @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
-                                                            @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount")
+                                                            @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient")
                                                             {
                                                                 <td>@item.ChannelOwner</td>
                                                             }
@@ -1011,7 +1028,9 @@
                                                         @if (ViewBag.actionstatus == "CancelledInterviewCount")
                                                         {
                                                             <td>@item.ClientHrContact</td>
-                                                            <td>@item.Client </td>
+                                                           
+                                                                <td>@item.Client </td>
+                                                            
                                                             <td>@item.interviewer </td>
                                                             <td>@item.BillingOwner</td>
                                                             <td>@item.Cancellationsource</td>
@@ -1527,6 +1546,7 @@
                                                         {
                                                             <td style="color:red;text-align:center">@item.RedMarker</td>
                                                         }
+
                                                        
                                                      <td class="interviewer">
                                                            
@@ -1558,10 +1578,35 @@
                                                                 }
                                                          </td>
                                                     }
+
+                                                        @if (ViewBag.actionstatus == "PotentialRiskByClient")
+                                                        { <td class="interviewer">
+                                                            @item.Rating
+                                                            </td>
+                                                            <td>@item.RateAddedBy</td>
+                                                            <td>@item.RateAddedOn</td>
+                                                            <td align="center">
+                                                                @if (!string.IsNullOrWhiteSpace(item.interviewer))
+                                                                {
+                                                                    <span>
+                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                            <span onclick="javascript:SuspiciousTypeDetails('@item.interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                        </button>
+                                                                    </span>
+                                                                }
+
+                                                                 <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                    </button>
+                                                                </a>
+                                                            </td>
+                                                    }
+                                                    
                                                     </tr>
                                                     i++;
                                                 }
-                                              
+                                          
                                             </tbody>
                                         </table>
                                     </div>
