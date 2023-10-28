@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using RestSharp;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -15,12 +18,22 @@ namespace Risebird.CommonHelper
     {
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IConfiguration _configuration;
+        private readonly ISettingsRepository _settingsRepository;
+        private readonly string accountId;
+        private readonly string clientId;
+        private readonly string clientSecret;
+        private readonly string oauthEndpoint;
 
 
-        public ZoomHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
+        public ZoomHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, ISettingsRepository settingsRepository)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
+            _settingsRepository = settingsRepository;
+            accountId = _configuration["ZoomOAuthDetails:accountId"];
+            clientId = _configuration["ZoomOAuthDetails:clientId"];
+            clientSecret = _configuration["ZoomOAuthDetails:clientSecret"];
+            oauthEndpoint = _configuration["ZoomOAuthDetails:endPoint"];
         }
 
         public string ZoomToken()
@@ -69,7 +82,6 @@ namespace Risebird.CommonHelper
 
         public async Task<HttpStatusCode> CheckMeetingbyId(string meetingId, string token)
         {
-            //string token = ZoomToken();
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingId));
             var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingId), Method.Get);
             request.AddHeader("content-type", "application/json");
@@ -79,5 +91,71 @@ namespace Risebird.CommonHelper
             return response.StatusCode;
 
         }
+
+        //public string GenerateAccessToken()
+        //{
+        //    var _model = new ZoomOAuthCredentials();
+        //    _model.grant_type = "account_credentials";
+        //    _model.account_id = "mKqPkZV2RciTWQ9tHtZyEw";
+            
+        //    var tokenResponse = new RestClient("https://zoom.us/oauth/token");
+        //    var request = new RestRequest("https://zoom.us/oauth/token", Method.Post);
+        //    request.AddHeader("authorization", "Basic bW10dXFIaUdTMWlnRVBNWmhEeldNUTpSemRiNk5Yb3pJeFZRZk1UOU5aOUwzQ1NjbnZidzhCeQ==");//"v7sy3J8cAFdEJp5S"
+        //    request.AddBody(_model);
+        //    //request.AddJsonBody(_model);
+        //    RestResponse response = tokenResponse.Execute(request);
+        //    var content = response.Content;
+        //    var convertedResponse = JsonConvert.DeserializeObject<string>(content);
+        //    if (convertedResponse != null)
+        //    {
+        //        return convertedResponse;
+        //    }
+        //    return string.Empty;
+
+
+        //}
+
+        public async Task<string> GenerateAccessToken()
+        {
+            try
+            {
+                string token = string.Empty;
+                //check whether we already have a token that has not expired, expires in 1 hour, we update every 50 mins
+                var existingTokenObj = await _settingsRepository.GetZoomOAuthToken();
+                if (existingTokenObj != null && existingTokenObj.Created_ModifiedOn.HasValue && (DateTime.Now - existingTokenObj.Created_ModifiedOn.Value).TotalMinutes < 50)
+                {
+                    token = existingTokenObj.Token;
+                    return token;
+                }
+
+                var client = new RestClient(oauthEndpoint);//"https://zoom.us/oauth/token"
+                var request = new RestRequest(oauthEndpoint, Method.Post);//"https://zoom.us/oauth/token"
+                string concatenatedString = clientId + ":" + clientSecret;
+
+                byte[] concatenatedBytes = Encoding.UTF8.GetBytes(concatenatedString);
+                string base64Encoded = Convert.ToBase64String(concatenatedBytes);
+                request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                request.AddParameter("grant_type", "account_credentials");
+                request.AddParameter("account_id", accountId);
+                //request.AddHeader("Authorization", "Basic bW10dXFIaUdTMWlnRVBNWmhEeldNUTpSemRiNk5Yb3pJeFZRZk1UOU5aOUwzQ1NjbnZidzhCeQ==");
+                request.AddHeader("Authorization", "Basic " + base64Encoded);
+
+
+                var response = await client.ExecuteAsync(request);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var tokenResponse = JsonConvert.DeserializeObject<ZoomTokenResponse>(response.Content);
+                    _ = await _settingsRepository.AddUpdateZoomOAuthToken(tokenResponse.access_token);
+                    return tokenResponse.access_token;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
+    
 }

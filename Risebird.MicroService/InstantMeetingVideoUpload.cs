@@ -50,8 +50,10 @@ namespace Risebird.MicroService
                 var pendingVideoMeetings = await _meetingRespository.GetPendingVideoInstantMeetings();
 
                 //get jwt authentication token 
-                //string token = ZoomToken();
-                string token = _zoomHelper.ZoomToken();
+                //string token = _zoomHelper.ZoomToken();
+
+                //get oauth token
+                string token = await _zoomHelper.GenerateAccessToken();
 
                 Parallel.ForEach(pendingVideoMeetings, async meeting =>
                 {
