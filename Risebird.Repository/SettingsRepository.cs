@@ -94,6 +94,52 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<bool> AddUpdateZoomOAuthToken(string token)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@token", token);
+                parameters.Add("@currentTime", DateTime.Now);//Indian Standard Time
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_AddUpdateZoomOAuthToken", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return false;
+        }
+
+        public async Task<ZoomApiToken> GetZoomOAuthToken()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<ZoomApiToken>(con, "usp_GetZoomOAuthToken", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }
