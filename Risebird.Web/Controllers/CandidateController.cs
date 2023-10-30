@@ -50,12 +50,14 @@ namespace Risebird.Web.Controllers
         private readonly IConfiguration _configuration;
         private readonly ITrackPublicUrlAccessor _trackPublicUrlAccessor;
         private readonly IAadhaarService _aadhaarService;
+        private readonly IZoomHelper _zoomHelper;
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
-            IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor, IAadhaarService aadhaarService)
+            IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor, 
+            IAadhaarService aadhaarService, IZoomHelper zoomHelper)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -77,6 +79,7 @@ namespace Risebird.Web.Controllers
             _configuration = configuration;
             _trackPublicUrlAccessor = trackPublicUrlAccessor;
             _aadhaarService = aadhaarService;
+            _zoomHelper = zoomHelper;
         }
 
         [HttpGet]
@@ -4123,7 +4126,7 @@ namespace Risebird.Web.Controllers
 
                     if (!string.IsNullOrEmpty(zoomMeetingId))
                     {
-                        DeleteMeetingLink(zoomMeetingId);
+                        await DeleteMeetingLink(zoomMeetingId);
                     }
 
                     return Json("Invitation has been cancelled Successfully!");
@@ -4211,36 +4214,38 @@ namespace Risebird.Web.Controllers
                 return View(model);
             }
         }
-        public string DeleteMeetingLink(string meetingid)
+        public async Task<string> DeleteMeetingLink(string meetingid)
         {
-            string token = ZoomToken();
+            //string token = ZoomToken();
+            //get oauth token
+            string token = await _zoomHelper.GenerateAccessToken();
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid));
             var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid), Method.Delete);
             request.AddHeader("content-type", "application/json");
             request.AddHeader("authorization", "Bearer " + token);
             RestResponse response = client.Execute(request);
             var content = response.Content;
-            return "Delete successfully";
+            return "Deleted successfully";
         }
-        public string ZoomToken()
-        {
-            DateTime Expiry = DateTime.UtcNow.AddDays(1);
-            string ApiKey = _configuration["ZoomAppDetails:apiKey"];
-            string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
-            int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var header = new JwtHeader(credentials);
-            var payload = new JwtPayload
-            {
-                { "iss", ApiKey},
-                { "exp", ts },
-            };
-            var secToken = new JwtSecurityToken(header, payload);
-            var handler = new JwtSecurityTokenHandler();
-            var tokenString = handler.WriteToken(secToken);
-            return tokenString;
-        }
+        //public string ZoomToken()
+        //{
+        //    DateTime Expiry = DateTime.UtcNow.AddDays(1);
+        //    string ApiKey = _configuration["ZoomAppDetails:apiKey"];
+        //    string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
+        //    int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
+        //    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
+        //    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        //    var header = new JwtHeader(credentials);
+        //    var payload = new JwtPayload
+        //    {
+        //        { "iss", ApiKey},
+        //        { "exp", ts },
+        //    };
+        //    var secToken = new JwtSecurityToken(header, payload);
+        //    var handler = new JwtSecurityTokenHandler();
+        //    var tokenString = handler.WriteToken(secToken);
+        //    return tokenString;
+        //}
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> ProcessingResume(int id)

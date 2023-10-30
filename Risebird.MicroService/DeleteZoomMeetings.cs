@@ -38,8 +38,11 @@ namespace Risebird.MicroService
             log.LogInformation($"DeleteZoomMeetings : C# Timer trigger function started executing at: {DateTime.Now}");
 
             var meetingsToBeDeleted = await _meetingRespository.GetZoomMeetingsToBeDeletedOnceUploadedOnBlob();
-            
-            string token = _zoomHelper.ZoomToken();
+
+            //string token = _zoomHelper.ZoomToken();
+
+            //get oauth token
+            string token = await _zoomHelper.GenerateAccessToken();
 
             Parallel.ForEach(meetingsToBeDeleted, meeting =>
             {

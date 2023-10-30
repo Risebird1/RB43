@@ -41,9 +41,16 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly ISkillService _skillService;
         private readonly IClientService _clientService;
+        private readonly IZoomHelper _zoomHelper;
         
 
-        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IConfiguration configuration, IInstaInterviewService instaInterviewService, IInterviewerService interviewerService, IMeetingService meetingService, IIRFRepository irfRepository, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, ISkillService skillService, IClientService clientService)
+        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, 
+            IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, 
+            IConfiguration configuration, IInstaInterviewService instaInterviewService, 
+            IInterviewerService interviewerService, IMeetingService meetingService, 
+            IIRFRepository irfRepository, IUserService userService, 
+            IFileMimeTypeHelper fileMimeTypeHelper, ISkillService skillService, 
+            IClientService clientService, IZoomHelper zoomHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -57,6 +64,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _skillService = skillService;
             _clientService = clientService;
+            _zoomHelper = zoomHelper;
         }
         [Authorize]
         [HttpGet]
@@ -1406,7 +1414,10 @@ namespace Risebird.Web.Controllers
             _zoommetingobject.settings.join_before_host = true;
             _zoommetingobject.settings.jbh_time = 5;
             _zoommetingobject.settings.auto_recording = "cloud";
-            string token = ZoomToken();
+            //string token = ZoomToken();
+
+            //get oauth token
+            string token = _zoomHelper.GenerateAccessToken().Result;
 
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
 
@@ -1422,26 +1433,26 @@ namespace Risebird.Web.Controllers
             return convertedResponse;
         }
 
-        [HttpGet]
-        public string ZoomToken()
-        {
-            DateTime Expiry = DateTime.UtcNow.AddDays(1);
-            string ApiKey = _configuration["ZoomAppDetails:apiKey"];
-            string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
-            int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var header = new JwtHeader(credentials);
-            var payload = new JwtPayload
-            {
-                { "iss", ApiKey},
-                { "exp", ts },
-            };
-            var secToken = new JwtSecurityToken(header, payload);
-            var handler = new JwtSecurityTokenHandler();
-            var tokenString = handler.WriteToken(secToken);
-            return tokenString;
-        }
+        //[HttpGet]
+        //public string ZoomToken()
+        //{
+        //    DateTime Expiry = DateTime.UtcNow.AddDays(1);
+        //    string ApiKey = _configuration["ZoomAppDetails:apiKey"];
+        //    string ApiSecret = _configuration["ZoomAppDetails:secretKey"];
+        //    int ts = (int)(Expiry - new DateTime(1970, 1, 1)).TotalSeconds;
+        //    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ApiSecret));
+        //    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        //    var header = new JwtHeader(credentials);
+        //    var payload = new JwtPayload
+        //    {
+        //        { "iss", ApiKey},
+        //        { "exp", ts },
+        //    };
+        //    var secToken = new JwtSecurityToken(header, payload);
+        //    var handler = new JwtSecurityTokenHandler();
+        //    var tokenString = handler.WriteToken(secToken);
+        //    return tokenString;
+        //}
 
         [HttpGet]
         public FileContentResult InstaInterviewsExporttoExcel(int id)

@@ -5985,7 +5985,9 @@ namespace Risebird.Web.Controllers
         #endregion
         public string DeleteMeetingLink(string meetingid)
         {
-            string token = _zoomHelper.ZoomToken();//ZoomToken();
+            //string token = _zoomHelper.ZoomToken();//ZoomToken();
+            //get oauth token
+            string token = _zoomHelper.GenerateAccessToken().Result;
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid));
             var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid), Method.Delete);
             request.AddHeader("content-type", "application/json");
@@ -7053,7 +7055,11 @@ namespace Risebird.Web.Controllers
             _zoommetingobject.settings.join_before_host = true;
             _zoommetingobject.settings.jbh_time = 5;
             _zoommetingobject.settings.auto_recording = "cloud";
-            string token = _zoomHelper.ZoomToken();//ZoomToken();
+
+            //string token = _zoomHelper.ZoomToken();//ZoomToken();
+
+            //get oauth token
+            string token = _zoomHelper.GenerateAccessToken().Result;
 
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
 
