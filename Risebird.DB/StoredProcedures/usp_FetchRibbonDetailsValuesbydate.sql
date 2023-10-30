@@ -223,7 +223,7 @@ begin
   begin  
    if (@Profile = 'SeniorHR' or @Profile = 'HR')  
    begin  
-    select distinct ccfr.Comment,im.*, cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId ,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy  
+    select distinct ccfr.Comment,ccfr.Interviewid,im.*, cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId ,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy  
      from  ClientCommentsForReport ccfr   
      join InterviewMeetings im on ccfr.InterviewId=im.id  
      join InterviewComments ic on ic.InterviewId=im.id   
@@ -235,7 +235,7 @@ begin
    end  
    else  
    begin  
-    select distinct ccfr.Comment,im.*, cl.Name,ul.EmailId as ChannelOwner, IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy  
+    select distinct ccfr.Comment,ccfr.Interviewid,im.*, cl.Name,ul.EmailId as ChannelOwner, IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy  
     ,ic.InterviewStatus,tq.Redflags  
     from  ClientCommentsForReport ccfr   
     join InterviewMeetings im on ccfr.InterviewId=im.id  
@@ -248,7 +248,7 @@ begin
   end  
   else  
   begin  
-   select distinct ccfr.Comment,im.*,cl.Name,ulc.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags  from  ClientCommentsForReport ccfr   
+   select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ulc.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags  from  ClientCommentsForReport ccfr   
    join InterviewMeetings im on ccfr.InterviewId=im.id  
    join InterviewComments ic on ic.InterviewId=im.id   
    left join Trans_QCFormReport tq on tq.Interviewid=im.id  
@@ -258,7 +258,7 @@ begin
    join UserList ulc on ulc.id=  irf.RisebirdHr  
    where ccfr.Rating<=3 and ul.EmailId=@emailID 
    union   
-   select distinct ccfr.Comment,im.*,cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags from  ClientCommentsForReport ccfr   
+   select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags from  ClientCommentsForReport ccfr   
     join InterviewMeetings im on ccfr.InterviewId=im.id  
     join InterviewComments ic on ic.InterviewId=im.id   
        left join Trans_QCFormReport tq on tq.Interviewid=im.id  
