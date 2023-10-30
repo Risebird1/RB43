@@ -14,15 +14,17 @@ AS
 BEGIN  
 if(@type='Pending')  
 BEGIN  
-Select Cl.id,Cl.Name as ClientName,SUM(mp.Points) as Point,cl.BillingType,Count(mp.Points) as TotalInterviews From MoneyProtectionWallet mp join Client cl on cl.id=mp.Clientid  
+Select Cl.id,Cl.Name as ClientName,SUM(mp.Points) as Point,IRF.Heuristicsscore,Count(mp.Points) as TotalInterviews From MoneyProtectionWallet mp join Client cl on cl.id=mp.Clientid
+left join InterviewMeetings im on im.id=mp.Interviewid left join IRF on IRF.IRFId=im.IRFId
 where ISNULL(mp.IsConverted,0)=0 and mp.Points>0 
-group by Cl.id,Cl.Name,cl.BillingType  
+group by Cl.id,Cl.Name,IRF.Heuristicsscore
 END  
 ELSE  
 BEGIN  
-Select Cl.id,Cl.Name as ClientName,SUM(mp.Points) as Point,cl.BillingType,Count(mp.Points) as TotalInterviews From MoneyProtectionWallet mp join Client cl on cl.id=mp.Clientid  
+Select Cl.id,Cl.Name as ClientName,SUM(mp.Points) as Point,IRF.Heuristicsscore,Count(mp.Points) as TotalInterviews From MoneyProtectionWallet mp join Client cl on cl.id=mp.Clientid  
+left join InterviewMeetings im on im.id=mp.Interviewid left join IRF on IRF.IRFId=im.IRFId
 where ISNULL(mp.IsConverted,0)=1 and mp.Points>0 
-group by Cl.id,Cl.Name,cl.BillingType  
+group by Cl.id,Cl.Name,IRF.Heuristicsscore  
 END  
 End  
 GO
