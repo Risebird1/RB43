@@ -184,10 +184,13 @@
                                                                 <th id="getstatus_6">Joinability</th>
                                                                 <th id="getstatus_7">Selectability</th>
                                                             }
-                                                            <th width="25%"> Actions </th>
+                                                            <th>Communications</th>
+                                                            <th> Actions </th>
+                                                            @if (ViewBag.profile != "Client")
+																	{
                                                             <th style="text-align:center">Schedule Call</th>
                                                             <th style="text-align:center">Call</th>
-                                                           
+                                                                    }
 
                                                         </tr>
                                                     </thead>
@@ -209,12 +212,15 @@
                                                                 <th>Joinability</th>
                                                                 <th>Selectability </th>
                                                             }
-                                                            <th style="width:25%"> Actions </th>
+                                                            <th>Communications</th>
+                                                            <th> Actions </th>
+                                                            @if (ViewBag.profile != "Client")
+																	{
                                                             <th style="text-align:center">Schedule Call</th>
 
                                                             <th style="text-align:center">Call</th>
                                                           
-
+                                                                    }
                                                         </tr>
                                                     </tfoot>
                                                     <tbody id="tblbodyCandidate">
@@ -315,13 +321,44 @@
                                                                 }
 
 
+                                                                <td>
+                                                                    @if (item.MailCount != 0)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <span class="icon-field"> <img class="icon ml" src="~/img/email.png" />    Emails :</span>    <span class="icon-field">
+                                                                                <a class="icon-link" href="#!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email})">
+                                                                                    @item.MailCount
+                                                                                </a>
+                                                                            </span>
+                                                                        </div>
+                                                                    }
+                                                                    @if (item.CallsCount != 0)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <span class="icon-field">
+                                                                                <img class="icon vc" src="~/img/voice-call.png" />  Voice Calls :
+                                                                            </span>   <span class="icon-field">
+                                                                                <a class="icon-link" href="#!!_@item.imid" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                    @item.CallsCount
+                                                                                </a>
+                                                                            </span>
+                                                                        </div>
+                                                                    }
 
+                                                                    @if (item.WhatsappCount != 0)
+                                                                    {
+                                                                        <div class="row">
+                                                                            <span class="icon-field">
+                                                                                <img class="icon wp" src="~/img/whatsapp.png" />   Whatsapp Messages :
+                                                                            </span>  <span class="icon-field">
+                                                                                <a class="icon-link" href="#!!!_@item.imid" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                    @item.WhatsappCount
+                                                                                </a>
+                                                                            </span>
+                                                                        </div>
+                                                                    }
 
-                                                                @*<td>@item.Phone</td>*@
-
-
-
-
+                                                                </td>
 
 
                                                                 <td class="text-left action">
@@ -407,12 +444,11 @@
                                                                         </button>
 
                                                                     }
-                                                                    @if (ViewBag.AccessType != "Public")
-                                                                    {
+                                                                    
                                                                         <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer;">
                                                                             <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                         </a>
-                                                                    }
+                                                                    
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
                                                                     {
                                                                         <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -442,7 +478,7 @@
 
 
 
-                 @*                                                   @if (ViewBag.AccessType != null && ViewBag.AccessType == "Public")
+                                                                    @*                                                   @if (ViewBag.AccessType != null && ViewBag.AccessType == "Public")
                                                                 {
 
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
@@ -454,24 +490,26 @@
 
 
                                                                 </td>
-                                                                <td class="text-center">
-                                                                    @if (item.Phone != null && item.Phone != string.Empty)
-                                                                    {
-                                                                        <span id="getstatus_11" class="call" data-toggle="tooltip" data-placement="top" onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>
-                                                                    }
+                                                                @if (ViewBag.profile != "Client")
+                                                                {
+                                                                    <td class="text-center">
+                                                                        @if (item.Phone != null && item.Phone != string.Empty)
+                                                                        {
+                                                                            <span id="getstatus_11" class="call" data-toggle="tooltip" data-placement="top" onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>
+                                                                        }
 
-                                                                </td>
+                                                                    </td>
 
-                                                                <td>
-                                                                    @if (item.Phone != null && item.Phone != string.Empty)
-                                                                    {
-                                                                        <span id="getstatus_12" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick(@jsonObject,1)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
-                                                                    }
+                                                                    <td>
+                                                                        @if (item.Phone != null && item.Phone != string.Empty)
+                                                                        {
+                                                                            <span id="getstatus_12" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick(@jsonObject,1)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
+                                                                        }
 
-                                                                </td>
+                                                                    </td>
+                                                                }
 
-
-                                                                <td>
+                                                              @* <td>
                                                                     @if (item.MailCount != 0)
                                                                     {
                                                                         <div class="row">
@@ -508,7 +546,7 @@
                                                                         </div>
                                                                     }
 
-                                                                </td>
+                                                                </td>*@
 
 
                                                             </tr>
@@ -1079,6 +1117,14 @@
     </div>
 </div>
 
+
+<div id="modal_recipientActivity_placeholder"></div>
+
+<div id="modal_clientComment_placeholder"></div>
+
+<div id="modal_candidateCommunicationDetails_placeholder"></div>
+<script src="~/js/ModalFormServerValidation.js"></script>
+
 <script>
     var spanImport = document.getElementById("importResultPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -1440,7 +1486,7 @@
             searchResult();
         });
 
-        ModalButtonClick(true);
+    //    ModalButtonClick(true);
 
     });
 

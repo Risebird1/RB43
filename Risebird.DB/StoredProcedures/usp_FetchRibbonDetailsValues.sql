@@ -571,8 +571,11 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct ccfr.Comment,im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId 
-				 from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id
+				select distinct ccfr.Comment,im.*, cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId ,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy
+				 from  ClientCommentsForReport ccfr 
+				 join InterviewMeetings im on ccfr.InterviewId=im.id
+				 join InterviewComments ic on ic.InterviewId=im.id 
+			    left join Trans_QCFormReport tq on tq.Interviewid=im.id
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
 				join UserList ul on ul.id=  irf.RisebirdHr 
@@ -580,17 +583,23 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 			end
 			else
 			begin
-				select distinct ccfr.Comment,im.*, IRF.id as irfIntId 
+				select distinct ccfr.Comment,im.*, cl.Name,ul.EmailId as ChannelOwner, IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy
+				,ic.InterviewStatus,tq.Redflags
 				from  ClientCommentsForReport ccfr 
 				join InterviewMeetings im on ccfr.InterviewId=im.id
-				join IRF on im.IRFId=irf.IRFId  
+				join InterviewComments ic on ic.InterviewId=im.id 
+			    left join Trans_QCFormReport tq on tq.Interviewid=im.id 
+				join IRF on im.IRFId=irf.IRFId  join Client cl on irf.ClientId=cl.id 
+				join UserList ul on ul.id=  irf.RisebirdHr 
 				where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3
 			end
 		end
 		else
 		begin
-			select distinct ccfr.Comment,im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId  from  ClientCommentsForReport ccfr 
+			select distinct ccfr.Comment,im.*,cl.Name,ulc.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags  from  ClientCommentsForReport ccfr 
 			join InterviewMeetings im on ccfr.InterviewId=im.id
+			join InterviewComments ic on ic.InterviewId=im.id 
+			left join Trans_QCFormReport tq on tq.Interviewid=im.id
 			join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId
 			join Userlist ul on ul.id=HR.UserId 
@@ -598,11 +607,12 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 
 			where ccfr.Rating<=3 and ul.EmailId=@emailID and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3
 			union 
-			select distinct ccfr.Comment,im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId  from  ClientCommentsForReport ccfr 
+			select distinct ccfr.Comment,im.*,cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags from  ClientCommentsForReport ccfr 
 				join InterviewMeetings im on ccfr.InterviewId=im.id
+				join InterviewComments ic on ic.InterviewId=im.id 
+			    left join Trans_QCFormReport tq on tq.Interviewid=im.id
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join Userlist ul on ul.id=irf.RisebirdHr 
-			join UserList ulc on ulc.id=  irf.RisebirdHr
 			where ccfr.Rating<=3 and ul.EmailId=@emailID and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3
 		end
 	end

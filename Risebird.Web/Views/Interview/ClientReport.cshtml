@@ -99,10 +99,17 @@
                     </div>
 
                     <div class="pull-right">
-                        @if (!Model.ReportAccepted && ViewBag.profile == "Client")
+                        @if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
                         {
                             <div class="rate-interview">
                                 <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
+                                <button onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
+                            </div>
+                        }
+                        else if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 2)
+                        {
+                            <div class="rate-interview">
+                                <h1>Please watch 15 minutes of interview and rate it :</h1>
                                 <button onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
                             </div>
                         }
@@ -630,7 +637,6 @@
                 GetMeetingAudioText('@Model.InterviewId', '@Model.AudioTranscriptFileLink');
             });
 
-            openSecureReportNotificationModel();
         </script>
     }
 
@@ -818,9 +824,11 @@
                 data: { 'id': interviewid },
                 type: "GET",
                 success: function (data) {
-                    openClientInterviewRating();
-                    $('#divClientInterviewRating').html('');
-                    $('#divClientInterviewRating').html(data);
+                    if (document.getElementById("ClientInterviewRatingModel").style.display != "block") {
+                        openClientInterviewRating();
+                        $('#divClientInterviewRating').html('');
+                        $('#divClientInterviewRating').html(data);
+                    }
                 }
             });
         }
@@ -829,10 +837,8 @@
             modal.style.display = "none";
         }
         function openClientInterviewRating() {
-            if (document.getElementById("ClientInterviewRatingModel").style.display != "block") {
-                var modal = document.getElementById("ClientInterviewRatingModel");
-                modal.style.display = "block";
-            }
+            var modal = document.getElementById("ClientInterviewRatingModel");
+            modal.style.display = "block";
         }
     </script>
     @if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
@@ -850,5 +856,11 @@
             }
             video.currentTime = startTime;
             checkTime();
+        </script>
+    }
+    @if ((ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink)) && (Model.ReportAccepted || Model.Reportsnippet == 0))
+    {
+        <script>
+            openSecureReportNotificationModel();
         </script>
     }
