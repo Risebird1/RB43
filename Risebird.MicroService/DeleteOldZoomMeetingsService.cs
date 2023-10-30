@@ -37,7 +37,10 @@ namespace Risebird.MicroService
 
                 //get jwt authentication token 
 
-                string token = _zoomHelper.ZoomToken();
+                //string token = _zoomHelper.ZoomToken();
+
+                //get oauth token
+                string token = await _zoomHelper.GenerateAccessToken();
 
                 // delete zoom meeting and its recording from Zoom
                 Parallel.ForEach(meetingsToBeDeleted, async meeting =>
