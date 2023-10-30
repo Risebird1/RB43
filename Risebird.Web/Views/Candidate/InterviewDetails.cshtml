@@ -133,7 +133,7 @@
                                     <b>Scheduled Interview</b>
                                     <br />
                                     <b style="color:grey;font-weight:normal;font-size:16px;"> Interview Time:</b>  @item.interviewDate
-                                    <p class="meeting-link" onclick="captureclick('ZoomMeeting','JoinMeeting')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span>Meeting Link</span></a></p>
+                                    <p class="meeting-link" onclick="captureclick('ZoomMeeting','JoinMeeting','@item.Interviewid')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span>Meeting Link</span></a></p>
                                     <p>
                                         <div class="interview">
                                             <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes')">
@@ -390,7 +390,7 @@
 </script>
 <script>
     var actionclick = 1;
-    function captureclick(type, buttonaction) {
+    function captureclick(type, buttonaction,interviewid) {
         var currenturl = window.location.href;
         if (actionclick == 1) {
             actionclick = 0;
@@ -401,7 +401,8 @@
                 data: {
                     'type': type,
                     'currenturl': currenturl,
-                    'buttonaction': buttonaction
+                    'buttonaction': buttonaction,
+                    'interviewid': interviewid
                 },
                 success: function (result) {
                     actionclick = 1;
