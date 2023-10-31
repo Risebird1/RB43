@@ -32,7 +32,7 @@
         <div class="canvas_div_pdf">
             <div class="report-full-wrap">
                 <div style="margin:10px 0px">
-                    <div class="accordion" id="accordion2" style="position:relative;width:100%;float:left;  margin:10px 0px 10px 0px;">
+                    <div class="accordion" id="accordion2" style="position:relative;width:100%;float:left;">
                         <div class="">
                             <div class="w-auto">
                                 <div class="form-group">
@@ -518,25 +518,24 @@
 
                     @if (ViewBag.actionType == 2)
                     {
-                        <div class="accordion" id="accordion2" style="position:relative;width:100%;float:left;  margin:10px 0px 10px 0px;">
+                        <div class="accordion" id="accordion2" style="position:relative;width:100%;float:left;">
                             <div class="">
                                 <div class="w-auto">
                                     <div class="form-group">
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
-                                                <a class="accordion-toggle">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#inaccurate'>
                                                     @Html.LabelFor(model => model.Inaccuratedecisionmaking, htmlAttributes: new { @class = "label-name" })
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="w-auto">
                                     <div class="form-group">
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
-                                                <a class="accordion-toggle">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#question'>
                                                     @Html.LabelFor(model => model.QuestionsRelevance, htmlAttributes: new { @class = "label-name" })
                                                 </a>
                                             </div>
@@ -547,19 +546,18 @@
                                     <div class="form-group">
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
-                                                <a class="accordion-toggle">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#score'>
                                                     @Html.LabelFor(model => model.ScoreRubricIgnorance, htmlAttributes: new { @class = "label-name" })
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="w-auto">
                                     <div class="form-group">
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
-                                                <a class="accordion-toggle">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#feedback'>
                                                     @Html.LabelFor(model => model.PoorFeedbackComments, htmlAttributes: new { @class = "label-name" })
                                                 </a>
                                             </div>
@@ -570,18 +568,7 @@
                                     <div class="form-group">
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
-                                                <a class="accordion-toggle">
-                                                    @Html.LabelFor(model => model.LimitedHandoncoding, htmlAttributes: new { @class = "label-name" })
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="w-auto">
-                                    <div class="form-group">
-                                        <div class="accordion-group">
-                                            <div class="accordion-heading">
-                                                <a class="accordion-toggle">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#status'>
                                                     @Html.LabelFor(model => model.WrongStatusUpdates, htmlAttributes: new { @class = "label-name" })
                                                 </a>
                                             </div>
@@ -592,7 +579,7 @@
                                     <div class="form-group">
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
-                                                <a class="accordion-toggle">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#proctoring'>
                                                     @Html.LabelFor(model => model.ProctoringIgnorance, htmlAttributes: new { @class = "label-name" })
                                                 </a>
                                             </div>
@@ -860,40 +847,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class='page' id='coding'>
-                                        <div class='page__header'>
-                                            <div class='page__title'>
-                                                Limited Handon Coding / Practical Scenario
-                                            </div>
-                                            <div class='page__close'>
-                                                <i style="font-size: 20px;" class="fa fa-close"></i>
-                                            </div>
-                                        </div>
-                                        <div class='page__body'>
-                                            <div class="accordion-body">
-                                                <div class="accordion-inner">
-                                                    @Html.HiddenFor(m=>m.LimitedHandoncoding)
-                                                    <ul class="ks-cboxtags">
-                                                        <li>
-                                                            @if (Model.LimitedHandoncoding.Split(",").Contains("wasting"))
-                                                            {
-                                                                <input type="checkbox" id="checkboxTwentyNine" name="LimitedHandoncoding" checked onclick="ChangeCheckBox('LimitedHandoncoding')" value="Not Check candidate competency" />
-
-                                                                <label for="checkboxTwentyNine">Not Check candidate competency</label>
-                                                            }
-                                                            else
-                                                            {
-                                                                <input type="checkbox" id="checkboxTwentyNine" name="LimitedHandoncoding" onclick="ChangeCheckBox('LimitedHandoncoding')" value="Not Check candidate competency" />
-
-                                                                <label for="checkboxTwentyNine">Not Check candidate competency</label>
-                                                            }
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <div class='page' id='status'>
                                         <div class='page__header'>
                                             <div class='page__title'>
@@ -934,9 +887,8 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class='page' id='proctoring'>
-                                        <div class='page__header'>
+                                        <div class='page__header' style="padding:0.7rem 5vw">
                                             <div class='page__title'>
                                                 Proctoring Ignorance
                                             </div>
@@ -945,7 +897,7 @@
                                             </div>
                                         </div>
                                         <div class='page__body'>
-                                            <div class="accordion-body">
+                                        <div class="accordion-body" style="padding-top:0px;padding-bottom:0px;">
                                                 <div class="accordion-inner">
                                                     @Html.HiddenFor(m=>m.ProctoringIgnorance)
                                                     <ul class="ks-cboxtags">
@@ -984,11 +936,11 @@
                                                         <li>
                                                             @if (Model.ProctoringIgnorance.Split(",").Contains("allowing candidates to take interview from mobile environment"))
                                                             {
-                                                                <input type="checkbox" id="checkboxFortyOne" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <label for="checkboxFortyOne">allowing candidates to take interview from mobile <br />&nbsp;/ inappropriate environment</label>
+                                                                <input type="checkbox" id="checkboxFortyOne" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <label for="checkboxFortyOne">allowing candidates to take interview from mobile&nbsp;/ inappropriate environment</label>
                                                             }
                                                             else
                                                             {
-                                                                <input type="checkbox" id="checkboxFortyOne" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <label for="checkboxFortyOne">allowing candidates to take interview from mobile<br />&nbsp; / inappropriate environment</label>
+                                                                <input type="checkbox" id="checkboxFortyOne" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <label for="checkboxFortyOne">allowing candidates to take interview from mobile&nbsp; / inappropriate environment</label>
                                                             }
                                                         </li>
                                                     </ul>
