@@ -4286,8 +4286,8 @@ namespace Risebird.Web.Controllers
                 emailId = emailId.Replace("\"", "");
                 if (model != null && Request.Form.Files.Count() > 0)
                 {
-                    model.IRFId = Convert.ToInt32(Request.Form["IRFId"].ToString());
-                    model.IRFName = Request.Form["IRFName"].ToString();
+                   // model.IRFId = Convert.ToInt32(Request.Form["IRFId"].ToString());
+                   // model.IRFName = Request.Form["IRFName"].ToString();
                     var addedByUserId = _irfService.GetUserId(emailId);
                     if (addedByUserId > 0)
                     {
@@ -4332,6 +4332,7 @@ namespace Risebird.Web.Controllers
                         if (result)
                         {
                             return Json("Resume(s) uploaded Successfully!");
+
                         }
                         else
                         {
