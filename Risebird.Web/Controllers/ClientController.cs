@@ -4139,6 +4139,15 @@ namespace Risebird.Web.Controllers
                     }
                     var model = await _clientService.GetRecruiterReportByClient(emailid, st, se);
                     model = model.Where(x => x.ClientHrContact != null && x.ClientHrContact != "").ToList();
+                    model = model.GroupBy(l => l.ClientHrContact).Select(cl => new IRF
+                    {
+                        id = cl.FirstOrDefault().id,
+                        ClientHrContact = cl.FirstOrDefault().ClientHrContact,
+                        IRFId = cl.Count().ToString(),
+                        ScheduledMeetings = cl.Sum(c => c.ScheduledMeetings),
+                        SelectedMeetings = cl.Sum(c => c.SelectedMeetings),
+                        RejectedMeetings = cl.Sum(c => c.RejectedMeetings),
+                    }).ToList();
                     if (TempData["RecruiterSuccessErrorMessage"] != null)
                     {
                         ViewBag.Message = TempData["RecruiterSuccessErrorMessage"].ToString();

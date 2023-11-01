@@ -360,7 +360,10 @@ namespace Risebird.Business
 
                     if (upcomingMeetings != null && upcomingMeetings.Count() > 0)
                     {
-                        var zoomToken = _zoomHelper.ZoomToken();
+                        //var zoomToken = _zoomHelper.ZoomToken();
+
+                        //get oauth token
+                        string zoomToken = await _zoomHelper.GenerateAccessToken();
                         foreach (var meeting in upcomingMeetings)
                         {
                             var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId, zoomToken);
@@ -494,7 +497,10 @@ namespace Risebird.Business
 
                     if (upcomingMeetings != null && upcomingMeetings.Count() > 0)
                     {
-                        var zoomToken = _zoomHelper.ZoomToken();
+                        //var zoomToken = _zoomHelper.ZoomToken();
+
+                        //get oauth token
+                        string zoomToken = await _zoomHelper.GenerateAccessToken();
                         foreach (var meeting in upcomingMeetings)
                         {
                             var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId, zoomToken);
@@ -584,7 +590,11 @@ namespace Risebird.Business
                 var deletedZoomMeetingList = new List<MeetingVM>();
                 if (upcomingMeetings != null && upcomingMeetings.Count() > 0)
                 {
-                    var zoomToken = _zoomHelper.ZoomToken();
+                    //var zoomToken = _zoomHelper.ZoomToken();
+                    //get oauth token
+
+                    string zoomToken = await _zoomHelper.GenerateAccessToken();
+
                     foreach (var meeting in upcomingMeetings)
                     {
                         var responseStatusCode = await _zoomHelper.CheckMeetingbyId(meeting.ZoomMeetingId, zoomToken);

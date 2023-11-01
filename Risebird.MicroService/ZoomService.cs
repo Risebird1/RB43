@@ -59,9 +59,11 @@ namespace Risebird.MicroService
                 var pendingZoomMeetings = pendingVideoMeetings.Except(pendingRBMeetings).ToList();
 
                 //get jwt authentication token 
-                //string token = ZoomToken();
-                string token = _zoomHelper.ZoomToken();
-                
+                //string token = _zoomHelper.ZoomToken();
+
+                //get oauth token
+                string token = await _zoomHelper.GenerateAccessToken();
+
                 Parallel.ForEach(pendingZoomMeetings, meeting =>
                 {
                     try
@@ -224,7 +226,6 @@ namespace Risebird.MicroService
                         return;
                     }
                 });
-
 
                 // RBMeet : fetch video link and dump in db
                 Parallel.ForEach(pendingRBMeetings, meeting =>
