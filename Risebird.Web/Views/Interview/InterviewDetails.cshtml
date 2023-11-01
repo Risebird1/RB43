@@ -1,0 +1,166 @@
+﻿
+@{
+    ViewData["Title"] = "Interviews Detail";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>InterviewDetails</title>
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
+    <script>
+        var Header = "<div id='myinterview_1'> Interview Details</div>";
+        $('#txtpageHeader').empty().html(Header);
+    </script>
+</head>
+<body>
+    
+    <div class="container">
+        <div class="col-md-12">
+            <div class="interviewWrapper">
+                <div class="card">
+                <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
+                        <span class="int-labelfield">Candidate Name:</span><span class="int-labelvalue" style="color: #c91919;font-weight:600;">Sathya Thendral</span>
+                </div>
+                   
+                    <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
+                    <span class="int-labelfield">JD Link:</span><span class="int-labelvalue">
+                       
+                    </span>
+                </div>
+                    
+                    <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
+                        <span class="int-labelfield">Tech Skill:</span><span class="int-labelvalue">
+
+                        </span>
+                    </div>
+                    <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
+                        <span class="int-labelfield">Audio Instruction:</span><span class="int-labelvalue">
+                            @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+                            {
+                            string audiofileName = string.Empty;
+                            audiofileName = Model.AudioComment.Split('/').Last();
+                            if (audiofileName?.Length >= 25)
+                            {
+                            audiofileName = audiofileName.Substring(0, 24) + "...";
+                            }
+                            <span> <a href='@Model.AudioComment' asp-append-version="true" download>@audiofileName</a></span>
+                            }
+                            else
+                            {
+                            @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
+                            {
+                            <span>
+                            <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")>Instructions</a>
+                            </span>
+                            }
+                            else
+                            {
+                            <span>
+                            No Instructions
+                            </span>
+                            }
+                            }*@
+                        </span>
+                    </div>
+
+                    <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
+                        <span class="int-labelfield">Client Instruction:</span><span class="int-labelvalue">
+
+                        </span>
+                    </div>
+</div>
+            </div>
+        </div>
+        </div>
+    <div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
+
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                        </span>
+                    </div>
+                    <h5 class="modal-title pull-left">Tech Skills <span class="popup-text" id="skill_id_pop"></span></h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span onclick="closeIRFSkillModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+                </button>
+
+                <input type="text" hidden id="txtinterviewid" />
+                <div class="modal-body">
+                    <div style="padding:10px" id="divcandidateskills">
+                    </div>
+                    <div>
+                        <div class="col-md-12 text-right">
+                            <div>
+                                <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeIRFSkillModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function openSkillpopup(id) {
+            $.ajax({
+                type: "POST",
+                url: "/IRF/FetchSkillDetails",
+                data: { id: id },
+                success: function (data) {
+                    var modal = document.getElementById("IRFSkillModel");
+                    var skill_id_pop = $("#skill_id_" + id).val();
+                    $("#skill_id_pop").text(skill_id_pop);
+                    modal.style.display = "block";
+                    bindSkillData(data);
+                }
+            });
+        }
+        function closeIRFSkillModel() {
+            var model = document.getElementById("IRFSkillModel");
+            model.style.display = "none";
+        }
+        function bindSkillData(data) {
+            var html = '';
+            html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+            html += '  <thead>';
+            html += '  <tr>';
+            html += '  <th width="20%" class="table_heading">Level<span class="red">*</span></th>';
+            html += '  <th width="40%" class="table_heading">Skill Name<span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Concepts <span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Natureofquestion <span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Timelimit <span class="red">*</span></th>';
+            html += '  </tr>';
+            html += '  </thead>';
+            html += '  <tbody>';
+            for (i = 0; i < data.length; i++) {
+                html += '   <tr>';
+                html += '  <td>' + data[i].levelName + '</td>';
+                html += '  <td>' + data[i].skillName + '</td>';
+                html += '  <td>' + data[i].weightage + '</td>';
+                html += '  <td>' + data[i].concepts + '</td>';
+                html += '  <td>' + data[i].natureofquestion + '</td>';
+                if (parseInt(data[i].timelimit) > 0) {
+                    html += '  <td>' + data[i].timelimit + '</td>';
+                } else {
+                    html += '<td></td>';
+                }
+                html += '  </tr>';
+            }
+            html += '</tbody>';
+            html += ' </table></div>';
+            $("#divcandidateskills").empty().html(html);
+        }
+    </script>
+</body>
+</html>

@@ -7385,6 +7385,22 @@ ul.ks-cboxtags {
     right: 26px;
     top: 9px;
 }
+.interviewWrapper {
+    margin: 30px auto;
+    position: relative;
+    padding: 0px;
+    width:700px;
+}
+.int-labelfield {
+    font-weight: bold;
+    font-size: 15px;
+    float: left;
+}
+.int-labelvalue {
+    float:left;
+    font-size: 15px;
+    padding: 0px 10px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

@@ -8083,5 +8083,15 @@ namespace Risebird.Web.Controllers
                 return Json("Success");
             }
         }
+        public  async Task<IActionResult> InterviewDetails(string meetingLineUpType = null)
+        {
+            meetingLineUpType = "Completed";
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+          //  emailid = emailid.Replace("\"", "");
+
+            var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, meetingLineUpType);
+
+            return View(myInterview);
+        }
     }
 }
