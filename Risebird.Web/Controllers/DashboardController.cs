@@ -1490,6 +1490,8 @@ namespace Risebird.Web.Controllers
                     email = email.Replace("\"", "");
                 }
                 var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCountbyHr(email, getDeletedZoomMeetingsCount);
+                var modelList = await _dashboardService.FetchParticipantwaitingDetails();
+                Ribbonmodel.CandidatewaitingCount = modelList.Where(x => x.PerformedOn != null).Count();
                 var myInterview = _meetingService.GetHRAssignedInterviews(email);
                 var WeekDate = DateTime.Now.AddDays(-7);
                 var interviewerids = myInterview.Where(x => x.interviewDate >= WeekDate).Select(x => x.id).Distinct().ToList();
@@ -1516,6 +1518,8 @@ namespace Risebird.Web.Controllers
                     Emailid = Emailid.Replace("\"", "");
                 }
                 var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid, getDeletedZoomMeetingsCount);
+                var modelList = await _dashboardService.FetchParticipantwaitingDetails();
+                Ribbonmodel.CandidatewaitingCount = modelList.Where(x => x.PerformedOn != null).Count();
                 return Json(Ribbonmodel);
             }
         }
@@ -1916,6 +1920,8 @@ namespace Risebird.Web.Controllers
                         model.NotUpdatedMeetingsObj = new NotUpdatedMeetings();
                         //model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
                         model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
+                        var modelList = await _dashboardService.FetchParticipantwaitingDetails();
+                        model.NotUpdatedMeetingsObj.CandidatewaitingCount = modelList.Where(x => x.PerformedOn != null).Count();
                         return View(model);
                     }
                     else
