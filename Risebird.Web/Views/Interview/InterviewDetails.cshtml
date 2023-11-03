@@ -7,6 +7,7 @@
 <!DOCTYPE html>
 
 <html>
+   
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>InterviewDetails</title>
@@ -16,30 +17,57 @@
         var Header = "<div id='myinterview_1'> Interview Details</div>";
         $('#txtpageHeader').empty().html(Header);
     </script>
+
+
 </head>
 <body>
+
     
+
+
     <div class="container">
         <div class="col-md-12">
             <div class="interviewWrapper">
+                <div class="col-md-6 pull-left">
                 <div class="card">
-                <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
-                        <span class="int-labelfield">Candidate Name:</span><span class="int-labelvalue" style="color: #c91919;font-weight:600;">Sathya Thendral</span>
-                </div>
-                   
-                    <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
-                    <span class="int-labelfield">JD Link:</span><span class="int-labelvalue">
-                       
-                    </span>
-                </div>
-                    
-                    <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
-                        <span class="int-labelfield">Tech Skill:</span><span class="int-labelvalue">
+                <fieldset class="question" >
+                    <label for="coupon_question">Candidate Details</label>
+                            <div class="round">  <input type="checkbox" class="coupon_question trigger" id="checkbox_one" name="question1" data-trigger="hidden_fields_one" />
+                               <label for="checkbox_one"></label>
+                            </div>
+                </fieldset>
 
-                        </span>
-                    </div>
-                    <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
-                        <span class="int-labelfield">Audio Instruction:</span><span class="int-labelvalue">
+                <fieldset class="answer hidden" id="hidden_fields_one">
+                            <div class="answer-label"><span class="heading">Candidate Name:</span><span>Santhyl serpa</span></div>
+                            <div class="answer-label"><span class="heading">Resume</span><span></span></div>
+                    
+                </fieldset>
+                </div>
+                <div class="card">
+
+                <fieldset class="question">
+                    <label for="coupon_question">Tech Skills</label>
+                            <div class="round"> <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
+                                 <label for="checkbox_two"></label>
+                                </div>
+                </fieldset>
+
+                <fieldset class="answer hidden" id="hidden_fields_two">
+                            <div class="answer-label"></div>
+                </fieldset>
+
+                </div>
+                    <div class="card">
+
+                        <fieldset class="question">
+                            <label for="coupon_question">Audio Instruction</label>
+                            <div class="round"> 
+                                <input type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
+                                <label for="checkbox_three"></label>
+                                </div>
+                        </fieldset>
+
+                        <fieldset class="answer hidden" id="hidden_fields_three">
                             @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                             {
                             string audiofileName = string.Empty;
@@ -65,15 +93,29 @@
                             </span>
                             }
                             }*@
-                        </span>
-                    </div>
+                        </fieldset>
 
-                    <div class="w-full" style="float:left;padding:5px 20px;line-height:34px;">
-                        <span class="int-labelfield">Client Instruction:</span><span class="int-labelvalue">
-
-                        </span>
                     </div>
-</div>
+                </div>
+
+                <div class="col-md-6 pull-left">
+                    <div class="card">
+                        <fieldset class="question">
+                            <label for="coupon_question">Client Instruction</label>
+                            <div class="round">  <input type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
+                                <label for="checkbox_five"></label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="answer hidden" id="hidden_fields_five">
+                            <label for="coupon_field">Your coupon:</label>
+                            <input type="text" name="hidden" id="hidden_five" />
+                        </fieldset>
+                    </div>
+                </div>
+
+
+
             </div>
         </div>
         </div>
@@ -161,6 +203,64 @@
             html += ' </table></div>';
             $("#divcandidateskills").empty().html(html);
         }
+    </script>
+    <script>
+        /**
+        *	Multiple Hidden Areas in a Form.
+        *
+        *	Instructions:
+        *
+        * 1. Add the 'trigger' class to checkboxes that will act as a trigger to show/hide area.
+        * 2. Create a wrapper <div> around the field(s) you want to hide and give this an ID (whatever you want) and the class 'hidden'.
+        * 3. Moving back to the checkbox, add a data-trigger attribute and set its value to the ID of the wrapper div that contains the fields you want to hide.
+        * e.g. <input type="checkbox" name="checkbox" id="checkbox" class="trigger" data-trigger="my_hidden_fields">
+        *      <div id="my_hidden_fields" class="hidden">
+        *        Name: <input type="text" name="name">
+        *      </div>
+        *
+        * The code below will automatically setup event listeners for any checkboxes with the 'trigger' class.
+        * All elements with the 'hidden' class will be hidden when the page loads.
+        * When a checkbox is checked the code will take the value from the data-trigger attribute on the
+        * checkbox and use this to select the wrapper <div> that needs to be shown/hidden.
+        */
+
+
+        $(function () {
+
+            // Hide the hidden sections.
+            // Use JS to do this in case the user doesn't have JS
+            // enabled.
+            $('.hidden').hide();
+
+            // Setup an event listener for each trigger checkbox that
+            // fires when the state of the checkbox changes.
+            $('.trigger').change(function () {
+                // Get the ID of the hidden area from the data-trigger
+                // attribute.
+                var hiddenId = $(this).attr("data-trigger");
+
+                // Check to see if the checkbox is checked.
+                // If it is, show the fields and populate the input.
+                // If not, hide the fields.
+                if ($(this).is(':checked')) {
+                    // Show the hidden fields.
+                    $("#" + hiddenId).show();
+                } else {
+                    // Make sure that the hidden fields are indeed
+                    // hidden.
+                    $("#" + hiddenId).hide();
+
+                    // You may also want to clear the value of the
+                    // hidden fields here. Just in case somebody
+                    // shows the fields, enters data to them and then
+                    // unticks the checkbox.
+                    //
+                    // This would do the job:
+                    //
+                    // $("#hidden_field").val("");
+                }
+            });
+        });
     </script>
 </body>
 </html>
