@@ -5818,7 +5818,7 @@ input[type="date"].form-control {
 
 .interviewresponsebtn {
     text-decoration: none;
-    padding: 10px 20px;
+    padding:7px 20px;
     position: relative;
     clear: both;
     border-radius: 3px;
@@ -5827,7 +5827,18 @@ input[type="date"].form-control {
     cursor: pointer;
 }
 
-
+.greenbtn {
+    background:  #25a125;
+}
+.greenbtn:hover {
+     background: #208520;
+}
+.redbtn {
+    background: #cf3f35;
+}
+    .redbtn:hover {
+        background: #bb3b33;
+    }
 .tablinks.active {
     /*background-color: #a7e8ba;*/
     background-color: #e5e7ea !important;
@@ -5852,16 +5863,31 @@ input[type="date"].form-control {
     box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.2);
     margin: 10px;
 }
-
-.candidate-tab .tabcontent p {
-    font-size: 15px;
+.candidate-tab .tab-block .card-block {
+    height: auto !important;
+    width: 100% !important;
+    float: none !important;
+    padding: 18px 10px;
+    margin: 10px 10px 15px 10px;
 }
+    .candidate-tab .tabcontent p {
+        font-size: 15px;
+    }
 
 .candidate-tab {
-    width: auto;
+   /* width: auto;*/
+   width:100%;
     margin: 0px auto;
 }
-
+.zoom-icon {
+    width: 25px;
+    position: relative;
+    top: -2px;
+    left: -3px;
+}
+.content-wrappers .meeting-link .click_herebtn {
+    padding: 15px 20px;
+}
     .candidate-tab .card-block h1 {
         color: #305887;
         font-weight: bold;
@@ -5869,7 +5895,16 @@ input[type="date"].form-control {
         text-transform: uppercase;
         text-align: center;
     }
-
+    .candidate-tab .tab-block .card-block h1 {
+        color: #305887;
+        font-weight: bold;
+        font-size: 13px;
+        text-transform: uppercase;
+        text-align: left;
+        padding-left: 45px;
+        padding-top: 7px;
+        padding-bottom: 0px;
+    }
 .meeting-link {
     margin: 20px 0px;
     color: #3094e5;
@@ -5887,7 +5922,7 @@ input[type="date"].form-control {
 }
 
 .candidate-tab b {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     color: #204065;
 }
@@ -5903,7 +5938,7 @@ input[type="date"].form-control {
     width: 200px;
     transition: all 0.5s;
     cursor: pointer;
-    margin: 5px;
+    margin: 10px 5px 0px 5px;
 }
 
     .click_herebtn span {
@@ -5923,7 +5958,8 @@ input[type="date"].form-control {
         }
 
     .click_herebtn:hover span {
-        padding-right: 25px;
+        padding-right: 20px;
+        color:#fff;
     }
 
         .click_herebtn:hover span:after {
@@ -5954,7 +5990,14 @@ input[type="date"].form-control {
     color: #FFf;
     text-align: center;
 }
-
+.candidate-tab .tab-block .step {
+  font-size:20px;
+    top: 50%;
+    left: 13%;
+    width: 30px;
+    border-radius: 120px 120px 120px 120px;
+    background-color: #204065;
+}
 .follow ul {
     margin: 0px;
     padding: 0px;
@@ -5975,10 +6018,17 @@ input[type="date"].form-control {
     max-width: 752px;
     margin: 0px auto;
 }
-#keycontainer {
-    float: left;
-    padding: 0px 10px;
+.content-wrappers {
+    max-width: 775px;
+    margin: 0px auto;
 }
+    .content-wrappers .tabcontent {
+        padding: 20px 0px;
+    }
+    #keycontainer {
+        float: left;
+        padding: 0px 10px;
+    }
 #keycontainer div {
     float: left;
     background-color: red;
@@ -8986,6 +9036,26 @@ ul.ks-cboxtags {
         width:100%;
         z-index:1000;
     }
+    .content-wrappers .meeting-link .click_herebtn {
+        padding: 10px 20px;
+        position: relative;
+        top: -2px;
+        font-size: 11px;
+    }
+    .candidate-tab .tab-block .step{
+        display:none;
+    }
+    .candidate-tab .tab-block .card-block {
+        width: 31.3% !important;
+        float: left !important;
+        margin: 0px 5px !important;
+        height: 65px !important;
+    }
+        .candidate-tab .tab-block .card-block h1 {
+            padding-left: 0px !important;
+            text-align: center;
+
+        }
 }
 
 
@@ -8995,12 +9065,19 @@ ul.ks-cboxtags {
             font-size: 13px !important;
             background: url(../../img/interview.svg) -20px 37px no-repeat !important;
         }
-
-        .public-url #candidateTable_length {
-            left: -22px;
-            position: relative;
+        .candidate-tab .tab-block .card-block {
+            width: 30.3% !important;
+            float: left !important;
+           
         }
-
+        
+            .public-url #candidateTable_length {
+                left: -22px;
+                position: relative;
+            }
+        .candidate-tab .tabcontent p{
+            font-size:14px;
+        }
         .public-url div.dataTables_wrapper div.dataTables_filter {
             text-align: right;
             position: absolute;
@@ -9256,10 +9333,7 @@ ul.ks-cboxtags {
             right: 95px;
         }
 
-        .candidate-tab .card-block {
-            height: 140px !important;
-        }
-
+   
             .candidate-tab .card-block h1 {
                 font-size: 11px !important;
             }
@@ -9311,6 +9385,12 @@ ul.ks-cboxtags {
         .page{
             top:0px;
             left:0px;
+        }
+        .content-wrappers .meeting-link .click_herebtn {
+            padding: 10px 20px;
+            position: relative;
+            top: 15px;
+            font-size: 13px;
         }
     }
 
