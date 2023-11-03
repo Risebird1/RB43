@@ -7766,7 +7766,7 @@ ul.ks-cboxtags {
         }
 
         .join-time {
-            width: 160px;
+            width: 150px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;

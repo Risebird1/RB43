@@ -1025,6 +1025,7 @@ textarea::-webkit-scrollbar-thumb {
     font-size: 11.8px;
 }
 
+
 .video-info span span {
     text-transform: capitalize;
 }
@@ -1491,10 +1492,9 @@ table {
 }
 
 .video-block .video-title {
-    margin-bottom: 5px;
+    margin-bottom:10px;
     min-height: 20px;
 }
-
 
 .video-block .main-title > h6 {
     margin: 0px 0 16px;
