@@ -103,14 +103,14 @@
                         {
                             <div class="rate-interview">
                                 <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
-                                <button onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
+                                <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate the Interview</button>
                             </div>
                         }
                         else if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 2)
                         {
                             <div class="rate-interview">
-                                <h1>Please watch 15 minutes of interview and rate it :</h1>
-                                <button onclick="ClientInterviewRating('@Model.InterviewId')"> Rate the Interview</button>
+                                <h1>Please rate this interview to Generated PDF and Shareable link: </h1>
+                                <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate the Interview</button>
                             </div>
                         }
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
@@ -818,10 +818,10 @@
         });
     </script>
     <script>
-        function ClientInterviewRating(interviewid) {
+        function ClientInterviewRating(interviewid, Reportsnippet) {
             $.ajax({
                 url: '/Interview/ClientInterviewReview',
-                data: { 'id': interviewid },
+                data: { 'id': interviewid, 'actionType': Reportsnippet},
                 type: "GET",
                 success: function (data) {
                     if (document.getElementById("ClientInterviewRatingModel").style.display != "block") {
