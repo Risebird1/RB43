@@ -15,7 +15,7 @@
 <style>
     body {
         font-size: 1.3vw !important;
-        background: url(../../img/interview.svg) -20px 5px no-repeat !important;
+       /* background: url(../../img/interview.svg) -20px 5px no-repeat !important;*/
     }
 
     @@media (max-width: 768px) {
@@ -68,16 +68,7 @@
     <div>
         <div class="content-wrappers">
             <div class="row">
-                <div class="text-center">
-                    @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("LogoSet")))
-                    {
-                        <img style="max-height:80px" class="img-responsive company-logo" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
-                    }
-                    else
-                    {
-                        <img style="max-height:80px" class="img-responsive company-logo" src="@HttpContextAccessor.HttpContext.Session.GetString("LogoSet")" />
-                    }
-                </div>
+              
                 <div class="col-md-12 col-xl-12 col-sm-12">
                     @if (Model.Timer > 0)
                     {
@@ -90,22 +81,38 @@
             </div>
             <div class="row">
                 <div class="candidate-tab">
-                    <div class="col-md-4 pull-left tab-block">
+                    <div class="col-md-3 pull-left tab-block">
+                          <div class="text-center">
+                    @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("LogoSet")))
+                    {
+                        <img style="max-height:80px" class="img-responsive company-logo" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
+                    }
+                    else
+                    {
+                        <img style="max-height:80px" class="img-responsive company-logo" src="@HttpContextAccessor.HttpContext.Session.GetString("LogoSet")" />
+                    }
+                </div>
                         <div class="tablinks card-block" onclick="openCity(event, 'Interviews')" id="defaultOpen">
                             <div class="step">1</div>
-                            @*<img src="~/img/int-img-2.png" /> *@ <h1>Interviews</h1>
+                            @*<img src="~/img/int-img-2.png" /> *@ <h1>Scheduled Interview</h1>
                         </div>
-                    <div class="tablinks card-block" onclick="openCity(event, 'Employer')">
+
+                        <div class="tablinks card-block" onclick="openCity(event, 'InterviewHistory')">
                         <div class="step">2</div>
+                       @* <img src="~/img/int-img-1.png" />*@<h1>Interview History</h1>
+                    </div>
+
+                    <div class="tablinks card-block" onclick="openCity(event, 'Employer')">
+                        <div class="step">3</div>
                        @* <img src="~/img/int-img-1.png" />*@<h1>Know Your Employer</h1>
                     </div>
                     
                     <div class="tablinks card-block" onclick="openCity(event, 'Conditions')">
-                        <div class="step">3</div>
+                        <div class="step">4</div>
                        @* <img src="~/img/int-img-3.png" />*@<h1>Do's / Dont's</h1>
                     </div>
                     </div>
-                   <div class="col-md-8 pull-left">
+                   <div class="col-md-9 pull-left">
                         <div id="Interviews" class="tabcontent">
                             @foreach (var item in Model.Meetings)
                             {
@@ -114,7 +121,7 @@
                                     <b>Scheduled Interview</b>
                                     <br />
                                     <p style="padding-top:10px;"><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b><span style="color:green; font-weight:600"> @item.interviewDate</span></p>
-                                    <p style="margin-bottom:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
+                                    <p style="margin-bottom:30px;margin-top:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
                                     <p>
                                         <div class="interview">
                                             <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes')">
@@ -135,15 +142,21 @@
                                 }
                                 else
                                 {
-                                    <b>Interview</b>
-                                    <br />
-                                    <p><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b> <span style="color:green; font-weight:600"> @item.interviewDate</span></p>
+                                   
 
                                     @if (Model.IsReschedule)
                                     {
                                         <p class="meeting-link">Reschedule Interview Link : <a class="click_herebtn" href="@Model.SchedulingLink" target="_blank"><span>Click Here</span></a></p>
                                     }
                                 }
+                            }
+                        </div>
+                          <div id="InterviewHistory" class="tabcontent">
+                                  @foreach (var item in Model.Meetings)
+                            {
+                                    <b>Interview</b>
+                                    <br />
+                                    <p><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b> <span style="color:green; font-weight:600"> @item.interviewDate</span></p>
                             }
                         </div>
                         <div id="Employer" class="tabcontent">
