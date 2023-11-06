@@ -120,8 +120,9 @@
                                 {
                                     @* <b>Scheduled Interview</b>
                             <br />*@
+                                    <p style="margin-bottom:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
+
                                     <p style="padding-top:10px;"><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b><span style="color:green; font-weight:600"> @item.interviewDate</span></p>
-                                    <p style="margin-bottom:30px;margin-top:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
                                     <p>
                                         <div class="interview">
                                             <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes')">
@@ -148,20 +149,25 @@
                             {
                                 @if (item.interviewDate < DateTime.Now || item.confirmationStatus != "Confirmed")
                                 {
-                                    <b>Interview</b>
-                                    <br />
-                                    <p><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b> <span style="color:green; font-weight:600"> @item.interviewDate</span></p>
+                                    <p> <b style="margin-bottom:10px;">Interview</b></p>
+                                    
+                                    <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Time:</b> <span style="color:green; font-weight:600"> @item.interviewDate</span></p>
                                     @if (Model.IsReschedule)
                                     {
                                         <p class="meeting-link">Reschedule Interview Link : <a class="click_herebtn" href="@Model.SchedulingLink" target="_blank"><span>Click Here</span></a></p>
                                     }
                                     @if (item.confirmationStatus != "Confirmed")
                                     {
-                                        <p>@item.confirmationStatus</p>
+                                        <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current cancelled" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>
                                     }
+                                    else if (item.confirmationStatus == "Confirmed")
+                                    {
+                                        <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current added" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>
+                                    }
+
                                     else
                                     {
-                                        <p>@item.MeetingStatus</p>
+                                        <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span>@item.MeetingStatus</span></p>
                                     }
                                 }
                             }
