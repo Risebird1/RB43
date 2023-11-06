@@ -83,13 +83,13 @@
                 <div class="candidate-tab">
                     <div class="col-md-3 pull-left tab-block">
                         <div class="text-center">
-                            @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("LogoSet")))
+                            @if (string.IsNullOrEmpty(Model.CandidateDetails.LogoUrl))
                             {
                                 <img style="max-height:80px" class="img-responsive company-logo" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
                             }
                             else
                             {
-                                <img style="max-height:80px" class="img-responsive company-logo" src="@HttpContextAccessor.HttpContext.Session.GetString("LogoSet")" />
+                                <img style="max-height:80px" class="img-responsive company-logo" src="@Model.CandidateDetails.LogoUrl" />
                             }
                         </div>
                         <div class="tablinks card-block" onclick="openCity(event, 'Interviews')" id="defaultOpen">
