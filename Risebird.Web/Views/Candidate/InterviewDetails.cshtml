@@ -66,7 +66,7 @@
         </div>
     </div>
     <div>
-        <div class="content-wrapper">
+        <div class="content-wrappers">
             <div class="row">
                 <div class="text-center">
                     @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("LogoSet")))
@@ -90,27 +90,70 @@
             </div>
             <div class="row">
                 <div class="candidate-tab">
+                    <div class="col-md-4 pull-left tab-block">
+                        <div class="tablinks card-block" onclick="openCity(event, 'Interviews')" id="defaultOpen">
+                            <div class="step">1</div>
+                            @*<img src="~/img/int-img-2.png" /> *@ <h1>Interviews</h1>
+                        </div>
                     <div class="tablinks card-block" onclick="openCity(event, 'Employer')">
-                        <div class="step">1</div>
-                        <img src="~/img/int-img-1.png" /><h1>Know Your Employer</h1>
-                    </div>
-                    <div class="tablinks card-block" onclick="openCity(event, 'Interviews')" id="defaultOpen">
                         <div class="step">2</div>
-                        <img src="~/img/int-img-2.png" />  <h1>Interviews</h1>
+                       @* <img src="~/img/int-img-1.png" />*@<h1>Know Your Employer</h1>
                     </div>
+                    
                     <div class="tablinks card-block" onclick="openCity(event, 'Conditions')">
                         <div class="step">3</div>
-                        <img src="~/img/int-img-3.png" /><h1>Do's / Dont's</h1>
+                       @* <img src="~/img/int-img-3.png" />*@<h1>Do's / Dont's</h1>
                     </div>
-                    <div>
+                    </div>
+                   <div class="col-md-8 pull-left">
+                        <div id="Interviews" class="tabcontent">
+                            @foreach (var item in Model.Meetings)
+                            {
+                                @if (item.interviewDate >= DateTime.Now && item.confirmationStatus == "Confirmed")
+                                {
+                                    <b>Scheduled Interview</b>
+                                    <br />
+                                    <p style="padding-top:10px;"><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b><span style="color:green; font-weight:600"> @item.interviewDate</span></p>
+                                    <p style="margin-bottom:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
+                                    <p>
+                                        <div class="interview">
+                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes')">
+                                                <div class="interviewresponsebtn greenbtn"  target="_blank" onclick="ComfirmMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Yes! I am Available</div>
+                                            </div>
+                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Reschedule')">
+                                                @*<a href="@Model.SchedulingLink" target="_blank"> <span class="interviewresponsebtn" style="background:#cd362b;">Reschedule</span></a>*@
+                                                <div class="interviewresponsebtn redbtn" onclick="ReschuduleMeeting(@item.Interviewid,'@Model.Uniqueid',@Model.CandidateDetails.IRFId,'@Model.CandidateDetails.EmailId')">Reschedule</div>
+                                            </div>
+                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'No')">
+                                                <div class="interviewresponsebtn redbtn"  onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">No! I am not Available</div>
+                                            </div>
+                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes')">
+                                                <div class="interviewresponsebtn redbtn" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId')">Need More Clarity</div>
+                                            </div>
+                                        </div>
+                                    </p>
+                                }
+                                else
+                                {
+                                    <b>Interview</b>
+                                    <br />
+                                    <p><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b> <span style="color:green; font-weight:600"> @item.interviewDate</span></p>
+
+                                    @if (Model.IsReschedule)
+                                    {
+                                        <p class="meeting-link">Reschedule Interview Link : <a class="click_herebtn" href="@Model.SchedulingLink" target="_blank"><span>Click Here</span></a></p>
+                                    }
+                                }
+                            }
+                        </div>
                         <div id="Employer" class="tabcontent">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p><b>Company Website :</b> <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></p>
-                                    <p><b>Job Description Link :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
-                                    <p><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
-                                    <p><b>HR Contact :&nbsp;</b>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<c onclick="captureclick('Call','Hr Contact')"><span onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')"><svg style="color: rgb(44, 139, 24);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone-plus-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM12.5 1a.5.5 0 0 1 .5.5V3h1.5a.5.5 0 0 1 0 1H13v1.5a.5.5 0 0 1-1 0V4h-1.5a.5.5 0 0 1 0-1H12V1.5a.5.5 0 0 1 .5-.5z" fill="#2c8b18"></path> </svg></span></c></p>
-                                    <p><b>Risebird Contact :&nbsp;</b>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<c onclick="captureclick('Call','Risebird Contact')"><span onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')"><svg style="color: rgb(44, 139, 24);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone-plus-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM12.5 1a.5.5 0 0 1 .5.5V3h1.5a.5.5 0 0 1 0 1H13v1.5a.5.5 0 0 1-1 0V4h-1.5a.5.5 0 0 1 0-1H12V1.5a.5.5 0 0 1 .5-.5z" fill="#2c8b18"></path> </svg></span></c></p>
+                                    <p style="line-height:32px;"><b>Company Website :</b> <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></p>
+                                    <p style="line-height:32px;"><b>Job Description Link :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
+                                    <p style="line-height:32px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
+                                    <p style="line-height:32px;"><b>HR Contact :&nbsp;</b>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<c onclick="captureclick('Call','Hr Contact')"><span onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')"><svg style="color: rgb(44, 139, 24);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone-plus-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM12.5 1a.5.5 0 0 1 .5.5V3h1.5a.5.5 0 0 1 0 1H13v1.5a.5.5 0 0 1-1 0V4h-1.5a.5.5 0 0 1 0-1H12V1.5a.5.5 0 0 1 .5-.5z" fill="#2c8b18"></path> </svg></span></c></p>
+                                    <p style="line-height:32px;"><b>Risebird Contact :&nbsp;</b>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<c onclick="captureclick('Call','Risebird Contact')"><span onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')"><svg style="color: rgb(44, 139, 24);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone-plus-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM12.5 1a.5.5 0 0 1 .5.5V3h1.5a.5.5 0 0 1 0 1H13v1.5a.5.5 0 0 1-1 0V4h-1.5a.5.5 0 0 1 0-1H12V1.5a.5.5 0 0 1 .5-.5z" fill="#2c8b18"></path> </svg></span></c></p>
 
                                 </div>
                             </div>
@@ -125,46 +168,7 @@
                                 </div>
                             }
                         </div>
-                        <div id="Interviews" class="tabcontent">
-                            @foreach (var item in Model.Meetings)
-                            {
-                                @if (item.interviewDate >= DateTime.Now && item.confirmationStatus == "Confirmed")
-                                {
-                                    <b>Scheduled Interview</b>
-                                    <br />
-                                    <b style="color:grey;font-weight:normal;font-size:16px;"> Interview Time:</b>  @item.interviewDate
-                                    <p class="meeting-link" onclick="captureclick('ZoomMeeting','JoinMeeting')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span>Meeting Link</span></a></p>
-                                    <p>
-                                        <div class="interview">
-                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes')">
-                                                <span class="interviewresponsebtn" style="background:#289f28;" target="_blank" onclick="ComfirmMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Yes! I am Available</span>
-                                            </div>
-                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Reschedule')">
-                                                @*<a href="@Model.SchedulingLink" target="_blank"> <span class="interviewresponsebtn" style="background:#cd362b;">Reschedule</span></a>*@
-                                                <span class="interviewresponsebtn" style="background:#cd362b;" onclick="ReschuduleMeeting(@item.Interviewid,'@Model.Uniqueid',@Model.CandidateDetails.IRFId,'@Model.CandidateDetails.EmailId')">Reschedule</span>
-                                            </div>
-                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'No')">
-                                                <span class="interviewresponsebtn" style="background:#cd362b;" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">No! I am not Available</span>
-                                            </div>
-                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes')">
-                                                <span class="interviewresponsebtn" style="background:#cd362b;" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId')">Need More Clarity</span>
-                                            </div>
-                                        </div>
-                                    </p>
-                                }
-                                else
-                                {
-                                    <b>Interview</b>
-                                    <br />
-                                    <p><b style="color:grey;font-weight:normal;font-size:16px;"> Interview Time:</b>  @item.interviewDate</p>
-
-                                    @if (Model.IsReschedule)
-                                    {
-                                        <p class="meeting-link">Reschedule Interview Link : <a class="click_herebtn" href="@Model.SchedulingLink" target="_blank"><span>Click Here</span></a></p>
-                                    }
-                                }
-                            }
-                        </div>
+                       
                         <div id="Conditions" class="tabcontent follow">
                             <div class="row">
                                 <div class="col-md-12">
