@@ -7389,7 +7389,9 @@ ul.ks-cboxtags {
     margin: 30px auto;
     position: relative;
     padding: 0px;
-    width:1000px;
+    width: 1000px;
+    left: 40px;
+    display: block;
 }
 .int-labelfield {
     font-weight: bold;
@@ -7403,21 +7405,29 @@ ul.ks-cboxtags {
 }
 .interviewWrapper .question{
     padding:10px;
+    cursor:pointer;
 }
+    .interviewWrapper .question .fa {
+        font-size: 20px;
+        padding: 0px 10px 0px 0px;
+    }
     .interviewWrapper .question label {
         font-size: 14px;
-        margin-bottom: 5px;
+        margin:8px 5px 0px 5px;
         color: #817c7c;
         padding: 0px 10px;
         text-transform:uppercase;
     }
-.answer-label {
-    width: 100%;
-    font-size: 13px;
-    margin-bottom: 5px;
+        .interviewWrapper .question .round label{
+            margin:6px 0px 0px 0px;
 
-    padding: 10px 0px 0px 10px;
-}
+        }
+        .answer-label {
+            width: 100%;
+            font-size: 13px;
+            margin-bottom: 5px;
+            padding: 10px 0px 0px 10px;
+        }
     .answer-label .heading {
         color: #949191;
         font-weight: 600;
@@ -7463,14 +7473,32 @@ ul.ks-cboxtags {
         visibility: hidden;
     }
 
-        .round input[type="checkbox"]:checked + label {
+   .round input[type="checkbox"]:checked + label {
             background-color: #66bb6a;
             border-color: #66bb6a;
-        }
+}
 
-            .round input[type="checkbox"]:checked + label:after {
+  .round input[type="checkbox"]:checked + label:after {
                 opacity: 1;
-            }
+ }
+.join-button {
+    background: #42a5f5;
+    text-decoration: none;
+    width: 110px;
+    display: block;
+    padding: 10px;
+    text-align: center;
+    border-radius: 3px;
+    font-size: 15px;
+    color: #fff;
+    float:left;
+
+}
+.interviewWrapper .button-wrapper {
+    margin: 0px auto;
+    width: 420px;
+    clear:both;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -7890,6 +7918,10 @@ ul.ks-cboxtags {
     @media only screen and (max-width: 1024px) {
         .top-h {
             height: 60px !important;
+        }
+        .interviewWrapper {
+            width: 100%;
+            left: 0px;
         }
 
         #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
@@ -9071,6 +9103,22 @@ ul.ks-cboxtags {
         bottom:0px;
         width:100%;
         z-index:1000;
+    }
+  
+        .interviewWrapper .button-wrapper {
+            margin: 0px auto;
+            width: 100%;
+            clear: both;
+        }
+
+        .interviewWrapper .button-wrapper h2{
+            font-size: 17px;
+            width: 100%;
+        }
+    .join-button {
+        float: none;
+        clear: both;
+        margin: 0px auto;
     }
 }
 

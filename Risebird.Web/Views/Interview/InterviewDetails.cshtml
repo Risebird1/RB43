@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width" />
     <title>InterviewDetails</title>
     <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
     <script>
         var Header = "<div id='myinterview_1'> Interview Details</div>";
         $('#txtpageHeader').empty().html(Header);
@@ -25,32 +25,38 @@
     
 
 
-    <div class="container">
-        <div class="col-md-12">
+
             <div class="interviewWrapper">
-                <div class="col-md-6 pull-left">
+        <div class="col-md-6 pull-left pad10">
                 <div class="card">
-                <fieldset class="question" >
-                    <label for="coupon_question">Candidate Details</label>
-                            <div class="round">  <input type="checkbox" class="coupon_question trigger" id="checkbox_one" name="question1" data-trigger="hidden_fields_one" />
+                <label class="question" for="checkbox_one">
+                            <label for="coupon_question"><i class="fa fa-user-circle-o"></i>Candidate Details</label>
+                    <span class="round">
+                        <input type="checkbox" class="coupon_question trigger" id="checkbox_one" name="checkbox_one" data-trigger="hidden_fields_one" />
                                <label for="checkbox_one"></label>
-                            </div>
-                </fieldset>
+                            </span>
+                </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_one">
                             <div class="answer-label"><span class="heading">Candidate Name:</span><span>Santhyl serpa</span></div>
                             <div class="answer-label"><span class="heading">Resume</span><span></span></div>
+                            <div class="answer-label"><span class="heading">JD Link</span><span></span></div>
                     
                 </fieldset>
                 </div>
                 <div class="card">
 
-                <fieldset class="question">
-                    <label for="coupon_question">Tech Skills</label>
-                            <div class="round"> <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
+                <label class="question" for="checkbox_two">
+                            <label for="coupon_question">
+                                <i class="fa fa-cogs" aria-hidden="true"></i>
+
+
+                                Tech Skills
+                            </label>
+                            <span class="round"> <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
                                  <label for="checkbox_two"></label>
-                                </div>
-                </fieldset>
+                                </span>
+                </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_two">
                             <div class="answer-label"></div>
@@ -59,13 +65,16 @@
                 </div>
                     <div class="card">
 
-                        <fieldset class="question">
-                            <label for="coupon_question">Audio Instruction</label>
-                            <div class="round"> 
+                <label class="question" for="checkbox_three">
+                            <label for="coupon_question">
+                                <i class="fa fa-file-audio-o" aria-hidden="true"></i>
+                                Audio Instruction
+                            </label>
+                            <span class="round"> 
                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
                                 <label for="checkbox_three"></label>
-                                </div>
-                        </fieldset>
+                                </span>
+                        </label>
 
                         <fieldset class="answer hidden" id="hidden_fields_three">
                             @* @if (!string.IsNullOrEmpty(Model.AudioComment))
@@ -98,27 +107,72 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 pull-left">
+        <div class="col-md-6 pull-left pad10">
                     <div class="card">
-                        <fieldset class="question">
-                            <label for="coupon_question">Client Instruction</label>
-                            <div class="round">  <input type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
-                                <label for="checkbox_five"></label>
-                            </div>
-                        </fieldset>
+                <label class="question" for="checkbox_four">
+                            <label for="coupon_question">
+                                <i class="fa fa-file-text-o" aria-hidden="true"></i>
 
-                        <fieldset class="answer hidden" id="hidden_fields_five">
+                                Client Instruction
+                            </label>
+                            <span class="round">  <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
+                                <label for="checkbox_four"></label>
+                            </span>
+                        </label>
+
+                        <fieldset class="answer hidden" id="hidden_fields_four">
                             <label for="coupon_field">Your coupon:</label>
-                            <input type="text" name="hidden" id="hidden_five" />
+                            <input type="text" name="hidden" id="hidden_four" />
                         </fieldset>
                     </div>
+
+            <div class="card">
+                <label class="question" for="checkbox_five">
+                    <label for="coupon_question">
+                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
+
+                       Sample Question
+                    </label>
+                    <span class="round">
+                        <input type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
+                        <label for="checkbox_five"></label>
+                    </span>
+                </label>
+
+                <fieldset class="answer hidden" id="hidden_fields_five">
+                    <label for="coupon_field">Your coupon:</label>
+                    <input type="text" name="hidden" id="hidden_five" />
+                </fieldset>
+            </div>
+
+            <div class="card">
+                <label class="question" for="checkbox_six">
+                    <label for="coupon_question">
+                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
+
+                        Sample Question
+                    </label>
+                    <span class="round">
+                        <input type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
+                        <label for="checkbox_six"></label>
+                    </span>
+                </label>
+
+                <fieldset class="answer hidden" id="hidden_fields_six">
+                    <label for="coupon_field">Your coupon:</label>
+                    <input type="text" name="hidden" id="hidden_six" />
+                </fieldset>
+            </div>
                 </div>
 
+        <div class="button-wrapper">
+            <h2 class="text-center pad10 pull-left">Click here to join the meeting</h2>
+                <a class="join-button" target="_blank" title="Meeting Link" href="#">Join now</a>
 
+        </div>
 
             </div>
-        </div>
-        </div>
+    
     <div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
 
         <!-- Modal content -->
