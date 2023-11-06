@@ -7,5 +7,6 @@ namespace Risebird.CommonHelper.Interface
     {
         string ZoomToken();
         Task<HttpStatusCode> CheckMeetingbyId(string meetingId, string token);
+        Task<string> GenerateAccessToken();
     }
 }

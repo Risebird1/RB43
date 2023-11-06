@@ -8,5 +8,8 @@ namespace Risebird.Repository.Interface
         Task<Settings> GetAllSettings();
         Task<bool> UpdateSettings(Settings settings);
         Task<int> GetInterviewUnassignedMinutes();
+        Task<bool> AddUpdateZoomOAuthToken(string token);
+
+        Task<ZoomApiToken> GetZoomOAuthToken();
     }
 }
