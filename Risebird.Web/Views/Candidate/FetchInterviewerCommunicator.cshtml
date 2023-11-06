@@ -652,7 +652,7 @@
                 processData: false,
                 success: function (data) {
                     $(".loader").hide();
-                    alert(data);
+                    swal.fire(data);
                     closeuploadResumesModal();
                 }
             });

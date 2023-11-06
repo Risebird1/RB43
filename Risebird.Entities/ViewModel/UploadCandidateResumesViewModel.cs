@@ -10,6 +10,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Skill Channel")]
         public string IRFName { get; set; }
+        public string IRFType { get; set; }
 
         [Display(Name = "Upload Resume(s)")]
         public List<IFormFile> ResumeFiles { get; set; }
