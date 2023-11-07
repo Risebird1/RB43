@@ -127,15 +127,16 @@
                     {
                         string audiofileName = string.Empty;
                         audiofileName = @Model.AudioComment.Split('/').Last();
-                        if (audiofileName?.Length >= 25)
+                        if (audiofileName?.Length >= 50)
                         {
-                            audiofileName = audiofileName.Substring(0, 24) + "...";
+                            audiofileName = audiofileName.Substring(0, 50) + "...";
                         }
                         <div>
-                        <audio controls>
+                       <div> <audio controls style="height:40px;margin-top:10px;">
                             <source src="@Url.Content(Model.AudioComment)" type="audio/ogg">
-                        </audio>
-                            @audiofileName
+                                </audio>
+                            </div>
+                            <div style="margin: 10px;color: steelblue;">  @audiofileName</div>
                         </div>
                     }
                     else
@@ -173,13 +174,12 @@
                 </label>
 
                         <fieldset class="answer hidden" id="hidden_fields_four">
-                            <label for="coupon_field">Your coupon:</label>
-                            <input type="text" name="hidden" id="hidden_four" />
+                           
                     <div id="CandidateDetails"></div>
                         </fieldset>
                
                     </div>
-
+</div>
         <div class="col-md-6 pull-left pad10">
             <div class="card">
                 <label class="question" for="checkbox_five">
