@@ -8083,15 +8083,18 @@ namespace Risebird.Web.Controllers
                 return Json("Success");
             }
         }
-        public  async Task<IActionResult> InterviewDetails(string meetingLineUpType = null)
+        public  async Task<IActionResult> InterviewDetails(int id, int interviewId, string meetingLineUpType)
         {
-            meetingLineUpType = "Completed";
             var emailid = HttpContext.Session.GetString("email")?.Trim();
-          //  emailid = emailid.Replace("\"", "");
+            meetingLineUpType = "Completed";
 
-            var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, meetingLineUpType);
-
-            return View(myInterview);
+            id = 4008;
+            interviewId = 176515;
+            ViewBag.id = id;
+            ViewBag.InterviewId = interviewId;
+            ViewBag.MeetingLineUpType = meetingLineUpType;
+            var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
+            return View(result);
         }
     }
 }
