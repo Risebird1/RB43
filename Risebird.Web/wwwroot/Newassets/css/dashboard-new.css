@@ -6014,6 +6014,35 @@ input[type="date"].form-control {
         color: #777575;
     }
 
+.paymentli ul {
+    margin: 0px;
+    padding: 0px 0px;
+}
+.paymentli ul li{
+    clear:both;
+}
+.paymentli ul li  {
+    font-size: 15px;
+    padding: 5px 0px;
+    list-style: none;
+    color: #777575;
+}
+    .paymentli ul li b {
+        float: left;
+        font-weight: 600;
+        padding: 0px;
+    }
+    .paymentli ul li span {
+        background-image: url(../../img/blue-tick.png);
+        background-repeat: no-repeat;
+        background-position: 7px 10px;
+        background-size: 6%;
+    }
+.tags {
+    float: left;
+    color: green;
+    font-weight: bold;
+}
 .content-wrapper {
     max-width: 752px;
     margin: 0px auto;

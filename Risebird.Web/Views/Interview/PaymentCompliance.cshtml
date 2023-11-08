@@ -1,52 +1,68 @@
 ﻿@model Risebird.Entities.ViewModel.PaymentSLAVM
-<div class="follow"><ul>
+<div class="paymentli"><ul>
     @if (!string.IsNullOrWhiteSpace(Model.Inaccuratedecisionmaking))
     {
-            <li><b>Inaccurate/ Arbitrary decision making:</b> @Model.Inaccuratedecisionmaking</li>
+            <li><b>Inaccurate/ Arbitrary decision making:</b><div class="tags">@Model.Inaccuratedecisionmaking</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.CandidateInteractionQuality))
     {
-            <li><b>Candidate Interaction Quality:</b> @Model.CandidateInteractionQuality</li>
+            <li><b>Candidate Interaction Quality:</b><div class="tags">@Model.CandidateInteractionQuality</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.LimitedHandoncoding))
     {
-            <li><b>Limited Handon coding / Practical scenarios:</b> @Model.LimitedHandoncoding</li>
+            <li><b>Limited Handon coding / Practical scenarios:</b><div class="tags">@Model.LimitedHandoncoding</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.WeakInfrastructure))
     {
-            <li><b>Weak Infrastructure:</b> @Model.WeakInfrastructure</li>
+            <li><b>Weak Infrastructure:</b><div class="tags">@Model.WeakInfrastructure</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.UnethicalPractices))
     {
-            <li><b>Unethical Practices:</b> @Model.UnethicalPractices</li>
+            <li><b>Unethical Practices:</b><div class="tags">@Model.UnethicalPractices</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.TimeManagement))
     {
-        <li><b>Time Management:</b> @Model.TimeManagement</li>
+            <li><b>Time Management:</b><div class="tags">@Model.TimeManagement</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.PoorCommunicationSkills))
     {
-            <li><b>Poor Communication Skills:</b> @Model.PoorCommunicationSkills</li>
+            <li><b>Poor Communication Skills:</b><div class="tags">Model.PoorCommunicationSkills</div> </li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.QuestionsRelevance))
     {
-            <li><b>Questions Relevance:</b> @Model.QuestionsRelevance</li>
+            <li><b>Questions Relevance:</b><div class="tags"> @Model.QuestionsRelevance</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.ScoreRubricIgnorance))
     {
-            <li><b>Score Rubric Ignorance:</b> @Model.ScoreRubricIgnorance</li>
+            <li><b>Score Rubric Ignorance:</b><div class="tags"> @Model.ScoreRubricIgnorance</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.PoorFeedbackComments))
     {
-            <li><b>Poor Feedback Comments:</b> @Model.PoorFeedbackComments</li>
+            <li><b>Poor Feedback Comments:</b><div class="tags"> @Model.PoorFeedbackComments</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.WrongStatusUpdates))
     {
-            <li><b>Wrong Status Updates:</b> @Model.WrongStatusUpdates</li>
+            <li><b>Wrong Status Updates:</b><div class="tags"> @Model.WrongStatusUpdates</div></li>
     }
     @if (!string.IsNullOrWhiteSpace(Model.ProctoringIgnorance))
     {
-        <li><b>Proctoring Ignorance:</b> @Model.ProctoringIgnorance</li>
+            <li><b>Proctoring Ignorance:</b><div class="tags"> @Model.ProctoringIgnorance</div></li>
     }
     </ul>
 </div>
+@*<script type="text/javascript">
+$('.tags').html($('.tags').html().split(', ').map(function(el) {return '<span>' + el + '</span>'}))
+</script>*@
+
+@*
+<script>
+    var allTheData = document.querySelector('.tags').textContent.trim().split(',')
+    var separateList = '<div>'
+    allTheData.forEach(function (value) {
+        separateList += '<span>' + value + '</span>';
+    });
+    separateList += '</div>';
+    document.querySelector(".tags").innerHTML = separateList;
+
+</script>
+*@
