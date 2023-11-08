@@ -9,5 +9,6 @@ namespace Risebird.Entities.Data
         public string currenturl { get; set; }
         public string Functiontype { get; set; }
         public string ButtonAction { get; set; }
+        public int Interviewid { get; set; }
     }
 }

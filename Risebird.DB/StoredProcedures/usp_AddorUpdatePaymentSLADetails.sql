@@ -55,7 +55,7 @@ Declare @ClientId int
 Declare @InterviewRate int
 Select @ClientId=IRF.ClientId From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@Interviewid
 Select @InterviewerUserid=ul.id from UserList ul join InterviewMeetings im on im.interviewer=ul.EmailId where im.id=@Interviewid
-Select @InterviewRate=ISNULL(IRF.RateComputedForClient,Cl.PerInterviewRate) From IRF join InterviewMeetings im on im.IRFId=IRF.IRFId Join Client cl on cl.id=IRF.ClientId where im.id=@Interviewid
+Select @InterviewRate= Case when IRF.IsMarketPlaceChannel=1 then IRF.RateComputedForClient else Cl.PerInterviewRate end  From IRF join InterviewMeetings im on im.IRFId=IRF.IRFId Join Client cl on cl.id=IRF.ClientId where im.id=@Interviewid
 Update InterviewPoints set PaymentSLA=@PaymentDeduction where Interviewid=@Interviewid and Userid=@InterviewerUserid and Type='Interview'   
 set @PaymentDeduction=@PaymentDeduction*@InterviewRate/100
 Insert into MoneyProtectionWallet(Clientid,Points,AddedOn,Interviewid,IsConverted,Rate) values(@ClientId,@PaymentDeduction,@CreatedOn,@Interviewid,0,@InterviewRate)

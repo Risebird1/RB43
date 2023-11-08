@@ -1252,7 +1252,7 @@ namespace Risebird.Repository
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@InterviewId", InterviewId);
                 dynamicParam.Add("@ModifyDate", modifyDate);
-                dynamicParam.Add("@ModifyBy",modifyBy);
+                dynamicParam.Add("@ModifyBy", modifyBy);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_ApproveRedoInterviews", dynamicParam,
@@ -1350,6 +1350,27 @@ namespace Risebird.Repository
                 return null;
             }
         }
-
+        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchParticipantwaitingDetails", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
