@@ -707,11 +707,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> ApprovedRedoInterviewsService(int InterviewId,string modifyBy,DateTime modifyDate)
+        public async Task<bool> ApprovedRedoInterviewsService(int InterviewId, string modifyBy, DateTime modifyDate)
         {
             try
             {
-                await _dashboardRespository.ApprovedRedoIntervies(InterviewId,modifyBy,modifyDate);
+                await _dashboardRespository.ApprovedRedoIntervies(InterviewId, modifyBy, modifyDate);
                 return true;
             }
             catch (Exception e)
@@ -764,7 +764,7 @@ namespace Risebird.Business
         {
             try
             {
-                await _dashboardRespository.AddRedoIntervies(InterviewId,Type);
+                await _dashboardRespository.AddRedoIntervies(InterviewId, Type);
                 return true;
             }
             catch (Exception e)
@@ -786,6 +786,17 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails()
+        {
+            try
+            {
+                return await _dashboardRespository.FetchParticipantwaitingDetails();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

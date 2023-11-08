@@ -120,22 +120,56 @@
 </div>
 <script>
     function approvedRedoInterviews(InterviewId) {
-
-        if (InterviewId != '') {
-            $.ajax({
-                url: '/Dashboard/ApprovedRedoInterviews',
-                data: { 'InterviewId': InterviewId },
-                type: "POST",
-                success: function (data) {
-                    swal.fire(data).then(function () {
-                        location.reload(true);
-                    });
-                }
-            });
-        }
-        else {
-            swal.fire("Please approved the Redo Interview.");
-        }
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to redo interview?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Redo!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Dashboard/ApprovedRedoInterviews',
+                        data: { 'InterviewId': InterviewId },
+                        type: "POST",
+                        success: function (data) {
+                            swal.fire(data).then(function () {
+                                location.reload(true);
+                            });
+                        },
+                        error: function () {
+                            swal.fire("Error Redo!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Redo cancelled! :)',
+                    'error'
+                )
+            }
+        })
+        //if (InterviewId != '') {
+        //    $.ajax({
+        //        url: '/Dashboard/ApprovedRedoInterviews',
+        //        data: { 'InterviewId': InterviewId },
+        //        type: "POST",
+        //        success: function (data) {
+        //            swal.fire(data).then(function () {
+        //                location.reload(true);
+        //            });
+        //        }
+        //    });
+        //}
+        //else {
+        //    swal.fire("Please approved the Redo Interview.");
+        //}
     }
     $(document).ready(function () {
         applyDataTable();

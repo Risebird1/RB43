@@ -92,6 +92,7 @@ namespace Risebird.Repository
                 parameters.Add("@Functiontype", model.Functiontype);
                 parameters.Add("@ButtonAction", model.ButtonAction);
                 parameters.Add("@PerformedOn", DateTime.Now);
+                parameters.Add("@Interviewid", model.Interviewid);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

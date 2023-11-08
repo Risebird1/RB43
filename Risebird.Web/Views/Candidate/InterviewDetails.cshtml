@@ -420,7 +420,7 @@
 </script>
 <script>
     var actionclick = 1;
-    function captureclick(type, buttonaction) {
+    function captureclick(type, buttonaction,interviewid) {
         var currenturl = window.location.href;
         if (actionclick == 1) {
             actionclick = 0;
@@ -431,7 +431,8 @@
                 data: {
                     'type': type,
                     'currenturl': currenturl,
-                    'buttonaction': buttonaction
+                    'buttonaction': buttonaction,
+                    'interviewid': interviewid
                 },
                 success: function (result) {
                     actionclick = 1;
