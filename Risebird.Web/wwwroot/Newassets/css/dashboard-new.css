@@ -6009,7 +6009,7 @@ input[type="date"].form-control {
         list-style: none;
         background-image: url(../../img/blue-tick.png);
         background-repeat: no-repeat;
-        background-position: 0px 10px;
+        background-position: 7px 10px;
         background-size: 2%;
         color: #777575;
     }
