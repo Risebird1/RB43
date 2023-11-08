@@ -1,50 +1,50 @@
 ﻿@model Risebird.Entities.ViewModel.PaymentSLAVM
 <ul>
-    @if (string.IsNullOrWhiteSpace(Model.Inaccuratedecisionmaking))
+    @if (!string.IsNullOrWhiteSpace(Model.Inaccuratedecisionmaking))
     {
         <li>Inaccurate/ Arbitrary decision making:@Model.Inaccuratedecisionmaking</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.CandidateInteractionQuality))
+    @if (!string.IsNullOrWhiteSpace(Model.CandidateInteractionQuality))
     {
         <li>Candidate Interaction Quality: @Model.CandidateInteractionQuality</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.LimitedHandoncoding))
+    @if (!string.IsNullOrWhiteSpace(Model.LimitedHandoncoding))
     {
         <li>Limited Handon coding / Practical scenarios: @Model.LimitedHandoncoding</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.WeakInfrastructure))
+    @if (!string.IsNullOrWhiteSpace(Model.WeakInfrastructure))
     {
         <li>Weak Infrastructure:@Model.WeakInfrastructure</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.UnethicalPractices))
+    @if (!string.IsNullOrWhiteSpace(Model.UnethicalPractices))
     {
         <li>Unethical Practices:@Model.UnethicalPractices</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.TimeManagement))
+    @if (!string.IsNullOrWhiteSpace(Model.TimeManagement))
     {
         <li>Time Management:@Model.TimeManagement</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.PoorCommunicationSkills))
+    @if (!string.IsNullOrWhiteSpace(Model.PoorCommunicationSkills))
     {
         <li>Poor Communication Skills:@Model.PoorCommunicationSkills</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.QuestionsRelevance))
+    @if (!string.IsNullOrWhiteSpace(Model.QuestionsRelevance))
     {
         <li>Questions Relevance:QuestionsRelevance</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.ScoreRubricIgnorance))
+    @if (!string.IsNullOrWhiteSpace(Model.ScoreRubricIgnorance))
     {
         <li>Score Rubric Ignorance:@Model.ScoreRubricIgnorance</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.PoorFeedbackComments))
+    @if (!string.IsNullOrWhiteSpace(Model.PoorFeedbackComments))
     {
         <li>Poor Feedback Comments:@Model.PoorFeedbackComments</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.WrongStatusUpdates))
+    @if (!string.IsNullOrWhiteSpace(Model.WrongStatusUpdates))
     {
         <li>Wrong Status Updates:@Model.WrongStatusUpdates</li>
     }
-    @if (string.IsNullOrWhiteSpace(Model.ProctoringIgnorance))
+    @if (!string.IsNullOrWhiteSpace(Model.ProctoringIgnorance))
     {
         <li>Proctoring Ignorance:@Model.ProctoringIgnorance</li>
     }
