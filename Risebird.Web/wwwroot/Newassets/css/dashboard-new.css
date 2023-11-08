@@ -6009,21 +6009,54 @@ input[type="date"].form-control {
         list-style: none;
         background-image: url(../../img/blue-tick.png);
         background-repeat: no-repeat;
-        background-position: 0px 10px;
+        background-position: 7px 10px;
         background-size: 2%;
         color: #777575;
     }
 
+.paymentli ul {
+    margin: 0px;
+    padding: 0px 0px;
+}
+.paymentli ul li{
+    clear:both;
+}
+.paymentli ul li  {
+    font-size: 15px;
+    padding: 5px 0px;
+    list-style: none;
+    color: #777575;
+}
+    .paymentli ul li b {
+        float: left;
+        font-weight: 600;
+        padding: 0px;
+    }
+    .paymentli ul li span {
+        background-image: url(../../img/blue-tick.png);
+        background-repeat: no-repeat;
+        background-position: 7px 10px;
+        background-size: 6%;
+    }
+.tags {
+    float: left;
+    color: green;
+    font-weight: bold;
+}
 .content-wrapper {
     max-width: 752px;
     margin: 0px auto;
 }
 .content-wrappers {
-    max-width: 775px;
+    max-width: 1000px;
     margin: 0px auto;
 }
     .content-wrappers .tabcontent {
-        padding: 20px 0px;
+        padding: 30px 20px 30px 20px;
+        margin: 110px 0px 20px 0px;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,.125);
+        box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);
     }
     #keycontainer {
         float: left;
@@ -8479,7 +8512,9 @@ ul.ks-cboxtags {
         #calender {
             padding-left: 25px !important;
         }
-
+        .candidate-tab .card-block{
+            max-width:160px;
+        }
         .time-btn {
             width: 110px !important;
         }
@@ -15598,7 +15633,9 @@ div.tagsinput {
         right: 27px;
         top: 11px;
     }
-
+    .content-wrappers .tabcontent {
+        margin: 10px 0px 20px 0px;
+    }
     #skill_card .pskill {
         display: block !important;
         text-align: center;
