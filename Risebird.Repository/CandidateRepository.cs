@@ -788,6 +788,7 @@ namespace Risebird.Repository
                         _resultVM.CandidateDetails.ChannelOwnerMobile = dt.Rows[0]["ChannelOwnerMobile"] != null ? dt.Rows[0]["ChannelOwnerMobile"].ToString() : null;
                         _resultVM.CandidateDetails.ClientHRAttemptContact = dt.Rows[0]["ClientHRAttemptContact"] != null ? dt.Rows[0]["ClientHRAttemptContact"].ToString() : null;
                         _resultVM.CandidateDetails.ClientHRAttemptContactMobile = dt.Rows[0]["ClientHRAttemptContactMobile"] != null ? dt.Rows[0]["ClientHRAttemptContactMobile"].ToString() : null;
+                        _resultVM.CandidateDetails.LogoUrl = dt.Rows[0]["LogoLink"] != null ? dt.Rows[0]["LogoLink"].ToString() : null;
                         //_resultVM.CandidateDetails = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     if (dataset.Tables.Count > 1)

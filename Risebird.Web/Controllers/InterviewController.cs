@@ -7550,7 +7550,7 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                
+
                 if (!string.IsNullOrEmpty(uniqueid) || !string.IsNullOrEmpty(publicEmailId))
                 {
                     model.Userid = 0;
@@ -7629,16 +7629,16 @@ namespace Risebird.Web.Controllers
                 string Logo = string.Empty;
                 ViewBag.ClientLogo = await ImageUrlToBase64(model.LogoUrl);
                 ViewBag.Risebirdlogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
-                if (profileName == "Client")
-                {
-                    var client = await _userRepository.GetClientUserDetails(email);
-                    model.IsQCRequired = client.IsQCRequired;
-                    model.IsRedoInterview = client.IsRedoInterview;
-                }
-                else
-                {
-                    model.IsQCRequired = false;
-                }
+                //if (profileName == "Client")
+                //{
+                //    var client = await _userRepository.GetClientUserDetails(email);
+                //    //model.IsQCRequired = client.IsQCRequired;
+                //    //model.IsRedoInterview = client.IsRedoInterview;
+                //}
+                //else
+                //{
+                //    model.IsQCRequired = false;
+                //}
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;

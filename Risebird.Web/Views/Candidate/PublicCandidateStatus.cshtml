@@ -630,10 +630,13 @@
                                                                                         <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" style="color:#fff" aria-hidden="true"></i></span>
                                                                                     </div>
                                                                                  }
-                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
-                                                                                <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send"></span></span>
-                                                                            </span>
-                                                                            @if (item.IsClientCancelInterview && item.CurrentStatus == "Scheduled")
+                                                                                  @if (item.CurrentStatus == "Cancelled" || item.CurrentStatus == "No Show(Candidate)" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Dropped")
+                                                                                {
+                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
+                                                                                        <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send"></span></span>
+                                                                                    </span>
+                                                                                }
+                                                                                @if (item.IsClientCancelInterview && item.CurrentStatus == "Scheduled")
                                                                             {
                                                                                 <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId','@item.IRFId')" data-original-title="Tooltip on top"><span class="btn shadow btn-xs sharp me-1 trash-btn" style="cursor: pointer;" title="Cancel Interview"><span class="fas fa-close"></span></span></span>
                                                                             }
@@ -659,14 +662,14 @@
                                                                                 }
                                                                             }
                                                                            
-                                                                            @if (item.IsQCRequired && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
+                                                                         @*   @if (item.IsQCRequired && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
                                                                             {
                                                                                 <button class="btn btn-primary shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="QC Form">
                                                                                     <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.InterviewId, interviewer = item.Interviewer,type="ClientPublic",uniqueid=ViewBag.id })'" title="QC Form">
                                                                                         <i class="far fa-comment-dots"></i>
                                                                                     </span>
                                                                                 </button>
-                                                                            }
+                                                                            }*@
                                                                             @*@if (item.IsRedoInterview && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8))
                                                                         {
                                                                         <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">

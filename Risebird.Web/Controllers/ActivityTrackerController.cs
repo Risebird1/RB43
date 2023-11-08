@@ -248,7 +248,7 @@ namespace Risebird.Web.Controllers
 
         #region Page Click Details
         [HttpPost]
-        public async Task<JsonResult> CapturePageClick(string type, string currenturl, string buttonaction)
+        public async Task<JsonResult> CapturePageClick(string type, string currenturl, string buttonaction,int interviewid)
         {
             string emailid = string.Empty;
             if (HttpContext.Session.GetString("email") != null)
@@ -261,6 +261,7 @@ namespace Risebird.Web.Controllers
             model.currenturl = currenturl;
             model.Functiontype = type;
             model.PerformedBy = emailid;
+            model.Interviewid = interviewid;
             await _activityTrackerService.SaveCaptureClickDetails(model);
             return Json("");
         }

@@ -335,6 +335,7 @@ namespace Risebird.Entities.ViewModel
         //public string EmploymentComment { get; set; }
         //public string CompanyName { get; set; }
         public int RedMarker { get; set; }
+        public DateTime? PerformedOn { get; set; }
 
 
     }
