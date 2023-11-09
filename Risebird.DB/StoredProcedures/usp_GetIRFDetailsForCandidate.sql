@@ -32,7 +32,7 @@ Begin
  end as [Name],ir.IRfId as IRFName,ul.EmailId, ul.MobileNumber, ul.uniqueid,  
  ir.JDTiltle, ir.JDLink, ir.ClientName, ir.CalendlyLink, ir.PrimarySkillInvite, cl.CompanyLink,   
  cl.CompanyVideoLink, ulr.EmailId as ChannelOwnerEmail,   
- ulr.MobileNumber as ChannelOwnerMobile,ca.ClientHRAttemptContact,ulr.MobileNumber as ClientHRAttemptContactMobile  
+ ulr.MobileNumber as ChannelOwnerMobile,ca.ClientHRAttemptContact,ulr.MobileNumber as ClientHRAttemptContactMobile,cl.LogoLink  
  from Candidate ca join irf ir on ca.IRFId=ir.id  
  join CandidatesMaster cm on cm.id=ca.CandidateMasterId  
  join Client cl on cl.id = ir.ClientId   
