@@ -237,6 +237,40 @@
                                         
                                        
                                         <hr style="clear:both;margin-bottom:0px;" />
+                                        <div>
+                                            @if (Model.MeetingStatus == 1)
+                                            {
+
+                                                <div class="row"><div class="nodata-wrapper-pdf"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
+
+                                            }
+                                            else
+                                            {
+
+                                                @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                                {
+
+                                                    <div> <a href="@Model.VideoLink"><div style="font-size:15px;margin:7px 0px">Click Here For Interview Video</div></a></div>
+
+
+                                                }
+
+                                                else
+                                                {
+                                                    <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
+                                                }
+                                                @if (ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+                                                {
+                                                    @if (Model.AudioTranscriptFileLink != null && Url.Content(Model.AudioTranscriptFileLink) != null)
+                                                    {
+                                                        <div> <a href="@Model.AudioTranscriptFileLink"><div style="font-size:15px">Click Here For Interview Audio Transcript</div></a></div>
+                                                    }
+
+                                                }
+
+
+                                            }
+                                        </div>
 
                                         <div class="interviewComment" style="clear:both;height:350px;overflow:auto;">
                                             <div class="int-heading" style="background-size:4%;background-position:5px 8px;font-weight:600;font-size:17px;color:#929090">Interviewer Comment</div>
@@ -286,40 +320,7 @@
                                             }
                                         </div>
                                     </div>
-                                    <div class="row col-md-8">
-                                        @if (Model.MeetingStatus == 1)
-                                        {
-
-                                            <div class="row"><div class="nodata-wrapper-pdf"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
-
-                                        }
-                                        else
-                                        {
-                                            
-                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                            {
-
-                                                <div> <a href="@Model.VideoLink"><div style="font-size:15px;margin:7px 0px;">Click Here For Interview Video</div></a></div>
-
-
-                                            }
-
-                                            else
-                                            {
-                                                <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
-                                            }
-                                            @if(ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
-                                            {
-                                                @if (Model.AudioTranscriptFileLink != null && Url.Content(Model.AudioTranscriptFileLink) != null)
-                                                {
-                                                    <div> <a href="@Model.AudioTranscriptFileLink"><div style="font-size:15px">Click Here For Interview Audio Transcript</div></a></div>
-                                                }
-
-                                            }
-
-                                            
-                                        }
-                                    </div>
+                                   
                                     <div class="html2pdf__page-break"></div>
                                     <div class="col-md-12">
 
