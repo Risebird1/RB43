@@ -3,13 +3,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <script>
-    var Header = "Interviews";
+    var Header = "Delivery Head Instruction";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
-<h3 class="tab_drawer_heading" rel="tab-3">Tech Skill</h3>
 
 <div class="main-panel " id="main-panel">
     <!-- Navbar -->
@@ -25,8 +24,8 @@
                       
 @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
  {
-<h3 class="tab_drawer_heading" rel="tab-3">Tech Skill</h3>
-<div class="tab-box" id="tab-3">
+<h3 >Tech Skill</h3>
+<div>
     <div class="tab-main-box">
         <div class="row">
 
