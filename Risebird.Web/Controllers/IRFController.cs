@@ -8042,6 +8042,49 @@ namespace Risebird.Web.Controllers
             var interviewlist = (await _irfService.GetSkillChannelStatsDetails(irfid, type))?.ToList();
             return View(interviewlist);
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> DeliveryHeadInstruction()
+        {
+            if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var model = new IRFVm();
+                //if (!string.IsNullOrEmpty(IntrviewerId))
+                //{
+                //    model.InterviewerId = IntrviewerId;
+                //}
+                //if (templateId != null && templateId != 0)
+                //{
+                //    var templateDetails = await _templateService.GetTemplateById(templateId.Value);
+                //    model.TemplateId = templateId.Value;
+                //    model.AssessmentGroupId = templateDetails.AssessmentGroupId.Value.ToString();
+                //    //foreach (var templateInterviewer in templateDetails.InterviewerCollection?.Where(x => x.IsSelected))
+                //    //{
+                //    //    model.InterviewerCollection.Add(new TransInterviewer { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
+                //    //    model.EmergencyInterviewerCollection.Add(new TransEmergencyInterviewer { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
+                //    //    model.QualityController.Add(new TransQualityController { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
+                //    //}
+                //    foreach (var techSkill in templateDetails.TechSkillCollection?.Where(x => x.IsSelected))
+                //    {
+                //        model.SkillCollection.Add(new TransSkill { LevelId = techSkill.LevelId.Value, SkillId = techSkill.SkillId.Value, Weightage = techSkill.Weightage.Value });
+                //    }
+                //}
+                await SetAddIRFProperties(model);
+                model.PerMintuteRate = 0;
+                model.TotalBudget = 0;
+                model.NoOfPosition = 0;
+                model.Type = "B2B";
+                model.Profile = profileName;
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+           
+        }
 
 
 
