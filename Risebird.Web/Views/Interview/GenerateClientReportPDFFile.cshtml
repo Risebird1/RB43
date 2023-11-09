@@ -296,7 +296,7 @@
                                             {
                                                 <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
                                             }
-                                            @if(ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+                                            @if(Model.IsTranscript && ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
                                             {
                                                 @if (Model.AudioTranscriptFileLink != null && Url.Content(Model.AudioTranscriptFileLink) != null)
                                                 {
