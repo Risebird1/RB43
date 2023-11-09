@@ -51,7 +51,7 @@ namespace Risebird.Business.Interface
         Task<string> AddAlertMessage(AlterMessage model);
         Task<IEnumerable<BlackListCompanyVM>> GetBlackkListComapany();
         Task<bool> UndoBlackListCompanyService(BlackListCompanyVM model);
-       Task<bool> ApprovedBlackListCompanyService(BlackListCompanyVM model);
+        Task<bool> ApprovedBlackListCompanyService(BlackListCompanyVM model);
         Task<QCFormVM> GetRedFlagsQCReportService(int Interviewid);
         Task<bool> UndoSuspiciousInterviewerService(int InterviewerProfileId);
         Task<bool> ApprovedRedoInterviewsService(int InterviewId, string modifyBy, DateTime modifyDate);
@@ -60,5 +60,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddRedoInterviewsService(int InterviewId, string Type);
         Task<bool> MoveToUnassignService(int meetingId);
         Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService();
+        Task<List<MeetingVM>> FetchParticipantwaitingDetails();
     }
 }

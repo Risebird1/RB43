@@ -6219,6 +6219,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RateComputedForClient", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@RateComputedForClient"].Value = irfDetails.RateComputedForClient;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMarketPlaceChannel", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsMarketPlaceChannel"].Value = irfDetails.RateComputedForClient > 0 ? irfDetails.IsMarketPlaceChannel : null;
+
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
                     flatRateParam.DbType = DbType.Int16;
