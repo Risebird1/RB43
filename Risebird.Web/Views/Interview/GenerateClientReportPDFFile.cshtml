@@ -184,8 +184,24 @@
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div>
+                                    <div class="col-md-12">
+                                       <div style="clear:both">
+                                        <div class="pull-left">
+                                        @if (Model.resumeLink != null && Model.resumeLink != "")
+                                        {
+                                           // <div class="report-heading">Candidate Name</div>
+                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5>@Model.CandidateName</h5></a>
+                                        }
+                                        else
+                                        {
+                                            <div class="report-heading">Candidate Name</div>
+                                            <h2 style="font-size:18px;font-weight:bold;">@Model.CandidateName</h2>
+                                        }
+                                        @Html.HiddenFor(m => m.CandidateName)
+                                        <h4 style="clear:both;font-size:15px;color:grey">@Model.JDTiltle</h4>
+                                        </div>
+                                        <div class="pull-right">
+                                        <div style="clear:both">
                                             @*<label>REPORT DETAILS</label>*@
                                             @{
                                                 var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
@@ -208,37 +224,44 @@
                                             {
                                                 <h6 style="text-transform:capitalize">Interview Status : <strong>@meestingstatusvalue</strong></h6>
                                             }
+                                            </div>
+                                                <div style="clear:both">
+                                                <span class="report-heading pull-left">
+                                                    Date of Interview :
+                                                </span>
+                                                    <h4 class="pull-left report-heading" style="font-weight:bold;">@Model.interviewDate</h4>
+                                            </div>
+                                            </div>
                                         </div>
-                                        @if (Model.resumeLink != null && Model.resumeLink != "")
-                                        {
-                                            <div class="report-heading">Candidate Name</div>
-                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5>@Model.CandidateName</h5></a>
-                                        }
-                                        else
-                                        {
-                                            <div class="report-heading">Candidate Name</div>
-                                            <h2>@Model.CandidateName</h2>
-                                        }
-                                        @Html.HiddenFor(m => m.CandidateName)
-                                        <div class="report-heading">
-                                            Position
+                                      
+                                        
+                                       
+                                        <hr style="clear:both;margin-bottom:0px;" />
+
+                                        <div class="interviewComment" style="clear:both;height:350px;overflow:auto;">
+                                            <div class="int-heading" style="background-size:4%;background-position:5px 8px;font-weight:600;font-size:17px;color:#929090">Interviewer Comment</div>
+                                            <hr style="margin-bottom:8px;" />
+                                            @if (Model.InterviewerComment != null)
+                                            {
+                                                <div style="font-size:14px;">@Model.InterviewerComment</div>
+                                            }
+                                            else
+                                            {
+                                                <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                            }
                                         </div>
-                                        <h4>@Model.JDTiltle</h4>
-                                        <div class="report-heading">
-                                            Date of Interview
-                                        </div>
-                                        <h4>@Model.interviewDate</h4>
-                                        <hr />
                                         <div>
-                                            <div class="skill-heading"> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
-                                        </div>
+                                            <div class="skill-heading" style="background-size:9%;background-position:5px 8px;font-weight:600;font-size:17px;color:#929090"> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
+                                            <hr style="clear:both;margin-bottom:0px;" />
+                                            </div>
+
                                         <div>
                                             @if (Model.TechSkillReportCollection != null)
                                             {
                                                 @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                 {
                                                     <div style="padding-top:10px">
-                                                        <p>@Model.TechSkillReportCollection[i].SkillName</p>
+                                                        <p style="margin-bottom:5px;">@Model.TechSkillReportCollection[i].SkillName</p>
                                                         @{
                                                             var TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                         }
@@ -272,22 +295,11 @@
                                         }
                                         else
                                         {
-                                            <div>
-                                                <div class="int-heading">Interviewer Comment</div>
-                                                <hr style="margin-bottom:8px;"/>
-                                                @if (Model.InterviewerComment != null)
-                                                {
-                                                    <p style="font-size:14px;">@Model.InterviewerComment</p>
-                                                }
-                                                else
-                                                {
-                                                    <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
-                                                }
-                                            </div>
+                                            
                                             @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                             {
 
-                                                <div> <a href="@Model.VideoLink"><div style="font-size:16px">Click Here For Interview Video</div></a></div>
+                                                <div> <a href="@Model.VideoLink"><div style="font-size:15px;margin:7px 0px;">Click Here For Interview Video</div></a></div>
 
 
                                             }
@@ -300,43 +312,49 @@
                                             {
                                                 @if (Model.AudioTranscriptFileLink != null && Url.Content(Model.AudioTranscriptFileLink) != null)
                                                 {
-                                                    <div> <a href="@Model.AudioTranscriptFileLink"><div style="font-size:16px">Click Here For Interview Audio Transcript</div></a></div>
+                                                    <div> <a href="@Model.AudioTranscriptFileLink"><div style="font-size:15px">Click Here For Interview Audio Transcript</div></a></div>
                                                 }
 
                                             }
 
-                                            <div  style="margin-top:10px;">
-                                                <div class="question-heading">Questions Discussed</div>
-                                                <hr style="margin-bottom:8px;" />
-                                                <div class="question">
-                                                    @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
-                                                    {
-                                                        <ul>
-                                                            @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
-                                                            {
-                                                                var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
-                                                                @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
-                                                                {
-                                                                    <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer;font-size:14px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
-                                                                }
-                                                                <label>Rating : @valueslist</label>
-                                                            }
-                                                        </ul>
-                                                    }
-                                                    else
-                                                    {
-                                                        <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
-
-                                                    }
-                                                </div>
-                                            </div>
+                                            
                                         }
                                     </div>
-                                </div>
+                                    <div class="html2pdf__page-break"></div>
+                                    <div class="col-md-12">
+
+                                        <div style="margin-top:10px;">
+                                            <div class="question-heading" style="background-size:9%;background-position:0px 8px;font-weight:600;font-size:17px;color:#929090">Questions Discussed</div>
+                                            <hr style="margin-bottom:8px;" />
+                                            <div class="question">
+                                                @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
+                                                {
+                                                    <ul>
+                                                        @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                        {
+                                                            var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
+                                                            @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
+                                                            {
+                                                                <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer;font-size:14px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                            }
+                                                            else
+                                                            {
+                                                                <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                            }
+                                                            <label>Rating : @valueslist</label>
+                                                        }
+                                                    </ul>
+                                                }
+                                                else
+                                                {
+                                                    <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    </div>
                                 @Html.HiddenFor(m => m.IsGeneralSkillRequired)
                             </div>
 
@@ -656,3 +674,15 @@
         window.setTimeout(function () { window.close(); }, 5000);
     }
 </script>
+
+        <style>
+    .before {
+        page-break-before: always;
+    }
+
+    .after {
+        page-break-after: always;
+    }</style>
+
+            <script>
+    pagebreak: { avoid: "tr", mode: "css", before: "#nextpage1", after: "1cm" }</script>
