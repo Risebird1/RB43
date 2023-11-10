@@ -198,7 +198,7 @@
                                             <h2 style="font-size:18px;font-weight:bold;">@Model.CandidateName</h2>
                                         }
                                         @Html.HiddenFor(m => m.CandidateName)
-                                        <h4 style="clear:both;font-size:15px;color:grey">@Model.JDTiltle</h4>
+                                        <h4 style="clear:both;font-size:15px;color:grey;font-weight:bold;">@Model.JDTiltle</h4>
                                         </div>
                                         <div class="pull-right">
                                         <div style="clear:both">
@@ -250,7 +250,7 @@
                                                 @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                 {
 
-                                                    <div> <a href="@Model.VideoLink"><div style="font-size:15px;margin:7px 0px">Click Here For Interview Video</div></a></div>
+                                                    <div style="float:left"> <a href="@Model.VideoLink"><div style="font-size:15px;margin:7px 0px">Click Here For Interview Video</div></a></div>
 
 
                                                 }
@@ -263,7 +263,7 @@
                                                 {
                                                     @if (Model.AudioTranscriptFileLink != null && Url.Content(Model.AudioTranscriptFileLink) != null)
                                                     {
-                                                        <div> <a href="@Model.AudioTranscriptFileLink"><div style="font-size:15px">Click Here For Interview Audio Transcript</div></a></div>
+                                                        <div style="float:right"> <a href="@Model.AudioTranscriptFileLink"><div style="font-size:15px;margin:7px 0px">Click Here For Interview Audio Transcript</div></a></div>
                                                     }
 
                                                 }
