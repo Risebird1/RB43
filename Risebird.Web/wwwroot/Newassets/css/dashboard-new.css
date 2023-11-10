@@ -7468,6 +7468,11 @@ ul.ks-cboxtags {
     right: 26px;
     top: 9px;
 }
+
+.interviewComment{
+   height:500px;
+    overflow:auto;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
