@@ -76,5 +76,9 @@ namespace Risebird.Entities.Data
         [Display(Name = "Country Type")]
         public int CountryType { get; set; } // onsite, offshore
 
+        [Display(Name = "Report snippet")]
+        public int Reportsnippet { get; set; }
+        [Display(Name = "Video Transcript")]
+        public bool IsTranscript { get; set; }
     }
 }

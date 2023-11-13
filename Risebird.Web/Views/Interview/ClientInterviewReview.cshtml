@@ -16,7 +16,7 @@
             <label for="Q1_1" class="star"></label>
             <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
         </div>
-        <p style="color: lightslategrey;font-size: 14.5px;line-height: 25px;">Please rate this interview to Generated PDF and Shareable link.</p>
+        <p style="color: lightslategrey;font-size: 14.5px;line-height: 25px;">Please rate this interview to Generate PDF and Shareable link.</p>
     </div>
     <div id="ClientInterviewFeedbackHide" class="ClientInterviewFeedbackHide" style="display:none;">
         <hr class="divider" style="background-color: #b5afaf;" />
@@ -30,7 +30,7 @@
         @Html.HiddenFor(m => m.isapprovedchecked)
         @Html.HiddenFor(m => m.PaymentComplianceCount)
         <div class="canvas_div_pdf">
-            <div class="report-full-wrap">
+            <div class="report-full-wrap" id="checkboxlist">
                 <div style="margin:10px 0px">
                     <div class="accordion" id="accordion2" style="position:relative;width:100%;float:left;">
                         <div class="">
@@ -952,15 +952,23 @@
 
                         </div>
                     }
-                
-                </div>
-               
-            </div>
-    <div id="ClientInterviewbuttonHide" class="submit-wrapper" style="display:none;position:relative;top:4px;margin-bottom:20px;">
-        <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
-    </div>
-</div>
+                    else
+                    {
+                        @Html.HiddenFor(m=>m.Inaccuratedecisionmaking)
+                        @Html.HiddenFor(m=>m.QuestionsRelevance)
+                        @Html.HiddenFor(m=>m.ScoreRubricIgnorance)
+                        @Html.HiddenFor(m=>m.PoorFeedbackComments)
+                        @Html.HiddenFor(m=>m.WrongStatusUpdates)
+                        @Html.HiddenFor(m=>m.ProctoringIgnorance)
+                    }
 
+                </div>
+            </div>
+        </div>
+</div>
+<div id="ClientInterviewbuttonHide" class="submit-wrapper" style="display:none;position:relative;top:4px;margin-bottom:20px;">
+        <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
+</div>
 <script>
     function ChangeCheckBox(groupName) {
         var result = $('input[name="' + groupName + '"]:checked');
@@ -1012,6 +1020,14 @@
         var PoorCommunicationSkills = $("#PoorCommunicationSkills").val();
         var TimeManagement = $("#TimeManagement").val();
         var Interviewid = $("#Interviewid").val();
+        var PaymentComplianceCount = $("#PaymentComplianceCount").val();
+        
+        var Inaccuratedecisionmaking = $("#Inaccuratedecisionmaking").val();
+        var QuestionsRelevance = $("#QuestionsRelevance").val();
+        var ScoreRubricIgnorance = $("#ScoreRubricIgnorance").val();
+        var PoorFeedbackComments = $("#PoorFeedbackComments").val();
+        var WrongStatusUpdates = $("#WrongStatusUpdates").val();
+        var ProctoringIgnorance = $("#ProctoringIgnorance").val();
         if ((parseInt($("#PaymentComplianceCount").val()) > 0 && parseInt($("#Rating").val()) < 5) || parseInt($("#Rating").val()) == 5) {
             $.ajax({
                 type: "POST",
@@ -1023,7 +1039,15 @@
                     WeakInfrastructure: WeakInfrastructure,
                     UnethicalPractices: UnethicalPractices,
                     PoorCommunicationSkills: PoorCommunicationSkills,
-                    Interviewid: Interviewid
+                    Interviewid: Interviewid,
+                    PaymentComplianceCount:PaymentComplianceCount,
+                    
+                    Inaccuratedecisionmaking:Inaccuratedecisionmaking,
+                    QuestionsRelevance:QuestionsRelevance,
+                    ScoreRubricIgnorance:ScoreRubricIgnorance,
+                    PoorFeedbackComments:PoorFeedbackComments,
+                    WrongStatusUpdates:WrongStatusUpdates,
+                    ProctoringIgnorance:ProctoringIgnorance
                 },
                 url: "/Interview/ClientInterviewReview",
                 success: function () {
@@ -1045,7 +1069,7 @@
     }
     function CountCheckBox() {
         var countcheck = 0;
-        $('#accordion2').find(':checkbox').each(function () {
+        $('#checkboxlist').find(':checkbox').each(function () {
             var vlucheck = $(this)[0].checked;
             if (vlucheck) {
                 countcheck = countcheck + 1;
@@ -1054,8 +1078,3 @@
         $("#PaymentComplianceCount").val(countcheck);
     }
 </script>
-
-
-
-
-
