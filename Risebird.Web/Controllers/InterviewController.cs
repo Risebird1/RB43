@@ -5765,13 +5765,13 @@ namespace Risebird.Web.Controllers
                     //    var _result = await _notificationHelper.SendInterviewClerityClientNotification(result.candidateEmail, result.interviewDate.ToString(), clientHr.EmailId, result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
                     //}
                     //if (status == 2 || status == 3 || (status == 4 && response == false))
-                    if (status == 1) // availability confirmed
-                    {
-                        //get irfId and interviewdate, candidateEmail and clientHrEmail
+                    //if (status == 1) // availability confirmed
+                    //{
+                    //    //get irfId and interviewdate, candidateEmail and clientHrEmail
 
-                        var meetingDetails = await _meetingService.GetMeetingDetails(meetingid);
-                        await _notificationHelper.SendCandidateConfirmedNotificationToClient(meetingDetails.candidateEmail, meetingDetails.interviewDate.ToString(), meetingDetails.ClientHrContact, meetingDetails.IRFID, meetingDetails.logolink);
-                    }
+                    //    var meetingDetails = await _meetingService.GetMeetingDetails(meetingid);
+                    //    await _notificationHelper.SendCandidateConfirmedNotificationToClient(meetingDetails.candidateEmail, meetingDetails.interviewDate.ToString(), meetingDetails.ClientHrContact, meetingDetails.IRFID, meetingDetails.logolink);
+                    //}
                     if (status == 2 || status == 3)
                     {
                         var value = string.Empty;
