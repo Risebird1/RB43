@@ -186,6 +186,7 @@ namespace Risebird.Repository.Interface
         Task<bool> IsClonableTemplateNameInUse(string name);
         //Task<bool> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser = null);
         Task<Tuple<bool, int>> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser = null);
+        Task<Tuple<bool, int>> CreateSkillChannelFromTemplateV1(IRFVm irfDetails, string loggedInUser = null);
         Task<AssignmentVM> GetAssessmentGroupDetails(int assessmentGroupId);
         Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails);
         int GetIRFIdByIRFName(string IRFId);

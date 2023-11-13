@@ -2810,8 +2810,10 @@ namespace Risebird.Business
                 irfDetails.Type = "B2B";
                 irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
 
+                irfDetails.Heuristicsscore = Convert.ToInt16(Heuristicsscorelevel.Pro);
+
                 //irfDetails.InterviewerCollection = irfDetails.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
-                var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
+                var result = await _irfRepository.CreateSkillChannelFromTemplateV1(irfDetails, loggedInUser);
                 if (result.Item1)
                 {
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
@@ -2977,6 +2979,99 @@ namespace Risebird.Business
             }
         }
 
+        /// <summary>
+        /// Create Skill Channel For Client from Single click interview link pop-up
+        /// </summary>
+        /// <param name="irfDetails"></param>
+        /// <param name="loggedInUser"></param>
+        /// <param name="profile"></param>
+        /// <returns></returns>
+        public async Task<Tuple<bool, int>> CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(IRFVm irfDetails, string loggedInUser, string profile)
+        {
+            try
+            {
+                string channelOwner;
+                if (profile == ProfileEnum.Client.GetDescription() || profile == ProfileEnum.Admin.GetDescription() || profile == ProfileEnum.SupportAdmin.GetDescription())
+                {
+                    var eligibleHrs = _irfRepository.GetEligibleChannelOwners()?.ToList();
+                    //eligibleHrs.RemoveAt(0);
+                    var random = new Random();
+                    int index = random.Next(eligibleHrs.Count);
+                    irfDetails.RisebirdHr = eligibleHrs[index].id;
+                    channelOwner = eligibleHrs[index].EmailId;
+                }
+                else
+                {
+                    irfDetails.RisebirdHr = GetUserId(loggedInUser);
+                    channelOwner = loggedInUser;
+                }
+
+                //get meeting platform from template by Id
+                if (string.IsNullOrEmpty(irfDetails.MeetingPlatform))
+                {
+                    var meetingPlatform = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelMeetingPlatformById(irfDetails.CreatedFromTemplateId);
+                    irfDetails.MeetingPlatform = meetingPlatform.MeetingPlatform;
+                    irfDetails.IsAadhaarVerificationRequired = meetingPlatform.IsAadhaarVerificationRequired;
+                }
+
+
+                irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
+                irfDetails.CompanyDetails = string.Empty;
+                irfDetails.PerMintuteRate = 0;
+                irfDetails.TotalBudget = 0;
+                irfDetails.NoOfPosition = 0;
+                irfDetails.Type = "B2B";
+                irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
+
+                var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(irfDetails.CreatedFromTemplateId);
+                var irfRecommendations = await _irfRepository.GetIRFRecommendation(irfDetails.CreatedFromTemplateId);
+
+                if (irfRecommendations != null)
+                {
+                    irfDetails.AssessmentGroupName = irfRecommendations.AssessmentGroupName;
+                    irfDetails.JobCountry = irfRecommendations.CountryType?.ToString();
+                    //irfDetails.JobLevel = irfRecommendations.SeniorityLevelId;
+                    irfDetails.JobLevel = (int)JobLevels.SE;
+                    irfDetails.CompanyType = irfRecommendations.CompanyType?.ToString();
+                    irfDetails.Heuristicsscore = irfRecommendations.CompetencyLevelId.HasValue ? irfRecommendations.CompetencyLevelId.Value : irfDetails.Heuristicsscore;
+                }
+
+                irfDetails.Heuristicsscore = Convert.ToInt16(Heuristicsscorelevel.Pro);
+                //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
+
+                //irfDetails.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(irfDetails.CreatedFromTemplateId);
+                irfDetails.SkillCollection = (IList<TransSkill>)(transTechSkills);
+
+                int clientUserId = _irfRepository.GetUserId(loggedInUser);
+                irfDetails.ClientCollection = new List<TransClientUser>();
+                irfDetails.ClientCollection.Add(new TransClientUser { ClientUserId = clientUserId, EmailId = loggedInUser, Role = _irfRepository.GetClientUserRole(clientUserId) });
+
+                var result = await _irfRepository.CreateSkillChannelFromTemplateV1(irfDetails, loggedInUser);
+                if (result.Item1)
+                {
+                    var clientName = await _clientService.GetClientName(irfDetails.ClientId);
+                    //send mail to the HR here
+                    await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
+
+
+                    var activityTrackerModel = new ActivityTrackerVM();
+                    activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
+                    activityTrackerModel.Particulars = irfDetails.IRFId;
+                    activityTrackerModel.PerformedBy = loggedInUser;
+                    activityTrackerModel.Summary = "Skill channel created";
+
+                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                }
+                return result;
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new Tuple<bool, int>(false, 0);
+            }
+        }
         public async Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailId, string profileName, IRFFilter filterModel = null)
         {
             try
