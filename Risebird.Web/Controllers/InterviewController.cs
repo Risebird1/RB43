@@ -7616,7 +7616,7 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
         {
             try
             {
@@ -7662,11 +7662,20 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                model.Userid = _iRFService.GetUserId(email, profileName);
-                if (model.Userid != 0)
+                if (!string.IsNullOrEmpty(uniqueid) || !string.IsNullOrEmpty(publicEmailId))
                 {
-                    await GetStatusList(model, irfId, model.Userid);
+                    model.Userid = 0;
                 }
+                else
+                {
+                    model.Userid = _iRFService.GetUserId(email, profileName);
+
+                }
+                await GetStatusList(model, irfId, model.Userid);
+                //if (model.Userid != 0)
+                //{
+                //    await GetStatusList(model, irfId, model.Userid);
+                //}
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
 

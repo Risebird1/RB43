@@ -504,12 +504,7 @@
         }
     </script>
 }
-@if (ViewBag.profile == "Client")
-{
-    <script>
-        openSecureReportNotificationModel();
-    </script>
-}
+
 @if (ViewBag.profile == "Interviewer")
 {
     @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
