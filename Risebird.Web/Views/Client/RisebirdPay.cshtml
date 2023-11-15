@@ -34,7 +34,10 @@
                             </button>
                         </div>
                         <div id="rbpay_8" style="padding:0px"><button class="form-control" id="btndebit" onclick="FetchPaymentTransaction('DEBIT')"><i class="fa fa-credit-card "></i> Debit</button></div>
-
+                        <div style="padding-top:2vw">
+                            <p><span>Per Interview Rate:</span><label id="txtperInterviewrate"></label></p>
+                            <p><span>Interview Credit:</span><label id="txtInterviewCredit"></label></p>
+                        </div>
                     </div>
                     <div id="divtransaction" class="razorpay_details">
                         <!--Bind transaction details-->
@@ -236,6 +239,9 @@
             success: function (data) {
                 $('#divtransaction').html('');
                 $('#divtransaction').html(data);
+                 $('#txtperInterviewrate').text($("#hidPerInterviewRate").val());
+                var interviews=parseInt($("#hidInterviewCountSum").val())/parseInt($("#hidPerInterviewRate").val());
+                $('#txtInterviewCredit').text(interviews);
             }
         });
     }

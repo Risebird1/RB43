@@ -12,13 +12,6 @@ GO
 Create Procedure usp_ShowBlackListCompany
 as
 begin
-select
-Comment,
-CreatedDate,
-CreatedBy,
-ModifyDate,
-ModifyBy,
-IsBlackList,
-CompanyName,id
-from BlackListedCompany where IsBlackList=1
+select * from BlackListedCompany where IsBlackList=1 
  end
+ Go
