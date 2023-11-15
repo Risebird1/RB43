@@ -6431,7 +6431,19 @@ input[type="date"].form-control {
     font-weight: bold;
 }
 
-.dashboard-iconcolor {
+.dashboard-iconcolor{
+    padding: 10px 0px 10px 10px;
+    display: block;
+    background-size: 60% !important;
+    font-weight: bold;
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    float: left;
+    margin-right: 8px;
+}
+
+.wallet-iconcolor {
     padding: 10px 0px 10px 10px;
     display: block;
     background-size: 60% !important;
