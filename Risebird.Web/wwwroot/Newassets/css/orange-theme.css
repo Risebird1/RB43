@@ -1163,6 +1163,13 @@ input[type="radio"]:checked {
     color: #f28542!important;
     background: #f98a46 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
+.wallet-iconcolor {
+    color: #f28542 !important;
+    background:#f98a46 url(../../img/wallet.png) 7px 7px no-repeat !important;
+}
+.wallet-txt {
+    color: #6a6866;
+}
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;
