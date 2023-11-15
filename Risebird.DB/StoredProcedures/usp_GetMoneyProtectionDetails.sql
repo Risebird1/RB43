@@ -15,7 +15,7 @@ AS
 BEGIN
 if(@type='Pending')
 BEGIN
-Select Cl.id,Cl.Name as ClientName,mp.Points as Point,cl.BillingType,mp.AddedOn,im.interviewDate,im.candidateEmail,im.IRFId,IRF.Heuristicsscore From MoneyProtectionWallet mp join Client cl on cl.id=mp.Clientid
+Select Cl.id,Cl.Name as ClientName,mp.Points as Point,cl.BillingType,mp.AddedOn,im.interviewDate,im.candidateEmail,im.IRFId,IRF.Heuristicsscore,cl.PerInterviewRate From MoneyProtectionWallet mp join Client cl on cl.id=mp.Clientid
 left join InterviewMeetings im on im.id=mp.Interviewid left join IRF on IRF.IRFId=im.IRFId
 where ISNULL(mp.IsConverted,0)=0 and mp.Clientid=@Clientid
 END
