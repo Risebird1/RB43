@@ -239,6 +239,9 @@
             success: function (data) {
                 $('#divtransaction').html('');
                 $('#divtransaction').html(data);
+                 $('#txtperInterviewrate').text($("#hidPerInterviewRate").val());
+                var interviews=parseInt($("#hidInterviewCountSum").val())/parseInt($("#hidPerInterviewRate").val());
+                $('#txtInterviewCredit').text(interviews);
             }
         });
     }
