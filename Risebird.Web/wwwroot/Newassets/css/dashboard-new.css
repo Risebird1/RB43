@@ -7489,12 +7489,12 @@ ul.ks-cboxtags {
     position: relative;
     top: -15px;
     border-radius: 16%;
-}        
+}
 .videoContainer {
     float: left;
     position: absolute;
-    width: 320px;
-    height: 231px;
+    width: 335px;
+    height: 280px;
     border-radius: 30px;
     background: #000;
 }
