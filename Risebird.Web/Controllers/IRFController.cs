@@ -8085,8 +8085,19 @@ namespace Risebird.Web.Controllers
             }
            
         }
-
-
-
+        [HttpPost]
+        public async Task<IActionResult> DeliveryHeadInstruction(IRFVm model)
+        {
+            if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }
