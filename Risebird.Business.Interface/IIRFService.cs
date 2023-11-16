@@ -140,6 +140,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null);
 
         Task<IRF> GetSkillChannelDetailsByName(string irfName);
+        Task<bool> UpdateTechSkills(IList<TransSkill> techskills);
 
     }
 }

@@ -1017,7 +1017,7 @@ namespace Risebird.Web.Controllers
 
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
         {
-            var dto = new AvailabilityCheckDTO{ id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
+            var dto = new AvailabilityCheckDTO { id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
             //var path = $"http://localhost:7071/api/CheckIRFAvailability";
             var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
@@ -6565,9 +6565,9 @@ namespace Risebird.Web.Controllers
                 //var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irf.AssessmentGroupId));
 
                 //model = model.Where(x => x.Type == "Interviewer").ToList();
-                if (model !=null && model.Count() > 0)
+                if (model != null && model.Count() > 0)
                 {
-                    if(model.FirstOrDefault().AvailbilityHour >= 3600 || model.FirstOrDefault().AvailbilityHour == 0)
+                    if (model.FirstOrDefault().AvailbilityHour >= 3600 || model.FirstOrDefault().AvailbilityHour == 0)
                     {
                         await _irfService.UpdateIntervieweravailbilityDetails(irfId);
                         var skills = await _irfService.GetTechSkillswithWeightage(irfId);
@@ -6604,7 +6604,7 @@ namespace Risebird.Web.Controllers
                                     Subject = "Current Availability (2 days) check for  " + item.JDTitle + " Risebird Interviews"
                                 };
                                 var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), item.FlatRate, dropMyProfileButton + "&rsc=" + source, item.BasicSkill, irfId, item.CompanyTypeDesc, item.CountryTypeDesc, item.PlanTypeDesc, item.SelectedDurationMin, item.RejectedDurationMin);
-                                
+
                                 source = "wp";
 
                                 yesbutton = yesbutton + "&rsc=" + source;
@@ -6658,7 +6658,7 @@ namespace Risebird.Web.Controllers
             //check link expiry befire hitting db
 
             try
-           {
+            {
                 dec = dec.Replace(" ", "+");
                 var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
                 if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
@@ -8044,46 +8044,25 @@ namespace Risebird.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> DeliveryHeadInstruction()
+        public async Task<IActionResult> DeliveryHeadInstruction(int irfid)
         {
             if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var model = new IRFVm();
-                //if (!string.IsNullOrEmpty(IntrviewerId))
-                //{
-                //    model.InterviewerId = IntrviewerId;
-                //}
-                //if (templateId != null && templateId != 0)
-                //{
-                //    var templateDetails = await _templateService.GetTemplateById(templateId.Value);
-                //    model.TemplateId = templateId.Value;
-                //    model.AssessmentGroupId = templateDetails.AssessmentGroupId.Value.ToString();
-                //    //foreach (var templateInterviewer in templateDetails.InterviewerCollection?.Where(x => x.IsSelected))
-                //    //{
-                //    //    model.InterviewerCollection.Add(new TransInterviewer { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
-                //    //    model.EmergencyInterviewerCollection.Add(new TransEmergencyInterviewer { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
-                //    //    model.QualityController.Add(new TransQualityController { UserId = templateInterviewer.UserId.Value, InterviewerId = templateInterviewer.InterviewerId, PrimarySkill = templateInterviewer.PrimarySkill });
-                //    //}
-                //    foreach (var techSkill in templateDetails.TechSkillCollection?.Where(x => x.IsSelected))
-                //    {
-                //        model.SkillCollection.Add(new TransSkill { LevelId = techSkill.LevelId.Value, SkillId = techSkill.SkillId.Value, Weightage = techSkill.Weightage.Value });
-                //    }
-                //}
-                await SetAddIRFProperties(model);
-                model.PerMintuteRate = 0;
-                model.TotalBudget = 0;
-                model.NoOfPosition = 0;
-                model.Type = "B2B";
-                model.Profile = profileName;
+                model = await _irfService.GetEditIRF(irfid, 0, false);
+                model.id = model.SkillCollection.FirstOrDefault().IRFId;
+                ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                var Skillset = await _irfRepository.GetSkills();
+                ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 return View(model);
             }
             else
             {
                 return RedirectToAction("SignOut", "Session");
             }
-           
+
         }
         [HttpPost]
         public async Task<IActionResult> DeliveryHeadInstruction(IRFVm model)
@@ -8092,6 +8071,18 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                foreach (var item in model.SkillCollection)
+                {
+                    item.IRFId = model.id;
+                }
+                var result = await _irfService.UpdateTechSkills(model.SkillCollection);
+                if (result)
+                {
+                    return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
+                }
+                ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                var Skillset = await _irfRepository.GetSkills();
+                ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 return View(model);
             }
             else
