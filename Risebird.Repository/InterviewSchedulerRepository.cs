@@ -432,6 +432,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Uniqueid", _guid.ToString());
                 dynamicParameters.Add("@Concurrency", resultset.Concurrency);
                 dynamicParameters.Add("@candidateEmail", candidateEmail);
+                dynamicParameters.Add("@TimeSlotDays", resultset.TimeSlotDays);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var eventids = await SqlMapper.QueryAsync<int>(con, "usp_GenerateOneTimeInterviewEvent", dynamicParameters,

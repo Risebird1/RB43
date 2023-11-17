@@ -2065,16 +2065,16 @@ namespace Risebird.CommonHelper
                 //{
                 //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 //}
-                if (!string.IsNullOrWhiteSpace(HRCoordinator))
-                {
-                    var hrEmail = HRCoordinator.Split("@");
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(HRCoordinator, hrEmail.FirstOrDefault()));
-                }
-                if (!string.IsNullOrWhiteSpace(StaffingAgiencies))
-                {
-                    var staffingEmail = StaffingAgiencies.Split("@");
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(StaffingAgiencies, staffingEmail.FirstOrDefault()));
-                }
+                //if (!string.IsNullOrWhiteSpace(HRCoordinator))
+                //{
+                //    var hrEmail = HRCoordinator.Split("@");
+                //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(HRCoordinator, hrEmail.FirstOrDefault()));
+                //}
+                //if (!string.IsNullOrWhiteSpace(StaffingAgiencies))
+                //{
+                //    var staffingEmail = StaffingAgiencies.Split("@");
+                //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(StaffingAgiencies, staffingEmail.FirstOrDefault()));
+                //}
                 var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
                 object[] parameters = new object[] { interviewdate, join_url, Email, HRCoordinator, StaffingAgiencies, Name, ClientName, jdLink, clientLogoLink, companyLink };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");
