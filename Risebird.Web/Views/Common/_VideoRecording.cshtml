@@ -1,4 +1,346 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'> 
+<div id="VideoKYCModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 1050px !important;">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-camera-video" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z" fill="white"></path> </svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Video KYC </h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="z-index:100">
+                <span onclick="closeVideoKYCModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="divVideoKycmodel" style="padding:20px;">
+               
+                <div class="col-md-4 pull-left">
+                  
+                    <div class="videoContainer">
+                        <video id="video" autoplay="true" muted></video><h4 style="font-size: 13px;text-align: center; font-weight: 600;color: #4d4444;">
+                            RECORD YOUR 90SECS VIDEO
+                        </h4>
+                    </div>
+                   <div class="videoButtons">
+
+                        <button id="btncamara" class="btncamara">  <i class="fa fa-camera" aria-hidden="true"></i><span class="on-off-txt">ON</span></button>
+                        <button id="btnoffcamara" class="btnoffcamara" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera-off"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34m-7.72-2.06a4 4 0 1 1-5.56-5.56"></path></svg><span class="on-off-txt">OFF</span></button>
+
+                        <button id="btnStart">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record-fill" viewBox="0 0 16 16" style="
+   
+">
+                                <path fill-rule="evenodd" d="M8 13A5 5 0 1 0 8 3a5 5 0 0 0 0 10z"></path>
+                            </svg><p class="recording-txt">START REC</p>
+                        </button>
+                        <button id="btnStop"><svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-fill" viewBox="0 0 16 16"> <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z" fill="white"></path> </svg><p class="recording-txt">STOP REC</p></button>
+                       
+                </div>
+                </div>
+              
+                <div class="col-md-8 pull-left">
+                    <div id="timer-clock">
+                        <div id="timer-clock-txt">COUNTER STARTS</div>
+                    </div>
+                    <div class="rules">
+                        <h3 style="color:green">TELL US ABOUT YOU & YOUR EXPERIENCE</h3>
+                        <p class="about-int">Type of company,  previous companies, overall experience, current projects, any Top Tech Achievement</p>
+                        <h3 style=" color: green;padding: 10px 0px;">
+                            QUESTION TO BE ASKED DURING THE INTERVIEW
+                        </h3>
+                        <p> <span class="number"> 1</span> <span class="number-txt">How will you differentiate between Poor, Average to Good Candidate </span></p>
+                        <p>
+                            <span class="number">
+                                2
+                            </span> <span class="number-txt">
+                            What tentative questions or strategy you use - only 1-2 example to understand the perspective </span> </p>
+                        <p>   <span class="number">   3</span><span class="number-txt"> How do you align to JD, score rubrics to ask 100% relevant questions, practical , discerning questions?</span></p>
+                    </div>
+                  
+                </div>
+               <div class="col-md-12 pull-left">
+
+                    <div class="preview-section">
+                        <h2 class="preview-txt">
+                            PREVIEW YOUR RECORDING
+                        </h2>
+                        <div class="videoPreviewContainer"> <video id="vid2" controls></video></div>
+                    </div>
+
+               </div>
+                <div class="col-md-12 pull-left"><button id="btnSave">SAVE</button></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"></script>
+<script>
+    function closeVideoKYCModel() {
+        var model = document.getElementById("VideoKYCModel");
+        model.style.display = "none";
+    }
+    function openVideoKYCModel() {
+        var model = document.getElementById("VideoKYCModel");
+        model.style.display = "block";
+    }
+</script>
+ <script>
+
+var width = 165,
+  height = 165,
+  timePassed = 0,
+  timeLimit = 94
+
+var fields = [{
+  value: timeLimit,
+  size: timeLimit,
+  update: function() {
+    return timePassed = timePassed + 1;
+  }
+}];
+
+var nilArc = d3.svg.arc()
+  .innerRadius(width / 3 - 120)
+  .outerRadius(width / 3 - 120)
+  .startAngle(0)
+  .endAngle(2 * Math.PI);
+
+var arc = d3.svg.arc()
+  .innerRadius(width / 3 - 28)
+  .outerRadius(width / 3 - 20)
+  .startAngle(0)
+  .endAngle(function(d) {
+    return ((d.value / d.size) * 2 * Math.PI);
+  });
+
+var svg = d3.select("#timer-clock").append("svg")
+  .attr("width", width)
+  .attr("height", height);
+
+var field = svg.selectAll(".field")
+  .data(fields)
+  .enter().append("g")
+  .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+  .attr("class", "field");
+
+var back = field.append("path")
+  .attr("class", "path path--background")
+  .attr("d", arc);
+
+var path = field.append("path")
+  .attr("class", "path path--foreground");
+
+var label = field.append("text")
+  .attr("class", "label")
+  .attr("dy", ".35em");
+
+(function update() {
+
+  field
+    .each(function(d) {
+      d.previous = d.value, d.value = d.update(timePassed);
+    });
+
+  path.transition()
+    .ease("elastic")
+    .duration(500)
+    .attrTween("d", arcTween);
+
+  if ((timeLimit - timePassed) <= 10)
+    pulseText();
+  else
+    label
+    .text(function(d) {
+      return d.size - d.value;
+    });
+
+  if (timePassed <= timeLimit)
+    setTimeout(update, 1000 - (timePassed % 1000));
+  else
+    destroyTimer();
+
+})();
+
+function pulseText() {
+  back.classed("pulse", true);
+  label.classed("pulse", true);
+
+  if ((timeLimit - timePassed) >= 0) {
+    label.style("font-size", "35px")
+      .attr("transform", "translate(0," + +4 + ")")
+      .text(function(d) {
+        return d.size - d.value;
+      });
+  }
+
+  label.transition()
+    .ease("elastic")
+    .duration(900)
+    .style("font-size", "35px")
+    .attr("transform", "translate(0," + -10 + ")");
+}
+
+function destroyTimer() {
+  label.transition()
+    .ease("back")
+    .duration(700)
+    .style("opacity", "0")
+    .style("font-size", "5")
+    .attr("transform", "translate(0," + -40 + ")")
+    .each("end", function() {
+      field.selectAll("text").remove()
+
+    });
+
+  path.transition()
+    .ease("back")
+    .duration(700)
+    .attr("d", nilArc);
+
+  back.transition()
+    .ease("back")
+    .duration(700)
+    .attr("d", nilArc)
+    .each("end", function() {
+      field.selectAll("path").remove()
+       document.getElementById('timer-clock-txt').style.display = 'none';
+    });
+}
+
+function arcTween(b) {
+  var i = d3.interpolate({
+    value: b.previous
+  }, b);
+  return function(t) {
+    return arc(i(t));
+  };
+}
+
+ </script>
+<script>
+    let constraintObj = {
+            audio: true,
+            video: true
+        };
+    
+        if (navigator.mediaDevices === undefined) {
+            navigator.mediaDevices = {};
+            navigator.mediaDevices.getUserMedia = function (constraintObj) {
+                let getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+                if (!getUserMedia) {
+                    return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+                }
+                return new Promise(function (resolve, reject) {
+                    getUserMedia.call(navigator, constraintObj, resolve, reject);
+                });
+            }
+        } else {
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    devices.forEach(device => {
+                        console.log(device.kind.toUpperCase(), device.label);
+                    })
+                })
+                .catch(err => {
+                    console.log(err.name, err.message);
+                })
+        }
+
+        navigator.mediaDevices.getUserMedia(constraintObj)
+            .then(function (mediaStreamObj) {
+                console.log('test')
+                let video=document.getElementById('video');
+                
+                let camara = document.getElementById('btncamara');
+                    let offcamara = document.getElementById('btnoffcamara');
+
+                let start = document.getElementById('btnStart');
+                let stop = document.getElementById('btnStop');
+                let save = document.getElementById('btnSave');
+                let vidSave = document.getElementById('vid2');
+                let mediaRecorder = new MediaRecorder(mediaStreamObj);
+                let chunks = [];
+                let blobtransfer;
+                document.getElementById('btnStart').disabled = true;
+                document.getElementById('btnStop').disabled = true;
+                camara.addEventListener('click', (ev) => {
+                    video.srcObject=mediaStreamObj;
+                    console.log(mediaRecorder.state);
+                    console.log('test')
+                })
+            offcamara.addEventListener('click', (ev) => {
+                video.srcObject = null;
+                console.log(mediaRecorder.state);
+                console.log('test')
+            })
+                start.addEventListener('click', (ev) => {
+                    mediaRecorder.start();
+                    //start timer
+                   
+                    // start button disable
+               
+                document.getElementById('btnStart').disabled = true;
+                 //   stop button enable disable false
+                document.getElementById('btnStop').disabled = false;
+                console.log(mediaRecorder.state);
+                })
+                stop.addEventListener('click', (ev) => {
+                 
+                    mediaRecorder.stop();
+                document.getElementById('btnStart').disabled = false;
+                //   stop button enable disable false
+                document.getElementById('btnStop').disabled = true;
+                    console.log(mediaRecorder.state);
+                });
+                save.addEventListener('click', (ev) => {
+                    var form_data = new FormData();
+                    form_data.append("file", blobtransfer);
+                    $.ajax({
+                            type: "POST",
+                            //url: "/MCQ/CandidateQuestionsD",
+                            data: form_data,
+                            contentType: false,
+                            enctype: 'multipart/form-data',
+                            processData: false,
+                            success: function (data) {
+                                  console.log("save successully");
+                            }
+                        });
+                });
+                mediaRecorder.ondataavailable = function (ev) {
+                    chunks.push(ev.data);
+                }
+                mediaRecorder.onstop = (ev) => {
+                    let blob = new Blob(chunks, { 'type': 'video/mp4;' });
+                    chunks = [];
+                    let videoURL = window.URL.createObjectURL(blob);
+                    vidSave.src = videoURL;
+                    console.log(videoURL);
+                    blobtransfer=blob;
+                }
+            })
+            .catch(function (err) {
+                console.log(err.name, err.message);
+            });
+</script>
+
+   <script>
+   
+    $('.btncamara').click(function () {
+         document.getElementById('btnStart').disabled = false;
+        $('#btnoffcamara').show(200);
+        $('.btncamara').hide(0);
+       
+    });
+
+    $('#btnoffcamara').click(function () {
+        $('.btncamara').show(200);
+       
+        $('#btnoffcamara').hide(0);
+    });
+                </script>
+
+
