@@ -48,10 +48,7 @@ body {
         text-transform: uppercase;
         box-shadow: 0 3px 8px 0 rgb(0 0 0 / 17%);
     }
-.wallet-iconcolor {
-    color: #244871 !important;
-    background: #42a5f5 url(../../img/wallet.png) 7px 7px no-repeat !important;
-}
+
 .client .table-bordered td {
     border-right: 1px solid #dee2e65e!important;
 }
