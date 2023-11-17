@@ -158,10 +158,14 @@ var label = field.append("text")
     });
 
   if (timePassed <= timeLimit)
-    setTimeout(update, 1000 - (timePassed % 1000));
+  {
+       setTimeout(update, 1000 - (timePassed % 1000));
+  }
   else
+  {
     destroyTimer();
-
+    document.getElementById('btnStop').click();
+  }
 })();
 
 function pulseText() {
@@ -255,7 +259,7 @@ function arcTween(b) {
                 let video=document.getElementById('video');
                 
                 let camara = document.getElementById('btncamara');
-                    let offcamara = document.getElementById('btnoffcamara');
+                let offcamara = document.getElementById('btnoffcamara');
 
                 let start = document.getElementById('btnStart');
                 let stop = document.getElementById('btnStop');
@@ -269,30 +273,23 @@ function arcTween(b) {
                 camara.addEventListener('click', (ev) => {
                     video.srcObject=mediaStreamObj;
                     console.log(mediaRecorder.state);
-                    console.log('test')
                 })
-            offcamara.addEventListener('click', (ev) => {
-                video.srcObject = null;
-                console.log(mediaRecorder.state);
-                console.log('test')
-            })
+                offcamara.addEventListener('click', (ev) => {
+                    video.srcObject = null;
+                    console.log(mediaRecorder.state);
+                })
                 start.addEventListener('click', (ev) => {
                     mediaRecorder.start();
-                    //start timer
-                   
-                    // start button disable
-               
-                document.getElementById('btnStart').disabled = true;
-                 //   stop button enable disable false
-                document.getElementById('btnStop').disabled = false;
-                console.log(mediaRecorder.state);
+                    document.getElementById('btnStart').disabled = true;
+                     //   stop button enable disable false
+                    document.getElementById('btnStop').disabled = false;
+                    console.log(mediaRecorder.state);
                 })
                 stop.addEventListener('click', (ev) => {
-                 
                     mediaRecorder.stop();
-                document.getElementById('btnStart').disabled = false;
-                //   stop button enable disable false
-                document.getElementById('btnStop').disabled = true;
+                    document.getElementById('btnStart').disabled = false;
+                    //   stop button enable disable false
+                    document.getElementById('btnStop').disabled = true;
                     console.log(mediaRecorder.state);
                 });
                 save.addEventListener('click', (ev) => {
@@ -306,7 +303,7 @@ function arcTween(b) {
                             enctype: 'multipart/form-data',
                             processData: false,
                             success: function (data) {
-                                  console.log("save successully");
+                                  alert(data);
                             }
                         });
                 });
@@ -333,14 +330,12 @@ function arcTween(b) {
          document.getElementById('btnStart').disabled = false;
         $('#btnoffcamara').show(200);
         $('.btncamara').hide(0);
-       
     });
 
     $('#btnoffcamara').click(function () {
         $('.btncamara').show(200);
-       
         $('#btnoffcamara').hide(0);
     });
-                </script>
+ </script>
 
 
