@@ -3917,6 +3917,37 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        [HttpPost]
+        public async Task<JsonResult> UploadVideoKYC()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                if (Request.Form.Files.Count() > 0)
+                {
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4"
+                        || fileMimeType == "video/quicktime")
+                    {
+                        var file = Request.Form.Files[0];
+                        var filename = emailId.Replace(".", "_").Replace("@", "a").ToString() + ".mp4";
+                        await _azureStorageHelper.InsertBlob(filename, "videokyc", file);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videokyc");
+                        var blob = containerRef.GetBlockBlobReference(filename);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        var VideoLink = uploadedvideoFileURL;
+                        var result = await _interviewerService.UpdateVideoKYCDetails(VideoLink, emailId);
+                        return Json("Video KYC uploaded successfully.");
+                    }
+                }
+                return Json("Fail to upload, Please try again");
+            }
+            else
+            {
+                return Json("Fail to upload, Please try again.");
+            }
+        }
     }
 }
 
