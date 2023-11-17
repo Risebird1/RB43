@@ -304,6 +304,7 @@ function arcTween(b) {
                             processData: false,
                             success: function (data) {
                                   alert(data);
+                                  closeVideoKYCModel();
                             }
                         });
                 });
@@ -324,8 +325,7 @@ function arcTween(b) {
             });
 </script>
 
-   <script>
-   
+<script>
     $('.btncamara').click(function () {
          document.getElementById('btnStart').disabled = false;
         $('#btnoffcamara').show(200);
@@ -336,6 +336,6 @@ function arcTween(b) {
         $('.btncamara').show(200);
         $('#btnoffcamara').hide(0);
     });
- </script>
+</script>
 
 
