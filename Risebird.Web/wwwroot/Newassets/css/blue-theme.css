@@ -1086,7 +1086,9 @@ table {
     color: #244871!important;
     background: #42a5f5 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
-
+#btnSave {
+    background: #42a5f5!important;
+}
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;
