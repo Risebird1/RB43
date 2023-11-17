@@ -236,7 +236,7 @@
         $.ajax({
             type: "POST",
             url: "/Client/MoneyClientProtectionDetailsView",
-            data: { type: 'Pending', Clientid: $("#hidClientid").val(), actiontype: action },
+            data: { type: 'Pending2', Clientid: $("#hidClientid").val(), actiontype: action },
             success: function (data) {
                 $('#divtransaction').html('');
                 $('#divtransaction').html(data);
