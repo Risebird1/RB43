@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MoneyProtectionVM>
-<input type="hidden" value="@Model.FirstOrDefault().PerInterviewRate" id="hidPerInterviewRate" />
-<input type="hidden" value="@Model.Select(x=>x.Point).Sum()" id="hidInterviewCountSum" />
+<input type="hidden" value="@Model?.FirstOrDefault()?.PerInterviewRate" id="hidPerInterviewRate" />
+<input type="hidden" value="@Model?.Select(x=>x.Point)?.Sum()" id="hidInterviewCountSum" />
 <table id="meetingTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
     <thead>
         <tr>

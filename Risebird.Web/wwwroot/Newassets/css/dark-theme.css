@@ -2281,6 +2281,9 @@ input[type="radio"]:checked {
 #interviewerMemberModal .table > tbody td{
     color:#fff!important;
 }
+#btnSave {
+    background: #131313!important;
+}
 @media screen and (max-width: 768px) {
     .d_active {
         background-color: #1a1a1a !important;

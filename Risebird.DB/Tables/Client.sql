@@ -259,7 +259,6 @@ BEGIN
     Add IsTranscript bit
 END
 
-
 END
 
 GO

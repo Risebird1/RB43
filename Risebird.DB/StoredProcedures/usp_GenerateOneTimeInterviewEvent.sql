@@ -17,13 +17,14 @@ CREATE Procedure usp_GenerateOneTimeInterviewEvent
 @duration int,      
 @Uniqueid varchar(50),
 @Concurrency int,
-@candidateEmail varchar(200)
+@candidateEmail varchar(200),
+@TimeSlotDays int
 AS      
 BEGIN      
   
 Insert into ScheduleInterviewEvent(EventName,SkillChannel,StartDate,EndDate,duration,Uniqueid,IsActive,  
-IsSingleUse,IsOnetimeUsed,SkillChannelRelation,Concurrency,CandidateEmail)      
-values(@EventName,null,@StartDate,@EndDate,@duration,@Uniqueid,1,1,0,@SkillChannel,@Concurrency,@candidateEmail)      
+IsSingleUse,IsOnetimeUsed,SkillChannelRelation,Concurrency,CandidateEmail,TimeSlotDays)      
+values(@EventName,null,@StartDate,@EndDate,@duration,@Uniqueid,1,1,0,@SkillChannel,@Concurrency,@candidateEmail,@TimeSlotDays)      
       
 Select SCOPE_IDENTITY()      
 END      
