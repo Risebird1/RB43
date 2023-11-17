@@ -2,8 +2,8 @@
 @using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Wallet";
-    ViewBag.PageHeader = "Wallet";
+    ViewData["Title"] = "Penalty Wallet";
+    ViewBag.PageHeader = "Penalty Wallet";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -30,13 +30,14 @@
                         </div>
                         <div id="rbpay_7" style="padding:0px">
                             <button class="form-control" id="btncredit" onclick="FetchPaymentTransaction('CREDIT')">
-                                <i class="fas fa-credit-card"></i>CREDIT
+                                <i class="fas fa-credit-card"></i>Penalty CREDIT
                             </button>
                         </div>
-                        <div id="rbpay_8" style="padding:0px"><button class="form-control" id="btndebit" onclick="FetchPaymentTransaction('DEBIT')"><i class="fa fa-credit-card "></i> Debit</button></div>
+                        <div id="rbpay_8" style="padding:0px"><button class="form-control" id="btndebit" onclick="FetchPaymentTransaction('DEBIT')"><i class="fa fa-credit-card "></i>Penalty Debit</button></div>
                         <div style="padding-top:2vw">
                             <p><span>Per Interview Rate:</span><label id="txtperInterviewrate"></label></p>
-                            <p><span>Interview Credit:</span><label id="txtInterviewCredit"></label></p>
+                            <p><span>Penalty Credits:</span><label id="txttotalCredit"></label></p>
+                            <p><span>Interview Credits:</span><label id="txtInterviewCredit"></label></p>
                         </div>
                     </div>
                     <div id="divtransaction" class="razorpay_details">
@@ -242,6 +243,7 @@
                 $('#txtperInterviewrate').text($("#hidPerInterviewRate").val());
                 var interviews=parseInt($("#hidInterviewCountSum").val())/parseInt($("#hidPerInterviewRate").val());
                 $('#txtInterviewCredit').text(interviews);
+                $('#txttotalCredit').text($("#hidInterviewCountSum").val());
             }
         });
     }

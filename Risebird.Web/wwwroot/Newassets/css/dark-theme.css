@@ -2263,6 +2263,14 @@ input[type="radio"]:checked {
     color: #fff !important;
     background: #555050 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
+.wallet-iconcolor {
+    color: #fff !important;
+    background: #333030 url(../../img/wallet.png) 7px 7px no-repeat !important;
+}
+
+.wallet-txt {
+    color: #fff;
+}
 #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th {
     padding: 2px 8px;
     font-weight: normal !important;

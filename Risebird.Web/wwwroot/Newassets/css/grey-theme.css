@@ -1114,6 +1114,13 @@ table {
     color: #727171 !important;
     background: #727171 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
+.wallet-iconcolor {
+    color: #727171 !important;
+    background: #727171 url(../../img/wallet.png) 7px 7px no-repeat !important;
+}
+.wallet-txt {
+    color: #747373;
+}
 #btnSave {
     background: #727171!important;
 }
