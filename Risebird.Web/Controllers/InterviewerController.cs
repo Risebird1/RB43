@@ -51,9 +51,10 @@ namespace Risebird.Web.Controllers
         private readonly string codeapiendpoint;
         private readonly IAadhaarService _aadhaarService;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly ISASUrlHelper _sasUrlHelper;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService, IWhatsAppHelper whatsAppHelper)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper)
 
         {
             _interviewerService = interviewerService;
@@ -74,6 +75,7 @@ namespace Risebird.Web.Controllers
             codeapiendpoint = _configuration["CodeApiEndPoint"];
             _aadhaarService = aadhaarService;
             _whatsAppHelper = whatsAppHelper;
+            _sasUrlHelper = sasUrlHelper;
         }
 
 
@@ -3935,7 +3937,12 @@ namespace Risebird.Web.Controllers
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("videokyc");
                         var blob = containerRef.GetBlockBlobReference(filename);
                         string uploadedvideoFileURL = blob.Uri.ToString();
-                        var VideoLink = uploadedvideoFileURL;
+                        var sas = _sasUrlHelper.CreateSasUrl("videokyc");
+                        var VideoLink = string.Empty;
+                        if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
+                        {
+                            VideoLink = uploadedvideoFileURL + "?" + sas;
+                        }
                         var result = await _interviewerService.UpdateVideoKYCDetails(VideoLink, emailId);
                         return Json("Video KYC uploaded successfully.");
                     }
