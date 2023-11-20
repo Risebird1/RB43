@@ -128,10 +128,10 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         var results = await _meetingService.FetchFeedbackDetails();
-                        if (results != null)
-                        {
-                            results = results.Where(x => x.StarRating < 5).ToList();
-                        }
+                        //if (results != null)
+                        //{
+                        //    results = results.Where(x => x.StarRating < 5).ToList();
+                        //}
                         if (HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateFeedBackfilters"));
