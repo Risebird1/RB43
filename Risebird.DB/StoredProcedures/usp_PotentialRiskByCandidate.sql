@@ -21,6 +21,7 @@ join Client cl on irf.ClientId=cl.id
 join UserList ul on ul.id=  irf.RisebirdHr
 left join UserList uli on im.interviewer= uli.EmailId  
 left join InterviewerProfile itp on itp.UserId = uli.id        
-where cfd.Rating<=3 and Cast(interviewDate as Date)<= @CurrentDate --(Cast(interviewDate as Date)> Cast(DATEADD(day,-7,@CurrentDate) as Date) and Cast(interviewDate as Date)<= @CurrentDate)
+where cfd.Rating<=3 and Cast(interviewDate as Date)<= @CurrentDate 
+order by cfd.CreatedOn desc--(Cast(interviewDate as Date)> Cast(DATEADD(day,-7,@CurrentDate) as Date) and Cast(interviewDate as Date)<= @CurrentDate)
 End
 GO
