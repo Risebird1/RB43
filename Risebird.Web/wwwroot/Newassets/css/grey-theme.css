@@ -926,7 +926,13 @@ table.journey {
 .card-blue .card-body .client-field {
     color: #9a9a9a !important;
 }
+input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
+    background: #9a9a9a !important;
+}
 
+input[type="radio"]:checked, input[type="checkbox"]:checked {
+    border-color: #9a9a9a !important;
+}
 input[type="radio"]:checked:before {
     background: #9a9a9a !important;
 }

@@ -149,7 +149,7 @@
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
-                      <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i>
+                      <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
 
                     </span>
                 </label>
@@ -253,13 +253,13 @@
             <div class="card">
                 <label class="question" for="checkbox_four">
                     <label for="coupon_question">
-                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                        <i class="fa fa-link" aria-hidden="true"></i>
 
-                        Text Instruction
+                                           Job description Link
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
-                       <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i>
+                       <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
                     </span>
                 </label>
 
@@ -281,7 +281,7 @@
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
-                        <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i>
+                        <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
                     </span>
                 </label>
 
@@ -301,42 +301,90 @@
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
-                       <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i>
+                       <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
                     </span>
                 </label>
 
-                <fieldset class="answer hidden" id="hidden_fields_six">
-                    <div class="answer-label"><span class="heading">coding:</span><span></span></div>
-                    <div class="answer-label"><span class="heading">current project:</span><span></span></div>
-                    <div class="answer-label"><span class="heading">conceptual:</span><span></span></div>
+                <fieldset class="format answer hidden" id="hidden_fields_six">
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="checkbox1" />
+                                               
+                                            </span><span class="pull-left"> Coding:</span>
+                                        </div>
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="checkbox2" />
+                                               
+                                            </span><span class="pull-left"> Current project:</span>
+                                        </div>
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading  pull-left">
+                                                <input type="checkbox" name="checkbox3" />
+                                               
+                                            </span><span class="pull-left"> Conceptual:</span>
+                                        </div>
 
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="checkbox4" />
+                                              
+                                            </span><span class="pull-left">  Scenario:</span>
+                                        </div>
+
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="checkbox4" />
+                                              
+                                            </span><span class="pull-left">System Design:</span>
+                                        </div>
+
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="checkbox4" />
+                                                
+                                            </span><span class="pull-left">People management:</span>
+                                        </div>
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="checkbox4" />
+                                              
+                                            </span><span class="pull-left"> Client management:</span>
+                                        </div>
 
                 </fieldset>
             </div>
 
           
         </div>
-        <div class="col-md-12 pull-left">
-              <div class="card">
-                <label class="question" for="checkbox_seven">
-                    <label for="coupon_question">
-                        <i class="fa fa-question-circle" aria-hidden="true" style="font-size:24px;"></i>
+      <div class="col-md-12 pull-left">
+                                <div class="card">
+                                    <label class="question" for="checkbox_four">
+                                        <label for="coupon_question">
+                                            <i class="fa fa-file-text-o" aria-hidden="true"></i>
 
-                       Critical Question & Concepts
-                    </label>
-                    <span class="round">
-                        <input type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
-                        <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i>
-</label>
-                    </span>
-                </label>
+                                            Text Instruction - <span style="font-size:14px; text-transform:capitalize; font-weight:normal;color: #a29c9c;">Critical Question & Concepts, Candidate Feedback</span>
+                                        </label>
+                                        <span class="round">
+                                            <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
+                                            <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
+                                        </span>
+                                    </label>
 
-                <fieldset class="answer hidden" id="hidden_fields_seven">
-                    <label for="coupon_field">Your coupon:</label>
-                    <input type="text" name="hidden" id="hidden_six" />
-                </fieldset>
-            </div>
-        </div>
+                                    <fieldset class="answer hidden" id="hidden_fields_four">
+
+                                        <div id="CandidateDetails"></div>
+                                    </fieldset>
+
+                                </div>
+      </div>
        @* <div class="button-wrapper">
             <h2 class="text-center pad10 pull-left">Click here to join the meeting</h2>
             <a class="join-button" target="_blank" title="Meeting Link" href="#">Join now</a>
