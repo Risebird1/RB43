@@ -585,7 +585,8 @@
         modalBct.style.display = "none";
         cancelRecording();
     }
-    function OpenVoiceRecordingModal(irfid, Irfname) {
+    function OpenVoiceRecordingModal(irfid, Irfname) 
+    {
         $.ajax({
             type: "POST",
             url: "/IRF/FetchIRFAudioLink",
@@ -632,7 +633,7 @@
     //    //$("#txtIRFName").val(Irfname);
     //}
     function UploadCandidateResume() {
-        debugger;
+      
         if (irfId != 0 && irfName.trim() != "" && document.getElementById("ResumeFiles").files.length > 0) {
             $(".loader").show();
             var files = $("#ResumeFiles").prop("files");

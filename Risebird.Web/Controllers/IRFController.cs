@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -8048,6 +8049,8 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var model = new IRFVm();
@@ -8056,6 +8059,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                 var Skillset = await _irfRepository.GetSkills();
                 ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+                model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
+                var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, meetingLineUpType);
                 return View(model);
             }
             else
@@ -8067,6 +8072,8 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DeliveryHeadInstruction(IRFVm model)
         {
+            try 
+            { 
             if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -8088,6 +8095,12 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }
