@@ -8049,6 +8049,8 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
+                var meetingLineUpType = "";
+                irfid = 6066;
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -8061,6 +8063,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
                 var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, meetingLineUpType);
+
                 return View(model);
             }
             else
@@ -8103,5 +8106,31 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-    }
+        [HttpPost]
+        public JsonResult TextInstruction(int irfId,string Comment)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                BroadcastModel model = new BroadcastModel();
+                model.IRFId = irfId;
+                model.Message = Comment;
+                model.SentBy = emailid;
+                var result = _meetingService.StoreClientBroadcastMessage(model);
+                return Json("Successfully");
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Text Instruction failed, Please try again.");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetTextInstruction(int irfid)
+        {
+            var textInstruction = await _irfService.GetTextInstructionService(irfid);
+            return Json(textInstruction);
+        }
+        }
 }

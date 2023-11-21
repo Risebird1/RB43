@@ -3456,7 +3456,18 @@ namespace Risebird.Business
                 return false;
             }
         }
-
+        public async Task<IEnumerable<BroadcastModel>> GetTextInstructionService( int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetTextInstruction(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
     }
 }
