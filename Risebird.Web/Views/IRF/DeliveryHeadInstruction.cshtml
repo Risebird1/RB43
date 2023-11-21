@@ -57,9 +57,9 @@
                                 <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
                                 <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
                                 <th width="10%" class="table_heading">Concepts</th>
-                                <th width="30%" class="table_heading">Nature of questions</th>
+                               @* <th width="30%" class="table_heading">Nature of questions</th>
                                 <th width="10%" class="table_heading">Time limit</th>
-                                <th width="10%" class="table_heading text-center">Action</th>
+                                <th width="10%" class="table_heading text-center">Action</th>*@
                             </tr>
                         </thead>
                         <tbody>
@@ -78,7 +78,7 @@
                                     <td>
                                         <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
                                     </td>
-                                    <td>
+                                   @* <td>
                                         <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
                                     </td>
                                     <td>
@@ -87,7 +87,7 @@
                                     <td class="action text-center">
                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                    </td>
+                                    </td>*@
                                 </tr>
                             }
                             else
@@ -107,7 +107,7 @@
                                         <td>
                                             @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                         </td>
-                                        <td>
+                                       @* <td>
                                             @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                         </td>
                                         <td>
@@ -118,7 +118,7 @@
                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                 <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                             </div>
-                                        </td>
+                                        </td>*@
                                     </tr>
                                 }
                             }
@@ -255,7 +255,7 @@
                     <label for="coupon_question">
                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
 
-                        Client Instruction
+                        Text Instruction
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
@@ -322,7 +322,7 @@
                     <label for="coupon_question">
                         <i class="fa fa-question-circle" aria-hidden="true" style="font-size:24px;"></i>
 
-                        Question & Concepts
+                       Critical Question & Concepts
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
