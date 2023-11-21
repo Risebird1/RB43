@@ -8060,9 +8060,10 @@ namespace Risebird.Web.Controllers
                 ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                 var Skillset = await _irfRepository.GetSkills();
                 ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
-                var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, meetingLineUpType);
-
                 return View(model);
             }
             else
@@ -8074,36 +8075,63 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DeliveryHeadInstruction(IRFVm model)
         {
-            try 
-            { 
-            if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+            try
             {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                foreach (var item in model.SkillCollection)
+                if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
                 {
-                    item.IRFId = model.id;
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    foreach (var item in model.SkillCollection)
+                    {
+                        item.IRFId = model.id;
+                    }
+                    var result = await _irfService.UpdateTechSkills(model.SkillCollection);
+                    if (result)
+                    {
+                        return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
+                    }
+                    ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                    var Skillset = await _irfRepository.GetSkills();
+                    ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                    return View(model);
                 }
-                var result = await _irfService.UpdateTechSkills(model.SkillCollection);
-                if (result)
+                else
                 {
-                    return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
+                    return RedirectToAction("SignOut", "Session");
                 }
-                ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
-                var Skillset = await _irfRepository.GetSkills();
-                ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateJobLevel(int irfid, int joblevel)
+        {
+            var result = await _irfService.UpdateJobLevel(irfid, joblevel);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateDeficultyLevel(int irfid, int deficultylevel)
+        {
+            var result = await _irfService.UpdateDeficultyLevel(irfid, deficultylevel);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateFormat(int irfid, string format)
+        {
+            var result = await _irfService.UpdateFormat(irfid, format);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetFormatanddifficultylevel(int irfid)
+        {
+            var result = await _irfService.GetFormatanddifficultylevel(irfid);
+            return Json(result);
         }
         [HttpPost]
         public JsonResult TextInstruction(int irfId,string Comment)

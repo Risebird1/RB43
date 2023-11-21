@@ -214,6 +214,10 @@ namespace Risebird.Repository.Interface
         Task<IRF> GetSkillChannelDetailsByName(string irfName);
         Task<bool> UpdateTechSkills(IList<TransSkill> techskills);
         Task<IEnumerable<BroadcastModel>> GetTextInstruction(int irfId);
+        Task<bool> UpdateJobLevel(int irf, int joblevel);
+        Task<bool> UpdateDeficultyLevel(int irf, int difficultylevel);
+        Task<bool> UpdateFormat(int irf, string format);
+        Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf);
 
     }
 }

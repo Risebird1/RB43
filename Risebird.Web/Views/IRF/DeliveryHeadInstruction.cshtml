@@ -1,6 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.IRFVm
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Delivery Head Instruction";
 }
 <script>
     var Header = "Delivery Head Instruction";
@@ -298,20 +299,19 @@
                 </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_five">
-                    <div class="answer-label"><div class="col-md-6 pull-left"><span class="heading pull-left">Difficulty:</span>
-                        <span class="custom-select-dropdown">
-               <select class="pull-left">
-                   <option>1</option>
-                   <option>2</option>
-                   <option>3</option>
-                   </select>
+                    <div class="answer-label"><div><span class="heading pull-left">Seniority</span>
+                        <span class="custom-select">
+                        @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control select-css ",@onChange="ChangeJobLevel()" })
            </span></div>
-                                            <div class="col-md-6 pull-left">
-                                                <span class="heading pull-left"> Seniority:</span> <span class="custom-select-dropdown">
-                                                    <select class="pull-left">
-                                                        <option>1</option>
-                                                        <option>2</option>
-                                                        <option>3</option>
+                                            <div>
+                                                <span>  Difficulty:</span> <span class="custom-select">
+                                                    <select id="Difficulty" class = "form-control select-css " onChange="ChangeDefautlevel()">
+                                                        <option>Select</option>
+                                                        <option value="60">60%</option>
+                                                        <option value="70">70%</option>
+                                                        <option value="80">80%</option>
+                                                        <option value="90">90%</option>
+                                                        <option value="99">99%</option>
                                                     </select>
                                                 </span>
                                             </div>
@@ -320,7 +320,7 @@
                 </fieldset>
             </div>
 
-            <div class="card">
+            <div class="card" id="divcheckbox">
                 <label class="question" for="checkbox_six">
                     <label for="checkbox_six">
                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
@@ -337,21 +337,21 @@
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
-                                                <input type="checkbox" name="checkbox1" />
+                                                <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" />
                                                
                                             </span><span class="pull-left"> Coding:</span>
                                         </div>
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
-                                                <input type="checkbox" name="checkbox2" />
+                                                <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" />
                                                
                                             </span><span class="pull-left"> Current project:</span>
                                         </div>
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading  pull-left">
-                                                <input type="checkbox" name="checkbox3" />
+                                                <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" />
                                                
                                             </span><span class="pull-left"> Conceptual:</span>
                                         </div>
@@ -359,7 +359,7 @@
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
-                                                <input type="checkbox" name="checkbox4" />
+                                                <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" />
                                               
                                             </span><span class="pull-left">  Scenario:</span>
                                         </div>
@@ -367,7 +367,7 @@
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
-                                                <input type="checkbox" name="checkbox4" />
+                                                <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" />
                                               
                                             </span><span class="pull-left">System Design:</span>
                                         </div>
@@ -375,14 +375,14 @@
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
-                                                <input type="checkbox" name="checkbox4" />
+                                                <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" />
                                                 
                                             </span><span class="pull-left">People management:</span>
                                         </div>
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
-                                                <input type="checkbox" name="checkbox4" />
+                                                <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" />
                                               
                                             </span><span class="pull-left"> Client management:</span>
                                         </div>
@@ -455,7 +455,7 @@
                 <h5 class="modal-title pull-left">Record Audio</h5>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true" style="cursor:pointer;" onclick="closeVoiceRecordingModal()">&times;</span>
+                <span aria-hidden="true" style="cursor:pointer;" onclick="closeVoiceRecordingModal(@Model.id)">&times;</span>
             </button>
             <div class="modal-body">
                 <div class="row" id="divIRFaudioRecording">
@@ -515,7 +515,7 @@
             <div class="modal-body" id="TextInstructionTypebody" style="overflow:auto;max-height:30vw">
                 <form method="post">
                     <input type="hidden" id="hdnIirfId">
-                    <label style="font-size:14px;">Comment</label>
+                    <label style="font-size:14px;">Instruction</label>
                     <div class="box arrow-top">  <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea></div>
                 </form>
             </div>
@@ -629,10 +629,8 @@
          }
      }
  }
+ 
  function CheckConditions() {
-        return CheckTotalWeightage();
- }
- function CheckTotalWeightage() {
         var total = 0;
         var skillArray = ["SkillCollection"];
         for (i = 0; i < skillArray.length; i++) {
@@ -749,7 +747,7 @@
         html += '</div>';
         $("#divIRFaudioRecording").empty().html(html);
     }
-      function closeVoiceRecordingModal() {
+      function closeVoiceRecordingModal(irfid) {
         var modalBct = document.getElementById("VoiceRecordingModal");
         modalBct.style.display = "none";
         cancelRecording();
@@ -813,3 +811,61 @@
         });
     });
 </script>
+    <script>
+        function ChangeJobLevel(){
+            var joblevel = document.getElementById("JobLevel").value;
+            var irfid = document.getElementById("id").value;
+            $.ajax({
+            type: "POST",
+            url: "/IRF/UpdateJobLevel",
+            data: { 'irfid': irfid,joblevel:joblevel },
+            success: function (data) {
+                }
+            });
+        }
+        function ChangeDefautlevel(){
+            var deficultylevel = document.getElementById("Difficulty").value;
+            var irfid = document.getElementById("id").value;
+            $.ajax({
+            type: "POST",
+            url: "/IRF/UpdateDeficultyLevel",
+            data: { 'irfid': irfid,deficultylevel:deficultylevel },
+            success: function (data) {
+                }
+            });
+        }
+       function ChangeCheckBox(groupName) {
+        var irfid = document.getElementById("id").value;
+        var result = $('input[name="' + groupName + '"]:checked');
+        var resultString = '';
+        if (result.length > 0) {
+            result.each(function () {
+                if (resultString == '') {
+                    resultString += $(this).val();
+                } else {
+                    resultString += "," + $(this).val();
+                }
+            });
+        }
+          $.ajax({
+            type: "POST",
+            url: "/IRF/UpdateFormat",
+            data: { 'irfid': irfid,format:resultString },
+            success: function (data) {
+                }
+            });
+        }
+    </script>
+    <script>
+         $(document).ready(function () {
+             var irfid = document.getElementById("id").value;
+                 $.ajax({
+                    type: "POST",
+                    url: "/IRF/GetFormatanddifficultylevel",
+                    data: { 'irfid': irfid },
+                    success: function (data) {
+                        document.getElementById("Difficulty").value=data.difficultylevel;
+                    }
+                 });
+         });
+    </script>
