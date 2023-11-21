@@ -7623,17 +7623,19 @@ ul.ks-cboxtags {
 
 .custom-select-dropdown {
     position: relative;
+    left: 10px;
+    top: -18px;
 }
 
 
     .custom-select-dropdown select {
-        width: 95px;
+        width: 120px;
         font-size: 1.2rem;
         padding: 10px 30px 10px 10px;
         border: 1px silver solid;
-        background-color: #e9e8e840;
         color: grey;
         outline: none;
+        margin: 10px;
     }
 
     .custom-select-dropdown span {

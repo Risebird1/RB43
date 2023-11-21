@@ -926,6 +926,9 @@ table.journey {
 .card-blue .card-body .client-field {
     color: #9a9a9a !important;
 }
+.custom-select-dropdown select {
+    background-color: #e9e8e840 !important;
+}
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     background: #9a9a9a !important;
 }

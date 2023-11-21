@@ -8060,7 +8060,7 @@ namespace Risebird.Web.Controllers
                 var Skillset = await _irfRepository.GetSkills();
                 ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
-                var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, meetingLineUpType);
+            //    var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, meetingLineUpType);
                 return View(model);
             }
             else
