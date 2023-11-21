@@ -515,7 +515,7 @@
             <div class="modal-body" id="TextInstructionTypebody" style="overflow:auto;max-height:30vw">
                 <form method="post">
                     <input type="hidden" id="hdnIirfId">
-                    <label style="font-size:14px;">Comment</label>
+                    <label style="font-size:14px;">Instruction</label>
                     <div class="box arrow-top">  <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea></div>
                 </form>
             </div>
@@ -799,20 +799,17 @@
             type: "POST",
             success: function (data) {
                 let text = "";
-                text = "<li>";
+                text = "<ui>";
                 for (let i = 0; i < data.length; i++) {
                     text += "<li>" + data[i].message + "</li>";
                     
                 }
-                text += "</li>";
+                text += "</ui>";
                 $('#lblComments').empty().html(text);
             }
         });
     });
 </script>
-        });
-    }
-    </script>
     <script>
         function ChangeJobLevel(){
             var joblevel = document.getElementById("JobLevel").value;
