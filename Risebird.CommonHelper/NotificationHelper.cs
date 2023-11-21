@@ -251,6 +251,8 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress("tanishka_gupta@risebird.io", "Tanishka Gupta"));
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress("dilruba_sultana@risebird.io", "Dilruba Sultana"));
 
                 object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
@@ -1059,6 +1061,9 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
                 }
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress("tanishka_gupta@risebird.io", "Tanishka Gupta"));
+                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress("dilruba_sultana@risebird.io", "Dilruba Sultana"));
+
                 //string companyLogoLink = string.Empty;
                 //string companyURL = string.Empty;
                 //companyLogoLink = clientLogo != null ? clientLogo : _configuration["RisebirdDetails:RisebirdLogo"];
@@ -2060,16 +2065,16 @@ namespace Risebird.CommonHelper
                 //{
                 //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 //}
-                if (!string.IsNullOrWhiteSpace(HRCoordinator))
-                {
-                    var hrEmail = HRCoordinator.Split("@");
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(HRCoordinator, hrEmail.FirstOrDefault()));
-                }
-                if (!string.IsNullOrWhiteSpace(StaffingAgiencies))
-                {
-                    var staffingEmail = StaffingAgiencies.Split("@");
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(StaffingAgiencies, staffingEmail.FirstOrDefault()));
-                }
+                //if (!string.IsNullOrWhiteSpace(HRCoordinator))
+                //{
+                //    var hrEmail = HRCoordinator.Split("@");
+                //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(HRCoordinator, hrEmail.FirstOrDefault()));
+                //}
+                //if (!string.IsNullOrWhiteSpace(StaffingAgiencies))
+                //{
+                //    var staffingEmail = StaffingAgiencies.Split("@");
+                //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(StaffingAgiencies, staffingEmail.FirstOrDefault()));
+                //}
                 var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
                 object[] parameters = new object[] { interviewdate, join_url, Email, HRCoordinator, StaffingAgiencies, Name, ClientName, jdLink, clientLogoLink, companyLink };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");

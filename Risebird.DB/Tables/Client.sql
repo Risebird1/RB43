@@ -24,7 +24,8 @@ CREATE TABLE [dbo].[Client](
             [GSTApplicable] [bit] NULL,
             [ClientType] [bit] NULL, -- service, product, elite
             [CountryType] [int] NULL, -- onsite offshore,
-            [Reportsnippet][int] Null
+            [Reportsnippet][int] Null,
+            [IsTranscript][bit] Null
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -248,7 +249,15 @@ BEGIN
     ALTER TABLE Client
     Add Reportsnippet int
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsTranscript')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add IsTranscript bit
+END
 
 END
 

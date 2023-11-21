@@ -6929,7 +6929,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorCloneTemplateMessage"] = "Failed to redirect! Kindly contact the Coordinator.";
-                return RedirectToAction("Index", "Template");
+                return RedirectToAction("List", "Template");
             }
         }
 
@@ -7011,6 +7011,7 @@ namespace Risebird.Web.Controllers
 
                         model.CalendlyLink = _schedulinglink;
                         var result = await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName);
+                        //var result = await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName);
                         //End: Auto Generate Scheduling Link
                         if (result.Item1)
                         {
@@ -7026,7 +7027,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Failed to create Skills Channel from {model.TemplateName}!";
-                            return RedirectToAction("Index", "Template");
+                            return RedirectToAction("List", "Template");
                         }
                     }
                     else
@@ -7043,7 +7044,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {model.TemplateName}; userEmailId : {emailId}");
                 TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
-                return RedirectToAction("Index", "Template");
+                return RedirectToAction("List", "Template");
             }
         }
 
@@ -7324,6 +7325,128 @@ namespace Risebird.Web.Controllers
             }
             skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-").Replace("+", "s").Replace("&", "o");
             return skillChannelName;
+        }
+
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> CreateInterviewLinkV1(IRFVm model)
+        {
+            string emailId = string.Empty;
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (/*profileName == "Admin" || profileName == "HR" ||*/ profileName == "Client" /*|| profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR"*/)
+                    {
+
+                        string uploadedFileURL = string.Empty;
+                        if (model.ClientId == 0)
+                            model.ClientId = await _clientService.GetClientByEmailId(emailId);
+                        if (model.JDFile != null)
+                        {
+
+
+                            int virusScanResult = 0;
+                            if (profileName == "Client")
+                            {
+                                using (var ms = new MemoryStream())
+                                {
+                                    model.JDFile.CopyTo(ms);
+
+                                    //VirusTotal virusTotal = new VirusTotal("30368672cc1d7fa0497a0d2c640544ade03ad455600d24c220bfd41c83b5e6d5");
+                                    VirusTotal virusTotal = new VirusTotal(_configuration["VirusTotal:ApiKey"]);
+
+                                    //Use HTTPS instead of HTTP
+                                    virusTotal.UseTLS = true;
+
+                                    //byte[] eicar = Encoding.ASCII.GetBytes(@"X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
+                                    //VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(eicar);//ms
+
+                                    VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(ms);
+                                    bool hasFileBeenScannedBefore = fileReport.ResponseCode == FileReportResponseCode.Present;
+
+                                    if (hasFileBeenScannedBefore)
+                                    {
+                                        virusScanResult = fileReport.Positives;
+                                    }
+                                    else
+                                    {
+                                        //var fileResults = await virusTotal.ScanFileAsync(eicar, fileName);//ms
+                                        var fileResults = await virusTotal.ScanFileAsync(ms, model.JDFile.FileName);
+                                        virusScanResult = fileReport.Positives;
+                                    }
+
+                                    if (virusScanResult > 0)
+                                    {
+                                        TempData["SuccessErrorCloneTemplateMessage"] = $"File upload failed. Virus Detected! Failed to create Skills Channel from {model.TemplateName}!";
+                                        return RedirectToAction("Index", "Template");
+                                    }
+
+                                }
+                            }
+
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint" || fileMimeType == "text/plain")
+                            {
+                                await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                model.JDLink = uploadedFileURL;
+                            }
+
+                        }
+
+                        //Start: Auto Generate Scheduling Link 
+                        model.StartDate = DateTime.Now;
+                        model.EndDate = DateTime.Now.AddMonths(3);
+
+                        //model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
+
+                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
+
+                        model.CalendlyLink = _schedulinglink;
+                        var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(model, emailId, profileName);
+                        //End: Auto Generate Scheduling Link
+                        if (result.Item1)
+                        {
+                            var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
+
+                            FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+
+                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                            TempData["SuccessErrorMessage2"] = model.CalendlyLink;
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Failed to create Skills Channel from {model.TemplateName}!";
+                            return RedirectToAction("List", "Template");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {model.TemplateName}; userEmailId : {emailId}");
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
+                return RedirectToAction("List", "Template");
+            }
         }
 
         /// <summary>

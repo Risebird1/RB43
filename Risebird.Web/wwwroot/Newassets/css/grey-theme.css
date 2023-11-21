@@ -1124,6 +1124,12 @@ table {
     background: #727171 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
 
+.wallet-txt {
+    color: #747373;
+}
+#btnSave {
+    background: #727171!important;
+}
 @media only screen and (max-width: 767px) {
 
     .razorpay_btn button.form-control {

@@ -675,7 +675,9 @@ table.journey {
 .filavatar {
     background: #ea6e24 !important;
 }
-
+#btnSave {
+    background: #f88e4d!important;
+}
 #IRFList a, #ProjectList a {
     color: #ea6e24 !important;
 }
@@ -1171,6 +1173,10 @@ input[type="radio"]:checked {
 .dashboard-iconcolor {
     color: #f28542!important;
     background: #f98a46 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
+}
+
+.wallet-txt {
+    color: #6a6866;
 }
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
