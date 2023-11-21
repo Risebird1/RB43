@@ -8049,6 +8049,8 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
+                var meetingLineUpType = "";
+                irfid = 6066;
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -8132,5 +8134,31 @@ namespace Risebird.Web.Controllers
             var result = await _irfService.GetFormatanddifficultylevel(irfid);
             return Json(result);
         }
-    }
+        [HttpPost]
+        public JsonResult TextInstruction(int irfId,string Comment)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                BroadcastModel model = new BroadcastModel();
+                model.IRFId = irfId;
+                model.Message = Comment;
+                model.SentBy = emailid;
+                var result = _meetingService.StoreClientBroadcastMessage(model);
+                return Json("Successfully");
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Text Instruction failed, Please try again.");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetTextInstruction(int irfid)
+        {
+            var textInstruction = await _irfService.GetTextInstructionService(irfid);
+            return Json(textInstruction);
+        }
+        }
 }

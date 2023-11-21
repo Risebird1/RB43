@@ -402,13 +402,17 @@
                                         </label>
                                         <span class="round">
                                             <input type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
-                                            <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
+                                            <label class="edit-wrap" onclick="javascript:TextInstructionDetails('@Model.id');">
+                                                <i class='fa fa-edit' style='color: white'></i>
+                                            
+                                            </label>
                                         </span>
                                     </label>
 
                                     <fieldset class="answer hidden" id="hidden_fields_seven">
 
                                         <div id="CandidateDetails"></div>
+                                        <label id="lblComments"></label>
                                     </fieldset>
 
                                 </div>
@@ -490,6 +494,35 @@
                         </div><!--end of col-md-12-->
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="TextInstructionTypeModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Text Instruction</h5>
+            </div>
+            <button onclick="closeTextInstructionTypeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="TextInstructionTypebody" style="overflow:auto;max-height:30vw">
+                <form method="post">
+                    <input type="hidden" id="hdnIirfId">
+                    <label style="font-size:14px;">Comment</label>
+                    <div class="box arrow-top">  <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer" style="display:block;text-align:right">
+
+                <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SaveTextInstruction()" id="btnTextInstructionSave">Save</button>
+
             </div>
         </div>
     </div>
@@ -725,6 +758,58 @@
             success: function (data) {
                 location.reload();
             }
+        });
+    }
+    </script>
+<script>
+    function closeTextInstructionTypeModal() {
+        var modal = document.getElementById("TextInstructionTypeModal");
+        modal.style.display = "none";
+    }
+    function TextInstructionDetails(irfId) {
+        var modal = document.getElementById("TextInstructionTypeModal");
+        modal.style.display = "block";
+        $('#hdnIirfId').val(irfId);
+    }
+    function SaveTextInstruction() {
+        var comment = $('#Comment').val().trim();
+        var irfId = $('#hdnIirfId').val();
+        if (comment != '') {
+            $.ajax({
+                url: '/IRF/TextInstruction',
+                data: { 'irfId': irfId, 'Comment': comment },
+                type: "POST",
+                success: function (data) {
+                    swal.fire(data);
+                    closeTextInstructionTypeModal();
+                }
+            });
+        }
+        else {
+            alert("Please enter the comment.");
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        var irfId = $("#id").val();
+        $.ajax({
+            url: '/IRF/GetTextInstruction',
+            data: { 'irfId': irfId },
+            type: "POST",
+            success: function (data) {
+                let text = "";
+                text = "<li>";
+                for (let i = 0; i < data.length; i++) {
+                    text += "<li>" + data[i].message + "</li>";
+                    
+                }
+                text += "</li>";
+                $('#lblComments').empty().html(text);
+            }
+        });
+    });
+</script>
         });
     }
     </script>
