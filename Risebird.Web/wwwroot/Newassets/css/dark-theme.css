@@ -83,7 +83,9 @@ td.detail-row {
     border-radius: 16px;
     background: #232424;
 }
-
+.custom-select-dropdown select {
+    background-color: #34303040!important;
+}
 input[type='radio']:checked:after {
     background-color: #929292 !important;
     top: 1px !important;

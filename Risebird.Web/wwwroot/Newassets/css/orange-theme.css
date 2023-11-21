@@ -193,6 +193,9 @@ textarea::-webkit-scrollbar {
     margin: 5px 5px;
     border: 1px #eb7022 solid;
 }
+.custom-select-dropdown select {
+    background-color: #e9e8e840 !important;
+}
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     background: #ea6b26 !important;
 }

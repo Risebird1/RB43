@@ -28,7 +28,7 @@
             <div class="card">
 
                 <label class="question" for="checkbox_two">
-                    <label for="coupon_question">
+                                        <label for="checkbox_two">
                         <i class="fa fa-cogs" aria-hidden="true"></i>
 
 
@@ -56,10 +56,10 @@
                                 <th width="15%" class="table_heading">Level<span class="red">*</span></th>
                                 <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
                                 <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                                <th width="10%" class="table_heading">Concepts</th>
-                               @* <th width="30%" class="table_heading">Nature of questions</th>
-                                <th width="10%" class="table_heading">Time limit</th>
-                                <th width="10%" class="table_heading text-center">Action</th>*@
+                                @* <th width="10%" class="table_heading">Concepts</th>
+                               <th width="30%" class="table_heading">Nature of questions</th>
+                                <th width="10%" class="table_heading">Time limit</th*@
+                                <th width="10%" class="table_heading text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,11 +83,11 @@
                                     </td>
                                     <td>
                                         <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="0">
-                                    </td>
+                                    </td>*@
                                     <td class="action text-center">
                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                    </td>*@
+                                    </td>
                                 </tr>
                             }
                             else
@@ -104,21 +104,21 @@
                                         <td>
                                             @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
                                         </td>
-                                        <td>
+                                       @*   <td>
                                             @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                         </td>
-                                       @* <td>
+                                      <td>
                                             @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                         </td>
                                         <td>
                                             @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "0" } })
-                                        </td>
+                                        </td>*@
                                         <td class="action text-center">
                                             <div>
                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                 <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                             </div>
-                                        </td>*@
+                                        </td>
                                     </tr>
                                 }
                             }
@@ -143,10 +143,10 @@
             <div class="card">
 
                 <label class="question" for="checkbox_three">
-                    <label for="coupon_question">
+                    <label for="checkbox_three">
                         <i class="fa fa-file-audio-o" aria-hidden="true"></i>
                         Audio Instruction
-                                            <audio controls><source src="@Model.AudioComment">Recording</audio>
+                                          
 
                     </label>
                                       
@@ -158,6 +158,8 @@
                 </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_three">
+
+                                        <audio controls><source src="@Model.AudioComment">Recording</audio>
                     @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                     {
                     string audiofileName = string.Empty;
@@ -256,7 +258,7 @@
 
             <div class="card">
                 <label class="question" for="checkbox_four">
-                    <label for="coupon_question">
+                    <label for="checkbox_four">
                         <i class="fa fa-link" aria-hidden="true"></i>
 
                                            Job description Link
@@ -283,7 +285,7 @@
         <div class="col-md-6 pull-left pad10">
             <div class="card">
                 <label class="question" for="checkbox_five">
-                    <label for="coupon_question">
+                    <label for="checkbox_five">
                         <i class="fa fa-signal" aria-hidden="true"></i>
 
 
@@ -296,15 +298,31 @@
                 </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_five">
-                    <div class="answer-label"><span class="heading">Difficulty / Seniority:</span><span></span></div>
+                    <div class="answer-label"><div class="col-md-6 pull-left"><span class="heading pull-left">Difficulty:</span>
+                        <span class="custom-select-dropdown">
+               <select class="pull-left">
+                   <option>1</option>
+                   <option>2</option>
+                   <option>3</option>
+                   </select>
+           </span></div>
+                                            <div class="col-md-6 pull-left">
+                                                <span class="heading pull-left"> Seniority:</span> <span class="custom-select-dropdown">
+                                                    <select class="pull-left">
+                                                        <option>1</option>
+                                                        <option>2</option>
+                                                        <option>3</option>
+                                                    </select>
+                                                </span>
+                                            </div>
 
-
+</div>
                 </fieldset>
             </div>
 
             <div class="card">
                 <label class="question" for="checkbox_six">
-                    <label for="coupon_question">
+                    <label for="checkbox_six">
                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
 
                         Format
@@ -376,8 +394,8 @@
         </div>
       <div class="col-md-12 pull-left">
                                 <div class="card">
-                                    <label class="question" for="checkbox_four">
-                                        <label for="coupon_question">
+                                    <label class="question" for="checkbox_seven">
+                                        <label for="checkbox_seven">
                                             <i class="fa fa-file-text-o" aria-hidden="true"></i>
 
                                             Text Instruction - <span style="font-size:14px; text-transform:capitalize; font-weight:normal;color: #a29c9c;">Critical Question & Concepts, Candidate Feedback</span>
@@ -391,7 +409,7 @@
                                         </span>
                                     </label>
 
-                                    <fieldset class="answer hidden" id="hidden_fields_four">
+                                    <fieldset class="answer hidden" id="hidden_fields_seven">
 
                                         <div id="CandidateDetails"></div>
                                         <label id="lblComments"></label>
@@ -432,7 +450,7 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="publicsharing-icon  fas fa-exclamation-triangle" style="font-size:24px;"></span>
+                    <span class="fa fa-file-audio-o" style="font-size:24px;"></span>
                 </div>
                 <h5 class="modal-title pull-left">Record Audio</h5>
             </div>
@@ -713,9 +731,9 @@
         modalBct.style.display = "block";
         var html = '';
         html += '<div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">';
-        html += '<div class="pull-left"><button id="startRecButton" onclick="startRecording()" title="Start Recording"><i class="fa fa-play" ></i></button></div>';
-        html += '<div class="pull-left"><button id="stopRecButton" type="button" onclick="stopIRFRecording(' + irfid + ')" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>';
-        html += '<div class="pull-left"><button id="cancelRecButton" type="button" onclick="cancelRecording()" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>';
+        html += '<div class="pull-left"><button style="margin-top:20px;" id="startRecButton" onclick="startRecording()" title="Start Recording"><i class="fa fa-play" ></i></button></div>';
+        html += '<div class="pull-left"><button style="margin-top:20px;" id="stopRecButton" type="button" onclick="stopIRFRecording(' + irfid + ')" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>';
+        html += '<div class="pull-left"><button style="margin-top:20px;" id="cancelRecButton" type="button" onclick="cancelRecording()" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>';
         html += '   </div>';
         html += '<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">';
         html += '<div class="row">';
