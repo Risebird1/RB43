@@ -801,13 +801,14 @@
             type: "POST",
             success: function (data) {
                 let text = "";
-                text = "<li>";
+                text += "<ui>";
                 for (let i = 0; i < data.length; i++) {
                     text += "<li>" + data[i].message + "</li>";
                     
                 }
-                text += "</li>";
+                text += "</ui>";
                 $('#lblComments').empty().html(text);
+                
             }
         });
     });

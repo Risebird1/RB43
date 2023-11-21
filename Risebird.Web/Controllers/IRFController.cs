@@ -8050,7 +8050,6 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
                 var meetingLineUpType = "";
-                irfid = 6066;
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
