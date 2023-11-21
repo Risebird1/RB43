@@ -3456,6 +3456,58 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateJobLevel(int irf, int joblevel)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateJobLevel(irf, joblevel);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> UpdateDeficultyLevel(int irf, int difficultylevel)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateDeficultyLevel(irf, difficultylevel);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> UpdateFormat(int irf, string format)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateFormat(irf, format);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf)
+        {
+            try
+            {
+                var result = await _irfRepository.GetFormatanddifficultylevel(irf);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
 
     }
