@@ -12,7 +12,7 @@ Create Procedure usp_FetchAudioComment
 @interviewId int
 as 
 begin
-Select irf.AudioComment,irf.CompanyDetails,im.zoomLink,im.interviewDate from InterviewMeetings im                   
+Select irf.AudioComment,irf.CompanyDetails,im.zoomLink,im.interviewDate,irf.JDLink from InterviewMeetings im                   
  join IRF  irf on im.IRFId=irf.IRFId where im.id=@interviewId
  End
 GO
