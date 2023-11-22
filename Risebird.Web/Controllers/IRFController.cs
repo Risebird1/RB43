@@ -8254,10 +8254,14 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> GetFormatanddifficultylevel(int irfid)
         {
             var result = await _irfService.GetFormatanddifficultylevel(irfid);
+            if (result == null)
+            {
+                result = new IRFInstructionDetailsVM();
+            }
             return Json(result);
         }
         [HttpPost]
-        public JsonResult TextInstruction(int irfId,string Comment)
+        public JsonResult TextInstruction(int irfId, string Comment)
         {
             try
             {
@@ -8282,5 +8286,5 @@ namespace Risebird.Web.Controllers
             var textInstruction = await _irfService.GetTextInstructionService(irfid);
             return Json(textInstruction);
         }
-        }
+    }
 }

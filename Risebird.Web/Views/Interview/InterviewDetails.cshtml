@@ -27,7 +27,7 @@
     
 
 
-
+    <input type="hidden" value="@ViewBag.id" id="id" />
             <div class="interviewWrapper">
         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;">
             <div class="card" style="margin-bottom:10px;">
@@ -70,6 +70,7 @@
                         </label>
 
                         <fieldset class="answer hidden" id="hidden_fields_three">
+                            <audio controls><source src="@Model.AudioComment">Recording</audio>
                             @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                             {
                             string audiofileName = string.Empty;
@@ -127,7 +128,7 @@
                     } *@
 
 
-                    @if (!string.IsNullOrEmpty(Model.AudioComment))
+                   @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                     {
                         string audiofileName = string.Empty;
                         audiofileName = @Model.AudioComment.Split('/').Last();
@@ -159,7 +160,7 @@
                         {
                             <div>No Instructions</div>
                         }
-                    }
+                    }*@
                         </fieldset>
 
                     </div>
@@ -179,6 +180,7 @@
                         <fieldset class="answer hidden" id="hidden_fields_four">
                            
                     <div id="CandidateDetails"></div>
+                    
                         </fieldset>
                
                     </div>
@@ -297,37 +299,36 @@
                 </div>
         <div class="col-md-12 pull-left pad10" style="padding-bottom:30px;padding-top:0px">
             <div class="card" style="margin-bottom:10px;">
-                <label class="question" for="checkbox_four">
-                    <label for="checkbox_four">
+                <label class="question" for="checkbox_seven">
+                    <label for="checkbox_seven">
                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
 
                         Text Instruction - <span style="font-size:14px; text-transform:capitalize; font-weight:normal;color: #a29c9c;">Critical Question &amp; Concepts, Candidate Feedback</span>
                     </label>
                     <span class="round">
-                        <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
-                        <label for="checkbox_four"></label>
+                        <input type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
+                        <label for="checkbox_seven"></label>
                     </span>
                 </label>
 
-                <fieldset class="answer hidden" id="hidden_fields_four">
+                <fieldset class="answer hidden" id="hidden_fields_seven">
 
-                    <div id="CandidateDetails"></div>
+                    <label id="lblComments"></label>
                 </fieldset>
 
             </div>
 </div>
         <div class="button-wrapper">
             <h2 class="text-center pad10 pull-left">Click here to join the meeting</h2>
-                <a class="join-button" target="_blank" title="Meeting Link" href="#">Join now</a>
             @if (Model.zoomLink != null && Model.zoomLink != "")
             {
-                @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
-                {
+              @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
+                {*@
                     <div>
                         <a target="_blank" class="join-button" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
                     </div>
                     
-                }
+                @*}*@
                @*  else
                 {
                     <div>Before 10 min only</div>
@@ -402,27 +403,27 @@
                 }
             });
             var interviewId = @ViewBag.InterviewId;
-            $.ajax({
-                type: "GET",
-                url: "/Interviewer/GetClientFeedForInterviewer",
-                data: { interviewId: interviewId },
-                success: function (data) {
-                    $('#CandidateDetails').html('');
-                    $('#CandidateDetails').html(data);
+            //$.ajax({
+            //    type: "GET",
+            //    url: "/Interviewer/GetClientFeedForInterviewer",
+            //    data: { interviewId: interviewId },
+            //    success: function (data) {
+            //        $('#CandidateDetails').html('');
+            //        $('#CandidateDetails').html(data);
 
-                }
-            });
-            var meetingLineUpType = @ViewBag.MeetingLineUpType;
-            $.ajax({
-                type: "GET",
-                url: "/Interview/MyInterview",
-                data: { meetingLineUpType: meetingLineUpType },
-                success: function (data) {
-                    $('#AudioInstruction').html('');
-                    $('#AudioInstruction').html(data);
+            //    }
+            //});
+            //var meetingLineUpType = @ViewBag.MeetingLineUpType;
+            //$.ajax({
+            //    type: "GET",
+            //    url: "/Interview/MyInterview",
+            //    data: { meetingLineUpType: meetingLineUpType },
+            //    success: function (data) {
+            //        $('#AudioInstruction').html('');
+            //        $('#AudioInstruction').html(data);
 
-                }
-            });
+            //    }
+            //});
         });
         function bindSkillData(data) {
             var html = '';
@@ -506,7 +507,6 @@
         });
     </script>
     <script>
-        <script>
          $(document).ready(function () {
              var irfid = document.getElementById("id").value;
                  $.ajax({
@@ -515,14 +515,38 @@
                     data: { 'irfid': irfid },
                     success: function (data) {
                         document.getElementById("Difficulty").value=data.difficultylevel;
+                        if(data.format!=null){
                         for(var i=0;i<data.format.split(",").length;i++)
                         {
                             $("input[value='"+data.format.split(",")[i]+"']").prop('checked', true);
+                        }
                         }
                     }
                  });
          });
     </script>
-    </script>
+    <script>
+    $(document).ready(function () {
+       GetInstruction();
+    });
+    function GetInstruction(){
+         var irfId = $("#id").val();
+        $.ajax({
+            url: '/IRF/GetTextInstruction',
+            data: { 'irfId': irfId },
+            type: "POST",
+            success: function (data) {
+                let text = "";
+                text += "<ui>";
+                for (let i = 0; i < data.length; i++) {
+                    text += "<li>" + data[i].message + "</li>";
+                }
+                text += "</ui>";
+                $('#lblComments').empty().html(text);
+
+            }
+        });
+    }
+</script>
 </body>
 </html>
