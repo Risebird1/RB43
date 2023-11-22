@@ -113,7 +113,7 @@ namespace Risebird.Business
                     //        }
 
                     //    }
-                        
+
 
                     //    //await _notificationHelper.SendEmailCheckingInterviewerAvailability(smeEmail, irfDetails.IRFId, client, irfDetails.JDTiltle, irfDetails.PrimarySkillInvite, channelOwner);
 
@@ -2126,7 +2126,7 @@ namespace Risebird.Business
                         }
                     }
 
-                    
+
                     //Parallel.ForEach(data.Rows.OfType<System.Data.DataRow>(), async row =>
                     //{
                     //    string value = row.ItemArray[1].ToString();
@@ -2937,7 +2937,7 @@ namespace Risebird.Business
                     //irfDetails.Heuristicsscore = irfRecommendations.CompetencyLevelId.HasValue ? irfRecommendations.CompetencyLevelId.Value : irfDetails.Heuristicsscore;
                     irfDetails.Heuristicsscore = (int)Heuristicsscorelevel.Standard;
                 }
-                if(irfDetails.MarketPlacePlanType > 0)
+                if (irfDetails.MarketPlacePlanType > 0)
                 {
                     irfDetails.Heuristicsscore = irfDetails.MarketPlacePlanType;
 
@@ -3530,6 +3530,83 @@ namespace Risebird.Business
             try
             {
                 var result = await _irfRepository.GetSkillChannelDetailsByName(irfName);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateTechSkills(IList<TransSkill> techskills)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateTechSkills(techskills);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<BroadcastModel>> GetTextInstructionService( int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetTextInstruction(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateJobLevel(int irf, int joblevel)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateJobLevel(irf, joblevel);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> UpdateDeficultyLevel(int irf, int difficultylevel)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateDeficultyLevel(irf, difficultylevel);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> UpdateFormat(int irf, string format)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateFormat(irf, format);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf)
+        {
+            try
+            {
+                var result = await _irfRepository.GetFormatanddifficultylevel(irf);
                 return result;
             }
             catch (Exception e)
