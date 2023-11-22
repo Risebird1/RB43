@@ -225,6 +225,8 @@ namespace Risebird.Repository
             parameters.Add("@IsRedoInterview", entity.IsRedoInterview);
             parameters.Add("@IsClientCancelInterview", entity.IsClientCancelInterview);
             parameters.Add("@PaymentTerm", entity.PaymentTerm);
+            parameters.Add("@Reportsnippet", entity.Reportsnippet);
+            parameters.Add("@IsTranscript", entity.IsTranscript);
             if (entity.GSTApplicable == 1)
             {
                 parameters.Add("@GSTApplicable", true);

@@ -1490,6 +1490,8 @@ namespace Risebird.Web.Controllers
                     email = email.Replace("\"", "");
                 }
                 var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCountbyHr(email, getDeletedZoomMeetingsCount);
+                var modelList = await _dashboardService.FetchParticipantwaitingDetails();
+                Ribbonmodel.CandidatewaitingCount = modelList.Where(x => x.PerformedOn != null).Count();
                 var myInterview = _meetingService.GetHRAssignedInterviews(email);
                 var WeekDate = DateTime.Now.AddDays(-7);
                 var interviewerids = myInterview.Where(x => x.interviewDate >= WeekDate).Select(x => x.id).Distinct().ToList();
@@ -1516,6 +1518,8 @@ namespace Risebird.Web.Controllers
                     Emailid = Emailid.Replace("\"", "");
                 }
                 var Ribbonmodel = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid, getDeletedZoomMeetingsCount);
+                var modelList = await _dashboardService.FetchParticipantwaitingDetails();
+                Ribbonmodel.CandidatewaitingCount = modelList.Where(x => x.PerformedOn != null).Count();
                 return Json(Ribbonmodel);
             }
         }
@@ -1916,6 +1920,8 @@ namespace Risebird.Web.Controllers
                         model.NotUpdatedMeetingsObj = new NotUpdatedMeetings();
                         //model.InterviewerCountObj = await _dashboardService.GetInterviewerCount();
                         model.NotUpdatedMeetingsObj = await _dashboardService.GetNotUpdatedMeetingsCount(Emailid);
+                        var modelList = await _dashboardService.FetchParticipantwaitingDetails();
+                        model.NotUpdatedMeetingsObj.CandidatewaitingCount = modelList.Where(x => x.PerformedOn != null).Count();
                         return View(model);
                     }
                     else
@@ -2176,17 +2182,17 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                    var data= await _dashboardService.MoveToUnassignService(meetingId);
+                var data = await _dashboardService.MoveToUnassignService(meetingId);
                 if (data == true)
                 {
                     return Json("Move to Unassign Successfully");
                 }
-            
-         else
-            {
-                return Json("Fail to marked Move To Unassign, Try again after sometime.");
+
+                else
+                {
+                    return Json("Fail to marked Move To Unassign, Try again after sometime.");
+                }
             }
-             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
@@ -2199,7 +2205,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 string Type = "Candidate";
-                var data = await _dashboardService.AddRedoInterviewsService(InterviewId,Type);
+                var data = await _dashboardService.AddRedoInterviewsService(InterviewId, Type);
                 if (data == true)
                 {
                     return Json(" Redo Interview has been marked successfully");
@@ -2216,7 +2222,6 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> PotentialRiskByCandidate()
@@ -2252,8 +2257,33 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
-
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Participantwaiting(string type)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var modelList = await _dashboardService.FetchParticipantwaitingDetails();
+                if (type == "Interviewer")
+                {
+                    ViewBag.Type = "Interviewer";
+                    modelList = modelList.Where(x => x.Joinedon != null).ToList();
+                }
+                else
+                {
+                    ViewBag.Type = "Candidate";
+                    modelList = modelList.Where(x => x.PerformedOn != null).ToList();
+                }
+                return View(modelList);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
-
 }

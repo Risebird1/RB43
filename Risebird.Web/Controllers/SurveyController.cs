@@ -128,10 +128,10 @@ namespace Risebird.Web.Controllers
                     else
                     {
                         var results = await _meetingService.FetchFeedbackDetails();
-                        if (results != null)
-                        {
-                            results = results.Where(x => x.StarRating < 5).ToList();
-                        }
+                        //if (results != null)
+                        //{
+                        //    results = results.Where(x => x.StarRating < 5).ToList();
+                        //}
                         if (HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateFeedBackfilters"));
@@ -613,7 +613,7 @@ namespace Risebird.Web.Controllers
                 if (modelData != null && modelData.Count() > 0)
                 {
                     var avgQ1 = modelData.Average(x => string.IsNullOrEmpty(x.Question1) ? 0 : Convert.ToInt32(x.Question1)).ToString("#.##");
-                    var avgQ2 = modelData.Average(x => string.IsNullOrEmpty(x.Question2) ? 0 : Convert.ToInt32(x.Question2)).ToString("#.##");
+                    var avgQ2 = modelData.Average(x => x.Rating).ToString("#.##");
                     var avgQ6 = modelData.Average(x => string.IsNullOrEmpty(x.Question6) ? 0 : Convert.ToInt32(x.Question6)).ToString("#.##");
                     return Json(new { avgQ1 = avgQ1, avgQ2 = avgQ2, avgQ6 = avgQ6 });
                 }
@@ -888,7 +888,7 @@ namespace Risebird.Web.Controllers
                 model.PoorCommunicationSkills = string.Empty;
             }
         }
-        
+
     }
 
 }
