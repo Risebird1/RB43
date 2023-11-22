@@ -7697,6 +7697,14 @@ padding-top:50px;
     font-weight: 600;
     padding-left: 50px;
 }
+.interviewWrapper {
+    position: relative;
+    width: 1000px;
+    left: 40px;
+    display: block;
+    margin: 30px auto;
+    padding: 0px;
+}
 .interviewWrapper .question {
     padding: 10px 5px;
     cursor: pointer;
