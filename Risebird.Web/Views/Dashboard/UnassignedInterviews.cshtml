@@ -1579,7 +1579,8 @@
                                                     }
 
                                                         @if (ViewBag.actionstatus == "PotentialRiskByClient")
-                                                        {   <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
+                                                        { 
+                                                            <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
 
                                                             
                                                             <td class="interviewer">
@@ -1823,6 +1824,7 @@
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
+@await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
 
 <script src="~/js/Aadhaar.js"></script>
 <script src="~/js/TwilioCallMaker.js"></script>
