@@ -119,7 +119,7 @@
                                 <div class="reportdropdown">
                                     <button class="reportdropbtn">Report Quality Issue</button>
                                     <div class="reportdropdown-content">
-                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId, allowClientAction = true})">
                                             <text>Rate Interviewer</text>
                                         </button>
                                         <button class="dropdown-btn" type="button" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
