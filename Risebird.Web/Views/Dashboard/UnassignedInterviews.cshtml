@@ -437,7 +437,7 @@
 
                                                      @if (ViewBag.actionstatus == "PotentialRiskByClient")
                                                     {
-                                                        
+                                                        <th>Payment Compliance</th>
                                                         <th>Rating</th>
                                                         <th>Rated By</th>
                                                         <th>Rated</th>
@@ -655,7 +655,7 @@
                                                     }
                                                     @if (ViewBag.actionstatus == "PotentialRiskByClient")
                                                     {
-
+                                                        <th>Payment Compliance</th>
                                                         <th>Rating</th>
                                                         <th>Rated By</th>
                                                         <th>Rated</th>
@@ -1579,7 +1579,10 @@
                                                     }
 
                                                         @if (ViewBag.actionstatus == "PotentialRiskByClient")
-                                                        { <td class="interviewer">
+                                                        {   <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
+
+                                                            
+                                                            <td class="interviewer">
                                                             <div  style="display:flex">
                                                                 @for (int i = 1; i <= 5; i++)
                                                                 {
