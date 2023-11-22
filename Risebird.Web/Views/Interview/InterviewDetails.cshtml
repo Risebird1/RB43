@@ -494,3 +494,24 @@
             });
         });
     </script>
+    <script>
+        <script>
+         $(document).ready(function () {
+             var irfid = document.getElementById("id").value;
+                 $.ajax({
+                    type: "POST",
+                    url: "/IRF/GetFormatanddifficultylevel",
+                    data: { 'irfid': irfid },
+                    success: function (data) {
+                        document.getElementById("Difficulty").value=data.difficultylevel;
+                        for(var i=0;i<data.format.split(",").length;i++)
+                        {
+                            $("input[value='"+data.format.split(",")[i]+"']").prop('checked', true);
+                        }
+                    }
+                 });
+         });
+    </script>
+    </script>
+</body>
+</html>

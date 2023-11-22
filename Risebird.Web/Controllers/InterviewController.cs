@@ -8103,6 +8103,9 @@ namespace Risebird.Web.Controllers
             ViewBag.id = id;
             ViewBag.InterviewId = interviewId;
             ViewBag.MeetingLineUpType = meetingLineUpType;
+            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                            select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
             var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
             return View(result);
         }
