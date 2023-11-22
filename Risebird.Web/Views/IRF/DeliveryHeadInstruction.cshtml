@@ -14,7 +14,7 @@
 <div class="main-panel " id="main-panel">
     <!-- Navbar -->
     <!-- End Navbar -->
- 
+
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
@@ -36,75 +36,75 @@
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
-                          @*<label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                            @*<label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
                                         </span>
                 </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_two">
-                   @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
- {
+                                        @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
+                                        {
 
-<div>
-    <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="table-responsive-sm">
-                    @Html.HiddenFor(m=>m.id)
-                    <table class="table table-bordered mbn" id="SkillTable">
-                        <thead>
-                            <tr>
-                                <th width="15%" class="table_heading">Level<span class="red">*</span></th>
-                                <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
-                                <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
-                                @* <th width="10%" class="table_heading">Concepts</th>
+            <div>
+                <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive-sm">
+                                                                @Html.HiddenFor(m=>m.id)
+                                <table class="table table-bordered mbn" id="SkillTable">
+                                    <thead>
+                                        <tr>
+                                            <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                            <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
+                                            <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
+                                                                            @* <th width="10%" class="table_heading">Concepts</th>
                                <th width="30%" class="table_heading">Nature of questions</th>
                                 <th width="10%" class="table_heading">Time limit</th*@
-                                <th width="10%" class="table_heading text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
-                                    </td>
-                                    <td>
-                                        @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
-                                    </td>
-                                    <td>
-                                        <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
-                                    </td>
-                                    <td>
-                                        <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
-                                    </td>
-                                   @* <td>
+                                            <th width="10%" class="table_heading text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                                        @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
+                                                                        {
+                                                        <tr>
+                                                            <td>
+                                                                                    @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                            </td>
+                                                            <td>
+                                                                                    @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
+                                                            </td>
+                                                                                @* <td>
                                         <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
                                     </td>
                                     <td>
                                         <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="0">
                                     </td>*@
-                                    <td class="action text-center">
-                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                    </td>
-                                </tr>
-                            }
-                            else
-                            {
-                                for (int i = 0; i < Model.SkillCollection.Count(); i++)
-                                {
-                                    <tr>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
-                                        </td>
-                                        <td>
-                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
-                                        </td>
-                                        <td>
-                                            @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-                                        </td>
-                                       @*   <td>
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            </td>
+                                                        </tr>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            for (int i = 0; i < Model.SkillCollection.Count(); i++)
+                                                                            {
+                                                                        <tr>
+                                                                            <td>
+                                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
+                                                                            </td>
+                                                                            <td>
+                                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
+                                                                            </td>
+                                                                            <td>
+                                                                                        @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                            </td>
+                                                                                    @*   <td>
                                             @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
                                         </td>
                                       <td>
@@ -113,27 +113,27 @@
                                         <td>
                                             @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "0" } })
                                         </td>*@
-                                        <td class="action text-center">
-                                            <div>
-                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                    <label class="text-danger" id="SkillCollection_WeightageError"></label>
-                    <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
-                </div>
-             <div class="tech-skill-button"><input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10" value="Submit Tech Skill" /></div>
-            </div>
+                                                                            <td class="action text-center">
+                                                                                <div>
+                                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                            }
+                                                                        }
+                                    </tbody>
+                                </table>
+                                <label class="text-danger" id="SkillCollection_WeightageError"></label>
+                                <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
+                            </div>
+                         <div class="tech-skill-button"><input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10" value="Submit Tech Skill" /></div>
+                        </div>
 
-        </div>
-    </div>
-</div>
-}
+                    </div>
+                </div>
+            </div>
+                                        }
                 </fieldset>
 
             </div>
@@ -146,21 +146,21 @@
                     <label for="checkbox_three">
                         <i class="fa fa-file-audio-o" aria-hidden="true"></i>
                         Audio Instruction
-                                          
+
 
                     </label>
-                                      
+
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
                       <label class="edit-wrap" onclick="javascript:OpenVoiceRecordingModal('@Model.id');" ><i class='fa fa-edit' style='color: white' ></i></label>
-           
+
                     </span>
                 </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_three">
 
                                         <audio controls><source src="@Model.AudioComment">Recording</audio>
-                    @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+                                        @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                     {
                     string audiofileName = string.Empty;
                     audiofileName = Model.AudioComment.Split('/').Last();
@@ -185,7 +185,7 @@
                     </span>
                     }
                     }*@
-                    @*   @foreach(var item in Model)
+                                        @*   @foreach(var item in Model)
                     {
                     <div id="AudioInstruction">
 
@@ -217,7 +217,7 @@
                     } *@
 
 
-                 @*    @if (!string.IsNullOrEmpty(Model.AudioComment))
+                                        @*    @if (!string.IsNullOrEmpty(Model.AudioComment))
                     {
                     string audiofileName = string.Empty;
                     audiofileName = @Model.AudioComment.Split('/').Last();
@@ -251,7 +251,7 @@
                     <div>No Instructions</div>
                     }
                     } *@
-                    
+
                 </fieldset>
 
             </div>
@@ -266,7 +266,7 @@
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
                        <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i>
-                                             @*    <a href="#" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
+                                                @*    <a href="#" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
                                                    data-interviewdate="@Model.irf" data-candidatename="@Model.candidateName"
                                                    data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = Model.id})">
                                                     Client Instruction(s)
@@ -277,7 +277,9 @@
 
                 <fieldset class="answer hidden" id="hidden_fields_four">
 
-                    <div id="CandidateDetails"></div>
+                    <div id="CandidateDetails">
+
+                    </div>
                 </fieldset>
 
             </div>
@@ -293,14 +295,14 @@
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
-                          @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                            @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
                                         </span>
                 </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_five">
                     <div class="answer-label"><div class="col-md-6 pull-left"><span class="heading pull-left">Seniority</span>
                                                 <span class="custom-select-dropdown">
-                        @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new {@onChange="ChangeJobLevel()" })
+                                                    @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new {@onChange="ChangeJobLevel()" })
            </span></div>
                                             <div class="col-md-6 pull-left">
                                                 <span class="heading pull-left"> Difficulty:</span> <span class="custom-select-dropdown">
@@ -337,21 +339,21 @@
     width: auto;">
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" />
-                                               
+
                                             </span><span class="pull-left"> Coding</span>
                                         </div>
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" />
-                                               
+
                                             </span><span class="pull-left"> Current project</span>
                                         </div>
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading  pull-left">
                                                 <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" />
-                                               
+
                                             </span><span class="pull-left"> Conceptual</span>
                                         </div>
 
@@ -359,7 +361,7 @@
     width: auto;">
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" />
-                                              
+
                                             </span><span class="pull-left">  Scenario</span>
                                         </div>
 
@@ -367,7 +369,7 @@
     width: auto;">
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" />
-                                              
+
                                             </span><span class="pull-left">System Design</span>
                                         </div>
 
@@ -375,21 +377,21 @@
     width: auto;">
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" />
-                                                
+
                                             </span><span class="pull-left">People management</span>
                                         </div>
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" />
-                                              
+
                                             </span><span class="pull-left"> Client management</span>
                                         </div>
 
                 </fieldset>
             </div>
 
-          
+
         </div>
                             <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;padding-left:11px;padding-right:11px">
                                 <div class="card">
@@ -403,7 +405,7 @@
                                             <input type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
                                             <label class="edit-wrap" onclick="javascript:TextInstructionDetails('@Model.id');">
                                                 <i class='fa fa-edit' style='color: white'></i>
-                                            
+
                                             </label>
                                         </span>
                                     </label>
@@ -416,7 +418,7 @@
 
                                 </div>
       </div>
-       @* <div class="button-wrapper">
+                            @* <div class="button-wrapper">
             <h2 class="text-center pad10 pull-left">Click here to join the meeting</h2>
             <a class="join-button" target="_blank" title="Meeting Link" href="#">Join now</a>
             @if (Model.zoomLink != null && Model.zoomLink != "")
@@ -428,14 +430,14 @@
             </div>
 
             }
-           
+
             }
         </div>
 *@
     </div>
 
 
-                      
+
 
 </div>
 </div>
@@ -628,7 +630,7 @@
          }
      }
  }
- 
+
  function CheckConditions() {
         var total = 0;
         var skillArray = ["SkillCollection"];
@@ -781,6 +783,7 @@
                 success: function (data) {
                     swal.fire(data);
                     closeTextInstructionTypeModal();
+                    GetInstruction();
                 }
             });
         }
@@ -791,7 +794,10 @@
 </script>
 <script>
     $(document).ready(function () {
-        var irfId = $("#id").val();
+       GetInstruction();
+    });
+    function GetInstruction(){
+         var irfId = $("#id").val();
         $.ajax({
             url: '/IRF/GetTextInstruction',
             data: { 'irfId': irfId },
@@ -801,14 +807,13 @@
                 text += "<ui>";
                 for (let i = 0; i < data.length; i++) {
                     text += "<li>" + data[i].message + "</li>";
-                    
                 }
                 text += "</ui>";
                 $('#lblComments').empty().html(text);
-                
+
             }
         });
-    });
+    }
 </script>
     <script>
         function ChangeJobLevel(){
@@ -864,6 +869,10 @@
                     data: { 'irfid': irfid },
                     success: function (data) {
                         document.getElementById("Difficulty").value=data.difficultylevel;
+                        for(var i=0;i<data.format.split(",").length;i++)
+                        {
+                            $("input[value='"+data.format.split(",")[i]+"']").prop('checked', true);
+                        }
                     }
                  });
          });
