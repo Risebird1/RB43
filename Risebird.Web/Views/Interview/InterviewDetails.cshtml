@@ -5,7 +5,7 @@
     ViewData["Title"] = "Interviews Detail";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    }
+}
 
     <meta name="viewport" content="width=device-width" />
     <title>InterviewDetails</title>
@@ -16,7 +16,7 @@
         $('#txtpageHeader').empty().html(Header);
     </script>
 
-
+<input type="hidden" value="@ViewBag.id" id="id" />
             <div class="interviewWrapper">
         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;">
             <div class="card" style="margin-bottom:10px;">
@@ -537,5 +537,3 @@
         });
     }
 </script>
-</body>
-</html>
