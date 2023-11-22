@@ -14,8 +14,7 @@
 <div class="main-panel " id="main-panel">
     <!-- Navbar -->
     <!-- End Navbar -->
-    <div class="mt50">
-    </div>
+ 
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
@@ -23,8 +22,8 @@
 
                     <div class="mtop50">
 
-                        <div class="interviewWrapper">
-        <div class="col-md-12 pull-left pad10">
+                        <div class="interviewWrapper" style="left:0px;">
+                            <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
 
             <div class="card">
 
@@ -37,8 +36,8 @@
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
-                     <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i>
-                    </span>
+                          @*<label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                        </span>
                 </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_two">
@@ -140,7 +139,7 @@
             </div>
 
             </div>
-            <div class="col-md-6 pull-left pad10">
+                            <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
             <div class="card">
 
                 <label class="question" for="checkbox_three">
@@ -153,7 +152,7 @@
                                       
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
-                      <label class="edit-wrap" onclick="javascript:OpenVoiceRecordingModal('@Model.id');" ><i class='fa fa-edit' style='color: white' ></i>
+                      <label class="edit-wrap" onclick="javascript:OpenVoiceRecordingModal('@Model.id');" ><i class='fa fa-edit' style='color: white' ></i></label>
            
                     </span>
                 </label>
@@ -283,7 +282,7 @@
 
             </div>
         </div>
-        <div class="col-md-6 pull-left pad10">
+                            <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
             <div class="card">
                 <label class="question" for="checkbox_five">
                     <label for="checkbox_five">
@@ -294,18 +293,18 @@
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
-                        <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
-                    </span>
+                          @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                        </span>
                 </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_five">
-                    <div class="answer-label"><div><span class="heading pull-left">Seniority</span>
-                        <span class="custom-select">
-                        @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new { @class = "form-control select-css ",@onChange="ChangeJobLevel()" })
+                    <div class="answer-label"><div class="col-md-6 pull-left"><span class="heading pull-left">Seniority</span>
+                                                <span class="custom-select-dropdown">
+                        @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new {@onChange="ChangeJobLevel()" })
            </span></div>
-                                            <div>
-                                                <span>  Difficulty:</span> <span class="custom-select">
-                                                    <select id="Difficulty" class = "form-control select-css " onChange="ChangeDefautlevel()">
+                                            <div class="col-md-6 pull-left">
+                                                <span class="heading pull-left"> Difficulty:</span> <span class="custom-select-dropdown">
+                                                    <select id="Difficulty"  onChange="ChangeDefautlevel()">
                                                         <option>Select</option>
                                                         <option value="60">60%</option>
                                                         <option value="70">70%</option>
@@ -329,8 +328,8 @@
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
-                       <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>
-                    </span>
+                                            @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                        </span>
                 </label>
 
                 <fieldset class="format answer hidden" id="hidden_fields_six">
@@ -339,21 +338,21 @@
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" />
                                                
-                                            </span><span class="pull-left"> Coding:</span>
+                                            </span><span class="pull-left"> Coding</span>
                                         </div>
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" />
                                                
-                                            </span><span class="pull-left"> Current project:</span>
+                                            </span><span class="pull-left"> Current project</span>
                                         </div>
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading  pull-left">
                                                 <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" />
                                                
-                                            </span><span class="pull-left"> Conceptual:</span>
+                                            </span><span class="pull-left"> Conceptual</span>
                                         </div>
 
                                         <div class="answer-label" style="float: left;
@@ -361,7 +360,7 @@
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" />
                                               
-                                            </span><span class="pull-left">  Scenario:</span>
+                                            </span><span class="pull-left">  Scenario</span>
                                         </div>
 
                                         <div class="answer-label" style="float: left;
@@ -369,7 +368,7 @@
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" />
                                               
-                                            </span><span class="pull-left">System Design:</span>
+                                            </span><span class="pull-left">System Design</span>
                                         </div>
 
                                         <div class="answer-label" style="float: left;
@@ -377,14 +376,14 @@
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" />
                                                 
-                                            </span><span class="pull-left">People management:</span>
+                                            </span><span class="pull-left">People management</span>
                                         </div>
                                         <div class="answer-label" style="float: left;
     width: auto;">
                                             <span class="heading pull-left">
                                                 <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" />
                                               
-                                            </span><span class="pull-left"> Client management:</span>
+                                            </span><span class="pull-left"> Client management</span>
                                         </div>
 
                 </fieldset>
@@ -392,7 +391,7 @@
 
           
         </div>
-      <div class="col-md-12 pull-left">
+                            <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;padding-left:11px;padding-right:11px">
                                 <div class="card">
                                     <label class="question" for="checkbox_seven">
                                         <label for="checkbox_seven">
@@ -505,7 +504,7 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                    <span class="fa fa-file-text-o" style="font-size:25px;"></span>
                 </div>
                 <h5 class="modal-title pull-left" id="memberHeading">Text Instruction</h5>
             </div>
