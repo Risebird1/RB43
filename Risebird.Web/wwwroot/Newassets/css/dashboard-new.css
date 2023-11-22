@@ -7499,6 +7499,97 @@ ul.ks-cboxtags {
     width: 420px;
     clear:both;
 }
+.format span {
+    color: #a29999;
+}
+
+.format input[type="checkbox"] {
+    display: grid;
+    place-content: center;
+    appearance: none;
+    margin: 2px 5px;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+}
+
+
+    .format input[type="checkbox"]::before {
+        content: "";
+        width: 0.65em;
+        height: 0.65em;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em var(--form-control-color);
+    }
+
+    .format input[type="checkbox"]:checked::before {
+        transform: scale(1);
+    }
+
+.custom-select-dropdown {
+    position: relative;
+    left: 10px;
+    top: -18px;
+}
+
+
+    .custom-select-dropdown select {
+        width: 120px;
+        font-size: 1.2rem;
+        padding: 10px 30px 10px 10px;
+        border: 1px silver solid;
+        color: grey;
+        outline: none;
+        margin: 10px;
+    }
+
+    .custom-select-dropdown span {
+        position: absolute;
+        width: 40px;
+        height: 100%;
+        background-color: #1e1e26;
+        right: 0;
+        top: 0;
+        pointer-events: none;
+    }
+
+        .custom-select-dropdown span::before {
+            position: absolute;
+            content: "";
+            border-style: solid;
+            border-width: 7px;
+            border-color: transparent transparent #5b6287 transparent;
+            top: 14%;
+            left: 35%;
+        }
+
+        .custom-select-dropdown span::after {
+            position: absolute;
+            content: "";
+            border-style: solid;
+            border-width: 7px;
+            border-color: #5b6287 transparent transparent transparent;
+            top: 56%;
+            left: 35%;
+        }
+
+option {
+    left: 0;
+    z-index: 999;
+    margin: 0 0;
+    padding: 10px;
+    list-style: none;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
