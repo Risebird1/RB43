@@ -279,7 +279,7 @@
                                                                     <div class="col-md-10 col-sm-10 pull-left nopad">
                                                                         @if (item.candidateName != null && item.candidateName != "")
                                                                         {
-                                                                            @if (@item.candidateName.Length > 10)
+                                                                            @if (@item.candidateName.Length > 8)
                                                                             {
                                                                                 <a class="pull-left" href="#" data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate-name candidate" style="position:relative;top:1px;">@item.candidateName.Substring(0, 10)..</span> </a>
                                                                             }
@@ -294,7 +294,7 @@
 
                                                                         @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                         {
-                                                                            @if (item.JDTiltle.Length > 20)
+                                                                            @if (item.JDTiltle.Length > 18)
                                                                             {
                                                                                 <a class="pull-left" href="#" data-tooltip="@item.JDTiltle">
                                                                                     <span class="join-time designation pull-left" title="@item.JDTiltle.Split("|")[0]">@item.JDTiltle.Split("|")[0]</span>
@@ -327,7 +327,7 @@
                                                                     <div class="col-md-2 col-sm-2 pull-left nopad">
                                                                         @if (item.MobileNumber != null && !(ViewBag.profile == "CuratedUser"))
                                                                         {
-                                                                            <span>
+                                                                            <span style="width:22px; float:left">
                                                                                 <button class="call-btn" aria-label="Call">
                                                                                     @* <span onclick="CallButtonClick('@item.candidateName','@item.MobileNumber','@item.imid')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>*@                                                                                    
                                                                                     <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
@@ -350,7 +350,7 @@
                                                                         }
                                                                         @if (ViewBag.profileName == "Client")
                                                                         {
-                                                                            <span>
+                                                                            <span style="width:22px; float:left">
                                                                                 <button class="rating-btn" aria-label="Rate Interviewer">
                                                                                     <span onclick="openpopUpRating('@item.candidateName','@item.imid')" title="Rate Interviewer">
                                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
@@ -365,11 +365,11 @@
                                                                     @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
 
                                                                 </div>
-                                                                <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                                <div class="video-info col-sm-6 col-md-6 col-lg-6 nopad pull-left">
                                                                     <i class="fas fa-calendar-alt"></i>
                                                                     <span>@item.interviewDate</span>
                                                                 </div>
-                                                                <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                                <div class="video-info col-sm-6 col-md-6 col-lg-6 nopad pull-left">
                                                                     <span class="pull-left">Tech Skill Score:</span>
 
                                                                     <span class="pull-left">@(item.TechSkillScore)%</span>
@@ -378,10 +378,10 @@
                                                                 </div>
 
 
-                                                                <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                                @*  <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
 
 
-                                                                    <span class="notice"> Notice Period: </span>
+                                                              <span class="notice"> Notice Period: </span>
                                                                     @if (item.joiningTime != null && item.joiningTime != "")
                                                                     {
                                                                         @if (item.joiningTime.Length > 12)
@@ -397,28 +397,33 @@
                                                                     {
                                                                         <span></span>
                                                                     }
-                                                                </div>
+                                                            </div>*@
 
-                                                                <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                                <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left" style="margin:10px 0px 0px 0px">
                                                                     <span>Status:</span>
                                                                     @if (item.InterviewStatus == 4)
                                                                     {
-                                                                        <span style="color:palevioletred">Border Line</span>
+                                                                        <span style="color:palevioletred;font-weight:bold;">Border Line</span>
                                                                     }
 
                                                                     else if (item.InterviewStatus == 2)
                                                                     {
-                                                                        <span style="color:green">Selected</span>
+                                                                        <span style="color:green;font-weight:bold;">Selected</span>
+
+                                                                    }
+
+                                                                    else if (item.InterviewStatus == 3)
+                                                                    {
+                                                                        <span style="color:red;font-weight:bold;">Rejected</span>
 
                                                                     }
 
 
 
 
-
                                                                 </div>
 
-                                                                <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                               @* <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
                                                                     <span>Expected Salary:</span>  @if (item.expectedPerHourRate != null && item.expectedPerHourRate != "")
                                                                     {@if (@item.expectedPerHourRate.Length > 5)
                                                                         {
@@ -430,16 +435,16 @@
                                                                 }
                                                                 else
                                                                 { <span></span>}
-                                                                </div>
+                                                                </div>*@
 
-                                                                <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                                <div class="video-info col-sm-6 col-md-6 col-lg-6 nopad pull-left" style="margin:10px 0px 0px 0px">
 
-                                                                    <span>Project Name:</span>
+                                                                    <span>Project:</span>
                                                                     <span class="endclient">
 
                                                                         @if (item.ClientName != null && item.ClientName != "")
                                                                         {
-                                                                            @if (@item.ClientName.Length > 8)
+                                                                            @if (@item.ClientName.Length > 18)
                                                                             {
                                                                                 <a href="#" data-tooltip="@item.ClientName"> <span class="expected-timing">@item.ClientName</span></a>
                                                                             }

@@ -31,8 +31,9 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @PaymentTerm int,
 @GSTApplicable bit,
 @ClientType int,
-@CountryType int
-
+@CountryType int,
+@Reportsnippet int,
+@IsTranscript bit
 AS          
 Begin          
       
@@ -62,6 +63,8 @@ SET
   ,[GSTApplicable]=@GSTApplicable
   ,[ClientType] = @ClientType
   ,[CountryType]= @CountryType
+  ,[Reportsnippet]=@Reportsnippet
+  ,[IsTranscript]=@IsTranscript
 WHERE          
       Id = @id          
 End     

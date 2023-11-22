@@ -16,7 +16,7 @@
             <label for="Q1_1" class="star"></label>
             <input type="radio" id="Q1_1" name="rating1" value="1" onclick="ChangeQuestion1(1)" />
         </div>
-        <p style="color: lightslategrey;font-size: 14.5px;line-height: 25px;">Please watch 15 minutes of interview and rate it.</p>
+        <p style="color: lightslategrey;font-size: 14.5px;line-height: 25px;">Please rate this interview to Generate PDF and Shareable link.</p>
     </div>
     <div id="ClientInterviewFeedbackHide" class="ClientInterviewFeedbackHide" style="display:none;">
         <hr class="divider" style="background-color: #b5afaf;" />
@@ -30,9 +30,9 @@
         @Html.HiddenFor(m => m.isapprovedchecked)
         @Html.HiddenFor(m => m.PaymentComplianceCount)
         <div class="canvas_div_pdf">
-            <div class="report-full-wrap">
+            <div class="report-full-wrap" id="checkboxlist">
                 <div style="margin:10px 0px">
-                    <div class="accordion" id="accordion2" style="position:relative;width:100%;float:left;  margin:10px 0px 10px 0px;">
+                    <div class="accordion" id="accordion2" style="position:relative;width:100%;float:left;">
                         <div class="">
                             <div class="w-auto">
                                 <div class="form-group">
@@ -515,15 +515,460 @@
                             </div>
                         </div>
                     </div>
+
+                    @if (ViewBag.actionType == 2)
+                    {
+                        <div class="accordion" id="accordion2" style="position:relative;width:100%;float:left;">
+                            <div class="">
+                                <div class="w-auto">
+                                    <div class="form-group">
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#inaccurate'>
+                                                    @Html.LabelFor(model => model.Inaccuratedecisionmaking, htmlAttributes: new { @class = "label-name" })
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-auto">
+                                    <div class="form-group">
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#question'>
+                                                    @Html.LabelFor(model => model.QuestionsRelevance, htmlAttributes: new { @class = "label-name" })
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-auto">
+                                    <div class="form-group">
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#score'>
+                                                    @Html.LabelFor(model => model.ScoreRubricIgnorance, htmlAttributes: new { @class = "label-name" })
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-auto">
+                                    <div class="form-group">
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#feedback'>
+                                                    @Html.LabelFor(model => model.PoorFeedbackComments, htmlAttributes: new { @class = "label-name" })
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-auto">
+                                    <div class="form-group">
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#status'>
+                                                    @Html.LabelFor(model => model.WrongStatusUpdates, htmlAttributes: new { @class = "label-name" })
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-auto">
+                                    <div class="form-group">
+                                        <div class="accordion-group">
+                                            <div class="accordion-heading">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target='#proctoring'>
+                                                    @Html.LabelFor(model => model.ProctoringIgnorance, htmlAttributes: new { @class = "label-name" })
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='page' id='inaccurate'>
+                                    <div class='page__header'>
+                                        <div class='page__title'>
+                                            Inaccurate Decision Making
+                                        </div>
+                                        <div class='page__close'>
+                                            <i style="font-size: 20px;" class="fa fa-close"></i>
+                                        </div>
+                                    </div>
+                                    <div class='page__body'>
+                                        <div class="accordion-body">
+                                            <div class="accordion-inner">
+                                                <ul class="ks-cboxtags">
+                                                    @Html.HiddenFor(m=> m.Inaccuratedecisionmaking)
+                                                    <li>
+                                                        @if (Model.Inaccuratedecisionmaking.Split(",").Contains("False positive"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxOne" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False positive" /> <label for="checkboxOne">False positive</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxOne" name="Inaccuratedecisionmaking" onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False positive" /> <label for="checkboxOne">False positive</label>
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        @if (Model.Inaccuratedecisionmaking.Split(",").Contains("False negative"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxTwo" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False negative" />
+
+                                                            <label for="checkboxTwo">False negative</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxTwo" name="Inaccuratedecisionmaking" onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="False negative" /> <label for="checkboxTwo">False negative</label>
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        @if (Model.Inaccuratedecisionmaking.Split(",").Contains("Lacking Sincerity"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxThree" name="Inaccuratedecisionmaking" checked onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="Lacking Sincerity" />
+
+                                                            <label for="checkboxThree">Lacking Sincerity</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxThree" name="Inaccuratedecisionmaking" onclick="ChangeCheckBox('Inaccuratedecisionmaking')" value="Lacking Sincerity" /> <label for="checkboxThree">Lacking Sincerity</label>
+                                                        }
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='page' id='question'>
+                                    <div class='page__header'>
+                                        <div class='page__title'>
+                                            Questions Relevance
+                                        </div>
+                                        <div class='page__close'>
+                                            <i style="font-size: 20px;" class="fa fa-close"></i>
+                                        </div>
+                                    </div>
+                                    <div class='page__body'>
+
+                                        <div class="accordion-body">
+                                            <div class="accordion-inner">
+                                                @Html.HiddenFor(m=>m.QuestionsRelevance)
+                                                <ul class="ks-cboxtags">
+                                                    <li>
+                                                        @if (Model.QuestionsRelevance.Split(",").Contains("irrelevant"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxEight" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="irrelevant" />
+
+                                                            <label for="checkboxEight">irrelevant</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxEight" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="irrelevant" />
+
+                                                            <label for="checkboxEight">irrelevant</label>
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        @if (Model.QuestionsRelevance.Split(",").Contains("mismatch difficulty level"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxNine" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="mismatch difficulty level" /> <label for="checkboxNine">mismatch difficulty level</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxNine" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="mismatch difficulty level" />
+
+                                                            <label for="checkboxNine">mismatch difficulty level</label>
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        @if (Model.QuestionsRelevance.Split(",").Contains("google questions"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxTen" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="google questions" />
+                                                            <label for="checkboxTen">theoretical / abstract / google questions- what is this/that ?</label>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxTen" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="google questions" /> <label for="checkboxTen">theoretical / abstract / google questions- what is this/that ?</label>
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        @if (Model.QuestionsRelevance.Split(",").Contains("same questions to all candidates"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxEleven" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions to all candidates" />
+                                                            <label for="checkboxEleven">same questions to all candidates</label>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxEleven" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions to all candidates" />
+
+                                                            <label for="checkboxEleven">same questions to all candidates</label>
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        @if (Model.QuestionsRelevance.Split(",").Contains("same questions for all skill channel"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxTwelve" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions for all skill channel" /> <label for="checkboxTwelve">same questions for all skill channel</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxTwelve" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="same questions for all skill channel" /> <label for="checkboxTwelve">same questions for all skill channel</label>
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        @if (Model.QuestionsRelevance.Split(",").Contains("same question repeated multiple times in the report "))
+                                                        {
+                                                            <input type="checkbox" id="checkboxThirteen" name="QuestionsRelevance" checked onclick="ChangeCheckBox('QuestionsRelevance')" value="same question repeated multiple times in the report " />
+                                                            <label for="checkboxThirteen"> same question repeated multiple times in the report </label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxThirteen" name="QuestionsRelevance" onclick="ChangeCheckBox('QuestionsRelevance')" value="same question repeated multiple times in the report " /> <label for="checkboxThirteen">same question repeated multiple times in the report </label>
+                                                        }
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='page' id='score'>
+                                    <div class='page__header'>
+                                        <div class='page__title'>
+                                            Score Rubric Ignorance
+                                        </div>
+                                        <div class='page__close'>
+                                            <i style="font-size: 20px;" class="fa fa-close"></i>
+                                        </div>
+                                    </div>
+                                    <div class='page__body'>
+
+                                        <div class="accordion-body">
+                                            <div class="accordion-inner">
+
+                                                @Html.HiddenFor(m=>m.ScoreRubricIgnorance)
+                                                <ul class="ks-cboxtags">
+                                                    <li>
+                                                        @if (Model.ScoreRubricIgnorance.Split(",").Contains("Not from score rubtic"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxFourteen" name="ScoreRubricIgnorance" checked onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="Not from score rubtic" /> <label for="checkboxFourteen">questions not linked to desired scoring rubric</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxFourteen" name="ScoreRubricIgnorance" onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="Not from score rubtic" /> <label for="checkboxFourteen">questions not linked to desired scoring rubric</label>
+                                                        }
+                                                    </li>
+                                                    <li>
+                                                        @if (Model.ScoreRubricIgnorance.Split(",").Contains("filling score rubric without cognizance"))
+                                                        {
+                                                            <input type="checkbox" id="checkboxFifthteen" name="ScoreRubricIgnorance" checked onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="filling score rubric without cognizance" /> <label for="checkboxFifthteen">filling score rubric without cognizance</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" id="checkboxFifthteen" name="ScoreRubricIgnorance" onclick="ChangeCheckBox('ScoreRubricIgnorance')" value="filling score rubric without cognizance" />
+                                                            <label for="checkboxFifthteen">filling score rubric without cognizance</label>
+
+                                                        }
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class='page' id='feedback'>
+                                        <div class='page__header'>
+                                            <div class='page__title'>
+                                                Poor Feedback Comments
+                                            </div>
+                                            <div class='page__close'>
+                                                <i style="font-size: 20px;" class="fa fa-close"></i>
+                                            </div>
+                                        </div>
+                                        <div class='page__body'>
+
+                                            <div class="accordion-body">
+                                                <div class="accordion-inner">
+                                                    @Html.HiddenFor(m=>m.PoorFeedbackComments)
+                                                    <ul class="ks-cboxtags">
+                                                        <li>
+                                                            @if (Model.PoorFeedbackComments.Split(",").Contains("Grammatical errors"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxSixteen" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Grammatical errors" /> <label for="checkboxSixteen">Grammatical errors</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxSixteen" name="PoorFeedbackComments" onclick="ChangeCheckBox('PoorFeedbackComments')" value="Grammatical errors" />
+                                                                <label for="checkboxSixteen">Grammatical errors</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.PoorFeedbackComments.Split(",").Contains("Too short"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxSeventeen" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too short" /> <label for="checkboxSeventeen">Too short</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxSeventeen" name="PoorFeedbackComments" onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too short" /> <label for="checkboxSeventeen">Too short</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.PoorFeedbackComments.Split(",").Contains("Too generic"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxEighteen" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too generic" /> <label for="checkboxEighteen">Too generic</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxEighteen" name="PoorFeedbackComments" onclick="ChangeCheckBox('PoorFeedbackComments')" value="Too generic" /> <label for="checkboxEighteen">Too generic</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.PoorFeedbackComments.Split(",").Contains("Irrelevant"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxNineteen" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="Irrelevant" /> <label for="checkboxNineteen">Irrelevant</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxNineteen" name="PoorFeedbackComments" onclick="ChangeCheckBox('PoorFeedbackComments')" value="Irrelevant" /> <label for="checkboxNineteen">Irrelevant</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.PoorFeedbackComments.Split(",").Contains("poor reasoning for selecting/rejecting the candidates"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwenty" name="PoorFeedbackComments" checked onclick="ChangeCheckBox('PoorFeedbackComments')" value="poor reasoning for selecting/rejecting the candidates" /> <label for="checkboxTwenty">poor reasoning for selecting/rejecting the candidates</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxTwenty" name="PoorFeedbackComments" onclick="ChangeCheckBox('PoorFeedbackComments')" value="poor reasoning for selecting/rejecting the candidates" /> <label for="checkboxTwenty">poor reasoning for selecting/rejecting the candidates</label>
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class='page' id='status'>
+                                        <div class='page__header'>
+                                            <div class='page__title'>
+                                                Wrong Status Updates
+                                            </div>
+                                            <div class='page__close'>
+                                                <i style="font-size: 20px;" class="fa fa-close"></i>
+                                            </div>
+                                        </div>
+                                        <div class='page__body'>
+                                            <div class="accordion-body">
+                                                <div class="accordion-inner">
+                                                    @Html.HiddenFor(m=>m.WrongStatusUpdates)
+                                                    <ul class="ks-cboxtags">
+                                                        <li>
+
+                                                            @if (Model.WrongStatusUpdates.Split(",").Contains("Marking noshow candidate as completed"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirty" name="WrongStatusUpdates" checked onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking noshow candidate as completed" /> <label for="checkboxThirty">Marking noshow candidate as completed</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirty" name="WrongStatusUpdates" onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking noshow candidate as completed" /> <label for="checkboxThirty">Marking noshow candidate as completed</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.WrongStatusUpdates.Split(",").Contains("Marking not qualified candidate as selected"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyOne" name="WrongStatusUpdates" checked onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking not qualified candidate as selected" /> <label for="checkboxThirtyOne">Marking not qualified candidate as selected</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyOne" name="WrongStatusUpdates" onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking not qualified candidate as selected" /> <label for="checkboxThirtyOne">Marking not qualified candidate as selected</label>
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class='page' id='proctoring'>
+                                        <div class='page__header' style="padding:0.7rem 5vw">
+                                            <div class='page__title'>
+                                                Proctoring Ignorance
+                                            </div>
+                                            <div class='page__close'>
+                                                <i style="font-size: 20px;" class="fa fa-close"></i>
+                                            </div>
+                                        </div>
+                                        <div class='page__body'>
+                                        <div class="accordion-body" style="padding-top:0px;padding-bottom:0px;">
+                                                <div class="accordion-inner">
+                                                    @Html.HiddenFor(m=>m.ProctoringIgnorance)
+                                                    <ul class="ks-cboxtags">
+                                                        <li>
+                                                            @if (Model.ProctoringIgnorance.Split(",").Contains("Conducting interviews while candidate video is off"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyEighth" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Conducting interviews while candidate video is off" /> <label for="checkboxThirtyEighth">Conducting interviews while candidate video is off</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyEighth" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="Conducting interviews while candidate video is off" />
+
+                                                                <label for="checkboxThirtyEighth">Conducting interviews while candidate video is off</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.ProctoringIgnorance.Split(",").Contains("Ignoring suspicious candidate"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyNine" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring suspicious candidate" /> <label for="checkboxThirtyNine">Ignoring suspicious candidate</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxThirtyNine" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring suspicious candidate" /> <label for="checkboxThirtyNine">Ignoring suspicious candidate</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.ProctoringIgnorance.Split(",").Contains("Ignoring use of suspicious apps or cheating by candidate"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxForty" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring use of suspicious apps or cheating by candidate" /> <label for="checkboxForty">Ignoring use of suspicious apps or cheating by candidate</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxForty" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="Ignoring use of suspicious apps or cheating by candidate" /> <label for="checkboxForty">Ignoring use of suspicious apps or cheating by candidate</label>
+                                                            }
+                                                        </li>
+                                                        <li>
+                                                            @if (Model.ProctoringIgnorance.Split(",").Contains("allowing candidates to take interview from mobile environment"))
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyOne" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <label for="checkboxFortyOne">allowing candidates to take interview from mobile&nbsp;/ inappropriate environment</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="checkboxFortyOne" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <label for="checkboxFortyOne">allowing candidates to take interview from mobile&nbsp; / inappropriate environment</label>
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m=>m.Inaccuratedecisionmaking)
+                        @Html.HiddenFor(m=>m.QuestionsRelevance)
+                        @Html.HiddenFor(m=>m.ScoreRubricIgnorance)
+                        @Html.HiddenFor(m=>m.PoorFeedbackComments)
+                        @Html.HiddenFor(m=>m.WrongStatusUpdates)
+                        @Html.HiddenFor(m=>m.ProctoringIgnorance)
+                    }
+
                 </div>
             </div>
         </div>
-    </div>
-    <div id="ClientInterviewbuttonHide" class="submit-wrapper" style="display:none;position:relative;top:4px;margin-bottom:20px;">
-        <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
-    </div>
 </div>
-
+<div id="ClientInterviewbuttonHide" class="submit-wrapper" style="display:none;position:relative;top:4px;margin-bottom:20px;">
+        <input type="button" id="btnSubmit" class="submit-feedback" value="Submit Feedback" onclick="AddCandidateFeedbackForm()" />
+</div>
 <script>
     function ChangeCheckBox(groupName) {
         var result = $('input[name="' + groupName + '"]:checked');
@@ -575,6 +1020,14 @@
         var PoorCommunicationSkills = $("#PoorCommunicationSkills").val();
         var TimeManagement = $("#TimeManagement").val();
         var Interviewid = $("#Interviewid").val();
+        var PaymentComplianceCount = $("#PaymentComplianceCount").val();
+        
+        var Inaccuratedecisionmaking = $("#Inaccuratedecisionmaking").val();
+        var QuestionsRelevance = $("#QuestionsRelevance").val();
+        var ScoreRubricIgnorance = $("#ScoreRubricIgnorance").val();
+        var PoorFeedbackComments = $("#PoorFeedbackComments").val();
+        var WrongStatusUpdates = $("#WrongStatusUpdates").val();
+        var ProctoringIgnorance = $("#ProctoringIgnorance").val();
         if ((parseInt($("#PaymentComplianceCount").val()) > 0 && parseInt($("#Rating").val()) < 5) || parseInt($("#Rating").val()) == 5) {
             $.ajax({
                 type: "POST",
@@ -586,7 +1039,15 @@
                     WeakInfrastructure: WeakInfrastructure,
                     UnethicalPractices: UnethicalPractices,
                     PoorCommunicationSkills: PoorCommunicationSkills,
-                    Interviewid: Interviewid
+                    Interviewid: Interviewid,
+                    PaymentComplianceCount:PaymentComplianceCount,
+                    
+                    Inaccuratedecisionmaking:Inaccuratedecisionmaking,
+                    QuestionsRelevance:QuestionsRelevance,
+                    ScoreRubricIgnorance:ScoreRubricIgnorance,
+                    PoorFeedbackComments:PoorFeedbackComments,
+                    WrongStatusUpdates:WrongStatusUpdates,
+                    ProctoringIgnorance:ProctoringIgnorance
                 },
                 url: "/Interview/ClientInterviewReview",
                 success: function () {
@@ -608,7 +1069,7 @@
     }
     function CountCheckBox() {
         var countcheck = 0;
-        $('#accordion2').find(':checkbox').each(function () {
+        $('#checkboxlist').find(':checkbox').each(function () {
             var vlucheck = $(this)[0].checked;
             if (vlucheck) {
                 countcheck = countcheck + 1;
@@ -617,8 +1078,3 @@
         $("#PaymentComplianceCount").val(countcheck);
     }
 </script>
-
-
-
-
-

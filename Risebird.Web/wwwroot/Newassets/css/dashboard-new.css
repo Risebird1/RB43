@@ -5818,7 +5818,7 @@ input[type="date"].form-control {
 
 .interviewresponsebtn {
     text-decoration: none;
-    padding: 10px 20px;
+    padding:7px 20px;
     position: relative;
     clear: both;
     border-radius: 3px;
@@ -5827,7 +5827,18 @@ input[type="date"].form-control {
     cursor: pointer;
 }
 
-
+.greenbtn {
+    background:  #25a125;
+}
+.greenbtn:hover {
+     background: #208520;
+}
+.redbtn {
+    background: #cf3f35;
+}
+    .redbtn:hover {
+        background: #bb3b33;
+    }
 .tablinks.active {
     /*background-color: #a7e8ba;*/
     background-color: #e5e7ea !important;
@@ -5852,16 +5863,31 @@ input[type="date"].form-control {
     box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.2);
     margin: 10px;
 }
-
-.candidate-tab .tabcontent p {
-    font-size: 15px;
+.candidate-tab .tab-block .card-block {
+    height: auto !important;
+    width: 100% !important;
+    float: none !important;
+    padding: 18px 10px;
+    margin: 10px 10px 15px 10px;
 }
+    .candidate-tab .tabcontent p {
+        font-size: 15px;
+    }
 
 .candidate-tab {
-    width: auto;
+   /* width: auto;*/
+   width:100%;
     margin: 0px auto;
 }
-
+.zoom-icon {
+    width: 25px;
+    position: relative;
+    top: -2px;
+    left: -3px;
+}
+.content-wrappers .meeting-link .click_herebtn {
+    padding: 15px 20px;
+}
     .candidate-tab .card-block h1 {
         color: #305887;
         font-weight: bold;
@@ -5869,7 +5895,16 @@ input[type="date"].form-control {
         text-transform: uppercase;
         text-align: center;
     }
-
+    .candidate-tab .tab-block .card-block h1 {
+        color: #305887;
+        font-weight: bold;
+        font-size: 13px;
+        text-transform: uppercase;
+        text-align: left;
+        padding-left: 45px;
+        padding-top: 7px;
+        padding-bottom: 0px;
+    }
 .meeting-link {
     margin: 20px 0px;
     color: #3094e5;
@@ -5887,7 +5922,7 @@ input[type="date"].form-control {
 }
 
 .candidate-tab b {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     color: #204065;
 }
@@ -5903,7 +5938,7 @@ input[type="date"].form-control {
     width: 200px;
     transition: all 0.5s;
     cursor: pointer;
-    margin: 5px;
+    margin: 10px 5px 0px 5px;
 }
 
     .click_herebtn span {
@@ -5923,7 +5958,8 @@ input[type="date"].form-control {
         }
 
     .click_herebtn:hover span {
-        padding-right: 25px;
+        padding-right: 20px;
+        color:#fff;
     }
 
         .click_herebtn:hover span:after {
@@ -5954,7 +5990,14 @@ input[type="date"].form-control {
     color: #FFf;
     text-align: center;
 }
-
+.candidate-tab .tab-block .step {
+  font-size:20px;
+    top: 50%;
+    left: 13%;
+    width: 30px;
+    border-radius: 120px 120px 120px 120px;
+    background-color: #204065;
+}
 .follow ul {
     margin: 0px;
     padding: 0px;
@@ -5966,19 +6009,59 @@ input[type="date"].form-control {
         list-style: none;
         background-image: url(../../img/blue-tick.png);
         background-repeat: no-repeat;
-        background-position: 0px 10px;
+        background-position: 7px 10px;
         background-size: 2%;
         color: #777575;
     }
 
+.paymentli ul {
+    margin: 0px;
+    padding: 0px 0px;
+}
+.paymentli ul li{
+    clear:both;
+}
+.paymentli ul li  {
+    font-size: 15px;
+    padding: 5px 0px;
+    list-style: none;
+    color: #777575;
+}
+    .paymentli ul li b {
+        float: left;
+        font-weight: 600;
+        padding: 0px;
+    }
+    .paymentli ul li span {
+        background-image: url(../../img/blue-tick.png);
+        background-repeat: no-repeat;
+        background-position: 7px 10px;
+        background-size: 6%;
+    }
+.tags {
+    float: left;
+    color: green;
+    font-weight: bold;
+}
 .content-wrapper {
     max-width: 752px;
     margin: 0px auto;
 }
-#keycontainer {
-    float: left;
-    padding: 0px 10px;
+.content-wrappers {
+    max-width: 1000px;
+    margin: 0px auto;
 }
+    .content-wrappers .tabcontent {
+        padding: 30px 20px 30px 20px;
+        margin: 110px 0px 20px 0px;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,.125);
+        box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);
+    }
+    #keycontainer {
+        float: left;
+        padding: 0px 10px;
+    }
 #keycontainer div {
     float: left;
     background-color: red;
@@ -6348,7 +6431,7 @@ input[type="date"].form-control {
     font-weight: bold;
 }
 
-.dashboard-iconcolor {
+.dashboard-iconcolor{
     padding: 10px 0px 10px 10px;
     display: block;
     background-size: 60% !important;
@@ -6358,6 +6441,23 @@ input[type="date"].form-control {
     border-radius: 100%;
     float: left;
     margin-right: 8px;
+}
+
+.wallet-iconcolor {
+    padding: 10px 0px 10px 10px;
+    display: block;
+    background-size: 55% !important;
+    font-weight: bold;
+    width: 32px;
+    height: 32px;
+    border-radius: 100%;
+    float: left;
+    margin-right: 5px;
+    color: #fff !important;
+    background-color: #a52a2a;
+    background-image: url(../../img/wallet.png);
+    background-position: 7px 7px;
+    background-repeat:no-repeat;
 }
 .transcript-btn {
     float: right;
@@ -7231,7 +7331,7 @@ ul.ks-cboxtags {
     padding: 0px 12px;
     cursor: pointer;
     font-size: 14px;
-    line-height: 35px;
+    line-height: 34px;
     border: 2px solid rgb(115 111 111 / 30%);
     color: #999292;
 }
@@ -7384,6 +7484,218 @@ ul.ks-cboxtags {
 .razorpay_details #trigger-update {
     right: 26px;
     top: 9px;
+}
+
+.interviewComment{
+   height:500px;
+    overflow:auto;
+}
+.videoPreviewContainer {
+    border: 10px #fff solid;
+    width: 600px;
+    height: 300px;
+    background: #000;
+    margin: 0px auto;
+}
+.videoPreviewContainer video {
+    width: 100%;
+    height: 100%;
+}
+.videoContainer video {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    top: -2px;
+    border-radius: 30px;
+}
+.videoContainer {
+    float: left;
+    position: absolute;
+    width: 350px;
+    height: 300px;
+    border-radius: 30px;
+    background: #000;
+    margin-top:0px;
+}
+.preview-txt {
+   text-align: center;
+    font-weight: 600;
+    padding-left: 50px;
+}
+.videoButtons {
+    float: left;
+    width: 35px;
+    height: 260px;
+    position: relative;
+    left: 340px;
+}
+
+#btncamara, #btnoffcamara {
+    width: 33px;
+    height: 33px;
+    border-radius: 100px;
+    background: #201f1f;
+    border: 0px;
+    position: relative;
+    left: -320px;
+    top: 18px;
+}
+    #btncamara .fa {
+        top: 5px;
+        position: relative;
+        font-size: 16px;
+        color: #fff;
+    }
+.on-off-txt {
+    color: #fff;
+    position: relative;
+    left: -4px;
+    width: 30px;
+    display: block;
+    font-weight: bold;
+    font-size: 9px;
+    top: 8px;
+}
+.btnoffcamara svg {
+    position: relative;
+    top: 1px;
+    left: 0px;
+
+}
+#btnStart {
+    width: 32px;
+    height: 32px;
+    border-radius: 100px;
+    background: #5b5757;
+    border: 0px;
+    position: relative;
+    left: -50px;
+    top: -10px;
+}
+    #btnStart svg {
+        color: red;
+        border: 2px #fff solid;
+        border-radius: 10px;
+    }
+
+#btnStop {
+    width: 32px;
+    height: 32px;
+    border-radius: 100px;
+    background: #de3838;
+    border: 0px;
+    position: relative;
+    left: -50px;
+    top: 30px;
+}
+
+#btnSave {
+    width: 120px;
+    margin: 10px auto;
+    height: 40px;
+    border-radius: 5px;
+    color: #fff;
+    border: 0px;
+    display: block;
+    position: relative;
+    left: 25px;
+}
+.recording-txt {
+    width: 100px;
+    font-weight: bold;
+    color: #FFF;
+   font-size: 9px;
+    position: relative;
+    left: -41px;
+    top: 6px;
+}
+#btnStart:disabled {
+    opacity: 0.7;
+    background: #6e6c6c;
+}
+
+#btnStop:disabled {
+    opacity: 0.7;
+    background: #e98080;
+}
+.hr {
+    margin: 20px 0px 0px 0px;
+    background: #958f8f;
+}
+.about-int {
+    padding: 0px 120px 0px 0px;
+}
+#timer-clock {
+    margin-top: -48px;
+    width: 165px;
+    height: 76px;
+    position: relative;
+    left: 33px;
+    top: -20px;
+    float: right;
+}
+.path--background {
+    fill: rgb(34, 213, 201);
+    stroke: #fff;
+    stroke-width: 0px;
+}
+
+.pulse {
+    fill: rgb(255, 74, 74) !important;
+}
+
+.path--foreground {
+    fill: #eee;
+    stroke: #eee;
+    stroke-width: 2px;
+}
+
+.label {
+    font: 35px "Open Sans"!important;
+    font-weight: 900;
+    text-anchor: middle;
+    fill: rgb(34, 213, 201);
+}
+#timer-clock-txt {
+    position: relative;
+    top: 151px;
+    left: 21px;
+    font-weight: bold;
+    font-family: 'Open Sans';
+    width: 120px;
+    color: #383737;
+    font-size:13px;
+}
+.rules {
+    padding: 0px 20px 0px 0px;
+    position: relative;
+    left: 50px;
+    top: 20px;
+    font-weight: 600;
+    color: #4e4a4a;
+}
+    .rules .number-txt{
+       float:left;
+       display:contents;
+    }
+    .rules .number {
+        background: #aea7a7;
+        width: 24px;
+        height: 24px;
+        display: inline-block;
+        text-align: center;
+        color: #fff;
+        border-radius: 100px;
+        float: left;
+        margin-right: 10px;
+    }
+.preview-section{
+padding-top:50px;
+}
+.preview-txt {
+    text-align: center;
+    font-weight: 600;
+    padding-left: 50px;
 }
 .interviewWrapper {
     margin: 30px auto;
@@ -7830,7 +8142,7 @@ ul.ks-cboxtags {
         }
 
         .join-time {
-            width: 160px;
+            width: 150px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -8547,7 +8859,9 @@ ul.ks-cboxtags {
         #calender {
             padding-left: 25px !important;
         }
-
+        .candidate-tab .card-block{
+            max-width:160px;
+        }
         .time-btn {
             width: 110px !important;
         }
@@ -9104,22 +9418,6 @@ ul.ks-cboxtags {
         width:100%;
         z-index:1000;
     }
-  
-        .interviewWrapper .button-wrapper {
-            margin: 0px auto;
-            width: 100%;
-            clear: both;
-        }
-
-        .interviewWrapper .button-wrapper h2{
-            font-size: 17px;
-            width: 100%;
-        }
-    .join-button {
-        float: none;
-        clear: both;
-        margin: 0px auto;
-    }
 }
 
 
@@ -9129,12 +9427,19 @@ ul.ks-cboxtags {
             font-size: 13px !important;
             background: url(../../img/interview.svg) -20px 37px no-repeat !important;
         }
-
-        .public-url #candidateTable_length {
-            left: -22px;
-            position: relative;
+        .candidate-tab .tab-block .card-block {
+            width: 30.3% !important;
+            float: left !important;
+           
         }
-
+        
+            .public-url #candidateTable_length {
+                left: -22px;
+                position: relative;
+            }
+        .candidate-tab .tabcontent p{
+            font-size:14px;
+        }
         .public-url div.dataTables_wrapper div.dataTables_filter {
             text-align: right;
             position: absolute;
@@ -9390,10 +9695,7 @@ ul.ks-cboxtags {
             right: 95px;
         }
 
-        .candidate-tab .card-block {
-            height: 140px !important;
-        }
-
+   
             .candidate-tab .card-block h1 {
                 font-size: 11px !important;
             }
@@ -9445,6 +9747,12 @@ ul.ks-cboxtags {
         .page{
             top:0px;
             left:0px;
+        }
+        .content-wrappers .meeting-link .click_herebtn {
+            padding: 10px 20px;
+            position: relative;
+            top: 15px;
+            font-size: 13px;
         }
     }
 
@@ -15652,7 +15960,9 @@ div.tagsinput {
         right: 27px;
         top: 11px;
     }
-
+    .content-wrappers .tabcontent {
+        margin: 10px 0px 20px 0px;
+    }
     #skill_card .pskill {
         display: block !important;
         text-align: center;

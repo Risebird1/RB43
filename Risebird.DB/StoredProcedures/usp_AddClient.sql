@@ -10,75 +10,81 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_AddClient]          
-@clientName varchar(150),          
-@clientDescr varchar(250),          
-@GST varchar(MAX),          
-@officeAddress varchar(MAX),        
-@Createdby varchar(200),      
-@LogoLink varchar(max),      
-@CompanyLink varchar(max),      
-@CompanyVideoLink varchar(max),      
-@IsPasswordReset bit,    
-@IsCandidateavailability bit,    
-@IsMeetingNotificationSend bit,    
-@PerInterviewRate int,
-@BillingType int,
-@InterviewDuration int,
-@IsMeetingAutoCancelled bit,
-@IsQCRequired bit,
-@IsRedoInterview bit,
-@IsClientCancelInterview bit,
-@PaymentTerm int,
-@GSTApplicable bit
-AS          
-Begin          
- Declare @Clientid int        
- Declare @Userid int      
- Select @Userid=id from USerList where Emailid=@Createdby      
- INSERT INTO [dbo].[Client]          
-       ([Name]          
-       ,[Description]          
-       ,[GST]          
-       ,[OfficeAddress]       
-       ,[LogoLink]      
-       ,[CompanyLink]      
-       ,[CompanyVideoLink]      
-       ,[IsPasswordReset]    
-    ,[IsCandidateavailability]    
-    ,[IsMeetingNotificationSend]   
- ,[PerInterviewRate]
- ,[BillingType]
- ,[InterviewDuration]
- ,[IsMeetingAutoCancelled]
- ,[IsQCRequired]
- ,[IsRedoInterview]
- ,[IsClientCancelInterview]
- ,[PaymentTerm]
- ,[GSTApplicable])        
-     VALUES          
-     (@clientName          
-     ,@clientDescr          
-     ,@GST          
-     ,@officeAddress      
-     ,@LogoLink      
-     ,@CompanyLink      
-     ,@CompanyVideoLink      
-     ,@IsPasswordReset    
-  ,@IsCandidateavailability    
-  ,@IsMeetingNotificationSend  
-  ,@PerInterviewRate
-  ,@BillingType
-  ,@InterviewDuration
-  ,@IsMeetingAutoCancelled
-  ,@IsQCRequired
-  ,@IsRedoInterview
-  ,@IsClientCancelInterview
-  ,@PaymentTerm
-  ,@GSTApplicable)          
-      
-set @Clientid=SCOPE_IDENTITY()
-Insert into SeniorHR Select id as Userid,@Clientid as Clientid from UserList where idprofile=32
-End           
+CREATE PROCEDURE [dbo].[usp_AddClient]            
+@clientName varchar(150),            
+@clientDescr varchar(250),            
+@GST varchar(MAX),            
+@officeAddress varchar(MAX),          
+@Createdby varchar(200),        
+@LogoLink varchar(max),        
+@CompanyLink varchar(max),        
+@CompanyVideoLink varchar(max),        
+@IsPasswordReset bit,      
+@IsCandidateavailability bit,      
+@IsMeetingNotificationSend bit,      
+@PerInterviewRate int,  
+@BillingType int,  
+@InterviewDuration int,  
+@IsMeetingAutoCancelled bit,  
+@IsQCRequired bit,  
+@IsRedoInterview bit,  
+@IsClientCancelInterview bit,  
+@PaymentTerm int,  
+@GSTApplicable bit,
+@Reportsnippet int,
+@IsTranscript bit
+AS            
+Begin            
+ Declare @Clientid int          
+ Declare @Userid int        
+ Select @Userid=id from USerList where Emailid=@Createdby        
+ INSERT INTO [dbo].[Client]            
+       ([Name]            
+       ,[Description]            
+       ,[GST]            
+       ,[OfficeAddress]         
+       ,[LogoLink]        
+       ,[CompanyLink]        
+       ,[CompanyVideoLink]        
+       ,[IsPasswordReset]      
+    ,[IsCandidateavailability]      
+    ,[IsMeetingNotificationSend]     
+ ,[PerInterviewRate]  
+ ,[BillingType]  
+ ,[InterviewDuration]  
+ ,[IsMeetingAutoCancelled]  
+ ,[IsQCRequired]  
+ ,[IsRedoInterview]  
+ ,[IsClientCancelInterview]  
+ ,[PaymentTerm]  
+ ,[GSTApplicable]
+ ,[Reportsnippet]
+ ,[IsTranscript])          
+     VALUES            
+     (@clientName            
+     ,@clientDescr            
+     ,@GST            
+     ,@officeAddress        
+     ,@LogoLink        
+     ,@CompanyLink        
+     ,@CompanyVideoLink        
+     ,@IsPasswordReset      
+  ,@IsCandidateavailability      
+  ,@IsMeetingNotificationSend    
+  ,@PerInterviewRate  
+  ,@BillingType  
+  ,@InterviewDuration  
+  ,@IsMeetingAutoCancelled  
+  ,@IsQCRequired  
+  ,@IsRedoInterview  
+  ,@IsClientCancelInterview  
+  ,@PaymentTerm  
+  ,@GSTApplicable
+  ,@Reportsnippet
+  ,@IsTranscript)            
+        
+set @Clientid=SCOPE_IDENTITY()  
+Insert into SeniorHR Select id as Userid,@Clientid as Clientid from UserList where idprofile=32  
+End             
 GO
   
