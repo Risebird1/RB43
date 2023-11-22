@@ -1515,5 +1515,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateVideoKYCDetails(string videolink, string Emailid)
+        {
+            try
+            {
+                return await _interviewerRepository.UpdateVideoKYCDetails(videolink, Emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
