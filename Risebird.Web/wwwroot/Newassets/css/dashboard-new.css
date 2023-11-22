@@ -7503,7 +7503,7 @@ ul.ks-cboxtags {
 }
 .videoContainer video {
     width: 100%;
-    height: 300px;
+    height: 265px;
     position: relative;
     top: -2px;
     border-radius: 30px;
@@ -7512,7 +7512,7 @@ ul.ks-cboxtags {
     float: left;
     position: absolute;
     width: 350px;
-    height: 300px;
+    height: 260px;
     border-radius: 30px;
     background: #000;
     margin-top:0px;
@@ -8741,8 +8741,21 @@ padding-top:50px;
         #calender {
             padding-left: 25px !important;
         }
-        .candidate-tab .card-block{
-            max-width:160px;
+        #btnStart, #btnStop {
+            left: -135px!important;
+        }
+        .videoContainer video {
+            height: 208px!important;
+        }
+        .videoContainer {
+            height: 200px!important;
+        }
+        .candidate-tab .card-block {
+            max-width: 160px;
+        }
+        .videoContainer {
+            width: 270px;
+            height: 280px;
         }
         .time-btn {
             width: 110px !important;
@@ -8957,7 +8970,9 @@ padding-top:50px;
     #clientduser li:nth-child(5) .dtr-data {
         float: left;
     }
-
+    #btnStart, #btnStop {
+        left: 150px;
+    }
     .action-btn {
         width: 100px;
         margin: 0px auto;
@@ -9049,7 +9064,15 @@ padding-top:50px;
     .navbar-toggle {
         top: -5px;
     }
-
+    .preview-section {
+        padding-top: 80px!important;
+    }
+    .preview-txt {
+        padding-left: 0px !important;
+    }
+    #btnSave {
+        left: 0px!important;
+    }
     .jd .skillname {
         width: 100% !important;
         text-align: center;
@@ -9320,6 +9343,30 @@ padding-top:50px;
             text-align: center;
 
         }
+    .videoContainer {
+        width: 100%;
+        left: 0px;
+    }
+  
+    #btncamara, #btnoffcamara {
+        left: -335px;
+    }
+    .rules {
+        left: 0px;
+        top: 80px;
+    }
+    .about-int {
+        padding: 0px 10px 0px 0px;
+    }
+    #timer-clock {
+        margin-top: 8px;
+        width: 100px;
+        height: 76px;
+        position: relative;
+        left: 0px;
+        top: -20px;
+        float: right;
+    }
 }
 
 
@@ -9334,11 +9381,19 @@ padding-top:50px;
             float: left !important;
            
         }
-        
-            .public-url #candidateTable_length {
-                left: -22px;
-                position: relative;
-            }
+        #btnStop, #btnStart {
+            left: -12px!important;
+        }
+        .videoContainer video{
+            height:310px!important;
+        }
+        .videoContainer{
+            height:305px!important;
+        }
+        .public-url #candidateTable_length {
+            left: -22px;
+            position: relative;
+        }
         .candidate-tab .tabcontent p{
             font-size:14px;
         }
@@ -9674,17 +9729,24 @@ padding-top:50px;
         #calenderTimeslot {
             left: 0px !important;
         }
-
-        .note-meeting {
-            width: 100% !important;
-            top: -11px !important;
-            font-size: 13px !important;
+        .videoContainer{
+            height:215px!important;
         }
+            .videoContainer video{
+                height:220px!important;
+            }
+            .note-meeting {
+                width: 100% !important;
+                top: -11px !important;
+                font-size: 13px !important;
+            }
 
         .single-video-left h1 .mdc-button {
             height: 30px !important;
         }
-
+        #btnStop, #btnStart {
+            left: -130px!important;
+        }
         .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
             font-size: 11px !important;
         }
@@ -9738,6 +9800,11 @@ padding-top:50px;
             position: relative !important;
             top: 8px !important;
             left: -25px !important;
+        }
+        .videoPreviewContainer {
+            width: 300px!important;
+            position:relative!important;
+            left: -23px!important;
         }
     }
     /* EOF BUTTONS */
@@ -15856,6 +15923,9 @@ div.tagsinput {
         .mh-top {
             margin-top: 60px !important;
         }
+    .videoPreviewContainer{
+        width:100%;
+    }
     .support {
         position: absolute;
         left: auto;
