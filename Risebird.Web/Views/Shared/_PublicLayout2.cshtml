@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Hosting
 @inject IHttpContextAccessor HttpContextAccessor
 @inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@inject IHostingEnvironment env
 @{
     string emailId = string.Empty;
 }
@@ -453,4 +455,25 @@
         </script>
     }
 }
+@if (!env.IsDevelopment())
+{
+    <script>
 
+        document.onkeypress = function (event) {
+            event = (event || window.event);
+            if (event.keyCode == 123 || (event.ctrlKey && event.keyCode == 83) || (event.ctrlKey && event.keyCode == 80)) {
+                return false;
+            }
+        }
+        document.onkeydown = function (event) {
+            event = (event || window.event);
+            if (event.keyCode == 123 || (event.ctrlKey && event.keyCode == 83) || (event.ctrlKey && event.keyCode == 80)) {
+                return false;
+            }
+        }
+        document.addEventListener("contextmenu", function (event) {
+            event.preventDefault();
+
+        }, false);
+    </script>
+}
