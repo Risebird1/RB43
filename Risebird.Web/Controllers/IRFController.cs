@@ -6659,33 +6659,33 @@ namespace Risebird.Web.Controllers
             //check link expiry befire hitting db
 
             try
-            {
-                dec = dec.Replace(" ", "+");
-                var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
-                if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
-                {
-                    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
-                    {
-                        return Json("Status updated successfully.");
-                    }
-                    else
-                    {
-                        return Json("Failed to update status, Please try again");
-                    }
-                }
-                else
-                {
-                    return Json("Link Expired.");
-                }
-
-                //if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid))
+           {
+                //dec = dec.Replace(" ", "+");
+                //var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
+                //if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
                 //{
-                //    return Json("Status updated successfully.");
+                //    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
+                //    {
+                //        return Json("Status updated successfully.");
+                //    }
+                //    else
+                //    {
+                //        return Json("Failed to update status, Please try again");
+                //    }
                 //}
                 //else
                 //{
-                //    return Json("Failed to update status, Please try again");
+                //    return Json("Link Expired.");
                 //}
+
+                if(await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
+                {
+                    return Json("Status updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update status, Please try again");
+                }
             }
             catch (Exception ex)
             {

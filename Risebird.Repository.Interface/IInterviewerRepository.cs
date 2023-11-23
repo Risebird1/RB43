@@ -108,5 +108,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type);
         Task<IEnumerable<InterviewerRedmarkers>> FecthUpcomingInterviewsRedMarkers();
         Task<bool> updateRedmarkerAcknowledge(string uniqueid);
+        Task<bool> UpdateVideoKYCDetails(string videolink, string Emailid);
     }
 }

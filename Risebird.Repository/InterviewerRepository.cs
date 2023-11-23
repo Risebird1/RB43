@@ -3231,6 +3231,27 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> UpdateVideoKYCDetails(string videolink, string Emailid)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@CurrentDate", DateTime.Now);
+                dynamicParam.Add("@videolink", videolink);
+                dynamicParam.Add("@Emailid", Emailid);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(conChange, "usp_UpdateVideoKYCDetails", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 
 }
