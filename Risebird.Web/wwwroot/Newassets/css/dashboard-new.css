@@ -7800,7 +7800,7 @@ padding-top:50px;
     text-align: center;
     border-radius: 3px;
     font-size: 15px;
-    color: #fff;
+    color: #fff!important;
     float: left;
 }
 
@@ -7917,11 +7917,22 @@ option {
     -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
-
-
-/***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
+.interviewWrapper .heading {
+    text-align: center;
+    margin: 0px 0px 20px 0px;
+    font-size: 20px;
+    color: grey;
+    line-height: 30px;
+    font-weight: 600;
+}
+    .interviewWrapper .heading span {
+        color: #c2b5b5;
+        font-weight: 300;
+        font-size: 18px;
+    }
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }
@@ -13717,7 +13728,7 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
     border: 0px !important;
 }
 
-.dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
+.dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search]{
     border: 0px !important;
     padding: 9px 10px 9px 10px;
     width: 256px;
@@ -13732,7 +13743,9 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
     position: relative;
     background: #fff;
 }
-
+#InterviewerCommunicatorList_filter input[type=search] {
+    border: 1px #e8e0e0 solid !important;
+}
 #MyInterviewList > thead > tr > th, #MyInterviewList > tfoot > tr > th {
     padding: 5px 0px
 }

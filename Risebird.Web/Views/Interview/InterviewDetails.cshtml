@@ -18,9 +18,13 @@
 
 <input type="hidden" value="@ViewBag.id" id="id" />
             <div class="interviewWrapper">
-        <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;">
+        <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+        <div class="heading">
+            Review the below instructions to align with client expectations<br/>
+            <span>Below zoom meeting link will be activated after you have click on all instructions</span>
+        </div>
             <div class="card" style="margin-bottom:10px;">
-
+              
                 <label class="question" for="checkbox_two">
                     <label for="checkbox_two">
                         <i class="fa fa-cogs" aria-hidden="true"></i>
@@ -308,7 +312,7 @@
             </div>
 </div>
         <div class="button-wrapper">
-            <h2 class="text-center pad10 pull-left">Click here to join the meeting</h2>
+            <h2 class="text-center pad10 pull-left" style="color:#a3a1a1;font-weight:bold;">Click here to join the meeting</h2>
             @if (Model.zoomLink != null && Model.zoomLink != "")
             {
               @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
