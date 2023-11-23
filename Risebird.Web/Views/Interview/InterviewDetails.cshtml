@@ -36,8 +36,8 @@
                         <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
                         <label style="visibility:hidden" for="checkbox_two"></label>
 
-                        <input  type="checkbox" class="coupon_question" id="checkbox_2" name="question1" />
-                        <label  for="checkbox_2"></label>
+                        <input  type="checkbox" class="coupon_question" disabled id="hidden_fields_two_1" name="Checkshow" />
+                        <label  for="hidden_fields_two_1"></label>
 
                     </span>
                 </label>
@@ -64,8 +64,8 @@
                                 <label style="visibility:hidden"  for="checkbox_three"></label>
                        
 
-                                  <input type="checkbox" class="coupon_question" id="checkbox_3" name="question1" />
-                                <label  for="checkbox_3"></label>
+                                  <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" />
+                                <label  for="hidden_fields_three_1"></label>
 
                                 </span>
                         </label>
@@ -177,8 +177,8 @@
                         <label style="visibility:hidden" for="checkbox_four"></label>
 
 
-                        <input type="checkbox" class="coupon_question" id="checkbox_4" name="question1" />
-                        <label  for="checkbox_4"></label>
+                        <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" />
+                        <label  for="hidden_fields_four_1"></label>
                     </span>
                 </label>
 
@@ -203,8 +203,8 @@
                         <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
                         <label style="visibility:hidden" for="checkbox_five"></label>
 
-                          <input type="checkbox" class="coupon_question" id="checkbox_5" name="question1" />
-                        <label  for="checkbox_5"></label>
+                          <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" />
+                        <label  for="hidden_fields_five_1"></label>
                     </span>
                 </label>
 
@@ -244,8 +244,8 @@
                         <input  style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
                         <label  style="visibility:hidden" for="checkbox_six"></label>
 
-                         <input  type="checkbox" class="coupon_question" id="checkbox_6" name="question1"  />
-                        <label  for="checkbox_6"></label>
+                         <input  type="checkbox" class="coupon_question" disabled id="hidden_fields_six_1" name="Checkshow"  />
+                        <label  for="hidden_fields_six_1"></label>
                     </span>
                 </label>
 
@@ -320,8 +320,8 @@
                         <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
                         <label style="visibility:hidden" for="checkbox_seven"></label>
 
-                         <input type="checkbox" class="coupon_question" id="checkbox_7" name="question1"/>
-                        <label for="checkbox_7"></label>
+                         <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow"/>
+                        <label for="hidden_fields_seven_1"></label>
                     </span>
                 </label>
 
@@ -503,6 +503,7 @@
                 if ($(this).is(':checked')) {
                     // Show the hidden fields.
                     $("#" + hiddenId).show();
+                    $("#" + hiddenId+"_1").prop('checked', true);
                 } else {
                     // Make sure that the hidden fields are indeed
                     // hidden.
@@ -560,5 +561,17 @@
 
             }
         });
+    }
+     function CountCheckBox() {
+        var countcheck = 0;
+        $('#Checkshow').find(':checkbox').each(function () {
+            var vlucheck = $(this)[0].checked;
+            if (vlucheck) {
+                countcheck = countcheck + 1;
+            }
+        });
+        if(countcheck==7){
+            //enable meeting link
+        }
     }
 </script>
