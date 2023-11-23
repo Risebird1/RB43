@@ -178,7 +178,7 @@
 
                                                                 </td>
                                                                 <td class="text-center">
-                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Broadcast Email to the Interviewers of this channel">
+                                                                    @*<button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Broadcast Email to the Interviewers of this channel">
                                                                         <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
                                                                         </span>
@@ -187,8 +187,11 @@
                                                                         <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
                                                                         </span>
+                                                                    </button>*@
+                                                                   <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
+                                                                        <span onclick="javascript:openHMInstruction('@item.id', '@item.IRFId');" title="HM Instruction">
+<svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-checklist" viewBox="0 0 16 16"> <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" fill="white"></path> <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0zM7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>                                                                        </span>
                                                                     </button>
-                                                                   
                                                                   
 
                                                                     @if (item.IsPaused)
@@ -585,7 +588,8 @@
         modalBct.style.display = "none";
         cancelRecording();
     }
-    function OpenVoiceRecordingModal(irfid, Irfname) {
+    function OpenVoiceRecordingModal(irfid, Irfname) 
+    {
         $.ajax({
             type: "POST",
             url: "/IRF/FetchIRFAudioLink",
@@ -632,7 +636,7 @@
     //    //$("#txtIRFName").val(Irfname);
     //}
     function UploadCandidateResume() {
-        debugger;
+      
         if (irfId != 0 && irfName.trim() != "" && document.getElementById("ResumeFiles").files.length > 0) {
             $(".loader").show();
             var files = $("#ResumeFiles").prop("files");
@@ -659,6 +663,10 @@
         } else {
             alert("Please fill all the fields.");
         }
+    }
+    function openHMInstruction(irfid, Irfname){
+        var url="/IRF/DeliveryHeadInstruction?irfid="+irfid;
+        window.open(url,'_blank');
     }
 </script>
 <script>
@@ -691,7 +699,7 @@
                 searchPlaceholder: "Search records",
             },
             "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span style='right:20px;top:9px;' id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
                 $(".dataTables_filter").keyup(function (e) {
                     if ($(this).val() != "") {
                         $("#x").show();
