@@ -7917,7 +7917,7 @@ option {
     -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
-.interviewWrapper .heading {
+.interviewWrapper .heading-txt {
     text-align: center;
     margin: 0px 0px 20px 0px;
     font-size: 20px;
@@ -7925,7 +7925,7 @@ option {
     line-height: 30px;
     font-weight: 600;
 }
-    .interviewWrapper .heading span {
+    .interviewWrapper .heading-txt span {
         color: #c2b5b5;
         font-weight: 300;
         font-size: 18px;
