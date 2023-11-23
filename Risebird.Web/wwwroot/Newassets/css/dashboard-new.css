@@ -7803,7 +7803,12 @@ padding-top:50px;
     color: #fff!important;
     float: left;
 }
-
+.disable-link{
+    background: #dddddd;
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+}
 .interviewWrapper .button-wrapper {
     margin: 0px auto;
     width: 420px;

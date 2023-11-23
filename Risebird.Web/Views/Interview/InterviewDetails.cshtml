@@ -339,7 +339,7 @@
               @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
                 {*@
                     <div>
-                        <a target="_blank" class="join-button" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
+                        <a   target="_blank" id="join-button" class="join-button disable-link" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
                     </div>
                     
                 @*}*@
@@ -562,15 +562,24 @@
             }
         });
     }
+
+
      function CountCheckBox() {
+       
         var countcheck = 0;
         $('#Checkshow').find(':checkbox').each(function () {
             var vlucheck = $(this)[0].checked;
             if (vlucheck) {
-                countcheck = countcheck + 1;
+                countcheck = countcheck + 5;
+               
             }
         });
-        if(countcheck==7){
+        if(countcheck==6){
+            debugger;
+     $(".join-button").removeClass('disable-link')
+            debugger;
+     alert('test')
+
             //enable meeting link
         }
     }
