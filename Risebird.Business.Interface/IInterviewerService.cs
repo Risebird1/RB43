@@ -90,5 +90,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid);
         Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type);
         Task<bool> updateRedmarkerAcknowledge(string uniqueid);
+        Task<string> GetInterviwerService(string interviewer);
     }
 }

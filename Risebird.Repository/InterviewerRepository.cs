@@ -3231,6 +3231,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task <string> GetInterviewer(string interviewer)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@interviewer", interviewer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryFirstOrDefaultAsync<string>(
+                        con, "select Upper(EmailId) from [dbo].[UserList] where EmailId= @interviewer", parameters, commandType:CommandType.Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 
 }

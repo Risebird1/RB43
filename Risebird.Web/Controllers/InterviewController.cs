@@ -8092,6 +8092,7 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Success");
             }
+
         }
     }
 }

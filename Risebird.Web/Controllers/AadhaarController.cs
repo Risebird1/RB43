@@ -783,6 +783,19 @@ namespace Risebird.Web.Controllers
                         var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
                         if (companystatus != null)
                         {
+                            //var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
+                            //DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
+                            //employementdetails.CandidateEmail = model.CandidateEmail;
+                            //employementdetails.MobileNumber = model.MobileNumber;
+                            //employementdetails.isVerified = true;
+                            //if (model.employmentSummary != null)
+                            //{
+                            //    employementdetails.Isemployed = model.employmentSummary.is_employed;
+                            //}
+                            employementdetails.message = "For this employment Company is in black list in our system.";
+                        }
+                        else
+                        {
                             var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
                             DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
                             employementdetails.CandidateEmail = model.CandidateEmail;
@@ -792,10 +805,7 @@ namespace Risebird.Web.Controllers
                             {
                                 employementdetails.Isemployed = model.employmentSummary.is_employed;
                             }
-                        }
-                        else
-                        {
-                            employementdetails.message = "For this employment Company is in black list in our system.";
+                           // employementdetails.message = "For this employment Company is in black list in our system.";
                         }
                     }
                     else
@@ -984,6 +994,20 @@ namespace Risebird.Web.Controllers
             //    i++;
             //}
             //End : Employement Verification Mapping into InterivewerProfile
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetInterviwerExist(string interviewer)
+        {
+            var result = await _interviewerService.GetInterviwerService(interviewer);
+            var role = _interviewerService.GetUserRolebyEmailid(interviewer);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                return Json("EmailId already in use as " + role + ".");
+            }
+            else {
+                return Json(null);
+            }
         }
     }
 }
