@@ -527,7 +527,17 @@
                                                                 </td>
                                                                 @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                                 {
-                                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                    {
+                                                                            <td class="cadName">
+                                                                                <a target="_blank" title="Meeting Link" href="/Interview/InterviewDetails?id=@item.irfIntId&interviewId=@item.id">Meeting Link</a>
+                                                                            </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                            <td>Before 10 min only</td>
+                                                                    }
+                                                                    @*@if (item.zoomLink != null && item.zoomLink != "")
                                                                     {
                                                                         @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                         {
@@ -543,7 +553,7 @@
                                                                     else
                                                                     {
                                                                         <td></td>
-                                                                    }
+                                                                    }*@
                                                                     <td>₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
                                                                     @if (item.IsNewSkillChannel)
                                                                     {
