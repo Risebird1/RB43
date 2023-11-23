@@ -504,6 +504,7 @@
                     // Show the hidden fields.
                     $("#" + hiddenId).show();
                     $("#" + hiddenId+"_1").prop('checked', true);
+                    CountCheckBox();
                 } else {
                     // Make sure that the hidden fields are indeed
                     // hidden.
@@ -567,7 +568,7 @@
      function CountCheckBox() {
        
         var countcheck = 0;
-        $('#Checkshow').find(':checkbox').each(function () {
+           $("input[name=Checkshow]").each( function () {
             var vlucheck = $(this)[0].checked;
             if (vlucheck) {
                 countcheck = countcheck + 1;
