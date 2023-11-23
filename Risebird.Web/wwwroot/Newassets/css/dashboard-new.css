@@ -7803,8 +7803,8 @@ padding-top:50px;
     color: #fff!important;
     float: left;
 }
-.disable-link{
-    background: #dddddd;
+.disable-link {
+    background: #ddd6d687;
     pointer-events: none;
     cursor: default;
     text-decoration: none;
