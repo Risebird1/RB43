@@ -4017,8 +4017,20 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<Meeting> GetAudioCommentDetailsService(int interviewId)
+        {
+            try
+            {
+                var result = await _meetingRespository.GetAudioCommentDetails(interviewId);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
-       
     }
 }
 

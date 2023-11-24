@@ -193,7 +193,16 @@ textarea::-webkit-scrollbar {
     margin: 5px 5px;
     border: 1px #eb7022 solid;
 }
+.custom-select-dropdown select {
+    background-color: #e9e8e840 !important;
+}
+input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
+    background: #ea6b26 !important;
+}
 
+input[type="radio"]:checked, input[type="checkbox"]:checked {
+    border-color: #ea6b26 !important;
+}
 .expiry [type="date"] {
     background: #dddddf url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;

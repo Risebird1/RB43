@@ -83,7 +83,9 @@ td.detail-row {
     border-radius: 16px;
     background: #232424;
 }
-
+.custom-select-dropdown select {
+    background-color: #34303040!important;
+}
 input[type='radio']:checked:after {
     background-color: #929292 !important;
     top: 1px !important;
@@ -325,8 +327,22 @@ table.dataTable thead .sorting:after {
     background: black !important;
     border: 1px #464343 solid !important;
 }
+input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
+    background: #9a9a9a !important;
+}
+input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
+    background: #9a9a9a !important;
+}
 
-
+input[type="radio"]:checked, input[type="checkbox"]:checked {
+    border-color: #9a9a9a !important;
+}
+input[type="radio"]:checked, input[type="checkbox"]:checked {
+    border-color: #9a9a9a !important;
+}
+.format input[type="checkbox"] {
+    background: #3e3b3b!important;
+}
 #MyChatModel .modal-content .modal-header {
     background-color: #121212 !important;
 }

@@ -1,0 +1,881 @@
+﻿@model Risebird.Entities.ViewModel.IRFVm
+@{
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    ViewData["Title"] = "Delivery Head Instruction";
+}
+<script>
+    var Header = "Delivery Head Instruction";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+ <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+<div class="main-panel " id="main-panel">
+    <!-- Navbar -->
+    <!-- End Navbar -->
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div style="margin-top:30px;">
+
+                        <div class="interviewWrapper" style="left:0px;">
+                            <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
+                                 <div class="heading-txt">
+                                    Instructions for Interviewer Guidance
+        </div>
+            <div class="card">
+
+                <label class="question" for="checkbox_two">
+                                        <label for="checkbox_two">
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+
+
+                        Tech Skills
+                    </label>
+                    <span class="round">
+                        <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
+                                            @*<label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                        </span>
+                </label>
+
+                <fieldset class="answer hidden" id="hidden_fields_two">
+                                        @using (Html.BeginForm("DeliveryHeadInstruction", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckConditions()" }))
+                                        {
+
+            <div>
+                <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive-sm">
+                                                                @Html.HiddenFor(m=>m.id)
+                                <table class="table table-bordered mbn" id="SkillTable">
+                                    <thead>
+                                        <tr>
+                                            <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                            <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
+                                            <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
+                                                                            @* <th width="10%" class="table_heading">Concepts</th>
+                               <th width="30%" class="table_heading">Nature of questions</th>
+                                <th width="10%" class="table_heading">Time limit</th*@
+                                            <th width="10%" class="table_heading text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                                        @if (Model.SkillCollection == null || Model.SkillCollection.Count() == 0)
+                                                                        {
+                                                        <tr>
+                                                            <td>
+                                                                                    @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, "Select", new { @class = "select-css form-control " })
+                                                            </td>
+                                                            <td>
+                                                                                    @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, "Select", new { @class = "select-css form-control " })
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
+                                                            </td>
+                                                                                @* <td>
+                                        <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
+                                    </td>
+                                    <td>
+                                        <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="0">
+                                    </td>*@
+                                                            <td class="action text-center">
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            </td>
+                                                        </tr>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            for (int i = 0; i < Model.SkillCollection.Count(); i++)
+                                                                            {
+                                                                        <tr>
+                                                                            <td>
+                                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control select-css" })
+                                                                            </td>
+                                                                            <td>
+                                                                                        @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "select-css form-control" })
+                                                                            </td>
+                                                                            <td>
+                                                                                        @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                            </td>
+                                                                                    @*   <td>
+                                            @Html.EditorFor(m => m.SkillCollection[i].Concepts, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
+                                        </td>
+                                      <td>
+                                            @Html.EditorFor(m => m.SkillCollection[i].Natureofquestion, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @maxlength = "50" } })
+                                        </td>
+                                        <td>
+                                            @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "0" } })
+                                        </td>*@
+                                                                            <td class="action text-center">
+                                                                                <div>
+                                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                    <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                            }
+                                                                        }
+                                    </tbody>
+                                </table>
+                                <label class="text-danger" id="SkillCollection_WeightageError"></label>
+                                <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:white!important; margin-left:415px"></label>
+                            </div>
+                         <div class="tech-skill-button"><input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10" value="Submit Tech Skill" /></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+                                        }
+                </fieldset>
+
+            </div>
+
+            </div>
+                            <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
+            <div class="card">
+
+                <label class="question" for="checkbox_three">
+                    <label for="checkbox_three">
+                        <i class="fa fa-file-audio-o" aria-hidden="true"></i>
+                        Audio Instruction
+
+
+                    </label>
+
+                    <span class="round">
+                        <input type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
+                      <label class="edit-wrap" onclick="javascript:OpenVoiceRecordingModal('@Model.id');" ><i class='fa fa-edit' style='color: white' ></i></label>
+
+                    </span>
+                </label>
+
+                <fieldset class="answer hidden" id="hidden_fields_three">
+
+                                        <audio controls><source src="@Model.AudioComment">Recording</audio>
+                                        @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+                    {
+                    string audiofileName = string.Empty;
+                    audiofileName = Model.AudioComment.Split('/').Last();
+                    if (audiofileName?.Length >= 25)
+                    {
+                    audiofileName = audiofileName.Substring(0, 24) + "...";
+                    }
+                    <span> <a href='@Model.AudioComment' asp-append-version="true" download>@audiofileName</a></span>
+                    }
+                    else
+                    {
+                    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
+                    {
+                    <span>
+                        <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", " %20")>Instructions</a>
+                    </span>
+                    }
+                    else
+                    {
+                    <span>
+                        No Instructions
+                    </span>
+                    }
+                    }*@
+                                        @*   @foreach(var item in Model)
+                    {
+                    <div id="AudioInstruction">
+
+                        @if (!string.IsNullOrEmpty(item.AudioComment))
+                        {
+                        string audiofileName = string.Empty;
+                        audiofileName = item.AudioComment.Split('/').Last();
+                        if (audiofileName?.Length >= 25)
+                        {
+                        audiofileName = audiofileName.Substring(0, 24) + "...";
+                        }
+                        <div><a href='@item.AudioComment' asp-append-version="true" download>@audiofileName</a></div>
+                        }
+                        else
+                        {
+                        @if (item.CompanyDetails != null && item.CompanyDetails != "")
+                        {
+                        <div>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", " %20")>Instructions</a></div>
+                        }
+                        else
+                        {
+                        <div> No Instructions</div>
+                        }
+                        }
+
+                        ya
+
+                    </div>
+                    } *@
+
+
+                                        @*    @if (!string.IsNullOrEmpty(Model.AudioComment))
+                    {
+                    string audiofileName = string.Empty;
+                    audiofileName = @Model.AudioComment.Split('/').Last();
+                    if (audiofileName?.Length >= 50)
+                    {
+                    audiofileName = audiofileName.Substring(0, 50) + "...";
+                    }
+                    <div>
+                        <div>
+                            <audio controls style="height:40px;margin-top:10px;">
+                                <source src="@Url.Content(Model.AudioComment)" type="audio/ogg">
+                            </audio>
+                        </div>
+                        <div style="margin: 10px;color: steelblue;">  @audiofileName</div>
+                    </div>
+                    }
+                    else
+                    {
+                    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
+                    {
+                    <div>
+                        <audio controls>
+                            <source src="@Url.Content(Model.CompanyDetails.Replace(" ", " %20"))" type="audio/ogg">
+
+                        </audio>
+                        Instructions
+                    </div>
+                    }
+                    else
+                    {
+                    <div>No Instructions</div>
+                    }
+                    } *@
+
+                </fieldset>
+
+            </div>
+
+            <div class="card">
+                <label class="question" for="checkbox_four">
+                    <label for="checkbox_four">
+                        <i class="fa fa-link" aria-hidden="true"></i>
+
+                                           Job description Link
+                    </label>
+                    <span class="round">
+                        <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
+                       <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i>
+                                                @*    <a href="#" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
+                                                   data-interviewdate="@Model.irf" data-candidatename="@Model.candidateName"
+                                                   data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = Model.id})">
+                                                    Client Instruction(s)
+                                                </a> *@
+                       </label>
+                    </span>
+                </label>
+
+                <fieldset class="answer hidden" id="hidden_fields_four">
+
+                    <div id="CandidateDetails">
+                        <a href="@Model.JDLink"> JDLink</a>
+                    </div>
+                </fieldset>
+
+            </div>
+        </div>
+                            <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
+            <div class="card">
+                <label class="question" for="checkbox_five">
+                    <label for="checkbox_five">
+                        <i class="fa fa-signal" aria-hidden="true"></i>
+
+
+                        Level
+                    </label>
+                    <span class="round">
+                        <input type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
+                                            @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                        </span>
+                </label>
+
+                <fieldset class="answer hidden" id="hidden_fields_five">
+                    <div class="answer-label"><div class="col-md-6 pull-left"><span class="heading pull-left">Seniority</span>
+                                                <span class="custom-select-dropdown">
+                                                    @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new {@onChange="ChangeJobLevel()" })
+           </span></div>
+                                            <div class="col-md-6 pull-left">
+                                                <span class="heading pull-left"> Difficulty:</span> <span class="custom-select-dropdown">
+                                                    <select id="Difficulty"  onChange="ChangeDefautlevel()">
+                                                        <option>Select</option>
+                                                        <option value="60">60%</option>
+                                                        <option value="70">70%</option>
+                                                        <option value="80">80%</option>
+                                                        <option value="90">90%</option>
+                                                        <option value="99">99%</option>
+                                                    </select>
+                                                </span>
+                                            </div>
+
+</div>
+                </fieldset>
+            </div>
+
+            <div class="card" id="divcheckbox">
+                <label class="question" for="checkbox_six">
+                    <label for="checkbox_six">
+                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
+
+                        Format
+                    </label>
+                    <span class="round">
+                        <input type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
+                                            @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                                        </span>
+                </label>
+
+                <fieldset class="format answer hidden" id="hidden_fields_six">
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" />
+
+                                            </span><span class="pull-left"> Coding</span>
+                                        </div>
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" />
+
+                                            </span><span class="pull-left"> Current project</span>
+                                        </div>
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading  pull-left">
+                                                <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" />
+
+                                            </span><span class="pull-left"> Conceptual</span>
+                                        </div>
+
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" />
+
+                                            </span><span class="pull-left">  Scenario</span>
+                                        </div>
+
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" />
+
+                                            </span><span class="pull-left">System Design</span>
+                                        </div>
+
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" />
+
+                                            </span><span class="pull-left">People management</span>
+                                        </div>
+                                        <div class="answer-label" style="float: left;
+    width: auto;">
+                                            <span class="heading pull-left">
+                                                <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" />
+
+                                            </span><span class="pull-left"> Client management</span>
+                                        </div>
+
+                </fieldset>
+            </div>
+
+
+        </div>
+                            <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;padding-left:11px;padding-right:11px">
+                                <div class="card">
+                                    <label class="question" for="checkbox_seven">
+                                        <label for="checkbox_seven">
+                                            <i class="fa fa-file-text-o" aria-hidden="true"></i>
+
+                                            Text Instruction - <span style="font-size:14px; text-transform:capitalize; font-weight:normal;color: #a29c9c;">Critical Question & Concepts, Candidate Feedback</span>
+                                        </label>
+                                        <span class="round">
+                                            <input type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
+                                            <label class="edit-wrap" onclick="javascript:TextInstructionDetails('@Model.id');">
+                                                <i class='fa fa-edit' style='color: white'></i>
+
+                                            </label>
+                                        </span>
+                                    </label>
+
+                                    <fieldset class="answer hidden" id="hidden_fields_seven">
+
+                                        <div id="CandidateDetails"></div>
+                                        <label id="lblComments"></label>
+                                    </fieldset>
+
+                                </div>
+      </div>
+                            @* <div class="button-wrapper">
+            <h2 class="text-center pad10 pull-left">Click here to join the meeting</h2>
+            <a class="join-button" target="_blank" title="Meeting Link" href="#">Join now</a>
+            @if (Model.zoomLink != null && Model.zoomLink != "")
+            {
+            @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
+            {
+            <div>
+                <a target="_blank" class="join-button" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
+            </div>
+
+            }
+
+            }
+        </div>
+*@
+    </div>
+
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="VoiceRecordingModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-file-audio-o" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left">Record Audio</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;" onclick="closeVoiceRecordingModal(@Model.id)">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="row" id="divIRFaudioRecording">
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="playUploadedAudioTwo">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="multiple_row">
+                                <h2>Uploaded Feedback Audio</h2>
+                            </div><!--end of multiple location-->
+                        </div><!--end of col-md-12-->
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive-sm">
+                                <table class="table table-bordered mbn" id="FeedBackAudioTable" style="text-align:center">
+                                    <thead>
+                                        <tr>
+                                            <th width="30%">File</th>
+                                            <th width="35%">Play</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <a id="anchorAudioId" asp-append-version="true" download>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <audio id="controlAudioId" asp-append-version="true" controls></audio>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><!--end of col-md-12-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="TextInstructionTypeModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-file-text-o" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Text Instruction</h5>
+            </div>
+            <button onclick="closeTextInstructionTypeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="TextInstructionTypebody" style="overflow:auto;max-height:30vw">
+                <form method="post">
+                    <input type="hidden" id="hdnIirfId">
+                    <label style="font-size:14px;">Instruction</label>
+                    <div class="box arrow-top">  <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer" style="display:block;text-align:right">
+
+                <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SaveTextInstruction()" id="btnTextInstructionSave">Save</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script src="~/js/SkillChannelAddEdit.js"></script>
+<script src="~/js/addeditskillchannelcommonmethods.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js"></script>
+<script>
+    function AddRow() {
+     var table = document.getElementById("SkillTable");
+     var rowCount = table.rows.length;
+     //if (rowCount == 6) {
+     //    alert("Cannot add more than 5 Tech Skills.");
+     //    return;
+     //}
+
+     var $ttc = $("#SkillTable").find("tbody tr:last");
+     var $tr = $ttc.clone();
+     var trIndexReplaced = $("#SkillTable tr").length - 1;
+
+     $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+         var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+         return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+     }).attr("id", function () { // change id also
+         var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+         return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+     });
+     $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+         var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+         return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+     })
+     // reset fields in the new row
+     $tr.find("select").val("");
+     $tr.find("input[type=text]").val("");
+     $tr.find("input[type=hidden]").val("");
+
+     $tr.find("a").val("");
+     // add cloned row as last row
+     $("#SkillTable").find("tbody tr:last").after($tr);
+
+     // Find the affected form
+     var $form = $tr.closest("FORM");
+
+     // Unbind existing validation
+     $form.unbind();
+     $form.data("validator", null);
+ }
+
+
+ function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
+     if ($(element).parents('tbody').find('tr').length === 1) {
+         alert('Must have atleast one Row');
+         return false;
+     }
+
+     else {
+         //document.getElementById("btnUpload").disabled = false;
+         var closestRow = $(element).closest('tr');
+         var currentIndex = closestRow[0].sectionRowIndex;
+         var totalRows = $(element).parents('tbody').find('tr').length;
+         var maxIndex = totalRows - 1;
+         if (currentIndex == maxIndex) {
+             $(element).closest('tr').remove();
+         }
+         else {
+             $(element).closest('tr').remove();
+             var startIndex = currentIndex + 1;
+             var endIndex = maxIndex + 1;
+             for (i = startIndex; i < endIndex; i++) {
+                 var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                 elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                 //name="ClientCollection[3].ClientUserId"
+                 elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                 var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                 elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                 elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                 var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                 elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                 elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                 if (tdFour != '') {
+                     var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                     elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                     elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+                 }
+                 if (tdFive != null && tdFive != '') {
+                     var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
+                     elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                     elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
+                 }
+                 if (tdSix != null && tdSix != '') {
+                     var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
+                     elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                     elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
+                 }
+                 if (tdSeven != null && tdSeven != '') {
+                     var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
+                     elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
+                     elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
+                 }
+             }
+         }
+     }
+ }
+
+ function CheckConditions() {
+        var total = 0;
+        var skillArray = ["SkillCollection"];
+        for (i = 0; i < skillArray.length; i++) {
+            var items = $('[id^=' + skillArray[i] + '][id$="Weightage"]');
+            for (j = 0; j < items.length; j++) {
+                var total = total + parseInt($("#" + items[j].id).val());
+            }
+            if (total != 100) {
+                document.getElementById(skillArray[i] + "_WeightageError").innerHTML = "Weightage total should be equal to 100.";
+                if (skillArray[i] == "SkillCollection") {
+                    var labelName = "Tech Skills";
+                }
+                document.getElementById(skillArray[i] + "_WeightageErrorDown").innerHTML = "Weightage total for " + labelName + " should be equal to 100.";
+                return false;
+            }
+            else {
+                document.getElementById(skillArray[i] + "_WeightageError").innerHTML = "";
+                document.getElementById(skillArray[i] + "_WeightageErrorDown").innerHTML = "";
+                return true;
+            }
+        }
+    }
+</script>
+<script>
+        /**
+        *	Multiple Hidden Areas in a Form.
+        *
+        *	Instructions:
+        *
+        * 1. Add the 'trigger' class to checkboxes that will act as a trigger to show/hide area.
+        * 2. Create a wrapper <div> around the field(s) you want to hide and give this an ID (whatever you want) and the class 'hidden'.
+        * 3. Moving back to the checkbox, add a data-trigger attribute and set its value to the ID of the wrapper div that contains the fields you want to hide.
+        * e.g. <input type="checkbox" name="checkbox" id="checkbox" class="trigger" data-trigger="my_hidden_fields">
+        *      <div id="my_hidden_fields" class="hidden">
+        *        Name: <input type="text" name="name">
+        *      </div>
+        *
+        * The code below will automatically setup event listeners for any checkboxes with the 'trigger' class.
+        * All elements with the 'hidden' class will be hidden when the page loads.
+        * When a checkbox is checked the code will take the value from the data-trigger attribute on the
+        * checkbox and use this to select the wrapper <div> that needs to be shown/hidden.
+        */
+
+
+        $(function () {
+
+            // Hide the hidden sections.
+            // Use JS to do this in case the user doesn't have JS
+            // enabled.
+            $('.hidden').hide();
+
+            // Setup an event listener for each trigger checkbox that
+            // fires when the state of the checkbox changes.
+            $('.trigger').change(function () {
+                // Get the ID of the hidden area from the data-trigger
+                // attribute.
+                var hiddenId = $(this).attr("data-trigger");
+
+                // Check to see if the checkbox is checked.
+                // If it is, show the fields and populate the input.
+                // If not, hide the fields.
+                if ($(this).is(':checked')) {
+                    // Show the hidden fields.
+                    $("#" + hiddenId).show();
+                } else {
+                    // Make sure that the hidden fields are indeed
+                    // hidden.
+                    $("#" + hiddenId).hide();
+
+                    // You may also want to clear the value of the
+                    // hidden fields here. Just in case somebody
+                    // shows the fields, enters data to them and then
+                    // unticks the checkbox.
+                    //
+                    // This would do the job:
+                    //
+                    // $("#hidden_field").val("");
+                }
+            });
+        });
+
+            function OpenVoiceRecordingModal(irfid)
+    {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/FetchIRFAudioLink",
+            data: { 'irfid': irfid },
+            success: function (data) {
+                document.getElementById('anchorAudioId').href = data;
+                splitData = data.split("/");
+                document.getElementById('anchorAudioId').innerHTML = splitData[splitData.length - 1];
+                document.getElementById('controlAudioId').src = data;
+            }
+        });
+        var modalBct = document.getElementById("VoiceRecordingModal");
+        modalBct.style.display = "block";
+        var html = '';
+        html += '<div class="col-lg-5 col-md-5 col-sm-4 col-xs-5">';
+        html += '<div class="pull-left"><button style="margin-top:20px;" id="startRecButton" onclick="startRecording()" title="Start Recording"><i class="fa fa-play" ></i></button></div>';
+        html += '<div class="pull-left"><button style="margin-top:20px;" id="stopRecButton" type="button" onclick="stopIRFRecording(' + irfid + ')" title="Stop Recording" disabled><i class="fa fa-stop"></i></button></div>';
+        html += '<div class="pull-left"><button style="margin-top:20px;" id="cancelRecButton" type="button" onclick="cancelRecording()" title="Cancel Recording" disabled><i class="fa fa-close"></i></button></div>';
+        html += '   </div>';
+        html += '<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">';
+        html += '<div class="row">';
+        html += '   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">';
+        html += '       <p style="font-size:18px" id="recordingStatus"></p>';
+        html += '   </div>';
+        html += '</div>';
+        html += '<div class="row" id="recordingRow" style="display:none">';
+        html += '   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:center">';
+        html += '       <div id="recordingsList"></div>';
+        html += '   </div>';
+        html += '</div>';
+        html += '</div>';
+        $("#divIRFaudioRecording").empty().html(html);
+    }
+      function closeVoiceRecordingModal(irfid) {
+        var modalBct = document.getElementById("VoiceRecordingModal");
+        modalBct.style.display = "none";
+        cancelRecording();
+        $.ajax({
+            type: "POST",
+            url: "/IRF/DeliveryHeadInstruction",
+            data: { 'irfid': irfid },
+            success: function (data) {
+                location.reload();
+            }
+        });
+    }
+    </script>
+<script>
+    function closeTextInstructionTypeModal() {
+        var modal = document.getElementById("TextInstructionTypeModal");
+        modal.style.display = "none";
+    }
+    function TextInstructionDetails(irfId) {
+        var modal = document.getElementById("TextInstructionTypeModal");
+        modal.style.display = "block";
+        $('#hdnIirfId').val(irfId);
+    }
+    function SaveTextInstruction() {
+        var comment = $('#Comment').val().trim();
+        var irfId = $('#hdnIirfId').val();
+        if (comment != '') {
+            $.ajax({
+                url: '/IRF/TextInstruction',
+                data: { 'irfId': irfId, 'Comment': comment },
+                type: "POST",
+                success: function (data) {
+                    swal.fire(data);
+                    closeTextInstructionTypeModal();
+                    GetInstruction();
+                }
+            });
+        }
+        else {
+            alert("Please enter the comment.");
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+       GetInstruction();
+    });
+    function GetInstruction(){
+         var irfId = $("#id").val();
+        $.ajax({
+            url: '/IRF/GetTextInstruction',
+            data: { 'irfId': irfId },
+            type: "POST",
+            success: function (data) {
+                let text = "";
+                text += "<ui>";
+                for (let i = 0; i < data.length; i++) {
+                    text += "<li>" + data[i].message + "</li>";
+                }
+                text += "</ui>";
+                $('#lblComments').empty().html(text);
+
+            }
+        });
+    }
+</script>
+    <script>
+        function ChangeJobLevel(){
+            var joblevel = document.getElementById("JobLevel").value;
+            var irfid = document.getElementById("id").value;
+            $.ajax({
+            type: "POST",
+            url: "/IRF/UpdateJobLevel",
+            data: { 'irfid': irfid,joblevel:joblevel },
+            success: function (data) {
+                }
+            });
+        }
+        function ChangeDefautlevel(){
+            var deficultylevel = document.getElementById("Difficulty").value;
+            var irfid = document.getElementById("id").value;
+            $.ajax({
+            type: "POST",
+            url: "/IRF/UpdateDeficultyLevel",
+            data: { 'irfid': irfid,deficultylevel:deficultylevel },
+            success: function (data) {
+                }
+            });
+        }
+       function ChangeCheckBox(groupName) {
+        var irfid = document.getElementById("id").value;
+        var result = $('input[name="' + groupName + '"]:checked');
+        var resultString = '';
+        if (result.length > 0) {
+            result.each(function () {
+                if (resultString == '') {
+                    resultString += $(this).val();
+                } else {
+                    resultString += "," + $(this).val();
+                }
+            });
+        }
+          $.ajax({
+            type: "POST",
+            url: "/IRF/UpdateFormat",
+            data: { 'irfid': irfid,format:resultString },
+            success: function (data) {
+                }
+            });
+        }
+    </script>
+    <script>
+         $(document).ready(function () {
+             var irfid = document.getElementById("id").value;
+                 $.ajax({
+                    type: "POST",
+                    url: "/IRF/GetFormatanddifficultylevel",
+                    data: { 'irfid': irfid },
+                    success: function (data) {
+                        document.getElementById("Difficulty").value=data.difficultylevel;
+                        for(var i=0;i<data.format.split(",").length;i++)
+                        {
+                            $("input[value='"+data.format.split(",")[i]+"']").prop('checked', true);
+                        }
+                    }
+                 });
+         });
+    </script>

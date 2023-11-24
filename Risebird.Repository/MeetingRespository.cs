@@ -6871,5 +6871,25 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<Meeting> GetAudioCommentDetails(int interviewId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Meeting>(con, "usp_FetchAudioComment", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

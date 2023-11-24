@@ -1,0 +1,18 @@
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'IRFInstructionDetails')
+
+BEGIN 
+CREATE TABLE [dbo].[IRFInstructionDetails](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[IRFId] [int] NULL,
+	[Difficultylevel] [int] NULL,
+	[Format] [varchar](1000) NULL,
+ CONSTRAINT [PK_IRFInstructionDetails] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+
