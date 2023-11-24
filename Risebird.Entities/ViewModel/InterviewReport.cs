@@ -409,6 +409,7 @@ namespace Risebird.Entities.ViewModel
         public string JDLink { get; set; }
         public int id { get; set; }
         public bool IsPaused { get; set; }
+        public bool ShowInterviewInstructions { get; set; }
     }
     public class RBInterviewerPayoutDetails
     {

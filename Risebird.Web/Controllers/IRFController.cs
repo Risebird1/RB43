@@ -8168,8 +8168,9 @@ namespace Risebird.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> DeliveryHeadInstruction(int irfid)
+        public async Task<IActionResult> DeliveryHeadInstruction(int irfid, string Type = null)//Type = "ublc" stands for public here
         {
+            ViewBag.PageType = "";
             if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
                 var meetingLineUpType = "";
@@ -8188,6 +8189,11 @@ namespace Risebird.Web.Controllers
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
                 return View(model);
+            }
+            else if(!string.IsNullOrEmpty(Type) && Type == "ublc" && HttpContext.Session.GetString("email") == null)
+            {
+                ViewBag.PageType = "Public";
+                return View(new IRFVm{ id = irfid});
             }
             else
             {
@@ -8232,6 +8238,33 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> VerifyClientAuthenticityForDHI(int irfId, string emailId) // DHI stands for Delivery Head Instructions
+        {
+            //HttpContext.Session.SetString("PublicUrlAccessor", JsonConvert.SerializeObject(Emailid));
+            //var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+            //_trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
+            HttpContext.Session.SetString("profileName", "Client");
+            //bool result = await _clientService.VerifyClientAuthenticity(irfId, emailId);
+            //var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
+            //if (string.IsNullOrEmpty(logovalue))
+            //{
+            //    HttpContext.Session.SetString("Logo", "");
+            //}
+            //else
+            //    HttpContext.Session.SetString("Logo", logovalue);
+            if (await _clientService.VerifyClientAuthenticity(irfId, emailId))
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("This User does not have access");
+            }
+        }
+
         [HttpPost]
         public async Task<JsonResult> UpdateJobLevel(int irfid, int joblevel)
         {
