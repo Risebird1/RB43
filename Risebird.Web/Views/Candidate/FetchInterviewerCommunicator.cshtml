@@ -771,14 +771,10 @@
     function CopyHMInstructionsLink(irfId, irfName) {
         var modal = document.getElementById("CopyHMInstructionsLinkModel");
         modal.style.display = "block";
-        // Get the current URL
-        //var currentURL = window.location.href;
-
-        // Extract the domain from the URL
-        //var domain = window.location.hostname;
+        
         // Get the current port (including the colon)
         var currentPort = window.location.port;
-        var url = window.location.protocol + '//' + window.location.hostname  + (currentPort ? ":" + currentPort : "") + "/IRF/DeliveryHeadInstruction?irfid=" + irfId;
+        var url = window.location.protocol + '//' + window.location.hostname  + (currentPort ? ":" + currentPort : "") + "/IRF/DeliveryHeadInstruction?irfid=" + irfId + "&Type='ublc'";
 
         $("#txtHMInstructionLink").text(url);
     }

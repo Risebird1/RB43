@@ -2,6 +2,13 @@
 @{
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
     ViewData["Title"] = "Delivery Head Instruction";
+    //string displayMainContent = "block";
+    bool openSubmitEmailPopup = false;
+    if(ViewBag.PageType == "Public")
+    {
+        //displayMainContent = "hide";
+        openSubmitEmailPopup = true;
+    }
 }
 <script>
     var Header = "Delivery Head Instruction";
@@ -14,8 +21,9 @@
 <div class="main-panel " id="main-panel">
     <!-- Navbar -->
     <!-- End Navbar -->
-
-    <div class="content client">
+    @if(!openSubmitEmailPopup)
+    {
+        <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
@@ -443,7 +451,10 @@
 </div>
 </div>
 </div>
-</div>
+    </div>
+    }
+
+    
 </div>
 <div id="VoiceRecordingModal" class="modal modal-bg">
     <!-- Modal content -->
@@ -528,6 +539,34 @@
         </div>
     </div>
 </div>
+
+<div id="EmailAuthentication" class="modal modal-bg">
+    
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                </div>
+                <h5 class="modal-title pull-left">Your Email Id</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                    <div class="text-areadiv">
+                        <input type="text" id="txtemailid" class="form-control" />
+                    </div>
+                    <div class="mt-10 text-right">
+                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
@@ -792,29 +831,81 @@
         }
     }
 </script>
-<script>
-    $(document).ready(function () {
-       GetInstruction();
-    });
-    function GetInstruction(){
-         var irfId = $("#id").val();
-        $.ajax({
-            url: '/IRF/GetTextInstruction',
-            data: { 'irfId': irfId },
-            type: "POST",
-            success: function (data) {
-                let text = "";
-                text += "<ui>";
-                for (let i = 0; i < data.length; i++) {
-                    text += "<li>" + data[i].message + "</li>";
-                }
-                text += "</ui>";
-                $('#lblComments').empty().html(text);
 
-            }
+@if(!openSubmitEmailPopup)
+{
+    
+    <script>
+        $(document).ready(function () {
+           GetInstruction();
         });
+        function GetInstruction(){
+             var irfId = $("#id").val();
+            $.ajax({
+                url: '/IRF/GetTextInstruction',
+                data: { 'irfId': irfId },
+                type: "POST",
+                success: function (data) {
+                    let text = "";
+                    text += "<ui>";
+                    for (let i = 0; i < data.length; i++) {
+                        text += "<li>" + data[i].message + "</li>";
+                    }
+                    text += "</ui>";
+                    $('#lblComments').empty().html(text);
+
+                }
+            });
+        }
+
+         $(document).ready(function () {
+             var irfid = document.getElementById("id").value;
+                 $.ajax({
+                    type: "POST",
+                    url: "/IRF/GetFormatanddifficultylevel",
+                    data: { 'irfid': irfid },
+                    success: function (data) {
+                        document.getElementById("Difficulty").value=data.difficultylevel;
+                        for(var i=0;i<data.format.split(",").length;i++)
+                        {
+                            $("input[value='"+data.format.split(",")[i]+"']").prop('checked', true);
+                        }
+                    }
+                 });
+         });
+    </script>
+}
+else
+{
+    <script>
+    $(document).ready(function () {
+
+        var modal = document.getElementById("EmailAuthentication");
+        modal.style.display = "block";
+        
+    });
+
+    function SubmitEmail() {
+        if ($("#txtemailid").val().trim() != "") {
+            localStorage.setItem('PublicEmailid', $("#txtemailid").val());
+            $.ajax({
+                type: "POST",
+                url: "/IRF/VerifyClientAuthenticityForDHI",
+                data: { irfId : '@Model.id', emailId: $("#txtemailid").val().trim() },
+                success: function (data) {
+                    if (data == "success") {
+                            window.location = "/IRF/DeliveryHeadInstruction?irfid=" + '@Model.id' + "&Type=" + 'ublc';
+                    } 
+                    else {
+                        swal.fire(data);
+                    }
+                }
+            });
+        }
     }
 </script>
+}
+
     <script>
         function ChangeJobLevel(){
             var joblevel = document.getElementById("JobLevel").value;
@@ -860,20 +951,4 @@
             });
         }
     </script>
-    <script>
-         $(document).ready(function () {
-             var irfid = document.getElementById("id").value;
-                 $.ajax({
-                    type: "POST",
-                    url: "/IRF/GetFormatanddifficultylevel",
-                    data: { 'irfid': irfid },
-                    success: function (data) {
-                        document.getElementById("Difficulty").value=data.difficultylevel;
-                        for(var i=0;i<data.format.split(",").length;i++)
-                        {
-                            $("input[value='"+data.format.split(",")[i]+"']").prop('checked', true);
-                        }
-                    }
-                 });
-         });
-    </script>
+    
