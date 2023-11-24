@@ -7377,7 +7377,178 @@ namespace Risebird.Repository
                     parameters.Add("@irfName", irfName);
                     var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetSkillChannelDetailsByIRFName", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault(); 
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateTechSkills(IList<TransSkill> techskills)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        DataTable techSkillDt = new DataTable();
+                        techSkillDt.Columns.Add("IRFId", typeof(int));
+                        techSkillDt.Columns.Add("LevelId", typeof(int));
+                        techSkillDt.Columns.Add("SkillId", typeof(int));
+                        techSkillDt.Columns.Add("Weightage", typeof(int));
+                        techSkillDt.Columns.Add("Concepts", typeof(string));
+                        techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                        techSkillDt.Columns.Add("Timelimit", typeof(int));
+
+                        foreach (var item in techskills)
+                        {
+                            techSkillDt.Rows.Add(item.IRFId, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        }
+
+                        SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
+                        cmdTechSkill.CommandType = CommandType.StoredProcedure;
+                        cmdTechSkill.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                        cmdTechSkill.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                        con.Open();
+                        if (cmdTechSkill.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> UpdateJobLevel(int irf, int joblevel)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfid", irf);
+                        parameters.Add("@joblevel", joblevel);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_updateJobLevel", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> UpdateDeficultyLevel(int irf, int difficultylevel)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfid", irf);
+                        parameters.Add("@difficultylevel", difficultylevel);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_updatedifficultylevel", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> UpdateFormat(int irf, string format)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfid", irf);
+                        parameters.Add("@format", format);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_updateformat", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfid", irf);
+                        var result = await SqlMapper.QueryAsync<IRFInstructionDetailsVM>(con, "dbo.usp_GetFormatanddifficultylevel", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return result.FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
                 }
             }
             catch (SqlException ex)
@@ -7391,7 +7562,29 @@ namespace Risebird.Repository
             return null;
         }
 
-
+        public async Task<IEnumerable<BroadcastModel>> GetTextInstruction( int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    var result = await SqlMapper.QueryAsync<BroadcastModel>(con, "usp_GetTextInstruction", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 
