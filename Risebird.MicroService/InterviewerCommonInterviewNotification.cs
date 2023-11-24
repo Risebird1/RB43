@@ -83,7 +83,7 @@ namespace Risebird.MicroService
                 }
                 //Start: Send Email to Clients
                 log.LogInformation($"Send Emails To Clients");
-                SendMailtoClient();
+                //SendMailtoClient();
                 //End: Send Email to Clients
             }
             catch (Exception ex)

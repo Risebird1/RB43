@@ -40,7 +40,10 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[VideoConfirmation] [int] NULL,
 	[PaymentSLAConfirmation] [bit] NULL,
 	[RedMarker] [int] NULL,
-	[RedmarkerAcknowledge] [bit] NULL
+	[RedmarkerAcknowledge] [bit] NULL,
+    [VideoLink][varchar](1000) NULL,
+    [IsVideoApproved][bit] NUll,
+    [LinkAddedOn][datetime] Null
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -388,6 +391,33 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add RedmarkerAcknowledge bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VideoLink')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add VideoLink varchar(1000)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsVideoApproved')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add IsVideoApproved bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'LinkAddedOn')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add LinkAddedOn datetime
 END
 
 End
