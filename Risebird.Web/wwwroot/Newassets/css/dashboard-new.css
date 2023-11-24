@@ -7804,7 +7804,7 @@ padding-top:50px;
     float: left;
 }
 .disable-link {
-    background: #ddd6d687;
+    background: #d5cfcf87;
     pointer-events: none;
     cursor: default;
     text-decoration: none;
@@ -7878,6 +7878,7 @@ padding-top:50px;
         color: grey;
         outline: none;
         margin: 10px;
+        font-size:13px;
     }
 
     .custom-select-dropdown span {
@@ -7935,6 +7936,23 @@ option {
         color: #c2b5b5;
         font-weight: 300;
         font-size: 18px;
+    }
+.expand-panel .fas {
+    font-size: 16px;
+    position: relative;
+    top: 12px;
+    right: -18px;
+}
+
+.collapsible-panel {
+    display: none;
+}
+
+    .collapsible-panel .fas {
+        font-size: 16px;
+        position: relative;
+        top: 12px;
+        right: -18px;
     }
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
