@@ -780,7 +780,7 @@ namespace Risebird.Web.Controllers
                     if (string.IsNullOrWhiteSpace(model.message))
                     {
                         var companyname = model.employmentSummary?.recent_employer_data.establishment_name;
-                        var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
+;                        var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
                         if (companystatus != null)
                         {
                             //var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
@@ -792,7 +792,7 @@ namespace Risebird.Web.Controllers
                             //{
                             //    employementdetails.Isemployed = model.employmentSummary.is_employed;
                             //}
-                            employementdetails.message = "For this employment Company is in black list in our system.";
+                            employementdetails.message = "This Interviwer Company has been blacklisted in our system.";
                         }
                         else
                         {
@@ -996,14 +996,14 @@ namespace Risebird.Web.Controllers
             //End : Employement Verification Mapping into InterivewerProfile
         }
         [HttpPost]
-        public async Task<JsonResult> GetInterviwerExist(string interviewer)
+        public async Task<JsonResult> GetInterviwerExists(string interviewer)
         {
-            var result = await _interviewerService.GetInterviwerService(interviewer);
+            var result = await _interviewerService.GetInterviwerExistsService(interviewer);
             var role = _interviewerService.GetUserRolebyEmailid(interviewer);
 
             if (!string.IsNullOrWhiteSpace(result))
             {
-                return Json("EmailId already in use as " + role + ".");
+                return Json("This mail id already exists in our system as " + role + "  Please check add accordingly.");
             }
             else {
                 return Json(null);

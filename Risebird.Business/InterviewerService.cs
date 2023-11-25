@@ -1528,11 +1528,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<string> GetInterviwerService(string interviewer)
+        public async Task<string> GetInterviwerExistsService(string interviewer)
         {
             try
             {
-                return await _interviewerRepository.GetInterviewer(interviewer);
+                return await _interviewerRepository.GetInterviewerExists(interviewer);
             }
             catch (Exception ex)
             {

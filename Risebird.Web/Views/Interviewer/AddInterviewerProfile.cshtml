@@ -1276,12 +1276,9 @@
     //}
 </script>
 <script>
-    function VerifyEVandNext() {
-     var result=checkEmailidExist();
-        if (result !== null) {
-            return false;
-        }
-        else { 
+    function VerifyEVandNext() 
+    {
+ 
             var mobilenumber = $("#txt_evmobile").val();
             var candidateEmailid = $("#txt_evEmailId").val();
             if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
@@ -1308,14 +1305,14 @@
             } else {
                 swal.fire("Please enter Mobile Number and Email Address.");
             }
-      } 
+   
     }
 </script>
 <script>
     function checkEmailidExist() {
         var interviewer = $("#txt_evEmailId").val().trim();
         $.ajax({
-            url: '/Aadhaar/GetInterviwerExist',
+            url: '/Aadhaar/GetInterviwerExists',
             type: 'POST',
             data: {'interviewer': interviewer },
             success: function (result) 

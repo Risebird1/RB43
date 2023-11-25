@@ -3253,7 +3253,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task <string> GetInterviewer(string interviewer)
+        public async Task <string> GetInterviewerExists(string interviewer)
         {
             try
             {
@@ -3262,7 +3262,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryFirstOrDefaultAsync<string>(
-                        con, "select Upper(EmailId) from [dbo].[UserList] where EmailId= @interviewer", parameters, commandType:CommandType.Text);
+                        con, "usp_GetInterviwerExists", parameters, commandType:CommandType.StoredProcedure);
                 }
             }
             catch (SqlException ex)
