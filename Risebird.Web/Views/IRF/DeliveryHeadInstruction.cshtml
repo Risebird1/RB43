@@ -46,7 +46,11 @@
                     </label>
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
-                                            @*<label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+                   <span  id="hidden_fields_two_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+            
+                   <span id="hidden_fields_two_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
+
+                           @*<label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
                                         </span>
                 </label>
 
@@ -164,6 +168,9 @@
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
                       <label class="edit-wrap" onclick="javascript:OpenVoiceRecordingModal('@Model.id');" ><i class='fa fa-edit' style='color: white' ></i></label>
 
+                           <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
+    
+                               <span id="hidden_fields_three_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
                     </span>
                 </label>
 
@@ -281,7 +288,12 @@
                                                    data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = Model.id})">
                                                     Client Instruction(s)
                                                 </a> *@
-                       </label>
+                                
+                                            </label>
+                                                    <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
+
+                                       <span id="hidden_fields_four_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
+
                     </span>
                 </label>
 
@@ -306,7 +318,12 @@
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
                                             @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
-                                        </span>
+                        
+                                <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
+
+                                   <span id="hidden_fields_five_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>            
+                                        
+                        </span>
                 </label>
 
                 <fieldset class="answer hidden" id="hidden_fields_five">
@@ -341,6 +358,11 @@
                     <span class="round">
                         <input type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
                                             @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
+
+                                            <span id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
+
+                                           <span id="hidden_fields_six_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>            
+
                                         </span>
                 </label>
 
@@ -417,6 +439,10 @@
                                                 <i class='fa fa-edit' style='color: white'></i>
 
                                             </label>
+                                                      <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
+
+                                                   <span id="hidden_fields_seven_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>            
+
                                         </span>
                                     </label>
 
@@ -730,18 +756,22 @@
                 // Get the ID of the hidden area from the data-trigger
                 // attribute.
                 var hiddenId = $(this).attr("data-trigger");
-
+               
                 // Check to see if the checkbox is checked.
                 // If it is, show the fields and populate the input.
                 // If not, hide the fields.
                 if ($(this).is(':checked')) {
                     // Show the hidden fields.
                     $("#" + hiddenId).show();
+                       $("#" + hiddenId+"_1" + ".collapsible-panel").show();
+                        $("#" + hiddenId+"_1" + ".expand-panel").hide();
+
                 } else {
                     // Make sure that the hidden fields are indeed
                     // hidden.
                     $("#" + hiddenId).hide();
-
+                    $("#" + hiddenId+"_1" + ".collapsible-panel").hide();
+                        $("#" + hiddenId+"_1" + ".expand-panel").show();
                     // You may also want to clear the value of the
                     // hidden fields here. Just in case somebody
                     // shows the fields, enters data to them and then
@@ -822,7 +852,7 @@
                 data: { 'irfId': irfId, 'Comment': comment },
                 type: "POST",
                 success: function (data) {
-                    swal.fire(data);
+                    swal.fire("Successfully added");
                     closeTextInstructionTypeModal();
                     GetInstruction();
                 }

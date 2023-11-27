@@ -38,6 +38,9 @@
 
                         <input  type="checkbox" class="coupon_question" disabled id="hidden_fields_two_1" name="Checkshow" />
                         <label  for="hidden_fields_two_1"></label>
+                        <span  id="hidden_fields_two_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+            
+                   <span id="hidden_fields_two_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
 
                     </span>
                 </label>
@@ -66,7 +69,9 @@
 
                                   <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" />
                                 <label  for="hidden_fields_three_1"></label>
-
+                                 <span  id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+            
+                                <span id="hidden_fields_three_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
                                 </span>
                         </label>
 
@@ -179,6 +184,9 @@
 
                         <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" />
                         <label  for="hidden_fields_four_1"></label>
+
+                          <span  id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                          <span id="hidden_fields_four_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
                     </span>
                 </label>
 
@@ -205,6 +213,10 @@
 
                           <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" />
                         <label  for="hidden_fields_five_1"></label>
+                    <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+
+                    <span id="hidden_fields_five_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+
                     </span>
                 </label>
 
@@ -246,6 +258,8 @@
 
                          <input  type="checkbox" class="coupon_question" disabled id="hidden_fields_six_1" name="Checkshow"  />
                         <label  for="hidden_fields_six_1"></label>
+                           <span  id="hidden_fields_six" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                          <span id="hidden_fields_six" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
                     </span>
                 </label>
 
@@ -322,6 +336,9 @@
 
                          <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow"/>
                         <label for="hidden_fields_seven_1"></label>
+
+                         <span  id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                          <span id="hidden_fields_seven_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
                     </span>
                 </label>
 
@@ -504,12 +521,15 @@
                     // Show the hidden fields.
                     $("#" + hiddenId).show();
                     $("#" + hiddenId+"_1").prop('checked', true);
+                      $("#" + hiddenId+"_1" + ".collapsible-panel").show();
+                        $("#" + hiddenId+"_1" + ".expand-panel").hide();
                     CountCheckBox();
                 } else {
                     // Make sure that the hidden fields are indeed
                     // hidden.
                     $("#" + hiddenId).hide();
-
+                      $("#" + hiddenId+"_1" + ".collapsible-panel").hide();
+                        $("#" + hiddenId+"_1" + ".expand-panel").show();
                     // You may also want to clear the value of the
                     // hidden fields here. Just in case somebody
                     // shows the fields, enters data to them and then
