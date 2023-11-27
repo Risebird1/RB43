@@ -7697,6 +7697,12 @@ padding-top:50px;
     font-weight: 600;
     padding-left: 50px;
 }
+    .preview-txt span {
+        color: #c2b5b5;
+        font-weight: 300;
+        font-size: 17px;
+        line-height: 35px;
+    }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
