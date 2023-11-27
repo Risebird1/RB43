@@ -779,7 +779,7 @@
         
         // Get the current port (including the colon)
         var currentPort = window.location.port;
-        var url = window.location.protocol + '//' + window.location.hostname  + (currentPort ? ":" + currentPort : "") + "/IRF/DeliveryHeadInstruction?irfid=" + irfId + "&Type='ublc'";
+        var url = window.location.protocol + '//' + window.location.hostname  + (currentPort ? ":" + currentPort : "") + "/IRF/DeliveryHeadInstruction?irfid=" + irfId + "&Type=ublc";
 
         $("#txtHMInstructionLink").text(url);
     }
