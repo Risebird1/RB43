@@ -7697,9 +7697,266 @@ padding-top:50px;
     font-weight: 600;
     padding-left: 50px;
 }
-/***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
+.interviewWrapper {
+    position: relative;
+    width: 1000px;
+    left: 40px;
+    display: block;
+    margin: 30px auto;
+    padding: 0px;
+}
+.interviewWrapper .question {
+    padding: 10px 5px;
+    cursor: pointer;
+}
+
+    .interviewWrapper .question .fa {
+        font-size: 20px;
+        padding: 0px 10px 0px 0px;
+    }
+
+    .interviewWrapper .question label {
+        font-size: 14px;
+        margin: 8px 5px 0px 5px;
+        color: #817c7c;
+        padding: 0px 10px;
+        text-transform: uppercase;
+        cursor:pointer;
+    }
+
+    .interviewWrapper .question .round label {
+        margin: 6px 0px 0px 0px;
+    }
+
+.answer-label {
+    width: 100%;
+    font-size: 13px;
+    margin-bottom: 5px;
+    padding: 10px 0px 0px 10px;
+}
+
+    .answer-label .heading {
+        color: #949191;
+        font-weight: 600;
+    }
+
+.answer {
+    padding: 10px;
+    background: rgb(214 209 209 / 17%);
+    border-top: 1px solid rgb(236, 235, 235);
+}
+
+.round {
+    position: relative;
+    float: right;
+    right: 30px;
+}
+
+    .round label {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+        height: 25px;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 25px;
+    }
+
+        .round label:after {
+            border: 2px solid #fff;
+            border-top: none;
+            border-right: none;
+            content: "";
+            height: 6px;
+            left: 7px;
+            opacity: 0;
+            position: absolute;
+            top: 8px;
+            transform: rotate(-45deg);
+            width: 12px;
+        }
+
+    .round input[type="checkbox"] {
+        visibility: hidden;
+    }
+
+        .round input[type="checkbox"]:checked + label {
+            background-color: #66bb6a;
+            border-color: #66bb6a;
+        }
+
+            .round input[type="checkbox"]:checked + label:after {
+                opacity: 1;
+            }
+
+.join-button {
+    background: #42a5f5;
+    text-decoration: none;
+    width: 110px;
+    display: block;
+    padding: 10px;
+    text-align: center;
+    border-radius: 3px;
+    font-size: 15px;
+    color: #fff!important;
+    float: left;
+}
+.disable-link {
+    background: #d5cfcf87;
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+}
+.interviewWrapper .button-wrapper {
+    margin: 0px auto;
+    width: 420px;
+    clear: both;
+}
+.edit-wrap {
+    background: #a9a7a7!important;
+}
+    .edit-wrap .fa {
+        color: white;
+        font-size: 15px!important;
+        position: relative;
+        left: -4px;
+        top: 2px;
+    }
+.tech-skill-button {
+    border-top: 1px #eee solid;
+    padding: 10px;
+    float: right;
+    width: 100%;
+    text-align: right;
+}
+.format span {
+    color: #a29999;
+}
+.format input[type="checkbox"] {
+    display: grid;
+    place-content: center;
+    appearance: none;
+    
+    margin: 2px 5px;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+}
+
+
+    .format input[type="checkbox"]::before {
+        content: "";
+        width: 0.65em;
+        height: 0.65em;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em var(--form-control-color);
+    }
+
+    .format input[type="checkbox"]:checked::before {
+        transform: scale(1);
+    }
+
+.custom-select-dropdown {
+    position: relative;
+    left: 10px;
+    top: -18px;
+}
+
+
+    .custom-select-dropdown select {
+        width: 120px;
+        font-size: 1.2rem;
+        padding: 10px 30px 10px 10px;
+        border: 1px silver solid;
+        color: grey;
+        outline: none;
+        margin: 10px;
+        font-size:13px;
+    }
+
+    .custom-select-dropdown span {
+        position: absolute;
+        width: 40px;
+        height: 100%;
+        background-color: #1e1e26;
+        right: 0;
+        top: 0;
+        pointer-events: none;
+    }
+
+        .custom-select-dropdown span::before {
+            position: absolute;
+            content: "";
+            border-style: solid;
+            border-width: 7px;
+            border-color: transparent transparent #5b6287 transparent;
+            top: 14%;
+            left: 35%;
+        }
+
+        .custom-select-dropdown span::after {
+            position: absolute;
+            content: "";
+            border-style: solid;
+            border-width: 7px;
+            border-color: #5b6287 transparent transparent transparent;
+            top: 56%;
+            left: 35%;
+        }
+
+option {
+    left: 0;
+    z-index: 999;
+    margin: 0 0;
+    padding: 10px;
+    list-style: none;
+    font-size:13px;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.interviewWrapper .heading-txt {
+    text-align: center;
+    margin: 0px 0px 20px 0px;
+    font-size: 20px;
+    color: grey;
+    line-height: 30px;
+    font-weight: 600;
+}
+    .interviewWrapper .heading-txt span {
+        color: #c2b5b5;
+        font-weight: 300;
+        font-size: 18px;
+    }
+.expand-panel .fas {
+    font-size: 16px;
+    position: relative;
+    top: 12px;
+    right: -18px;
+}
+
+.collapsible-panel {
+    display: none;
+}
+
+    .collapsible-panel .fas {
+        font-size: 16px;
+        position: relative;
+        top: 12px;
+        right: -18px;
+    }
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }
@@ -8116,6 +8373,10 @@ padding-top:50px;
     @media only screen and (max-width: 1024px) {
         .top-h {
             height: 60px !important;
+        }
+        .interviewWrapper {
+            width: 100%;
+            left: 0px;
         }
 
         #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
@@ -13578,7 +13839,7 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
     border: 0px !important;
 }
 
-.dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
+.dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search]{
     border: 0px !important;
     padding: 9px 10px 9px 10px;
     width: 256px;
@@ -13593,7 +13854,9 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
     position: relative;
     background: #fff;
 }
-
+#InterviewerCommunicatorList_filter input[type=search] {
+    border: 1px #e8e0e0 solid !important;
+}
 #MyInterviewList > thead > tr > th, #MyInterviewList > tfoot > tr > th {
     padding: 5px 0px
 }
