@@ -35,6 +35,7 @@
 </div>
 <script>
     function openHMLink(irfId) {
+        var currentPort = window.location.port;
         var url = window.location.protocol + '//' + window.location.hostname + (currentPort ? ":" + currentPort : "") + "/IRF/DeliveryHeadInstruction?irfid=" + irfId;
         window.open(url, '_blank');
     }
