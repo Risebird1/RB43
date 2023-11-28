@@ -571,12 +571,15 @@
         </div>
     </div>
 
+
+   
+
     @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
     @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 
     <script src="~/js/ModalFormServerValidation.js"></script>
     <script src="~/js/BroadcastMessage.js"></script>
-
+ 
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -585,9 +588,9 @@
                 var modal = document.getElementById("PublicShareVideo");
                 modal.style.display = "block";
             }
-
+           
         })
-
+     
         function SubmitEmail() {
             if ($("#txtEmailid").val().trim() != "") {
                 localStorage.setItem('PublicEmailid', $("#txtEmailid").val());
