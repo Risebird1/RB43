@@ -20,11 +20,11 @@
             <div class="interviewWrapper">
         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="heading-txt">
-            Review the below instructions to align with client expectations<br/>
+            Review the below client instructions to get the meeting link<br/>
             <span>Below zoom meeting link will be activated after you have clicked on all instructions</span>
         </div>
             <div class="card" style="margin-bottom:10px;">
-              
+
                 <label class="question" for="checkbox_two">
                     <label for="checkbox_two">
                         <i class="fa fa-cogs" aria-hidden="true"></i>
@@ -39,7 +39,7 @@
                         <input  type="checkbox" class="coupon_question" disabled id="hidden_fields_two_1" name="Checkshow" />
                         <label  for="hidden_fields_two_1"></label>
                         <span  id="hidden_fields_two_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-            
+
                    <span id="hidden_fields_two_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
 
                     </span>
@@ -53,8 +53,8 @@
             </div>
                 </div>
         <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
-              
-               
+
+
                     <div class="card">
 
                 <label class="question" for="checkbox_three">
@@ -65,19 +65,19 @@
                             <span class="round"> 
                                 <input style="visibility:hidden"  type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
                                 <label style="visibility:hidden"  for="checkbox_three"></label>
-                       
+
 
                                   <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" />
                                 <label  for="hidden_fields_three_1"></label>
                                  <span  id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-            
+
                                 <span id="hidden_fields_three_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
                                 </span>
                         </label>
 
                         <fieldset class="answer hidden" id="hidden_fields_three">
                             <audio controls><source src="@Model.AudioComment">Recording</audio>
-                            @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+                @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                             {
                             string audiofileName = string.Empty;
                             audiofileName = Model.AudioComment.Split('/').Last();
@@ -102,7 +102,7 @@
                             </span>
                             }
                             }*@
-                      @*   @foreach(var item in Model)
+                @*   @foreach(var item in Model)
                             {
                     <div id="AudioInstruction">
 
@@ -127,14 +127,14 @@
                                <div> No Instructions</div>
                             }
                         }
-                            
-                    
-                    
+
+
+
                     </div>
                     } *@
 
 
-                   @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+                @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                     {
                         string audiofileName = string.Empty;
                         audiofileName = @Model.AudioComment.Split('/').Last();
@@ -157,7 +157,7 @@
                             <div>
                             <audio controls>
                                 <source src="@Url.Content(Model.CompanyDetails.Replace(" ", " %20"))" type="audio/ogg">
-                                
+
                             </audio>
                                 Instructions
                             </div>
@@ -191,11 +191,11 @@
                 </label>
 
                         <fieldset class="answer hidden" id="hidden_fields_four">
-                           
-                    <div id="CandidateDetails"><a href="@Model.JDLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> JDLink</span></a></div>
-                    
+
+                    <div id="CandidateDetails"><a target="_blank" href="@Model.JDLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> JDLink</span></a></div>
+
                         </fieldset>
-               
+
                     </div>
 </div>
         <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
@@ -225,12 +225,12 @@
                         <div class="col-md-6 pull-left">
                             <span class="heading pull-left">Seniority</span>
                             <span class="custom-select-dropdown">
-                                @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new {@onChange="ChangeJobLevel()" })
+                            @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new {@disabled="disabled" })
                             </span>
                         </div>
                         <div class="col-md-6 pull-left">
                             <span class="heading pull-left"> Difficulty:</span> <span class="custom-select-dropdown">
-                                <select id="Difficulty" onChange="ChangeDefautlevel()">
+                                <select id="Difficulty" disabled>
                                     <option>Select</option>
                                     <option value="60">60%</option>
                                     <option value="70">70%</option>
@@ -258,8 +258,8 @@
 
                          <input  type="checkbox" class="coupon_question" disabled id="hidden_fields_six_1" name="Checkshow"  />
                         <label  for="hidden_fields_six_1"></label>
-                           <span  id="hidden_fields_six" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                          <span id="hidden_fields_six" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
+                           <span  id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                          <span id="hidden_fields_six_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
                     </span>
                 </label>
 
@@ -320,7 +320,7 @@
                 </fieldset>
             </div>
 
-            
+
                 </div>
         <div class="col-md-12 pull-left pad10" style="padding-bottom:30px;padding-top:0px">
             <div class="card" style="margin-bottom:10px;">
@@ -351,25 +351,25 @@
 </div>
         <div class="button-wrapper">
             <h2 class="text-center pad10 pull-left" style="color:#a3a1a1;font-weight:bold;">Click here to join the meeting</h2>
-            @if (Model.zoomLink != null && Model.zoomLink != "")
-            {
-              @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
+        @if (Model.zoomLink != null && Model.zoomLink != "")
+        {
+            @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
                 {*@
-                    <div>
-                        <a   target="_blank" id="join-button" class="join-button disable-link" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
-                    </div>
-                    
-                @*}*@
-               @*  else
+                        <div>
+                            <a   target="_blank" id="join-button" class="join-button disable-link" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
+                        </div>
+
+            @*}*@
+            @*  else
                 {
                     <div>Before 10 min only</div>
                 }  *@
-            }
+        }
         </div>
 
             </div>
-    
-    @* <div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
+
+@* <div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
 
         <!-- Modal content -->
         <div class="modal-dialog modal-lg" role="document">
@@ -402,7 +402,7 @@
             </div>
         </div>
     </div> *@
-   
+
     <script>
         function CaptureMeetingOpenTime(interviewid) {
             $.ajax({
@@ -579,27 +579,21 @@
                 }
                 text += "</ui>";
                 $('#lblComments').empty().html(text);
-
             }
         });
     }
 
 
      function CountCheckBox() {
-       
         var countcheck = 0;
            $("input[name=Checkshow]").each( function () {
             var vlucheck = $(this)[0].checked;
             if (vlucheck) {
                 countcheck = countcheck + 1;
-               
             }
         });
         if(countcheck==6){
-       
-     $(".join-button").removeClass('disable-link')
-  
-
+           $(".join-button").removeClass('disable-link')
             //enable meeting link
         }
     }

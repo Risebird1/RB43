@@ -15,7 +15,7 @@ AS
 BEGIN  
 DECLARE @Role varchar(100)
 Select @Role=Name from Profile Where id in(Select idProfile From UserList where Emailid=@EmailId)
-if(@Role='SeniorHR' or @Role='SupportAdmin')
+if(@Role='SeniorHR')
 BEGIN
 select cu.id, ul.FirstName,ul.LastName,ul.EmailId,ul.UserPassword,Ul.MobileNumber,ul.idProfile,cl.Name as ClientName,cr.Name as Role, ul.id as UserId,ul.IsActive, cl.logolink from [ClientUser] cu  
 inner join [dbo].[UserList] ul on cu.UserId = ul.id  

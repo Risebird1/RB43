@@ -8171,7 +8171,12 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> DeliveryHeadInstruction(int irfid, string Type = null)//Type = "ublc" stands for public here
         {
             ViewBag.PageType = "";
-            if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+            if (!string.IsNullOrEmpty(Type) && Type == "ublc" /*&& HttpContext.Session.GetString("email") == null*/)
+            {
+                ViewBag.PageType = "Public";
+                return View(new IRFVm { id = irfid });
+            }
+            else if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
             {
                 var meetingLineUpType = "";
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -8189,11 +8194,6 @@ namespace Risebird.Web.Controllers
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
                 return View(model);
-            }
-            else if(!string.IsNullOrEmpty(Type) && Type == "ublc" && HttpContext.Session.GetString("email") == null)
-            {
-                ViewBag.PageType = "Public";
-                return View(new IRFVm{ id = irfid});
             }
             else
             {
