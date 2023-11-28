@@ -922,25 +922,25 @@ else
 
         });
 
-        function SubmitEmail() {
-            if ($("#txtemailid").val().trim() != "") {
-                localStorage.setItem('PublicEmailid', $("#txtemailid").val());
-                $.ajax({
-                    type: "POST",
-                    url: "/IRF/VerifyClientAuthenticityForDHI",
-                    data: { irfId: '@Model.id', emailId: $("#txtemailid").val().trim() },
-                    success: function (data) {
-                        if (data == "success") {
-                            window.location = "/IRF/DeliveryHeadInstruction?irfid=" + '@Model.id' + "&Type=" + 'ublc';
-                        }
-                        else {
-                            swal.fire(data);
-                        }
+    function SubmitEmail() {
+        if ($("#txtemailid").val().trim() != "") {
+            localStorage.setItem('PublicEmailid', $("#txtemailid").val());
+            $.ajax({
+                type: "POST",
+                url: "/IRF/VerifyClientAuthenticityForDHI",
+                data: { irfId : '@Model.id', emailId: $("#txtemailid").val().trim() },
+                success: function (data) {
+                    if (data == "success") {
+                            window.location = "/IRF/DeliveryHeadInstruction?irfid=" + '@Model.id' ; //+ "&Type=" + 'ublc'
+                    } 
+                    else {
+                        swal.fire(data);
                     }
-                });
-            }
+                }
+            });
         }
-    </script>
+    }
+</script>
 }
 
 <script>
