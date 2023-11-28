@@ -20,10 +20,10 @@
 </div>
 
 <script>
-       function PaymentComplianceDetails(id) {
+       function PaymentComplianceDetails(id, type) {
       $.ajax({
             url: '/Interview/PaymentCompliance',
-            data: { 'interviewid': id },
+            data: { 'interviewid': id , type:type},
           type: "GET",
           success: function (data) {
                 openPaymentComplianceModel();
