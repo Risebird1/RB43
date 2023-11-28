@@ -1456,13 +1456,10 @@ namespace Risebird.Business
                     //get emails
                     foreach (var item in updatedMeetings ?? new List<MeetingVM>())
                     {
-                       // item.interviewer = "ajit_yadav@risebird.io";
                         await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
                         //insert meeting in PausedIRF
                         // _irfRepository.AddPausedMeetings(irfId, item.imid);
                         // item.candidateEmail = "tanishka_gupta@risebird.io";
-                        item.candidateEmail = "aagya_katiyar@risebird.io";
-                        item.ClientHrContact= "ajit_yadav@risebird.io";
                         await _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact, item.interviewDate.ToString("MMMM dd, yyyy"), irfId);
 
                     }
