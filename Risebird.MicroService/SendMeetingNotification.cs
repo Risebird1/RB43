@@ -93,7 +93,7 @@ namespace Risebird.MicroService
                             {
                                 TO = item.interviewer,
                                 CC = CCEmails,
-                                Subject = "Risebird Interview: Are you late? Candidate (" + item.candidateName + " ) joined the meeting and waiting. Please join immediately."
+                                Subject = "Risebird Interview: Are you late? Candidate (" + item.candidateName + " ) has joined the meeting and is waiting. Please join immediately."
                             };
                             var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "");
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
@@ -172,7 +172,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Risebird: Due to unforeseen circmstances, the interviewer is unable to join the interview. We apologise for the inconvenience. Kindly reschedule."
+                            Subject = $"Risebird: Due to unforeseen circumstances, the interviewer is unable to join the interview. We apologise for the inconvenience. Kindly reschedule."
                         };
                         var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
