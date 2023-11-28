@@ -52,5 +52,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionList(string type);
         Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionDetails(string type, int Clientid);
         Task<DynamicRatesDTO> GenerateDynamicRateByCurrentTimeOfWeek(int clientId);
+        Task<bool> VerifyClientAuthenticity(int irfId, string emailId);
     }
 }

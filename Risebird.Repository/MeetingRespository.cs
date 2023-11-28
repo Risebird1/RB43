@@ -4994,7 +4994,7 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
                 //var query = "Select IRF.IRFId,JDTiltle,CalendlyLink from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
-                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id,IRF.IsPaused from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE()) order by CreatedOn desc";
+                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id,IRF.IsPaused, cl.ShowInterviewInstructions  from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner join Client cl on cl.id = irf.ClientId Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE()) order by CreatedOn desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await con.QueryAsync<SchedulingLinkVM>(query, dynamicParameters);
@@ -5442,7 +5442,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //var query = "Select im.interviewdate,im.interviewer,ul.Emailid,ir.Comment,ir.StarRating,im.candidateEmail,ir.Interviewid From [dbo].[InterviewRatings] ir join UserList ul on ul.id=ir.Userid join InterviewMeetings im on im.id=ir.Interviewid order by Addedon desc";
-                    var query = "Select im.interviewdate,im.interviewer,ul.Emailid,ir.Comment,ir.StarRating,im.candidateEmail,ir.Interviewid,ir.Addedon From [dbo].[InterviewRatings] ir join UserList ul on ul.id=ir.Userid join InterviewMeetings im on im.id=ir.Interviewid union Select im.interviewdate,im.interviewer,ir.CreatedBy as Emailid,ir.Comment,ir.Rating as StarRating,im.candidateEmail,ir.Interviewid,ir.CreatedAt as Addedon  From ClientCommentsForReport ir join UserList ul on ul.EmailId=ir.CreatedBy join InterviewMeetings im on im.id=ir.Interviewid order by Addedon desc";
+                    var query = "Select im.interviewdate,im.interviewer,ir.CreatedBy as Emailid,ir.Comment,ir.Rating as StarRating,im.candidateEmail,ir.Interviewid,ir.CreatedAt as Addedon  From ClientCommentsForReport ir join UserList ul on ul.EmailId=ir.CreatedBy join InterviewMeetings im on im.id=ir.Interviewid order by Addedon desc";
                     var results = await con.QueryAsync<InterviewerRating>(query, null);
                     return (List<InterviewerRating>)results;
                 }
@@ -6872,6 +6872,26 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+
+        public async Task<Meeting> GetAudioCommentDetails(int interviewId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Meeting>(con, "usp_FetchAudioComment", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

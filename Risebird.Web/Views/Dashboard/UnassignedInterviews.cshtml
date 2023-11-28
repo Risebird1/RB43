@@ -1356,7 +1356,7 @@
                                                                             </svg>
                                                                         </span>
                                                                     </button>*@
-                                                                    @if(ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement")
+                                                                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR")
                                                                     {
                                                                         <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { irfId = item.irfIntId, irfName = item.IRFId})" title="Client Interview Report">
                                                                             <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity For Availability" style="position:relative;top:3px;">

@@ -52,6 +52,7 @@ namespace Risebird.Web.Controllers
         private readonly IZoomHelper _zoomHelper;
         private readonly IInterviewerService _interviewerService;
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
+        private readonly IIRFService _irfService;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -65,7 +66,7 @@ namespace Risebird.Web.Controllers
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
             IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository)
+            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository, IIRFService irfService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -87,6 +88,7 @@ namespace Risebird.Web.Controllers
             _zoomHelper = zoomHelper;
             _interviewerService = interviewerService;
             _interviewSchedulerRepository = interviewSchedulerRepository;
+            _irfService = irfService;
         }
 
 
@@ -8092,6 +8094,18 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Success");
             }
+        }
+        public async Task<IActionResult> InterviewDetails(int id, int interviewId)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            ViewBag.id = id;
+            ViewBag.InterviewId = interviewId;
+            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                            select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+            var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
+            result.AudioComment = _irfService.FetchIRFAudioLink(id);
+            return View(result);
         }
     }
 }

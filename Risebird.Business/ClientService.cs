@@ -656,5 +656,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> VerifyClientAuthenticity(int irfId, string emailId)
+        {
+            try
+            {
+                return await _clientRepository.VerifyClientAuthenticity(irfId, emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }

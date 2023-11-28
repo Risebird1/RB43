@@ -25,7 +25,8 @@ CREATE TABLE [dbo].[Client](
             [ClientType] [bit] NULL, -- service, product, elite
             [CountryType] [int] NULL, -- onsite offshore,
             [Reportsnippet][int] Null,
-            [IsTranscript][bit] Null
+            [IsTranscript][bit] Null,
+            [ShowInterviewInstructions][bit] Null
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -257,6 +258,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add IsTranscript bit
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ShowInterviewInstructions')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add ShowInterviewInstructions bit
 END
 
 END
