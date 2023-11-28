@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE [dbo].[sp_usp_GetTextInstruction]     
+Create PROCEDURE [dbo].[usp_GetTextInstruction]     
 @irfId int
 as
 begin

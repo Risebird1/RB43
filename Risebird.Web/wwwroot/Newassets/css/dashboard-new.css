@@ -6507,7 +6507,7 @@ input[type="date"].form-control {
     display: inline-block;
 }
 #skill_card .dropdown-content {
-    display: none;
+   display: none;
     position: absolute;
     bottom: -8px;
     z-index: 1;
@@ -6522,10 +6522,10 @@ input[type="date"].form-control {
 #skill_card .notification .badge {
     left:15px;
 }
-
+/*
 #skill_card .dropdown:hover .dropdown-content {
     display: block;
-}
+}*/
 
 #skill_card .tripledot:after {
     content: '\2807';

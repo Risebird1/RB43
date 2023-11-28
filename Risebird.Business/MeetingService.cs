@@ -3919,11 +3919,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid)
+        public async Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type)
         {
             try
             {
-                return await _meetingRespository.FetchPaymentSlaDetailsById(interviewid);
+                return await _meetingRespository.FetchPaymentSlaDetailsById(interviewid, type);
             }
             catch (Exception ex)
             {
