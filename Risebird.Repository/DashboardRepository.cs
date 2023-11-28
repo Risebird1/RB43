@@ -945,7 +945,8 @@ namespace Risebird.Repository
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                var conString = "Server=tcp:risebirdtest.database.windows.net,1433;Initial Catalog=productTestProdDB;Persist Security Info=False;User ID=risebirdtestadmin;Password=Ri$£bird@567;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                using (SqlConnection con = new SqlConnection(conString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingDetailsForParticipant>(con, "usp_FetchParticipantZoomMeetingWaiting", null,
                         commandType: CommandType.StoredProcedure);
