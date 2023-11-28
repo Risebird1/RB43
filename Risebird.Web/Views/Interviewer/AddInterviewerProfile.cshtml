@@ -1312,7 +1312,7 @@
     function checkEmailidExist() {
         var interviewer = $("#txt_evEmailId").val().trim();
         $.ajax({
-            url: '/Aadhaar/GetInterviwerExists',
+            url: '/Interviewer/GetInterviwerExists',
             type: 'POST',
             data: {'interviewer': interviewer },
             success: function (result) 
