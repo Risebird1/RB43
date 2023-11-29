@@ -395,6 +395,7 @@ namespace Risebird.CommonHelper
                 msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateMail, "Risebird"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(clientHRMail, "Risebird"));
 
                 StringBuilder msgBody = new StringBuilder("Dear Candidate,");
                 msgBody.Append("\n");
