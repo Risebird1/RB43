@@ -9198,9 +9198,19 @@ option {
         width: 100%;
         float: left;
     }
-
-    .scrollbar{
-        overflow:hidden;
+    .mobile-view-cl{
+        position:absolute!important;
+        right:15px;
+    }
+        .mobile-view-cl .call-wrap {
+            top: 1px;
+            left: -4px;
+        }
+    .commonpool .available {
+        margin: 0px 0px 9px 0px;
+    }
+    .scrollbar {
+        overflow: hidden;
     }
     .template-top {
         margin-top:80px;
