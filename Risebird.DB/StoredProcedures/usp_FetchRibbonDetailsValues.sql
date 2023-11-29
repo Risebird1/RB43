@@ -571,10 +571,11 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct ccfr.Comment,ccfr.Interviewid,im.*, cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId ,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus
+				select distinct ccfr.Comment,ccfr.Interviewid,im.*, cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId ,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus,ps.PaymentComplianceCount
 				 from  ClientCommentsForReport ccfr 
 				 join InterviewMeetings im on ccfr.InterviewId=im.id
 				 join InterviewComments ic on ic.InterviewId=im.id 
+				 left join PaymentSLADetails ps on ps.Interviewid=im.id
 			    left join Trans_QCFormReport tq on tq.Interviewid=im.id
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
@@ -584,10 +585,11 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 			else
 			begin
 				select distinct ccfr.Comment,ccfr.Interviewid,im.*, cl.Name,ul.EmailId as ChannelOwner, IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy
-				,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus
+				,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus,ps.PaymentComplianceCount
 				from  ClientCommentsForReport ccfr 
 				join InterviewMeetings im on ccfr.InterviewId=im.id
 				join InterviewComments ic on ic.InterviewId=im.id 
+				left join PaymentSLADetails ps on ps.Interviewid=im.id
 			    left join Trans_QCFormReport tq on tq.Interviewid=im.id 
 				join IRF on im.IRFId=irf.IRFId  join Client cl on irf.ClientId=cl.id 
 				join UserList ul on ul.id=  irf.RisebirdHr 
@@ -596,9 +598,10 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 		end
 		else
 		begin
-			select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ulc.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus  from  ClientCommentsForReport ccfr 
+			select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ulc.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus,ps.PaymentComplianceCount  from  ClientCommentsForReport ccfr 
 			join InterviewMeetings im on ccfr.InterviewId=im.id
 			join InterviewComments ic on ic.InterviewId=im.id 
+			left join PaymentSLADetails ps on ps.Interviewid=im.id
 			left join Trans_QCFormReport tq on tq.Interviewid=im.id
 			join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId
@@ -607,9 +610,10 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 
 			where ccfr.Rating<=3 and ul.EmailId=@emailID and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3
 			union 
-			select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus from  ClientCommentsForReport ccfr 
+			select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus,ps.PaymentComplianceCount from  ClientCommentsForReport ccfr 
 				join InterviewMeetings im on ccfr.InterviewId=im.id
-				join InterviewComments ic on ic.InterviewId=im.id 
+				join InterviewComments ic on ic.InterviewId=im.id
+				left join PaymentSLADetails ps on ps.Interviewid=im.id
 			    left join Trans_QCFormReport tq on tq.Interviewid=im.id
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join Userlist ul on ul.id=irf.RisebirdHr 
