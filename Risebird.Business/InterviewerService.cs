@@ -1527,18 +1527,5 @@ namespace Risebird.Business
                 return false;
             }
         }
-
-        public async Task<string> GetInterviwerExistsService(string interviewer)
-        {
-            try
-            {
-                return await _interviewerRepository.GetInterviewerExists(interviewer);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
     }
 }

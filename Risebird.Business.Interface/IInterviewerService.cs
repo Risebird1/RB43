@@ -91,6 +91,5 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type);
         Task<bool> updateRedmarkerAcknowledge(string uniqueid);
         Task<bool> UpdateVideoKYCDetails(string videolink, string Emailid);
-        Task<string> GetInterviwerExistsService(string interviewer);
     }
 }

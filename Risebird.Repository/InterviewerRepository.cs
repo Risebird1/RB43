@@ -3253,28 +3253,6 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task <string> GetInterviewerExists(string interviewer)
-        {
-            try
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@interviewer", interviewer);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    return await SqlMapper.QueryFirstOrDefaultAsync<string>(
-                        con, "usp_GetInterviwerExists", parameters, commandType:CommandType.StoredProcedure);
-                }
-            }
-            catch (SqlException ex)
-            {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            catch (Exception ex)
-            {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return null;
-        }
     }
 
 }

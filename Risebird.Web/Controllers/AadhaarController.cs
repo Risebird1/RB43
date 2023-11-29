@@ -998,10 +998,10 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> GetInterviwerExists(string interviewer)
         {
-            var result = await _interviewerService.GetInterviwerExistsService(interviewer);
+           // var result = await _interviewerService.GetInterviwerExistsService(interviewer);
             var role = _interviewerService.GetUserRolebyEmailid(interviewer);
 
-            if (!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrWhiteSpace(role))
             {
                 return Json("This mail id already exists in our system as " + role + "  Please check add accordingly.");
             }
