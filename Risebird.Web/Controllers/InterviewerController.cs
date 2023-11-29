@@ -3954,6 +3954,21 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to upload, Please try again.");
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> GetInterviwerExists(string interviewer)
+        {
+            var role = _interviewerService.GetUserRolebyEmailid(interviewer);
+
+            if (!string.IsNullOrWhiteSpace(role))
+            {
+                return Json("This mail id already exists in our system as " + role + "  Please check add accordingly.");
+            }
+            else
+            {
+                return Json(null);
+            }
+        }
     }
 }
 

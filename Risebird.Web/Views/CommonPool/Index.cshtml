@@ -413,11 +413,11 @@
                                                                     {
                                                                         @if (item.CandidateAvailable == "Available")
                                                                         {
-                                                                            <a class="pull-left" href="#" data-tooltip="@item.candidateName" onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate candidate-name pull-left">@item.candidateName.Substring(0, 10)..</span> </a>
+                                                                            <a class="pull-left" href="#" data-tooltip="@item.candidateName"  onclick="location.href='@Url.Action("VideoPage", "CommonPool", new { id = item.imid })'" style=" cursor: pointer;"><span class="candidate candidate-name pull-left" style="width:100px;">@item.candidateName.Substring(0, 10)..</span> </a>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <a class="pull-left" href="#" data-tooltip="@item.candidateName"><span class="candidate-name pull-left candidate">@item.candidateName.Substring(0, 10)..</span> </a>
+                                                                            <a class="pull-left" href="#" data-tooltip="@item.candidateName"><span class="candidate-name pull-left candidate" style="width:100px;">@item.candidateName.Substring(0, 10)..</span> </a>
                                                                         }
                                                                     }
                                                                     else
@@ -442,18 +442,9 @@
                                                                 }
                                                                 else
                                                                 { <span></span>}
-                                                                <span class="pull-left">
-                                                                    @if (item.CandidateAvailable == "Available")
-                                                                    {
-                                                                        <span class="available"> &nbsp; @item.CandidateAvailable</span>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <span class="unavailable"> &nbsp; @item.CandidateAvailable</span>}
-
-                                                                </span>
+                                                                
                                                             </div>
-                                                            <div class="col-md-2 col-sm-2 pull-left nopad">
+                                                            <div class="col-md-2 col-sm-2 pull-left nopad mobile-view-cl">
                                                                 <span class="pull-right">
                                                                     @if (item.CandidateAvailable == "Available")
                                                                     {
@@ -526,20 +517,38 @@
                                                             @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
 
                                                         </div>
-                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                            <span class="pull-left">
+                                                                @if (item.CandidateAvailable == "Available")
+                                                                {
+                                                                    <span class="available" style="background: #44b144;color:#fff; height:17px;line-height: 13px;"> &nbsp; @item.CandidateAvailable</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="unavailable"> &nbsp; @item.CandidateAvailable</span>
+                                                                }
+
+                                                            </span>
+
+
+
+
+                                                           
+                                                        </div>
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left" style="margin-bottom:5px;">
+
                                                             <i class="fas fa-calendar-alt"></i>
                                                             <span>@item.interviewDate</span>
+
+
+
+
+                                                         
+
                                                         </div>
-                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-                                                            <span class="pull-left">Tech Skill Score:</span>
-
-                                                            <span class="pull-left">@(item.TechSkillScore)%</span>
 
 
-                                                        </div>
-
-
-                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                       @* <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
 
 
                                                             <span class="notice"> Notice Period: </span>
@@ -558,22 +567,28 @@
                                                             }
                                                             else
                                                             { <span></span>}
-                                                        </div>
+                                                        </div>*@
 
                                                         <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
-                                                            <span>Status:</span>
+
+
+                                                              <span>Status:</span>
                                                             @if (item.InterviewStatus == 4)
                                                             {
-                                                                <span style="color:palevioletred">Border Line</span>
+                                                                <span style="color:palevioletred;font-weight:bold">Border Line</span>
                                                             }
 
                                                             else if (item.InterviewStatus == 2)
                                                             {
-                                                                <span style="color:green">Selected</span>
+                                                                <span style="color:green;font-weight:bold">Selected</span>
 
                                                             }
+                                                          
+                                                           
+
+                                                            
                                                         </div>
-                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                     @*   <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
                                                             <span>Expected Salary:</span>
                                                             @if (item.expectedPerHourRate != null && item.expectedPerHourRate != "")
                                                             {
@@ -588,9 +603,15 @@
                                                             else
                                                             { <span></span>}
                                                         </div>
+*@
+                                                        <div class="video-info col-sm-6 col-md-7 col-lg-7 nopad pull-left">
+                                                            <span class="pull-left">Tech Skill Score:</span>
 
-                                                        <div class="video-info col-sm-6 col-md-5 col-lg-5 nopad pull-left">
+                                                            <span class="pull-left">@(item.TechSkillScore)%</span>
 
+                                                          
+                                                        </div>
+                                                        <div class="video-info col-sm-12 col-md-12 pull-left nopad" style="margin-top:5px;">
                                                             <span>Location:</span>
                                                             <span>
 
@@ -598,16 +619,23 @@
                                                                 {
                                                                     @if (@item.preferredLocation.Length > 10)
                                                                     {
-                                                                        <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>}
+                                                                        <a href="#" data-tooltip="@item.preferredLocation"> <span class="expected-timing">@item.preferredLocation</span></a>
+                                                                    }
                                                                     else
-                                                                    {<span>@item.preferredLocation</span>}
+                                                                    {
+                                                                        <span>@item.preferredLocation</span>
+                                                                    }
                                                                 }
                                                                 else
-                                                                { <span></span>}
+                                                                {
+                                                                    <span></span>
+                                                                }
                                                             </span>
 
-                                                        </div>
 
+
+
+                                                            </div>
                                                     </div>
                                                 </div>
                                             </div>

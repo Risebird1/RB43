@@ -116,7 +116,7 @@
                                         <th>Total Completed</th>
                                         <th>Selected</th>
                                         <th>Rejected</th>
-                                        <th>Selection Rate</th>
+                                        <th>Selection Rate (%)</th>
                                         @if (ViewBag.ButtonAccess)
                                         {
                                             <th>Action</th>
@@ -131,7 +131,7 @@
                                         <th>Total Completed</th>
                                         <th>Selected</th>
                                         <th>Rejected</th>
-                                        <th>Selection Rate</th>
+                                        <th>Selection Rate (%)</th>
                                         @if (ViewBag.ButtonAccess)
                                         {
                                             <th>Action</th>
@@ -175,8 +175,14 @@
                                             <td>@item.SelectedMeetings</td>
                                             <td>@item.RejectedMeetings</td>
                                             @if (@item.ScheduledMeetings != null && @item.ScheduledMeetings != 0)
-                                            {
-                                                <td>@(Convert.ToInt32(item.SelectedMeetings) * 100 / item.ScheduledMeetings)</td>
+                                            {  @if ((Convert.ToInt32(item.SelectedMeetings) * 100 / item.ScheduledMeetings) <=30)
+
+                                                {
+                                                <td><span style="color:red;">@(Convert.ToInt32(item.SelectedMeetings) * 100 / item.ScheduledMeetings)%</span></td>
+                                                }
+                                                else{
+                                                    <td>@(Convert.ToInt32(item.SelectedMeetings) * 100 / item.ScheduledMeetings)%</td>
+                                                }
                                             }
                                             else
                                             {
