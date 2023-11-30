@@ -88,14 +88,14 @@
                             <input type="hidden" value="@ViewBag.emailid" id="hiddemail" />
                             <input type="hidden" value="@ViewBag.uniqueid" id="hidduniqueid" />
                             <input type="hidden" value="@ViewBag.IsCLientLogin" id="hiddLoginStatus" />
-                            @if(ViewBag.PageStatus == "Public")
+                            @if (ViewBag.PageStatus == "Public")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("PublicCandidateStatus", "Candidate", new { emailid=ViewBag.emailid,id=ViewBag.uniqueid })'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                                 </button>
 
                             }
-                            
+
                         }
                         else
                         {
@@ -243,14 +243,14 @@
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
-                                                    
-                                                            <th>Client</th>
-                                                            <th>Billing Owner</th>
-                                                        
+
+                                                        <th>Client</th>
+                                                        <th>Billing Owner</th>
+
                                                     }
-                                                  
-                                                        <th>Risebird Channel Owner</th>
-                                                    
+
+                                                    <th>Risebird Channel Owner</th>
+
                                                     @if (ViewBag.Type == "ChannelOwner")
                                                     {
                                                         <th>Skill Channels</th>
@@ -264,9 +264,9 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
-                                                    
-                                                        <th>Report Pending</th>
-                                                    
+
+                                                    <th>Report Pending</th>
+
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
@@ -281,14 +281,14 @@
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
-                                                       
-                                                            <th>Client</th>
-                                                            <th>Billing Owner</th>
-                                                        
+
+                                                        <th>Client</th>
+                                                        <th>Billing Owner</th>
+
                                                     }
-                                                    
-                                                        <th>Risebird Channel Owner</th>
-                                                    
+
+                                                    <th>Risebird Channel Owner</th>
+
                                                     @if (ViewBag.Type == "ChannelOwner")
                                                     {
                                                         <th>Skill Channels</th>
@@ -302,9 +302,9 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
-                                                  
-                                                        <th>Report Pending</th>
-                                                    
+
+                                                    <th>Report Pending</th>
+
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
@@ -324,14 +324,14 @@
                                                             @if (ViewBag.Type != "ChannelOwner")
                                                             {
                                                                 <td>@item.IRFId</td>
-                                                               
-                                                                    <td>@item.ClientCompName</td>
-                                                                    <td>@item.BillingOwnerEmailId</td>
-                                                                
+
+                                                                <td>@item.ClientCompName</td>
+                                                                <td>@item.BillingOwnerEmailId</td>
+
                                                             }
-                                                          
-                                                                <td> @item.RisebirdHREmail </td>
-                                                            
+
+                                                            <td> @item.RisebirdHREmail </td>
+
                                                             @if (ViewBag.Type == "ChannelOwner")
                                                             {
                                                                 <td> @item.IRFId</td>
@@ -344,7 +344,9 @@
                                                                     @if (ViewBag.Type != "ChannelOwner")
                                                                     {
                                                                         <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.id','@item.IRFId', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink,@item.FeedbackCount)">@item.Flags</td>
-                                                                    }else{
+                                                                    }
+                                                                    else
+                                                                    {
                                                                         <td style="color:red!important;cursor:pointer" onclick="OpenModalForFlags('@item.id','@item.RisebirdHREmail', '', '@item.ScheduledPercentage', '@item.CompletionRate', '@item.SelectionRate',@item.UnassignedInterviewsCount,@item.UnfilledMeetingStatusCount,@item.UnfilledCommentsCount,@item.MissingVideoLink,@item.MissingZoomLink,@item.FeedbackCount)">@item.Flags</td>
                                                                     }
                                                                 }
@@ -370,28 +372,51 @@
                                                                 <td> @item.JDTiltle </td>
                                                             }
                                                             <td> @item.CandidateCount </td>
-                                                            <td> @item.CompletedInterviews                                                                
-                                                               { @if (item.CandidateCount > 0){@((item.CompletedInterviews * 100) / @item.CandidateCount)}% }
+                                                            <td>
+                                                                @item.CompletedInterviews
+                                                                { @if (item.CandidateCount > 0)
+                                                                {
+                                                                    @((item.CompletedInterviews * 100) / @item.CandidateCount)
+                                                                }% }
                                                             </td>
-                                                            <td> @item.SelectedMeetings
-                                                             { @if (item.CompletedInterviews > 0){@((item.SelectedMeetings * 100) / @item.CompletedInterviews)}% }</td>
-                                                            <td> @item.RejectedMeetings
+                                                            <td>
+                                                                @item.SelectedMeetings
+                                                                { @if (item.CompletedInterviews > 0)
+                                                                {
+                                                                    @((item.SelectedMeetings * 100) / @item.CompletedInterviews)
+                                                                }% }
+                                                            </td>
+                                                            <td>
+                                                                @item.RejectedMeetings
                                                                 { @if (item.CompletedInterviews > 0)
                                                                 {
                                                                     @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
                                                                 }% }
                                                             </td>
-                                                          
-                                                                <td> @item.PendingCount </td>
-                                                            
-                                                            <td> @item.NotScheduledCount 
-                                                                 { @if (item.CandidateCount > 0){@((item.NotScheduledCount * 100) / @item.CandidateCount)}% }
+
+                                                            <td> @item.PendingCount </td>
+
+                                                            <td>
+                                                                @item.NotScheduledCount
+                                                                { @if (item.CandidateCount > 0)
+                                                                {
+                                                                    @((item.NotScheduledCount * 100) / @item.CandidateCount)
+                                                                }% }
                                                             </td>
-                                                            <td> @item.ReScheduledCount 
-                                                                 { @if (item.CandidateCount > 0){@((item.ReScheduledCount * 100) / @item.CandidateCount)}% }
+                                                            <td>
+                                                                @item.ReScheduledCount
+                                                                { @if (item.CandidateCount > 0)
+                                                                {
+                                                                    @((item.ReScheduledCount * 100) / @item.CandidateCount)
+                                                                }% }
                                                             </td>
-                                                            <td> @item.FutureScheduledMeetings
-                                                              { @if (item.CandidateCount > 0){@((item.FutureScheduledMeetings * 100) / @item.CandidateCount)}% }</td>
+                                                            <td>
+                                                                @item.FutureScheduledMeetings
+                                                                { @if (item.CandidateCount > 0)
+                                                                {
+                                                                    @((item.FutureScheduledMeetings * 100) / @item.CandidateCount)
+                                                                }% }
+                                                            </td>
                                                             @if (ViewBag.profile == "Client")
                                                             {
                                                                 <td>
@@ -429,25 +454,37 @@
                                                             else if ((ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement") && ViewBag.Type != "ChannelOwner")
                                                             {
                                                                 <td>
-
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit HM Instruction" style="position: relative;">
+                                                                        <span onclick="javascript:openHMLink('@item.id');" title="Edit HM Instruction">
+                                                                            <svg style="color: white;position: relative;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path>
+                                                                            </svg>
+                                                                            <svg style="position:relative;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Share HM Instruction URL">
+                                                                        <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="Share HM Instruction URL">
+                                                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
+                                                                        </span>
+                                                                    </button>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
 
-                                                                        <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" target="_blank" >
+                                                                        <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
                                                                             <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
                                                                         </a>
 
                                                                     </button>
-                                                       
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Recruiter Stats">
 
-                                                                            <a href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
-                                                                                @*<span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>*@
-                                                                                <span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="square" stroke-linejoin="arcs"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3" /><circle cx="12" cy="10" r="3" /><circle cx="12" cy="12" r="10" /></svg></span>
-                                                                            </a>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Recruiter Stats">
 
-                                                                        </button>
+                                                                        <a href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                            @*<span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>*@
+                                                                            <span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="square" stroke-linejoin="arcs"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3" /><circle cx="12" cy="10" r="3" /><circle cx="12" cy="12" r="10" /></svg></span>
+                                                                        </a>
 
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client HR Stats">
+                                                                    </button>
+
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client HR Stats">
 
                                                                         <a href="@Url.Action("ClientHRStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
                                                                             @*<span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>*@
@@ -455,7 +492,7 @@
                                                                         </a>
 
                                                                     </button>
-                                                                  
+
                                                                 </td>
                                                             }
 
@@ -564,7 +601,7 @@
     </div>
 </div>
 
-
+@await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
 
 
 <script>
