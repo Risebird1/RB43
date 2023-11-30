@@ -62,11 +62,13 @@ begin
      delete from @Enumerator where id = @interviewId  
   if not exists(select top 1 id from ProbableNoShowCandidates where interviewId = @interviewId)
   Begin
-    insert into ProbableNoShowCandidates values ((select id from IRF where IRFId = (select IRFId from InterviewMeetings where id =@interviewId)), (select id from UserList where EmailId = @candidateEmailId and idProfile =23), @interviewId, dateadd(MINUTE, 330, getdate()), null)  
+    insert into ProbableNoShowCandidates values ((select id from IRF where IRFId = (select IRFId from InterviewMeetings where id =@interviewId)), (select id from UserList where EmailId = @candidateEmailId and idProfile =23), @interviewId, @currentTime, null)  
   End
   --set @isProbableNoShow = 1  
 end  
-  
+
+
+EXEC usp_AddUpdateProbableNoShowInterviewers @currentTimeParam = @currentTime;  
 End  
 GO
 
