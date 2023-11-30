@@ -8185,7 +8185,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var model = new IRFVm();
                 model = await _irfService.GetEditIRF(irfid, 0, false);
-                model.id = model.SkillCollection.FirstOrDefault().IRFId;
+                //model.id = model.SkillCollection.FirstOrDefault().IRFId;
                 ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                 var Skillset = await _irfRepository.GetSkills();
                 ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");

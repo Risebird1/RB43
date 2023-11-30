@@ -6708,12 +6708,14 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public async Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid)
+        public async Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Interviewid", interviewid);
+                dynamicParameters.Add("@type", type);
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = await SqlMapper.QueryFirstOrDefaultAsync<PaymentSLAVM>(con, "usp_GetPaymentSlaDetailsById", dynamicParameters,

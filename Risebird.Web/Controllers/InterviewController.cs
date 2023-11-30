@@ -7836,11 +7836,11 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type)
         {
             try
             {
-                var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid, type);
                 if (model == null)
                 {
                     model = new PaymentSLAVM();
@@ -8055,11 +8055,11 @@ namespace Risebird.Web.Controllers
             return Json("Success");
         }
         #endregion
-        public async Task<IActionResult> PaymentCompliance(int interviewid)
+        public async Task<IActionResult> PaymentCompliance(int interviewid,string type)
         {
             try
             {
-                var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid,type);
                 return PartialView(result);
             }
             catch (Exception ex)
@@ -8094,6 +8094,7 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Success");
             }
+
         }
         public async Task<IActionResult> InterviewDetails(int id, int interviewId)
         {

@@ -261,7 +261,7 @@ namespace Risebird.Repository.Interface
         Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month);
         Task<string> GetTranscriptUrlByMeeting(int id);
         Task<bool> AddBlackListCompany(BlackListCompanyVM model);
-        Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid);
+        Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type);
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
         Task<bool> PaymentSlaNotApproved(int interviewid,string emailid);
