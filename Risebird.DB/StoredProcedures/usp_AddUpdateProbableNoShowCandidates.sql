@@ -68,7 +68,7 @@ begin
 end  
 
 
-EXEC usp_AddUpdateProbableNoShowInterviewers @currentTimeParam = @currentTime;  
+--EXEC usp_AddUpdateProbableNoShowInterviewers @currentTimeParam = @currentTime;  
 End  
 GO
 
