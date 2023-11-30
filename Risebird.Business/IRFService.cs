@@ -1459,7 +1459,7 @@ namespace Risebird.Business
                         await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
                         //insert meeting in PausedIRF
                         // _irfRepository.AddPausedMeetings(irfId, item.imid);
-
+                        // item.candidateEmail = "tanishka_gupta@risebird.io";
                         await _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact, item.interviewDate.ToString("MMMM dd, yyyy"), irfId);
 
                     }

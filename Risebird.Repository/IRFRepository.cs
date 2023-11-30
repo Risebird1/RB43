@@ -7422,6 +7422,7 @@ namespace Risebird.Repository
                         if (cmdTechSkill.ExecuteNonQuery() != 0)
                         {
                             con.Close();
+                            return true;
                         }
                     }
                     catch (Exception ex)
