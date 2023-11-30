@@ -6508,7 +6508,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@currentTime", DateTime.Now);
-                    var result = await SqlMapper.QueryAsync<PendingVideoMeetingsData>(con, "usp_AddUpdateProbableNoShowCandidates", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddUpdateProbableNoShowCandidates", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
@@ -6545,6 +6545,30 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<bool> UpdateProbableNoShowInterviewers()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@currentTimeParam", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddUpdateProbableNoShowInterviewers", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
         public async Task<bool> SaveSauveyIRFReview(int rating, string comments, string Emailid, string IRFId)
         {
