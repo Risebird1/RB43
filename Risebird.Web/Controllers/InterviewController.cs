@@ -8094,6 +8094,7 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Success");
             }
+
         }
         public async Task<IActionResult> InterviewDetails(int id, int interviewId)
         {
