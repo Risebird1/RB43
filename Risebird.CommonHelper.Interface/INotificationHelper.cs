@@ -54,11 +54,11 @@ namespace Risebird.CommonHelper.Interface
         Task<string> RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb);
         Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
         Task<string> CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
-        Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate);
-        Task<string> CandidateWaitingEINotification(Mail model, string reassignmentLink, string zoomLink);
-        Task<string> AppologyNotificationToCandidate(Mail model, string candidateName);
-        Task<string> ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName, string clientlogo);
-        Task<string> AppologyNotificationToCandidateSecond(Mail model, string candidateName);
+        Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate, int interviewId);
+        Task<string> CandidateWaitingEINotification(Mail model, string reassignmentLink, string zoomLink, int interviewId);
+        Task<string> AppologyNotificationToCandidate(Mail model, string candidateName, int interviewId);
+        Task<string> ReScheduleNotificationToCandidate(Mail model, string zoomlink, string candidateName, string clientlogo, int interviewId);
+        Task<string> AppologyNotificationToCandidateSecond(Mail model, string candidateName, int interviewId);
         Task<string> InstaClientNotification(Mail model, string RequiredSkill, string logolink);
         Task<string> InstaInterviewerNotification(Mail model, string RequiredSkill);
         Task<string> InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate);
