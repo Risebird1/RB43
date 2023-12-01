@@ -219,12 +219,13 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month);
         Task<string> GetTranscriptUrlByMeeting(int meetingId);
         Task<bool> AddBlackListCompanyService(BlackListCompanyVM model);
-        Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid);
+        Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type);
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
         Task<bool> PaymentSlaNotApproved(int interviewid,string emailid);
         Task<bool> AgreeToPaymentSLAConditions(string emailid);
         Task<bool> AddTransInterviewersReliabilityScoresService(TransInterviewersReliabilityScoresVm model);
         Task<bool> AddTransReliabilityScoresSelectAndRejectService(int InterviewMeetingId);
+        Task<Meeting> GetAudioCommentDetailsService(int interviewId);
     }
 }

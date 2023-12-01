@@ -87,7 +87,7 @@ namespace Risebird.Business.Interface
         //Task<string> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite);
         Task<bool> AddCandidateStatus(string performedBy, int candidateId, int irfId, string comments, int status, int? interviewid = null, string audioLink = null);
         Task AddCandidateUsingResumeParserJob(List<CandidateQuickAddModel> candidateList, int irfId);
-        Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite,string linkurl);
+        Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite, string linkurl);
         Task<IRF> GetIRFForCall(int irfId);
         IEnumerable<Users> GetEligibleChannelOwners();
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
@@ -116,6 +116,8 @@ namespace Risebird.Business.Interface
         Task<Tuple<bool, int>> CreateSkillChannelFromTemplate(IRFVm irfDetails, string loggedInUser, string profile = null);
         Task<bool> EditSkillChannelCreatedFromTemplate(IRFVm irfDetails, string loggedInUser);
         Task<Tuple<bool, int>> CreateSkillChannelUsingTemplateByInterviewLinkPopUp(IRFVm irfDetails, string loggedInUser, string profile);
+
+        Task<Tuple<bool, int>> CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(IRFVm irfDetails, string loggedInUser, string profile);
         Task<IEnumerable<IRFFilterViewModel>> GetIRFFilterData(string emailId, string profileName, IRFFilter filterModel = null);
         Task<Tuple<bool, int>> CreateSkillChannelUsingNewInterviewRequest(IRFVm irfDetails, string loggedInUser, string profile);
         Task<IEnumerable<IRF>> GetAllIRFDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid);
@@ -140,6 +142,13 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetAvailableAssessmentGroupInterviewerMembers(int assessmentGroupId, int? irfId = null);
 
         Task<IRF> GetSkillChannelDetailsByName(string irfName);
+        Task<bool> UpdateTechSkills(IList<TransSkill> techskills);
+        Task<IEnumerable<BroadcastModel>> GetTextInstructionService(int irfId);
+        Task<bool> UpdateJobLevel(int irf, int joblevel);
+        Task<bool> UpdateDeficultyLevel(int irf, int difficultylevel);
+        Task<bool> UpdateFormat(int irf, string format);
+        Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf);
+        
 
     }
 }

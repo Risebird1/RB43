@@ -178,7 +178,7 @@
 
                                                                 </td>
                                                                 <td class="text-center">
-                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Broadcast Email to the Interviewers of this channel">
+                                                                    @*<button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Broadcast Email to the Interviewers of this channel">
                                                                         <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
                                                                         </span>
@@ -187,9 +187,23 @@
                                                                         <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
                                                                         </span>
-                                                                    </button>
-                                                                   
-                                                                  
+                                                                    </button>*@
+                                                                   @* <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
+                                                                        <span onclick="javascript:openHMInstruction('@item.id', '@item.IRFId');" title="HM Instruction">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
+                                                                        </span>
+                                                                    </button> *@
+
+                                                                    @* @if(item.ShowInterviewInstructions)
+                                                                    {
+                                                                        
+                                                                    } *@
+                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
+                                                                            <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="HM Instruction">
+                                                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
+                                                                            </span>
+                                                                        </button>
 
                                                                     @if (item.IsPaused)
                                                                     {
@@ -258,7 +272,7 @@
                 <div>
                     <div class="col-md-12 text-right">
                         <div>
-                            <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeIRFSkillModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeIRFSkillModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
                         </div>
                     </div>
                 </div>
@@ -393,14 +407,17 @@
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeCopySchedulinglink()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closeCopySchedulinglink()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
 @await Html.PartialAsync("~/Views/Candidate/UploadResumePartial.cshtml")
+@await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
 
 @if (ViewBag.Message != null && ViewBag.Message2 != null)
 {
@@ -585,7 +602,8 @@
         modalBct.style.display = "none";
         cancelRecording();
     }
-    function OpenVoiceRecordingModal(irfid, Irfname) {
+    function OpenVoiceRecordingModal(irfid, Irfname) 
+    {
         $.ajax({
             type: "POST",
             url: "/IRF/FetchIRFAudioLink",
@@ -632,7 +650,7 @@
     //    //$("#txtIRFName").val(Irfname);
     //}
     function UploadCandidateResume() {
-        debugger;
+      
         if (irfId != 0 && irfName.trim() != "" && document.getElementById("ResumeFiles").files.length > 0) {
             $(".loader").show();
             var files = $("#ResumeFiles").prop("files");
@@ -659,6 +677,10 @@
         } else {
             alert("Please fill all the fields.");
         }
+    }
+    function openHMInstruction(irfid, Irfname){
+        var url="/IRF/DeliveryHeadInstruction?irfid="+irfid;
+        window.open(url,'_blank');
     }
 </script>
 <script>
@@ -691,7 +713,7 @@
                 searchPlaceholder: "Search records",
             },
             "fnInitComplete": function () {
-                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span style='right:20px;top:9px;' id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
                 $(".dataTables_filter").keyup(function (e) {
                     if ($(this).val() != "") {
                         $("#x").show();
@@ -716,14 +738,7 @@
         var modal = document.getElementById("CopySchedulinglinkModel");
         modal.style.display = "none";
     }
-    function copyToClipboard(element) {
-        var temp = $("<input>");
-        $("body").append(temp);
-        temp.val($(element).text()).select();
-        document.execCommand("copy");
-        temp.remove();
-        $('#special_text').text('Copied');
-    }
+
     function PlayIRF(irfId, irfName) {
         swal.fire({
             title: 'Are you sure?',

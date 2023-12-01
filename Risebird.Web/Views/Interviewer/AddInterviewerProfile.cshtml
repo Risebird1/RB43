@@ -48,11 +48,12 @@
                                 <div class="row">
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back", "Index", "Interviewer", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                        <button type="button" value="Verify" onclick="VerifyEVandNext()" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Verify</button>
+                                        <button type="button" value="Verify" onclick="checkEmailidExist()" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Verify</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId1" })
                         <div id="divEVverified" style="display:none">
                             @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();", @id = "InterviewerProfileform" }))
                             {
@@ -161,7 +162,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line",@readonly="readonly" } })
                                             @Html.ValidationMessageFor(model => model.EmailId, "", new { @id = "err_txt_EmailId", @class = "text-danger" })
                                         </div>
                                         <div class="form-group">
@@ -1275,32 +1276,79 @@
     //}
 </script>
 <script>
-    function VerifyEVandNext() {
-        var mobilenumber = $("#txt_evmobile").val();
-        var candidateEmailid = $("#txt_evEmailId").val();
-        if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
-            $.ajax({
-                url: '/Aadhaar/EvVerification',
-                type: 'POST',
-                data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
-                success: function (result) {
-                    if (result.message == null) {
-                        document.getElementById("divEVverification").style.display = "none";
-                        document.getElementById("divEVverified").style.display = "block";
-                        $("#txt_MobileNumber").val(result.mobileNumber);
-                        $("#txt_EmailId").val(result.candidateEmail);
-                        $("#CompanyName").val(result.companyName); 
-                        $("#isVerified").val(result.isVerified);
-                        $("#IsEmployed").val(result.isemployed);
-                        $("#DOB").val(result.dob);
+    function VerifyEVandNext() 
+    {
+ 
+            var mobilenumber = $("#txt_evmobile").val();
+            var candidateEmailid = $("#txt_evEmailId").val();
+            if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
+                $.ajax({
+                    url: '/Aadhaar/EvVerification',
+                    type: 'POST',
+                    data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
+                    success: function (result) {
+                        if (result.message == null) {
+                            document.getElementById("divEVverification").style.display = "none";
+                            document.getElementById("divEVverified").style.display = "block";
+                            $("#txt_MobileNumber").val(result.mobileNumber);
+                            $("#txt_EmailId").val(result.candidateEmail);
+                            $("#CompanyName").val(result.companyName);
+                            $("#isVerified").val(result.isVerified);
+                            $("#IsEmployed").val(result.isemployed);
+                            $("#DOB").val(result.dob);
+                        } else {
+                            swal.fire(result.message);
+                        }
+                    }
+                });
+
+            } else {
+                swal.fire("Please enter Mobile Number and Email Address.");
+            }
+   
+    }
+</script>
+<script>
+    function checkEmailidExist() {
+        var interviewer = $("#txt_evEmailId").val().trim();
+        $.ajax({
+            url: '/Interviewer/GetInterviwerExists',
+            type: 'POST',
+            data: {'interviewer': interviewer },
+            success: function (result) 
+            {
+                if (result) {
+                    swal.fire(result);
+                }
+                else {
+                    var mobilenumber = $("#txt_evmobile").val();
+                    var candidateEmailid = $("#txt_evEmailId").val();
+                    if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
+                        $.ajax({
+                            url: '/Aadhaar/EvVerification',
+                            type: 'POST',
+                            data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
+                            success: function (result) {
+                                if (result.message == null) {
+                                    document.getElementById("divEVverification").style.display = "none";
+                                    document.getElementById("divEVverified").style.display = "block";
+                                    $("#txt_MobileNumber").val(result.mobileNumber);
+                                    $("#txt_EmailId").val(result.candidateEmail);
+                                    $("#CompanyName").val(result.companyName);
+                                    $("#isVerified").val(result.isVerified);
+                                    $("#IsEmployed").val(result.isemployed);
+                                    $("#DOB").val(result.dob);
+                                } else {
+                                    swal.fire(result.message);
+                                }
+                            }
+                        });
+
                     } else {
-                        swal.fire(result.message);
+                        swal.fire("Please enter Mobile Number and Email Address.");
                     }
                 }
-            });
-
-        } else {
-            swal.fire("Please enter Mobile Number and Email Address.");
-        }
+            }
+        });
     }
 </script>

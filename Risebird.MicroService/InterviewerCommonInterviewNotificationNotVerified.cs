@@ -82,7 +82,7 @@ namespace Risebird.MicroService
                     }
                 }
                 log.LogInformation($"Send Emails To Clients");
-                SendMailtoClient();
+                //SendMailtoClient();
             }
             catch (Exception ex)
             {

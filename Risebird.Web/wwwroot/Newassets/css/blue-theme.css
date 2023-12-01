@@ -916,7 +916,9 @@ textarea::-webkit-scrollbar-thumb {
     margin: 5px 5px;
     border: 1px #54a5f5 solid;
 }
-
+.custom-select-dropdown select {
+    background-color: #e9e8e840!important;
+}
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     background: #53a5f5 !important;
 }
@@ -1087,6 +1089,12 @@ table {
     background: #42a5f5 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
 
+.wallet-txt {
+    color: #254b76;
+}
+#btnSave {
+    background: #42a5f5!important;
+}
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {
         width: 33.3%;

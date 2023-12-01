@@ -278,23 +278,23 @@
                                         {
 @*                                         <span style="cursor:pointer;" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Skill Channel Stats</font></span>
 *@
-                                       <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top">
+                                    @*   <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top">
                                                 <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                                 <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;">
                                                     Skill Channel Stats
                                                 </div>
 
                                             </button>
-                                            
-                                            
-                                            
+                                            *@
+
+                                            <span onclick="location.href='@Url.Action("Risebirdpay", "Client")'"><span class="wallet-iconcolor"></span><span class="pull-left d-lg-inline-flex pad7" style="color:#fff;font-size:12px;font-weight:bold;"><span style="position:relative;top:4px;">Penalty Wallet</span></span></span>
                                             @* <span style="cursor:pointer;" onclick="location.href='@Url.Action("CreateInterviewRequest", "InterviewRequest")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> New Interview Request</font></span>
                                             <span style="cursor:pointer;" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Manage Interviews</font></span>
                                              *@
 
                                             <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top">
                                                 <span class="topheader-link"><i class="fa fa-users" style="color:#fff"></i></span>
-                                                <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;">
+                                                <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;position:relative;top:4px;">
                                                     Manage Interviews
                                                 </div>
 
@@ -935,13 +935,13 @@
 
         document.onkeypress = function (event) {
             event = (event || window.event);
-            if (event.keyCode == 123) {
+            if (event.keyCode == 123 || (event.ctrlKey && event.keyCode == 83) || (event.ctrlKey && event.keyCode == 80)) {
                 return false;
             }
         }
         document.onkeydown = function (event) {
             event = (event || window.event);
-            if (event.keyCode == 123) {
+            if (event.keyCode == 123 || (event.ctrlKey && event.keyCode == 83) || (event.ctrlKey && event.keyCode == 80)) {
                 return false;
             }
         }

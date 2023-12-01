@@ -119,21 +119,12 @@
                                 <div class="reportdropdown">
                                     <button class="reportdropbtn">Report Quality Issue</button>
                                     <div class="reportdropdown-content">
-                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId, allowClientAction = true})">
                                             <text>Rate Interviewer</text>
                                         </button>
-                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
-                                            <text> Audio Feedback </text>
-                                        </button>
                                         <button class="dropdown-btn" type="button">
-                                            <span data-toggle="tooltip" data-placement="top" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.InterviewId', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
+                                            <span data-toggle="tooltip" data-placement="top" onclick="javascript:openHMLink('@Model.IRFId');" data-original-title="Tooltip on top"><text>Edit HM Instruction</text></span>
                                         </button>
-                                        @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
-                                        {
-                                            <button class="dropdown-btn" type="button">
-                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
-                                            </button>
-                                        }
                                         @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                                         {
                                             <button class="dropdown-btn">
@@ -331,7 +322,7 @@
                                                                     <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
                                                                 }
 
-                                                                @if (ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+                                                                @if (Model.IsTranscript && ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
                                                                 {
                                                                     <div class="transcript">
                                                                         <h3 style="padding:0px;"><svg width="30" style="color: rgb(150, 145, 145);" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 16C5 15.4477 5.44772 15 6 15H14C14.5523 15 15 15.4477 15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16Z" fill="#969191"></path> <path d="M18 11C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H10C9.44772 13 9 12.5523 9 12C9 11.4477 9.44772 11 10 11H18Z" fill="#969191"></path> <path d="M16 16C16 15.4477 16.4477 15 17 15H18C18.5523 15 19 15.4477 19 16C19 16.5523 18.5523 17 18 17H17C16.4477 17 16 16.5523 16 16Z" fill="#969191"></path> <path d="M7 11C7.55228 11 8 11.4477 8 12C8 12.5523 7.55228 13 7 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11H7Z" fill="#969191"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 3C2.34315 3 1 4.34315 1 6V18C1 19.6569 2.34315 21 4 21H20C21.6569 21 23 19.6569 23 18V6C23 4.34315 21.6569 3 20 3H4ZM20 5H4C3.44772 5 3 5.44772 3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6C21 5.44771 20.5523 5 20 5Z" fill="#969191"></path> </svg> Meeting Transcript</h3>
@@ -571,12 +562,15 @@
         </div>
     </div>
 
+
+   
+
     @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
     @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
-
+    @await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
     <script src="~/js/ModalFormServerValidation.js"></script>
     <script src="~/js/BroadcastMessage.js"></script>
-
+ 
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -585,9 +579,9 @@
                 var modal = document.getElementById("PublicShareVideo");
                 modal.style.display = "block";
             }
-
+           
         })
-
+     
         function SubmitEmail() {
             if ($("#txtEmailid").val().trim() != "") {
                 localStorage.setItem('PublicEmailid', $("#txtEmailid").val());
@@ -629,7 +623,7 @@
 
     <script src="~/js/transcriptfunctionalities.js"></script>
 
-    @if (ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+    @if (Model.IsTranscript && ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
     {
         <script>
 
@@ -821,7 +815,7 @@
         function ClientInterviewRating(interviewid, Reportsnippet) {
             $.ajax({
                 url: '/Interview/ClientInterviewReview',
-                data: { 'id': interviewid, 'actionType': Reportsnippet},
+                data: { 'id': interviewid, 'actionType': Reportsnippet },
                 type: "GET",
                 success: function (data) {
                     if (document.getElementById("ClientInterviewRatingModel").style.display != "block") {

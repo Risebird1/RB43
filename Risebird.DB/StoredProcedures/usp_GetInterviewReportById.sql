@@ -15,7 +15,7 @@ AS
 Begin  
 select ip.*, ic.*, IRF.JobLevel,IRF.IRFId as IRFName, irf.IsBiometricEnabled, im.resumeLink, im.interviewDate,im.currentEmployerName,   
 im.JoiningBiometryScore, im.InterviewBiometryScore, irf.IsQCRequired,
-Case When cl.Reportsnippet=1 or Reportsnippet=2 then ic.ReportAccepted Else 1 end as ReportAccepted,cl.Reportsnippet
+Case When cl.Reportsnippet=1 or Reportsnippet=2 then ic.ReportAccepted Else 1 end as ReportAccepted,cl.Reportsnippet,cl.IsTranscript
 from InterviewReport ip  
 inner join IRF on ip.IRFId = IRF.id   
 inner join [InterviewComments] ic on ic.InterviewId = ip.InterviewId  

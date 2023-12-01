@@ -251,6 +251,8 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
                 }
+                msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("tanishka_gupta@risebird.io", "Tanishka Gupta"));
+                msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("dilruba_sultana@risebird.io", "Dilruba Sultana"));
 
                 object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
@@ -393,6 +395,7 @@ namespace Risebird.CommonHelper
                 msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateMail, "Risebird"));
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(clientHRMail, "Risebird"));
 
                 StringBuilder msgBody = new StringBuilder("Dear Candidate,");
                 msgBody.Append("\n");
@@ -1059,6 +1062,9 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
                 }
+                msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("tanishka_gupta@risebird.io", "Tanishka Gupta"));
+                msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("dilruba_sultana@risebird.io", "Dilruba Sultana"));
+
                 //string companyLogoLink = string.Empty;
                 //string companyURL = string.Empty;
                 //companyLogoLink = clientLogo != null ? clientLogo : _configuration["RisebirdDetails:RisebirdLogo"];

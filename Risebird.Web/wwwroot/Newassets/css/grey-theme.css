@@ -926,7 +926,16 @@ table.journey {
 .card-blue .card-body .client-field {
     color: #9a9a9a !important;
 }
+.custom-select-dropdown select {
+    background-color: #e9e8e840 !important;
+}
+input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
+    background: #9a9a9a !important;
+}
 
+input[type="radio"]:checked, input[type="checkbox"]:checked {
+    border-color: #9a9a9a !important;
+}
 input[type="radio"]:checked:before {
     background: #9a9a9a !important;
 }
@@ -1115,6 +1124,12 @@ table {
     background: #727171 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
 
+.wallet-txt {
+    color: #747373;
+}
+#btnSave {
+    background: #727171!important;
+}
 @media only screen and (max-width: 767px) {
 
     .razorpay_btn button.form-control {

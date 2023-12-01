@@ -2879,6 +2879,7 @@ table {
 
         #myForm .searchbox input[type=email] {
             width: 270px;
+            height:17px;
         }
 
     .toolbar {
@@ -2992,7 +2993,7 @@ table {
         }
 
         #myForm .searchbox input[type=email] {
-            width: 256px !important;
+            width: 253px !important;
             padding-left: 4px;
             /* height: auto;*/
         }

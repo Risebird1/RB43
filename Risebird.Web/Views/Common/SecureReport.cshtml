@@ -74,14 +74,12 @@
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="quality-con">
-                    <label>If you have any concerns with quality, use the above <strong>'Report Quality Issue'</strong> button to leave feedback.</label>
-                    <ul>
-                        <li>Rate Interviewer</li>
-                        <li>Audio Feedback</li>
-                        <li>Mass Communication</li>
-                        <li>Report red flags</li>
-                        <li>Redo Interview</li>
-                    </ul>
+                        <label>If you have any concerns with quality, use the above <strong>'Report Quality Issue'</strong> button to leave feedback.</label>
+                        <ul>
+                            <li>Rate Interviewer</li>
+                            <li>HM Instruction</li>
+                            <li>Redo Interview</li>
+                        </ul>
                     </div>
                 </div>
                 <div class="col-md-12 ">
@@ -167,7 +165,7 @@
         var interviewstatusdetails = '';
         if (interviewstatus == 2 || interviewstatus == 4) {
             interviewstatusdetails = 'Selected';
-        }else {
+        } else {
             interviewstatusdetails = 'Reject';
         }
         $.ajax({

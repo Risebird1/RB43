@@ -437,7 +437,7 @@
 
                                                      @if (ViewBag.actionstatus == "PotentialRiskByClient")
                                                     {
-                                                        
+                                                        <th>Payment Compliance</th>
                                                         <th>Rating</th>
                                                         <th>Rated By</th>
                                                         <th>Rated</th>
@@ -655,7 +655,7 @@
                                                     }
                                                     @if (ViewBag.actionstatus == "PotentialRiskByClient")
                                                     {
-
+                                                        <th>Payment Compliance</th>
                                                         <th>Rating</th>
                                                         <th>Rated By</th>
                                                         <th>Rated</th>
@@ -1356,7 +1356,7 @@
                                                                             </svg>
                                                                         </span>
                                                                     </button>*@
-                                                                    @if(ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement")
+                                                                    @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR")
                                                                     {
                                                                         <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { irfId = item.irfIntId, irfName = item.IRFId})" title="Client Interview Report">
                                                                             <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity For Availability" style="position:relative;top:3px;">
@@ -1579,7 +1579,11 @@
                                                     }
 
                                                         @if (ViewBag.actionstatus == "PotentialRiskByClient")
-                                                        { <td class="interviewer">
+                                                        { 
+                                                            <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
+
+                                                            
+                                                            <td class="interviewer">
                                                             <div  style="display:flex">
                                                                 @for (int i = 1; i <= 5; i++)
                                                                 {
@@ -1612,7 +1616,7 @@
                                                                     </button>
                                                                 </a>
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
-                                                                    <div onclick="PaymentSLADetails('@item.id','@item.candidateEmail','@item.interviewer',false,'PotentailRiskCandidate')" title="Palyment SLA" class="mdc-fab__icon material-icons">
+                                                                    <div onclick="PaymentSLADetails('@item.id','@item.candidateEmail','@item.interviewer',false,'PotentailRiskClient')" title="Palyment SLA" class="mdc-fab__icon material-icons">
                                                                         <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
                                                                     </div>
                                                                 </button>
@@ -1820,6 +1824,7 @@
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
+@await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
 
 <script src="~/js/Aadhaar.js"></script>
 <script src="~/js/TwilioCallMaker.js"></script>

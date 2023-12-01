@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -1017,7 +1018,7 @@ namespace Risebird.Web.Controllers
 
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
         {
-            var dto = new AvailabilityCheckDTO{ id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
+            var dto = new AvailabilityCheckDTO { id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
             //var path = $"http://localhost:7071/api/CheckIRFAvailability";
             var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
@@ -6565,9 +6566,9 @@ namespace Risebird.Web.Controllers
                 //var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irf.AssessmentGroupId));
 
                 //model = model.Where(x => x.Type == "Interviewer").ToList();
-                if (model !=null && model.Count() > 0)
+                if (model != null && model.Count() > 0)
                 {
-                    if(model.FirstOrDefault().AvailbilityHour >= 3600 || model.FirstOrDefault().AvailbilityHour == 0)
+                    if (model.FirstOrDefault().AvailbilityHour >= 3600 || model.FirstOrDefault().AvailbilityHour == 0)
                     {
                         await _irfService.UpdateIntervieweravailbilityDetails(irfId);
                         var skills = await _irfService.GetTechSkillswithWeightage(irfId);
@@ -6604,7 +6605,7 @@ namespace Risebird.Web.Controllers
                                     Subject = "Current Availability (2 days) check for  " + item.JDTitle + " Risebird Interviews"
                                 };
                                 var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), item.FlatRate, dropMyProfileButton + "&rsc=" + source, item.BasicSkill, irfId, item.CompanyTypeDesc, item.CountryTypeDesc, item.PlanTypeDesc, item.SelectedDurationMin, item.RejectedDurationMin);
-                                
+
                                 source = "wp";
 
                                 yesbutton = yesbutton + "&rsc=" + source;
@@ -6659,32 +6660,32 @@ namespace Risebird.Web.Controllers
 
             try
            {
-                dec = dec.Replace(" ", "+");
-                var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
-                if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
-                {
-                    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
-                    {
-                        return Json("Status updated successfully.");
-                    }
-                    else
-                    {
-                        return Json("Failed to update status, Please try again");
-                    }
-                }
-                else
-                {
-                    return Json("Link Expired.");
-                }
-
-                //if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid))
+                //dec = dec.Replace(" ", "+");
+                //var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
+                //if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
                 //{
-                //    return Json("Status updated successfully.");
+                //    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
+                //    {
+                //        return Json("Status updated successfully.");
+                //    }
+                //    else
+                //    {
+                //        return Json("Failed to update status, Please try again");
+                //    }
                 //}
                 //else
                 //{
-                //    return Json("Failed to update status, Please try again");
+                //    return Json("Link Expired.");
                 //}
+
+                if(await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
+                {
+                    return Json("Status updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update status, Please try again");
+                }
             }
             catch (Exception ex)
             {
@@ -6928,7 +6929,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorCloneTemplateMessage"] = "Failed to redirect! Kindly contact the Coordinator.";
-                return RedirectToAction("Index", "Template");
+                return RedirectToAction("List", "Template");
             }
         }
 
@@ -7010,6 +7011,7 @@ namespace Risebird.Web.Controllers
 
                         model.CalendlyLink = _schedulinglink;
                         var result = await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName);
+                        //var result = await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName);
                         //End: Auto Generate Scheduling Link
                         if (result.Item1)
                         {
@@ -7025,7 +7027,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Failed to create Skills Channel from {model.TemplateName}!";
-                            return RedirectToAction("Index", "Template");
+                            return RedirectToAction("List", "Template");
                         }
                     }
                     else
@@ -7042,7 +7044,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {model.TemplateName}; userEmailId : {emailId}");
                 TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
-                return RedirectToAction("Index", "Template");
+                return RedirectToAction("List", "Template");
             }
         }
 
@@ -7323,6 +7325,128 @@ namespace Risebird.Web.Controllers
             }
             skillChannelName = skillChannelName.Replace(".", "a").Replace(" ", "-").Replace("+", "s").Replace("&", "o");
             return skillChannelName;
+        }
+
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> CreateInterviewLinkV1(IRFVm model)
+        {
+            string emailId = string.Empty;
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (/*profileName == "Admin" || profileName == "HR" ||*/ profileName == "Client" /*|| profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR"*/)
+                    {
+
+                        string uploadedFileURL = string.Empty;
+                        if (model.ClientId == 0)
+                            model.ClientId = await _clientService.GetClientByEmailId(emailId);
+                        if (model.JDFile != null)
+                        {
+
+
+                            int virusScanResult = 0;
+                            if (profileName == "Client")
+                            {
+                                using (var ms = new MemoryStream())
+                                {
+                                    model.JDFile.CopyTo(ms);
+
+                                    //VirusTotal virusTotal = new VirusTotal("30368672cc1d7fa0497a0d2c640544ade03ad455600d24c220bfd41c83b5e6d5");
+                                    VirusTotal virusTotal = new VirusTotal(_configuration["VirusTotal:ApiKey"]);
+
+                                    //Use HTTPS instead of HTTP
+                                    virusTotal.UseTLS = true;
+
+                                    //byte[] eicar = Encoding.ASCII.GetBytes(@"X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
+                                    //VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(eicar);//ms
+
+                                    VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(ms);
+                                    bool hasFileBeenScannedBefore = fileReport.ResponseCode == FileReportResponseCode.Present;
+
+                                    if (hasFileBeenScannedBefore)
+                                    {
+                                        virusScanResult = fileReport.Positives;
+                                    }
+                                    else
+                                    {
+                                        //var fileResults = await virusTotal.ScanFileAsync(eicar, fileName);//ms
+                                        var fileResults = await virusTotal.ScanFileAsync(ms, model.JDFile.FileName);
+                                        virusScanResult = fileReport.Positives;
+                                    }
+
+                                    if (virusScanResult > 0)
+                                    {
+                                        TempData["SuccessErrorCloneTemplateMessage"] = $"File upload failed. Virus Detected! Failed to create Skills Channel from {model.TemplateName}!";
+                                        return RedirectToAction("Index", "Template");
+                                    }
+
+                                }
+                            }
+
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+                            if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint" || fileMimeType == "text/plain")
+                            {
+                                await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
+                                model.JDLink = uploadedFileURL;
+                            }
+
+                        }
+
+                        //Start: Auto Generate Scheduling Link 
+                        model.StartDate = DateTime.Now;
+                        model.EndDate = DateTime.Now.AddMonths(3);
+
+                        //model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
+
+                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", model.MeetingPlatform);
+
+                        model.CalendlyLink = _schedulinglink;
+                        var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(model, emailId, profileName);
+                        //End: Auto Generate Scheduling Link
+                        if (result.Item1)
+                        {
+                            var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
+
+                            FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+
+                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                            TempData["SuccessErrorMessage2"] = model.CalendlyLink;
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Failed to create Skills Channel from {model.TemplateName}!";
+                            return RedirectToAction("List", "Template");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {model.TemplateName}; userEmailId : {emailId}");
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
+                return RedirectToAction("List", "Template");
+            }
         }
 
         /// <summary>
@@ -8042,8 +8166,158 @@ namespace Risebird.Web.Controllers
             var interviewlist = (await _irfService.GetSkillChannelStatsDetails(irfid, type))?.ToList();
             return View(interviewlist);
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> DeliveryHeadInstruction(int irfid, string Type = null)//Type = "ublc" stands for public here
+        {
+            ViewBag.PageType = "";
+            if (!string.IsNullOrEmpty(Type) && Type == "ublc" /*&& HttpContext.Session.GetString("email") == null*/)
+            {
+                ViewBag.PageType = "Public";
+                return View(new IRFVm { id = irfid });
+            }
+            else if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+            {
+                var meetingLineUpType = "";
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var model = new IRFVm();
+                model = await _irfService.GetEditIRF(irfid, 0, false);
+                //model.id = model.SkillCollection.FirstOrDefault().IRFId;
+                ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                var Skillset = await _irfRepository.GetSkills();
+                ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
 
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeliveryHeadInstruction(IRFVm model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    foreach (var item in model.SkillCollection)
+                    {
+                        item.IRFId = model.id;
+                    }
+                    var result = await _irfService.UpdateTechSkills(model.SkillCollection);
+                    if (result)
+                    {
+                        return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
+                    }
+                    ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                    var Skillset = await _irfRepository.GetSkills();
+                    ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
+        [HttpPost]
+        public async Task<JsonResult> VerifyClientAuthenticityForDHI(int irfId, string emailId) // DHI stands for Delivery Head Instructions
+        {
+            //HttpContext.Session.SetString("PublicUrlAccessor", JsonConvert.SerializeObject(Emailid));
+            //var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+            //_trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
+            HttpContext.Session.SetString("profileName", "Client");
+            //bool result = await _clientService.VerifyClientAuthenticity(irfId, emailId);
+            //var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
+            //if (string.IsNullOrEmpty(logovalue))
+            //{
+            //    HttpContext.Session.SetString("Logo", "");
+            //}
+            //else
+            //    HttpContext.Session.SetString("Logo", logovalue);
+            if (await _clientService.VerifyClientAuthenticity(irfId, emailId))
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("This User does not have access");
+            }
+        }
 
+        [HttpPost]
+        public async Task<JsonResult> UpdateJobLevel(int irfid, int joblevel)
+        {
+            var result = await _irfService.UpdateJobLevel(irfid, joblevel);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateDeficultyLevel(int irfid, int deficultylevel)
+        {
+            var result = await _irfService.UpdateDeficultyLevel(irfid, deficultylevel);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateFormat(int irfid, string format)
+        {
+            var result = await _irfService.UpdateFormat(irfid, format);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetFormatanddifficultylevel(int irfid)
+        {
+            var result = await _irfService.GetFormatanddifficultylevel(irfid);
+            if (result == null)
+            {
+                result = new IRFInstructionDetailsVM();
+            }
+            return Json(result);
+        }
+        [HttpPost]
+        public JsonResult TextInstruction(int irfId, string Comment)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                BroadcastModel model = new BroadcastModel();
+                model.IRFId = irfId;
+                model.Message = Comment;
+                model.SentBy = emailid;
+                var result = _meetingService.StoreClientBroadcastMessage(model);
+                return Json("Successfully");
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Text Instruction failed, Please try again.");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetTextInstruction(int irfid)
+        {
+            var textInstruction = await _irfService.GetTextInstructionService(irfid);
+            return Json(textInstruction);
+        }
     }
 }

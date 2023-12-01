@@ -193,7 +193,16 @@ textarea::-webkit-scrollbar {
     margin: 5px 5px;
     border: 1px #eb7022 solid;
 }
+.custom-select-dropdown select {
+    background-color: #e9e8e840 !important;
+}
+input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
+    background: #ea6b26 !important;
+}
 
+input[type="radio"]:checked, input[type="checkbox"]:checked {
+    border-color: #ea6b26 !important;
+}
 .expiry [type="date"] {
     background: #dddddf url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;
@@ -666,7 +675,9 @@ table.journey {
 .filavatar {
     background: #ea6e24 !important;
 }
-
+#btnSave {
+    background: #f88e4d!important;
+}
 #IRFList a, #ProjectList a {
     color: #ea6e24 !important;
 }
@@ -1162,6 +1173,10 @@ input[type="radio"]:checked {
 .dashboard-iconcolor {
     color: #f28542!important;
     background: #f98a46 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
+}
+
+.wallet-txt {
+    color: #6a6866;
 }
 @media only screen and (max-width: 767px) {
     .razorpay_btn button.form-control {

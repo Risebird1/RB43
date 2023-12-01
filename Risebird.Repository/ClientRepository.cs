@@ -225,6 +225,8 @@ namespace Risebird.Repository
             parameters.Add("@IsRedoInterview", entity.IsRedoInterview);
             parameters.Add("@IsClientCancelInterview", entity.IsClientCancelInterview);
             parameters.Add("@PaymentTerm", entity.PaymentTerm);
+            parameters.Add("@Reportsnippet", entity.Reportsnippet);
+            parameters.Add("@IsTranscript", entity.IsTranscript);
             if (entity.GSTApplicable == 1)
             {
                 parameters.Add("@GSTApplicable", true);
@@ -1258,6 +1260,33 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<bool> VerifyClientAuthenticity(int irfId, string emailId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@emailId", emailId);
+                parameters.Add("@irfId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QuerySingleAsync<bool>(con, "[usp_VerifyClientAuthenticity]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
         }
     }
 }

@@ -781,7 +781,7 @@ namespace Risebird.Repository
                                     IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["IRFId"]) : 0,
                                     HRId = !string.IsNullOrEmpty(dt.Rows[i]["HRId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["HRId"]) : 0,
                                     UserId = !string.IsNullOrEmpty(dt.Rows[i]["UserId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["UserId"]) : 0
-                                    
+
                                 });
                             }
                             _resultVM.HRCollection = (IList<TransHR>)(transHR);
@@ -807,7 +807,7 @@ namespace Risebird.Repository
                                     IRFName = !string.IsNullOrEmpty(dt.Rows[i]["IRFName"].ToString()) ? dt.Rows[i]["IRFName"].ToString() : null,
                                     FirstName = !string.IsNullOrEmpty(dt.Rows[i]["FirstName"].ToString()) ? dt.Rows[i]["FirstName"].ToString() : null,
                                     Role = !string.IsNullOrEmpty(dt.Rows[i]["Role"].ToString()) ? dt.Rows[i]["Role"].ToString() : null,
-                                    
+
                                 });
                             }
                             _resultVM.ClientCollection = (IList<TransClientUser>)(transClientUser);
@@ -2134,7 +2134,7 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IRFId", typeof(int));
                         interviewerDt.Columns.Add("UserId", typeof(int));
                         interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
-                        if(irfDetails.IsNewSkillChannel)
+                        if (irfDetails.IsNewSkillChannel)
                         {
                             interviewerDt.Columns.Add("Surcharge", typeof(int));
 
@@ -2408,7 +2408,7 @@ namespace Risebird.Repository
                     }
                     if (interviewerDt != null && interviewerDt.Rows.Count > 0)
                     {
-                        if(irfDetails.IsNewSkillChannel)
+                        if (irfDetails.IsNewSkillChannel)
                         {
                             cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerSurchargeBulkData", SqlDbType.Structured));
                             cmdUpdateIRF.Parameters["@InterviewerSurchargeBulkData"].Value = interviewerDt;
@@ -5321,7 +5321,7 @@ namespace Risebird.Repository
         public async Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false)
         {
             DataTable dt = new DataTable();
-            if(isResumeParser)
+            if (isResumeParser)
             {
                 dt.Columns.AddRange(new DataColumn[3] { new DataColumn("EmailId", typeof(string)),
                     new DataColumn("Import Status", typeof(string)), new DataColumn("CandidateResumeId", typeof(int)) });
@@ -5331,7 +5331,7 @@ namespace Risebird.Repository
                 dt.Columns.AddRange(new DataColumn[2] { new DataColumn("EmailId", typeof(string)),
                     new DataColumn("Import Status", typeof(string)) });
             }
-            
+
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -5346,7 +5346,7 @@ namespace Risebird.Repository
                             parameters.Add("@EmailId", obj.EmailId);
                             parameters.Add("@ResumeLink", obj.ResumeLink);
                             parameters.Add("@Phone", obj.Phone);
-                            if(userId.HasValue)
+                            if (userId.HasValue)
                             {
                                 parameters.Add("@AddedByUserId", userId);
 
@@ -5366,7 +5366,7 @@ namespace Risebird.Repository
                             await SqlMapper.QueryAsync(con, "usp_AddQuickCandidate", parameters, commandType: CommandType.StoredProcedure);
 
                             var result = parameters.Get<string>("@operationStatus");
-                            if(isResumeParser)
+                            if (isResumeParser)
                             {
                                 dt.Rows.Add(obj.EmailId, result, obj.CandidateResumeId);
 
@@ -6206,10 +6206,10 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsCandidateavailability", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsCandidateavailability"].Value = irfDetails.IsCandidateavailability;
-                    
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingAutoCancelled", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingAutoCancelled"].Value = irfDetails.IsMeetingAutoCancelled;
-                    
+
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
 
@@ -6346,6 +6346,238 @@ namespace Risebird.Repository
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 //return false;
                 return new Tuple<bool, int>(false, 0);
+
+            }
+        }
+
+
+        public async Task<Tuple<bool, int>> CreateSkillChannelFromTemplateV1(IRFVm irfDetails, string loggedInUser = null)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlCommand cmdUpdateIRF = new SqlCommand("usp_CreateSkillChannelFromTemplateV1", con);
+                    cmdUpdateIRF.CommandType = CommandType.StoredProcedure;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.NVarChar));
+                    cmdUpdateIRF.Parameters["@IRFId"].Value = irfDetails.IRFId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientName", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@ClientName"].Value = irfDetails.ClientName;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDTiltle", SqlDbType.NVarChar));
+                    cmdUpdateIRF.Parameters["@JDTiltle"].Value = irfDetails.JDTiltle;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CompanyType", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@CompanyType"].Value = irfDetails.CompanyType;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientId", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@ClientId"].Value = irfDetails.ClientId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JobCountry", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@JobCountry"].Value = irfDetails.JobCountry;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@StartDate", SqlDbType.DateTime));
+                    cmdUpdateIRF.Parameters["@StartDate"].Value = irfDetails.StartDate;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@EndDate", SqlDbType.DateTime));
+                    cmdUpdateIRF.Parameters["@EndDate"].Value = irfDetails.EndDate;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDLink", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@JDLink"].Value = irfDetails.JDLink;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@NoOfPosition", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@NoOfPosition"].Value = irfDetails.NoOfPosition;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@NoOfIntterview", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@NoOfIntterview"].Value = irfDetails.NoOfIntterview;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@RisebirdHr", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@RisebirdHr"].Value = irfDetails.RisebirdHr;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PerMintuteRate", SqlDbType.Real));
+                    cmdUpdateIRF.Parameters["@PerMintuteRate"].Value = irfDetails.PerMintuteRate;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JobLevel", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@JobLevel"].Value = irfDetails.JobLevel.HasValue ? irfDetails.JobLevel.Value : (int)JobLevels.SE;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CalendlyLink", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@CalendlyLink"].Value = irfDetails.CalendlyLink ?? string.Empty;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@TotalBudget", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@TotalBudget"].Value = irfDetails.TotalBudget;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsBiometricEnabled", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsBiometricEnabled"].Value = irfDetails.IsBiometricEnabled;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PriorityLevel", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@PriorityLevel"].Value = irfDetails.PriorityLevel;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CompanyDetails", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@CompanyDetails"].Value = irfDetails.CompanyDetails ?? string.Empty;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Type", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@Type"].Value = irfDetails.Type ?? string.Empty;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Heuristicsscore", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@Heuristicsscore"].Value = irfDetails.Heuristicsscore;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@PrimarySkillInvite", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@PrimarySkillInvite"].Value = irfDetails.PrimarySkillInvite ?? string.Empty;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@BillingOwner", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@BillingOwner"].Value = irfDetails.BillingOwner;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@AssessmentGroupId"].Value = irfDetails.AssessmentGroupId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsJoinabilitySelectabilityRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsJoinabilitySelectabilityRequired"].Value = irfDetails.IsJoinabilitySelectabilityRequired;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsGeneralSkillRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsGeneralSkillRequired"].Value = irfDetails.IsGeneralSkillRequired;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedFromTemplateId", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@CreatedFromTemplateId"].Value = irfDetails.CreatedFromTemplateId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
+                    cmdUpdateIRF.Parameters["@CreatedOn"].Value = DateTime.Now;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform ?? "Zoom";
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAadhaarVerificationRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsAadhaarVerificationRequired"].Value = irfDetails.IsAadhaarVerificationRequired;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsCandidateavailability", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsCandidateavailability"].Value = irfDetails.IsCandidateavailability;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingAutoCancelled", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsMeetingAutoCancelled"].Value = irfDetails.IsMeetingAutoCancelled;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = true;
+
+                    SqlParameter flatRateParam = new SqlParameter();
+                    flatRateParam.ParameterName = "@flatRate";
+                    flatRateParam.DbType = DbType.Int16;
+                    flatRateParam.Direction = ParameterDirection.Output;
+                    cmdUpdateIRF.Parameters.Add(flatRateParam);
+
+                    int flatRate = 0;
+
+                    DataTable techSkillDt = new DataTable();
+                    techSkillDt.Columns.Add("IRFId", typeof(int));
+                    techSkillDt.Columns.Add("LevelId", typeof(int));
+                    techSkillDt.Columns.Add("SkillId", typeof(int));
+                    techSkillDt.Columns.Add("Weightage", typeof(int));
+                    techSkillDt.Columns.Add("Concepts", typeof(string));
+                    techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                    techSkillDt.Columns.Add("Timelimit", typeof(int));
+
+                    foreach (var item in irfDetails.SkillCollection)
+                    {
+                        if (string.IsNullOrEmpty(item.Concepts))
+                        {
+                            item.Concepts = "";
+                        }
+                        if (string.IsNullOrEmpty(item.Natureofquestion))
+                        {
+                            item.Natureofquestion = "";
+                        }
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, "", "", 0);
+                    }
+
+                    DataTable clientUserDt = new DataTable();
+                    if (irfDetails.ClientCollection != null && irfDetails.ClientCollection.Count() > 0)
+                    {
+                        clientUserDt.Columns.Add("IRFId", typeof(int));
+                        clientUserDt.Columns.Add("ClientUserId", typeof(int));
+
+                        foreach (var item in irfDetails.ClientCollection)
+                        {
+                            clientUserDt.Rows.Add(irfDetails.id, item.ClientUserId);
+                        }
+                    }
+
+
+                    //DataTable interviewerDt = new DataTable();
+
+                    //if (irfDetails.InterviewerCollection != null && irfDetails.InterviewerCollection.Count() != 0 && !(irfDetails.InterviewerCollection.Where(x => x.UserId == 0).Any()))
+                    //{
+                    //    interviewerDt.Columns.Add("IRFId", typeof(int));
+                    //    interviewerDt.Columns.Add("UserId", typeof(int));
+                    //    interviewerDt.Columns.Add("PerSuccessRate", typeof(int));
+                    //    interviewerDt.Columns.Add("Surcharge", typeof(int));
+                    //    interviewerDt.Columns.Add("IsActive", typeof(bool));
+                    //    interviewerDt.Columns.Add("IsAvailable", typeof(bool));
+
+                    //    foreach (var item in irfDetails.InterviewerCollection)
+                    //    {
+                    //        //if (irfDetails.JobCountry == "2")
+                    //        //{
+                    //        //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1500, true, false);
+                    //        //}
+                    //        //else
+                    //        //{
+                    //        //    interviewerDt.Rows.Add(irfDetails.id, item.UserId, 1000, true, false);
+                    //        //}
+                    //        interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable);
+
+                    //    }
+                    //}
+
+                    if (techSkillDt != null && techSkillDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                    }
+                    //if (interviewerDt != null && interviewerDt.Rows.Count > 0)
+                    //{
+                    //    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewerBulkData", SqlDbType.Structured));
+                    //    cmdUpdateIRF.Parameters["@InterviewerBulkData"].Value = interviewerDt;
+                    //}
+                    if (clientUserDt != null && clientUserDt.Rows.Count > 0)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@ClientUserBulkData", SqlDbType.Structured));
+                        cmdUpdateIRF.Parameters["@ClientUserBulkData"].Value = clientUserDt;
+                    }
+
+                    con.Open();
+
+                    if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    flatRate = Convert.ToInt16(cmdUpdateIRF?.Parameters["@flatRate"]?.Value);
+
+                    return new Tuple<bool, int>(true, flatRate);
+                }
+            }
+
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new Tuple<bool, int>(false, 0);
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+
+                //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                //return false;
+                return new Tuple<bool, int>(false, 0); 
 
             }
         }
@@ -7147,7 +7379,179 @@ namespace Risebird.Repository
                     parameters.Add("@irfName", irfName);
                     var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetSkillChannelDetailsByIRFName", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault(); 
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateTechSkills(IList<TransSkill> techskills)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        DataTable techSkillDt = new DataTable();
+                        techSkillDt.Columns.Add("IRFId", typeof(int));
+                        techSkillDt.Columns.Add("LevelId", typeof(int));
+                        techSkillDt.Columns.Add("SkillId", typeof(int));
+                        techSkillDt.Columns.Add("Weightage", typeof(int));
+                        techSkillDt.Columns.Add("Concepts", typeof(string));
+                        techSkillDt.Columns.Add("Natureofquestion", typeof(string));
+                        techSkillDt.Columns.Add("Timelimit", typeof(int));
+
+                        foreach (var item in techskills)
+                        {
+                            techSkillDt.Rows.Add(item.IRFId, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        }
+
+                        SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
+                        cmdTechSkill.CommandType = CommandType.StoredProcedure;
+                        cmdTechSkill.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
+                        cmdTechSkill.Parameters["@TechSkillBulkData"].Value = techSkillDt;
+                        con.Open();
+                        if (cmdTechSkill.ExecuteNonQuery() != 0)
+                        {
+                            con.Close();
+                            return true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> UpdateJobLevel(int irf, int joblevel)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfid", irf);
+                        parameters.Add("@joblevel", joblevel);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_updateJobLevel", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> UpdateDeficultyLevel(int irf, int difficultylevel)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfid", irf);
+                        parameters.Add("@difficultylevel", difficultylevel);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_updatedifficultylevel", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> UpdateFormat(int irf, string format)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfid", irf);
+                        parameters.Add("@format", format);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_updateformat", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfid", irf);
+                        var result = await SqlMapper.QueryAsync<IRFInstructionDetailsVM>(con, "dbo.usp_GetFormatanddifficultylevel", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return result.FirstOrDefault();
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
                 }
             }
             catch (SqlException ex)
@@ -7161,7 +7565,29 @@ namespace Risebird.Repository
             return null;
         }
 
-
+        public async Task<IEnumerable<BroadcastModel>> GetTextInstruction( int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    var result = await SqlMapper.QueryAsync<BroadcastModel>(con, "usp_GetTextInstruction", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 

@@ -254,18 +254,20 @@ namespace Risebird.Repository.Interface
         Task<bool> BacklinkFailInterviewStatusUpdate(int id);
         Task<bool> UpdateProbableNoShowCandidates();
         Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates();
+        Task<bool> UpdateProbableNoShowInterviewers();
         Task<bool> SaveSauveyIRFReview(int rating, string comments, string Emailid, string IRFId);
         Task<bool> SaveCapturedJoinMeetingTime(int interviewid, string emailid);
         Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt);
         Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month);
         Task<string> GetTranscriptUrlByMeeting(int id);
         Task<bool> AddBlackListCompany(BlackListCompanyVM model);
-        Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid);
+        Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type);
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
         Task<bool> PaymentSlaNotApproved(int interviewid,string emailid);
         Task<bool> AgreeToPaymentSLAConditions(string emailid);
         Task<bool> AddTransInterviewersReliabilityScores(TransInterviewersReliabilityScoresVm model);
         Task<bool> AddTransReliabilityScoresSelectAndReject(int InterviewMeetingId);
+        Task<Meeting> GetAudioCommentDetails(int interviewId);
     }
 }

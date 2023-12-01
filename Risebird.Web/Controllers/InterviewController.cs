@@ -52,6 +52,7 @@ namespace Risebird.Web.Controllers
         private readonly IZoomHelper _zoomHelper;
         private readonly IInterviewerService _interviewerService;
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
+        private readonly IIRFService _irfService;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -65,7 +66,7 @@ namespace Risebird.Web.Controllers
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
             IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository)
+            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository, IIRFService irfService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -87,6 +88,7 @@ namespace Risebird.Web.Controllers
             _zoomHelper = zoomHelper;
             _interviewerService = interviewerService;
             _interviewSchedulerRepository = interviewSchedulerRepository;
+            _irfService = irfService;
         }
 
 
@@ -5771,13 +5773,13 @@ namespace Risebird.Web.Controllers
                     //    var _result = await _notificationHelper.SendInterviewClerityClientNotification(result.candidateEmail, result.interviewDate.ToString(), clientHr.EmailId, result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList());
                     //}
                     //if (status == 2 || status == 3 || (status == 4 && response == false))
-                    if (status == 1) // availability confirmed
-                    {
-                        //get irfId and interviewdate, candidateEmail and clientHrEmail
+                    //if (status == 1) // availability confirmed
+                    //{
+                    //    //get irfId and interviewdate, candidateEmail and clientHrEmail
 
-                        var meetingDetails = await _meetingService.GetMeetingDetails(meetingid);
-                        await _notificationHelper.SendCandidateConfirmedNotificationToClient(meetingDetails.candidateEmail, meetingDetails.interviewDate.ToString(), meetingDetails.ClientHrContact, meetingDetails.IRFID, meetingDetails.logolink);
-                    }
+                    //    var meetingDetails = await _meetingService.GetMeetingDetails(meetingid);
+                    //    await _notificationHelper.SendCandidateConfirmedNotificationToClient(meetingDetails.candidateEmail, meetingDetails.interviewDate.ToString(), meetingDetails.ClientHrContact, meetingDetails.IRFID, meetingDetails.logolink);
+                    //}
                     if (status == 2 || status == 3)
                     {
                         var value = string.Empty;
@@ -7610,7 +7612,7 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null)
+        public async Task<IActionResult> GenerateClientReportPDFFile(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
         {
             try
             {
@@ -7656,11 +7658,20 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
-                model.Userid = _iRFService.GetUserId(email, profileName);
-                if (model.Userid != 0)
+                if (!string.IsNullOrEmpty(uniqueid) || !string.IsNullOrEmpty(publicEmailId))
                 {
-                    await GetStatusList(model, irfId, model.Userid);
+                    model.Userid = 0;
                 }
+                else
+                {
+                    model.Userid = _iRFService.GetUserId(email, profileName);
+
+                }
+                await GetStatusList(model, irfId, model.Userid);
+                //if (model.Userid != 0)
+                //{
+                //    await GetStatusList(model, irfId, model.Userid);
+                //}
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
 
@@ -7825,11 +7836,11 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type)
         {
             try
             {
-                var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid, type);
                 if (model == null)
                 {
                     model = new PaymentSLAVM();
@@ -7891,6 +7902,10 @@ namespace Risebird.Web.Controllers
                     else if (model.Pagetype == "PotentailRiskCandidate")
                     {
                         return RedirectToAction("PotentialRiskByCandidate", "DashBoard");
+                    }
+                    else if (model.Pagetype == "PotentailRiskClient")
+                    {
+                        return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.PotentialRiskByClient });
                     }
                     else
                     {
@@ -8044,11 +8059,11 @@ namespace Risebird.Web.Controllers
             return Json("Success");
         }
         #endregion
-        public async Task<IActionResult> PaymentCompliance(int interviewid)
+        public async Task<IActionResult> PaymentCompliance(int interviewid, string type)
         {
             try
             {
-                var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid, type);
                 return PartialView(result);
             }
             catch (Exception ex)
@@ -8083,6 +8098,19 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Success");
             }
+
+        }
+        public async Task<IActionResult> InterviewDetails(int id, int interviewId)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            ViewBag.id = id;
+            ViewBag.InterviewId = interviewId;
+            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                            select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+            var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
+            result.AudioComment = _irfService.FetchIRFAudioLink(id);
+            return View(result);
         }
     }
 }
