@@ -8190,7 +8190,6 @@ namespace Risebird.Web.Controllers
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
-                //Check For access 
                 var result = await _clientService.VerifyClientAuthenticity(irfid, emailid);
                 if (!result)
                 {
