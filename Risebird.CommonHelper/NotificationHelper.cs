@@ -1506,7 +1506,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> CandidateWaitingEINotification(Mail model, string zoomlink)
+        public async Task<string> CandidateWaitingEINotification(Mail model, string ressignmentlink, string zoomlink)
         {
             try
             {
@@ -1524,7 +1524,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { zoomlink };
+                object[] parameters = new object[] { ressignmentlink, zoomlink };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
