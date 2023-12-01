@@ -7903,6 +7903,10 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("PotentialRiskByCandidate", "DashBoard");
                     }
+                    else if (model.Pagetype == "PotentailRiskClient")
+                    {
+                        return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.PotentialRiskByClient });
+                    }
                     else
                     {
                         return RedirectToAction("PaymentSlaDetails", "Interview");
@@ -8055,11 +8059,11 @@ namespace Risebird.Web.Controllers
             return Json("Success");
         }
         #endregion
-        public async Task<IActionResult> PaymentCompliance(int interviewid,string type)
+        public async Task<IActionResult> PaymentCompliance(int interviewid, string type)
         {
             try
             {
-                var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid,type);
+                var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid, type);
                 return PartialView(result);
             }
             catch (Exception ex)

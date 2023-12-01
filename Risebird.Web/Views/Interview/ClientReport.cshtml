@@ -122,18 +122,9 @@
                                         <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId, allowClientAction = true})">
                                             <text>Rate Interviewer</text>
                                         </button>
-                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
-                                            <text> Audio Feedback </text>
-                                        </button>
                                         <button class="dropdown-btn" type="button">
-                                            <span data-toggle="tooltip" data-placement="top" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.InterviewId', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
+                                            <span data-toggle="tooltip" data-placement="top" onclick="javascript:openHMLink('@Model.IRFId');" data-original-title="Tooltip on top"><text>Edit HM Instruction</text></span>
                                         </button>
-                                        @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
-                                        {
-                                            <button class="dropdown-btn" type="button">
-                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
-                                            </button>
-                                        }
                                         @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                                         {
                                             <button class="dropdown-btn">
@@ -576,7 +567,7 @@
 
     @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
     @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
-
+    @await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
     <script src="~/js/ModalFormServerValidation.js"></script>
     <script src="~/js/BroadcastMessage.js"></script>
  
