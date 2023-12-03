@@ -864,17 +864,48 @@
     }
     <script>
         function removeInterviewer(interviewid) {
-            $.ajax({
-                type: "POST",
-                url: "/Interview/RemoveInterviewer",
-                data: { interviewid: interviewid },
-                success: function (data) {
-                    if (data == "success") {
-                        window.location.reload();
-                    } else {
-                        swal.fire(data);
-                    }
+            swal.fire({
+                title: 'Are you sure?',
+                text: 'Want to remove interviewer from further this Skill channel interviews',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Remove it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Interview/RemoveInterviewer",
+                            data: { interviewid: interviewid },
+                            success: function (result) {
+                                resolve(result);
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Removed!',
+                        type: 'success',
+                        html: '<p>The Interviewer has been removed.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        location.reload(true);
+                    })
                 }
-            });
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'remove cancelled! :)',
+                        'error'
+                    )
+                }
+            })
         }
     </script>
