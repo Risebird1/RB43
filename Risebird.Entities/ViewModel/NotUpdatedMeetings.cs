@@ -34,6 +34,7 @@ namespace Risebird.Entities.ViewModel
     }
     public class MeetingDetailsForParticipant
     {
+        public int interviewMeetingId { get; set; }
         public string candidateEmail { get; set; }
         public string risebirdHR { get; set; }
         public string interviewer { get; set; }
