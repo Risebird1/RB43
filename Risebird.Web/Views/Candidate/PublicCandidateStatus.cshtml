@@ -491,6 +491,12 @@
 
 
                                                                             <div class="candidate-field">
+                                                                               @if(item.RedoInterview==true)
+                                                                                {
+                                                                                   <p>Redo Interview</p>
+                                                                                }
+                                                                                else
+                                                                                {
                                                                                 @if (item.CurrentStatus == "Selected")
                                                                                 {
                                                                                     <p class="current selected">@item.CurrentStatus</p>
@@ -516,7 +522,7 @@
                                                                                 {
                                                                                     <p>@item.CurrentStatus</p>
                                                                                 }
-
+                                                                               }
 
                                                                     </div>
                                                                              <div class="candidate-field">
@@ -548,6 +554,11 @@
                                                                             <td></td>
                                                                         }
                                                                         <td>
+                                                                            @if(item.RedoInterview==true)
+                                                                            {
+                                                                                <p>No Report</p>
+                                                                            }
+                                                                            else{
                                                                             @if (!item.IsReportBlocked && ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
                                                                             {
                                                                                 @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">Report</a>*@
@@ -565,6 +576,7 @@
                                                                             else
                                                                             {
                                                                                 <p>No Report</p>
+                                                                            }
                                                                             }
                                                                         </td>
 

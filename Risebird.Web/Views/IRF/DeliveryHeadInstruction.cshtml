@@ -89,9 +89,9 @@
                                                                                     <td>
                                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                                                     </td>
-                                                                                   @* <td>
-                                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
-                                                                                    </td>*@
+                                                                                    @* <td>
+                                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Concepts" name="SkillCollection[0].Concepts" type="text" maxlength="50">
+                                                                        </td>*@
                                                                                     @* <td>
                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Natureofquestion" name="SkillCollection[0].Natureofquestion" type="text" maxlength="50">
                                                                         </td>
@@ -603,6 +603,18 @@
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
 <script src="~/js/FeedbackRecorder/Record.js"></script>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            swal.fire("Failed", '@ViewBag.Message', "error");
+        }
+    </script>
+}
 <script>
     function AddRow() {
         var table = document.getElementById("SkillTable");
@@ -922,25 +934,25 @@ else
 
         });
 
-    function SubmitEmail() {
-        if ($("#txtemailid").val().trim() != "") {
-            localStorage.setItem('PublicEmailid', $("#txtemailid").val());
-            $.ajax({
-                type: "POST",
-                url: "/IRF/VerifyClientAuthenticityForDHI",
-                data: { irfId : '@Model.id', emailId: $("#txtemailid").val().trim() },
-                success: function (data) {
-                    if (data == "success") {
-                            window.location = "/IRF/DeliveryHeadInstruction?irfid=" + '@Model.id' ; //+ "&Type=" + 'ublc'
-                    } 
-                    else {
-                        swal.fire(data);
+        function SubmitEmail() {
+            if ($("#txtemailid").val().trim() != "") {
+                localStorage.setItem('PublicEmailid', $("#txtemailid").val());
+                $.ajax({
+                    type: "POST",
+                    url: "/IRF/VerifyClientAuthenticityForDHI",
+                    data: { irfId: '@Model.id', emailId: $("#txtemailid").val().trim() },
+                    success: function (data) {
+                        if (data == "success") {
+                            window.location = "/IRF/DeliveryHeadInstruction?irfid=" + '@Model.id'; //+ "&Type=" + 'ublc'
+                        }
+                        else {
+                            swal.fire(data);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
-    }
-</script>
+    </script>
 }
 
 <script>

@@ -1243,6 +1243,7 @@ namespace Risebird.Business
                 reportModel.JDTiltle = interviewDetails.JDTiltle;
                 reportModel.LogoUrl = interviewDetails.LogoUrl;
                 reportModel.AudioTranscriptFileLink = interviewDetails.AudioTranscriptFileLink;
+                reportModel.IRFInterviewerActive = interviewDetails.IRFInterviewerActive;
                 return reportModel;
             }
             catch (Exception e)
@@ -4028,6 +4029,19 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<bool> RemoveInterviewer(int interviewid)
+        {
+            try
+            {
+                var result = await _meetingRespository.RemoveInterviewer(interviewid);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
 

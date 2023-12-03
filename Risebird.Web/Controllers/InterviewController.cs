@@ -8112,5 +8112,12 @@ namespace Risebird.Web.Controllers
             result.AudioComment = _irfService.FetchIRFAudioLink(id);
             return View(result);
         }
+        
+        [HttpPost]
+        public async Task<JsonResult> RemoveInterviewer(int interviewid)
+        {
+            var result = await _meetingService.RemoveInterviewer(interviewid);
+            return Json("success");
+        }
     }
 }

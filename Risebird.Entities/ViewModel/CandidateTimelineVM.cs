@@ -55,6 +55,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsClientCancelInterview { get; set; }
         public bool IsReportBlocked { get; set; }
         public string CompanyName { get; set; }
+        public bool RedoInterview { get; set; }
     }
 
     public class TimelineStatus
