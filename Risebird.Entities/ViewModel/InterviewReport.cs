@@ -357,6 +357,7 @@ namespace Risebird.Entities.ViewModel
         public bool ReportAccepted { get; set; }
         public int Reportsnippet { get; set; }
         public bool IsTranscript { get; set; }
+        public bool IRFInterviewerActive { get; set; }
     }
     public class RBInterviewDetails
     {

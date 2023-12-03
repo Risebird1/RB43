@@ -6917,5 +6917,24 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<bool> RemoveInterviewer(int interviewid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_updateInterviewerIRFStatus", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

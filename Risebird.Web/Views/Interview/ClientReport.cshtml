@@ -115,6 +115,10 @@
                         }
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
                         {
+                            @if (Model.IRFInterviewerActive)
+                            {
+                                <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Remove Interviewer" onclick="removeInterviewer(@Model.InterviewId)"></div>
+                            }
                             <div class="pull-right">
                                 <div class="reportdropdown">
                                     <button class="reportdropbtn">Report Quality Issue</button>
@@ -563,14 +567,14 @@
     </div>
 
 
-   
+
 
     @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
     @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
     @await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
     <script src="~/js/ModalFormServerValidation.js"></script>
     <script src="~/js/BroadcastMessage.js"></script>
- 
+
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -579,9 +583,9 @@
                 var modal = document.getElementById("PublicShareVideo");
                 modal.style.display = "block";
             }
-           
+
         })
-     
+
         function SubmitEmail() {
             if ($("#txtEmailid").val().trim() != "") {
                 localStorage.setItem('PublicEmailid', $("#txtEmailid").val());
@@ -858,3 +862,19 @@
             openSecureReportNotificationModel();
         </script>
     }
+    <script>
+        function removeInterviewer(interviewid) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/RemoveInterviewer",
+                data: { interviewid: interviewid },
+                success: function (data) {
+                    if (data == "success") {
+                        window.location.reload();
+                    } else {
+                        swal.fire(data);
+                    }
+                }
+            });
+        }
+    </script>
