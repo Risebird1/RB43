@@ -180,7 +180,7 @@ namespace Risebird.Business.Interface
         Task<QCFormVM> FetchQCFormDetailsById(int interviewid);
         Task<bool> AddorUpdateQCFormReport(QCFormVM model);
         List<CallCatalogueVM> GetInterviewerCallCatalogueList();
-        Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags,int VideoReward);
+        Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags, int VideoReward);
         Task<string> GetClientHRContactByInterviewid(int interviewid);
         Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
         Task<List<MeetingVM>> QCReportDetailsByInterviewer(string emailId);
@@ -222,10 +222,11 @@ namespace Risebird.Business.Interface
         Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type);
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
-        Task<bool> PaymentSlaNotApproved(int interviewid,string emailid);
+        Task<bool> PaymentSlaNotApproved(int interviewid, string emailid);
         Task<bool> AgreeToPaymentSLAConditions(string emailid);
         Task<bool> AddTransInterviewersReliabilityScoresService(TransInterviewersReliabilityScoresVm model);
         Task<bool> AddTransReliabilityScoresSelectAndRejectService(int InterviewMeetingId);
         Task<Meeting> GetAudioCommentDetailsService(int interviewId);
+        Task<bool> RemoveInterviewer(int interviewid);
     }
 }

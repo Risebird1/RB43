@@ -108,6 +108,7 @@ namespace Risebird.Entities.ViewModel
         public int interviewid { get; set; }
         public int returnvaluetype { get; set; }
         public int TimeSlotDays { get; set; }
+        public bool isCandidateportal { get; set; }
     }
     public class TimeslotsVM
     {
@@ -126,6 +127,7 @@ namespace Risebird.Entities.ViewModel
         public string JDTiltle { get; set; }
         public string CompanyLink { get; set; }
         public int inIRFid { get; set; }
+        public bool isCandidateportal { get; set; }
     }
     public class CandidateIRFData
     {

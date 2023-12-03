@@ -134,6 +134,10 @@
                                     </div>
                                 </div>
                             </div>
+                            @if (Model.IRFInterviewerActive)
+                            {
+                                <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Remove Interviewer" onclick="removeInterviewer(@Model.InterviewId)"></div>
+                            }
                         }
 
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
@@ -563,14 +567,14 @@
     </div>
 
 
-   
+
 
     @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
     @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
     @await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
     <script src="~/js/ModalFormServerValidation.js"></script>
     <script src="~/js/BroadcastMessage.js"></script>
- 
+
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -579,9 +583,9 @@
                 var modal = document.getElementById("PublicShareVideo");
                 modal.style.display = "block";
             }
-           
+
         })
-     
+
         function SubmitEmail() {
             if ($("#txtEmailid").val().trim() != "") {
                 localStorage.setItem('PublicEmailid', $("#txtEmailid").val());
@@ -858,3 +862,50 @@
             openSecureReportNotificationModel();
         </script>
     }
+    <script>
+        function removeInterviewer(interviewid) {
+            swal.fire({
+                title: 'Are you sure?',
+                text: 'Want to remove interviewer from further this Skill channel interviews',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Remove it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/Interview/RemoveInterviewer",
+                            data: { interviewid: interviewid },
+                            success: function (result) {
+                                resolve(result);
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Removed!',
+                        type: 'success',
+                        html: '<p>The Interviewer has been removed.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        location.reload(true);
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'remove cancelled! :)',
+                        'error'
+                    )
+                }
+            })
+        }
+    </script>
