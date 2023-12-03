@@ -2080,7 +2080,7 @@ namespace Risebird.CommonHelper
                 var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
                 object[] parameters = new object[] { interviewdate, join_url, Email, HRCoordinator, StaffingAgiencies, Name, ClientName,  clientLogoLink, companyLink };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeetingV2.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeetingV3.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 //Start: Attachment
