@@ -684,7 +684,28 @@ table tr td.relatedvideo:hover {
     bottom: 130px !important;
     right: 0% !important;
 }
+.remove-btn input {
+    border: 0px;
+    background: none;
+    text-align: center;
+    padding: 2px 20px;
+    width: 30px;
+    height: 30px;
+    display: block;
+    position: relative;
+    top: 10px;
+}
 
+
+.remove-btn i {
+    position: relative;
+    top: -17px;
+    left: -5px;
+    color: #c53737;
+    font-size: 17px;
+    padding: 0px 6px;
+    width: 30px;
+}
 .risetubenext-btn {
     border-radius: 5px !important;
     font-size: 12px !important;
