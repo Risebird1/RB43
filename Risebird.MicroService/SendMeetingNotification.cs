@@ -153,21 +153,15 @@ namespace Risebird.MicroService
                     else if (item.EmailType == "Reschedule")
                     {
                         string oneTimeSchedulingLink = string.Empty;
-                        if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                        string stepfirst = item.CalendlyLink.Split("?").LastOrDefault();
+                        var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
+                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
-                            string stepfirst = item.CalendlyLink.Split("?").LastOrDefault();
-                            var olduniqueid = stepfirst.Split("=").LastOrDefault();
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
-                            if (string.IsNullOrEmpty(oneTimeSchedulingLink))
-                            {
-                                oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
-                            }
-                            oneTimeSchedulingLink = "https://portal.risebird.io/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                         }
-                        else
-                        {
-                            oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(item.irfId).Result;
-                        }
+                        oneTimeSchedulingLink = item.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+
                         Mail _mail = new Mail
                         {
                             TO = item.candidateEmail,
