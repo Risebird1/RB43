@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE Procedure usp_FetchCandidateFeedback  
+Create Procedure usp_FetchCandidateFeedback  
 @Emailid varchar(200),  
 @Profile varchar(50)  
 AS  
@@ -29,12 +29,13 @@ BEGIN
 
   Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate 
   ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
-cl.Name as ClientName
+cl.Name as ClientName,ip.NickName as Interviewer
   from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
  join TransClientUser tcu on tcu.IRFId=IRF.id   
  join Client cl on irf.ClientId=cl.id 
 join UserList uli on uli.id=  irf.RisebirdHr
 left join UserList ul on ul.EmailId= im.candidateEmail
+left join UserList ulim on ulim.EmailId=im.interviewer left join InterviewerProfile ip on ip.UserId=ulim.id
  where IRF.ClientId=@Clientid and tcu.ClientUserId=@UserId and im.confirmationStatus=1  
 END  
 else if(@Profile='SeniorHR' or @Profile='SupportAdmin')  
@@ -44,7 +45,7 @@ BEGIN
  --where ul.Emailid=@Emailid and im.confirmationStatus=1 
   Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate 
   ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
-cl.Name as ClientName
+cl.Name as ClientName,ip.NickName as Interviewer
   from 
   CandidateFeedbackDetails cfd  
   join InterviewMeetings im on cfd.Interviewid=im.id
@@ -54,6 +55,7 @@ cl.Name as ClientName
  join Client cl on irf.ClientId=cl.id 
 join UserList uli on uli.id=  irf.RisebirdHr
 left join UserList ulis on ulis.EmailId= im.candidateEmail
+left join UserList ulim on ulim.EmailId=im.interviewer left join InterviewerProfile ip on ip.UserId=ulim.id
  where ul.Emailid=@Emailid and im.confirmationStatus=1 
 END  
 else  
@@ -63,11 +65,12 @@ BEGIN
 
  Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate
 ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
-cl.Name as ClientName
+cl.Name as ClientName,ip.NickName as Interviewer
 from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
 join Client cl on irf.ClientId=cl.id 
 join UserList uli on uli.id=  irf.RisebirdHr
 left join UserList ul on ul.EmailId= im.candidateEmail
+left join UserList ulim on ulim.EmailId=im.interviewer left join InterviewerProfile ip on ip.UserId=ulim.id
 where im.confirmationStatus=1
 END  
   

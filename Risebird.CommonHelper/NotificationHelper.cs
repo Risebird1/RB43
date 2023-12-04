@@ -2066,8 +2066,11 @@ namespace Risebird.CommonHelper
                     var ccMails = model.CC.Split(";");
                     foreach (var mail in ccMails)
                     {
-                        var hrEmail = mail.Split("@");
-                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, hrEmail.FirstOrDefault()));
+                        if (!string.IsNullOrEmpty(mail))
+                        {
+                            var hrEmail = mail.Split("@");
+                            msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, hrEmail.FirstOrDefault()));
+                        }
                     }
                 }
                 //if (!string.IsNullOrWhiteSpace(HRCoordinator))

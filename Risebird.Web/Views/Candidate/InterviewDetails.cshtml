@@ -120,22 +120,22 @@
                                 {
                                     @* <b>Scheduled Interview</b>
                             <br />*@
-                                    <p style="margin-bottom:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting')"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
+                                    <p style="margin-bottom:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
 
                                     <p style="padding-top:10px;"><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b><span style="color:green; font-weight:600"> @item.interviewDate</span></p>
                                     <p>
                                         <div class="interview">
-                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes')">
+                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes',@item.Interviewid)">
                                                 <div class="interviewresponsebtn greenbtn" target="_blank" onclick="ComfirmMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Yes! I am Available</div>
                                             </div>
-                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Reschedule')">
+                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Reschedule',@item.Interviewid)">
                                                 @*<a href="@Model.SchedulingLink" target="_blank"> <span class="interviewresponsebtn" style="background:#cd362b;">Reschedule</span></a>*@
                                                 <div class="interviewresponsebtn redbtn" onclick="ReschuduleMeeting(@item.Interviewid,'@Model.Uniqueid',@Model.CandidateDetails.IRFId,'@Model.CandidateDetails.EmailId')">Reschedule</div>
                                             </div>
-                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'No')">
+                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'No',@item.Interviewid)">
                                                 <div class="interviewresponsebtn redbtn" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">No! I am not Available</div>
                                             </div>
-                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes')">
+                                            <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes',@item.Interviewid)">
                                                 <div class="interviewresponsebtn redbtn" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId')">Need More Clarity</div>
                                             </div>
                                         </div>
@@ -150,7 +150,7 @@
                                 @if (item.interviewDate < DateTime.Now || item.confirmationStatus != "Confirmed")
                                 {
                                     <p> <b style="margin-bottom:10px;">Interview</b></p>
-                                    
+
                                     <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Time:</b> <span style="color:green; font-weight:600"> @item.interviewDate</span></p>
                                     @if (Model.IsReschedule)
                                     {
@@ -162,12 +162,8 @@
                                     }
                                     else if (item.confirmationStatus == "Confirmed")
                                     {
-                                        <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current added" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>
-                                    }
-
-                                    else
-                                    {
-                                        <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span>@item.MeetingStatus</span></p>
+                                        @*<p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current added" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>*@
+                                        <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span>@item.MeetingStatusStatusDesc</span></p>
                                     }
                                 }
                             }
@@ -426,7 +422,7 @@
 </script>
 <script>
     var actionclick = 1;
-    function captureclick(type, buttonaction,interviewid) {
+    function captureclick(type, buttonaction, interviewid) {
         var currenturl = window.location.href;
         if (actionclick == 1) {
             actionclick = 0;
