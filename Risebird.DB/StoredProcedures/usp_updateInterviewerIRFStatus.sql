@@ -16,6 +16,6 @@ declare @interviewerUserId int
 declare @irfId int
 set @interviewerUserId = (select ul.id from UserList ul join InterviewMeetings im on im.interviewer = ul.EmailId where im.id = @InterviewId)
 Select @irfId=IRF.id from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId where im.id=@Interviewid
-Update TransInterviewer Set ClientAction='Rejected' Where Userid=@interviewerUserId and IRFId=@irfId
+Update TransInterviewer Set ClientAction='Rejected',isActive=0 Where Userid=@interviewerUserId and IRFId=@irfId
 END
 GO
