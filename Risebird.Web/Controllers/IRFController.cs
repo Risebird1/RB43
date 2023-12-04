@@ -6659,7 +6659,7 @@ namespace Risebird.Web.Controllers
             //check link expiry befire hitting db
 
             try
-           {
+            {
                 //dec = dec.Replace(" ", "+");
                 //var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
                 //if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
@@ -6678,7 +6678,7 @@ namespace Risebird.Web.Controllers
                 //    return Json("Link Expired.");
                 //}
 
-                if(await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
+                if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
                 {
                     return Json("Status updated successfully.");
                 }
@@ -8184,14 +8184,19 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var model = new IRFVm();
-                model = await _irfService.GetEditIRF(irfid, 0, false);
-                //model.id = model.SkillCollection.FirstOrDefault().IRFId;
                 ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                 var Skillset = await _irfRepository.GetSkills();
                 ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                var result = await _clientService.VerifyClientAuthenticity(irfid, emailid);
+                if (!result)
+                {
+                    ViewBag.Message = "Do not have access for this skill Channel instruction";
+                    return View(model);
+                }
+                model = await _irfService.GetEditIRF(irfid, 0, false);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
                 return View(model);
             }

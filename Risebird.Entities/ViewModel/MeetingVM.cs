@@ -338,6 +338,7 @@ namespace Risebird.Entities.ViewModel
         public int PaymentComplianceCount { get; set; }
 
         public DateTime? PerformedOn { get; set; }
+        public bool IRFInterviewerActive { get; set; }
 
     }
 

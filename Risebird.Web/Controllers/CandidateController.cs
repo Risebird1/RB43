@@ -3507,6 +3507,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.MailCount = firstData.MailCount;
                         candidateTimeline.CallsCount = firstData.CallsCount;
                         candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
+                        candidateTimeline.RedoInterview = firstData.RedoInterview;
                         //candidateTimeline.staffingAgency = firstData.staffingAgency;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -3552,6 +3553,7 @@ namespace Risebird.Web.Controllers
                             {
                                 candidateTimeline.CurrentStatus = "Scheduled";
                             }
+                           
                         }
                         else
                         {
@@ -3678,6 +3680,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.MailCount = firstData.MailCount;
                     candidateTimeline.CallsCount = firstData.CallsCount;
                     candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
+                    candidateTimeline.RedoInterview=firstData.RedoInterview;
                     //schedule status
 
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)

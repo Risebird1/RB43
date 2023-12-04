@@ -25,6 +25,9 @@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
+<input id="hidclientlogo" type="hidden" value="data:image/png;base64,@ViewBag.ClientLogo" />
+<input id="hidlogo" type="hidden" value="data:image/png;base64,@ViewBag.Risebirdlogo" />
+
 <!---  <style>
       .skillBackground {
           color: #000 !important;
@@ -118,6 +121,27 @@
         .sidebar .navbar-minimize .btn {
             display: none !important
         }
+      
+    </style>
+    <style>
+
+#target{
+    width:300px;
+    height:160px;
+    background:lightblue;
+    color:#fff;
+    padding:10px;
+    background-image: url(https://risebirdportal.blob.core.windows.net/clientlogos/synechron_logo_white_background.jpg);
+    background-repeat:no-repeat;
+    background-position:center center;
+    -o-background-size: 100%;
+    -moz-background-size: 100%;
+    -webkit-background-size: 100%;
+    background-size: 100%;
+   height: 100%;
+}
+
+
     </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
@@ -153,29 +177,28 @@
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
+
 <link href="~/newassets/css/report.css" rel="stylesheet" />
-<div id="main-panel" style="display:none">
+<div id="main-panel" style="display:none;">
 
 
-    <div class="content dataloading client">
-        <div class="row bl-bg">
-            <div class="col-md-12">
-            </div>
-        </div>
+    <div class="content dataloading client" >
+       
         <div class="row bl-bg" id="pdfdownload">
-            <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-panel" style="height:53px;">
+       
+       <!--   <nav class="navbar navbar-expand-lg navbar-transparent btn-primary" style="height:60px;">
                 <div class="pull-left">
                     <div class="navbar-wrapper w-full">
-                        <div id="txtpageHeader" class="clientlogoarea" style="position:absolute;left:30px; top:7px;">
-                            <img  src="data:image/png;base64,@ViewBag.Risebirdlogo" />
+                        <div id="txtpageHeader" class="clientlogoarea" style="position:absolute;left:30px; top:10px;">
+                            <img src="data:image/png;base64,@ViewBag.Risebirdlogo" />
                         </div>
                     </div>
 
                 </div>
                 <div class="pull-right" style="text-align:right!important;">
-                    <img style="position:absolute;top:5px;right:30px;height:35px" src="data:image/png;base64,@ViewBag.ClientLogo" />
+                    <img style="position:absolute;top:7px;right:30px;height:35px" src="data:image/png;base64,@ViewBag.ClientLogo" />
                 </div>
-            </nav>
+            </nav>--!>
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
@@ -185,57 +208,57 @@
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <div class="row">
                                     <div class="col-md-12">
-                                       <div style="clear:both">
-                                        <div class="pull-left">
-                                        @if (Model.resumeLink != null && Model.resumeLink != "")
-                                        {
-                                           // <div class="report-heading">Candidate Name</div>
-                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5>@Model.CandidateName</h5></a>
-                                        }
-                                        else
-                                        {
-                                            <div class="report-heading">Candidate Name</div>
-                                            <h2 style="font-size:18px;font-weight:bold;">@Model.CandidateName</h2>
-                                        }
-                                        @Html.HiddenFor(m => m.CandidateName)
-                                        <h4 style="clear:both;font-size:15px;color:grey;font-weight:bold;">@Model.JDTiltle</h4>
-                                        </div>
-                                        <div class="pull-right">
                                         <div style="clear:both">
-                                            @*<label>REPORT DETAILS</label>*@
-                                            @{
-                                                var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
-                                                var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
-                                            }
-                                            @if (Model.MeetingStatus == 4)
-                                            {
-                                                var meetingcolor = "";
-                                                @if (Model.InterviewStatus == 2)
+                                            <div class="pull-left">
+                                                @if (Model.resumeLink != null && Model.resumeLink != "")
                                                 {
-                                                    meetingcolor = "green";
+                                                // <div class="report-heading">Candidate Name</div>
+                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5>@Model.CandidateName</h5></a>
                                                 }
-                                                else if (Model.InterviewStatus == 3)
+                                                else
                                                 {
-                                                    meetingcolor = "red";
+                                                    <div class="report-heading">Candidate Name</div>
+                                                    <h2 style="font-size:18px;font-weight:bold;">@Model.CandidateName</h2>
                                                 }
-                                                <h6 style="text-transform:capitalize">Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h6>
-                                            }
-                                            else
-                                            {
-                                                <h6 style="text-transform:capitalize">Interview Status : <strong>@meestingstatusvalue</strong></h6>
-                                            }
+                                                @Html.HiddenFor(m => m.CandidateName)
+                                                <h4 style="clear:both;font-size:15px;color:grey;font-weight:bold;">@Model.JDTiltle</h4>
                                             </div>
+                                            <div class="pull-right">
                                                 <div style="clear:both">
-                                                <span class="report-heading pull-left" style="font-weight:bold;">
-                                                    Date of Interview :
-                                                </span>
+                                                    @*<label>REPORT DETAILS</label>*@
+                                                    @{
+                                                        var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
+                                                        var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
+                                                    }
+                                                    @if (Model.MeetingStatus == 4)
+                                                    {
+                                                        var meetingcolor = "";
+                                                        @if (Model.InterviewStatus == 2)
+                                                        {
+                                                            meetingcolor = "green";
+                                                        }
+                                                        else if (Model.InterviewStatus == 3)
+                                                        {
+                                                            meetingcolor = "red";
+                                                        }
+                                                        <h6 style="text-transform:capitalize">Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h6>
+                                                    }
+                                                    else
+                                                    {
+                                                        <h6 style="text-transform:capitalize">Interview Status : <strong>@meestingstatusvalue</strong></h6>
+                                                    }
+                                                </div>
+                                                <div style="clear:both">
+                                                    <span class="report-heading pull-left" style="font-weight:bold;">
+                                                        Date of Interview :
+                                                    </span>
                                                     <h4 class="pull-left report-heading" style="font-weight:bold;">@Model.interviewDate</h4>
-                                            </div>
+                                                </div>
                                             </div>
                                         </div>
-                                      
-                                        
-                                       
+
+
+
                                         <hr style="clear:both;margin-bottom:0px;" />
                                         <div>
                                             @if (Model.MeetingStatus == 1)
@@ -287,7 +310,7 @@
                                         <div>
                                             <div class="skill-heading" style="background-size:9%;background-position:5px 8px;font-weight:600;font-size:17px;color:#929090"> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
                                             <hr style="clear:both;margin-bottom:0px;" />
-                                            </div>
+                                        </div>
 
                                         <div>
                                             @if (Model.TechSkillReportCollection != null)
@@ -320,8 +343,9 @@
                                             }
                                         </div>
                                     </div>
-                                   
+
                                     <div class="html2pdf__page-break"></div>
+                              
                                     <div class="col-md-12">
 
                                         <div style="margin-top:10px;">
@@ -354,8 +378,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    </div>
+
+                                </div>
                                 @Html.HiddenFor(m => m.IsGeneralSkillRequired)
                             </div>
 
@@ -649,36 +673,68 @@
 
 <script src="~/js/FeedbackRecorder/Record.js"></script>
 <script src="~/js/Aadhaar.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
 <script>
     function getPDF() {
+      var imgData = $("#hidclientlogo").val();
+      var imgData1 = $("#hidlogo").val();
         var d = new Date();
         var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + ".pdf";
         var element = document.getElementById("pdfdownload");
-        var opt = {
-            margin: [0, 0, 10, 0], //top, left, buttom, right,
-            filename: filename,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            pagebreak: { mode: 'avoid-all' }
-        };
-        html2pdf(element, opt);
-        timeout(5000);
+
+
+        html2pdf()
+            .from(element)
+            .set({
+                margin: [20, 0, 20, 0], //top, left, buttom, right,
+                filename: filename,
+                image:        { type: 'jpeg', quality: .95 },
+                html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'p' },
+                pagebreak: { mode: 'avoid-all' }
+
+            })
+            .toPdf()
+            .get('pdf').then(function (pdf) {
+               
+                var totalPages = pdf.internal.getNumberOfPages();
+
+               
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(50);
+                     pdf.addImage(imgData, "PNG",175, 3, 25, 8);
+                     pdf.addImage(imgData1, "PNG",5, 3, 25, 10);
+                    pdf.text('© 2023 Arhat Talent Solutions Pvt Ltd.:' + i + '/' + totalPages + '', pdf.internal.pageSize.getWidth() - 85, pdf.internal.pageSize.getHeight() - 8);
+
+                }
+            }).save();
+        
+
     }
     function timeout(index) {
         setTimeout('', index);
         window.setTimeout(function () { window.close(); }, 5000);
     }
+
+
+
 </script>
 
-        <style>
+
+<style>
     .before {
         page-break-before: always;
     }
 
     .after {
         page-break-after: always;
-    }</style>
+    }
+</style>
 
-            <script>
+<script>
     pagebreak: { avoid: "tr", mode: "css", before: "#nextpage1", after: "1cm" }</script>
