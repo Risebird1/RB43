@@ -33,7 +33,7 @@ namespace Risebird.MicroService
             _interviewSchedulerRepository = interviewSchedulerRepository;
         }
         [FunctionName("SendMeetingNotification")]
-        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer, ILogger log)
         {
 
 
