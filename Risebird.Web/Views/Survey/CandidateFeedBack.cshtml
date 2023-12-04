@@ -209,65 +209,29 @@
                                         <table id="interviewer" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
-                                                    <th id="cfeedback_4">Candidate Name</th>
-                                                    <th>Candidate Email</th>
+                                                    <th id="cfeedback_4">Candidate Email</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Interview Date</th>
                                                     <th>Rating</th>
-                                                    @if (ViewBag.profileName != "Client")
-                                                    {
-                                                        <th>Interviewer</th>
-                                                    }
                                                     <th>Client</th>
-                                                    <th>Candidate Interaction Quality</th>
-                                                    <th>Limited Handon coding / Practical scenarios</th>
-                                                    <th> Weak Infrastructure</th>
-                                                    <th>Unethical Practices</th>
-                                                    <th>Time Management</th>
-                                                    <th>Poor Communication Skills</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                    <th>Candidate Name</th>
                                                     <th>Candidate Email</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Interview Date</th>
                                                     <th>Rating</th>
-                                                    @if (ViewBag.profileName != "Client")
-                                                    {
-                                                        <th>Interviewer</th>
-                                                    }
                                                     <th>Client</th>
-                                                    <th>Candidate Interaction Quality</th>
-                                                    <th>Limited Handon coding / Practical scenarios</th>
-                                                    <th> Weak Infrastructure</th>
-                                                    <th>Unethical Practices</th>
-                                                    <th>Time Management</th>
-                                                    <th>Poor Communication Skills</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-                                                @{
-                                                    var i = 0;
-                                                }
                                                 @foreach (var item in Model)
                                                 {
                                                     <tr id=@item.interviewid>
-                                                        <td class="candidate-details">
-                                                            @if (item.Name != null && item.Name != "")
-                                                            {
-                                                                @if (item.Name.Length > 10)
-                                                                {
-                                                                    <div class="cadfName mtop-5 text-left">
-                                                                        <a onclick="" data-tooltip="@item.Name"> <span class="cname"> @item.Name</span> </a>
-                                                                    </div>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="cadfName text-left">
-                                                                        <a onclick=""><span class="cname"> @item.Name</span> </a>
-                                                                    </div>
-                                                                }
-                                                            }
-                                                            </td>
-                                                            <td>
+                                                        <td>
                                                             @if (item.EmailAddress != null && item.EmailAddress != "")
                                                             {
                                                                 @if (item.EmailAddress.Length > 40)
@@ -283,46 +247,7 @@
                                                                     </div>
                                                                 }
                                                             }
-                                                            </td>
-                                                            <td>
-                                                                
-                                                          @*   @if (item.PrimarySkill != null && item.PrimarySkill != "")
-                                                            {
-                                                                @if (item.PrimarySkill.Length > 18)
-                                                                {
-                                                                    <div class="text-left mtop-5">
-                                                                        <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill.Substring(0, 18)... </a>
-                                                                    </div>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="text-left mtop-5">
-                                                                        <a onclick=""> @item.PrimarySkill</a>
-                                                                    </div>
-                                                                }
-                                                            } *@
-                                                            <div>
-                                                                @for (int value = 1; value <= 5; value++)
-                                                            {
-                                                                    @if (value <= item.Rating)
-                                                                    {
-                                                                        <i class="fas fa-star checked" style="background-color:yellow" ></i>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <i class="fa fa-star" ></i>
-                                                                    }
-                                                                }
-                                                            </div>
                                                         </td>
-                                                        @*@if (item.IsClient)
-                                                    {
-                                                    <td>******</td>
-                                                    }
-                                                    else
-                                                    {
-
-                                                    }*@
                                                         @if (ViewBag.profileName != "Client")
                                                         {
                                                             <td>
@@ -343,17 +268,34 @@
                                                                 }
                                                             </td>
                                                         }
-
+                                                        else
+                                                        {
+                                                            <td>@item.Interviewer</td>
+                                                        }
+                                                        <td>@item.Interviewdate</td>
+                                                        <td>
+                                                            <div style="margin-top:-1vw">
+                                                                @for (int value = 1; value <= 5; value++)
+                                                                {
+                                                                    @if (value <= item.Rating)
+                                                                    {
+                                                                        @*<i class="fas fa-star checked" style="background-color:yellow"></i>*@
+                                                                        <i style="color:gold;font-size:180%;">&starf;</i>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <i style="color:lightgray;font-size:180%;">&starf;</i>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </td>
                                                         <td>@item.ClientName</td>
-                                                        <td>@item.CandidateInteractionQuality</td>
-                                                        <td>@item.LimitedHandoncoding</td>
-                                                        <td>@item.WeakInfrastructure</td>
-                                                         <td>@item.UnethicalPractices</td>
-                                                        <td>@item.TimeManagement</td>
-                                                        <td>@item.PoorCommunicationSkills</td>
-                                                    @*  <td></td> *@
+                                                        <td>
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
+                                                                <div style="width: 30px;height: 30px;cursor:pointer; display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.interviewid','Candidate')"><svg style="color: white;position:relative;top:-4px;left:6px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg><svg style="color: white;position:relative;top:3px;" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M2 8C2 7.44772 2.44772 7 3 7H21C21.5523 7 22 7.44772 22 8C22 8.55228 21.5523 9 21 9H3C2.44772 9 2 8.55228 2 8Z" fill="white"></path> <path d="M2 12C2 11.4477 2.44772 11 3 11H21C21.5523 11 22 11.4477 22 12C22 12.5523 21.5523 13 21 13H3C2.44772 13 2 12.5523 2 12Z" fill="white"></path> <path d="M3 15C2.44772 15 2 15.4477 2 16C2 16.5523 2.44772 17 3 17H15C15.5523 17 16 16.5523 16 16C16 15.4477 15.5523 15 15 15H3Z" fill="white"></path> </svg></div>
+                                                            </button>
+                                                        </td>
                                                     </tr>
-                                                    i++;
                                                 }
                                             </tbody>
                                         </table>
@@ -371,6 +313,7 @@
         </div>
     </div>
 </div>
+@await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -436,7 +379,7 @@
     }
 
     $(document).ready(function () {
-       // SetRating();
+        // SetRating();
         applyDataTable();
 
     });
