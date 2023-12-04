@@ -171,26 +171,15 @@ namespace Risebird.MicroService
                         var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink, item.interviewMeetingId);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.candidateEmail;
-                        if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
-                        {
+                        //if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                        //{
                             _whatsapp.Event = "Interview Reschedule Risebird";
-                        }
-                        else
-                        {
-                            _whatsapp.Event = "Interview Reschedule";
-                        }
-                        if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
-                        {
-                            _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
-                        }
-                        else
-                        {
-                            _whatsapp.buttonlink = !string.IsNullOrEmpty(item.CalendlyLink) ? item.CalendlyLink.Replace("https://calendly.com/", "") : "";
-                        }
-                        if (_whatsapp.buttonlink.Contains("InterviewScheduler/ScheduleEvent"))
-                        {
-                            _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
-                        }
+                        //}
+                        //else
+                        //{
+                        //    _whatsapp.Event = "Interview Reschedule";
+                        //}
+                        _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
                         _whatsapp.irfId = item.irfId;
                         _ = await _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
                     }
