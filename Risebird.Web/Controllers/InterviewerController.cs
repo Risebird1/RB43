@@ -2606,7 +2606,7 @@ namespace Risebird.Web.Controllers
                             modelData = results;
                         if (modelData.Count() != 0)
                         {
-                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.StarRating).Average(), 2);
+                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.Rating).Average(), 2);
                         }
                     }
                     return View(modelData);

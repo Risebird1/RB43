@@ -86,6 +86,7 @@ namespace Risebird.Entities.ViewModel
         public string interviewer { get; set; }
         public string candidateEmail { get; set; }
         public int Question2 { get; set; }
+        public int Rating { get; set; }
     }
     public class ClientReviewVM
     {
