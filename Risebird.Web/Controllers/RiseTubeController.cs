@@ -1795,7 +1795,7 @@ namespace Risebird.Web.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Sharecreatedview(MeetingVM _newobject)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
