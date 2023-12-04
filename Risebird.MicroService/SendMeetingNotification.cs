@@ -155,8 +155,8 @@ namespace Risebird.MicroService
                         string oneTimeSchedulingLink = string.Empty;
                         if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                         {
-                            string stepfirst = item.CalendlyLink.Split("?")[item.CalendlyLink.Split("?").Length];
-                            var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                            string stepfirst = item.CalendlyLink.Split("?").LastOrDefault();
+                            var olduniqueid = stepfirst.Split("=").LastOrDefault();
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
                             if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                             {
