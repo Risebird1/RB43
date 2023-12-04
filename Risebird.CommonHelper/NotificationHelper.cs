@@ -2061,11 +2061,14 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
-                foreach (var mail in ccMails)
+                if (!string.IsNullOrEmpty(model.CC))
                 {
-                    var hrEmail = mail.Split("@");
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, hrEmail.FirstOrDefault()));
+                    var ccMails = model.CC.Split(";");
+                    foreach (var mail in ccMails)
+                    {
+                        var hrEmail = mail.Split("@");
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, hrEmail.FirstOrDefault()));
+                    }
                 }
                 //if (!string.IsNullOrWhiteSpace(HRCoordinator))
                 //{
@@ -2078,7 +2081,7 @@ namespace Risebird.CommonHelper
                 //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(StaffingAgiencies, staffingEmail.FirstOrDefault()));
                 //}
                 var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
-                object[] parameters = new object[] { interviewdate, join_url, Email, HRCoordinator, StaffingAgiencies, Name, ClientName,  clientLogoLink, companyLink };
+                object[] parameters = new object[] { interviewdate, join_url, Email, HRCoordinator, StaffingAgiencies, Name, ClientName, clientLogoLink, companyLink };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeetingV3.html");
                 string msgBody = string.Format(rawEmail, parameters);
