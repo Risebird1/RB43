@@ -84,7 +84,7 @@ namespace Risebird.MicroService
                                 CC = CCEmails,
                                 Subject = item.ClientName + " " + item.PrimarySkill + " Interview-  Interviewer is waiting for you. Please join immediately."
                             };
-                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString());
+                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId);
 
                         }
                         else
@@ -95,7 +95,7 @@ namespace Risebird.MicroService
                                 CC = CCEmails,
                                 Subject = "Risebird Interview: Are you late? Candidate (" + item.candidateName + " ) has joined the meeting and is waiting. Please join immediately."
                             };
-                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "");
+                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "", item.interviewMeetingId);
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.interviewer + ";" + CCEmails;
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
@@ -116,7 +116,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = "Risebird Emergency Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
                         };
-                        var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
+                        var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId);
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.emergencyinterviewer;
                         _whatsAppVM.buttonlink = !string.IsNullOrEmpty(linkurl) ? linkurl.Replace("https://portal.risebird.io/", "") : "";
@@ -131,7 +131,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = $"Risebird: We apologise for the delay in the interview"
                         };
-                        var resultset1 = await _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName);
+                        var resultset1 = await _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName, item.interviewMeetingId);
 
                         WhatsAppVM _whatsAppVMC = new WhatsAppVM();
                         _whatsAppVMC.Emailid = item.candidateEmail;
@@ -148,7 +148,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = $"Risebird: We apologise for the delay - Please wait for 5 more mins"
                         };
-                        var resultset1 = await _notificationHelper.AppologyNotificationToCandidateSecond(_mail1, item.candidateName);
+                        var resultset1 = await _notificationHelper.AppologyNotificationToCandidateSecond(_mail1, item.candidateName, item.interviewMeetingId);
                     }
                     else if (item.EmailType == "Reschedule")
                     {
@@ -174,7 +174,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = $"Risebird: Due to unforeseen circumstances, the interviewer is unable to join the interview. We apologise for the inconvenience. Kindly reschedule."
                         };
-                        var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink);
+                        var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink, item.interviewMeetingId);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.candidateEmail;
                         if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
