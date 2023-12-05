@@ -84,7 +84,11 @@ namespace Risebird.MicroService
                                 CC = CCEmails,
                                 Subject = item.ClientName + " " + item.PrimarySkill + " Interview-  Interviewer is waiting for you. Please join immediately."
                             };
-                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId);
+
+                            string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails/" + item.candidateUniqueId + "?IRFId=" + item.irfId;
+
+                            //var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId);
+                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId);
 
                         }
                         else
