@@ -4137,6 +4137,8 @@ namespace Risebird.Web.Controllers
                             se = filter.EndDate.Value.AddDays(1);
                         }
                     }
+                    ViewBag.st = st;
+                    ViewBag.se = se;
                     var model = await _clientService.GetRecruiterReportByClient(emailid, st, se);
                     model = model.Where(x => x.ClientHrContact != null && x.ClientHrContact != "").ToList();
                     model = model.GroupBy(l => l.ClientHrContact).Select(cl => new IRF
@@ -4816,8 +4818,9 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<JsonResult> GetRecruiterReport()
+        public async Task<IActionResult> GetRecruiterReport(DateTime st,DateTime se)
         {
+            try { 
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
@@ -4828,21 +4831,22 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     var client = await _userRepository.GetClientUserDetails(emailid);
                     ViewBag.ButtonAccess = false;
+
                     if (client.Role == "Multiple IRF owner")
                     {
                         ViewBag.ButtonAccess = true;
                     }
-                    DateTime st = DateTime.Now.AddMonths(-1);
-                    DateTime se = DateTime.Now;
-                    if (HttpContext.Session.GetString("RecruiterReportfilters") != null)
-                    {
-                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RecruiterReportfilters"));
-                        if (filter.StartDate != null && filter.EndDate != null)
-                        {
-                            st = filter.StartDate.Value;
-                            se = filter.EndDate.Value.AddDays(1);
-                        }
-                    }
+                    //DateTime st = DateTime.Now.AddMonths(-3);
+                    //DateTime se = DateTime.Now;
+                    //if (HttpContext.Session.GetString("RecruiterReportfilters") != null)
+                    //{
+                    //    var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RecruiterReportfilters"));
+                    //    if (filter.StartDate != null && filter.EndDate != null)
+                    //    {
+                    //        st = filter.StartDate.Value;
+                    //        se = filter.EndDate.Value.AddDays(1);
+                    //    }
+                    //}
                     var model = await _clientService.GetRecruiterReportByClient(emailid, st, se);
                     model = model.Where(x => x.ClientHrContact != null && x.ClientHrContact != "").ToList();
                     //model = model.GroupBy(l => l.ClientHrContact).Select(cl => new IRF
@@ -4859,16 +4863,21 @@ namespace Risebird.Web.Controllers
                         ViewBag.Message = TempData["RecruiterSuccessErrorMessage"].ToString();
                         TempData.Remove("RecruiterSuccessErrorMessage");
                     }
-                    return Json(model);
+                    return PartialView("_GetRecruiterReportDetails", model);
                 }
-                else
                 {
-                    return Json("Hello");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             else
             {
-                return Json("Hello1111");
+                return RedirectToAction("SignOut", "Session");
+            }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

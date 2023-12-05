@@ -113,14 +113,12 @@
                                         <th>Recruiter</th>
                                         <th>Skill Channel</th>
                                         @*<th>Job Title</th>*@
-                                        <th>Total Completed</th>
+                                       @*  <th>Total Completed</th>
                                         <th>Selected</th>
                                         <th>Rejected</th>
-                                        <th>Selection Rate (%)</th>
-                                        @if (ViewBag.ButtonAccess)
-                                        {
+                                        <th>Selection Rate (%)</th> *@
+
                                             <th>Action</th>
-                                        }
                                     </tr>
                                 </thead>
                                 <tfoot>
@@ -128,14 +126,12 @@
                                         <th>Recruiter</th>
                                         <th>Skill Channel</th>
                                         @*<th>Job Title</th>*@
-                                        <th>Total Completed</th>
+                                        @* <th>Total Completed</th>
                                         <th>Selected</th>
                                         <th>Rejected</th>
-                                        <th>Selection Rate (%)</th>
-                                        @if (ViewBag.ButtonAccess)
-                                        {
+                                        <th>Selection Rate (%)</th> *@
+
                                             <th>Action</th>
-                                        }
                                     </tr>
                                 </tfoot>
                                 <tbody>
@@ -171,7 +167,7 @@
                                         </div>
                                         </td>*@
 
-                                            <td>@item.ScheduledMeetings</td>
+                                           @*  <td>@item.ScheduledMeetings</td>
                                             <td>@item.SelectedMeetings</td>
                                             <td>@item.RejectedMeetings</td>
                                             @if (@item.ScheduledMeetings != null && @item.ScheduledMeetings != 0)
@@ -187,7 +183,7 @@
                                             else
                                             {
                                                 <td>0</td>
-                                            }
+                                            } *@
                                       
                                             <td>
                                             <button class="mdc-fab app-fab--absolute" aria-label=" Recruiter Report">
@@ -211,101 +207,31 @@
 
 </div>
 
-<div id="RecruiterReportTypeModal" class="modal modal-bg">
+
+<div id="RecruiterReportModel" class="modal modal-bg" style="z-index:3;">
     <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 1000px !important;">
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="fa fa-user-secret" style="font-size:25px;"></span>
+                    <span>
+                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-lightbulb" viewBox="0 0 16 16"> <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" fill="white"></path> </svg>
+                    </span>
                 </div>
-                <h5 class="modal-title pull-left" id="memberHeading">Suspicious Interviewer Details</h5>
+                <h5 class="modal-title pull-left">Recruiter Report </h5><p style="float:right"><span class="candidatename-sla" id="hidlastlogin" style="position:relative;top:1px;font-size:14px;"></span></p><span class="candidatename-sla" id="txtheaderInsights" style="margin-right:25px;"></span>
             </div>
-            <button onclick="RecruiterReportTypeBody()" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeRecruiterReportModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
-            <div class="modal-body" id="SuspiciousTypebody" style="overflow:auto;max-height:30vw">
-                <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th>Recruiter</th>
-                            <th>Skill Channel</th>
-                            @*<th>Job Title</th>*@
-                            <th>Total Completed</th>
-                            <th>Selected</th>
-                            <th>Rejected</th>
-                            <th>Selection Rate (%)</th>
-                                <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Recruiter</th>
-                            <th>Skill Channel</th>
-                            @*<th>Job Title</th>*@
-                            <th>Total Completed</th>
-                            <th>Selected</th>
-                            <th>Rejected</th>
-                            <th>Selection Rate (%)</th>
-                                <th>Action</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.ClientHrContact</td>
-                                <td>
-                                    @item.IRFId
-                                </td>
-
-                                <td>@item.ScheduledMeetings</td>
-                                <td>@item.SelectedMeetings</td>
-                                <td>@item.RejectedMeetings</td>
-                                @if (@item.ScheduledMeetings != null && @item.ScheduledMeetings != 0)
-                                {  @if ((Convert.ToInt32(item.SelectedMeetings) * 100 / item.ScheduledMeetings) <= 30)
-
-                                    {
-                                        <td><span style="color:red;">@(Convert.ToInt32(item.SelectedMeetings) * 100 / item.ScheduledMeetings)%</span></td>
-                                    }
-                                    else
-                                    {
-                                        <td>@(Convert.ToInt32(item.SelectedMeetings) * 100 / item.ScheduledMeetings)%</td>
-                                    }
-                                }
-                                else
-                                {
-                                    <td>0</td>
-                                }
-                  
-                                       @if (ViewBag.ButtonAccess)
-                                {
-                                <td>
-                           
-                                        @if (!item.IsRecruiterActive)
-                                        {
-                                        <button class="mdc-fab app-fab--absolute" aria-label="Active the Recruiter">
-                                            <span onclick="ActiveRecruiter('@item.UserId', '@item.ClientId', '@item.id');" title="Active the Recruiter" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" /></svg></span>
-                                        </button>
-                                        }
-                                        else
-                                        {
-                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Disable the Recruiter">
-                                            <span onclick="DisableRecruiter('@item.UserId', '@item.ClientId', '@item.id');" title="Disable the Recruiter" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M2.23 4.35A6.004 6.004 0 0 0 2 6c0 1.691.7 3.22 1.826 4.31.203.196.359.4.453.619l.762 1.769A.5.5 0 0 0 5.5 13a.5.5 0 0 0 0 1 .5.5 0 0 0 0 1l.224.447a1 1 0 0 0 .894.553h2.764a1 1 0 0 0 .894-.553L10.5 15a.5.5 0 0 0 0-1 .5.5 0 0 0 0-1 .5.5 0 0 0 .288-.091L9.878 12H5.83l-.632-1.467a2.954 2.954 0 0 0-.676-.941 4.984 4.984 0 0 1-1.455-4.405l-.837-.836zm1.588-2.653.708.707a5 5 0 0 1 7.07 7.07l.707.707a6 6 0 0 0-8.484-8.484zm-2.172-.051a.5.5 0 0 1 .708 0l12 12a.5.5 0 0 1-.708.708l-12-12a.5.5 0 0 1 0-.708z" /></svg></span>
-                                        </button>
-                                        }
-                                </td>
-                                     }
-                               
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <div class="modal-body" id="divRecruiterReportmodel">
             </div>
-           
         </div>
     </div>
 </div>
+
+@* @await Html.PartialAsync("~/Views/Client/_GetRecruiterReportDetails.cshtml") *@
+
+
 
 @if (ViewBag.Message != null)
 {
@@ -581,6 +507,7 @@
             }
         })
         changeColor('red');
+        changeColor('red');
     }
 
     function ActiveRecruiter(userid, clientid, Irfid) {
@@ -622,17 +549,31 @@
     }
 </script>
 <script>
-    function RecruiterReportTypeDetails() {
-        var modal = document.getElementById("RecruiterReportTypeModal");
+
+
+    function closeRecruiterReportModel() {
+        var modal = document.getElementById("RecruiterReportModel");
+        modal.style.display = "none";
+    }
+    function openRecruiterReportModel() {
+        var modal = document.getElementById("RecruiterReportModel");
         modal.style.display = "block";
-        GetRecruiterReport
+    }
+    function RecruiterReportTypeDetails() {
         $.ajax({
             url: '/Client/GetRecruiterReport',
-            type: "POST",
+            type: "Get",
+            data: {
+                st: '@ViewBag.st', se: '@ViewBag.se'},
             success: function (data) {
-               
+                openRecruiterReportModel();
+                
+                $('#divRecruiterReportmodel').html('');
+                $('#divRecruiterReportmodel').html(data);
             }
         });
     }
+
+    
 </script>
 <script src="~/js/filtervalidation.js"></script>
