@@ -4139,15 +4139,15 @@ namespace Risebird.Web.Controllers
                     }
                     var model = await _clientService.GetRecruiterReportByClient(emailid, st, se);
                     model = model.Where(x => x.ClientHrContact != null && x.ClientHrContact != "").ToList();
-                    //model = model.GroupBy(l => l.ClientHrContact).Select(cl => new IRF
-                    //{
-                    //    id = cl.FirstOrDefault().id,
-                    //    ClientHrContact = cl.FirstOrDefault().ClientHrContact,
-                    //    IRFId = cl.Count().ToString(),
-                    //    ScheduledMeetings = cl.Sum(c => c.ScheduledMeetings),
-                    //    SelectedMeetings = cl.Sum(c => c.SelectedMeetings),
-                    //    RejectedMeetings = cl.Sum(c => c.RejectedMeetings),
-                    //}).ToList();
+                    model = model.GroupBy(l => l.ClientHrContact).Select(cl => new IRF
+                    {
+                        id = cl.FirstOrDefault().id,
+                        ClientHrContact = cl.FirstOrDefault().ClientHrContact,
+                        IRFId = cl.Count().ToString(),
+                        ScheduledMeetings = cl.Sum(c => c.ScheduledMeetings),
+                        SelectedMeetings = cl.Sum(c => c.SelectedMeetings),
+                        RejectedMeetings = cl.Sum(c => c.RejectedMeetings),
+                    }).ToList();
                     if (TempData["RecruiterSuccessErrorMessage"] != null)
                     {
                         ViewBag.Message = TempData["RecruiterSuccessErrorMessage"].ToString();
@@ -4811,6 +4811,64 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetRecruiterReport()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Client")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var client = await _userRepository.GetClientUserDetails(emailid);
+                    ViewBag.ButtonAccess = false;
+                    if (client.Role == "Multiple IRF owner")
+                    {
+                        ViewBag.ButtonAccess = true;
+                    }
+                    DateTime st = DateTime.Now.AddMonths(-1);
+                    DateTime se = DateTime.Now;
+                    if (HttpContext.Session.GetString("RecruiterReportfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RecruiterReportfilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            st = filter.StartDate.Value;
+                            se = filter.EndDate.Value.AddDays(1);
+                        }
+                    }
+                    var model = await _clientService.GetRecruiterReportByClient(emailid, st, se);
+                    model = model.Where(x => x.ClientHrContact != null && x.ClientHrContact != "").ToList();
+                    //model = model.GroupBy(l => l.ClientHrContact).Select(cl => new IRF
+                    //{
+                    //    id = cl.FirstOrDefault().id,
+                    //    ClientHrContact = cl.FirstOrDefault().ClientHrContact,
+                    //    IRFId = cl.Count().ToString(),
+                    //    ScheduledMeetings = cl.Sum(c => c.ScheduledMeetings),
+                    //    SelectedMeetings = cl.Sum(c => c.SelectedMeetings),
+                    //    RejectedMeetings = cl.Sum(c => c.RejectedMeetings),
+                    //}).ToList();
+                    if (TempData["RecruiterSuccessErrorMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["RecruiterSuccessErrorMessage"].ToString();
+                        TempData.Remove("RecruiterSuccessErrorMessage");
+                    }
+                    return Json(model);
+                }
+                else
+                {
+                    return Json("Hello");
+                }
+            }
+            else
+            {
+                return Json("Hello1111");
             }
         }
     }
