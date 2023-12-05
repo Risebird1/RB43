@@ -6854,6 +6854,10 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SecureReport", "Interview", new { interviewId = model.interviewid, irfId = model.IRFId, emailid = model.ModifiedBy, id = model.uniqueid });
             }
+            else if (model.type == "FeedbackCandidate")
+            {
+                return RedirectToAction("CandidateFeedBack", "Survey", new { type = "Candidate" });
+            }
             return RedirectToAction("CompletedInterviews");
         }
         [HttpGet]
@@ -8112,7 +8116,7 @@ namespace Risebird.Web.Controllers
             result.AudioComment = _irfService.FetchIRFAudioLink(id);
             return View(result);
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> RemoveInterviewer(int interviewid)
         {
