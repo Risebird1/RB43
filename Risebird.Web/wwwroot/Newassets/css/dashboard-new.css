@@ -9369,8 +9369,13 @@ option {
     .preview-txt {
         padding-left: 0px !important;
     }
+
+        .preview-txt span {
+            color: #706a6a;
+            font-size:15px;
+        }
     #btnSave {
-        left: 0px!important;
+        left: 0px !important;
     }
     .jd .skillname {
         width: 100% !important;
