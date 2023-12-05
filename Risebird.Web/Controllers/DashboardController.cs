@@ -1594,6 +1594,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
                         ViewBag.PaymentSLAConfirmation = model.PaymentSLAConfirmation;
                         ViewBag.InterviewerRedMarkerReport = model.RedmarkerAcknowledge;
+                        ViewBag.VideoKYC = model.VideoKYC;
                         if (model.VideoConfirmation == 0)
                         {
                             ViewBag.VideoConfirmationPopup = true;
