@@ -116,7 +116,7 @@
                         <div id="Interviews" class="tabcontent">
                             @foreach (var item in Model.Meetings)
                             {
-                                @if (item.interviewDate >= DateTime.Now && item.confirmationStatus == "Confirmed")
+                                @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.confirmationStatus == "Confirmed")
                                 {
                                     @* <b>Scheduled Interview</b>
                             <br />*@

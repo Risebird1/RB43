@@ -83,8 +83,11 @@
 <input type="text" hidden id="hidtxtinterviewid" value="@ViewBag.InterviewId" />
 <input type="text" hidden id="hidtxtirfid" value="@ViewBag.IrfId" />
 
-<div @*class="main-panel"*@ id="main-panel">
+<div  id="main-panel">
     <div class="pt30">
+        <div class="col-md-12">
+            @*<span class="discretion"><strong style="font-size:15px;">Report discretion:</strong> Till the time QC is passed, Risebird can not ensure that all quality standards are met on this report. Use this report at your own discretion.</span>*@
+            </div>
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
@@ -136,7 +139,7 @@
                             </div>
                             @if (Model.IRFInterviewerActive)
                             {
-                                <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Remove Interviewer" onclick="removeInterviewer(@Model.InterviewId)"></div>
+                                <div class="pull-right"> <input style="background:red" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Remove Interviewer" onclick="removeInterviewer(@Model.InterviewId)"></div>
                             }
                         }
 
@@ -448,7 +451,7 @@
 
 
     </div>
-
+    </div>
     <div id="modal_clientComment_placeholder"></div>
 
     @*<div id="modal_clientAudio_placeholder"></div>*@
