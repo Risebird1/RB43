@@ -2590,13 +2590,13 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.type = "Candidate";
                         modelData = await _interviewerService.fetchClientFeedbackbyInterviewer(emailid, "Candidate");
-                        foreach (var item in modelData)
-                        {
-                            item.StarRating = item.Question2;
-                        }
+                        //foreach (var item in modelData)
+                        //{
+                        //    item.StarRating = item.Question2;
+                        //}
                         if (modelData.Count() != 0)
                         {
-                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.Question2).Average(), 2);
+                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.Rating).Average(), 2);
                         }
                     }
                     else
@@ -2606,7 +2606,7 @@ namespace Risebird.Web.Controllers
                             modelData = results;
                         if (modelData.Count() != 0)
                         {
-                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.StarRating).Average(), 2);
+                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.Rating).Average(), 2);
                         }
                     }
                     return View(modelData);

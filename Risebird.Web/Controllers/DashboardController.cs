@@ -1664,7 +1664,7 @@ namespace Risebird.Web.Controllers
 
                 if (Clientmodel.Count() != 0)
                 {
-                    clientrating = Math.Round(Clientmodel.Select(x => x.StarRating).Average(), 2);
+                    clientrating = Math.Round(Clientmodel.Select(x => x.Rating).Average(), 2);
                 }
                 return Json(new { clientRating = clientrating });
             }
