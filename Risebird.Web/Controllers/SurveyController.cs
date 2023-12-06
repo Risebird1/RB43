@@ -102,11 +102,20 @@ namespace Risebird.Web.Controllers
                 ViewBag.PageName = "Interview";
                 if (profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Admin")
                 {
+                    if (TempData["SuccessErrorMessageQCForm"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                        TempData.Remove("SuccessErrorMessageQCForm");
+                    }
                     if (type == "Candidate")
                     {
                         ViewBag.type = "Candidate";
                         var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
-
+                        modelData = modelData.Select(x =>
+                        {
+                            x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
                         if (HttpContext.Session.GetString("CandidateFeedBackfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<CandidateTimelineFilter>(HttpContext.Session.GetString("CandidateFeedBackfilters"));

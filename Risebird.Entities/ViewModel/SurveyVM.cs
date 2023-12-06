@@ -57,6 +57,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Time Management ")]
         public string TimeManagement { get; set; }
         public string Interviewer { get; set; }
+        public int? InterviewStatus { get; set; }
+        public string intervieweStatusStatDesc { get; set; }
     }
     public class SurveyCandidateInterviewer
     {
