@@ -7880,6 +7880,10 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
                     model.CreatedBy = emailId;
+                    if (model.VideoReward > 0)
+                    {
+                        model.VideoEnable = true;
+                    }
                     if (await _meetingService.AddorUpdatePaymentSLADetails(model))
                     {
                         TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
@@ -7889,6 +7893,10 @@ namespace Risebird.Web.Controllers
                             result.InterviewMeetingId = model.Interviewid;
                             result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerPaymentSLA;
                             await _meetingService.AddTransInterviewersReliabilityScoresService(result);
+                        }
+                        else
+                        {
+                            await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, 0, model.VideoReward);
                         }
                     }
                     else
@@ -7910,6 +7918,10 @@ namespace Risebird.Web.Controllers
                     else if (model.Pagetype == "PotentailRiskClient")
                     {
                         return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.PotentialRiskByClient });
+                    }
+                    else if (model.Pagetype == "QCPendingReport")
+                    {
+                        return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.QCPendingReport });
                     }
                     else
                     {
