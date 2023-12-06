@@ -682,6 +682,7 @@
                             </div>
                             @if (Model.isapprovedchecked)
                             {
+                                @Html.HiddenFor(model=>model.VideoReward)
                                 <div class="form-group">
                                     <div class="accordion-group">
                                         <div class="accordion-heading">
@@ -699,7 +700,7 @@
                                     </div>
                                 </div>
                             }
-                            else if (Model.isapprovedchecked)
+                            else if (Model.Pagetype == "QCPendingReport")
                             {
                                 <div class="form-group">
                                     <div class="accordion-group">
@@ -716,13 +717,16 @@
                                                 new SelectListItem{Value="10",Text="10%"},
                                                 new SelectListItem{Value="12",Text="12%"},
                                                 new SelectListItem{Value="15",Text="15%"},
-                                                new SelectListItem{Value="20",Text="20%"},
+                                                new SelectListItem{Value="20",Text="20%"}},
                                                 new { @class = "pull-left",@style="width:200px;" })
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            }
+                            else{
+                                @Html.HiddenFor(model=>model.VideoReward)
                             }
                         </div>
                         <div class="col-md-6 col-sm-6">
