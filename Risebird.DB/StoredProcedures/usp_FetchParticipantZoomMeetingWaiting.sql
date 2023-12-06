@@ -31,7 +31,8 @@ DECLARE @MeetingNotificationDetails TABLE(
   PrimarySkill varchar(1000),          
   irfId int,  
   LogoLink varchar(1000) ,
-  candidateUniqueId varchar(50)
+  candidateUniqueId varchar(50),
+  JDLink varchar(2000)
 )                         
 DECLARE @MeetingNotificationEI TABLE(    
   interviewMeetingId int,  
@@ -52,7 +53,8 @@ DECLARE @MeetingNotificationEI TABLE(
   PrimarySkill varchar(1000),          
   irfId int,  
   LogoLink varchar(1000), 
-  candidateUniqueId varchar(50)
+  candidateUniqueId varchar(50),
+  JDLink varchar(2000)
 )                          
 DECLARE @MeetingNotificationReschedule TABLE(       
   interviewMeetingId int,  
@@ -73,7 +75,8 @@ DECLARE @MeetingNotificationReschedule TABLE(
   PrimarySkill varchar(1000),          
   irfId int,  
   LogoLink varchar(1000),
-  candidateUniqueId varchar(50)
+  candidateUniqueId varchar(50),
+  JDLink varchar(2000)
 )                          
 DECLARE @MeetingNotificationCandidate TABLE(    
   interviewMeetingId int,  
@@ -94,7 +97,8 @@ DECLARE @MeetingNotificationCandidate TABLE(
   PrimarySkill varchar(1000),          
   irfId int,  
   LogoLink varchar(1000),
-  candidateUniqueId varchar(50)
+  candidateUniqueId varchar(50),
+  JDLink varchar(2000)
 )        
     
 create table #ZoomMeetingTransmissionTempTbl( ParticipantName varchar(200), Meetingid varchar(200))    
@@ -111,13 +115,13 @@ where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and
                   
 ;with CTE(interviewMeetingId, Meetingid,candidateEmail,interviewer,risebirdHR,emergencyinterviewer,isInterviewerWaiting,
 EmailType,zoomLink,CalendlyLink,HRCoordinatorEmailId,candidateName,interviewDate,ClientHrContact,ClientName,PrimarySkill, 
-irfId,LogoLink, candidateUniqueId) as (                        
+irfId,LogoLink, candidateUniqueId, JDLink) as (                        
     
 Select distinct im.id, t1.Meetingid,im.candidateEmail,im.interviewer,ulr.EmailId as risebirdHR,'' as emergencyinterviewer,                       
 (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END) as isInterviewerWaiting, 'reaminder' as EmailType,im.zoomLink,
 IRF.CalendlyLink,im.HRCoordinatorEmailId,im.candidateName,im.interviewDate,im.ClientHrContact,      
 Cl.Name as ClientName,IRF.JDTiltle as PrimarySkill,  
-IRF.id as irfId,cl.LogoLink, ulc.uniqueid from    
+IRF.id as irfId,cl.LogoLink, ulc.uniqueid, irf.JDLink from    
 (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where                    
 Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1                              
 left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' 
@@ -149,7 +153,7 @@ Insert into @MeetingNotificationEI
 Select distinct im.id, im.ZoomMeetingId as Meetingid,im.candidateEmail,im.interviewer,ulr.EmailId as risebirdHR,
 ei.emergencyinterviewer, (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END) as isInterviewerWaiting,'EI' as EmailType,
 im.zoomLink,IRF.CalendlyLink,im.HRCoordinatorEmailId,im.candidateName,im.interviewDate,im.ClientHrContact,
-Cl.Name as ClientName,'' as PrimarySkill, IRF.id as irfId,cl.LogoLink, ulc.uniqueid
+Cl.Name as ClientName,'' as PrimarySkill, IRF.id as irfId,cl.LogoLink, ulc.uniqueid, irf.JDLink
 from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1                        
 left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid                          
 join InterviewMeetings im on im.ZoomMeetingId=t1.Meetingid                        
@@ -177,7 +181,7 @@ Insert into @MeetingNotificationCandidate
 Select distinct im.id, im.ZoomMeetingId as Meetingid,im.candidateEmail,im.interviewer,ulr.EmailId as risebirdHR,
 ei.emergencyinterviewer, (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END) as isInterviewerWaiting,'CApology' as EmailType,
 im.zoomLink,IRF.CalendlyLink,im.HRCoordinatorEmailId,im.candidateName,im.interviewDate,im.ClientHrContact,Cl.Name as ClientName,
-'' as PrimarySkill, IRF.id as irfId,cl.LogoLink, ulc.uniqueid 
+'' as PrimarySkill, IRF.id as irfId,cl.LogoLink, ulc.uniqueid, irf.JDLink 
 from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group  by meetingid) as t1                        
 left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid                          
 join InterviewMeetings im on im.ZoomMeetingId=t1.Meetingid                        
@@ -203,7 +207,7 @@ Insert into @MeetingNotificationReschedule
 Select distinct im.id, im.ZoomMeetingId as Meetingid,im.candidateEmail,im.interviewer,ulr.EmailId as risebirdHR,
 ei.emergencyinterviewer, (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END) as isInterviewerWaiting,'Reschedule' as EmailType,
 im.zoomLink,IRF.CalendlyLink,im.HRCoordinatorEmailId,im.candidateName,im.interviewDate,im.ClientHrContact,Cl.Name as ClientName,
-'' as PrimarySkill, IRF.id as irfId,cl.LogoLink, ulc.uniqueid
+'' as PrimarySkill, IRF.id as irfId,cl.LogoLink, ulc.uniqueid, irf.JDLink
 from(Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_JOINED' and ParticipantName not like '%risebird.io'  group by meetingid) as t1                        
 left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmission where Event='PARTICIPANT_LEFT' and ParticipantName not like '%risebird.io'  group by meetingid) as t2 on t1.Meetingid=t2.Meetingid                          
 join InterviewMeetings im on im.ZoomMeetingId=t1.Meetingid                        
