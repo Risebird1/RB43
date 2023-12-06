@@ -6852,6 +6852,10 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SecureReport", "Interview", new { interviewId = model.interviewid, irfId = model.IRFId, emailid = model.ModifiedBy, id = model.uniqueid });
             }
+            else if (model.type == "FeedbackCandidate")
+            {
+                return RedirectToAction("CandidateFeedBack", "Survey", new { type = "Candidate" });
+            }
             return RedirectToAction("CompletedInterviews");
         }
         [HttpGet]
@@ -7876,6 +7880,10 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
                     model.CreatedBy = emailId;
+                    if (model.VideoReward > 0)
+                    {
+                        model.VideoEnable = true;
+                    }
                     if (await _meetingService.AddorUpdatePaymentSLADetails(model))
                     {
                         TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
@@ -7885,6 +7893,10 @@ namespace Risebird.Web.Controllers
                             result.InterviewMeetingId = model.Interviewid;
                             result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerPaymentSLA;
                             await _meetingService.AddTransInterviewersReliabilityScoresService(result);
+                        }
+                        else
+                        {
+                            await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, 0, model.VideoReward);
                         }
                     }
                     else
@@ -7906,6 +7918,10 @@ namespace Risebird.Web.Controllers
                     else if (model.Pagetype == "PotentailRiskClient")
                     {
                         return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.PotentialRiskByClient });
+                    }
+                    else if (model.Pagetype == "QCPendingReport")
+                    {
+                        return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.QCPendingReport });
                     }
                     else
                     {
@@ -8112,7 +8128,7 @@ namespace Risebird.Web.Controllers
             result.AudioComment = _irfService.FetchIRFAudioLink(id);
             return View(result);
         }
-        
+
         [HttpPost]
         public async Task<JsonResult> RemoveInterviewer(int interviewid)
         {

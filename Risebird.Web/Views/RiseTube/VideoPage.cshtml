@@ -1771,7 +1771,8 @@
                                                                                                     }
                                                                                                     else
                                                                                                     {
-                                                                                                        <span onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" class="candidate">@videolist.candidateName</span>}
+                                                                                                        <span onclick="location.href='@Url.Action("VideoPage", "Risetube" , new { id = videolist.imid })'" class="candidate">@videolist.candidateName</span>
+                                                                                                    }
                                                                                                 }
                                                                                                 else
                                                                                                 {<span></span>}

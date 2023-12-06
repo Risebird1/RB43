@@ -16,7 +16,7 @@ CREATE PROCEDURE usp_GetInterviewerStatsAndRatings
 @clientEmailId varchar(100) = null
   
 AS            
-BEGIN    
+BEGIN 
   
 declare @yesterdayDate date = cast(dateadd(day, -1, @timeNow) as date)  
 declare @IRFName varchar(30)  
@@ -183,10 +183,11 @@ DECLARE @tbl_InterviewerClientRatings TABLE (
   
 INSERT INTO @tbl_InterviewerClientRatings    
   
-select  ti.interviewer, AVG(ir.StarRating) from @tbl_Interviewer ti   
+select  ti.interviewer, AVG(clrs.Rating) from @tbl_Interviewer ti   
 left join InterviewMeetings im on im.interviewer = ti.interviewer  
-left join InterviewRatings ir on ir.Interviewid = im.id  
-where ir.Comment not like '%Redflags raised%'  
+--left join InterviewRatings ir on ir.Interviewid = im.id  
+left join ClientCommentsForReport clrs on clrs.Interviewid=im.id  
+where clrs.Comment not like '%Redflags raised%'  
 group by ti.interviewer  
   
   

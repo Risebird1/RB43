@@ -2,7 +2,7 @@
 <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'> 
 <div id="VideoKYCModel" class="modal modal-bg" style="z-index:3">
     <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document" style="max-width: 1050px !important;">
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 1050px !important;top:10px;">
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
@@ -46,10 +46,10 @@
                         <div id="timer-clock-txt">COUNTER STARTS</div>
                     </div>
                     <div class="rules">
-                        <h3 style="color:green">TELL US ABOUT YOU & YOUR EXPERIENCE</h3>
+                        <h3 style="color:green;font-weight:bold;">TELL US ABOUT YOU & YOUR EXPERIENCE</h3>
                         <p class="about-int">Type of company,  previous companies, overall experience, current projects, any Top Tech Achievement</p>
-                        <h3 style=" color: green;padding: 10px 0px;">
-                            QUESTION TO BE ASKED DURING THE INTERVIEW
+                        <h3 style=" color: green;padding: 10px 0px;font-weight:bold;">
+                            EXPLAIN THE BELOW POINTS DURING THE RECORDING
                         </h3>
                         <p> <span class="number"> 1</span> <span class="number-txt">How will you differentiate between Poor, Average to Good Candidate </span></p>
                         <p>
@@ -66,7 +66,9 @@
                     <div class="preview-section">
                         <h2 class="preview-txt">
                             PREVIEW YOUR RECORDING<br/>
-                          <span>  Preview your recording if not you are not happy, and click on start to re - record your video </span>
+                            <span>
+                                Preview your recording here. If you wish to re-record, click on the record button above to start over.
+                            </span>
                         </h2>
                         <div class="videoPreviewContainer"> <video id="vid2" controls></video></div>
                     </div>
@@ -93,7 +95,7 @@
 var width = 165,
   height = 165,
   timePassed = 0,
-  timeLimit = 94
+  timeLimit = 90
 
 var fields = [{
   value: timeLimit,
