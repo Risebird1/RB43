@@ -1602,7 +1602,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (string.IsNullOrEmpty(meetingLineUpType))
                         {
-                            meetingLineUpType = MeetingLineUpType.Pending;
+                            meetingLineUpType = MeetingLineUpType.Upcoming;
                         }
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -8147,7 +8147,7 @@ namespace Risebird.Web.Controllers
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
-            var result = await _meetingService.UpdateInterviewReport(interviewid, comment,email);
+            var result = await _meetingService.UpdateInterviewReport(interviewid, comment, email);
             if (result)
             {
                 return Json("Successfully updated.");
