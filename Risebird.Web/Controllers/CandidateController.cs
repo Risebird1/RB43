@@ -58,7 +58,7 @@ namespace Risebird.Web.Controllers
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
-            IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor, 
+            IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor,
             IAadhaarService aadhaarService, IZoomHelper zoomHelper)
         {
             _candidateService = candidateService;
@@ -875,14 +875,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                
+
                 ViewBag.IRFName = irfName;
                 ViewBag.IRFId = id;
                 ViewBag.profile = profileName;
-                
+
                 var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
                 var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
-                
+
                 ViewBag.ButtonAccess = true;
                 ViewBag.IsClientCancelInterview = true;
                 if (profileName == "Client")
@@ -2785,7 +2785,7 @@ namespace Risebird.Web.Controllers
                                             {
                                                 try
                                                 {
-                                                    string str = (workSheet.Cells[rowIterator, 4] != null && workSheet.Cells[rowIterator, 4].Value != null) ? workSheet.Cells[rowIterator, 4].Value.ToString()  : string.Empty;
+                                                    string str = (workSheet.Cells[rowIterator, 4] != null && workSheet.Cells[rowIterator, 4].Value != null) ? workSheet.Cells[rowIterator, 4].Value.ToString() : string.Empty;
                                                     int numberOfLetters = !string.IsNullOrEmpty(str) ? str.ToCharArray().Length : 0;
                                                     var phoneValidate = numberOfLetters >= 9 && long.TryParse(str, out long phoneNumber);
                                                     var candidate = new CandidateQuickAddModel
@@ -3553,7 +3553,7 @@ namespace Risebird.Web.Controllers
                             {
                                 candidateTimeline.CurrentStatus = "Scheduled";
                             }
-                           
+
                         }
                         else
                         {
@@ -3680,7 +3680,7 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.MailCount = firstData.MailCount;
                     candidateTimeline.CallsCount = firstData.CallsCount;
                     candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
-                    candidateTimeline.RedoInterview=firstData.RedoInterview;
+                    candidateTimeline.RedoInterview = firstData.RedoInterview;
                     //schedule status
 
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
@@ -4208,7 +4208,7 @@ namespace Risebird.Web.Controllers
                         }
                         TempData.Remove("SuccessErrorMessageMarketPlace1");
                     }
-                    
+
                     return View(model);
                 }
                 return View(model);
@@ -4294,8 +4294,8 @@ namespace Risebird.Web.Controllers
                 emailId = emailId.Replace("\"", "");
                 if (model != null && Request.Form.Files.Count() > 0)
                 {
-                   // model.IRFId = Convert.ToInt32(Request.Form["IRFId"].ToString());
-                   // model.IRFName = Request.Form["IRFName"].ToString();
+                    // model.IRFId = Convert.ToInt32(Request.Form["IRFId"].ToString());
+                    // model.IRFName = Request.Form["IRFName"].ToString();
                     var addedByUserId = _irfService.GetUserId(emailId);
                     if (addedByUserId > 0)
                     {

@@ -27,7 +27,7 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-                                                                                                                                                    color: #9b9393;*/
+                                                                                                                                                        color: #9b9393;*/
         font-size: 17px;
         /* background: #e5e5e5 !important*/
     }
@@ -358,7 +358,7 @@
                                         @Html.TextBoxFor(m => m.StaffingAgiencies, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                     }
                                 </div>
-                               
+
                                 @if (!Model.reschedulerequest)
                                 {
                                     <div class="form-group">
@@ -383,7 +383,7 @@
 
                                 @Html.HiddenFor(m=> m.MeetingPlatform)
                                 <div class="form-group">
-                                    <input type="submit" value="Schedule Interview" onclick="return checkvalidation();" class="mdc-button mdc-button--raised" />
+                                    <input type="submit" id="btnsubmit" value="Schedule Interview" onclick="return checkvalidation();" class="mdc-button mdc-button--raised" />
                                 </div>
                             </div>
                         </form>
@@ -553,3 +553,15 @@
         fileChosen.textContent = this.files[0].name
     })
 </script>
+@*<script>
+    $(document).ready(function () {
+        $("#btnsubmit").on("click", function () {
+            $(this).attr("disabled", "disabled");
+            doWork();
+        });
+    });
+    function doWork() {
+        alert("doing work");
+        setTimeout('$("#btnsubmit").removeAttr("disabled")', 1500);
+    }
+</script>*@

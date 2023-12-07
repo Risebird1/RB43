@@ -8191,7 +8191,7 @@ namespace Risebird.Web.Controllers
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
                 var result = await _clientService.VerifyClientAuthenticity(irfid, emailid);
-                if (!result)
+                if (!result && profileName == "Public")
                 {
                     ViewBag.Message = "Do not have access for this skill Channel instruction";
                     return View(model);
@@ -8251,7 +8251,7 @@ namespace Risebird.Web.Controllers
             //var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
             //_trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
-            HttpContext.Session.SetString("profileName", "Client");
+            HttpContext.Session.SetString("profileName", "Public");
             //bool result = await _clientService.VerifyClientAuthenticity(irfId, emailId);
             //var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
             //if (string.IsNullOrEmpty(logovalue))
