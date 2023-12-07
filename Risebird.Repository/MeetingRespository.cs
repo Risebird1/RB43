@@ -6937,5 +6937,26 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> UpdateInterviewReport(int interviewid, string comment,string emailid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewid);
+                dynamicParameters.Add("@comment", comment);
+                dynamicParameters.Add("@emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateReportDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
