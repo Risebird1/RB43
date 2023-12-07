@@ -12,6 +12,6 @@ Create PROCEDURE [dbo].[usp_GetTextInstruction]
 @irfId int
 as
 begin
-Select * from ClientBroadcastMessages where IRFId=@irfId
+Select * from ClientBroadcastMessages where IRFId=@irfId order by SentAt desc
 end
 Go
