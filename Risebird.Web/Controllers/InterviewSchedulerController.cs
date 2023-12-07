@@ -1289,6 +1289,7 @@ namespace Risebird.Web.Controllers
                         model._IRFDetails = new ScheculeInterviewIRFVM();
                     }
                     model.ClientName = model._IRFDetails.Name;
+                    model.isCandidateportal = model._IRFDetails.isCandidateportal;
                     model.MeetingPlatform = result.FirstOrDefault().MeetingPlatform;
                     if (result.FirstOrDefault().TimeSlotDays >= 1)
                     {

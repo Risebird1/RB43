@@ -29,8 +29,9 @@ BEGIN
 
   Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate 
   ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
-cl.Name as ClientName,ip.NickName as Interviewer
-  from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
+cl.Name as ClientName,ip.NickName as Interviewer,ic.InterviewStatus
+  from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId 
+  join InterviewComments ic on ic.InterviewId=im.id
  join TransClientUser tcu on tcu.IRFId=IRF.id   
  join Client cl on irf.ClientId=cl.id 
 join UserList uli on uli.id=  irf.RisebirdHr
@@ -45,11 +46,12 @@ BEGIN
  --where ul.Emailid=@Emailid and im.confirmationStatus=1 
   Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate 
   ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
-cl.Name as ClientName,ip.NickName as Interviewer
+cl.Name as ClientName,ip.NickName as Interviewer,ic.InterviewStatus
   from 
   CandidateFeedbackDetails cfd  
   join InterviewMeetings im on cfd.Interviewid=im.id
   join IRF on im.IRFId=IRF.IRFId  
+  join InterviewComments ic on ic.InterviewId=im.id
  join SeniorHR sh on IRF.ClientId=sh.Clientid 
  join Userlist ul on ul.id=Sh.Userid   
  join Client cl on irf.ClientId=cl.id 
@@ -65,8 +67,9 @@ BEGIN
 
  Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate
 ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
-cl.Name as ClientName,ip.NickName as Interviewer
-from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId  
+cl.Name as ClientName,ip.NickName as Interviewer,ic.InterviewStatus
+from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId 
+join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on irf.ClientId=cl.id 
 join UserList uli on uli.id=  irf.RisebirdHr
 left join UserList ul on ul.EmailId= im.candidateEmail
