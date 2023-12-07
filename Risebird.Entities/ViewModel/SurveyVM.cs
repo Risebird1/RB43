@@ -50,9 +50,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Unethical Practices")]
         public string UnethicalPractices { get; set; }
         [Display(Name = "Poor Communication Skills")]
-        public string PoorCommunicationSkills { get; set;}
-       [Display(Name = "Weak Infrastructure")]
-       public string WeakInfrastructure { get; set; }
+        public string PoorCommunicationSkills { get; set; }
+        [Display(Name = "Weak Infrastructure")]
+        public string WeakInfrastructure { get; set; }
 
         [Display(Name = "Time Management ")]
         public string TimeManagement { get; set; }

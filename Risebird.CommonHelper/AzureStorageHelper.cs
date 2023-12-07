@@ -399,7 +399,7 @@ namespace Risebird.CommonHelper
 
         }
 
-        public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFileStream = null, Stream transcriptStream  = null)
+        public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFileStream = null, Stream transcriptStream = null)
         {
             CloudBlockBlob blob;
             blob = GetCloudBlockBlobClient(containerName, filename);
@@ -414,7 +414,7 @@ namespace Risebird.CommonHelper
                 await blob.UploadFromStreamAsync(blobFileStream);
 
             }
-            else if(transcriptStream != null)
+            else if (transcriptStream != null)
             {
                 blob.Properties.ContentType = "text/plain";
                 await blob.UploadFromStreamAsync(transcriptStream);

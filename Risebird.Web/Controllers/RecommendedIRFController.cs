@@ -39,11 +39,11 @@ namespace Risebird.Web.Controllers
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
-        public RecommendedIRFController(IApplicationErrorLogger applicationErrorLogger, 
-            ISkillService skillService, IConfiguration configuration, IIRFService irfService, 
-            IInterviewerService interviewerService, IIRFRepository irfRepository, 
+        public RecommendedIRFController(IApplicationErrorLogger applicationErrorLogger,
+            ISkillService skillService, IConfiguration configuration, IIRFService irfService,
+            IInterviewerService interviewerService, IIRFRepository irfRepository,
             IInterviewSchedulerService interviewSchedulerservice, IUserRepository userRepository,
-            IRecommendedIRFService recommendedIRFService, IFileMimeTypeHelper fileMimeTypeHelper, 
+            IRecommendedIRFService recommendedIRFService, IFileMimeTypeHelper fileMimeTypeHelper,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService,
             IClientService clientService, IAzureStorageHelper azureStorageHelper, HttpClientHelper factory)
         {

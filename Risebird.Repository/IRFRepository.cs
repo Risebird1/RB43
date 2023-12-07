@@ -6575,7 +6575,7 @@ namespace Risebird.Repository
 
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 //return false;
-                return new Tuple<bool, int>(false, 0); 
+                return new Tuple<bool, int>(false, 0);
 
             }
         }
@@ -7563,7 +7563,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<BroadcastModel>> GetTextInstruction( int irfId)
+        public async Task<IEnumerable<BroadcastModel>> GetTextInstruction(int irfId)
         {
             try
             {

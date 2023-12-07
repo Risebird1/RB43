@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -32,9 +28,9 @@ namespace Risebird.Entities.ViewModel
         public int Penalty { get; set; }
         public decimal CandidateRating { get; set; }
         public decimal CustomerRating { get; set; }
-        public int Redorequests{ get; set; }
-        public int RedFlags{ get; set; }
-        public int JoinLateMeeting{ get; set; }
+        public int Redorequests { get; set; }
+        public int RedFlags { get; set; }
+        public int JoinLateMeeting { get; set; }
         public int JoinLateCandidateNoShow { get; set; }
         public int UnassignInterviews { get; set; }
         public int SuspiciousCount { get; set; }
@@ -50,7 +46,7 @@ namespace Risebird.Entities.ViewModel
         {
             get; set;
         }
- public string WeakInfrastructure { get; set; }
+        public string WeakInfrastructure { get; set; }
         public string TimeManagement { get; set; }
 
     }
@@ -71,7 +67,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? interviewDate { get; set; }
         public string interviewer { get; set; }
         public int RedMarker { get; set; }
-        public string candidateName {  get; set; }
+        public string candidateName { get; set; }
         public string candidateEmail { get; set; }
         public string ResumeLink { get; set; }
         public string MobileNumber { get; set; }

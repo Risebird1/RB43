@@ -248,7 +248,7 @@ namespace Risebird.Web.Controllers
 
         #region Page Click Details
         [HttpPost]
-        public async Task<JsonResult> CapturePageClick(string type, string currenturl, string buttonaction,int interviewid)
+        public async Task<JsonResult> CapturePageClick(string type, string currenturl, string buttonaction, int interviewid)
         {
             string emailid = string.Empty;
             if (HttpContext.Session.GetString("email") != null)

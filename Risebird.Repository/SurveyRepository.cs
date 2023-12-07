@@ -138,8 +138,8 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@CreatedOn",DateTime.Now);
-                parameters.Add("@Rating",model.Rating);
+                parameters.Add("@CreatedOn", DateTime.Now);
+                parameters.Add("@Rating", model.Rating);
                 parameters.Add("@CandidateInteractionQuality", model.CandidateInteractionQuality);
                 parameters.Add("@LimitedHandoncoding", model.LimitedHandoncoding);
                 parameters.Add("@UnethicalPractices", model.UnethicalPractices);

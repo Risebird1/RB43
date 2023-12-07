@@ -177,7 +177,7 @@ namespace Risebird.MicroService
                         _whatsapp.Emailid = item.candidateEmail;
                         //if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                         //{
-                            _whatsapp.Event = "Interview Reschedule Risebird";
+                        _whatsapp.Event = "Interview Reschedule Risebird";
                         //}
                         //else
                         //{

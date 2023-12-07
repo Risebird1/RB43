@@ -54,7 +54,7 @@ namespace Risebird.MicroService
                 {
                     try
                     {
-                        
+
                         //masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
                         //foreach (var mail in mails)
                         //{

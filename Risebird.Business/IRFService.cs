@@ -3549,7 +3549,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<BroadcastModel>> GetTextInstructionService( int irfId)
+        public async Task<IEnumerable<BroadcastModel>> GetTextInstructionService(int irfId)
         {
             try
             {

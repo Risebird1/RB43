@@ -601,11 +601,11 @@ namespace Risebird.Business
                 // Get the current time of the day
                 TimeSpan currentTime = now.TimeOfDay;
                 int margin;
-                if(currentTime.Hours < 6 && currentTime.Hours >= 0)
+                if (currentTime.Hours < 6 && currentTime.Hours >= 0)
                 {
                     margin = 20;
                 }
-                else if(currentTime.Hours < 12 && currentTime.Hours >= 6)
+                else if (currentTime.Hours < 12 && currentTime.Hours >= 6)
                 {
                     margin = 30;
                 }

@@ -64,7 +64,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> InstaInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate);
         Task<string> InstaReportClientNotification(Mail model, string UrlDetails, string CandidateName, string logolink);
         Task<string> InstaClientInterviewwithzoomlink(Mail model, string CandidateName, string zoomlink, DateTime Interviewdate, string logolink);
-        Task<string> SendPublicUrlToClient(Mail model, string UrlDetails , string logoink);
+        Task<string> SendPublicUrlToClient(Mail model, string UrlDetails, string logoink);
         Task<string> InterviewRequestAddNotification(Mail model, string JdTitle, string PrimarySkill, string Client);
         Task<string> InterviewRequestEditNotification(Mail model, string JdTitle, string PrimarySkill, string RequestedBy);
         Task<string> InterviewRequestAssignationNotification(Mail model, string JdTitle, string PrimarySkill, string interviewer);
@@ -80,7 +80,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string dashboardLink, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null);
         //Task<string> SendInterviewReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, int? irfId = null, int? interviewId = null);
         Task<string> SendInterviewRemindersecond(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string DashboardLink, string yesbutton, string nobutton, string rescheulebutton, string needcleritybutton, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientCompanyLink = null, string clientLogoLink = null);
-        Task<string> SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, int PerSuccessRate, string dropMyProfileButton, string basicSkill, int? irfId = null, string companyTypeDesc = null, string countryTypeDesc = null, string planTypeDesc = null, int? selectedDuration = null, int? rejectedDuration =null);
+        Task<string> SendCheckIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string Skillslist, int PerSuccessRate, string dropMyProfileButton, string basicSkill, int? irfId = null, string companyTypeDesc = null, string countryTypeDesc = null, string planTypeDesc = null, int? selectedDuration = null, int? rejectedDuration = null);
         Task<string> SendAllIntervieweravailbility(Mail model, string Interviewname, string yesbutton, string nobutton, string cleritybutton, string nodropbutton);
         Task<string> SendClientCommonInterviewNotification(Mail model, DataTable dt, string clientlogo);
         Task<string> SharedTestLinkClient(Mail model, string title, string timeduration, string Url, string CandidateEmail, string meetingurl, DateTime interviewdatetime, string Reporturl, int offset, string clientlogo);

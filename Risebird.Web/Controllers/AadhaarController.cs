@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -23,7 +22,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static OfficeOpenXml.ExcelErrorValue;
 
 namespace Risebird.Web.Controllers
 {
@@ -780,7 +778,7 @@ namespace Risebird.Web.Controllers
                     if (string.IsNullOrWhiteSpace(model.message))
                     {
                         var companyname = model.employmentSummary?.recent_employer_data.establishment_name;
-;                        var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
+                        ; var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
                         if (companystatus != null)
                         {
                             //var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
@@ -805,7 +803,7 @@ namespace Risebird.Web.Controllers
                             {
                                 employementdetails.Isemployed = model.employmentSummary.is_employed;
                             }
-                           // employementdetails.message = "For this employment Company is in black list in our system.";
+                            // employementdetails.message = "For this employment Company is in black list in our system.";
                         }
                     }
                     else
@@ -998,14 +996,15 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> GetInterviwerExists(string interviewer)
         {
-           // var result = await _interviewerService.GetInterviwerExistsService(interviewer);
+            // var result = await _interviewerService.GetInterviwerExistsService(interviewer);
             var role = _interviewerService.GetUserRolebyEmailid(interviewer);
 
             if (!string.IsNullOrWhiteSpace(role))
             {
                 return Json("This mail id already exists in our system as " + role + "  Please check add accordingly.");
             }
-            else {
+            else
+            {
                 return Json(null);
             }
         }

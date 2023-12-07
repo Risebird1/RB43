@@ -110,13 +110,13 @@ namespace Risebird.MicroService
                     catch (Exception ex)
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-               
+
                         continue;
                     }
 
                 }
 
-                if(candidateResumeList !=null && candidateResumeList.Count() >0)
+                if (candidateResumeList != null && candidateResumeList.Count() > 0)
                 {
                     await _candidateRepository.UpdateCandidateResumeInBulk(candidateResumeList);
                 }

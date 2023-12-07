@@ -102,7 +102,7 @@
 //                    log.LogInformation($"CreateIRFCheckavailability : C# Timer trigger function exited {i} loop at: {DateTime.Now}");
 
 //                    i++;
-                    
+
 //                }
 //            }
 //            catch (Exception ex)

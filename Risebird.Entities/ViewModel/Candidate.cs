@@ -142,9 +142,9 @@ namespace Risebird.Entities.ViewModel
         public string ChannelOwnerEmail { get; set; }
         public string ChannelOwnerMobile { get; set; }
         public string ClientHRAttemptContactMobile { get; set; }
-        public int CandidateResumeId {get; set;}// id from CandidateResume table
-        public string AddedByEmailId { get; set;}// id from CandidateResume table
-        public string SchedulerUniqueid { get; set;}
+        public int CandidateResumeId { get; set; }// id from CandidateResume table
+        public string AddedByEmailId { get; set; }// id from CandidateResume table
+        public string SchedulerUniqueid { get; set; }
         public int InterviewId { get; set; }
         public int MailCount { get; set; }
         public int CallsCount { get; set; }

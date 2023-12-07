@@ -270,6 +270,6 @@ namespace Risebird.Repository.Interface
         Task<bool> AddTransReliabilityScoresSelectAndReject(int InterviewMeetingId);
         Task<Meeting> GetAudioCommentDetails(int interviewId);
         Task<bool> RemoveInterviewer(int interviewid);
-        Task<bool> UpdateInterviewReport(int interviewid, string comment,string emailid);
+        Task<bool> UpdateInterviewReport(int interviewid, string comment, string emailid);
     }
 }

@@ -10,7 +10,6 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -1524,7 +1523,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                object[] parameters = new object[] { ressignmentlink, zoomlink, jdLink};
+                object[] parameters = new object[] { ressignmentlink, zoomlink, jdLink };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);

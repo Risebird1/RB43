@@ -1,25 +1,21 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Risebird.Entities.Data;
-using System.Collections.Generic;
-using Risebird.CommonHelper.Interface;
-using Microsoft.Extensions.Configuration;
-using RestSharp;
-using Risebird.Entities.ViewModel;
 using Newtonsoft.Json.Linq;
-using System.Linq;
-using Microsoft.OData.Edm;
-using Risebird.Repository.Interface;
-using Risebird.Repository;
+using RestSharp;
 using Risebird.Business.Interface;
-using System.Reflection;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {

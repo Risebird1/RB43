@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Business
 {
@@ -95,7 +94,7 @@ namespace Risebird.Business
                             RequiredSkill = RequiredSkill + "," + item.SkillId;
                     }
                     //Send mail to Client
-                    var clientDetails =  _clientService.GetClientRoleAndCompanyNameByEmailId(model.Result.RequestedBy).Result;
+                    var clientDetails = _clientService.GetClientRoleAndCompanyNameByEmailId(model.Result.RequestedBy).Result;
                     var logolink = clientDetails.Item3;
                     Mail _mail = new Mail
                     {

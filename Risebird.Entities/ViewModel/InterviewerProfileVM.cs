@@ -65,7 +65,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Current Role")]
 
         public string CurrentRole { get; set; }
-        
+
         public int VideoConfirmation { get; set; }
 
         [Display(Name = "Years of Experience")]
