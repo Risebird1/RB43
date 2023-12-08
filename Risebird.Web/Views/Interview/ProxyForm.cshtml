@@ -8,8 +8,16 @@
     @Html.HiddenFor(m => m.IsQCdone)
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
-            <div class="card-wrap" style="margin:10px 0px">
-                <div class="accordion" id="accordion2">
+            <div class="card-wrap" style="margin:0px 0px">
+                <div class="checkbox-selectproxy">
+                    <h2>Please select proxy candidate reporting:</h2>
+                  <span class="round">
+                          <input  type="checkbox"  id="myCheck" name="question1" onclick="checkProxy()" />
+                        <label  for="myCheck"></label>
+                        </span>
+
+                        </div>
+                <div class="accordion" id="proxy-content" style="display:none;">
                     <div class="row">
                         <div class="col-md-6 col-sm-6 border-rv pull-left">
                             <div class="form-group">
@@ -563,3 +571,16 @@
         }
     }
 </script>
+
+<script>
+function checkProxy() {
+  var checkBox = document.getElementById("myCheck");
+  var text = document.getElementById("proxy-content");
+  if (checkBox.checked == true){
+    text.style.display = "block";
+  } else {
+     text.style.display = "none";
+  }
+}
+</script>
+

@@ -8224,9 +8224,26 @@ option {
 #ProxyModel .modal-lg {
     max-width: 850px !important;
 }
-/***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
+.checkbox-selectproxy{
+    width:100%;
+    float:left;
+}
+    .checkbox-selectproxy h2 {
+        font-size: 16px;
+        color: green;
+        font-weight: 500;
+        float:left;
+    }
+.checkbox-selectproxy .round {
+    position: relative;
+    float: left;
+    right: -13px;
+    top: 15px;
+    width: 30px;
+}
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }

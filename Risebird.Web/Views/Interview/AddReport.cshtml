@@ -1300,7 +1300,7 @@
                                         <div class="card-wrap" style="margin-bottom:0px; padding:30px 20px 0px 20px;">
                                             <span class="heading pull-left"><span style="color:red;font-weight:bold;font-size:13px;">*</span> Please select the option  </span>
                                             <span class="custom-select-dropdown">
-                                                <select id='Proxy_val' name='Proxy_val'>
+                                                <select id='isProxyCandidate' name='isProxyCandidate'>
                                                     <option>Select</option>
                                                     <option value="yes">Yes</option>
                                                     <option value="no">No</option>
@@ -2701,7 +2701,7 @@
 <script>
        $(document).ready(function () {
            
-    document.getElementById('Proxy_val').onchange = function () {
+    document.getElementById('isProxyCandidate').onchange = function () {
         if (this.value == 'yes') {
            ProxyFormDetails();
         } 
