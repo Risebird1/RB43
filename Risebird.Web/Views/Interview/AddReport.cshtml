@@ -2698,14 +2698,18 @@
         }
         });
 </script>
-
 <script>
+       $(document).ready(function () {
+           debugger;
     document.getElementById('Proxy_val').onchange = function () {
         if (this.value == 'yes') {
-            openProxyModel();
+            debugger;
+          //  openProxyModel();
+           ProxyFormDetails(id, IsQCDone);
         } else {
             
         }
     };
+       });
 </script>
-@await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")    
+@await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
