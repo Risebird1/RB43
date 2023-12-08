@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -1601,7 +1602,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (string.IsNullOrEmpty(meetingLineUpType))
                         {
-                            meetingLineUpType = MeetingLineUpType.Pending;
+                            meetingLineUpType = MeetingLineUpType.Upcoming;
                         }
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -8134,6 +8135,21 @@ namespace Risebird.Web.Controllers
         {
             var result = await _meetingService.RemoveInterviewer(interviewid);
             return Json("success");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewReport(int interviewid, string comment)
+        {
+            var email = HttpContext.Session.GetString("email");
+            email = email.Replace("\"", "");
+            var result = await _meetingService.UpdateInterviewReport(interviewid, comment, email);
+            if (result)
+            {
+                return Json("Successfully updated.");
+            }
+            else
+            {
+                return Json("Fail to update, try again after some time.");
+            }
         }
     }
 }

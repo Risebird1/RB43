@@ -29,6 +29,7 @@
                             <th id="getstatus_6">Joinability</th>
                             <th id="getstatus_7">Selectability</th>
                         }
+                        <th>Communications</th>
                         <th width="25%"> Actions </th>
                         <th style="text-align:center">Schedule Call</th>
                         <th style="text-align:center">Call</th>
@@ -54,6 +55,7 @@
                             <th>Joinability</th>
                             <th>Selectability </th>
                         }
+                        <th>Communications</th>
                         <th style="width:25%"> Actions </th>
                         <th style="text-align:center">Schedule Call</th>
 
@@ -157,16 +159,44 @@
                                     <b>@item.SelectabilityScore</b>
                                 </td>
                             }
+                            <td>
+                                @if (item.MailCount != 0)
+                                {
+                                    <div class="row">
+                                        <span class="icon-field"> <img class="icon ml" src="~/img/email.png" />    Emails :</span>    <span class="icon-field">
+                                            <a class="icon-link" href="#!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email})">
+                                                @item.MailCount
+                                            </a>
+                                        </span>
+                                    </div>
+                                }
+                                @if (item.CallsCount != 0)
+                                {
+                                    <div class="row">
+                                        <span class="icon-field">
+                                            <img class="icon vc" src="~/img/voice-call.png" />  Voice Calls :
+                                        </span>   <span class="icon-field">
+                                            <a class="icon-link" href="#!!_@item.imid" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                @item.CallsCount
+                                            </a>
+                                        </span>
+                                    </div>
+                                }
 
+                                @if (item.WhatsappCount != 0)
+                                {
+                                    <div class="row">
+                                        <span class="icon-field">
+                                            <img class="icon wp" src="~/img/whatsapp.png" />   Whatsapp Messages :
+                                        </span>  <span class="icon-field">
+                                            <a class="icon-link" href="#!!!_@item.imid" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                @item.WhatsappCount
+                                            </a>
+                                        </span>
+                                    </div>
+                                }
 
-
-
-                            @*<td>@item.Phone</td>*@
-
-
-
-
-
+                            </td>
 
                             <td class="text-left action">
 
@@ -509,3 +539,5 @@
     </div>
 
 </div>
+
+<script src="~/js/ModalFormServerValidation.js"></script>
