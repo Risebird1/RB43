@@ -1,0 +1,565 @@
+﻿@model Risebird.Entities.ViewModel.ProctoringReport
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<form action="/Interview/ProxyForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+    @Html.HiddenFor(m => m.InterviewId)
+    @Html.HiddenFor(m => m.IsQCdone)
+    <div class="canvas_div_pdf">
+        <div class="report-full-wrap">
+            <div class="card-wrap" style="margin:10px 0px">
+                <div class="accordion" id="accordion2">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 border-rv pull-left">
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.EyeMovement, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                @Html.HiddenFor(m=> m.EyeMovement)
+                                                <li>
+                                                    @if (Model.EyeMovement.Split(";").Contains("Candidate looking somewhere else continuously at the time of coding or answering theoretical questions."))
+                                                    {
+                                                        <input type="checkbox" id="checkboxOne" name="EyeMovement" checked onclick="ChangeCheckBox('EyeMovement')" value="Candidate looking somewhere else continuously at the time of coding or answering theoretical questions." /> <label for="checkboxOne">Candidate looking somewhere else continuously at the time of coding or answering theoretical questions.</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxOne" name="EyeMovement" onclick="ChangeCheckBox('EyeMovement')" value="Candidate looking somewhere else continuously at the time of coding or answering theoretical questions." /> <label for="checkboxOne">Candidate looking somewhere else continuously at the time of coding or answering theoretical questions.</label>
+                                                    }
+                                                </li>
+                                                <li>
+                                                    @if (Model.EyeMovement.Split(";").Contains("Zoom the candidate to see how many lights reflection in her eyes"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwo" name="EyeMovement" checked onclick="ChangeCheckBox('EyeMovement')" value="Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]" />
+                                                        <label for="checkboxTwo">Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwo" name="EyeMovement" onclick="ChangeCheckBox('EyeMovement')" value="Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]" /> <label for="checkboxTwo">Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]</label>
+                                                    }
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.LipsMovement, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                @Html.HiddenFor(m=> m.LipsMovement)
+                                                <li>
+                                                    @if (Model.LipsMovement.Split(";").Contains("Mismatch of the lips and the voice of candidate while speaking"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxThree" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Mismatch of the lips and the voice of candidate while speaking" />
+                                                        <label for="checkboxThree">
+                                                            Mismatch of the lips and the voice of candidate while speaking
+
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxThree" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Using overhead light" />
+                                                        <label for="checkboxThree">Using overhead light</label>
+                                                    }
+                                                </li>
+                                                <li>
+
+                                                    @if (Model.LipsMovement.Split(";").Contains("Dark light in the room or on the face"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Dark light in the room or on the face" />
+                                                        <label for="checkboxFour"> Dark light in the room or on the face</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Dark light in the room or on the face" />
+                                                        <label for="checkboxFour">Dark light in the room or on the face</label>
+                                                    }
+                                                </li>
+                                                <li>
+                                                    @if (Model.LipsMovement.Split(";").Contains("Using Headphone in front of Lips"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFive" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Using Headphone in front of Lips" />
+                                                        <label for="checkboxFive">Using Headphone in front of Lips</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFive" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Using Headphone in front of Lips" />
+                                                        <label for="checkboxFive">Using Headphone in front of Lips</label>
+                                                    }
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.CandidateDesktop, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        @Html.HiddenFor(m => m.CandidateDesktop)
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                <li>
+                                                    @if (Model.CandidateDesktop.Split(";").Contains("External suspicious applications [Screen mirroring app or remote desktops] are open in Desktop"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxSix" name="CandidateDesktop" checked onclick="ChangeCheckBox('CandidateDesktop')" value="External suspicious applications [Screen mirroring app or remote desktops] are open in Desktop" />
+                                                        <label for="checkboxSix">External suspicious applications [Screen mirroring app or remote desktops] are open in Desktop</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxSix" name="CandidateDesktop" onclick="ChangeCheckBox('CandidateDesktop')" value="External suspicious applications [Screen mirroring app or remote desktops] are open in Desktop" />
+                                                        <label for="checkboxSix">External suspicious applications [Screen mirroring app or remote desktops] are open in Desktop</label>
+                                                    }
+                                                </li>
+                                                <li>
+                                                    @if (Model.CandidateDesktop.Split(";").Contains("Other suspicious devices connected. [Check in toolbar]"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxSeven" name="CandidateDesktop" checked onclick="ChangeCheckBox('CandidateDesktop')" value="Other suspicious devices connected. [Check in toolbar]" />
+                                                        <label for="checkboxSeven">
+                                                            Other suspicious devices connected. [Check in toolbar]
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxSeven" name="CandidateDesktop" onclick="ChangeCheckBox('CandidateDesktop')" value="Other suspicious devices connected. [Check in toolbar]" />
+                                                        <label for="checkboxSeven">Other suspicious devices connected. [Check in toolbar]</label>
+                                                    }
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.LinkedinPhoto, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                @Html.HiddenFor(m => m.LinkedinPhoto)
+                                                <li>
+                                                    @if (Model.LinkedinPhoto.Split(";").Contains("LinkedIn photo verification [Check in case of suspicion]"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxEight" name="LinkedinPhoto" checked onclick="ChangeCheckBox('LinkedinPhoto')" value="LinkedIn photo verification [Check in case of suspicion]" />
+                                                        <label for="checkboxEight">
+                                                            LinkedIn photo verification [Check in case of suspicion]
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxEight" name="LinkedinPhoto" onclick="ChangeCheckBox('LinkedinPhoto')" value="LinkedIn photo verification [Check in case of suspicion]" />
+                                                        <label for="checkboxEight">
+                                                            LinkedIn photo verification [Check in case of suspicion]
+                                                        </label>
+                                                    }
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.SusipicousDevices, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                @Html.HiddenFor(m => m.SusipicousDevices)
+                                                <li>
+                                                    @if (Model.SusipicousDevices.Split(";").Contains("Any indications that the candidate might be using multiple devices simultaneously to search for answers or receive help"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFifteen" name="SusipicousDevices" checked onclick="ChangeCheckBox('SusipicousDevices')" value="Any indications that the candidate might be using multiple devices simultaneously to search for answers or receive help" />
+                                                        <label for="checkboxFifteen">
+                                                            Any indications that the candidate might be using multiple devices simultaneously to search for answers or receive help
+
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFifteen" name="SusipicousDevices" onclick="ChangeCheckBox('SusipicousDevices')" value="Any indications that the candidate might be using multiple devices simultaneously to search for answers or receive help" />
+                                                        <label for="checkboxFifteen">
+                                                            Any indications that the candidate might be using multiple devices simultaneously to search for answers or receive help
+
+                                                        </label>
+                                                    }
+                                                </li>
+
+                                                <li>
+                                                    @if (Model.SusipicousDevices.Split(";").Contains("Using Overhead light"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxSixteen" name="SusipicousDevices" checked onclick="ChangeCheckBox('SusipicousDevices')" value="Using Overhead light" />
+                                                        <label for="checkboxSixteen">
+                                                            Using Overhead light
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxSixteen" name="SusipicousDevices" onclick="ChangeCheckBox('SusipicousDevices')" value="Using Overhead light" />
+                                                        <label for="checkboxSixteen">
+                                                            Using Overhead light
+                                                        </label>
+                                                    }
+                                                </li>
+
+                                                <li>
+                                                    @if (Model.SusipicousDevices.Split(";").Contains("Dark light in the room or on the face"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxSeventeen" name="SusipicousDevices" checked onclick="ChangeCheckBox('SusipicousDevices')" value="Dark light in the room or on the face" />
+                                                        <label for="checkboxSeventeen">
+                                                            Dark light in the room or on the face
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxSeventeen" name="SusipicousDevices" onclick="ChangeCheckBox('SusipicousDevices')" value="Dark light in the room or on the face" />
+                                                        <label for="checkboxSeventeen">
+                                                            Dark light in the room or on the face
+                                                        </label>
+                                                    }
+                                                </li>
+
+
+                                                <li>
+                                                    @if (Model.SusipicousDevices.Split(";").Contains("Using Headphone in front of the lips"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxEighteen" name="SusipicousDevices" checked onclick="ChangeCheckBox('SusipicousDevices')" value="Using Headphone in front of the lips" />
+                                                        <label for="checkboxEighteen">
+                                                            Using Headphone in front of the lips
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxEighteen" name="SusipicousDevices" onclick="ChangeCheckBox('SusipicousDevices')" value="Using Headphone in front of the lips" />
+                                                        <label for="checkboxEighteen">
+                                                            Using Headphone in front of the lips
+                                                        </label>
+                                                    }
+                                                </li>
+
+
+                                                <li>
+                                                    @if (Model.SusipicousDevices.Split(";").Contains("Using speaker or audio splitter to communicate, so that the voice can be heard on the phone conference and answer can be given on the phone"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxNineteen" name="SusipicousDevices" checked onclick="ChangeCheckBox('SusipicousDevices')" value="Using speaker or audio splitter to communicate, so that the voice can be heard on the phone conference and answer can be given on the phone" />
+                                                        <label for="checkboxNineteen">
+                                                            Using speaker or audio splitter to communicate, so that the voice can be heard on the phone conference and answer can be given on the phone
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxNineteen" name="SusipicousDevices" onclick="ChangeCheckBox('SusipicousDevices')" value="Using speaker or audio splitter to communicate, so that the voice can be heard on the phone conference and answer can be given on the phone" />
+                                                        <label for="checkboxNineteen">
+                                                            Using speaker or audio splitter to communicate, so that the voice can be heard on the phone conference and answer can be given on the phone
+                                                        </label>
+                                                    }
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.HeadMovement, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                @Html.HiddenFor(m => m.HeadMovement)
+                                                <li>
+                                                    @if (Model.HeadMovement.Split(";").Contains("Suspicious head movement at the time of code writing or answering theoretical questions."))
+                                                    {
+                                                        <input type="checkbox" id="checkboxNine" name="HeadMovement" checked onclick="ChangeCheckBox('HeadMovement')" value="Suspicious head movement at the time of code writing or answering theoretical questions." />
+                                                        <label for="checkboxNine">Suspicious head movement at the time of code writing or answering theoretical questions.</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxNine" name="HeadMovement" onclick="ChangeCheckBox('HeadMovement')" value="Suspicious head movement at the time of code writing or answering theoretical questions." />
+                                                        <label for="checkboxNine">Suspicious head movement at the time of code writing or answering theoretical questions.</label>
+                                                    }
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.LatencyCheck, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                @Html.HiddenFor(m => m.LatencyCheck)
+                                                <li>
+                                                    @if (Model.LatencyCheck.Split(";").Contains("Latency check or jitter report to see for the packet loss"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTen" name="LatencyCheck" checked onclick="ChangeCheckBox('LatencyCheck')" value="Latency check or jitter report to see for the packet loss" />
+                                                        <label for="checkboxTen">
+                                                            Latency check or jitter report to see for the packet loss
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTen" name="LatencyCheck" onclick="ChangeCheckBox('LatencyCheck')" value="Latency check or jitter report to see for the packet loss" />
+                                                        <label for="checkboxTen">
+                                                            Latency check or jitter report to see for the packet loss
+                                                        </label>
+                                                    }
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.VoiceImpostering, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                @Html.HiddenFor(m => m.VoiceImpostering)
+                                                <li>
+                                                    @if (Model.VoiceImpostering.Split(";").Contains("Voice tone and expressions are not in sync - Flat voice"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxEleven" name="VoiceImpostering" checked onclick="ChangeCheckBox('VoiceImpostering')" value="Voice tone and expressions are not in sync - Flat voice" />
+
+                                                        <label for="checkboxEleven">Voice tone and expressions are not in sync - Flat voice</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxEleven" name="VoiceImpostering" onclick="ChangeCheckBox('VoiceImpostering')" value="Voice tone and expressions are not in sync - Flat voice" />
+                                                        <label for="checkboxEleven">
+                                                            Voice tone and expressions are not in sync - Flat voice
+                                                        </label>
+                                                    }
+                                                </li>
+                                                <li>
+                                                    @if (Model.VoiceImpostering.Split(";").Contains("Non-satisfactory answers for personal questions from the Resume or their experience"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwelve" name="VoiceImpostering" checked onclick="ChangeCheckBox('VoiceImpostering')" value="Non-satisfactory answers for personal questions from the Resume or their experience" />
+
+                                                        <label for="checkboxTwelve">Non-satisfactory answers for personal questions from the Resume or their experience</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwelve" name="VoiceImpostering" onclick="ChangeCheckBox('VoiceImpostering')" value="Non-satisfactory answers for personal questions from the Resume or their experience" />
+
+                                                        <label for="checkboxTwelve">
+                                                            Non-satisfactory answers for personal questions from the Resume or their experience
+                                                       </label>
+                                                    }
+                                 
+                                                </li>
+                                              
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.SuspiciousVoice, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                @Html.HiddenFor(m => m.SuspiciousVoice)
+                                                <li>
+                                                    @if (Model.SuspiciousVoice.Split(";").Contains("Any notifications, pings, other voices"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxThirteen" name="SuspiciousVoice" checked onclick="ChangeCheckBox('SuspiciousVoice')" value="Any notifications, pings, other voices" />
+
+                                                        <label for="checkboxThirteen">Any notifications, pings, other voices</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxThirteen" name="SuspiciousVoice" onclick="ChangeCheckBox('SuspiciousVoice')" value="Any notifications, pings, other voices" />
+                                                        <label for="checkboxThirteen">
+                                                            Any notifications, pings, other voices
+                                                        </label>
+                                                    }
+                                                </li>
+                                                <li>
+                                                    @if (Model.SuspiciousVoice.Split(";").Contains("Not sharing the complete screen in desktop but one screen or tab"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxForteen" name="SuspiciousVoice" checked onclick="ChangeCheckBox('SuspiciousVoice')" value="Not sharing the complete screen in desktop but one screen or tab" />
+
+                                                        <label for="checkboxForteen">
+                                                            Not sharing the complete screen in desktop but one screen or tab.
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxForteen" name="SuspiciousVoice" onclick="ChangeCheckBox('SuspiciousVoice')" value="Not sharing the complete screen in desktop but one screen or tab" />
+
+                                                        <label for="checkboxForteen">
+                                                            Not sharing the complete screen in desktop but one screen or tab
+                                                        </label>
+                                                    }
+
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a class="accordion-toggle">
+                                            @Html.LabelFor(m => m.SuspiciousEnvironment, htmlAttributes: new { @class = "label-name" })
+                                        </a>
+                                    </div>
+                                    <div class="accordion-body">
+                                        <div class="accordion-inner">
+                                            <ul class="ks-cboxtags">
+                                                @Html.HiddenFor(m => m.SuspiciousEnvironment)
+                                                <li>
+                                                    @if (Model.SuspiciousEnvironment.Split(";").Contains("Inconsistent camera angles"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwenty" name="SuspiciousEnvironment" checked onclick="ChangeCheckBox('SuspiciousEnvironment')" value="Inconsistent camera angles" />
+
+                                                        <label for="checkboxTwenty">Inconsistent camera angles</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwenty" name="SuspiciousEnvironment" onclick="ChangeCheckBox('SuspiciousEnvironment')" value="Inconsistent camera angles" />
+                                                        <label for="checkboxTwenty">
+                                                            Inconsistent camera angles
+                                                        </label>
+                                                    }
+                                                </li>
+                                                <li>
+                                                    @if (Model.SuspiciousEnvironment.Split(";").Contains("Abrupt Disruptions"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyOne" name="SuspiciousEnvironment" checked onclick="ChangeCheckBox('SuspiciousEnvironment')" value="Abrupt Disruptions" />
+
+                                                        <label for="checkboxTwentyOne">
+                                                            Abrupt Disruptions
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyOne" name="SuspiciousEnvironment" onclick="ChangeCheckBox('SuspiciousEnvironment')" value="Abrupt Disruptions" />
+
+                                                        <label for="checkboxTwentyOne">
+                                                            Abrupt Disruptions
+                                                        </label>
+                                                    }
+
+                                                </li>
+
+
+                                                <li>
+                                                    @if (Model.SuspiciousEnvironment.Split(";").Contains("Strange sounds in the background"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyTwo" name="SuspiciousEnvironment" checked onclick="ChangeCheckBox('SuspiciousEnvironment')" value="Strange sounds in the background" />
+
+                                                        <label for="checkboxTwentyTwo">
+                                                            Strange sounds in the background
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyTwo" name="SuspiciousEnvironment" onclick="ChangeCheckBox('SuspiciousEnvironment')" value="Strange sounds in the background" />
+
+                                                        <label for="checkboxTwentyTwo">
+                                                            Strange sounds in the background
+                                                        </label>
+                                                    }
+
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mc-button-area" style="margin-bottom:10px;">
+                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    function ChangeCheckBox(groupName) {
+        var result = $('input[name="' + groupName + '"]:checked');
+        var resultString = '';
+        if (result.length > 0) {
+            result.each(function () {
+                if (resultString == '') {
+                    resultString += $(this).val();
+                } else {
+                    resultString += ";" + $(this).val();
+                }
+            });
+            $('#' + groupName).val(resultString);
+        }
+        else {
+            $('#' + groupName).val("");
+        }
+    }
+</script>

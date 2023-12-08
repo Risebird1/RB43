@@ -1475,25 +1475,26 @@ namespace Risebird.Repository
                     if (reportDetails.Proctoring != null)
                     {
                         //update protoring report table
-                        string sqlProcReport = "INSERT INTO ProctoringReport Values (@InterviewId, @EyesDirection, @EyesReflection, @HeadDirection, @LipsOverhead, @LipsDarklight, @LipsHeadphone, @LatencyJitter, @DesktopSuspiciousApps, @DesktopScreenSharing, @VoiceAudioSplitter, @VoiceToneExpression, @VoicePersonalUnsatisfactory, @VoiceSuspicious, @LinkedInPhotoVerification);";
-                        var result3 = await con.ExecuteAsync(sqlProcReport, new
-                        {
-                            reportDetails.InterviewId,
-                            reportDetails.Proctoring.EyesDirection,
-                            reportDetails.Proctoring.EyesReflection,
-                            reportDetails.Proctoring.HeadDirection,
-                            reportDetails.Proctoring.LipsOverhead,
-                            reportDetails.Proctoring.LipsDarklight,
-                            reportDetails.Proctoring.LipsHeadphone,
-                            reportDetails.Proctoring.LatencyJitter,
-                            reportDetails.Proctoring.DesktopSuspiciousApps,
-                            reportDetails.Proctoring.DesktopScreenSharing,
-                            reportDetails.Proctoring.VoiceAudioSplitter,
-                            reportDetails.Proctoring.VoiceToneExpression,
-                            reportDetails.Proctoring.VoicePersonalUnsatisfactory,
-                            reportDetails.Proctoring.VoiceSuspicious,
-                            reportDetails.Proctoring.LinkedInPhotoVerification
-                        });
+                        //string sqlProcReport = "INSERT INTO ProctoringReport Values (@InterviewId, @EyesDirection, @EyesReflection, @HeadDirection, @LipsOverhead, @LipsDarklight, @LipsHeadphone, @LatencyJitter, @DesktopSuspiciousApps, @DesktopScreenSharing, @VoiceAudioSplitter, @VoiceToneExpression, @VoicePersonalUnsatisfactory, @VoiceSuspicious, @LinkedInPhotoVerification);";
+                        //var result3 = await con.ExecuteAsync(sqlProcReport, new
+                        //{
+                        //    reportDetails.InterviewId,
+                        //    reportDetails.Proctoring.EyesDirection,
+                        //    reportDetails.Proctoring.EyesReflection,
+                        //    reportDetails.Proctoring.HeadDirection,
+                        //    reportDetails.Proctoring.LipsOverhead,
+                        //    reportDetails.Proctoring.LipsDarklight,
+                        //    reportDetails.Proctoring.LipsHeadphone,
+                        //    reportDetails.Proctoring.LatencyJitter,
+                        //    reportDetails.Proctoring.DesktopSuspiciousApps,
+                        //    reportDetails.Proctoring.DesktopScreenSharing,
+                        //    reportDetails.Proctoring.VoiceAudioSplitter,
+                        //    reportDetails.Proctoring.VoiceToneExpression,
+                        //    reportDetails.Proctoring.VoicePersonalUnsatisfactory,
+                        //    reportDetails.Proctoring.VoiceSuspicious,
+                        //    reportDetails.Proctoring.LinkedInPhotoVerification
+                        //});
+                        await SaveProctoringReport(reportDetails.Proctoring, loggedInEmailId);
 
                     }
 
@@ -1727,7 +1728,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select * from ProctoringReport where InterviewId = @id";
+                //var query = "select * from ProctoringReport where InterviewId = @id";
+                var query = "select * from ProxyReport where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -6937,7 +6939,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public async Task<bool> UpdateInterviewReport(int interviewid, string comment,string emailid)
+        public async Task<bool> UpdateInterviewReport(int interviewid, string comment, string emailid)
         {
             try
             {
@@ -6948,6 +6950,39 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateReportDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> SaveProctoringReport(ProctoringReport model, string emailId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@InterviewId", model.InterviewId);
+                dynamicParameters.Add("@isProxyCandidate", model.isProxyCandidate);
+                dynamicParameters.Add("@EyeMovement", model.EyeMovement);
+                dynamicParameters.Add("@LipsMovement", model.LipsMovement);
+                dynamicParameters.Add("@CandidateDesktop", model.CandidateDesktop);
+                dynamicParameters.Add("@LinkedinPhoto", model.LinkedinPhoto);
+                dynamicParameters.Add("@HeadMovement", model.HeadMovement);
+                dynamicParameters.Add("@LatencyCheck", model.LatencyCheck);
+                dynamicParameters.Add("@VoiceImpostering", model.VoiceImpostering);
+                dynamicParameters.Add("@SusipicousDevices", model.SusipicousDevices);
+                dynamicParameters.Add("@SuspiciousVoice", model.SuspiciousVoice);
+                dynamicParameters.Add("@SuspiciousEnvironment", model.SuspiciousEnvironment);
+                dynamicParameters.Add("@IsQCdone", model.IsQCdone);
+                dynamicParameters.Add("@emailId", emailId);
+                dynamicParameters.Add("@CreatedOn", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveorUpdateProxyReport", dynamicParameters,
                        commandType: CommandType.StoredProcedure);
                     return true;
                 }

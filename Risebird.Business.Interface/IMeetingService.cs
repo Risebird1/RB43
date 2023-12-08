@@ -229,5 +229,7 @@ namespace Risebird.Business.Interface
         Task<Meeting> GetAudioCommentDetailsService(int interviewId);
         Task<bool> RemoveInterviewer(int interviewid);
         Task<bool> UpdateInterviewReport(int interviewid,string comment,string emailid);
+        Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
+        Task<ProctoringReport> GetProctoringReport(int interviewid);
     }
 }
