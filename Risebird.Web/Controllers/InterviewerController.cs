@@ -3828,7 +3828,7 @@ namespace Risebird.Web.Controllers
                             CC = "talent@risebird.io",
                             Subject = "New interviews have come up! Please assign."
                         };
-                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total);
+                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, irfId);
                         //What's App Message Send
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.EmailId;

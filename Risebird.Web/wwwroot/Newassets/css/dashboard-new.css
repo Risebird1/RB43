@@ -8216,7 +8216,8 @@ option {
     width: 100%;
     top: 0px;
     left: 25px;
-    font-size: 15px;
+    font-size: 14.5px;
+    line-height: 25px;
     font-weight: 500;
     color: #c63838;
 }
@@ -8659,20 +8660,19 @@ option {
 }
 
 
-@media only screen and (max-width: 1024px) {
-    .top-h {
-        height: 60px !important;
-    }
+    @media only screen and (max-width: 1024px) {
+        .top-h {
+            height: 60px !important;
+        }
+        .interviewWrapper {
+            width: 100%;
+            left: 0px;
+        }
 
-    .interviewWrapper {
-        width: 100%;
-        left: 0px;
-    }
-
-    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-        width: 285px !important;
-        height: 160px !important;
-    }
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 285px !important;
+            height: 160px !important;
+        }
 
     .select-selected {
         padding: 6px 6px !important;
@@ -9057,16 +9057,16 @@ option {
     }
 }
 
-@media only screen and (max-width:991px) {
-    .tabCon .tab-main-box {
-        padding: 20px 10px;
-        margin-bottom: 10px;
-    }
+    @media only screen and (max-width:991px) {
+        .tabCon .tab-main-box {
+            padding: 20px 10px;
+            margin-bottom: 10px;
+        }
 
-    .nodata {
-        text-align: center;
-        font-size: 17px !important;
-    }
+        .nodata {
+            text-align: center;
+            font-size: 17px !important;
+        }
 
         .nodata img {
             width: 26px !important;
@@ -9165,15 +9165,15 @@ option {
     }
 }
 
-@media (min-width: 768px) and (max-width: 991px) {
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        font-size: 11px !important;
-    }
+    @media (min-width: 768px) and (max-width: 991px) {
+        .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+            font-size: 11px !important;
+        }
 
-    .w60 {
-        width: 55%;
-        float: left;
-    }
+        .w60 {
+            width: 55%;
+            float: left;
+        }
 
     .w40 {
         width: 45%;
@@ -9275,15 +9275,15 @@ option {
         margin-bottom: 10px;
     }
 
-    .logo-cm {
-        position: relative;
-        top: 4px !important;
-        left: 10px !important;
-    }
+        .logo-cm {
+            position: relative;
+            top: 4px !important;
+            left: 10px !important;
+        }
 
-    #userProfileForm .tab-menu ul li a {
-        font-size: 15px;
-    }
+        #userProfileForm .tab-menu ul li a {
+            font-size: 15px;
+        }
 
     .public-url #candidateTable_length {
         display: none;
@@ -9966,44 +9966,38 @@ option {
 
 
 
-@media only screen and (max-width: 480px) {
-    .candidate-tab .card-block h1 {
-        font-size: 13px !important;
-        background: url(../../img/interview.svg) -20px 37px no-repeat !important;
-    }
-
-    .candidate-tab .tab-block .card-block {
-        width: 30.3% !important;
-        float: left !important;
-    }
-
-    #btnStop, #btnStart {
-        left: -12px !important;
-    }
-
-    .videoContainer video {
-        height: 310px !important;
-    }
-
-    .videoContainer {
-        height: 305px !important;
-    }
-
-    .public-url #candidateTable_length {
-        left: -22px;
-        position: relative;
-    }
-
-    .candidate-tab .tabcontent p {
-        font-size: 14px;
-    }
-
-    .public-url div.dataTables_wrapper div.dataTables_filter {
-        text-align: right;
-        position: absolute;
-        left: 104px;
-        top: -45px;
-    }
+    @media only screen and (max-width: 480px) {
+        .candidate-tab .card-block h1 {
+            font-size: 13px !important;
+            background: url(../../img/interview.svg) -20px 37px no-repeat !important;
+        }
+        .candidate-tab .tab-block .card-block {
+            width: 30.3% !important;
+            float: left !important;
+           
+        }
+        #btnStop, #btnStart {
+            left: -12px!important;
+        }
+        .videoContainer video{
+            height:310px!important;
+        }
+        .videoContainer{
+            height:305px!important;
+        }
+        .public-url #candidateTable_length {
+            left: -22px;
+            position: relative;
+        }
+        .candidate-tab .tabcontent p{
+            font-size:14px;
+        }
+        .public-url div.dataTables_wrapper div.dataTables_filter {
+            text-align: right;
+            position: absolute;
+            left: 104px;
+            top: -45px;
+        }
 
     .public-url #candidateTable_length {
         top: 9px;
@@ -10409,21 +10403,20 @@ option {
         width: 100%;
     }
 
-    .click-arrow {
-        position: relative !important;
-        top: 8px !important;
-        left: -25px !important;
+        .click-arrow {
+            position: relative !important;
+            top: 8px !important;
+            left: -25px !important;
+        }
+        .videoPreviewContainer {
+            width: 300px!important;
+            position:relative!important;
+            left: -23px!important;
+        }
     }
-
-    .videoPreviewContainer {
-        width: 300px !important;
-        position: relative !important;
-        left: -23px !important;
-    }
-}
-/* EOF BUTTONS */
-/* FORM ELEMENTS */
-.fa, .fas, .far {
+    /* EOF BUTTONS */
+    /* FORM ELEMENTS */
+    .fa, .fas, .far {
     font-family: "Font Awesome 5 Pro";
     font-weight: 500;
 }
@@ -16550,7 +16543,6 @@ div.tagsinput {
         padding-right: 15px !important;
         padding-left: 15px !important;
     }
-
     .topheader-header {
         right: 0px !important;
     }

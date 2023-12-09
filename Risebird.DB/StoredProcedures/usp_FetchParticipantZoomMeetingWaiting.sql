@@ -101,16 +101,16 @@ DECLARE @MeetingNotificationCandidate TABLE(
   JDLink varchar(2000)
 )        
     
-create table #ZoomMeetingTransmissionTempTbl( ParticipantName varchar(200), Meetingid varchar(200))    
+--create table #ZoomMeetingTransmissionTempTbl( ParticipantName varchar(200), Meetingid varchar(200))    
     
-insert into #ZoomMeetingTransmissionTempTbl    
-Select ParticipantName, Meetingid from ZoomMeetingTransmission zmt     
-join InterviewMeetings im on im.ZoomMeetingId = zmt.Meetingid    
-where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'              
-EXCEPT     
-Select ParticipantName,Meetingid from ZoomMeetingTransmission zmt    
-join InterviewMeetings im on im.ZoomMeetingId = zmt.Meetingid    
-where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT'    
+--insert into #ZoomMeetingTransmissionTempTbl    
+--Select ParticipantName, Meetingid from ZoomMeetingTransmission zmt     
+--join InterviewMeetings im on im.ZoomMeetingId = zmt.Meetingid    
+--where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'              
+--EXCEPT     
+--Select ParticipantName,Meetingid from ZoomMeetingTransmission zmt    
+--join InterviewMeetings im on im.ZoomMeetingId = zmt.Meetingid    
+--where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT'    
     
                   
 ;with CTE(interviewMeetingId, Meetingid,candidateEmail,interviewer,risebirdHR,emergencyinterviewer,isInterviewerWaiting,
@@ -131,12 +131,12 @@ join IRF on IRF.IRFId=im.irfid
 left join Client cl on cl.id=irf.Clientid                
 left join UserList ulr on IRF.risebirdHR=ulr.id                  
 left join TransInterviewer tei on tei.IRFId=IRF.id      
-left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId    
+--left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId    
 Outer Apply(Select Max(Joinedon) as Joinedon From InterviewMeetingsJoinTime imjt where im.id=imjt.interviewid) imj    
 --Outer Apply(Select Max(PerformedOn) as PerformedOn From PageClickDetails pd where pd.Interviewid=im.id and ButtonAction='JoinMeeting') pc    
 --Outer Apply (Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'              
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt              
-left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName  
+--left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName  
 left join UserList ulc on ulc.EmailId = im.candidateEmail
 where irf.ClientId = 23 and im.Confirmationstatus=1 and ISNULL(Case When IRF.IsCandidateavailability is null and 
 IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  
@@ -165,12 +165,12 @@ from TransInterviewer t1 join Userlist ul on ul.id=t1.UserId
 where t.IRFId = t1.IRFId FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                           
 from TransInterviewer t                          
 where t.IRFId=IRF.id) ei       
-left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId   
+--left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId   
 Outer Apply(Select Max(Joinedon) as Joinedon From InterviewMeetingsJoinTime imjt where im.id=imjt.interviewid) imj    
 --Outer Apply (Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'              
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt              
 left join UserList ulc on ulc.EmailId  = im.candidateEmail
-left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                   
+--left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                   
 where irf.ClientId = 23 and ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,4,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)!=1 and (CASE WHEN (imj.Joinedon is null
 ) THEN 0 ELSE 1 END)=0  
         
@@ -193,12 +193,12 @@ from TransInterviewer t1 join Userlist ul on ul.id=t1.UserId
 where t.IRFId = t1.IRFId FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                           
 from TransInterviewer t                          
 where t.IRFId=IRF.id) ei     
-left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId    
+--left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId    
 Outer Apply(Select Max(Joinedon) as Joinedon From InterviewMeetingsJoinTime imjt where im.id=imjt.interviewid) imj    
 --outer Apply (Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'              
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt                            
 left join UserList ulc on ulc.EmailId  = im.candidateEmail
-left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                          
+--left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                          
 where irf.ClientId = 23 and ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,7,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(im.IsNotificationSentToCandidate,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0  
                         
 Update InterviewMeetings set IsNotificationSentToCandidate=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationCandidate)                  
@@ -219,12 +219,12 @@ from TransInterviewer t1 join Userlist ul on ul.id=t1.UserId
 where t.IRFId = t1.IRFId FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                           
 from TransInterviewer t                          
 where t.IRFId=IRF.id) ei     
-left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId    
+--left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId    
 Outer Apply(Select Max(Joinedon) as Joinedon From InterviewMeetingsJoinTime imjt where im.id=imjt.interviewid) imj    
 --outer Apply (Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_JOINED'              
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt              
 left join UserList ulc on ulc.EmailId  = im.candidateEmail
-left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                          
+--left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                          
 where irf.ClientId = 23 and ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,14,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and ISNULL(im.IsMeetingNotificationSent,0)=1 and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(IsRescheduleNotificationSent,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0  
                         
 Update InterviewMeetings set IsRescheduleNotificationSent=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationReschedule)                          
@@ -239,7 +239,7 @@ Union
 Select * from @MeetingNotificationReschedule                        
     
     
-drop table #ZoomMeetingTransmissionTempTbl    
+--drop table #ZoomMeetingTransmissionTempTbl    
                         
 END 
 
