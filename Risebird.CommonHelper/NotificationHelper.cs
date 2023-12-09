@@ -1994,7 +1994,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount)
+        public async Task<string> SendInterviewerCommonInterviewNotification(Mail model, string UrlDetails, int totalCount, int? irfId = null)
         {
             try
             {
@@ -2016,7 +2016,7 @@ namespace Risebird.CommonHelper
 
                 msg.HtmlContent = msgBody;
 
-                return await SendMail(msg);
+                return await SendMail(msg, irfId);
             }
             catch (Exception)
             {
