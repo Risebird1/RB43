@@ -2239,6 +2239,14 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         var model = await _dashboardService.GetPotentialRiskByCandidateService();
+                        foreach (var item in model)
+                        {
+
+                            if (item.InterviewStatus.HasValue)
+                            {
+                                item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                            }
+                        }
 
                         return View(model);
                     }
@@ -2258,6 +2266,86 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<FileContentResult> ExportPotentialRiskByCandidate()
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Potential Risk By Candidate");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Potential Risk By Candidate\r\n" + ".xlsx";
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var modelList = await _dashboardService.GetPotentialRiskByCandidateService();
+                foreach (var item in modelList)
+                {
+
+                    if (item.InterviewStatus.HasValue)
+                    {
+                        item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                    }
+                }
+                Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:AI1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 12;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "Skill Channel ID";
+                Sheet.Cells[1, 2].Value = "Interview Date";
+                Sheet.Cells[1, 3].Value = "Interviewer";
+                Sheet.Cells[1, 4].Value = "Candidate Name";
+                Sheet.Cells[1, 5].Value = "Candidate Email";
+                Sheet.Cells[1, 6].Value = "Candidate Contact";
+                Sheet.Cells[1, 7].Value = "Interview Status";
+                Sheet.Cells[1, 8].Value = "Client Name";
+                Sheet.Cells[1, 9].Value = "Channel Owner";
+                Sheet.Cells[1, 10].Value = "Red Marker";
+                Sheet.Cells[1, 11].Value = "Rating";
+                Sheet.Cells[1, 12].Value = "Rated On";
+                
+                int i = 2;
+                if (modelList.Count() > 0)
+                {
+                    foreach (var item in modelList)
+                    {
+                        Sheet.Cells[i, 1].Value = item.IRFId;
+                        Sheet.Cells[i, 2].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 3].Value = item.interviewer;
+                        Sheet.Cells[i, 4].Value = item.candidateName;
+                        Sheet.Cells[i, 5].Value = item.candidateEmail;
+
+                        Sheet.Cells[i, 6].Value = item.MobileNumber;
+                        Sheet.Cells[i, 7].Value = item.intervieweStatusStatDesc;
+                        Sheet.Cells[i, 8].Value = item.Name;
+                        Sheet.Cells[i, 9].Value = item.ChannelOwner;
+                        Sheet.Cells[i, 10].Value = item.RedMarker;
+                        Sheet.Cells[i, 11].Value = item.Rating;
+                        Sheet.Cells[i, 12].Value = item.RatingAddedOn;
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Participantwaiting(string type)

@@ -210,8 +210,17 @@
                                             <thead>
                                                 <tr>
                                                     <th id="cfeedback_4">Candidate Email</th>
+                                                      @if (ViewBag.type == "Candidate")
+                                                    {
+                                                        <th>Candidate Name</th>
+                                                    }
                                                     <th>Interviewer</th>
                                                     <th>Interview Date</th>
+                                                    @if (ViewBag.type == "Candidate")
+                                                    {
+                                                        <th>Interview Status</th>
+                                                        <th>CreatedOn</th>
+                                                    }
                                                     <th>Rating</th>
                                                     <th>Client</th>
                                                     <th>Action</th>
@@ -220,8 +229,17 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>Candidate Email</th>
+                                                    @if (ViewBag.type == "Candidate")
+                                                    {
+                                                        <th>Candidate Name</th>
+                                                    }
                                                     <th>Interviewer</th>
                                                     <th>Interview Date</th>
+                                                    @if (ViewBag.type == "Candidate")
+                                                    {
+                                                        <th>Interview Status</th>
+                                                        <th>CreatedOn</th>
+                                                    }
                                                     <th>Rating</th>
                                                     <th>Client</th>
                                                     <th>Action</th>
@@ -246,10 +264,16 @@
                                                                         <a onclick=""> @item.EmailAddress</a>
                                                                     </div>
                                                                 }
+
                                                             }
                                                         </td>
+                                                        @if (ViewBag.type == "Candidate")
+                                                        {
+                                                            <td>@item.candidateName</td>
+                                                        }
                                                         @if (ViewBag.profileName != "Client")
                                                         {
+                                                            
                                                             <td>
                                                                 @if (item.interviewerEmail != null && item.interviewerEmail != "")
                                                                 {
@@ -273,6 +297,14 @@
                                                             <td>@item.Interviewer</td>
                                                         }
                                                         <td>@item.Interviewdate</td>
+
+
+                                                        @if (ViewBag.type == "Candidate")
+                                                        {
+                                                            <td>@item.intervieweStatusStatDesc</td>
+                                                            <td>@item.CreatedOn</td>
+
+                                                        }
                                                         <td>
                                                             <div style="margin-top:-1vw">
                                                                 @for (int value = 1; value <= 5; value++)
@@ -289,6 +321,8 @@
                                                                 }
                                                             </div>
                                                         </td>
+
+
                                                         <td>@item.ClientName</td>
                                                         <td>
                                                             <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
