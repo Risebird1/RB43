@@ -25,5 +25,6 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public int JobCountry { get; set; }
         public string logolink { get; set; }
+        public int? irfIntId { get; set; }
     }
 }

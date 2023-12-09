@@ -7998,8 +7998,9 @@ option {
     z-index: 1000;
     width: 100%;
     top: 0px;
-    left:25px;
-    font-size: 15px;
+    left: 25px;
+    font-size: 14.5px;
+    line-height: 25px;
     font-weight: 500;
     color: #c63838;
 }
@@ -8427,7 +8428,13 @@ option {
             width: 100%;
             left: 0px;
         }
-
+        .video-alert {
+            left: 0px !important;
+            font-size: 13px !important;
+        }
+        #VideoKYCModel{
+            top:40px;
+        }
         #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
             width: 285px !important;
             height: 160px !important;
@@ -8821,7 +8828,7 @@ option {
             padding: 20px 10px;
             margin-bottom: 10px;
         }
-
+       
         .nodata {
             text-align: center;
             font-size: 17px !important;
@@ -8928,7 +8935,7 @@ option {
         .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
             font-size: 11px !important;
         }
-
+      
         .w60 {
             width: 55%;
             float: left;
@@ -9039,7 +9046,14 @@ option {
             top: 4px !important;
             left: 10px !important;
         }
+        .video-alert {
+            left: 0px !important;
+            font-size: 13px !important;
+        }
 
+        #VideoKYCModel {
+            top: 45px !important;
+        }
         #userProfileForm .tab-menu ul li a {
             font-size: 15px;
         }
@@ -9706,6 +9720,13 @@ option {
             float: left !important;
            
         }
+        #VideoKYCModel {
+            top: 45px !important;
+        }
+
+        .video-alert {
+            left: 0px !important;
+        }
         #btnStop, #btnStart {
             left: -12px!important;
         }
@@ -10130,6 +10151,15 @@ option {
             width: 300px!important;
             position:relative!important;
             left: -23px!important;
+        }
+        .video-alert {
+            left: 0px !important;
+            line-height: 18px !important;
+            font-size: 12px !important;
+        }
+
+        #VideoKYCModel {
+            top: 80px !important;
         }
     }
     /* EOF BUTTONS */
@@ -16240,6 +16270,12 @@ div.tagsinput {
         width: 100%;
         padding-right: 15px !important;
         padding-left: 15px !important;
+    }
+    #VideoKYCModel {
+        top: 65px !important;
+    }
+    .video-alert {
+        line-height: 18px !important
     }
     .topheader-header {
         right: 0px!important;
