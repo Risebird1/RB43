@@ -4059,7 +4059,32 @@ namespace Risebird.Business
                 return false;
             }
         }
-
+        public async Task<bool> SaveProctoringReport(ProctoringReport model, string emailId)
+        {
+            try
+            {
+                var result = await _meetingRespository.SaveProctoringReport(model, emailId);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<ProctoringReport> GetProctoringReport(int interviewid)
+        {
+            try
+            {
+                var result = _meetingRespository.GetProctoringReport(interviewid);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

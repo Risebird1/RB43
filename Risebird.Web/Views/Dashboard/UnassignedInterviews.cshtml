@@ -1412,6 +1412,13 @@
                                                         @if (ViewBag.actionstatus == "QCPendingReport")
                                                         {
                                                             <td>
+                                                                <span>
+                                                                    <a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="ProxyFormDetails('@item.Interviewid',true)">
+                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Proxy Form" style=" position: relative; top: -1px;">
+                                                                            <i style="font-size: 16px; position: relative; top: -1px;" class="fa fa-wpforms"></i>
+                                                                        </button>
+                                                                    </a>
+                                                                </span>
                                                                 <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
 
                                                                     <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
@@ -1831,6 +1838,7 @@
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentSLA.cshtml")
 @await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
+@await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
 
 <script src="~/js/Aadhaar.js"></script>
 <script src="~/js/TwilioCallMaker.js"></script>

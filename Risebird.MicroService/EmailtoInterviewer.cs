@@ -73,7 +73,7 @@ namespace Risebird.MicroService
                         msgBody.AppendLine(
                             "Kindly login over risebird portal and head over to \'MyInterview\' menu to join.");
                         msgBody.Append("\n");
-                        msgBody.AppendLine("Note: Please login over zoom 2 minutes prior to the scheduled time of the interview and try finishing 2 minutes before the scheduled close time.");
+                        msgBody.AppendLine("Note: Please login over zoom 2 minutes prior to the scheduled time of the interview.");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
