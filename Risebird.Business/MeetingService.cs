@@ -12,6 +12,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
+
 namespace Risebird.Business
 {
     public class MeetingService : IMeetingService
@@ -3433,7 +3435,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags,int VideoReward)
+        public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags, int VideoReward)
         {
             try
             {
@@ -3968,7 +3970,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> PaymentSlaNotApproved(int interviewid,string emailid)
+        public async Task<bool> PaymentSlaNotApproved(int interviewid, string emailid)
         {
             try
             {
@@ -3996,8 +3998,8 @@ namespace Risebird.Business
         {
             try
             {
-             return  await _meetingRespository.AddTransInterviewersReliabilityScores(model);
-                
+                return await _meetingRespository.AddTransInterviewersReliabilityScores(model);
+
             }
             catch (Exception e)
             {
@@ -4045,7 +4047,45 @@ namespace Risebird.Business
                 return false;
             }
         }
-
+        public async Task<bool> UpdateInterviewReport(int interviewid, string comment,string emailid)
+        {
+            try
+            {
+                var result = await _meetingRespository.UpdateInterviewReport(interviewid, comment, emailid);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> SaveProctoringReport(ProctoringReport model, string emailId)
+        {
+            try
+            {
+                var result = await _meetingRespository.SaveProctoringReport(model, emailId);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<ProctoringReport> GetProctoringReport(int interviewid)
+        {
+            try
+            {
+                var result = _meetingRespository.GetProctoringReport(interviewid);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
 

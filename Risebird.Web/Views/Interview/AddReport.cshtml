@@ -1293,17 +1293,31 @@
 
                                     }
                                     <div>
-                                        <div class="proctor">
+
+                                        <div class="multiple_row">
+                                            <h2 style="margin:0px;">Proxy Candidate Reporting</h2>
+                                        </div>
+                                        <div class="card-wrap" style="margin-bottom:0px; padding:30px 20px 0px 20px;">
+                                            <span class="heading pull-left"><span style="color:red;font-weight:bold;font-size:13px;">*</span> Please select the option  </span>
+                                            <span class="custom-select-dropdown">
+                                                <select id='isProxyCandidate' name='isProxyCandidate'>
+                                                    <option>Select</option>
+                                                    <option value="yes">Yes</option>
+                                                    <option value="no">No</option>
+                                                </select>
+                                            </span>
+                                        </div>
+										@* <div class="proctor">
                                             <input class="toggle-box" id="identifier-2" type="checkbox">
                                             <label for="identifier-2">
                                                 <div class="multiple_row">
-                                                    <h2>Proctoring Report | <span>Count: @Model.ProctoringCount</span></h2>
+                                                    <h2>Proctoring Report</h2>
                                                 </div>
                                             </label>
 
 
 
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopad">
+                                          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopad">
                                                 <div class="table-responsive-sm">
                                                     <table class="table table-bordered mbn" id="ProctoringTable">
                                                         <thead>
@@ -1506,7 +1520,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                        </div>
+                                    </div>*@
                                         <!--end of multiple location-->
                                     </div>
 
@@ -2684,3 +2698,14 @@
         }
         });
 </script>
+<script>
+       $(document).ready(function () {
+           
+    document.getElementById('isProxyCandidate').onchange = function () {
+        if (this.value == 'yes') {
+           ProxyFormDetails();
+        } 
+    };
+       });
+</script>
+@await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")

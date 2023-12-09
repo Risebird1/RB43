@@ -25,7 +25,7 @@ body {
     padding: 0.438rem 1rem;
     font-weight: 600;
     border-radius: 0.375rem;
-    color:#fff;
+    color: #fff;
 }
 
 .sharp.btn-xs {
@@ -430,14 +430,15 @@ a.infos {
         height: 70px;
         padding: 0px 10px 0px 0px;
     }
+
 .scrollbar {
     overflow: auto;
 }
+
 #style-2::-webkit-scrollbar, .style-2::-webkit-scrollbar {
     width: 4px;
     height: 9px;
     margin-top: 5px;
- 
 }
 
 #style-2::-webkit-scrollbar-thumb, .style-2::-webkit-scrollbar-thumb {
@@ -684,6 +685,7 @@ table tr td.relatedvideo:hover {
     bottom: 130px !important;
     right: 0% !important;
 }
+
 .remove-btn input {
     border: 0px;
     background: none;
@@ -706,6 +708,7 @@ table tr td.relatedvideo:hover {
     padding: 0px 6px;
     width: 30px;
 }
+
 .risetubenext-btn {
     border-radius: 5px !important;
     font-size: 12px !important;
@@ -1324,6 +1327,7 @@ table tr td.relatedvideo:hover {
     transform: rotate( -45deg );
     vertical-align: top;
     width: 0.45em;
+    display: none;
 }
 
 .proctor .toggle-box + label:before {
@@ -1339,6 +1343,7 @@ table tr td.relatedvideo:hover {
     vertical-align: top;
     width: 0.45em;
     transform: rotate(135deg);
+    display: none;
 }
 
 .wsp-normal {
@@ -1734,11 +1739,13 @@ audio {
 .interviewerSkills .overlay-relative {
     color: #fff !important;
 }
+
 .dashboard .flipper {
     position: relative;
     top: 0px;
     left: 0px;
 }
+
 .dashboard .countdown__timer {
     padding: 0em;
     border: 0px solid black;
@@ -1751,6 +1758,7 @@ audio {
     line-height: 25px;
     text-align: center;
 }
+
 .dashboard
 .flipper.flip .back-card, .dashboard
 .flipper1.flip .back-card {
@@ -1803,10 +1811,11 @@ audio {
 
 
 .dashboard .countdown__timer.front-card .card-title {
-    background:none!important;
+    background: none !important;
 }
-.dashboard .back-card, .dashboard .front-card{
-    font-family:inherit;
+
+.dashboard .back-card, .dashboard .front-card {
+    font-family: inherit;
 }
 
 
@@ -1866,7 +1875,7 @@ audio {
     background: #FFF;
     font-family: inherit;
     font-weight: bold;
-    position:inherit;
+    position: inherit;
 }
 
 .flipper.flip .front-card {
@@ -2964,6 +2973,7 @@ table.journey td.cadSkill {
     padding: 0px 20px !important;
     border: 0px !important;
 }
+
 .label {
     display: inline;
     padding: .2em .6em .3em;
@@ -3417,14 +3427,17 @@ table.interviewertable td.cadEmail {
         font-size: 14px;
         font-family: "Raleway", sans-serif;
     }
+
 #interviewerFlagDetailsModal .table > tbody > tr > td {
-    padding: 10px!important;
+    padding: 10px !important;
 }
-    #interviewerMemberModal .table > tbody > tr > td {
+
+#interviewerMemberModal .table > tbody > tr > td {
     padding: 5px;
     border-right: 1px solid #dee2e68f !important;
     border-left: 1px solid #dee2e68f;
 }
+
 .interviewertable td.interview-com {
     max-width: 280px;
 }
@@ -5601,7 +5614,7 @@ button .btn {
 .dashboardcode-bsmultiselect .badge {
     border: 0px;
     color: #888 !important;
-    width:auto;
+    width: auto;
 }
 
 .dashboardcode-bsmultiselect .dropdown-menu .form-control {
@@ -5839,7 +5852,7 @@ input[type="date"].form-control {
 
 .interviewresponsebtn {
     text-decoration: none;
-    padding:7px 20px;
+    padding: 7px 20px;
     position: relative;
     clear: both;
     border-radius: 3px;
@@ -5849,17 +5862,21 @@ input[type="date"].form-control {
 }
 
 .greenbtn {
-    background:  #25a125;
+    background: #25a125;
 }
-.greenbtn:hover {
-     background: #208520;
-}
+
+    .greenbtn:hover {
+        background: #208520;
+    }
+
 .redbtn {
     background: #cf3f35;
 }
+
     .redbtn:hover {
         background: #bb3b33;
     }
+
 .tablinks.active {
     /*background-color: #a7e8ba;*/
     background-color: #e5e7ea !important;
@@ -5884,6 +5901,7 @@ input[type="date"].form-control {
     box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.2);
     margin: 10px;
 }
+
 .candidate-tab .tab-block .card-block {
     height: auto !important;
     width: 100% !important;
@@ -5891,41 +5909,47 @@ input[type="date"].form-control {
     padding: 18px 10px;
     margin: 10px 10px 15px 10px;
 }
-    .candidate-tab .tabcontent p {
-        font-size: 15px;
-    }
+
+.candidate-tab .tabcontent p {
+    font-size: 15px;
+}
 
 .candidate-tab {
-   /* width: auto;*/
-   width:100%;
+    /* width: auto;*/
+    width: 100%;
     margin: 0px auto;
 }
+
 .zoom-icon {
     width: 25px;
     position: relative;
     top: -2px;
     left: -3px;
 }
+
 .content-wrappers .meeting-link .click_herebtn {
     padding: 15px 20px;
 }
-    .candidate-tab .card-block h1 {
-        color: #305887;
-        font-weight: bold;
-        font-size: 13px;
-        text-transform: uppercase;
-        text-align: center;
-    }
-    .candidate-tab .tab-block .card-block h1 {
-        color: #305887;
-        font-weight: bold;
-        font-size: 13px;
-        text-transform: uppercase;
-        text-align: left;
-        padding-left: 45px;
-        padding-top: 7px;
-        padding-bottom: 0px;
-    }
+
+.candidate-tab .card-block h1 {
+    color: #305887;
+    font-weight: bold;
+    font-size: 13px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.candidate-tab .tab-block .card-block h1 {
+    color: #305887;
+    font-weight: bold;
+    font-size: 13px;
+    text-transform: uppercase;
+    text-align: left;
+    padding-left: 45px;
+    padding-top: 7px;
+    padding-bottom: 0px;
+}
+
 .meeting-link {
     margin: 20px 0px;
     color: #3094e5;
@@ -5980,7 +6004,7 @@ input[type="date"].form-control {
 
     .click_herebtn:hover span {
         padding-right: 20px;
-        color:#fff;
+        color: #fff;
     }
 
         .click_herebtn:hover span:after {
@@ -6011,14 +6035,16 @@ input[type="date"].form-control {
     color: #FFf;
     text-align: center;
 }
+
 .candidate-tab .tab-block .step {
-  font-size:20px;
+    font-size: 20px;
     top: 50%;
     left: 13%;
     width: 30px;
     border-radius: 120px 120px 120px 120px;
     background-color: #204065;
 }
+
 .follow ul {
     margin: 0px;
     padding: 0px;
@@ -6039,39 +6065,47 @@ input[type="date"].form-control {
     margin: 0px;
     padding: 0px 0px;
 }
-.paymentli ul li{
-    clear:both;
-}
-.paymentli ul li  {
-    font-size: 15px;
-    padding: 5px 0px;
-    list-style: none;
-    color: #777575;
-}
-    .paymentli ul li b {
-        float: left;
-        font-weight: 600;
-        padding: 0px;
+
+    .paymentli ul li {
+        clear: both;
     }
-    .paymentli ul li span {
-        background-image: url(../../img/blue-tick.png);
-        background-repeat: no-repeat;
-        background-position: 7px 10px;
-        background-size: 6%;
+
+    .paymentli ul li {
+        font-size: 15px;
+        padding: 5px 0px;
+        list-style: none;
+        color: #777575;
     }
+
+        .paymentli ul li b {
+            float: left;
+            font-weight: 600;
+            padding: 0px;
+        }
+
+        .paymentli ul li span {
+            background-image: url(../../img/blue-tick.png);
+            background-repeat: no-repeat;
+            background-position: 7px 10px;
+            background-size: 6%;
+        }
+
 .tags {
     float: left;
     color: green;
     font-weight: bold;
 }
+
 .content-wrapper {
     max-width: 752px;
     margin: 0px auto;
 }
+
 .content-wrappers {
     max-width: 1000px;
     margin: 0px auto;
 }
+
     .content-wrappers .tabcontent {
         padding: 30px 20px 30px 20px;
         margin: 110px 0px 20px 0px;
@@ -6079,28 +6113,34 @@ input[type="date"].form-control {
         border: 1px solid rgba(0,0,0,.125);
         box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);
     }
-    #keycontainer {
-        float: left;
-        padding: 0px 10px;
-    }
-#keycontainer div {
+
+#keycontainer {
     float: left;
-    background-color: red;
-    padding: 1px 5px;
-    border-radius: 3px;
-    margin: 3px;
-    color:#fff;
-    font-size:14px;
+    padding: 0px 10px;
 }
-.flex-w{
-    display:flex;
+
+    #keycontainer div {
+        float: left;
+        background-color: red;
+        padding: 1px 5px;
+        border-radius: 3px;
+        margin: 3px;
+        color: #fff;
+        font-size: 14px;
+    }
+
+.flex-w {
+    display: flex;
 }
+
 .int-table .action span button, .int-table .action span a, .int-table .action span span {
     margin-right: 3px;
 }
+
 .int-table table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
     max-width: 370px !important;
 }
+
 .interviewer-name {
     font-size: 17px;
     color: forestgreen;
@@ -6174,6 +6214,7 @@ input[type="date"].form-control {
         left: 15%;
         margin-left: -10px;
     }
+
 .quality-con label {
     font-weight: normal;
     color: #373333cc;
@@ -6181,20 +6222,23 @@ input[type="date"].form-control {
     font-size: 15px;
     padding: 10px;
 }
+
 .quality-con ul {
     margin: 0px;
     padding: 0px 10px;
 }
-.quality-con ul li {
-    font-size: 14.5px;
-    padding: 0px 30px;
-    list-style: none;
-    background-image: url(../../img/tick-mark-icon.svg);
-    background-repeat: no-repeat;
-    background-position: 10px 5px;
-    background-size: 2%;
-    color: #5f5959;
-}
+
+    .quality-con ul li {
+        font-size: 14.5px;
+        padding: 0px 30px;
+        list-style: none;
+        background-image: url(../../img/tick-mark-icon.svg);
+        background-repeat: no-repeat;
+        background-position: 10px 5px;
+        background-size: 2%;
+        color: #5f5959;
+    }
+
 #addComment .star-rating {
     display: flex;
     direction: rtl;
@@ -6203,9 +6247,9 @@ input[type="date"].form-control {
     padding: 0 .2em;
     text-align: center;
     width: 300px;
-    margin:0px auto 10px auto;
-    background:none;
-    border:0px;
+    margin: 0px auto 10px auto;
+    background: none;
+    border: 0px;
 }
 
     #addComment .star-rating input {
@@ -6254,19 +6298,21 @@ input[type="date"].form-control {
         height: 70px;
         width: 100%;
         border: 0px;
-        background:#fff;
+        background: #fff;
     }
+
 .int-date {
     float: right;
     margin: 5px;
     position: relative;
     right: 20px;
 }
-.audio-con{
-    width:300px;
-    margin:0px auto;
 
+.audio-con {
+    width: 300px;
+    margin: 0px auto;
 }
+
 .dashboard-icon {
     width: 50px;
     height: 50px;
@@ -6277,15 +6323,17 @@ input[type="date"].form-control {
     padding: 10px !important;
     vertical-align: middle;
 }
-.audio-con button{
-    background:none;
-    border:none;
+
+.audio-con button {
+    background: none;
+    border: none;
 }
-    .audio-con span {
-        font-size: 13PX;
-        font-family: 'Roboto';
-        display:block;
-    }
+
+.audio-con span {
+    font-size: 13PX;
+    font-family: 'Roboto';
+    display: block;
+}
 
 .dashboard-icon img {
     height: 100% !important;
@@ -6301,7 +6349,7 @@ input[type="date"].form-control {
     margin: 0px;
     position: relative;
     top: -6px;
-    text-align:left;
+    text-align: left;
 }
 
 .dashboard-count {
@@ -6312,17 +6360,21 @@ input[type="date"].form-control {
     position: relative;
     left: 30px;
     line-height: 25px;
-    padding:9px 10px;
+    padding: 9px 10px;
 }
+
 .dashboard .panel .panel-body {
     padding: 5px;
 }
-    .unassign {
+
+.unassign {
     background: #74c0fc;
 }
-.icons-blacklist{
-    width:24px;
+
+.icons-blacklist {
+    width: 24px;
 }
+
 .pending {
     background: #f89d9db5;
 }
@@ -6338,6 +6390,7 @@ input[type="date"].form-control {
 .open-issue {
     background: #ff7f50ba;
 }
+
 .suspicious {
     background: #64c964;
 }
@@ -6345,6 +6398,7 @@ input[type="date"].form-control {
 .risk {
     background: #F44336;
 }
+
 .deleted {
     background: #e02d2df5;
 }
@@ -6356,6 +6410,7 @@ input[type="date"].form-control {
 .clarity {
     background: #25bd6a8a;
 }
+
 .report-pending {
     background: #3bb5a0;
 }
@@ -6363,52 +6418,64 @@ input[type="date"].form-control {
 .video {
     background: cadetblue;
 }
+
 .icons-dash {
     width: 40px !important;
     left: -4px;
     max-width: 40px !important;
-    position:relative;
+    position: relative;
 }
+
 .dashboard-smalltxt {
     display: block;
     font-size: 12px;
     padding: 0px 0px 0px 11px;
     color: #a49f9f;
-    line-height:1px;
-    position:relative;
-    top:7px;
+    line-height: 1px;
+    position: relative;
+    top: 7px;
 }
+
 .blacklist {
     background: #92b079f0;
 }
-.noshow{
-    background:grey;
+
+.noshow {
+    background: grey;
 }
+
 .noshow-icon {
-    max-height: 95px!important;
-    height: 110%!important;
+    max-height: 95px !important;
+    height: 110% !important;
     position: relative;
     top: -1px;
     left: -5px;
 }
+
 .reschedule {
     background: #fad402a6;
 }
+
 .payment {
     background: #e0aa48;
 }
+
 .risk-client {
     background: #f79f09;
 }
+
 .redo {
     background: #cd7a33;
 }
+
 .cancel {
     background: #eb5454;
 }
+
 .risk-int {
     background: #b380ab;
 }
+
 .click-arrow {
     border-radius: 100%;
     width: 30px;
@@ -6418,27 +6485,31 @@ input[type="date"].form-control {
     border: none;
     position: relative;
     top: 5px;
-    line-height:14px;
+    line-height: 14px;
 }
 
 .logo-cm {
     position: relative;
     top: 4px;
-    width:9%;
+    width: 9%;
     left: 4px;
 }
-.top-h{
-    height:auto;
+
+.top-h {
+    height: auto;
 }
+
 .white-space {
     width: 300px;
     display: block;
     overflow: hidden;
     white-space: break-spaces;
 }
-.dashboard-count span{
-    cursor:pointer;
+
+.dashboard-count span {
+    cursor: pointer;
 }
+
 .dashboard-view {
     text-align: right;
     cursor: pointer;
@@ -6452,7 +6523,7 @@ input[type="date"].form-control {
     font-weight: bold;
 }
 
-.dashboard-iconcolor{
+.dashboard-iconcolor {
     padding: 10px 0px 10px 10px;
     display: block;
     background-size: 60% !important;
@@ -6478,70 +6549,78 @@ input[type="date"].form-control {
     background-color: #a52a2a;
     background-image: url(../../img/wallet.png);
     background-position: 7px 7px;
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
 }
+
 .transcript-btn {
     float: right;
     margin: 0px 10px;
     padding: 6px 10px 8px 10px;
 }
-    .transcript-btn a{
-        border-radius:3px;
+
+    .transcript-btn a {
+        border-radius: 3px;
     }
-    .transcript {
+
+.transcript {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+    .transcript .accordion-title {
         position: relative;
-        margin-bottom:10px;
+        margin: 0;
+        font-size: 1.25em;
+        font-weight: normal;
+        color: #fff;
+        cursor: pointer;
     }
-        .transcript .accordion-title {
-            position: relative;
-            margin: 0;
-            font-size: 1.25em;
-            font-weight: normal;
-            color: #fff;
-            cursor: pointer;
+
+
+        .transcript .accordion-title::after {
+            content: "";
+            position: absolute;
+            top: -40px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-top-color: #000;
         }
 
-
-            .transcript .accordion-title::after {
-                content: "";
-                position: absolute;
-                top: -40px;
-                right: 25px;
-                width: 0;
-                height: 0;
-                border: 8px solid transparent;
-                border-top-color: #000;
-            }
-
-            .transcript .accordion-title.open::after {
-                content: "";
-                position: absolute;
-                top: -40px;
-                border: 8px solid transparent;
-                border-bottom-color: #000;
-            }
-        .transcript .focused {
-            background: #53a5f5!important;
+        .transcript .accordion-title.open::after {
+            content: "";
+            position: absolute;
+            top: -40px;
+            border: 8px solid transparent;
+            border-bottom-color: #000;
         }
+
+    .transcript .focused {
+        background: #53a5f5 !important;
+    }
+
 #skill_card .dropdown {
     position: absolute;
     display: inline-block;
 }
+
 #skill_card .dropdown-content {
-   display: none;
+    display: none;
     position: absolute;
     bottom: -8px;
     z-index: 1;
 }
-#skill_card .dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
+
+    #skill_card .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
 
 #skill_card .notification .badge {
-    left:15px;
+    left: 15px;
 }
 /*
 #skill_card .dropdown:hover .dropdown-content {
@@ -6551,18 +6630,22 @@ input[type="date"].form-control {
 #skill_card .tripledot:after {
     content: '\2807';
 }
-#skill_card .dropdown-content button{
-    margin-bottom:2px;
+
+#skill_card .dropdown-content button {
+    margin-bottom: 2px;
 }
+
 .tox-notifications-container {
     display: none
 }
+
 #uploadResumesModal .card-footer {
     background-color: #56a9ff0a;
     border: 0;
-    padding:10px;
+    padding: 10px;
     border-top: 1px #eeeeee73 solid;
 }
+
 .drop-btn {
     background: #4b6c9578;
     border: 0px;
@@ -6574,6 +6657,7 @@ input[type="date"].form-control {
     margin: 0px auto 20px auto;
     display: block;
 }
+
 .drop-box {
     margin: 10px 15px;
     padding: 30px;
@@ -6621,46 +6705,52 @@ input[type="date"].form-control {
 #uploadResumesModal .modal-lg {
     max-width: 650px !important;
 }
-.flex-w{
-    display:flex;
+
+.flex-w {
+    display: flex;
 }
+
 .call-area {
     width: 35px;
     cursor: pointer;
 }
+
 .avail {
     background: #6dd36dbd;
     color: #fff;
     padding: 2px 6px;
     font-size: 12px;
-
 }
+
 .noavail {
     background: #ef756c;
     color: #fff;
     padding: 2px 6px;
     font-size: 12px;
 }
+
 .drop {
     background: #cf3b30;
     color: #fff;
     padding: 2px 6px;
     font-size: 12px;
 }
+
 .clarity {
     background: #77c1cd;
     color: #fff;
     padding: 2px 6px;
     font-size: 12px;
 }
+
 .int-table .name-field {
     font-size: 13px;
-    font-weight:bold;
-    position:relative;
-    top:-6px;
+    font-weight: bold;
+    position: relative;
+    top: -6px;
     color: #5e3787;
     font-family: "Raleway", sans-serif;
-    line-height:14px;
+    line-height: 14px;
 }
 
 .int-table .email-field {
@@ -6671,7 +6761,6 @@ input[type="date"].form-control {
     position: relative;
     top: 2px;
     display: block;
-
 }
 
 .name-field {
@@ -6679,41 +6768,50 @@ input[type="date"].form-control {
     color: #260944;
     font-family: "Raleway", sans-serif;
 }
+
 .email-field {
     font-size: 13px;
     color: #70709d !important;
     font-family: "Open Sans", sans-serif;
 }
+
 .int-datetime {
     color: #5b5b98 !important
 }
+
 .wp {
     width: 12%;
 }
+
 .ml {
     width: 24%;
 }
+
 .vc {
     width: 20%;
     transform: rotate(15deg);
 }
+
 .icon {
     height: 20px !important;
     position: relative;
     left: 7px;
     margin-right: 10px;
 }
+
 .icon-link {
     cursor: pointer;
     text-decoration: none;
     font-weight: bolder;
-    font-size:15px;
+    font-size: 15px;
 }
+
 .icon-field {
     width: auto;
     float: left;
     padding: 0px 0px 5px 10px;
 }
+
 .current {
     font-size: 11px;
     padding: 0px 6px;
@@ -6723,56 +6821,68 @@ input[type="date"].form-control {
     position: relative;
     top: 0px;
 }
+
 .selected {
     background: #90ee9094;
     color: forestgreen;
- 
 }
+
 .rejected {
     background: #fdebf3;
     color: #ee4936;
- 
 }
+
 .scheduled {
     background: #f2eefc;
     color: #845adf;
 }
+
 .cancelled {
     background: red;
     color: #fff;
 }
+
 .added {
     background: #b5f2a76b;
     color: #35c032;
 }
+
 .new {
     background: #3b92e652;
     color: #3a5fd3;
 }
+
 .irrelevant {
     background: #ffa5005e;
     color: #d39e3a;
 }
+
 .noshowcandidate {
     background: #f89cbf24;
     color: #94207bbd;
 }
-.progress{
-    background:green;
-    color:#fff;
+
+.progress {
+    background: green;
+    color: #fff;
 }
+
 .waiting {
     background: orange;
     color: #94207bbd;
 }
+
 .offer {
-  background: darkgreen;color:#fff;
+    background: darkgreen;
+    color: #fff;
 }
+
 .candidate-field {
     width: 100%;
     float: left;
     display: flex;
 }
+
 .pskill {
     text-decoration: none;
     color: #1799bb;
@@ -6780,67 +6890,81 @@ input[type="date"].form-control {
     font-size: 12px;
     padding-left: 5px;
 }
+
 .logo-area {
     width: 30%;
 }
+
     .logo-area .logo-cm {
         position: relative;
         top: 4px;
         width: 40%;
         left: 4px;
     }
+
 .welcome {
     line-height: 22px;
     font-size: 17px;
     font-family: cursive;
-    color:#fff;
+    color: #fff;
 }
 
-.welcome span {
-    color: mediumspringgreen;
-}
+    .welcome span {
+        color: mediumspringgreen;
+    }
+
 .btn-calling, .btn-calling:hover {
     background: #1ba51be0 !important;
     color: #fff;
     border-color: #1ba51be0 !important;
 }
+
 .btn-rating, .btn-rating:hover {
     background: #f6b445c7;
     border-color: #f6b445c7;
 }
+
 .btn-reschedule, .btn-reschedule:hover {
     background: #76b39c;
     border-color: #76b39c;
 }
+
 .btn-upload, .btn-upload:hover {
     background: #b1ba4e;
     border-color: #b1ba4e;
 }
+
 .btn-candlist, .btn-candlist:hover {
-    background: #eea4349e; border-color: #f0cc96;
+    background: #eea4349e;
+    border-color: #f0cc96;
 }
+
 .fixed-header {
     position: fixed;
     top: 44px;
     z-index: 1000;
     width: 100%;
 }
+
 .fixedtop {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
 }
-    .modal textarea.form-control:focus {
+
+.modal textarea.form-control:focus {
     border: 0px !important;
-    border-bottom:0px!important;
+    border-bottom: 0px !important;
 }
-.topheader-header{
-position:absolute;
-top:63px;
-z-index:1;
-right:315px;
+
+.topheader-header {
+    position: absolute;
+    top: 63px;
+    z-index: 1;
+    right: 315px;
 }
+
 .topheader-link {
     width: 32px;
     height: 32px;
@@ -6854,33 +6978,38 @@ right:315px;
     margin-right: 0px;
     float: left;
 }
+
 .topheader-link-wrap {
     width: auto;
-    float:left;
+    float: left;
     margin-right: 0px;
     color: #ffff;
     padding: 0px;
     font-size: 12px;
     border: 0px;
     background: none;
-/*    position: absolute;
+    /*    position: absolute;
     top: -39px;*/
     z-index: 100000000;
-/*    right: 250px;*/
+    /*    right: 250px;*/
 }
+
     .topheader-link-wrap button, .topbar-item button {
         background: none;
         border: 0px;
         color: #817c7c;
         font-weight: 600
     }
+
 .filter:hover + .note-filter {
     display: block;
 }
-    .user-mail {
-        position: relative;
-        top: 10px;
-    }
+
+.user-mail {
+    position: relative;
+    top: 10px;
+}
+
 .instruction ul {
     margin: 0px;
     padding: 0px;
@@ -6896,16 +7025,19 @@ right:315px;
         background-size: 2.5%;
         color: #2a2222;
     }
+
 .del-inst ul {
     list-style: none;
-    padding:0px;
+    padding: 0px;
 }
+
     .del-inst ul li {
         padding: 0px 4px 10px 20px;
         color: #2a2222;
         font-size: 13px;
         line-height: 25px;
     }
+
         .del-inst ul li::before {
             content: "\2022";
             color: red;
@@ -6934,6 +7066,7 @@ right:315px;
     background-repeat: no-repeat;
     background-position: 10px 7px;
 }
+
 .no-btn {
     background: url(../../img/notavailable.png), #e22d20;
     padding: 10px 20px 10PX 30PX;
@@ -6950,20 +7083,25 @@ right:315px;
     background-position: 8px 9px;
     border: 0PX;
 }
+
 #myStatusListpopup .table-bordered td:hover, #myStatusListpopup .table-striped tbody tr:hover {
     box-shadow: none;
 }
+
 .mtop-h {
     margin-top: 60px;
 }
-.mh-top{
-    margin-top:25px;
+
+.mh-top {
+    margin-top: 25px;
 }
+
 .clientlogoarea {
     width: auto;
     height: 38px;
     margin: 0px 10px;
 }
+
     .clientlogoarea img {
         width: 100%;
         height: 100%;
@@ -6972,18 +7110,20 @@ right:315px;
 
 #actionwrap {
     max-width: 100% !important;
-
 }
-    #actionwrap .action-btn{
-        overflow:visible!important;
+
+    #actionwrap .action-btn {
+        overflow: visible !important;
     }
 
-.action-btn{
-    margin:0px 10px 0px 8px;
+.action-btn {
+    margin: 0px 10px 0px 8px;
 }
-.action-btn .mdc-fab {
-    box-shadow: none !important;
-}
+
+    .action-btn .mdc-fab {
+        box-shadow: none !important;
+    }
+
 #actionwrap .btn:hover, #actionwrap .btn {
     background: none;
     border: 0px;
@@ -7096,6 +7236,7 @@ right:315px;
     .the-arrow.-right > .shaft:after {
         transform: rotate(-40deg);
     }
+
 .candidatename-sla {
     float: right;
     color: green;
@@ -7103,24 +7244,26 @@ right:315px;
     font-weight: 600;
     margin: 13px 50px 0px 0px;
 }
-#PaymentSLAModel{
-    overflow:auto;
-}
-#PaymentSLAModel .modal-lg {
-    max-width: 850px !important;
+
+#PaymentSLAModel {
+    overflow: auto;
 }
 
-#PaymentSLAModel input[type='radio'] {
-    border: 1px solid gray;
-    margin: 0px 10px 0px 10px;
-    position: relative;
-    top: 2px;
-    width: 15px;
-    height: 15px;
-}
+    #PaymentSLAModel .modal-lg {
+        max-width: 850px !important;
+    }
+
+    #PaymentSLAModel input[type='radio'] {
+        border: 1px solid gray;
+        margin: 0px 10px 0px 10px;
+        position: relative;
+        top: 2px;
+        width: 15px;
+        height: 15px;
+    }
 
 #InterviewerInsightsModel .modal-lg {
-    max-width:1050px !important;
+    max-width: 1050px !important;
 }
 
 .accordion-group .accordion-body {
@@ -7143,7 +7286,8 @@ ul.ks-cboxtags {
             border: 2px solid rgba(139, 139, 139, .3);
             color: #adadad;
             border-radius: 25px;
-            white-space: nowrap;
+            line-height: 22px;
+            /* white-space: nowrap;*/
             margin: 3px 0px;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -7156,7 +7300,7 @@ ul.ks-cboxtags {
         }
 
         ul.ks-cboxtags li label {
-            padding: 0px 6px;
+            padding: 3px 6px;
             cursor: pointer;
         }
 
@@ -7203,7 +7347,14 @@ ul.ks-cboxtags {
     font-family: system-ui !important;
     font-size: 13px !important;
     font-weight: 600;
-    
+}
+
+.proctor .label-name {
+    font-size: 15px !important;
+}
+
+.proctor ul.ks-cboxtags li label {
+    border-radius: 10px;
 }
 
 .accordion-toggle:after {
@@ -7225,6 +7376,7 @@ ul.ks-cboxtags {
     display: flex;
     justify-content: center
 }
+
 .submit-feedback {
     width: 220px;
     padding: 10px;
@@ -7232,18 +7384,22 @@ ul.ks-cboxtags {
     background: #000;
     color: #fff;
     margin: 0px 0px 0px 0px;
-    border:0px;
+    border: 0px;
 }
+
 .feebdackcontainer .label-name {
-    color: #000000ad!important;
+    color: #000000ad !important;
 }
+
 .feedbackcontainer .accordion-toggle:after {
     display: none;
 }
+
 .feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label {
-    font-size:14px;
-    font-weight:600;
+    font-size: 14px;
+    font-weight: 600;
 }
+
 .redobtn {
     background: #e32f2fe3;
     color: #fff;
@@ -7254,8 +7410,9 @@ ul.ks-cboxtags {
     position: relative;
     top: -37px;
     left: 7px;
-    float:left;
+    float: left;
 }
+
 .feedbackcontainer .accordion-heading {
     width: auto;
     background-color: transparent;
@@ -7266,7 +7423,7 @@ ul.ks-cboxtags {
     align-items: center;
     gap: 0.5rem;
     padding: 0px 10px;
-    height:35px;
+    height: 35px;
     margin: 0px 8px 0px 0px;
     border-radius: 5px;
     cursor: pointer;
@@ -7309,9 +7466,9 @@ ul.ks-cboxtags {
 
 .page__close {
     display: flex;
-    cursor: pointer;position:relative;
-    right:-25px;
-
+    cursor: pointer;
+    position: relative;
+    right: -25px;
 }
 
 .page__body {
@@ -7323,6 +7480,7 @@ ul.ks-cboxtags {
     width: auto;
     float: left;
 }
+
 .feedbackcontainer {
     text-align: center;
     grid-template-columns: 1fr 1fr;
@@ -7348,6 +7506,7 @@ ul.ks-cboxtags {
     grid-column: span 2;
     display: flex;
 }
+
 .feedbackcontainer ul.ks-cboxtags li label {
     padding: 0px 12px;
     cursor: pointer;
@@ -7356,12 +7515,15 @@ ul.ks-cboxtags {
     border: 2px solid rgb(115 111 111 / 30%);
     color: #999292;
 }
-    .feedbackcontainer .label-name {
-        color: #000!important;
-    }
-#ratingInterviewer.rating{
-    border:0px!important;
+
+.feedbackcontainer .label-name {
+    color: #000 !important;
 }
+
+#ratingInterviewer.rating {
+    border: 0px !important;
+}
+
 .rating {
     /*border: solid 1px #ccc;*/
     border: solid 1px white;
@@ -7393,16 +7555,19 @@ ul.ks-cboxtags {
         cursor: pointer;
     }
 
-.rating :checked ~ label {
-    background-image: url(../../img/yellow-star.svg);
-}
+    .rating :checked ~ label {
+        background-image: url(../../img/yellow-star.svg);
+    }
+
     .rating label:hover,
     .rating label:hover ~ label {
         background-image: url(../../img/yellow-star.svg);
     }
+
     .rating input[type='radio'][disabled]:hover, .rating input[type='radio'][disabled]:hover ~ label {
         cursor: not-allowed;
     }
+
 .redo-text {
     clear: both;
     position: relative;
@@ -7410,17 +7575,21 @@ ul.ks-cboxtags {
     clear: both;
     float: left;
 }
+
 .qc-form .control-label {
-    color: #858181!important;
+    color: #858181 !important;
 }
+
 .rate-type {
     font-size: 15px;
     padding-left: 25px;
 }
+
 .template-wrapper {
     width: 950px;
     margin: 0px auto;
 }
+
 .rate-strip {
     position: absolute;
     top: -3px;
@@ -7430,13 +7599,16 @@ ul.ks-cboxtags {
     padding: 6px;
     top: -2px;
 }
-.template-top{
-    margin-top:40px;
+
+.template-top {
+    margin-top: 40px;
 }
+
 .template-name-padding {
     padding-left: 100px !important;
     font-size: 15px;
 }
+
 #cloneTemplateTable_filter .form-control {
     border: 1px solid #E3E3E3 !important;
 }
@@ -7444,10 +7616,12 @@ ul.ks-cboxtags {
 #cloneTemplateTable.table-striped tbody tr:nth-of-type(even) {
     background: rgb(151 139 139 / 2.5%);
 }
-.rate-interview{
-    position:relative;
-    top:8px;
+
+.rate-interview {
+    position: relative;
+    top: 8px;
 }
+
     .rate-interview h1 {
         font-size: 15px;
         float: left;
@@ -7455,6 +7629,7 @@ ul.ks-cboxtags {
         color: green;
         padding-right: 10px;
     }
+
     .rate-interview button, .rate-interview button:hover {
         padding: 7px 17px;
         position: relative;
@@ -7463,15 +7638,17 @@ ul.ks-cboxtags {
         border-radius: 3px;
         margin: 0px;
         top: -7px;
-        color:#fff;
+        color: #fff;
         font-size: 11px;
-        text-transform:uppercase;
+        text-transform: uppercase;
         background: #da1111 !important;
         box-shadow: none;
     }
-        .rate-interview button:focus{
-            border:0px;
+
+        .rate-interview button:focus {
+            border: 0px;
         }
+
 .rating-star {
     max-width: 58px;
     position: relative;
@@ -7479,8 +7656,9 @@ ul.ks-cboxtags {
     color: #fff;
     top: 1px;
 }
+
 .ClientInterviewFeedbackHide .page {
-    top:-88px;
+    top: -88px;
 }
 
 #ClientInterviewbuttonHide .submit-wrapper {
@@ -7493,24 +7671,29 @@ ul.ks-cboxtags {
 #detailsTable_filter .form-control-sm {
     border: 1px solid #E3E3E3 !important;
 }
-    #detailsTable_filter #search {
-        top: 3px;
-    }
+
+#detailsTable_filter #search {
+    top: 3px;
+}
+
 .razorpay_details .table > tbody > tr > td {
     padding: 12px 5px;
 }
+
 .razorpay_details .dataTables_filter input[type=search] {
     border: 1px solid #E3E3E3 !important;
 }
+
 .razorpay_details #trigger-update {
     right: 26px;
     top: 9px;
 }
 
-.interviewComment{
-   height:500px;
-    overflow:auto;
+.interviewComment {
+    height: 500px;
+    overflow: auto;
 }
+
 .videoPreviewContainer {
     border: 10px #fff solid;
     width: 600px;
@@ -7518,10 +7701,12 @@ ul.ks-cboxtags {
     background: #000;
     margin: 0px auto;
 }
-.videoPreviewContainer video {
-    width: 100%;
-    height: 100%;
-}
+
+    .videoPreviewContainer video {
+        width: 100%;
+        height: 100%;
+    }
+
 .videoContainer video {
     width: 100%;
     height: 265px;
@@ -7529,6 +7714,7 @@ ul.ks-cboxtags {
     top: -2px;
     border-radius: 30px;
 }
+
 .videoContainer {
     float: left;
     position: absolute;
@@ -7536,13 +7722,15 @@ ul.ks-cboxtags {
     height: 260px;
     border-radius: 30px;
     background: #000;
-    margin-top:0px;
+    margin-top: 0px;
 }
+
 .preview-txt {
-   text-align: center;
+    text-align: center;
     font-weight: 600;
     padding-left: 50px;
 }
+
     .preview-txt span {
         color: #696f69;
         font-weight: 500;
@@ -7551,13 +7739,14 @@ ul.ks-cboxtags {
         display: block;
         font-size: 18px;
     }
-    .videoButtons {
-        float: left;
-        width: 35px;
-        height: 260px;
-        position: relative;
-        left: 340px;
-    }
+
+.videoButtons {
+    float: left;
+    width: 35px;
+    height: 260px;
+    position: relative;
+    left: 340px;
+}
 
 #btncamara, #btnoffcamara {
     width: 33px;
@@ -7569,12 +7758,14 @@ ul.ks-cboxtags {
     left: -320px;
     top: 18px;
 }
+
     #btncamara .fa {
         top: 5px;
         position: relative;
         font-size: 16px;
         color: #fff;
     }
+
 .on-off-txt {
     color: #fff;
     position: relative;
@@ -7585,12 +7776,13 @@ ul.ks-cboxtags {
     font-size: 9px;
     top: 8px;
 }
+
 .btnoffcamara svg {
     position: relative;
     top: 1px;
     left: 0px;
-
 }
+
 #btnStart {
     width: 32px;
     height: 32px;
@@ -7601,6 +7793,7 @@ ul.ks-cboxtags {
     left: -50px;
     top: -10px;
 }
+
     #btnStart svg {
         color: red;
         border: 2px #fff solid;
@@ -7629,15 +7822,17 @@ ul.ks-cboxtags {
     position: relative;
     left: 25px;
 }
+
 .recording-txt {
     width: 100px;
     font-weight: bold;
     color: #FFF;
-   font-size: 9px;
+    font-size: 9px;
     position: relative;
     left: -41px;
     top: 6px;
 }
+
 #btnStart:disabled {
     opacity: 0.7;
     background: #6e6c6c;
@@ -7647,13 +7842,16 @@ ul.ks-cboxtags {
     opacity: 0.7;
     background: #e98080;
 }
+
 .hr {
     margin: 20px 0px 0px 0px;
     background: #958f8f;
 }
+
 .about-int {
     padding: 0px 120px 0px 0px;
 }
+
 #timer-clock {
     margin-top: -48px;
     width: 165px;
@@ -7663,6 +7861,7 @@ ul.ks-cboxtags {
     top: -20px;
     float: right;
 }
+
 .path--background {
     fill: rgb(34, 213, 201);
     stroke: #fff;
@@ -7680,11 +7879,12 @@ ul.ks-cboxtags {
 }
 
 .label {
-    font: 35px "Open Sans"!important;
+    font: 35px "Open Sans" !important;
     font-weight: 900;
     text-anchor: middle;
     fill: rgb(34, 213, 201);
 }
+
 #timer-clock-txt {
     position: relative;
     top: 151px;
@@ -7693,8 +7893,9 @@ ul.ks-cboxtags {
     font-family: 'Open Sans';
     width: 120px;
     color: #383737;
-    font-size:13px;
+    font-size: 13px;
 }
+
 .rules {
     padding: 0px 20px 0px 0px;
     position: relative;
@@ -7703,10 +7904,12 @@ ul.ks-cboxtags {
     font-weight: 600;
     color: #4e4a4a;
 }
-    .rules .number-txt{
-       float:left;
-       display:contents;
+
+    .rules .number-txt {
+        float: left;
+        display: contents;
     }
+
     .rules .number {
         background: #aea7a7;
         width: 24px;
@@ -7718,14 +7921,17 @@ ul.ks-cboxtags {
         float: left;
         margin-right: 10px;
     }
-.preview-section{
-padding-top:50px;
+
+.preview-section {
+    padding-top: 50px;
 }
+
 .preview-txt {
     text-align: center;
     font-weight: 600;
     padding-left: 50px;
 }
+
 .interviewWrapper {
     position: relative;
     width: 1000px;
@@ -7734,28 +7940,29 @@ padding-top:50px;
     margin: 30px auto;
     padding: 0px;
 }
-.interviewWrapper .question {
-    padding: 10px 5px;
-    cursor: pointer;
-}
 
-    .interviewWrapper .question .fa {
-        font-size: 20px;
-        padding: 0px 10px 0px 0px;
+    .interviewWrapper .question {
+        padding: 10px 5px;
+        cursor: pointer;
     }
 
-    .interviewWrapper .question label {
-        font-size: 14px;
-        margin: 8px 5px 0px 5px;
-        color: #817c7c;
-        padding: 0px 10px;
-        text-transform: uppercase;
-        cursor:pointer;
-    }
+        .interviewWrapper .question .fa {
+            font-size: 20px;
+            padding: 0px 10px 0px 0px;
+        }
 
-    .interviewWrapper .question .round label {
-        margin: 6px 0px 0px 0px;
-    }
+        .interviewWrapper .question label {
+            font-size: 14px;
+            margin: 8px 5px 0px 5px;
+            color: #817c7c;
+            padding: 0px 10px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .interviewWrapper .question .round label {
+            margin: 6px 0px 0px 0px;
+        }
 
 .answer-label {
     width: 100%;
@@ -7829,30 +8036,35 @@ padding-top:50px;
     text-align: center;
     border-radius: 3px;
     font-size: 15px;
-    color: #fff!important;
+    color: #fff !important;
     float: left;
 }
+
 .disable-link {
     background: #d5cfcf87;
     pointer-events: none;
     cursor: default;
     text-decoration: none;
 }
+
 .interviewWrapper .button-wrapper {
     margin: 0px auto;
     width: 420px;
     clear: both;
 }
+
 .edit-wrap {
-    background: #a9a7a7!important;
+    background: #a9a7a7 !important;
 }
+
     .edit-wrap .fa {
         color: white;
-        font-size: 15px!important;
+        font-size: 15px !important;
         position: relative;
         left: -4px;
         top: 2px;
     }
+
 .tech-skill-button {
     border-top: 1px #eee solid;
     padding: 10px;
@@ -7860,14 +8072,15 @@ padding-top:50px;
     width: 100%;
     text-align: right;
 }
+
 .format span {
     color: #a29999;
 }
+
 .format input[type="checkbox"] {
     display: grid;
     place-content: center;
     appearance: none;
-    
     margin: 2px 5px;
     font: inherit;
     color: currentColor;
@@ -7907,7 +8120,7 @@ padding-top:50px;
         color: grey;
         outline: none;
         margin: 10px;
-        font-size:13px;
+        font-size: 13px;
     }
 
     .custom-select-dropdown span {
@@ -7946,13 +8159,14 @@ option {
     margin: 0 0;
     padding: 10px;
     list-style: none;
-    font-size:13px;
+    font-size: 13px;
     border: 1px solid #ccc;
     background-color: #eee;
     -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
+
 .interviewWrapper .heading-txt {
     text-align: center;
     margin: 0px 0px 20px 0px;
@@ -7961,11 +8175,13 @@ option {
     line-height: 30px;
     font-weight: 600;
 }
+
     .interviewWrapper .heading-txt span {
         color: #c2b5b5;
         font-weight: 300;
         font-size: 18px;
     }
+
 .expand-panel .fas {
     font-size: 16px;
     position: relative;
@@ -7990,6 +8206,7 @@ option {
     display: block;
     background: antiquewhite;
 }
+
 .video-alert {
     background: antiquewhite;
     padding: 2px;
@@ -7998,20 +8215,44 @@ option {
     z-index: 1000;
     width: 100%;
     top: 0px;
-    left:25px;
-    font-size: 15px;
+    left: 25px;
+    font-size: 14.5px;
+    line-height: 25px;
     font-weight: 500;
     color: #c63838;
 }
-/***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
+
+#ProxyModel .modal-lg {
+    max-width: 850px !important;
+}
+.checkbox-selectproxy{
+    width:100%;
+    float:left;
+}
+    .checkbox-selectproxy h2 {
+        font-size: 16px;
+        color: green;
+        font-weight: 500;
+        float:left;
+    }
+.checkbox-selectproxy .round {
+    position: relative;
+    float: left;
+    right: -13px;
+    top: 15px;
+    width: 30px;
+}
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }
+
     .top-h {
-        height: auto!important;
+        height: auto !important;
     }
+
     .staffclose-btn {
         border-radius: 5px !important;
         font-size: 12px !important;
@@ -8021,402 +8262,402 @@ option {
         right: -660% !important;
     }
 
-        [data-id="candidatetimeline"] .allmeetingnext-btn {
-            right: -653% !important;
-            bottom: 135px !important;
-        }
-
-        [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
-            right: -400% !important;
-            bottom: 138px !important;
-        }
-
-        [data-id="candidatefeedback_table"] .allmeetingnext-btn {
-            bottom: 90px !important;
-            right: -653% !important;
-        }
-
-        .next-btn {
-            position: absolute !important;
-            right: -230% !important;
-            bottom: 827% !important;
-        }
-
-        .allmeetingnext-btn {
-            bottom: 96px !important;
-            right: -705% !important;
-        }
-
-        .skillnext-btn {
-            bottom: 62px !important;
-            right: -48% !important;
-        }
-
-        .skillnext-btn {
-            bottom: 130px !important;
-            right: 0% !important;
-        }
-
-        .risetubenext-btn {
-            bottom: 60px !important;
-            right: -200% !important;
-        }
-
-        .tabCon .tab-menu ul li a {
-            font-size: 17px !important;
-            padding: 10px 12px;
-        }
-
-        .ntschnext-btn {
-            bottom: 130px !important;
-            right: -655% !important;
-        }
-
-        .staffntschnext-btn {
-            bottom: 130px !important;
-            right: -655% !important;
-        }
-
-        .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
-            right: 16px !important;
-        }
-
-        .tab-menu ul li:nth-child(3) .skillcount {
-            right: 25px !important;
-        }
-
-        .tab-menu ul li:nth-child(4) .skillcount {
-            right: 22px !important;
-        }
-
-        .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
-            right: 25px !important;
-        }
-
-        .tab-menu ul li:nth-child(5) .skillcount {
-            right: 4px !important;
-        }
-
-        .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
-            right: 6px !important;
-        }
-
-        .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
-            right: 4px !important;
-        }
-
-        .tab-menu ul li:nth-child(6) .skillcount {
-            right: 0px !important;
-        }
-
-        .tab-menu ul li:nth-child(7) .skillcount {
-            right: 22px !important;
-        }
-
-        .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
-            right: 12px !important;
-        }
-
-        .tab-menu ul li:nth-child(8) .skillcount {
-            right: 18px !important;
-        }
-
-        .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
-            right: 5px !important;
-        }
-
-        .tab-menu ul li:nth-child(9) .skillcount {
-            right: 32px !important;
-        }
-
-        .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
-            right: 16px !important;
-        }
-
-        .tab-menu ul li:nth-child(10) .skillcount {
-            right: 0px !important;
-        }
-
-        .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
-            right: 8px !important;
-        }
-
-        .tab-menu ul li:nth-child(11) .skillcount {
-            right: 11px !important;
-        }
-
-        .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
-            right: 10px !important;
-        }
+    [data-id="candidatetimeline"] .allmeetingnext-btn {
+        right: -653% !important;
+        bottom: 135px !important;
     }
 
-    @media only screen and (max-width: 1920px) {
-        .top-h {
-            height: auto;
-        }
-
-        .allmeeting .candidate-details {
-            width: 25%
-        }
-
-        .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
-            width: 22%
-        }
-
-        .selectedmeeting .candidate-client {
-            width: 22%
-        }
-
-        .rejectedmeeting .candidate-client {
-            width: 22%
-        }
-
-        .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
-            width: 30%
-        }
-
-        .tab-teaser {
-            max-width: 100%
-        }
-
-        [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
-            right: -400% !important;
-            bottom: 138px !important;
-        }
-
-        [data-id="candidatetimeline"] .allmeetingnext-btn {
-            right: -458% !important;
-            bottom: 138px !important;
-        }
-
-        .candidate-hr .hrname {
-            width: 250px !important
-        }
-
-        .hrname, .chrname {
-            width: 290px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            top: 7px;
-            position: relative;
-        }
-
-        .notschedulemeeting .candidate-hr .hrname {
-            width: 190px !important
-        }
-
-        .notschedulemeeting .candidate-hr .chrname {
-            width: 200px !important
-        }
+    [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+        right: -400% !important;
+        bottom: 138px !important;
     }
 
-    @media only screen and (max-width: 1400px) {
-        /* table.journey td.cadName, table.journey td.cadEmail {
+    [data-id="candidatefeedback_table"] .allmeetingnext-btn {
+        bottom: 90px !important;
+        right: -653% !important;
+    }
+
+    .next-btn {
+        position: absolute !important;
+        right: -230% !important;
+        bottom: 827% !important;
+    }
+
+    .allmeetingnext-btn {
+        bottom: 96px !important;
+        right: -705% !important;
+    }
+
+    .skillnext-btn {
+        bottom: 62px !important;
+        right: -48% !important;
+    }
+
+    .skillnext-btn {
+        bottom: 130px !important;
+        right: 0% !important;
+    }
+
+    .risetubenext-btn {
+        bottom: 60px !important;
+        right: -200% !important;
+    }
+
+    .tabCon .tab-menu ul li a {
+        font-size: 17px !important;
+        padding: 10px 12px;
+    }
+
+    .ntschnext-btn {
+        bottom: 130px !important;
+        right: -655% !important;
+    }
+
+    .staffntschnext-btn {
+        bottom: 130px !important;
+        right: -655% !important;
+    }
+
+    .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
+        right: 16px !important;
+    }
+
+    .tab-menu ul li:nth-child(3) .skillcount {
+        right: 25px !important;
+    }
+
+    .tab-menu ul li:nth-child(4) .skillcount {
+        right: 22px !important;
+    }
+
+    .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
+        right: 25px !important;
+    }
+
+    .tab-menu ul li:nth-child(5) .skillcount {
+        right: 4px !important;
+    }
+
+    .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
+        right: 6px !important;
+    }
+
+    .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
+        right: 4px !important;
+    }
+
+    .tab-menu ul li:nth-child(6) .skillcount {
+        right: 0px !important;
+    }
+
+    .tab-menu ul li:nth-child(7) .skillcount {
+        right: 22px !important;
+    }
+
+    .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
+        right: 12px !important;
+    }
+
+    .tab-menu ul li:nth-child(8) .skillcount {
+        right: 18px !important;
+    }
+
+    .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
+        right: 5px !important;
+    }
+
+    .tab-menu ul li:nth-child(9) .skillcount {
+        right: 32px !important;
+    }
+
+    .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
+        right: 16px !important;
+    }
+
+    .tab-menu ul li:nth-child(10) .skillcount {
+        right: 0px !important;
+    }
+
+    .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
+        right: 8px !important;
+    }
+
+    .tab-menu ul li:nth-child(11) .skillcount {
+        right: 11px !important;
+    }
+
+    .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
+        right: 10px !important;
+    }
+}
+
+@media only screen and (max-width: 1920px) {
+    .top-h {
+        height: auto;
+    }
+
+    .allmeeting .candidate-details {
+        width: 25%
+    }
+
+    .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
+        width: 22%
+    }
+
+    .selectedmeeting .candidate-client {
+        width: 22%
+    }
+
+    .rejectedmeeting .candidate-client {
+        width: 22%
+    }
+
+    .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
+        width: 30%
+    }
+
+    .tab-teaser {
+        max-width: 100%
+    }
+
+    [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+        right: -400% !important;
+        bottom: 138px !important;
+    }
+
+    [data-id="candidatetimeline"] .allmeetingnext-btn {
+        right: -458% !important;
+        bottom: 138px !important;
+    }
+
+    .candidate-hr .hrname {
+        width: 250px !important
+    }
+
+    .hrname, .chrname {
+        width: 290px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+
+    .notschedulemeeting .candidate-hr .hrname {
+        width: 190px !important
+    }
+
+    .notschedulemeeting .candidate-hr .chrname {
+        width: 200px !important
+    }
+}
+
+@media only screen and (max-width: 1400px) {
+    /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
-        .single-video-left .video-title [data-tooltip] {
-            top: 15px;
-        }
-
-        .single-video-left .join-time {
-            width: 125px;
-        }
-
-        .video-title .candidate {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-        }
-
-        .laptop-view {
-            display: block !important;
-            height: 5px;
-        }
-
-        .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
-            width: 36%
-        }
-
-        .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
-            width: 18%
-        }
-
-        .selectedmeeting .candidate-details {
-            width: 30%
-        }
-
-        .instanext-btn {
-            right: -270% !important;
-        }
-
-        .skillnext-btn {
-            bottom: 66px !important;
-            right: -70% !important;
-        }
-
-        .cjd {
-            width: 100px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            top: 7px;
-            position: relative;
-        }
-
-        .rbpay .modal .form-control {
-            height: 40px;
-            border: 0px;
-            border-radius: 2px;
-            margin-bottom: 10px;
-        }
-
-            .rbpay .modal .form-control.invoicecomment {
-                height: 79px;
-            }
-
-        .rbpay .border-rv {
-            border-right: 1px dotted #ccc;
-        }
-
-        table .journey td.cadSkill {
-            max-width: 150px;
-        }
-
-        .candidate table.journey td.cadEmail {
-            /* max-width: 133px;*/
-        }
-
-        .intEmail {
-            width: 90px !important;
-        }
-
-        .intName {
-            width: 58px !important;
-        }
-
-        .rbpay .sb-scrollbar {
-            position: absolute;
-            right: 0px !important;
-        }
-
-        .notschedulemeeting .candidate-hr .hrname {
-            width: 230px !important
-        }
-
-        .notschedulemeeting .candidate-hr .chrname {
-            width: 230px !important
-        }
-
-        .candidate-hr .hrname {
-            width: 250px !important
-        }
-
-        .candidate-hr {
-            width: 25% !important;
-        }
-
-        .hrname {
-            width: 290px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            top: 7px;
-            position: relative;
-        }
-
-        .hremail {
-            width: 260px !important
-        }
-
-        .join-time {
-            width: 150px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-        }
-
-        .info-detail {
-            font-size: 14px !important;
-            position: relative;
-            top: -24px;
-            right: -10px
-        }
-
-        .commonpool .join-time {
-            width: 95px !important;
-            top: 0px !important;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-        }
-
-        .single-video-left .join-time {
-            top: -1px !important;
-        }
-
-        .allmeeting .table > tbody > tr > td {
-            padding: 5px 5px !important;
-        }
-
-        .allmeeting .cname {
-            width: 127px;
-        }
-
-        .clname {
-            width: 197px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            top: 7px;
-            position: relative;
-        }
-
-        .skillname {
-            width: 170px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            top: 7px;
-            position: relative;
-        }
-
-        .cname {
-            width: 170px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            top: 7px;
-            position: relative;
-        }
-
-        .rejectedmeeting .s_cname {
-            width: 225px;
-        }
-
-        .selectedmeeting .s_cname {
-            width: 220px;
-        }
-
-        .s_cname {
-            width: 236px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: inline-block;
-            top: 7px;
-            position: relative;
-        }
+    .single-video-left .video-title [data-tooltip] {
+        top: 15px;
     }
+
+    .single-video-left .join-time {
+        width: 125px;
+    }
+
+    .video-title .candidate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
+
+    .laptop-view {
+        display: block !important;
+        height: 5px;
+    }
+
+    .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
+        width: 36%
+    }
+
+    .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
+        width: 18%
+    }
+
+    .selectedmeeting .candidate-details {
+        width: 30%
+    }
+
+    .instanext-btn {
+        right: -270% !important;
+    }
+
+    .skillnext-btn {
+        bottom: 66px !important;
+        right: -70% !important;
+    }
+
+    .cjd {
+        width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+
+    .rbpay .modal .form-control {
+        height: 40px;
+        border: 0px;
+        border-radius: 2px;
+        margin-bottom: 10px;
+    }
+
+        .rbpay .modal .form-control.invoicecomment {
+            height: 79px;
+        }
+
+    .rbpay .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    table .journey td.cadSkill {
+        max-width: 150px;
+    }
+
+    .candidate table.journey td.cadEmail {
+        /* max-width: 133px;*/
+    }
+
+    .intEmail {
+        width: 90px !important;
+    }
+
+    .intName {
+        width: 58px !important;
+    }
+
+    .rbpay .sb-scrollbar {
+        position: absolute;
+        right: 0px !important;
+    }
+
+    .notschedulemeeting .candidate-hr .hrname {
+        width: 230px !important
+    }
+
+    .notschedulemeeting .candidate-hr .chrname {
+        width: 230px !important
+    }
+
+    .candidate-hr .hrname {
+        width: 250px !important
+    }
+
+    .candidate-hr {
+        width: 25% !important;
+    }
+
+    .hrname {
+        width: 290px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+
+    .hremail {
+        width: 260px !important
+    }
+
+    .join-time {
+        width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
+
+    .info-detail {
+        font-size: 14px !important;
+        position: relative;
+        top: -24px;
+        right: -10px
+    }
+
+    .commonpool .join-time {
+        width: 95px !important;
+        top: 0px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
+
+    .single-video-left .join-time {
+        top: -1px !important;
+    }
+
+    .allmeeting .table > tbody > tr > td {
+        padding: 5px 5px !important;
+    }
+
+    .allmeeting .cname {
+        width: 127px;
+    }
+
+    .clname {
+        width: 197px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+
+    .skillname {
+        width: 170px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+
+    .cname {
+        width: 170px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+
+    .rejectedmeeting .s_cname {
+        width: 225px;
+    }
+
+    .selectedmeeting .s_cname {
+        width: 220px;
+    }
+
+    .s_cname {
+        width: 236px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        top: 7px;
+        position: relative;
+    }
+}
 
 
     @media only screen and (max-width: 1024px) {
@@ -8433,388 +8674,388 @@ option {
             height: 160px !important;
         }
 
-        .select-selected {
-            padding: 6px 6px !important;
+    .select-selected {
+        padding: 6px 6px !important;
+    }
+
+    #calenderTimeslot {
+        width: 180px !important;
+        height: auto !important;
+    }
+
+    .support .divider-rm {
+        position: relative;
+        left: -75px;
+        top: 2px;
+    }
+
+    #calender h4 {
+        font-size: 19px !important;
+    }
+
+    .calendar-con table {
+        width: 100% !important;
+    }
+
+    .txttimezone-con {
+        background: #dbdbdb8c;
+        width: 100% !important;
+        display: block !important;
+        margin: 10px auto 20px auto !important;
+    }
+
+    body.sidebar-mini .top-panel {
+        padding: 0px 10px 0px 10px !important;
+        margin-bottom: 0px !important;
+    }
+
+    #tblbodyCandidate .action {
+        max-width: 100% !important;
+    }
+
+    .tab-menu ul li:nth-child(3) .skillcount {
+        right: 1px !important;
+    }
+
+    .tab-menu ul li:nth-child(4) .skillcount {
+        right: -1px !important;
+    }
+
+    .tab-menu ul li:nth-child(5) .skillcount {
+        right: -11px !important;
+    }
+
+    .tab-menu ul li:nth-child(6) .skillcount {
+        right: -15px !important;
+    }
+
+    .tab-menu ul li:nth-child(8) .skillcount {
+        right: -6px !important;
+    }
+
+    .tab-menu ul li:nth-child(9) .skillcount {
+        right: 9px !important;
+    }
+
+    .tab-menu ul li:last-child .skillcount {
+        right: -10px !important;
+    }
+
+    .razorpay_details {
+        width: 60% !important;
+    }
+
+    .s_cname {
+        width: 165px !important;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        min-height: .01%;
+        padding-bottom: 10px;
+    }
+
+    .hrname {
+        top: 2px !important;
+        position: relative !important;
+        line-height: 100% !important;
+    }
+
+    .clname, .skillname {
+        width: 170px !important;
+    }
+
+    .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
+        width: 100% !important;
+        display: block;
+        white-space: initial;
+    }
+
+        .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
+            line-height: 15px;
         }
 
-        #calenderTimeslot {
-            width: 180px !important;
-            height: auto !important;
+    .candidate-hr .hrname {
+        width: 205px !important
+    }
+
+    #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
+    }
+
+    .tabCon .tab-menu ul li a {
+        font-size: 11px !important;
+        padding: 10px 0px;
+    }
+
+    .user.user-r .main-notification-title {
+        padding-top: 0px !important;
+        position: relative;
+        right: -39px;
+        top: -52px !important;
+    }
+
+    .user .main-notification-title {
+        padding-top: 0px !important;
+        position: relative;
+        right: -6px;
+        top: -46px !important;
+    }
+
+    .user.user-r {
+        right: 60px !important;
+    }
+
+    .user {
+        position: absolute;
+        top: 54px;
+        right: 160px !important;
+    }
+
+        .user .user-menu {
+            top: -17px !important;
+            left: auto;
+            right: -17px !important;
         }
 
-        .support .divider-rm {
-            position: relative;
-            left: -75px;
-            top: 2px;
-        }
+    .main-img-user {
+        display: block;
+        position: relative;
+        width: 25px !important;
+        height: 25px !important;
+        margin: 0px 0px 0px 30px;
+        right: -60px !important;
+        border-radius: 100%;
+        left: -10px;
+        top: -78px !important;
+        float: right;
+    }
 
-        #calender h4 {
-            font-size: 19px !important;
-        }
+    .nav-open .navbar {
+        left: 260px;
+    }
 
-        .calendar-con table {
-            width: 100% !important;
-        }
-
-        .txttimezone-con {
-            background: #dbdbdb8c;
-            width: 100% !important;
-            display: block !important;
-            margin: 10px auto 20px auto !important;
-        }
-
-        body.sidebar-mini .top-panel {
-            padding: 0px 10px 0px 10px !important;
-            margin-bottom: 0px !important;
-        }
-
-        #tblbodyCandidate .action {
-            max-width: 100% !important;
-        }
-
-        .tab-menu ul li:nth-child(3) .skillcount {
-            right: 1px !important;
-        }
-
-        .tab-menu ul li:nth-child(4) .skillcount {
-            right: -1px !important;
-        }
-
-        .tab-menu ul li:nth-child(5) .skillcount {
-            right: -11px !important;
-        }
-
-        .tab-menu ul li:nth-child(6) .skillcount {
-            right: -15px !important;
-        }
-
-        .tab-menu ul li:nth-child(8) .skillcount {
-            right: -6px !important;
-        }
-
-        .tab-menu ul li:nth-child(9) .skillcount {
-            right: 9px !important;
-        }
-
-        .tab-menu ul li:last-child .skillcount {
-            right: -10px !important;
-        }
-
-        .razorpay_details {
-            width: 60% !important;
-        }
-
-        .s_cname {
-            width: 165px !important;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-            min-height: .01%;
-            padding-bottom: 10px;
-        }
-
-        .hrname {
-            top: 2px !important;
-            position: relative !important;
-            line-height: 100% !important;
-        }
-
-        .clname, .skillname {
-            width: 170px !important;
-        }
-
-        .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
-            width: 100% !important;
-            display: block;
-            white-space: initial;
-        }
-
-            .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
-                line-height: 15px;
-            }
-
-        .candidate-hr .hrname {
-            width: 205px !important
-        }
-
-        #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-            color: red !important;
-            margin-left: 0 !important;
-            font-size: 12px !important;
-            width: 100%;
-            position: relative;
-            text-align: right;
-        }
-
-        .tabCon .tab-menu ul li a {
-            font-size: 11px !important;
-            padding: 10px 0px;
-        }
-
-        .user.user-r .main-notification-title {
-            padding-top: 0px !important;
-            position: relative;
-            right: -39px;
-            top: -52px !important;
-        }
-
-        .user .main-notification-title {
-            padding-top: 0px !important;
-            position: relative;
-            right: -6px;
-            top: -46px !important;
-        }
-
-        .user.user-r {
-            right: 60px !important;
-        }
-
-        .user {
-            position: absolute;
-            top: 54px;
-            right: 160px !important;
-        }
-
-            .user .user-menu {
-                top: -17px !important;
-                left: auto;
-                right: -17px !important;
-            }
-
-        .main-img-user {
-            display: block;
-            position: relative;
-            width: 25px !important;
-            height: 25px !important;
-            margin: 0px 0px 0px 30px;
-            right: -60px !important;
-            border-radius: 100%;
-            left: -10px;
-            top: -78px !important;
-            float: right;
-        }
-
-        .nav-open .navbar {
-            left: 260px;
-        }
-
-        /* .top-panel {
+    /* .top-panel {
         padding: 0px 0px 0px 0px !important;
     }*/
 
-        .page-container .page-sidebar {
+    .page-container .page-sidebar {
+        position: relative;
+        float: left;
+        width: 100%;
+    }
+
+        .page-container .page-sidebar.scroll {
             position: relative;
-            float: left;
+        }
+
+    .page-container .page-content {
+        margin-left: 0px;
+    }
+
+        .page-container .page-content .content-frame .content-frame-left,
+        .page-container .page-content .content-frame .content-frame-right {
             width: 100%;
+            display: none;
         }
 
-            .page-container .page-sidebar.scroll {
-                position: relative;
-            }
-
-        .page-container .page-content {
+        .page-container .page-content .content-frame .content-frame-body {
             margin-left: 0px;
+            margin-right: 0px;
         }
 
-            .page-container .page-content .content-frame .content-frame-left,
-            .page-container .page-content .content-frame .content-frame-right {
-                width: 100%;
-                display: none;
-            }
-
-            .page-container .page-content .content-frame .content-frame-body {
-                margin-left: 0px;
+            .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
                 margin-right: 0px;
             }
 
-                .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
-                    margin-right: 0px;
-                }
+        .page-container .page-content .content-frame .content-frame-left-toggle,
+        .page-container .page-content .content-frame .content-frame-right-toggle {
+            display: inline-block;
+        }
 
-            .page-container .page-content .content-frame .content-frame-left-toggle,
-            .page-container .page-content .content-frame .content-frame-right-toggle {
-                display: inline-block;
+    .page-container.page-navigation-toggled .page-content {
+        margin-left: 0px;
+    }
+
+    .page-container.page-mode-rtl .page-content {
+        margin-right: 0px;
+    }
+
+    .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
+        padding-right: 0px;
+        position: relative;
+    }
+
+    .page-container.page-navigation-top-fixed .page-content {
+        padding-top: 0px;
+    }
+
+    table.journey td.cadName, table.journey td.cadEmail {
+        max-width: 200px;
+    }
+
+    .candidate table.journey td.cadEmail {
+        max-width: 160px;
+    }
+
+    table.journey td.cadSkill {
+        max-width: 150px;
+    }
+
+    .selected-priority table.journey td.cadName {
+        max-width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        max-width: 235px;
+    }
+
+    .selected-priority .journey td.interview-com {
+        max-width: 300px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        max-width: 160px;
+    }
+
+    .x-navigation {
+        max-height: 50px;
+        overflow: hidden;
+        background: #1b1e24;
+    }
+
+        .x-navigation.x-navigation-panel {
+            height: 50px;
+            max-height: auto;
+            overflow: visible;
+        }
+
+            .x-navigation.x-navigation-panel li.xn-icon-button {
+                width: 50px;
             }
 
-        .page-container.page-navigation-toggled .page-content {
-            margin-left: 0px;
-        }
-
-        .page-container.page-mode-rtl .page-content {
-            margin-right: 0px;
-        }
-
-        .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
-            padding-right: 0px;
-            position: relative;
-        }
-
-        .page-container.page-navigation-top-fixed .page-content {
-            padding-top: 0px;
-        }
-
-        table.journey td.cadName, table.journey td.cadEmail {
-            max-width: 200px;
-        }
-
-        .candidate table.journey td.cadEmail {
-            max-width: 160px;
-        }
-
-        table.journey td.cadSkill {
-            max-width: 150px;
-        }
-
-        .selected-priority table.journey td.cadName {
-            max-width: 250px;
-        }
-
-        .selected-priority table.journey td.cadSkill {
-            max-width: 235px;
-        }
-
-        .selected-priority .journey td.interview-com {
-            max-width: 300px;
-        }
-
-        .selected-priority table.journey td.interviewdate {
-            max-width: 160px;
-        }
-
-        .x-navigation {
-            max-height: 50px;
-            overflow: hidden;
-            background: #1b1e24;
-        }
-
-            .x-navigation.x-navigation-panel {
-                height: 50px;
-                max-height: auto;
-                overflow: visible;
+            .x-navigation.x-navigation-panel li.xn-search {
+                width: auto;
             }
 
-                .x-navigation.x-navigation-panel li.xn-icon-button {
-                    width: 50px;
-                }
-
-                .x-navigation.x-navigation-panel li.xn-search {
-                    width: auto;
-                }
-
-            .x-navigation .xn-search input {
-                width: 100%;
-            }
-
-            .x-navigation.x-navigation-open {
-                max-height: 1200px;
-                overflow: visible;
-            }
-
-            .x-navigation .x-navigation-control {
-                display: block;
-            }
-
-        .x-navigation-minimize {
-            display: none !important;
-        }
-
-        .x-navigation-horizontal > li > ul ul,
-        .x-navigation-horizontal > li > ul.xn-drop-left ul {
-            position: relative;
-            left: auto;
-            right: auto;
-            margin-left: 0px;
-            margin-right: 0px;
-            -moz-box-shadow: none;
-            -webkit-box-shadow: none;
-            box-shadow: none;
-        }
-
-            .x-navigation-horizontal > li > ul ul:after {
-                display: none;
-            }
-        /* XNAV PANEL */
-        .x-navigation li > .panel {
-            width: 250px;
-        }
-        /* END XNAV PANEL */
-        /* list icons */
-        .icons-list li {
+        .x-navigation .xn-search input {
             width: 100%;
         }
-        /* END list icons */
-        /* Gallery */
-        .gallery .gallery-item {
-            width: 50%;
-        }
-        /* End Gallery */
-        /* Timeline */
-        .timeline .timeline-item .timeline-item-content {
-            width: 90%;
+
+        .x-navigation.x-navigation-open {
+            max-height: 1200px;
+            overflow: visible;
         }
 
-            .timeline .timeline-item .timeline-item-content:before,
-            .timeline .timeline-item .timeline-item-content:after {
-                left: 90%;
-            }
+        .x-navigation .x-navigation-control {
+            display: block;
+        }
 
-        .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
-        .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
-            right: 90%;
-        }
-        /* END Timeline */
-        /* Error */
-        .error-container {
-            width: 100%;
-        }
-        /* End Error */
-        /* Settings */
-        .theme-settings {
+    .x-navigation-minimize {
+        display: none !important;
+    }
+
+    .x-navigation-horizontal > li > ul ul,
+    .x-navigation-horizontal > li > ul.xn-drop-left ul {
+        position: relative;
+        left: auto;
+        right: auto;
+        margin-left: 0px;
+        margin-right: 0px;
+        -moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+        .x-navigation-horizontal > li > ul ul:after {
             display: none;
         }
-        /* End Settings */
-        .post-image {
-            width: 300px;
-        }
-
-
-        .dashboard-cat-title {
-            left: 12px !important;
-            font-size: 12px !important;
-        }
+    /* XNAV PANEL */
+    .x-navigation li > .panel {
+        width: 250px;
+    }
+    /* END XNAV PANEL */
+    /* list icons */
+    .icons-list li {
+        width: 100%;
+    }
+    /* END list icons */
+    /* Gallery */
+    .gallery .gallery-item {
+        width: 50%;
+    }
+    /* End Gallery */
+    /* Timeline */
+    .timeline .timeline-item .timeline-item-content {
+        width: 90%;
     }
 
-    @media (min-width: 992px) and (max-width: 1199px) {
-        table.journey td.cadName, table.journey td.cadEmail {
-            max-width: 200px;
+        .timeline .timeline-item .timeline-item-content:before,
+        .timeline .timeline-item .timeline-item-content:after {
+            left: 90%;
         }
 
-        table.journey td.cadSkill {
-            max-width: 150px;
-        }
-
-        .candidate table.journey td.cadEmail {
-            max-width: 160px;
-        }
-
-        .selected-priority table.journey td.cadName {
-            max-width: 250px;
-        }
-
-        .selected-priority table.journey td.cadSkill {
-            max-width: 235px;
-        }
-
-        .selected-priority table.journey td.interviewdate {
-            max-width: 160px;
-        }
-
-
-        .selected-priority .journey td.interview-com, .journey td.interview-com {
-            max-width: 300px;
-        }
+    .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
+    .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
+        right: 90%;
     }
+    /* END Timeline */
+    /* Error */
+    .error-container {
+        width: 100%;
+    }
+    /* End Error */
+    /* Settings */
+    .theme-settings {
+        display: none;
+    }
+    /* End Settings */
+    .post-image {
+        width: 300px;
+    }
+
+
+    .dashboard-cat-title {
+        left: 12px !important;
+        font-size: 12px !important;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    table.journey td.cadName, table.journey td.cadEmail {
+        max-width: 200px;
+    }
+
+    table.journey td.cadSkill {
+        max-width: 150px;
+    }
+
+    .candidate table.journey td.cadEmail {
+        max-width: 160px;
+    }
+
+    .selected-priority table.journey td.cadName {
+        max-width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        max-width: 235px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        max-width: 160px;
+    }
+
+
+    .selected-priority .journey td.interview-com, .journey td.interview-com {
+        max-width: 300px;
+    }
+}
 
     @media only screen and (max-width:991px) {
         .tabCon .tab-main-box {
@@ -8827,102 +9068,102 @@ option {
             font-size: 17px !important;
         }
 
-            .nodata img {
-                width: 26px !important;
-            }
-
-        .logo-cm {
-            position: relative;
-            top: -1px;
-            width: 11% !important;
-            left: 10px;
+        .nodata img {
+            width: 26px !important;
         }
 
-        .support .divider-rm {
-            display: none;
-        }
-
-        .mob_h {
-            width: 63% !important
-        }
-
-        .single-video {
-            margin-bottom: 0px !important;
-        }
-
-        #calenderTimeslot {
-            width: 190px !important;
-        }
-
-        .tabCon .tabs {
-            display: none;
-        }
-
-        .calendar-con {
-            padding: 40px 0px 0px 0px !important;
-        }
-
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            width: 350px !important;
-            height: 200px !important;
-        }
-
-        #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-            color: red !important;
-            margin-left: 0 !important;
-            font-size: 12px !important;
-            width: 100%;
-            position: relative;
-            text-align: right;
-        }
-
-        .user {
-            top: -2px !important;
-            right: 160px !important;
-        }
-
-            .user.user-r .main-img-user {
-                top: -27px !important;
-                right: -65px;
-            }
-
-            .user.user-r .main-notification-title {
-                top: 0px !important;
-            }
-
-        .recommendation .dropdown-toggle::after {
-            border-top: .3em solid;
-            border-right: .3em solid transparent;
-            border-bottom: 0;
-            border-left: .3em solid transparent;
-        }
-
-        .navbar .container-fluid {
-            height: 100%;
-        }
-
-        .user.user-r {
-            top: 4px !important;
-        }
-
-
-
-        .main-img-user {
-            display: block;
-            position: relative;
-            width: 20px;
-            height: 20px;
-            margin: 0px 0px 0px 30px;
-            top: -73px !important;
-            border-radius: 100%;
-            left: -10px;
-            float: right;
-        }
-
-        .recommendation .multiselect.dropdown-toggle:after {
-            left: 1% !important;
-        }
+    .logo-cm {
+        position: relative;
+        top: -1px;
+        width: 11% !important;
+        left: 10px;
     }
+
+    .support .divider-rm {
+        display: none;
+    }
+
+    .mob_h {
+        width: 63% !important
+    }
+
+    .single-video {
+        margin-bottom: 0px !important;
+    }
+
+    #calenderTimeslot {
+        width: 190px !important;
+    }
+
+    .tabCon .tabs {
+        display: none;
+    }
+
+    .calendar-con {
+        padding: 40px 0px 0px 0px !important;
+    }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 350px !important;
+        height: 200px !important;
+    }
+
+    #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
+    }
+
+    .user {
+        top: -2px !important;
+        right: 160px !important;
+    }
+
+        .user.user-r .main-img-user {
+            top: -27px !important;
+            right: -65px;
+        }
+
+        .user.user-r .main-notification-title {
+            top: 0px !important;
+        }
+
+    .recommendation .dropdown-toggle::after {
+        border-top: .3em solid;
+        border-right: .3em solid transparent;
+        border-bottom: 0;
+        border-left: .3em solid transparent;
+    }
+
+    .navbar .container-fluid {
+        height: 100%;
+    }
+
+    .user.user-r {
+        top: 4px !important;
+    }
+
+
+
+    .main-img-user {
+        display: block;
+        position: relative;
+        width: 20px;
+        height: 20px;
+        margin: 0px 0px 0px 30px;
+        top: -73px !important;
+        border-radius: 100%;
+        left: -10px;
+        float: right;
+    }
+
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1% !important;
+    }
+}
 
     @media (min-width: 768px) and (max-width: 991px) {
         .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
@@ -8934,105 +9175,105 @@ option {
             float: left;
         }
 
-        .w40 {
-            width: 45%;
-            float: right;
-        }
-
-        #calenderTimeslot {
-            left: 20px;
-        }
-
-        .interview-status {
-            position: absolute !important;
-            top: -56px !important;
-        }
-
-        .event .calendar-con {
-            min-width: 90% !important;
-            max-width: 90% !important;
-            margin: 40px auto 40px auto;
-            padding: 20px 20px !important;
-        }
-
-        .candidate .journey td.cadEmail {
-            width: 130px !important;
-        }
-
-        .filter-note {
-            right: 15%
-        }
-
-        .tabCon .tab_drawer_heading {
-            background-color: #ececec;
-            color: #5a5757cc;
-            border-bottom: 1px solid #ccc;
-            margin: 0 0 5px 0;
-            padding: 5px 20px;
-            display: block;
-            font-size: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        table.journey td.cadName, table.journey td.cadEmail {
-            max-width: 200px;
-        }
-
-        .user-r .user {
-            position: absolute;
-            top: 4px !important;
-            right: 71px !important;
-        }
-
-        .nav-open .navbar {
-            left: 260px;
-        }
-
-        .candidate table.journey td.cadEmail {
-            max-width: 160px;
-        }
-
-        table.journey td.cadSkill {
-            max-width: 150px;
-        }
-
-        .selected-priority table.journey td.cadName {
-            max-width: 250px;
-        }
-
-        .selected-priority table.journey td.cadSkill {
-            max-width: 235px;
-        }
-
-        .selected-priority table.journey td.interviewdate {
-            max-width: 160px;
-        }
-
-        .selected-priority table.journey td.interviewdate {
-            max-width: 270px;
-        }
-
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            position: absolute;
-            left: 30px !important;
-        }
+    .w40 {
+        width: 45%;
+        float: right;
     }
 
+    #calenderTimeslot {
+        left: 20px;
+    }
 
-    @media only screen and (max-width: 768px) {
-        [class^='col-xs-'],
-        [class^='col-sm-'],
-        [class^='col-md-'],
-        [class^='col-lg-'] {
-            margin-bottom: 10px;
-        }
+    .interview-status {
+        position: absolute !important;
+        top: -56px !important;
+    }
+
+    .event .calendar-con {
+        min-width: 90% !important;
+        max-width: 90% !important;
+        margin: 40px auto 40px auto;
+        padding: 20px 20px !important;
+    }
+
+    .candidate .journey td.cadEmail {
+        width: 130px !important;
+    }
+
+    .filter-note {
+        right: 15%
+    }
+
+    .tabCon .tab_drawer_heading {
+        background-color: #ececec;
+        color: #5a5757cc;
+        border-bottom: 1px solid #ccc;
+        margin: 0 0 5px 0;
+        padding: 5px 20px;
+        display: block;
+        font-size: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    table.journey td.cadName, table.journey td.cadEmail {
+        max-width: 200px;
+    }
+
+    .user-r .user {
+        position: absolute;
+        top: 4px !important;
+        right: 71px !important;
+    }
+
+    .nav-open .navbar {
+        left: 260px;
+    }
+
+    .candidate table.journey td.cadEmail {
+        max-width: 160px;
+    }
+
+    table.journey td.cadSkill {
+        max-width: 150px;
+    }
+
+    .selected-priority table.journey td.cadName {
+        max-width: 250px;
+    }
+
+    .selected-priority table.journey td.cadSkill {
+        max-width: 235px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        max-width: 160px;
+    }
+
+    .selected-priority table.journey td.interviewdate {
+        max-width: 270px;
+    }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        position: absolute;
+        left: 30px !important;
+    }
+}
+
+
+@media only screen and (max-width: 768px) {
+    [class^='col-xs-'],
+    [class^='col-sm-'],
+    [class^='col-md-'],
+    [class^='col-lg-'] {
+        margin-bottom: 10px;
+    }
 
         .logo-cm {
             position: relative;
@@ -9044,226 +9285,238 @@ option {
             font-size: 15px;
         }
 
-        .public-url #candidateTable_length {
-            display: none;
-        }
+    .public-url #candidateTable_length {
+        display: none;
+    }
 
-        #calender {
-            padding-left: 25px !important;
-        }
-        #btnStart, #btnStop {
-            left: -135px!important;
-        }
-        .videoContainer video {
-            height: 208px!important;
-        }
-        .videoContainer {
-            height: 200px!important;
-        }
-        .candidate-tab .card-block {
-            max-width: 160px;
-        }
-        .videoContainer {
-            width: 270px;
-            height: 280px;
-        }
-        .time-btn {
-            width: 110px !important;
-        }
+    #calender {
+        padding-left: 25px !important;
+    }
 
-        .calendar-con table {
-            width: 300px !important;
-        }
+    #btnStart, #btnStop {
+        left: -135px !important;
+    }
 
-        #calenderTimeslot {
-            margin-top: 40px;
-            height: 320px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            width: 155px !important;
-        }
+    .videoContainer video {
+        height: 208px !important;
+    }
 
-        .edit_request [class*="pl-"] {
-            padding-left: 13px !important;
-        }
-        /* LOGIN */
-        .login-container {
-            padding: 0px 10px;
-        }
+    .videoContainer {
+        height: 200px !important;
+    }
 
-            .login-container .login-box {
-                padding-top: 10px;
-                width: 100%;
-            }
-        /* END LOGIN */
-        /* TOCIFY */
-        .tocify {
-            display: none;
-        }
-        /* END TOCIFY */
+    .candidate-tab .card-block {
+        max-width: 160px;
+    }
 
-        .recommendation .multiselect.dropdown-toggle:after {
-            left: 1% !important;
-        }
+    .videoContainer {
+        width: 270px;
+        height: 280px;
+    }
 
-        .edit_request {
-            width: 100% !important;
-            float: left;
-            padding: 0px !important;
-        }
+    .time-btn {
+        width: 110px !important;
+    }
 
-        .next-btn {
-            bottom: 735% !important;
-            right: 0% !important;
-        }
+    .calendar-con table {
+        width: 300px !important;
+    }
 
+    #calenderTimeslot {
+        margin-top: 40px;
+        height: 320px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 155px !important;
+    }
 
-        .mc-button-area.text-left .mdc-button {
-            margin-top: 2px;
-            margin-bottom: 5px;
-        }
+    .edit_request [class*="pl-"] {
+        padding-left: 13px !important;
+    }
+    /* LOGIN */
+    .login-container {
+        padding: 0px 10px;
+    }
 
-        .tab_drawer_heading {
-            background-color: #ececec;
-            color: #5a5757cc;
-            border-bottom: 1px solid #ccc;
-            margin: 0 0 5px 0;
-            padding: 5px 20px;
-            display: block;
-            font-size: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        /* TIMELINE */
-        .timeline.timeline-right:before {
-            left: 60px;
-        }
-
-        .timeline.timeline-right .timeline-item {
-            padding-left: 110px;
-        }
-
-            .timeline.timeline-right .timeline-item.timeline-main {
-                width: 60px;
-            }
-
-            .timeline.timeline-right .timeline-item .timeline-item-icon {
-                left: 40px;
-            }
-
-            .timeline.timeline-right .timeline-item .timeline-item-info {
-                top: 45px;
-                width: 70px;
-                left: 25px;
-                padding: 7px 0px;
-            }
-        /* END TIMELINE */
-        .post-image {
+        .login-container .login-box {
+            padding-top: 10px;
             width: 100%;
         }
-
-        .razorpay_details {
-            width: 41% !important;
-        }
-
-        .user.user-r {
-            top: 4px;
-            right: -259px !important;
-        }
-
-        .main-notification-title span {
-            top: 0px !important
-        }
-
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            position: absolute;
-            left: 40px !important;
-        }
-
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            width: 270px !important;
-            height: 164px !important;
-        }
-
-        .instainterview .multiple_row > h2, #reportForm .multiple_row > h3 {
-            top: 10px !important;
-        }
-
-        .divider-lm {
-            display: none;
-        }
-
-        .navbar .navbar-brand {
-            font-size: 10px;
-        }
-
-        .topbar-item {
-            top: 3px !important;
-            position: relative;
-            right: 0px !important;
-        }
-
-        .user.user-r .main-img-user {
-            top: -34px !important;
-        }
-
-        .tabCon .tab-main-box {
-            padding: 20px 10px;
-        }
-
-        .tab-main-box .col-md-4.col-sm-4 {
-            padding-right: 5px !important;
-            padding-left: 5px !important;
-        }
-
-        .tab-box label {
-            padding: 0px 0px 0px 5px !important;
-            font-size: 12px !important;
-        }
-
-        .tab-main-box .mdc-radio {
-            width: 13px !important;
-            height: 13px !important;
-        }
-
-        .tab-box .form-group {
-            margin-bottom: 0px !important;
-        }
-
-        #CalendlyLinkDiv {
-            position: relative;
-            top: -6px;
-        }
+    /* END LOGIN */
+    /* TOCIFY */
+    .tocify {
+        display: none;
     }
+    /* END TOCIFY */
+
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1% !important;
+    }
+
+    .edit_request {
+        width: 100% !important;
+        float: left;
+        padding: 0px !important;
+    }
+
+    .next-btn {
+        bottom: 735% !important;
+        right: 0% !important;
+    }
+
+
+    .mc-button-area.text-left .mdc-button {
+        margin-top: 2px;
+        margin-bottom: 5px;
+    }
+
+    .tab_drawer_heading {
+        background-color: #ececec;
+        color: #5a5757cc;
+        border-bottom: 1px solid #ccc;
+        margin: 0 0 5px 0;
+        padding: 5px 20px;
+        display: block;
+        font-size: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    /* TIMELINE */
+    .timeline.timeline-right:before {
+        left: 60px;
+    }
+
+    .timeline.timeline-right .timeline-item {
+        padding-left: 110px;
+    }
+
+        .timeline.timeline-right .timeline-item.timeline-main {
+            width: 60px;
+        }
+
+        .timeline.timeline-right .timeline-item .timeline-item-icon {
+            left: 40px;
+        }
+
+        .timeline.timeline-right .timeline-item .timeline-item-info {
+            top: 45px;
+            width: 70px;
+            left: 25px;
+            padding: 7px 0px;
+        }
+    /* END TIMELINE */
+    .post-image {
+        width: 100%;
+    }
+
+    .razorpay_details {
+        width: 41% !important;
+    }
+
+    .user.user-r {
+        top: 4px;
+        right: -259px !important;
+    }
+
+    .main-notification-title span {
+        top: 0px !important
+    }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        position: absolute;
+        left: 40px !important;
+    }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 270px !important;
+        height: 164px !important;
+    }
+
+    .instainterview .multiple_row > h2, #reportForm .multiple_row > h3 {
+        top: 10px !important;
+    }
+
+    .divider-lm {
+        display: none;
+    }
+
+    .navbar .navbar-brand {
+        font-size: 10px;
+    }
+
+    .topbar-item {
+        top: 3px !important;
+        position: relative;
+        right: 0px !important;
+    }
+
+    .user.user-r .main-img-user {
+        top: -34px !important;
+    }
+
+    .tabCon .tab-main-box {
+        padding: 20px 10px;
+    }
+
+    .tab-main-box .col-md-4.col-sm-4 {
+        padding-right: 5px !important;
+        padding-left: 5px !important;
+    }
+
+    .tab-box label {
+        padding: 0px 0px 0px 5px !important;
+        font-size: 12px !important;
+    }
+
+    .tab-main-box .mdc-radio {
+        width: 13px !important;
+        height: 13px !important;
+    }
+
+    .tab-box .form-group {
+        margin-bottom: 0px !important;
+    }
+
+    #CalendlyLinkDiv {
+        position: relative;
+        top: -6px;
+    }
+}
 
 @media only screen and (max-width: 767px) {
     #clientduser li {
         width: 100%;
         float: left;
     }
-    .mobile-view-cl{
-        position:absolute!important;
-        right:15px;
+
+    .mobile-view-cl {
+        position: absolute !important;
+        right: 15px;
     }
+
         .mobile-view-cl .call-wrap {
             top: 1px;
             left: -4px;
         }
+
     .commonpool .available {
         margin: 0px 0px 9px 0px;
     }
+
     .scrollbar {
         overflow: hidden;
     }
+
     .template-top {
-        margin-top:80px;
+        margin-top: 80px;
     }
+
     #reportForm video {
         width: calc(100% - 4px) !important;
         padding: 0px !important;
@@ -9290,9 +9543,11 @@ option {
     #clientduser li:nth-child(5) .dtr-data {
         float: left;
     }
+
     #btnStart, #btnStop {
         left: 150px;
     }
+
     .action-btn {
         width: 100px;
         margin: 0px auto;
@@ -9384,20 +9639,24 @@ option {
     .navbar-toggle {
         top: -5px;
     }
+
     .preview-section {
-        padding-top: 80px!important;
+        padding-top: 80px !important;
     }
+
     .preview-txt {
         padding-left: 0px !important;
     }
 
         .preview-txt span {
             color: #706a6a;
-            font-size:15px;
+            font-size: 15px;
         }
+
     #btnSave {
         left: 0px !important;
     }
+
     .jd .skillname {
         width: 100% !important;
         text-align: center;
@@ -9628,61 +9887,72 @@ option {
 
         .feedbackcontainer .accordion-heading a {
             width: 100%;
-            height:auto;
+            height: auto;
             justify-content: center;
         }
+
         .feedbackcontainer .w-auto {
             width: 100% !important;
         }
+
     .redobtn {
         float: none;
         top: -51px;
     }
-    .redo-text{
-        top:-51px;
-        line-height:31px;
+
+    .redo-text {
+        top: -51px;
+        line-height: 31px;
     }
-    .submit-feedback{
-        position:fixed;
-        bottom:0px;
-        width:100%;
-        z-index:1000;
+
+    .submit-feedback {
+        position: fixed;
+        bottom: 0px;
+        width: 100%;
+        z-index: 1000;
     }
+
     .content-wrappers .meeting-link .click_herebtn {
         padding: 10px 20px;
         position: relative;
         top: -2px;
         font-size: 11px;
     }
-    .candidate-tab .tab-block .step{
-        display:none;
+
+    .candidate-tab .tab-block .step {
+        display: none;
     }
+
     .candidate-tab .tab-block .card-block {
         width: 31.3% !important;
         float: left !important;
         margin: 0px 5px !important;
         height: 65px !important;
     }
+
         .candidate-tab .tab-block .card-block h1 {
             padding-left: 0px !important;
             text-align: center;
-
         }
+
     .videoContainer {
         width: 100%;
         left: 0px;
     }
-  
+
     #btncamara, #btnoffcamara {
         left: -335px;
     }
+
     .rules {
         left: 0px;
         top: 80px;
     }
+
     .about-int {
         padding: 0px 10px 0px 0px;
     }
+
     #timer-clock {
         margin-top: 8px;
         width: 100px;
@@ -9729,397 +9999,409 @@ option {
             top: -45px;
         }
 
-        .public-url #candidateTable_length {
-            top: 9px;
-        }
-
-        .sharp.btn-xs {
-            width: 2.1rem;
-            height: 2.1rem;
-            min-width: 2.1rem;
-            min-height: 2.1rem;
-        }
-
-        .pad7 {
-            padding: 0px !important;
-        }
-
-        .note-filter {
-            font-size: 13px !important;
-            padding: 5px 0px !important;
-        }
-
-        .logo-cm {
-            position: relative;
-            top: -1px !important;
-            width: 23% !important;
-            left: 10px !important;
-        }
-
-        #scoreChart tspan {
-            font-size: 11.5px;
-        }
-
-        .custom-select {
-            line-height: 17px !important;
-        }
-
-        .txttimezone-con {
-            width: 300px !important;
-            min-height: 30px;
-        }
-
-        .currMonth {
-            padding: 0px 12px !important;
-        }
-
-        #calender table {
-            border-collapse: separate;
-            border-spacing: 4px 9px !important;
-        }
-
-        #calender {
-            width: 100% !important;
-        }
-
-        #calenderTimeslot {
-            width: 120px !important;
-        }
-
-        .time-btn {
-            width: 95px !important;
-            left: 9px !important;
-        }
-
-        #calender {
-            width: 325px !important;
-            padding-left: 10px !important;
-        }
-
-        .filter-note {
-            width: 100% !important;
-            float: left;
-            color: #2a9e2a;
-            padding-top: 4px;
-            position: absolute;
-            right: 20% !important;
-            top: 34px !important;
-            line-height: 16px;
-        }
-
-        .note-meeting {
-            left: 7px !important;
-            position: absolute;
-            top: -5px !important;
-            font-size: 15px;
-            width: 100% !important;
-        }
-
-        .popup-text {
-            right: 60px !important;
-            top: 24px !important;
-            font-size: 16px !important;
-        }
-
-        .single-video-left h1 .mdc-button {
-            height: 30px !important;
-        }
-
-        .single-video-left .join-time {
-            top: 8px !important;
-        }
-
-        .mob_canvas-height {
-            height: 300px;
-        }
-
-        .overall-rate {
-            position: absolute;
-            right: 25px;
-            top: -26px;
-            color: #7eb38e;
-            font-weight: normal;
-        }
-
-        .main-notification-title {
-            right: 9px !important;
-            padding-top: 0px !important;
-            position: relative;
-            top: 2px;
-        }
-
-        .user-r .user-menu {
-            top: -15px;
-            left: auto;
-            right: -19px;
-        }
-
-        .click-arrow {
-            position: relative !important;
-            top: 10px !important;
-            left: -10px !important;
-        }
-
-        .dashboard-cat-title {
-            position: relative;
-            top: 0px !important;
-            text-align: center !important;
-        }
-
-        .topheader-link-wrap {
-            width: 248px;
-            font-size: 10px;
-            margin: 0px !important;
-            padding: 0px !important;
-        }
-
-        .topheader-link {
-            width: 23px;
-            height: 23px;
-        }
+    .public-url #candidateTable_length {
+        top: 9px;
     }
 
-    @media only screen and (min-width: 480px) {
-
-        .dashboard-icon {
-            margin: 0px auto !important;
-            float: none !important;
-            position: relative !important;
-            left: 0px !important;
-        }
+    .sharp.btn-xs {
+        width: 2.1rem;
+        height: 2.1rem;
+        min-width: 2.1rem;
+        min-height: 2.1rem;
     }
 
-    @media only screen and (max-width: 415px) {
-
-
-        .popup-text {
-            display: none !important;
-        }
-
-        #calenderTimeslot {
-            width: 100% !important;
-            margin-top: 0px !important;
-        }
-
-        #scoreChart tspan {
-            font-size: 11px;
-        }
-
-        .time-btn {
-            width: 100% !important;
-        }
-
-        .filter-note {
-            width: 252px;
-            right: 30% !important;
-            top: 40px !important;
-            line-height: 16px;
-        }
-
-        h1, h2 {
-            font-size: 32px;
-        }
-
-        .interview-status {
-            position: absolute;
-            top: -16px !important;
-            font-size: 14px !important;
-        }
-
-        .f1 {
-            padding-bottom: 20px;
-        }
-
-        .f1-buttons button {
-            margin-bottom: 5px;
-        }
-
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            width: 310px !important;
-            height: 180px !important;
-            left: 7px !important;
-        }
-
-        .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
-            font-size: 14px;
-        }
-
-        .candidate-tab .card-block {
-            height: 150px !important;
-            width: 30% !important;
-            margin: 10px 6px !important;
-        }
-
-        .step {
-            width: 40px !important;
-            height: 20px !important;
-            font-size: 13px !important;
-        }
-
-
-        .dashboard-cat-title {
-            position: relative;
-            top: 0px;
-            text-align: center;
-        }
-
-        .dashboard-count {
-            margin: 0px auto;
-            position: relative;
-            left: 80px;
-        }
+    .pad7 {
+        padding: 0px !important;
     }
 
-    @media only screen and (max-width: 375px) {
-        .scheduling .action {
-            position: absolute;
-            top: 6px;
-            right: 95px;
-        }
-
-   
-            .candidate-tab .card-block h1 {
-                font-size: 11px !important;
-            }
-
-        #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
-            margin-bottom: 10px;
-        }
-
-        .filter-note {
-            width: 210px !important;
-            right: 40% !important;
-            top: 40px !important;
-            line-height: 16px;
-        }
-
-        .support {
-            position: absolute;
-            left: auto;
-            right: 25px !important;
-            top: 12px !important;
-        }
-
-        .logo-cm {
-            position: relative;
-            top: 3px;
-            left: 10px;
-        }
-
-        .dashboard-cat-title {
-            position: relative !important;
-            top: 0px !important;
-            text-align: center !important;
-        }
-
-        .dashboard-count {
-            position: relative !important;
-            left: 80px !important;
-            text-align: center !important;
-        }
-        .feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label{
-            font-size:12px;
-        }
-        .feedbackcontainer ul.ks-cboxtags li label{
-            font-size:12px;
-        }
-        .page__title{
-            font-size:13px;
-        }
-        .page{
-            top:0px;
-            left:0px;
-        }
-        .content-wrappers .meeting-link .click_herebtn {
-            padding: 10px 20px;
-            position: relative;
-            top: 15px;
-            font-size: 13px;
-        }
+    .note-filter {
+        font-size: 13px !important;
+        padding: 5px 0px !important;
     }
 
-    @media only screen and (max-width: 360px) {
-        .logo-cm {
-            position: relative;
-            top: 4px !important;
-            left: 10px !important;
-        }
-        ul.ks-cboxtags li label{
-            font-size:9.5px;
-        }
-        #scoreChart tspan {
-            font-size: 9.3px;
+    .logo-cm {
+        position: relative;
+        top: -1px !important;
+        width: 23% !important;
+        left: 10px !important;
+    }
+
+    #scoreChart tspan {
+        font-size: 11.5px;
+    }
+
+    .custom-select {
+        line-height: 17px !important;
+    }
+
+    .txttimezone-con {
+        width: 300px !important;
+        min-height: 30px;
+    }
+
+    .currMonth {
+        padding: 0px 12px !important;
+    }
+
+    #calender table {
+        border-collapse: separate;
+        border-spacing: 4px 9px !important;
+    }
+
+    #calender {
+        width: 100% !important;
+    }
+
+    #calenderTimeslot {
+        width: 120px !important;
+    }
+
+    .time-btn {
+        width: 95px !important;
+        left: 9px !important;
+    }
+
+    #calender {
+        width: 325px !important;
+        padding-left: 10px !important;
+    }
+
+    .filter-note {
+        width: 100% !important;
+        float: left;
+        color: #2a9e2a;
+        padding-top: 4px;
+        position: absolute;
+        right: 20% !important;
+        top: 34px !important;
+        line-height: 16px;
+    }
+
+    .note-meeting {
+        left: 7px !important;
+        position: absolute;
+        top: -5px !important;
+        font-size: 15px;
+        width: 100% !important;
+    }
+
+    .popup-text {
+        right: 60px !important;
+        top: 24px !important;
+        font-size: 16px !important;
+    }
+
+    .single-video-left h1 .mdc-button {
+        height: 30px !important;
+    }
+
+    .single-video-left .join-time {
+        top: 8px !important;
+    }
+
+    .mob_canvas-height {
+        height: 300px;
+    }
+
+    .overall-rate {
+        position: absolute;
+        right: 25px;
+        top: -26px;
+        color: #7eb38e;
+        font-weight: normal;
+    }
+
+    .main-notification-title {
+        right: 9px !important;
+        padding-top: 0px !important;
+        position: relative;
+        top: 2px;
+    }
+
+    .user-r .user-menu {
+        top: -15px;
+        left: auto;
+        right: -19px;
+    }
+
+    .click-arrow {
+        position: relative !important;
+        top: 10px !important;
+        left: -10px !important;
+    }
+
+    .dashboard-cat-title {
+        position: relative;
+        top: 0px !important;
+        text-align: center !important;
+    }
+
+    .topheader-link-wrap {
+        width: 248px;
+        font-size: 10px;
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+
+    .topheader-link {
+        width: 23px;
+        height: 23px;
+    }
+}
+
+@media only screen and (min-width: 480px) {
+
+    .dashboard-icon {
+        margin: 0px auto !important;
+        float: none !important;
+        position: relative !important;
+        left: 0px !important;
+    }
+}
+
+@media only screen and (max-width: 415px) {
+
+
+    .popup-text {
+        display: none !important;
+    }
+
+    #calenderTimeslot {
+        width: 100% !important;
+        margin-top: 0px !important;
+    }
+
+    #scoreChart tspan {
+        font-size: 11px;
+    }
+
+    .time-btn {
+        width: 100% !important;
+    }
+
+    .filter-note {
+        width: 252px;
+        right: 30% !important;
+        top: 40px !important;
+        line-height: 16px;
+    }
+
+    h1, h2 {
+        font-size: 32px;
+    }
+
+    .interview-status {
+        position: absolute;
+        top: -16px !important;
+        font-size: 14px !important;
+    }
+
+    .f1 {
+        padding-bottom: 20px;
+    }
+
+    .f1-buttons button {
+        margin-bottom: 5px;
+    }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 310px !important;
+        height: 180px !important;
+        left: 7px !important;
+    }
+
+    .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
+        font-size: 14px;
+    }
+
+    .candidate-tab .card-block {
+        height: 150px !important;
+        width: 30% !important;
+        margin: 10px 6px !important;
+    }
+
+    .step {
+        width: 40px !important;
+        height: 20px !important;
+        font-size: 13px !important;
+    }
+
+
+    .dashboard-cat-title {
+        position: relative;
+        top: 0px;
+        text-align: center;
+    }
+
+    .dashboard-count {
+        margin: 0px auto;
+        position: relative;
+        left: 80px;
+    }
+}
+
+@media only screen and (max-width: 375px) {
+    .scheduling .action {
+        position: absolute;
+        top: 6px;
+        right: 95px;
+    }
+
+
+    .candidate-tab .card-block h1 {
+        font-size: 11px !important;
+    }
+
+    #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
+        margin-bottom: 10px;
+    }
+
+    .filter-note {
+        width: 210px !important;
+        right: 40% !important;
+        top: 40px !important;
+        line-height: 16px;
+    }
+
+    .support {
+        position: absolute;
+        left: auto;
+        right: 25px !important;
+        top: 12px !important;
+    }
+
+    .logo-cm {
+        position: relative;
+        top: 3px;
+        left: 10px;
+    }
+
+    .dashboard-cat-title {
+        position: relative !important;
+        top: 0px !important;
+        text-align: center !important;
+    }
+
+    .dashboard-count {
+        position: relative !important;
+        left: 80px !important;
+        text-align: center !important;
+    }
+
+    .feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label {
+        font-size: 12px;
+    }
+
+    .feedbackcontainer ul.ks-cboxtags li label {
+        font-size: 12px;
+    }
+
+    .page__title {
+        font-size: 13px;
+    }
+
+    .page {
+        top: 0px;
+        left: 0px;
+    }
+
+    .content-wrappers .meeting-link .click_herebtn {
+        padding: 10px 20px;
+        position: relative;
+        top: 15px;
+        font-size: 13px;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+    .logo-cm {
+        position: relative;
+        top: 4px !important;
+        left: 10px !important;
+    }
+
+    ul.ks-cboxtags li label {
+        font-size: 9.5px;
+    }
+
+    #scoreChart tspan {
+        font-size: 9.3px;
+    }
+
+    #calenderTimeslot {
+        left: 0px !important;
+    }
+
+    .videoContainer {
+        height: 215px !important;
+    }
+
+        .videoContainer video {
+            height: 220px !important;
         }
 
-        #calenderTimeslot {
-            left: 0px !important;
-        }
-        .videoContainer{
-            height:215px!important;
-        }
-            .videoContainer video{
-                height:220px!important;
-            }
-            .note-meeting {
-                width: 100% !important;
-                top: -11px !important;
-                font-size: 13px !important;
-            }
+    .note-meeting {
+        width: 100% !important;
+        top: -11px !important;
+        font-size: 13px !important;
+    }
 
-        .single-video-left h1 .mdc-button {
-            height: 30px !important;
-        }
-        #btnStop, #btnStart {
-            left: -130px!important;
-        }
-        .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
-            font-size: 11px !important;
-        }
+    .single-video-left h1 .mdc-button {
+        height: 30px !important;
+    }
 
-        #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
-            padding-right: 5px !important;
-            padding-left: 5px !important;
-        }
+    #btnStop, #btnStart {
+        left: -130px !important;
+    }
 
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            width: 285px !important;
-            height: 160px !important;
-            left: 7px !important;
-        }
+    .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
+        font-size: 11px !important;
+    }
 
-        .support {
-            position: absolute;
-            left: auto;
-        }
+    #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+        padding-right: 5px !important;
+        padding-left: 5px !important;
+    }
 
-        .main-img-user {
-            display: block;
-            position: relative;
-            width: 20px !important;
-            height: 20px !important;
-            margin: 0px 0px 0px 30px;
-            top: -43px !important;
-            border-radius: 100%;
-            left: -145px !important;
-            float: right;
-        }
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 285px !important;
+        height: 160px !important;
+        left: 7px !important;
+    }
 
-        .main-notification-title {
-            padding-top: 0px !important;
-            position: relative;
-            right: 9px !important;
-            top: -19px !important;
-            width: 100%;
-            text-align: center !important;
-            margin: 0px;
-            padding: 0px;
-        }
+    .support {
+        position: absolute;
+        left: auto;
+    }
 
-        .user {
-            left: -110px !important;
-            top: 14px !important;
-            width: 100%;
-        }
+    .main-img-user {
+        display: block;
+        position: relative;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0px 0px 0px 30px;
+        top: -43px !important;
+        border-radius: 100%;
+        left: -145px !important;
+        float: right;
+    }
+
+    .main-notification-title {
+        padding-top: 0px !important;
+        position: relative;
+        right: 9px !important;
+        top: -19px !important;
+        width: 100%;
+        text-align: center !important;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .user {
+        left: -110px !important;
+        top: 14px !important;
+        width: 100%;
+    }
 
         .click-arrow {
             position: relative !important;
@@ -10302,6 +10584,7 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     left: 10px;
     top: 2px;
 }
+
 .status {
     padding: 3px 5px;
     font-size: 12px;
@@ -10309,8 +10592,9 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     display: block;
     border-radius: 3px;
     text-align: center;
-    text-decoration:none;
+    text-decoration: none;
 }
+
 .mscheduled {
     background: #f2eefc;
     color: #845adf;
@@ -10322,23 +10606,27 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     color: #bd871d;
     width: 92px;
 }
+
 .mcomplete {
     background: #e9f8f4;
     color: #40b888dd;
     width: 83px;
 }
+
 .mdropped {
     background: #e454301f;
     color: #e6540fdb;
     width: 111px;
-    width:113px;
+    width: 113px;
 }
+
 .mnoshow {
     background: #f89cbf24;
     color: #c545a9db;
     color: #94207bbd;
     max-width: 126px;
 }
+
 .overlay {
     position: absolute;
     top: 0;
@@ -10367,9 +10655,11 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
 #statusListModal .scrollers {
     height: 390px;
 }
-.pagination .page-item.active > .page-link{
-    z-index:0;
+
+.pagination .page-item.active > .page-link {
+    z-index: 0;
 }
+
 .helper {
     position: absolute;
     top: 0;
@@ -10569,9 +10859,9 @@ label {
     -webkit-border-radius: 3px;
     border-radius: 3px;
     padding: 0px 2px;
-    width:22px;
-    height:22px;
-    text-align:center;
+    width: 22px;
+    height: 22px;
+    text-align: center;
 }
 
 .label-primary,
@@ -12969,9 +13259,11 @@ blockquote {
 .pad10 {
     padding: 10px;
 }
+
 .pad7 {
     padding: 7px;
 }
+
 .timer {
     display: inline;
     padding: 2px 8px;
@@ -13707,37 +13999,42 @@ button.close {
     display: inline-block;
     width: 100%;
 }
+
 .upload_resume.custom-file {
     background: #eeeeee !important;
 }
+
 .upload_resume .custom-file-label {
     background: #eeeeee;
     border: 0px;
     height: 35px;
 }
-    .upload_resume .custom-file-label::after{
-        height:35px;
-        line-height:26px;
+
+    .upload_resume .custom-file-label::after {
+        height: 35px;
+        line-height: 26px;
     }
+
 .upload_resume .custom-file .custom-file-label {
     line-height: 36px;
     position: absolute;
 }
-    .custom-file-label {
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        z-index: 1;
-        height: calc(1.5em + 0.75rem + 2px);
-        padding: 0.375rem 0.75rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #495057;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-    }
+
+.custom-file-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
 
     .custom-file-label::after {
         position: absolute;
@@ -13842,9 +14139,11 @@ button.close {
     top: 2px;
     left: -35px;
 }
-.sendButton{
-    font-size:12px;
+
+.sendButton {
+    font-size: 12px;
 }
+
 .instainterview .fa-clock:before {
     content: "\f017";
     position: absolute;
@@ -13903,7 +14202,7 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
     border: 0px !important;
 }
 
-.dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search]{
+.dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
     border: 0px !important;
     padding: 9px 10px 9px 10px;
     width: 256px;
@@ -13918,9 +14217,11 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
     position: relative;
     background: #fff;
 }
+
 #InterviewerCommunicatorList_filter input[type=search] {
     border: 1px #e8e0e0 solid !important;
 }
+
 #MyInterviewList > thead > tr > th, #MyInterviewList > tfoot > tr > th {
     padding: 5px 0px
 }
@@ -14586,6 +14887,7 @@ body .top-panel {
 .table-striped > tbody > tr:nth-of-type(odd) > * {
     color: #504e4e;
 }
+
 #mySchedulingLinkpopup .mCSB_inside > .mCSB_container {
     margin-right: 9px;
 }
@@ -16242,26 +16544,32 @@ div.tagsinput {
         padding-left: 15px !important;
     }
     .topheader-header {
-        right: 0px!important;
+        right: 0px !important;
     }
-        .topheader-header [data-tooltip]:before{
-            left:-270px;
+
+        .topheader-header [data-tooltip]:before {
+            left: -270px;
         }
-        .mh-top {
-            margin-top: 60px !important;
-        }
-    .videoPreviewContainer{
-        width:100%;
+
+    .mh-top {
+        margin-top: 60px !important;
     }
+
+    .videoPreviewContainer {
+        width: 100%;
+    }
+
     .support {
         position: absolute;
         left: auto;
         right: 27px;
         top: 11px;
     }
+
     .content-wrappers .tabcontent {
         margin: 10px 0px 20px 0px;
     }
+
     #skill_card .pskill {
         display: block !important;
         text-align: center;

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -1601,7 +1602,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (string.IsNullOrEmpty(meetingLineUpType))
                         {
-                            meetingLineUpType = MeetingLineUpType.Pending;
+                            meetingLineUpType = MeetingLineUpType.Upcoming;
                         }
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -8138,6 +8139,115 @@ namespace Risebird.Web.Controllers
         {
             var result = await _meetingService.RemoveInterviewer(interviewid);
             return Json("success");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewReport(int interviewid, string comment)
+        {
+            var email = HttpContext.Session.GetString("email");
+            email = email.Replace("\"", "");
+            var result = await _meetingService.UpdateInterviewReport(interviewid, comment, email);
+            if (result)
+            {
+                return Json("Successfully updated.");
+            }
+            else
+            {
+                return Json("Fail to update, try again after some time.");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ProxyForm(int interviewid, bool IsQCDone)
+        {
+            try
+            {
+                var model = await _meetingService.GetProctoringReport(interviewid);
+                if (model == null)
+                {
+                    model = new ProctoringReport();
+                }
+                if (!model.IsQCdone)
+                {
+                    model.IsQCdone = IsQCDone;
+                }
+                await SetProxyFormInitialValue(model);
+                return PartialView(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> ProxyForm(ProctoringReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var result = await _meetingService.SaveProctoringReport(model, emailid);
+                    return RedirectToAction("ProxyForm", "Interview", new { interviewid = model.InterviewId });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public async Task SetProxyFormInitialValue(ProctoringReport model)
+        {
+            if (string.IsNullOrEmpty(model.EyeMovement))
+            {
+                model.EyeMovement = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.LipsMovement))
+            {
+                model.LipsMovement = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.CandidateDesktop))
+            {
+                model.CandidateDesktop = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.LinkedinPhoto))
+            {
+                model.LinkedinPhoto = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.HeadMovement))
+            {
+                model.HeadMovement = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.LatencyCheck))
+            {
+                model.LatencyCheck = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.VoiceImpostering))
+            {
+                model.VoiceImpostering = string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(model.SusipicousDevices))
+            {
+                model.SusipicousDevices = string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(model.SuspiciousVoice))
+            {
+                model.SuspiciousVoice = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.SuspiciousEnvironment))
+            {
+                model.SuspiciousEnvironment = string.Empty;
+            }
         }
     }
 }
