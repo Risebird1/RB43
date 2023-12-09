@@ -333,7 +333,8 @@ app.UseCsp(builder =>
            .Allow("https://cdnjs.com/libraries/material-components-web/")
            .Allow("https://widget.freshworks.com/")
            .Allow("https://portal.risebird.io/")
-           .Allow("https://qa.portal.risebird.io/");
+           .Allow("https://qa.portal.risebird.io/")
+           .Allow("blob:");
 
     builder.Frame
            .AllowSelf()
