@@ -30,6 +30,7 @@ namespace Risebird.Entities.ViewModel
         public int RedoRequestCount { get; set; }
         public int HighRiskInterviewers { get; set; }
         public int CandidatewaitingCount { get; set; }
+        public int InterviewerVideoKYC { get; set; }
 
     }
     public class MeetingDetailsForParticipant

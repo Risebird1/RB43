@@ -1578,6 +1578,68 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper23">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="InterviewerVideoKYC()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon videokyc"><img src="~/img/video-kyc.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Interviewer Video KYC</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonInterviewerVideoKYCCount" onclick="InterviewerVideoKYC()">@Model.NotUpdatedMeetingsObj.InterviewerVideoKYC </span> </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="InterviewerVideoKYC()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="InterviewerVideoKYC()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Interviewer Video KYC</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>  <span style="cursor:pointer" id="ribbonInterviewerVideoKYCCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.InterviewerVideoKYC</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="InterviewerVideoKYC()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
                         </div>
                     </div>
                 </div>
@@ -1617,6 +1679,10 @@
     }
     function OpenCandidateWaiting() {
         window.location.href = "/Dashboard/Participantwaiting";
+    }
+
+    function InterviewerVideoKYC() {
+        window.location.href = "/Dashboard/InterviewerVideoKYC";
     }
 </script>
 <script type="text/javascript">
@@ -1789,6 +1855,12 @@
                 else {
                     $(".flipper22").removeClass("flipper");
                 }
+                if (parseInt(data.interviewerVideoKYC) != parseInt($("#ribbonInterviewerVideoKYCCount").text())) {
+                    $(".flipper23").addClass("flipper");
+                }
+                else {
+                    $(".flipper23").removeClass("flipper");
+                }
 
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
@@ -1812,6 +1884,7 @@
                 $("#ribbonRedoRequestCount").text(data.redoRequestCount);
                 $("#ribbonHighRiskInterviewersCount").text(data.highRiskInterviewers);
                 $("#ribbonCandidatewaitingCount").text(data.candidatewaitingCount);
+                $("#ribbonInterviewerVideoKYCCount").text(data.interviewerVideoKYC);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -1834,7 +1907,8 @@
                 $("#ribbonInterviewerChurnCount_1").text(data.interviewerChurnCount);
                 $("#ribbonRedoRequestCount_1").text(data.reoRequestCount);
                 $("#ribbonunHighRiskInterviewersCount_1").text(data.highRiskInterviewers);
-                $("#ribbonCandidatewaitingCount_1").text(data.candidatewaitingCount);
+                $("#ribbonCandidatewaitingCount_1").text(data.interviewerVideoKYC);
+                 $("#ribbonInterviewerVideoKYCCount_1").text(data.candidatewaitingCount);
                 $(".flipper").toggleClass("flip");
             }
         });
