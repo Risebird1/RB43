@@ -6406,7 +6406,9 @@ input[type="date"].form-control {
 .waiting {
     background: #18188069;
 }
-
+.videokyc {
+    background: #206870;
+}
 .clarity {
     background: #25bd6a8a;
 }

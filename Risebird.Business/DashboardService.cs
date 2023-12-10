@@ -798,5 +798,33 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<InterviewerVideoKYCVM>> GeInterviewerVideoKYC()
+        {
+            try
+            {
+                return await _dashboardRespository.GeInterviewerVideoKYC();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateInterviewerVideoKYC(int id,string type)
+        {
+            try
+            {
+                await _dashboardRespository.UpdateInterviewerVideoKYC(id,type);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }
