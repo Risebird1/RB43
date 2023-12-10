@@ -61,5 +61,7 @@ namespace Risebird.Business.Interface
         Task<bool> MoveToUnassignService(int meetingId);
         Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService();
         Task<List<MeetingVM>> FetchParticipantwaitingDetails();
+        Task<IEnumerable<InterviewerVideoKYCVM>> GeInterviewerVideoKYC();
+        Task<bool> UpdateInterviewerVideoKYC(int id, string type);
     }
 }
