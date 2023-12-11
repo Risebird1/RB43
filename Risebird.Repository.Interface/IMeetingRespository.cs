@@ -271,5 +271,6 @@ namespace Risebird.Repository.Interface
         Task<Meeting> GetAudioCommentDetails(int interviewId);
         Task<bool> RemoveInterviewer(int interviewid);
         Task<bool> UpdateInterviewReport(int interviewid, string comment,string emailid);
+        Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
     }
 }
