@@ -7640,7 +7640,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.ClientLogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png"); 
+                    ViewBag.ClientLogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
                 }
                 ViewBag.Risebirdlogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
                 //if (profileName == "Client")
@@ -8159,7 +8159,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ProxyForm(int interviewid, bool IsQCDone)
+        public async Task<IActionResult> ProxyForm(int interviewid, bool IsQCDone, string type)
         {
             try
             {
@@ -8172,6 +8172,7 @@ namespace Risebird.Web.Controllers
                 {
                     model.IsQCdone = IsQCDone;
                 }
+                model.type = type;
                 await SetProxyFormInitialValue(model);
                 return PartialView(model);
             }
@@ -8193,6 +8194,14 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     var result = await _meetingService.SaveProctoringReport(model, emailid);
+                    if (result)
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Proxy form filled successfully.";
+                        if (model.type == "QCPendingReport")
+                        {
+                            return RedirectToAction("UnassignedInterviews", "Dashboard", new { actionstatus = RibbonActionType.QCPendingReport });
+                        }
+                    }
                     return RedirectToAction("ProxyForm", "Interview", new { interviewid = model.InterviewId });
                 }
                 else

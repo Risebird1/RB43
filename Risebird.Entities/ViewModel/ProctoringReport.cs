@@ -50,5 +50,6 @@ namespace Risebird.Entities.ViewModel
         public string SuspiciousEnvironment { get; set; }
         public bool isProxyCandidate { get; set; }
         public bool IsQCdone { get; set; }
+        public string type { get; set; }
     }
 }
