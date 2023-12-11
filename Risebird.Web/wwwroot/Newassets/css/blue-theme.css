@@ -921,10 +921,12 @@ textarea::-webkit-scrollbar-thumb {
 }
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     background: #53a5f5 !important;
+    outline:none!important;
 }
 
 input[type="radio"]:checked, input[type="checkbox"]:checked {
     border-color: #53a5f5 !important;
+    outline: none !important;
 }
 
 .text-areadiv1 textarea {

@@ -10,14 +10,21 @@
         <div class="report-full-wrap">
             <div class="card-wrap" style="margin:0px 0px">
                 <div class="checkbox-selectproxy">
-                    <h2>Please select proxy candidate reporting:</h2>
-                  <span class="round">
-                          <input  type="checkbox"  id="myCheck" name="question1" onclick="checkProxy()" />
-                        <label  for="myCheck"></label>
-                        </span>
+                   
+                    <label class="pull-left" style="padding: 0px 15px 0px 0px;">
+                        Yes
+                        <input style="position:relative;top:3px;outline:none;" type="radio" name="radio" value="YES">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="pull-left" style="padding: 0px 0px 0px 15px;">
+                        No
+                        <input style="position:relative;top:3px;outline:none;" type="radio" checked="checked" name="radio" value="NO">
+                        <span class="checkmark"></span>
+                    </label>
 
                         </div>
-                <div class="accordion" id="proxy-content" style="display:none;">
+                <div class="accordion" id="proxyContent" style="display:none;">
                     <div class="row">
                         <div class="col-md-6 col-sm-6 border-rv pull-left">
                             <div class="form-group">
@@ -74,41 +81,30 @@
                                                     {
                                                         <input type="checkbox" id="checkboxThree" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Mismatch of the lips and the voice of candidate while speaking" />
                                                         <label for="checkboxThree">
-                                                            Mismatch of the lips and the voice of candidate while speaking
+                                                           Mismatch of the lips and the voice of candidate while speaking
 
                                                         </label>
                                                     }
                                                     else
                                                     {
-                                                        <input type="checkbox" id="checkboxThree" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Using overhead light" />
-                                                        <label for="checkboxThree">Using overhead light</label>
+                                                        <input type="checkbox" id="checkboxThree" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Mismatch of the lips and the voice of candidate while speaking" />
+                                                        <label for="checkboxThree">Mismatch of the lips and the voice of candidate while speaking</label>
                                                     }
                                                 </li>
                                                 <li>
 
-                                                    @if (Model.LipsMovement.Split(";").Contains("Dark light in the room or on the face"))
+                                                    @if (Model.LipsMovement.Split(";").Contains("Heavy beard that covers most of the lip movement"))
                                                     {
-                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Dark light in the room or on the face" />
-                                                        <label for="checkboxFour"> Dark light in the room or on the face</label>
+                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Heavy beard that covers most of the lip movement" />
+                                                        <label for="checkboxFour"> Heavy beard that covers most of the lip movement</label>
                                                     }
                                                     else
                                                     {
-                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Dark light in the room or on the face" />
-                                                        <label for="checkboxFour">Dark light in the room or on the face</label>
+                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Heavy beard that covers most of the lip movement" />
+                                                        <label for="checkboxFour">Heavy beard that covers most of the lip movement</label>
                                                     }
                                                 </li>
-                                                <li>
-                                                    @if (Model.LipsMovement.Split(";").Contains("Using Headphone in front of Lips"))
-                                                    {
-                                                        <input type="checkbox" id="checkboxFive" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Using Headphone in front of Lips" />
-                                                        <label for="checkboxFive">Using Headphone in front of Lips</label>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="checkbox" id="checkboxFive" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Using Headphone in front of Lips" />
-                                                        <label for="checkboxFive">Using Headphone in front of Lips</label>
-                                                    }
-                                                </li>
+                                                
                                             </ul>
                                         </div>
                                     </div>
@@ -162,7 +158,7 @@
                                 <div class="accordion-group">
                                     <div class="accordion-heading">
                                         <a class="accordion-toggle">
-                                            @Html.LabelFor(m => m.LinkedinPhoto, htmlAttributes: new { @class = "label-name" })
+                                           @Html.LabelFor(m => m.LinkedinPhoto, htmlAttributes: new { @class = "label-name"})
                                         </a>
                                     </div>
                                     <div class="accordion-body">
@@ -196,7 +192,7 @@
                                 <div class="accordion-group">
                                     <div class="accordion-heading">
                                         <a class="accordion-toggle">
-                                            @Html.LabelFor(m => m.SusipicousDevices, htmlAttributes: new { @class = "label-name" })
+                                            @Html.LabelFor(m => m.SusipicousDevices, htmlAttributes: new { @class="label-name" })
                                         </a>
                                     </div>
                                     <div class="accordion-body">
@@ -460,6 +456,72 @@
 
                                                 </li>
 
+
+                                                 <li>
+                                                    @if (Model.SuspiciousVoice.Split(";").Contains("Non expressive body language"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyThree" name="SuspiciousVoice" checked onclick="ChangeCheckBox('SuspiciousVoice')" value="Non expressive body language" />
+
+                                                        <label for="checkboxTwentyThree">
+                                                            Non expressive body language
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyThree" name="SuspiciousVoice" onclick="ChangeCheckBox('SuspiciousVoice')" value="Non expressive body language" />
+
+                                                        <label for="checkboxTwentyThree">
+                                                           Non expressive body language
+                                                        </label>
+                                                    }
+
+                                                </li>
+
+                                                <li>
+                                                    @if (Model.SuspiciousVoice.Split(";").Contains("Either too much movement or lacking any movement"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyFour" name="SuspiciousVoice" checked onclick="ChangeCheckBox('SuspiciousVoice')" value="Either too much movement or lacking any movement" />
+
+                                                        <label for="checkboxTwentyFour">
+                                                            Either too much movement or lacking any movement
+
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyFour" name="SuspiciousVoice" onclick="ChangeCheckBox('SuspiciousVoice')" value="Either too much movement or lacking any movement" />
+
+                                                            <label for="checkboxTwentyFour">
+                                                           Either too much movement or lacking any movement
+
+                                                        </label>
+                                                    }
+
+                                                </li>
+
+
+                                                 <li>
+                                                    @if (Model.SuspiciousVoice.Split(";").Contains("Showing face without lips or showing till upper lip"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyFive" name="SuspiciousVoice" checked onclick="ChangeCheckBox('SuspiciousVoice')" value="Showing face without lips or showing till upper lip" />
+
+                                                        <label for="checkboxTwentyFive">
+                                                            Showing face without lips or showing till upper lip
+
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyFive" name="SuspiciousVoice" onclick="ChangeCheckBox('SuspiciousVoice')" value="Showing face without lips or showing till upper lip" />
+
+                                                            <label for="checkboxTwentyFive">
+                                                            Showing face without lips or showing till upper lip
+
+                                                        </label>
+                                                    }
+
+                                                </li>
+
                                             </ul>
                                         </div>
                                     </div>
@@ -573,14 +635,25 @@
 </script>
 
 <script>
-function checkProxy() {
-  var checkBox = document.getElementById("myCheck");
-  var text = document.getElementById("proxy-content");
-  if (checkBox.checked == true){
-    text.style.display = "block";
-  } else {
-     text.style.display = "none";
-  }
-}
+//function checkProxy() {
+//  var checkBox = document.getElementById("myCheck");
+//  var text = document.getElementById("proxy-content");
+//  if (checkBox.checked == true){
+//    text.style.display = "block";
+//  } else {
+//     text.style.display = "none";
+//  }
+//}
+
+    document.querySelectorAll('input[type="radio"][name="radio"]').forEach(e => {
+        e.addEventListener('change', function () {
+            if (this.value == "YES") {
+                proxyContent.style.display = "block";
+            } else {
+                proxyContent.style.display = "none";
+            }
+        })
+    })
+
 </script>
 

@@ -8244,9 +8244,18 @@ option {
     top: 15px;
     width: 30px;
 }
-    /***** Media queries *****/
-    @media only screen and (min-width: 1920px) {
-        .rbpay .sb-scrollbar {
+
+    .checkbox-selectproxy input[type="radio"]:checked:before {
+        border: 2px #fff solid;
+        outline: none!important;
+        background: #fff;
+    }
+    .checkbox-selectproxy input[type="radio"]:checked {
+        outline: none!important;
+    }
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
         position: absolute;
         right: -6px !important;
     }
