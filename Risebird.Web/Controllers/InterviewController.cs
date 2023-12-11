@@ -7634,7 +7634,14 @@ namespace Risebird.Web.Controllers
                 ViewBag.profile = profileName;
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 string Logo = string.Empty;
-                ViewBag.ClientLogo = await ImageUrlToBase64(model.LogoUrl);
+                if (!string.IsNullOrWhiteSpace(model.LogoUrl))
+                {
+                    ViewBag.ClientLogo = await ImageUrlToBase64(model.LogoUrl);
+                }
+                else
+                {
+                    ViewBag.ClientLogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png"); 
+                }
                 ViewBag.Risebirdlogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
                 //if (profileName == "Client")
                 //{
