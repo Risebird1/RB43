@@ -8236,6 +8236,7 @@ option {
         color: green;
         font-weight: 500;
         float:left;
+        padding-right:20px;
     }
 .checkbox-selectproxy .round {
     position: relative;
