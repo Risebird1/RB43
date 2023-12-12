@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.ViewModel;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.MicroService
 {
@@ -55,17 +57,6 @@ namespace Risebird.MicroService
                     try
                     {
                         
-                        //masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird"));
-                        //foreach (var mail in mails)
-                        //{
-                        //    if (!string.IsNullOrEmpty(mail.interviewer))
-                        //    {
-                        //        masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail.interviewer, null));
-                        //    }
-                        //}
-                        //masg.Subject = "Reminder! You have a video based interview meeting coming up in the next 30 minutes.";
-
-
                         StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
@@ -79,24 +70,24 @@ namespace Risebird.MicroService
                         msgBody.AppendLine("Thank You, Team Risebird");
 
 
-                        string finalMessageBody = msgBody.ToString();
-                        //masg.PlainTextContent = msgBody.ToString();
+                        //string finalMessageBody = msgBody.ToString();
+                        var masg = new SendGridMessage();
+                        masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("talent@risebird.io", null));
+                        masg.Subject = "Reminder! You have a video based interview meeting coming up in the next 30 minutes.";
+                        masg.From = new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird Notification");
+
+                        masg.PlainTextContent = msgBody.ToString();
 
                         foreach (var mail in mails)
                         {
-                            var masg = new SendGridMessage();
                             if (!string.IsNullOrEmpty(mail.interviewer))
                             {
-                                masg.Subject = "Reminder! You have a video based interview meeting coming up in the next 30 minutes.";
-                                masg.From = new SendGrid.Helpers.Mail.EmailAddress("notification@risebird.io", "Risebird Notification");
-
-                                masg.PlainTextContent = finalMessageBody;
-                                //masg.HtmlContent = finalMessageBody;
-                                masg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail.interviewer, null));
-                                _ = await _notificationHelper.SendMail(masg, null, mail.id);
-
+                                masg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail.interviewer, null));
                             }
                         }
+
+                        _ = await _notificationHelper.SendMail(masg, null, null, null, mails.Select(x =>x.id).ToList());
+
                         log.LogInformation("EmailtoInterviewer : Interview schedule mail sent to interviewer.");
 
 

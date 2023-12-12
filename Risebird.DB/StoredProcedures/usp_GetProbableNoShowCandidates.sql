@@ -21,6 +21,7 @@ from ProbableNoShowCandidates pnc
 join InterviewMeetings im on im.id = pnc.InterviewId  
 join UserList ul on ul.id = pnc.CandidateUserId  
 join InterviewComments ic on ic.Interviewid=im.id  
+where interviewDate >= dateadd(DAY, -8, getdate())
 order by im.interviewDate desc  
 End    
 GO
