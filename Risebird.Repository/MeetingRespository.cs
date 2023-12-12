@@ -6770,6 +6770,7 @@ namespace Risebird.Repository
                     parameters.Add("@PaymentComplianceCount", model.PaymentComplianceCount);
                     parameters.Add("@Rating", model.Rating);
                     parameters.Add("@VideoEnable", model.VideoEnable);
+                    parameters.Add("@isQcDone", model.isQcDone);
 
                     var result = await SqlMapper.QueryAsync(con, "usp_AddorUpdatePaymentSLADetails", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);

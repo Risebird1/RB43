@@ -7848,7 +7848,7 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type, bool isQcDone)
         {
             try
             {
@@ -7864,6 +7864,7 @@ namespace Risebird.Web.Controllers
                 }
                 model.Interviewer = interviewer;
                 model.isapprovedchecked = isapproved;
+                model.isQcDone = isQcDone;
                 model.Pagetype = pagetype;
                 await SetPaymentSLADropDown(model);
                 await SetInitialValue(model);
