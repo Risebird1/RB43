@@ -7902,7 +7902,7 @@ ul.ks-cboxtags {
     padding: 0px 20px 0px 0px;
     position: relative;
     left: 50px;
-    top: 20px;
+    top: 9px;
     font-weight: 600;
     color: #4e4a4a;
 }
@@ -7925,7 +7925,7 @@ ul.ks-cboxtags {
     }
 
 .preview-section {
-    padding-top: 50px;
+    padding-top: 40px;
 }
 
 .preview-txt {
@@ -8253,6 +8253,35 @@ option {
     .checkbox-selectproxy input[type="radio"]:checked {
         outline: none!important;
     }
+
+.saveloader {
+    clear: both;
+    text-align: center;
+    font-size: 16px;
+    color: forestgreen;
+}
+.interviewerAlert {
+    padding: 10px;
+    text-align: center;
+    font-size: 20px;
+    line-height: 32px;
+    color: #847878;
+    font-weight: 500;
+}
+#InterviewerAlert .filavatar .fa {
+    font-size: 17px;
+    color: #fff;
+    padding: 10px 32px 0px 10px;
+}
+#InterviewerAlert .button-warning {
+    background: #d43434;
+    color: #fff;
+    font-size: 14px;
+}
+#InterviewerAlert .filavatar {
+    width: 37px;
+    height: 37px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -9837,7 +9866,7 @@ option {
     }
 
     .navbar-toggle {
-        margin-top: 12px;
+        margin-top: 12px!important;
     }
 
     .top-content {
@@ -10158,6 +10187,11 @@ option {
         width: 23px;
         height: 23px;
     }
+        .video-alert{
+            left:0px!important;
+            font-size:12px!important;
+            line-height:14px!important;
+        }
 }
 
 @media only screen and (min-width: 480px) {
@@ -10550,7 +10584,7 @@ input[type='radio'] {
 }
 
 .swal2-popup .swal2-title {
-    font-size: 1.35em !important;
+    font-size: 1.5em !important;
 }
 
 .mdc-radio .mdc-radio__native-control:enabled:not(:checked) + .mdc-radio__background .mdc-radio__outer-circle {

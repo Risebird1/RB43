@@ -74,7 +74,14 @@
                     </div>
 
                </div>
-                <div class="col-md-12 pull-left"><button id="btnSave">SAVE</button></div>
+
+                <div class="col-md-12 pull-left" style="padding-bottom:35px;"><button id="btnSave">SAVE</button>
+
+                    <div id="saveLoader" class="saveloader" style="display:none;">Please Wait...Video is uploading <img width="20" src="/img/saveloader.gif"></div>
+
+                
+                </div>
+
             </div>
         </div>
     </div>
@@ -339,6 +346,7 @@ function arcTween(b) {
                 save.addEventListener('click', (ev) => {
                     var form_data = new FormData();
                 var vidalert = $('#VideoKYCAlert').css('display','none')
+                var saveloader = $('#saveLoader').css('display','block')
                     form_data.append("file", blobtransfer);
                     $.ajax({
                             type: "POST",
@@ -347,10 +355,13 @@ function arcTween(b) {
                             contentType: false,
                             enctype: 'multipart/form-data',
                             processData: false,
+                           
                             success: function (data) {
+                                 saveloader
                                   swal.fire(data);
                                   closeVideoKYCModel();
-                        vidalert;
+                      vidalert;
+                      $('.top-h').css('top','0px');
                             }
                         });
                 });
