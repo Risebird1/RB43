@@ -4,27 +4,22 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <form action="/Interview/ProxyForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
-    @Html.HiddenFor(m => m.InterviewId)
+    @Html.HiddenFor(m => m.InterviewId,new{@id="hidInterviewid"})
     @Html.HiddenFor(m => m.IsQCdone)
+    @Html.HiddenFor(m => m.type)
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
             <div class="card-wrap" style="margin:0px 0px">
                 <div class="checkbox-selectproxy">
-                   
-                    <label class="pull-left" style="padding: 0px 15px 0px 0px;">
-                        Yes
-                        <input style="position:relative;top:3px;outline:none;" type="radio" name="radio" value="YES">
-                        <span class="checkmark"></span>
-                    </label>
+                    <h2>Please select proxy candidate reporting:</h2>
+                    <span class="round">
+                        @*<input type="checkbox" id="isProxyCandidate" name="isProxyCandidate" onclick="checkProxy()" />*@
+                        @Html.CheckBoxFor(m=>m.isProxyCandidate,new{@onclick="checkProxy()"})
+                        <label for="isProxyCandidate"></label>
+                    </span>
 
-                    <label class="pull-left" style="padding: 0px 0px 0px 15px;">
-                        No
-                        <input style="position:relative;top:3px;outline:none;" type="radio" checked="checked" name="radio" value="NO">
-                        <span class="checkmark"></span>
-                    </label>
-
-                        </div>
-                <div class="accordion" id="proxyContent" style="display:none;">
+                </div>
+                <div class="accordion" id="proxy-content" style="display:none;">
                     <div class="row">
                         <div class="col-md-6 col-sm-6 border-rv pull-left">
                             <div class="form-group">
@@ -397,11 +392,11 @@
 
                                                         <label for="checkboxTwelve">
                                                             Non-satisfactory answers for personal questions from the Resume or their experience
-                                                       </label>
+                                                        </label>
                                                     }
-                                 
+
                                                 </li>
-                                              
+
                                             </ul>
                                         </div>
                                     </div>
@@ -604,10 +599,17 @@
 
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12 mc-button-area" style="margin-bottom:10px;">
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mc-button-area" style="margin-bottom:10px;">
+                        @if (Model.type != "Report")
+                        {
                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Submit</button>
-                        </div>
+                        }
+                        else
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SaveReportvalues()" value="Submit">Submit</button>
+                        }
                     </div>
                 </div>
             </div>
@@ -615,6 +617,9 @@
     </div>
 </form>
 <script>
+    $(document).ready(function () {
+        checkProxy();
+    });
     function ChangeCheckBox(groupName) {
         var result = $('input[name="' + groupName + '"]:checked');
         var resultString = '';
@@ -635,25 +640,32 @@
 </script>
 
 <script>
-//function checkProxy() {
-//  var checkBox = document.getElementById("myCheck");
-//  var text = document.getElementById("proxy-content");
-//  if (checkBox.checked == true){
-//    text.style.display = "block";
-//  } else {
-//     text.style.display = "none";
-//  }
-//}
-
-    document.querySelectorAll('input[type="radio"][name="radio"]').forEach(e => {
-        e.addEventListener('change', function () {
-            if (this.value == "YES") {
-                proxyContent.style.display = "block";
-            } else {
-                proxyContent.style.display = "none";
-            }
-        })
-    })
-
+    function checkProxy() {
+        var checkBox = document.getElementById("isProxyCandidate");
+        var text = document.getElementById("proxy-content");
+        if (checkBox.checked == true) {
+            text.style.display = "block";
+        } else {
+            text.style.display = "none";
+        }
+    }
+    function SaveReportvalues() {
+        closeProxyModel();
+        if (document.getElementById("isProxyCandidate").checked) {
+            $("#Proctoring_isProxyCandidate").val(true);
+        } else {
+            $("#Proctoring_isProxyCandidate").val(false);
+        }
+        $("#Proctoring_EyeMovement").val($("#EyeMovement").val());
+        $("#Proctoring_LipsMovement").val($("#LipsMovement").val());
+        $("#Proctoring_CandidateDesktop").val($("#CandidateDesktop").val());
+        $("#Proctoring_LinkedinPhoto").val($("#LinkedinPhoto").val());
+        $("#Proctoring_HeadMovement").val($("#HeadMovement").val());
+        $("#Proctoring_LatencyCheck").val($("#LatencyCheck").val());
+        $("#Proctoring_VoiceImpostering").val($("#VoiceImpostering").val());
+        $("#Proctoring_SusipicousDevices").val($("#SusipicousDevices").val());
+        $("#Proctoring_SuspiciousVoice").val($("#SuspiciousVoice").val());
+        $("#Proctoring_SuspiciousEnvironment").val($("#SuspiciousEnvironment").val());
+        $("#Proctoring_IsQCdone").val($("#IsQCdone").val());
+    }
 </script>
-

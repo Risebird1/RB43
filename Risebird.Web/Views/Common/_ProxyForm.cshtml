@@ -22,10 +22,10 @@
     </div>
 </div>
 <script>
-    function ProxyFormDetails(id, IsQCDone) {
+    function ProxyFormDetails(id, IsQCDone, type) {
         $.ajax({
             url: '/Interview/ProxyForm',
-            data: { 'interviewid': id, 'IsQCDone': IsQCDone },
+            data: { 'interviewid': id, 'IsQCDone': IsQCDone, 'type': type },
             type: "GET",
             success: function (data) {
                 openProxyModel();
