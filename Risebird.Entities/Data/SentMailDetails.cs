@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Risebird.Entities.Data
 {
@@ -16,5 +17,6 @@ namespace Risebird.Entities.Data
         public DateTime CreatedAt { get; set; }
         public string SentBy { get; set; }
         public string IRFName { get; set; }
+        public List<int> InterviewIdList { get; set; }
     }
 }

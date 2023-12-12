@@ -21,13 +21,13 @@
 
                     <div class="videoContainer">
                         <video id="video" autoplay="true" muted></video><h4 style="font-size: 13px;text-align: center; font-weight: 600;color: #4d4444;">
-                            RECORD YOUR 90SECS VIDEO
+                            RECORD YOUR 90 SECS VIDEO
                         </h4>
                     </div>
                    <div class="videoButtons">
 
-                        <button id="btncamara" class="btncamara">  <i class="fa fa-camera" aria-hidden="true"></i><span class="on-off-txt">ON</span></button>
-                        <button id="btnoffcamara" class="btnoffcamara" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera-off"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34m-7.72-2.06a4 4 0 1 1-5.56-5.56"></path></svg><span class="on-off-txt">OFF</span></button>
+                        <button id="btncamara" class="btncamara" style="display:none;">  <i class="fa fa-camera" aria-hidden="true"></i><span class="on-off-txt">ON</span></button>
+                        <button id="btnoffcamara" class="btnoffcamara"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera-off"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34m-7.72-2.06a4 4 0 1 1-5.56-5.56"></path></svg><span class="on-off-txt">OFF</span></button>
 
                         <button id="btnStart">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record-fill" viewBox="0 0 16 16" style="
@@ -74,7 +74,14 @@
                     </div>
 
                </div>
-                <div class="col-md-12 pull-left"><button id="btnSave">SAVE</button></div>
+
+                <div class="col-md-12 pull-left" style="padding-bottom:35px;"><button id="btnSave">SAVE</button>
+
+                    <div id="saveLoader" class="saveloader" style="display:none;">Please Wait...Video is uploading <img width="20" src="/img/saveloader.gif"></div>
+
+                
+                </div>
+
             </div>
         </div>
     </div>
@@ -95,7 +102,7 @@
 var width = 165,
   height = 165,
   timePassed = 0,
-  timeLimit = 90
+  timeLimit = 91
 
 var fields = [{
   value: timeLimit,
@@ -289,7 +296,7 @@ function arcTween(b) {
 
         navigator.mediaDevices.getUserMedia(constraintObj)
             .then(function (mediaStreamObj) {
-                console.log('test')
+               // console.log('test')
                 let video=document.getElementById('video');
 
                 let camara = document.getElementById('btncamara');
@@ -302,15 +309,22 @@ function arcTween(b) {
                 let mediaRecorder = new MediaRecorder(mediaStreamObj);
                 let chunks = [];
                 let blobtransfer;
-                document.getElementById('btnStart').disabled = true;
+                document.getElementById('btnStart').disabled = false;
                 document.getElementById('btnStop').disabled = true;
+                video.srcObject = mediaStreamObj;
+                 console.log(mediaRecorder.state);
+
                 camara.addEventListener('click', (ev) => {
+                $('#btncamara').css('display', 'none')
                     video.srcObject=mediaStreamObj;
                     console.log(mediaRecorder.state);
+                $('#btnoffcamara').css('display', 'block')
                 })
                 offcamara.addEventListener('click', (ev) => {
+                $('#btnoffcamara').css('display', 'none')
                     video.srcObject = null;
                     console.log(mediaRecorder.state);
+                    $('#btncamara').css('display','block')
                 })
                 start.addEventListener('click', (ev) => {
                     mediaRecorder.start();
@@ -331,6 +345,8 @@ function arcTween(b) {
                 });
                 save.addEventListener('click', (ev) => {
                     var form_data = new FormData();
+                var vidalert = $('#VideoKYCAlert').css('display','none')
+                var saveloader = $('#saveLoader').css('display','block')
                     form_data.append("file", blobtransfer);
                     $.ajax({
                             type: "POST",
@@ -339,9 +355,13 @@ function arcTween(b) {
                             contentType: false,
                             enctype: 'multipart/form-data',
                             processData: false,
+                           
                             success: function (data) {
-                                  alert(data);
+                                 saveloader
+                                  swal.fire(data);
                                   closeVideoKYCModel();
+                      vidalert;
+                      $('.top-h').css('top','0px');
                             }
                         });
                 });
