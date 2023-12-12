@@ -98,7 +98,7 @@ namespace Risebird.CommonHelper.Interface
         //Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, int? irfId = null, int? interviewId = null);
         Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientLogoLink = null);
         Task<string> SharedBotTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
-        Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null);
+        Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null);
         Task<string> SendClientRisebirdReview(Mail model, string Name, string reviewurl, string clientlogo);
         Task<string> SharedReminderTestLink(Mail model, string title, string timeduration, string Url, string ClientName, DateTime Expiretime);
         Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl);
