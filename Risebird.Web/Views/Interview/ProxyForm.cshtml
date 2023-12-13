@@ -12,10 +12,10 @@
             <div class="card-wrap" style="margin:0px 0px">
                 <div class="checkbox-selectproxy">
                     <h2>Please select proxy candidate reporting:</h2>
-                    @Html.RadioButtonFor(m=>m.isProxyCandidate,true, new{@onclick="checkProxy()", @style="position:relative;top:3px;outline:none;"})
+                    @Html.RadioButtonFor(m=>m.isProxyCandidate,true, new{@onclick="checkProxy()",@class="proxy-radio-button"})
                      <label style="padding-top:15px;" for="isProxyCandidate">Yes</label>
 
-                    @Html.RadioButtonFor(m=>m.isProxyCandidate,false, new{@onclick="checkProxy()", @style="position:relative;top:3px;outline:none;"})
+                    @Html.RadioButtonFor(m=>m.isProxyCandidate,false, new{@onclick="checkProxy()", @class="proxy-radio-button"})
                     <label for="isProxyCandidate">No</label>
                 </div>
                 <div class="accordion" id="proxy-content" style="display:none;">
