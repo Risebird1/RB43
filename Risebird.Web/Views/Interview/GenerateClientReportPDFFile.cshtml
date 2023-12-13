@@ -121,26 +121,24 @@
         .sidebar .navbar-minimize .btn {
             display: none !important
         }
-      
     </style>
     <style>
 
-#target{
-    width:300px;
-    height:160px;
-    background:lightblue;
-    color:#fff;
-    padding:10px;
-    background-image: url(https://risebirdportal.blob.core.windows.net/clientlogos/synechron_logo_white_background.jpg);
-    background-repeat:no-repeat;
-    background-position:center center;
-    -o-background-size: 100%;
-    -moz-background-size: 100%;
-    -webkit-background-size: 100%;
-    background-size: 100%;
-   height: 100%;
-}
-
+        #target {
+            width: 300px;
+            height: 160px;
+            background: lightblue;
+            color: #fff;
+            padding: 10px;
+            background-image: url(https://risebirdportal.blob.core.windows.net/clientlogos/synechron_logo_white_background.jpg);
+            background-repeat: no-repeat;
+            background-position: center center;
+            -o-background-size: 100%;
+            -moz-background-size: 100%;
+            -webkit-background-size: 100%;
+            background-size: 100%;
+            height: 100%;
+        }
 
     </style>
     <script>
@@ -182,49 +180,49 @@
 <div id="main-panel" style="display:none;">
 
 
-    <div class="content dataloading client" >
-       
-        <div class="row bl-bg" id="pdfdownload">
-       
-       <!--   <nav class="navbar navbar-expand-lg navbar-transparent btn-primary" style="height:60px;">
-                <div class="pull-left">
-                    <div class="navbar-wrapper w-full">
-                        <div id="txtpageHeader" class="clientlogoarea" style="position:absolute;left:30px; top:10px;">
-                            <img src="data:image/png;base64,@ViewBag.Risebirdlogo" />
-                        </div>
-                    </div>
+    <div class="content dataloading client">
 
-                </div>
-                <div class="pull-right" style="text-align:right!important;">
-                    <img style="position:absolute;top:7px;right:30px;height:35px" src="data:image/png;base64,@ViewBag.ClientLogo" />
-                </div>
-            </nav>--!>
-            <div class="col-md-12">
-                <div class="mdc-card card bl-bg">
-                    <div class="mdc-card-wrapper__text-section">
-                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
+        <div class="row bl-bg" id="pdfdownload">
+
+            <!--   <nav class="navbar navbar-expand-lg navbar-transparent btn-primary" style="height:60px;">
+                     <div class="pull-left">
+                         <div class="navbar-wrapper w-full">
+                             <div id="txtpageHeader" class="clientlogoarea" style="position:absolute;left:30px; top:10px;">
+                                 <img src="data:image/png;base64,@ViewBag.Risebirdlogo" />
+                             </div>
+                         </div>
+
+                     </div>
+                     <div class="pull-right" style="text-align:right!important;">
+                         <img style="position:absolute;top:7px;right:30px;height:35px" src="data:image/png;base64,@ViewBag.ClientLogo" />
+                     </div>
+                 </nav>--!>
+                 <div class="col-md-12">
+                     <div class="mdc-card card bl-bg">
+                         <div class="mdc-card-wrapper__text-section">
+                             <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
                             @Html.AntiForgeryToken()
-                            <div class="canvas_div_pdf">
+                                 <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div style="clear:both">
-                                            <div class="pull-left">
+                                     <div class="row">
+                                         <div class="col-md-12">
+                                             <div style="clear:both">
+                                                 <div class="pull-left">
                                                 @if (Model.resumeLink != null && Model.resumeLink != "")
                                                 {
-                                                // <div class="report-heading">Candidate Name</div>
-                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5>@Model.CandidateName</h5></a>
+                // <div class="report-heading">Candidate Name</div>
+                                                             <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5>@Model.CandidateName</h5></a>
                                                 }
                                                 else
                                                 {
-                                                    <div class="report-heading">Candidate Name</div>
-                                                    <h2 style="font-size:18px;font-weight:bold;">@Model.CandidateName</h2>
+                                                             <div class="report-heading">Candidate Name</div>
+                                                             <h2 style="font-size:18px;font-weight:bold;">@Model.CandidateName</h2>
                                                 }
                                                 @Html.HiddenFor(m => m.CandidateName)
-                                                <h4 style="clear:both;font-size:15px;color:grey;font-weight:bold;">@Model.JDTiltle</h4>
-                                            </div>
-                                            <div class="pull-right">
-                                                <div style="clear:both">
+                                                     <h4 style="clear:both;font-size:15px;color:grey;font-weight:bold;">@Model.JDTiltle</h4>
+                                                 </div>
+                                                 <div class="pull-right">
+                                                     <div style="clear:both">
                                                     @*<label>REPORT DETAILS</label>*@
                                                     @{
                                                         var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
@@ -241,30 +239,30 @@
                                                         {
                                                             meetingcolor = "red";
                                                         }
-                                                        <h6 style="text-transform:capitalize">Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h6>
+                                                                 <h6 style="text-transform:capitalize">Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h6>
                                                     }
                                                     else
                                                     {
-                                                        <h6 style="text-transform:capitalize">Interview Status : <strong>@meestingstatusvalue</strong></h6>
+                                                                 <h6 style="text-transform:capitalize">Interview Status : <strong>@meestingstatusvalue</strong></h6>
                                                     }
-                                                </div>
-                                                <div style="clear:both">
-                                                    <span class="report-heading pull-left" style="font-weight:bold;">
-                                                        Date of Interview :
-                                                    </span>
-                                                    <h4 class="pull-left report-heading" style="font-weight:bold;">@Model.interviewDate</h4>
-                                                </div>
-                                            </div>
-                                        </div>
+                                                     </div>
+                                                     <div style="clear:both">
+                                                         <span class="report-heading pull-left" style="font-weight:bold;">
+                                                             Date of Interview :
+                                                         </span>
+                                                         <h4 class="pull-left report-heading" style="font-weight:bold;">@Model.interviewDate</h4>
+                                                     </div>
+                                                 </div>
+                                             </div>
 
 
 
-                                        <hr style="clear:both;margin-bottom:0px;" />
-                                        <div>
+                                             <hr style="clear:both;margin-bottom:0px;" />
+                                             <div>
                                             @if (Model.MeetingStatus == 1)
                                             {
 
-                                                <div class="row"><div class="nodata-wrapper-pdf"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
+                                                         <div class="row"><div class="nodata-wrapper-pdf"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
 
                                             }
                                             else
@@ -273,115 +271,115 @@
                                                 @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                 {
 
-                                                    <div style="float:left"> <a href="@Model.VideoLink"><div style="font-size:15px;margin:7px 0px">Click Here For Interview Video</div></a></div>
+                                                                 <div style="float:left"> <a href="@Model.VideoLink"><div style="font-size:15px;margin:7px 0px">Click Here For Interview Video</div></a></div>
 
 
                                                 }
 
                                                 else
                                                 {
-                                                    <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
+                                                                 <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
                                                 }
                                                 @if (Model.IsTranscript && ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
                                                 {
                                                     @if (Model.AudioTranscriptFileLink != null && Url.Content(Model.AudioTranscriptFileLink) != null)
                                                     {
-                                                        <div style="float:right"> <a href="@Model.AudioTranscriptFileLink"><div style="font-size:15px;margin:7px 0px">Click Here For Interview Audio Transcript</div></a></div>
+                                                                         <div style="float:right"> <a href="@Model.AudioTranscriptFileLink"><div style="font-size:15px;margin:7px 0px">Click Here For Interview Audio Transcript</div></a></div>
                                                     }
 
                                                 }
 
 
                                             }
-                                        </div>
+                                             </div>
 
-                                        <div class="interviewComment" style="clear:both;height:350px;overflow:auto;">
-                                            <div class="int-heading" style="background-size:4%;background-position:5px 8px;font-weight:600;font-size:17px;color:#929090">Interviewer Comment</div>
-                                            <hr style="margin-bottom:8px;" />
+                                             <div class="interviewComment" style="clear:both;height:350px;overflow:auto;">
+                                                 <div class="int-heading" style="background-size:4%;background-position:5px 8px;font-weight:600;font-size:17px;color:#929090">Interviewer Comment</div>
+                                                 <hr style="margin-bottom:8px;" />
                                             @if (Model.InterviewerComment != null)
                                             {
-                                                <div style="font-size:14px;">@Model.InterviewerComment</div>
+                                                         <div style="font-size:14px;">@Model.InterviewerComment</div>
                                             }
                                             else
                                             {
-                                                <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                                         <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
                                             }
-                                        </div>
-                                        <div>
-                                            <div class="skill-heading" style="background-size:9%;background-position:5px 8px;font-weight:600;font-size:17px;color:#929090"> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
-                                            <hr style="clear:both;margin-bottom:0px;" />
-                                        </div>
+                                             </div>
+                                             <div>
+                                                 <div class="skill-heading" style="background-size:9%;background-position:5px 8px;font-weight:600;font-size:17px;color:#929090"> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
+                                                 <hr style="clear:both;margin-bottom:0px;" />
+                                             </div>
 
-                                        <div>
+                                             <div>
                                             @if (Model.TechSkillReportCollection != null)
                                             {
                                                 @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                 {
-                                                    <div style="padding-top:10px">
-                                                        <p style="margin-bottom:5px;">@Model.TechSkillReportCollection[i].SkillName</p>
+                                                                 <div style="padding-top:10px">
+                                                                     <p style="margin-bottom:5px;">@Model.TechSkillReportCollection[i].SkillName</p>
                                                         @{
                                                             var TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                         }
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                        <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                     <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
-                                                        <div class="skillBackground skill-round-xlarge skill-small" style="font-size:9px;">
+                                                                     <div class="skillBackground skill-round-xlarge skill-small" style="font-size:9px;">
                                                             @if (TechSkill_Score == 0)
                                                             {
-                                                                <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%">@TechSkill_Score %</div>
+                                                                                 <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%">@TechSkill_Score %</div>
                                                             }
                                                             else
                                                             {
-                                                                <div class="skill-center skill-round-xlarge skill-teal" style="font-size:9px;width:@TechSkill_Score%">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</div>
+                                                                                 <div class="skill-center skill-round-xlarge skill-teal" style="font-size:9px;width:@TechSkill_Score%">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</div>
 
                                                             }
-                                                        </div>
-                                                    </div>
+                                                                     </div>
+                                                                 </div>
                                                 }
                                             }
-                                        </div>
-                                    </div>
+                                             </div>
+                                         </div>
 
-                                    <div class="html2pdf__page-break"></div>
-                              
-                                    <div class="col-md-12">
+                                         <div class="html2pdf__page-break"></div>
 
-                                        <div style="margin-top:10px;">
-                                            <div class="question-heading" style="background-size:9%;background-position:0px 8px;font-weight:600;font-size:17px;color:#929090">Questions Discussed</div>
-                                            <hr style="margin-bottom:8px;" />
-                                            <div class="question">
+                                         <div class="col-md-12">
+
+                                             <div style="margin-top:10px;">
+                                                 <div class="question-heading" style="background-size:9%;background-position:0px 8px;font-weight:600;font-size:17px;color:#929090">Questions Discussed</div>
+                                                 <hr style="margin-bottom:8px;" />
+                                                 <div class="question">
                                                 @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
                                                 {
-                                                    <ul>
+                                                             <ul>
                                                         @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                         {
                                                             var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                             @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
                                                             {
-                                                                <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer;font-size:14px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                                 <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer;font-size:14px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                             }
                                                             else
                                                             {
-                                                                <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                                 <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                             }
-                                                            <label>Rating : @valueslist</label>
+                                                                         <label>Rating : @valueslist</label>
                                                         }
-                                                    </ul>
+                                                             </ul>
                                                 }
                                                 else
                                                 {
-                                                    <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+                                                             <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
 
                                                 }
-                                            </div>
-                                        </div>
-                                    </div>
+                                                 </div>
+                                             </div>
+                                         </div>
 
-                                </div>
+                                     </div>
                                 @Html.HiddenFor(m => m.IsGeneralSkillRequired)
-                            </div>
+                                 </div>
 
                             @Html.HiddenFor(m => m.id)
                             @Html.HiddenFor(m => m.IRFId)
@@ -404,17 +402,16 @@
                             @Html.HiddenFor(x => x.OldInterviewerComment)
                             @Html.HiddenFor(x => x.IsEdited)
                             @Html.HiddenFor(x => x.ResourceUrl)
-                        </form>
-                    </div>
+                             </form>
+                         </div>
 
-                    <!-- end content-->
-                </div>
-                <!--  end card  -->
-            </div>
-            <!-- end col-md-12 -->
+                         <!-- end content-->
         </div>
-        <!-- end row -->
-
+        <!--  end card  -->
+    </div>
+    <!-- end col-md-12 -->
+</div>
+<!-- end row -->
     </div>
 
 </div>
@@ -663,6 +660,7 @@
     }
     window.onload = function () {
         getPDF();
+        
     }
 </script>
 
@@ -679,8 +677,8 @@
 
 <script>
     function getPDF() {
-      var imgData = $("#hidclientlogo").val();
-      var imgData1 = $("#hidlogo").val();
+        var imgData = $("#hidclientlogo").val();
+        var imgData1 = $("#hidlogo").val();
         var d = new Date();
         var filename = $('#CandidateName').val() + "_" + d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear() + ".pdf";
         var element = document.getElementById("pdfdownload");
@@ -691,7 +689,7 @@
             .set({
                 margin: [20, 0, 20, 0], //top, left, buttom, right,
                 filename: filename,
-                image:        { type: 'jpeg', quality: .95 },
+                image: { type: 'jpeg', quality: .95 },
                 html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'p' },
                 pagebreak: { mode: 'avoid-all' }
@@ -699,22 +697,21 @@
             })
             .toPdf()
             .get('pdf').then(function (pdf) {
-               
+
                 var totalPages = pdf.internal.getNumberOfPages();
 
-               
+
                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(10);
                     pdf.setTextColor(50);
-                     pdf.addImage(imgData, "PNG",175, 3, 25, 8);
-                     pdf.addImage(imgData1, "PNG",5, 3, 25, 10);
+                    pdf.addImage(imgData, "PNG", 175, 3, 25, 8);
+                    pdf.addImage(imgData1, "PNG", 5, 3, 25, 10);
                     pdf.text('© 2023 Arhat Talent Solutions Pvt Ltd.:' + i + '/' + totalPages + '', pdf.internal.pageSize.getWidth() - 85, pdf.internal.pageSize.getHeight() - 8);
 
                 }
             }).save();
-        
-
+        timeout(5000);
     }
     function timeout(index) {
         setTimeout('', index);
@@ -737,4 +734,5 @@
 </style>
 
 <script>
-    pagebreak: { avoid: "tr", mode: "css", before: "#nextpage1", after: "1cm" }</script>
+    pagebreak: { avoid: "tr", mode: "css", before: "#nextpage1", after: "1cm" }
+</script>

@@ -304,7 +304,7 @@
                                                     @{
                                                         if (Model.resumeLink != null && Model.resumeLink != "")
                                                         {
-                                                                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
                                                         }
                                                     }
 
@@ -1260,7 +1260,7 @@
                                                                             @{
                                                                                 if (Model.VideoLink != null)
                                                                                 {
-                                                                                                                            <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                                                    <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
                                                                                 }
                                                                             }
                                                                         </div>
@@ -1300,226 +1300,240 @@
                                         <div class="card-wrap" style="margin-bottom:0px; padding:30px 20px 0px 20px;">
                                             <span class="heading pull-left"><span style="color:red;font-weight:bold;font-size:13px;">*</span> Please select the option  </span>
                                             <span class="custom-select-dropdown">
-                                                <select id='isProxyCandidate' name='isProxyCandidate'>
+                                                <select id='isProxy' name='isProxy'>
                                                     <option>Select</option>
                                                     <option value="yes">Yes</option>
                                                     <option value="no">No</option>
                                                 </select>
                                             </span>
                                         </div>
-										@* <div class="proctor">
-                                            <input class="toggle-box" id="identifier-2" type="checkbox">
-                                            <label for="identifier-2">
-                                                <div class="multiple_row">
-                                                    <h2>Proctoring Report</h2>
-                                                </div>
-                                            </label>
+                                        @Html.HiddenFor(m=>m.Proctoring.InterviewId)
+                                        @Html.HiddenFor(m=>m.Proctoring.isProxyCandidate)
+                                        @Html.HiddenFor(m=>m.Proctoring.EyeMovement)
+                                        @Html.HiddenFor(m=>m.Proctoring.LipsMovement)
+                                        @Html.HiddenFor(m=>m.Proctoring.CandidateDesktop)
+                                        @Html.HiddenFor(m=>m.Proctoring.LinkedinPhoto)
+                                        @Html.HiddenFor(m=>m.Proctoring.HeadMovement)
+                                        @Html.HiddenFor(m=>m.Proctoring.LatencyCheck)
+                                        @Html.HiddenFor(m=>m.Proctoring.VoiceImpostering)
+                                        @Html.HiddenFor(m=>m.Proctoring.SusipicousDevices)
+                                        @Html.HiddenFor(m=>m.Proctoring.SuspiciousVoice)
+                                        @Html.HiddenFor(m=>m.Proctoring.SuspiciousEnvironment)
+                                        @Html.HiddenFor(m=>m.Proctoring.IsQCdone)
+
+                                        @* <div class="proctor">
+                                    <input class="toggle-box" id="identifier-2" type="checkbox">
+                                    <label for="identifier-2">
+                                    <div class="multiple_row">
+                                    <h2>Proctoring Report</h2>
+                                    </div>
+                                    </label>
 
 
 
-                                          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopad">
-                                                <div class="table-responsive-sm">
-                                                    <table class="table table-bordered mbn" id="ProctoringTable">
-                                                        <thead>
-                                                            <tr>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopad">
+                                    <div class="table-responsive-sm">
+                                    <table class="table table-bordered mbn" id="ProctoringTable">
+                                    <thead>
+                                    <tr>
 
-                                                                <th class="table_heading">Areas</th>
-                                                                <th class="table_heading">Number of Red Flags</th>
+                                    <th class="table_heading">Areas</th>
+                                    <th class="table_heading">Number of Red Flags</th>
 
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    Eyes Movement
-                                                                </td>
-                                                                <td></td>
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                    <td>
+                                    Eyes Movement
+                                    </td>
+                                    <td></td>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    <label class="form-control label-type" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Head Movement
-                                                                </td>
-                                                                <td></td>
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
+                                    <td>
+                                    <label class="form-control label-type" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
+                                    </tr>
+                                    <tr>
+                                    <td>
+                                    Head Movement
+                                    </td>
+                                    <td></td>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Lips Movement
-                                                                </td>
-                                                                <td class="control-width"></td>
-                                                            </tr>
+                                    </tr>
+                                    <tr>
+                                    <td>
+                                    Lips Movement
+                                    </td>
+                                    <td class="control-width"></td>
+                                    </tr>
 
-                                                            <tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="LipsOverhead">Using overhead light</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="LipsOverhead">Using overhead light</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="LipsDarklight">Dark light in the room or on the face</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="LipsDarklight">Dark light in the room or on the face</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="LipsHeadphone">Using Headphone in front of Lips</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    <td>
+                                    <label class="form-control label-type" for="LipsHeadphone">Using Headphone in front of Lips</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
 
-                                                                </td>
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Latency check
-                                                                </td>
-                                                                <td></td>
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
+                                    <td>
+                                    Latency check
+                                    </td>
+                                    <td></td>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
+                                    </tr>
 
-                                                            <tr>
-                                                                <td>
-                                                                    Candidate desktop
-                                                                </td>
-                                                                <td></td>
-                                                            </tr>
-                                                            <tr>
+                                    <tr>
+                                    <td>
+                                    Candidate desktop
+                                    </td>
+                                    <td></td>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="DesktopScreenSharing">Sharing screen but not desktop</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="DesktopScreenSharing">Sharing screen but not desktop</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Voice Impostering
-                                                                </td>
-                                                                <td></td>
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
+                                    <td>
+                                    Voice Impostering
+                                    </td>
+                                    <td></td>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-                                                                </td>
+                                    <td>
+                                    <label class="form-control label-type" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
+                                    </td>
 
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Linkedin Photo
-                                                                </td>
-                                                                <td class="control-width"></td>
-                                                            </tr>
-                                                            <tr>
+                                    </tr>
+                                    <tr>
+                                    <td>
+                                    Linkedin Photo
+                                    </td>
+                                    <td class="control-width"></td>
+                                    </tr>
+                                    <tr>
 
-                                                                <td>
-                                                                    <label class="form-control label-type" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
-                                                                </td>
-                                                                <td class="control-width">
-                                                                    @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
-
-
-                                                                </td>
-
-                                                            </tr>
+                                    <td>
+                                    <label class="form-control label-type" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
+                                    </td>
+                                    <td class="control-width">
+                                    @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
 
 
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                    </td>
+
+                                    </tr>
+
+
+                                    </tbody>
+                                    </table>
+                                    </div>
+                                    </div>
                                     </div>*@
                                         <!--end of multiple location-->
                                     </div>
@@ -1675,24 +1689,24 @@
     </div>
 </div>
 
-<div id="QuestionNotificationModelPopup" class="modal modal-bg" style="z-index:5;background-color: rgba(0,0,0,0.9);" >
+<div id="QuestionNotificationModelPopup" class="modal modal-bg" style="z-index:5;background-color: rgba(0,0,0,0.9);">
     <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar" style="background:#d61818!important;">
- 
+
                     <span class="mdc-fab__icon material-icons">
                         <i class='fa fa-warning' style='color: white'></i>
                     </span>
                 </div>
                 <h5 class="modal-title pull-left">Interview Question Missing Alert</h5>
             </div>
-           @*  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span onclick="closeQuestionCollectionNotification()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            @*  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span onclick="closeQuestionCollectionNotification()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button> *@
             <div class="modal-body">
                 <div style="padding:10px">
-                    <h2 style="font-size:20px; line-height:32px";>  If you haven't added any questions, please add your questions before filling candidate report <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank">Click Here</a></h2>
+                    <h2 style="font-size:20px; line-height:32px; text-align:center";>  If you haven't added any questions, please add <br/> your questions before filling candidate report <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank">Click Here</a></h2>
                 </div>
             </div>
         </div>
@@ -1729,12 +1743,12 @@
     @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
     {
         <script>
-         @*    function closeQuestionCollectionNotification() {
-                document.getElementById("QuestionNotificationModelPopup").style.display = "none";
-            } *@
-            function OpenQuestionCollectionNotification() {
-                document.getElementById("QuestionNotificationModelPopup").style.display = "block";
-            }
+            @*    function closeQuestionCollectionNotification() {
+        document.getElementById("QuestionNotificationModelPopup").style.display = "none";
+        } *@
+                function OpenQuestionCollectionNotification() {
+                    document.getElementById("QuestionNotificationModelPopup").style.display = "block";
+                }
             OpenQuestionCollectionNotification();
         </script>
     }
@@ -2153,11 +2167,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-                                                                                                                                                            //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-                                                                                                                                                            // Check document for changes
-                                                                                                                                                            //$.validator.unobtrusive.parse(document);
+                                                                                                                                                                            //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                                                                                                                                                                            // Check document for changes
+                                                                                                                                                                            //$.validator.unobtrusive.parse(document);
 
-                                                                                                                                                        }
+                                                                                                                                                                        }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2257,7 +2271,7 @@
             });*@
 
 
-                                                                                                                                                        }
+                                                                                                                                                                        }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2331,24 +2345,24 @@
         }
     }
 
-   
 
- function InterviewStatusChangedValue() {
+
+    function InterviewStatusChangedValue() {
         var msg = '';
         var interviewStatusValue = document.getElementById("InterviewStatus").value;
-         if (interviewStatusValue == 2 ){
-            msg ='Are you sure you want to select the candidate for the interview';
-         }
-         else if(interviewStatusValue == 3){
-            msg ='Are you sure you want to reject the candidate for the interview';
-         }
-      if(window.confirm(msg)){
-          return true;
-      }
-      else{
-          return false;
-      }
-      
+        if (interviewStatusValue == 2) {
+            msg = 'Are you sure you want to select the candidate for the interview';
+        }
+        else if (interviewStatusValue == 3) {
+            msg = 'Are you sure you want to reject the candidate for the interview';
+        }
+        if (window.confirm(msg)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
     function CheckInterviewerComments() {
         //var interviewStatusElem = document.getElementById("InterviewStatus");
@@ -2366,7 +2380,7 @@
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
                 }*@
-                                                                           return CheckLength(250);
+                                                                                           return CheckLength(250);
         }
         else if (interviewStatusValue == 1 || interviewStatusValue == 3) {
             return CheckLength(50);
@@ -2546,7 +2560,7 @@
                 }
                 });*@
 
-                                                                                                                                                            }
+                                                                                                                                                                            }
 
 
     });
@@ -2673,9 +2687,9 @@
 
     })();
     $('#MeetingStatus').change(function () {
-         var MeetingStatus = jQuery("#MeetingStatus option:selected").val();
+        var MeetingStatus = jQuery("#MeetingStatus option:selected").val();
         if (MeetingStatus == 6 || MeetingStatus == 7) {
-         $("#remainingC").style.display = 'block';
+            $("#remainingC").style.display = 'block';
         }
         else {
             $("#remainingC").style.display = 'none';
@@ -2696,16 +2710,23 @@
         else {
             $("#remainingC").style.display = 'none';
         }
-        });
+    });
 </script>
 <script>
-       $(document).ready(function () {
-           
-    document.getElementById('isProxyCandidate').onchange = function () {
-        if (this.value == 'yes') {
-           ProxyFormDetails();
-        } 
-    };
-       });
+    $(document).ready(function () {
+        document.getElementById('isProxy').onchange = function () {
+            if (this.value == 'yes') {
+                var interviewid = $("#InterviewId").val();
+                ProxyFormDetails(interviewid, false, 'Report');
+            }
+            else if (this.value == 'no') {
+                $("#Proctoring_isProxyCandidate").val(false);
+            }
+        };
+        $("#Proctoring_InterviewId").val($("#InterviewId").val());
+        if (document.getElementById('Proctoring_isProxyCandidate').value == 'True') {
+            document.getElementById('isProxy').value = "yes";
+        }
+    });
 </script>
 @await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")

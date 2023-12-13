@@ -282,15 +282,15 @@
                                             </label>
                                             <span class="round">
                                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
-                                                <label class="edit-wrap">
-                                                    <i class='fa fa-edit' style='color: white'></i>
-                                                    @*    <a href="#" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
+                                                @*<label class="edit-wrap">
+                                                  <i class='fa fa-edit' style='color: white'></i>
+                                                     <a href="#" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
                                                 data-interviewdate="@Model.irf" data-candidatename="@Model.candidateName"
                                                 data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer", new { interviewId = Model.id})">
                                                 Client Instruction(s)
-                                                </a> *@
+                                                </a>
 
-                                                </label>
+                                                </label>*@
                                                 <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
 
                                                 <span id="hidden_fields_four_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
@@ -329,15 +329,15 @@
 
                                         <fieldset class="answer hidden" id="hidden_fields_five">
                                             <div class="answer-label">
-                                                <div class="col-md-6 pull-left">
+                                                <div class="col-md-7 pull-left">
                                                     <span class="heading pull-left">Seniority</span>
                                                     <span class="custom-select-dropdown">
-                                                        @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new {@onChange="ChangeJobLevel()" })
+                                                        @Html.DropDownListFor(m=>m.JobLevel, (SelectList)ViewBag.JobLevelList, "Select", new {@onChange="ChangeJobLevel()",@style="width:150px;" })
                                                     </span>
                                                 </div>
-                                                <div class="col-md-6 pull-left">
+                                                <div class="col-md-5 pull-left">
                                                     <span class="heading pull-left"> Difficulty:</span> <span class="custom-select-dropdown">
-                                                        <select id="Difficulty" onChange="ChangeDefautlevel()">
+                                                        <select id="Difficulty" onChange="ChangeDefautlevel()" style="width:105px;">
                                                             <option>Select</option>
                                                             <option value="60">60%</option>
                                                             <option value="70">70%</option>
