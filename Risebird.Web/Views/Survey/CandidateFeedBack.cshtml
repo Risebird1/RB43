@@ -210,8 +210,17 @@
                                             <thead>
                                                 <tr>
                                                     <th id="cfeedback_4">Candidate Email</th>
+                                                      @if (ViewBag.type == "Candidate")
+                                                    {
+                                                        <th>Candidate Name</th>
+                                                    }
                                                     <th>Interviewer</th>
                                                     <th>Interview Date</th>
+                                                    @if (ViewBag.type == "Candidate")
+                                                    {
+                                                        <th>Interview Status</th>
+                                                        <th>CreatedOn</th>
+                                                    }
                                                     <th>Rating</th>
                                                     <th>Client</th>
                                                     <th>Action</th>
@@ -220,8 +229,17 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>Candidate Email</th>
+                                                    @if (ViewBag.type == "Candidate")
+                                                    {
+                                                        <th>Candidate Name</th>
+                                                    }
                                                     <th>Interviewer</th>
                                                     <th>Interview Date</th>
+                                                    @if (ViewBag.type == "Candidate")
+                                                    {
+                                                        <th>Interview Status</th>
+                                                        <th>CreatedOn</th>
+                                                    }
                                                     <th>Rating</th>
                                                     <th>Client</th>
                                                     <th>Action</th>
@@ -246,10 +264,16 @@
                                                                         <a onclick=""> @item.EmailAddress</a>
                                                                     </div>
                                                                 }
+
                                                             }
                                                         </td>
+                                                        @if (ViewBag.type == "Candidate")
+                                                        {
+                                                            <td>@item.candidateName</td>
+                                                        }
                                                         @if (ViewBag.profileName != "Client")
                                                         {
+                                                            
                                                             <td>
                                                                 @if (item.interviewerEmail != null && item.interviewerEmail != "")
                                                                 {
@@ -273,6 +297,14 @@
                                                             <td>@item.Interviewer</td>
                                                         }
                                                         <td>@item.Interviewdate</td>
+
+
+                                                        @if (ViewBag.type == "Candidate")
+                                                        {
+                                                            <td>@item.intervieweStatusStatDesc</td>
+                                                            <td>@item.CreatedOn</td>
+
+                                                        }
                                                         <td>
                                                             <div style="margin-top:-1vw">
                                                                 @for (int value = 1; value <= 5; value++)
@@ -289,6 +321,8 @@
                                                                 }
                                                             </div>
                                                         </td>
+
+
                                                         <td>@item.ClientName</td>
                                                         <td>
                                                             <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
@@ -302,6 +336,15 @@
                                                                     </svg>
                                                                 </span>
                                                             </button>
+                                                            @if (ViewBag.type == "Candidate")
+                                                            {
+
+                                                                <span class="interview_9">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                                        <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
+                                                                    </button>
+                                                                </span>
+                                                            }
                                                         </td>
                                                     </tr>
                                                 }
