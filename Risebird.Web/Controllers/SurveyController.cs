@@ -897,7 +897,10 @@ namespace Risebird.Web.Controllers
                 model.PoorCommunicationSkills = string.Empty;
             }
         }
-
+        public async Task<IActionResult> PublicCandidateFeedback(string emailid, string uniqueid)
+        {
+            return View("CandidateFeedBack");
+        }
     }
 
 }
