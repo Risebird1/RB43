@@ -6859,6 +6859,10 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("CandidateFeedBack", "Survey", new { type = "Candidate" });
             }
+            else if (model.type == "PotentialRiskRCandidate")
+            {
+                return RedirectToAction("PotentialRiskByCandidate", "Dashboard");
+            }
             else if (model.type == "PublicFeedbackCandidate")
             {
                 return RedirectToAction("PublicCandidateFeedback", "Survey", new { emailid = model.ModifiedBy, uniqueid = model.uniqueid });
