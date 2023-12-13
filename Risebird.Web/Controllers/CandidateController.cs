@@ -3577,7 +3577,6 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.Whatsappflag = true;
                     }
-                    
                     else
                     {
                         ViewBag.Whatsappflag = false;
