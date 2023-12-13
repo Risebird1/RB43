@@ -8283,6 +8283,10 @@ option {
     width: 37px;
     height: 37px;
 }
+.overflow {
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
