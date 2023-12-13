@@ -14,14 +14,14 @@
                 {
                     <div class="checkbox-selectproxy">
                         <h2>Please select proxy candidate reporting:</h2>
-                        @Html.RadioButtonFor(m=>m.isProxyCandidate,true, new{@onclick="checkProxy()"})
+                        @Html.RadioButtonFor(m=>m.isProxyCandidate,true, new{@onclick="checkProxy()",@checked="checked"})
                         <label style="padding-top:15px;" for="isProxyCandidate">Yes</label>
 
                         @Html.RadioButtonFor(m=>m.isProxyCandidate,false, new{@onclick="checkProxy()"})
                         <label for="isProxyCandidate">No</label>
                     </div>
                 }
-                <div class="accordion" id="proxy-content" style="display:none;">
+                <div class="accordion" id="proxy-content" style="display:block;">
                     <div class="row">
                         <div class="col-md-6 col-sm-6 border-rv pull-left">
                             <div class="form-group">
