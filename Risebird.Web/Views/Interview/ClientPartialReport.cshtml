@@ -299,14 +299,14 @@
                                                         </div>
                                                     }
                                                 }
-                                                @if (Model.AadhaarVerified)
+                                              @*  @if (Model.AadhaarVerified)
                                                 {
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group" style="padding-left:10px">
                                                             <a href="#" onclick="javascript:FetchInterviewAadhaarDetails('@Model.CandidateEmail');">Click Here For Candidate Verified Data</a>
                                                         </div>
                                                     </div>
-                                                }
+                                                }*@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6">
@@ -496,18 +496,6 @@
                                                             </div>
 
 
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </div>
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </div>
-
-
-
-
                                                         </div>
                                                     </div>
                                                 </div>
@@ -553,14 +541,14 @@
                                                             </div>
 
 
-                                                            <div class="form-group">
+                                                            @*<div class="form-group">
                                                                 @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                                 @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                             </div>
                                                             <div class="form-group">
                                                                 @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                                 @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </div>
+                                                            </div>*@
 
 
 
@@ -750,9 +738,9 @@
                                                                     @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                     @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
                                                                 </tr>
-                                                                <tr>
+                                                               @* <tr>
                                                                     <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Comment for Skill min 25 characters", maxlength = "75", @style = "font-weight: bold !important;" })</td>
-                                                                </tr>
+                                                                </tr>*@
                                                             }
                                                         }
 
