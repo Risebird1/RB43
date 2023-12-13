@@ -6193,6 +6193,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                //profileName = "Client";
                 ViewBag.profile = profileName;
                 ViewBag.PageStatus = "Main";
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
