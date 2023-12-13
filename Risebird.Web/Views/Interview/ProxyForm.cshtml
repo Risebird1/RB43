@@ -10,14 +10,17 @@
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
             <div class="card-wrap" style="margin:0px 0px">
-                <div class="checkbox-selectproxy">
-                    <h2>Please select proxy candidate reporting:</h2>
-                    @Html.RadioButtonFor(m=>m.isProxyCandidate,true, new{@onclick="checkProxy()",@class="proxy-radio-button"})
-                     <label style="padding-top:15px;" for="isProxyCandidate">Yes</label>
+                 @if (Model.type != "Report")
+                {
+                    <div class="checkbox-selectproxy">
+                        <h2>Please select proxy candidate reporting:</h2>
+                        @Html.RadioButtonFor(m=>m.isProxyCandidate,true, new{@onclick="checkProxy()"})
+                        <label style="padding-top:15px;" for="isProxyCandidate">Yes</label>
 
-                    @Html.RadioButtonFor(m=>m.isProxyCandidate,false, new{@onclick="checkProxy()", @class="proxy-radio-button"})
-                    <label for="isProxyCandidate">No</label>
-                </div>
+                        @Html.RadioButtonFor(m=>m.isProxyCandidate,false, new{@onclick="checkProxy()"})
+                        <label for="isProxyCandidate">No</label>
+                    </div>
+                }
                 <div class="accordion" id="proxy-content" style="display:none;">
                     <div class="row">
                         <div class="col-md-6 col-sm-6 border-rv pull-left">
@@ -587,6 +590,7 @@
     function checkProxy() {
         var checkBox = document.getElementById("isProxyCandidate");
         var text = document.getElementById("proxy-content");
+       
         if (checkBox.checked == true) {
             text.style.display = "block";
         } else {
