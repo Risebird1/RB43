@@ -6659,32 +6659,139 @@ namespace Risebird.Web.Controllers
 
             try
            {
-                dec = dec.Replace(" ", "+");
-                var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
-                if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
+                //dec = dec.Replace(" ", "+");
+                //var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
+                //if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
+                //{
+                //    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
+                //    {
+                //        return Json("Status updated successfully.");
+                //    }
+                //    else
+                //    {
+                //        return Json("Failed to update status, Please try again");
+                //    }
+                //}
+                //else
+                //{
+                //    return Json("Link Expired.");
+                //}
+                if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
                 {
-                    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
+                    return Json("Status updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update status, Please try again");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed to update status, Please try again");
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> CheckAGLevelInterviewerAvailability(int assessmentGroupId)
+        {
+            try
+            {
+                var model = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(assessmentGroupId);
+                
+                if (model != null && model.Count() > 0)
+                {
+                    if (model.FirstOrDefault().AGAvailabilityCommunicationTimeElapsed >= 3600 || model.FirstOrDefault().AGAvailabilityCommunicationTimeElapsed == 0)
                     {
-                        return Json("Status updated successfully.");
+                        
+                        foreach (var item in model)
+                        {
+                            if (!string.IsNullOrEmpty(item.EmailId))
+                            {
+                                
+                                string source = "ml";
+
+                                var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
+                                string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=true&uniqueid=" + item.uniqueid + "&agId=" + assessmentGroupId + "&dec=" + encryptedDate;
+                                string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=false&uniqueid=" + item.uniqueid + "&agId=" + assessmentGroupId + "&dec=" + encryptedDate;
+                                //string dropMyProfileButton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=4&uniqueid=" + item.uniqueid + "&agId=" + irfId + "&dec=" + encryptedDate;
+
+                                Mail _mail = new Mail
+                                {
+                                    TO = item.EmailId,
+                                    Subject = "Current Availability (2 days) check for skills based on: " + item.AGName + " Risebird Interviews"
+                                };
+                                var emailresult = await _notificationHelper.CheckAGLevelInterviewerAvailability(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, item.AGName, assessmentGroupId);
+
+                                source = "wp";
+
+                                yesbutton = yesbutton + "&rsc=" + source;
+                                WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                                _whatsAppVM.Emailid = item.EmailId;
+                                _whatsAppVM.PrimarySkill = item.AGName;
+                                //_whatsAppVM.MessageValue = "";
+                                //_whatsAppVM.PerSuccessRate = item.FlatRate.ToString();//interviewer.PerSuccessRate.ToString();
+                                //_whatsAppVM.Interviewduration = "";
+                                //_whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=true&uniqueid=", "");
+                                _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
+                                _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
+                                //await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
+                            }
+                        }
+                        return Json("Emails sent successfully.");
                     }
                     else
                     {
-                        return Json("Failed to update status, Please try again");
+                        return Json("Emails have already been sent for the Assessment Group Interviewers mapped to this skill channel. Please try notifying(email) at least 1 hour after the last successful notification attempt.");
+
                     }
                 }
                 else
                 {
-                    return Json("Link Expired.");
+                    return Json("No globally interviewer available in the assessment group. Emails not sent.");
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Fail");
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> UpdateInterviewerAvailbilityStatusForAssessmentGroup(bool isAv, string uniqueid, int agId, string dec, string rsc = null)
+        {
+            //check link expiry befire hitting db
 
-                //if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid))
+            try
+            {
+                //dec = dec.Replace(" ", "+");
+                //var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
+                //if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
                 //{
-                //    return Json("Status updated successfully.");
+                //    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
+                //    {
+                //        return Json("Status updated successfully.");
+                //    }
+                //    else
+                //    {
+                //        return Json("Failed to update status, Please try again");
+                //    }
                 //}
                 //else
                 //{
-                //    return Json("Failed to update status, Please try again");
+                //    return Json("Link Expired.");
                 //}
+
+                if(await _meetingService.UpdateInterviewerAvailbilityStatusForAssessmentGroup(isAv, uniqueid, agId, rsc))
+                {
+                    return Json("Status updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update status, Please try again");
+                }
             }
             catch (Exception ex)
             {

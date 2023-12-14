@@ -3320,6 +3320,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> UpdateInterviewerAvailbilityStatusForAssessmentGroup(bool status, string uniqueid, int agId, string rsc = null)
+        {
+            try
+            {
+                return await _meetingRespository.UpdateInterviewerAvailbilityStatusForAssessmentGroup(status, uniqueid, agId, rsc);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public string SetInterviewerAvailability(int transid, int isavailable)
         {
             try

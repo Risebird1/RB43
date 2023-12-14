@@ -19,6 +19,8 @@ CREATE TABLE [dbo].[AssessmentGroup](
     [AssessmentVerificationType][varchar](5) NULL,
     [CodeLanguage][varchar](100) NULL,
     [MCQSetsValue][int] NULL,
+    [AvailabilityMailSentOn][datetime] NULL,
+    [IsMasterAG][bit] NULL
  CONSTRAINT [PK_AssessmentGroup] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -151,6 +153,26 @@ BEGIN
     ALTER TABLE AssessmentGroup
     Add MCQSetsValue int NULL 
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AvailabilityMailSentOn')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add AvailabilityMailSentOn datetime NULL 
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsMasterAG')
+      AND Object_ID = Object_ID(N'AssessmentGroup'))
+BEGIN
+    ALTER TABLE AssessmentGroup
+    Add IsMasterAG bit NULL 
+END
+
 GO
 
 

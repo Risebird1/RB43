@@ -171,6 +171,8 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid);
 
         Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid, string rsc = null);
+
+        Task<bool> UpdateInterviewerAvailbilityStatusForAssessmentGroup(bool status, string uniqueid, int agId, string rsc = null);
         string SetInterviewerAvailability(int transid, int isavailable);
         Task<List<InterviewerRating>> FetchFeedbackDetails();
         Task<List<InterviewerRating>> FetchFeedbackDetailsByIRFId(string IRFId);
