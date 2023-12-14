@@ -28,10 +28,17 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @isapproved int,  
 @PaymentComplianceCount int,  
 @Rating int,
-@VideoEnable bit
+@VideoEnable bit,
+@isQcDone bit
 AS  
 BEGIN  
-Declare @Userid int         
+Declare @Userid int       
+Declare @isQcDonecheck bit       
+Select  @isQcDonecheck=ISNULL(isQcDone,0) from PaymentSLADetails where Interviewid=@Interviewid
+if(@isQcDonecheck=1)
+begin
+set @isQcDone=1
+end
 Select @Userid=id From UserList where Emailid=@Emailid    
 if(@Rating<5)
 begin
@@ -41,15 +48,15 @@ Update PaymentSLADetails set Inaccuratedecisionmaking=@Inaccuratedecisionmaking,
 ScoreRubricIgnorance=@ScoreRubricIgnorance,PoorFeedbackComments=@PoorFeedbackComments,CandidateInteractionQuality=@CandidateInteractionQuality,  
 LimitedHandoncoding=@LimitedHandoncoding,WrongStatusUpdates=@WrongStatusUpdates,WeakInfrastructure=@WeakInfrastructure,ProctoringIgnorance=@ProctoringIgnorance,  
 UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,ModifiedBy=@Emailid,ModifiedOn=@CreatedOn,PaymentDeduction=@PaymentDeduction,isapproved=@isapproved,  
-PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable  
+PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone  
 where Interviewid=@Interviewid  
 end  
 else  
 begin  
 Insert into PaymentSLADetails(Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,CandidateInteractionQuality,  
-LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable)   
+LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone)   
 values(@Interviewid,@Inaccuratedecisionmaking,@TimeManagement,@QuestionsRelevance,@ScoreRubricIgnorance,@PoorFeedbackComments,@CandidateInteractionQuality,  
-@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable)   
+@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone)   
 end  
 end
 If(@isapproved=1)  
@@ -70,6 +77,5 @@ Update InterviewComments set ReportAccepted=1,ReportAcceptedBy=@Emailid where In
 Insert into ClientCommentsForReport(Comment, InterviewId, CreatedBy, CreatedAt, Rating) values ('', @Interviewid, @Emailid, @CreatedOn, @Rating)    
 end  
 END  
-
 
 GO

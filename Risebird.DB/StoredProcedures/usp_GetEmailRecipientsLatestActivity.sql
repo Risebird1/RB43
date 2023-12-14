@@ -22,8 +22,14 @@ Begin
   
 
 	;WITH CTE AS
-	(SELECT id,
-		ROW_NUMBER() OVER (PARTITION BY email, Split_Message_Id ORDER BY [timestamp] desc) as rn FROM SendgridEventData
+	(SELECT sge.id,
+		ROW_NUMBER() OVER (PARTITION BY email, Split_Message_Id ORDER BY [timestamp] desc) as rn FROM SendgridEventData sge
+		join UserList ul on ul.EmailId = sge.email
+		where ((@startDate is null and @endDate is null and cast(CreatedAt as date) >= cast(DATEADD(DAY, -1, @timeNow) as date)) or
+		(@startDate is not null and cast(CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(CreatedAt as date) <= cast(@endDate as date)))
+		and ([event] = 'processed' or [event] = 'delivered' or [event] = 'deferred' or [event] = 'bounce' or [event] = 'dropped')
+		and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3) or (@recipientType = 'Client' and ul.idProfile=4))
+
 	)
 	SELECT id into #latestActivityRowId FROM CTE WHERE rn=1
 

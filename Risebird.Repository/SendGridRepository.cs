@@ -3,8 +3,10 @@ using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -69,22 +71,64 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@To", model.To);
-                    parameters.Add("@Cc", model.Cc);
-                    parameters.Add("@Bcc", model.Bcc);
-                    parameters.Add("@MailBody", model.MailBody);
-                    parameters.Add("@MailSubject", model.MailSubject);
-                    parameters.Add("@sg_message_id", model.sg_message_id);
-                    parameters.Add("@IRFId", model.IRFId);
-                    parameters.Add("@InterviewId", model.InterviewId);
-                    parameters.Add("@CreatedAt", DateTime.Now);
-                    parameters.Add("@SentBy", model.SentBy);
-                    parameters.Add("@IRFName", model.IRFName);
+                    if(model.InterviewIdList != null)
+                    {
+                        //use bulk insert
+                        DataTable sentMailDt = new DataTable();
+                        sentMailDt.Columns.Add("To", typeof(string));
+                        sentMailDt.Columns.Add("Cc", typeof(string));
+                        sentMailDt.Columns.Add("Bcc", typeof(string));
+                        sentMailDt.Columns.Add("MailBody", typeof(string));
+                        sentMailDt.Columns.Add("MailSubject", typeof(string));
+                        sentMailDt.Columns.Add("sg_message_id", typeof(string));
+                        sentMailDt.Columns.Add("IRFId", typeof(int));
+                        sentMailDt.Columns.Add("InterviewId", typeof(int));
+                        sentMailDt.Columns.Add("CreatedAt", typeof(DateTime));
+                        sentMailDt.Columns.Add("SentBy", typeof(string));
 
-                    await SqlMapper.QueryAsync(con, "usp_SaveSentMailDetails", parameters,
-                         commandType: CommandType.StoredProcedure);
-                    return true;
+
+                        foreach (var item in model.InterviewIdList)
+                        {
+                            sentMailDt.Rows.Add(model.To, model.Cc, model.Bcc, model.MailBody, model.MailSubject, model.sg_message_id, null, item, DateTime.Now, model.SentBy);
+                        }
+
+                        SqlCommand cmd = new SqlCommand("usp_SaveSentMailDetailsBulkInsert", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add(new SqlParameter("@SentMailDetailsBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@SentMailDetailsBulkData"].Value = sentMailDt;
+
+                        con.Open();
+
+                        if (await cmd.ExecuteNonQueryAsync() != 0)
+                        {
+                            con.Close();
+                        }
+
+                        return true;
+
+                    }
+                    else
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@To", model.To);
+                        parameters.Add("@Cc", model.Cc);
+                        parameters.Add("@Bcc", model.Bcc);
+                        parameters.Add("@MailBody", model.MailBody);
+                        parameters.Add("@MailSubject", model.MailSubject);
+                        parameters.Add("@sg_message_id", model.sg_message_id);
+                        parameters.Add("@IRFId", model.IRFId);
+                        parameters.Add("@InterviewId", model.InterviewId);
+                        parameters.Add("@CreatedAt", DateTime.Now);
+                        parameters.Add("@SentBy", model.SentBy);
+                        parameters.Add("@IRFName", model.IRFName);
+
+                        await SqlMapper.QueryAsync(con, "usp_SaveSentMailDetails", parameters,
+                             commandType: CommandType.StoredProcedure);
+                        return true;
+
+                    }
+                    
                 }
             }
             catch (SqlException ex)
@@ -97,5 +141,6 @@ namespace Risebird.Repository
             }
             return false;
         }
+
     }
 }
