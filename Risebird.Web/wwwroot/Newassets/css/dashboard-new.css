@@ -8358,6 +8358,11 @@ option {
  
     border: 0px !important;
 }
+.strict-note {
+    color: red;
+    font-size: 14px;
+    margin: 10px 0px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
