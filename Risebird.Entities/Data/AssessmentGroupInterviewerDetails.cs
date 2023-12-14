@@ -22,6 +22,8 @@
         public string PlanTypeDesc { get; set; }
         public int SelectedDurationMin { get; set; }
         public int RejectedDurationMin { get; set; }
+        public string AGName { get; set; }
+        public int AGAvailabilityCommunicationTimeElapsed { get; set; }
 
 
     }

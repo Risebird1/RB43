@@ -896,7 +896,24 @@ namespace Risebird.Web.Controllers
                 model.PoorCommunicationSkills = string.Empty;
             }
         }
-
+        public async Task<IActionResult> PublicCandidateFeedback(string emailid, string uniqueid)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            var profileName = "Client";
+            ViewBag.profileName = profileName;
+            ViewBag.type = "Candidate";
+            var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
+            modelData = modelData.Select(x =>
+            {
+                x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
+                return x;
+            }).ToList();
+            
+            ViewBag.IRFId = "0";
+            return View("CandidateFeedBack", modelData);
+        }
     }
 
 }

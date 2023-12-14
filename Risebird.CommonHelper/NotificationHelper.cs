@@ -1257,7 +1257,7 @@ namespace Risebird.CommonHelper
         //    }
         //    return msg;
         //}
-        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null)
+        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null)
         {
             try
             {
@@ -1349,6 +1349,7 @@ namespace Risebird.CommonHelper
                 {
                     obj.InterviewIdList = interviewIds;
                 }
+                obj.AssessmentGroupId = assessmentGroupId;
                 _ = await _sendGridRepository.SaveSentMailDetails(obj);
                 return "Mail sent successfully.";
             }
@@ -2221,6 +2222,33 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, irfId);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+        public async Task<string> CheckAGLevelInterviewerAvailability(Mail model, string Interviewname, string yesbutton, string nobutton, string agName, int assessmentGroupId)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
+                }
+                object[] parameters = new object[] { Interviewname, yesbutton, nobutton, agName};
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckIntervieweravailbility.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckAGLevelInterviewerAvailability.html");
+
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg, null, null, null, null, assessmentGroupId);
             }
             catch (Exception)
             {
