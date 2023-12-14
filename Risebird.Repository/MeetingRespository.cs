@@ -5443,8 +5443,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    //var query = "Select im.interviewdate,im.interviewer,ul.Emailid,ir.Comment,ir.StarRating,im.candidateEmail,ir.Interviewid From [dbo].[InterviewRatings] ir join UserList ul on ul.id=ir.Userid join InterviewMeetings im on im.id=ir.Interviewid order by Addedon desc";
-                    var query = "Select im.interviewdate,im.interviewer,ir.CreatedBy as Emailid,ir.Comment,ir.Rating as StarRating,im.candidateEmail,ir.Interviewid,ir.CreatedAt as Addedon  From ClientCommentsForReport ir join UserList ul on ul.EmailId=ir.CreatedBy join InterviewMeetings im on im.id=ir.Interviewid order by Addedon desc";
+                    //var query = "Select im.interviewdate,im.interviewer,ir.CreatedBy as Emailid,ir.Comment,ir.Rating as StarRating,im.candidateEmail,ir.Interviewid,ir.CreatedAt as Addedon  From ClientCommentsForReport ir join UserList ul on ul.EmailId=ir.CreatedBy join InterviewMeetings im on im.id=ir.Interviewid order by Addedon desc";
+                    var query = "Select im.interviewdate,im.interviewer,ir.CreatedBy as Emailid,ir.Comment,ir.Rating as StarRating,im.candidateEmail,ir.Interviewid,ir.CreatedAt as Addedon From ClientCommentsForReport ir join UserList ul on ul.EmailId=ir.CreatedBy join InterviewMeetings im on im.id=ir.Interviewid order by Addedon desc";
                     var results = await con.QueryAsync<InterviewerRating>(query, null);
                     return (List<InterviewerRating>)results;
                 }
@@ -6770,6 +6770,7 @@ namespace Risebird.Repository
                     parameters.Add("@PaymentComplianceCount", model.PaymentComplianceCount);
                     parameters.Add("@Rating", model.Rating);
                     parameters.Add("@VideoEnable", model.VideoEnable);
+                    parameters.Add("@isQcDone", model.isQcDone);
 
                     var result = await SqlMapper.QueryAsync(con, "usp_AddorUpdatePaymentSLADetails", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);

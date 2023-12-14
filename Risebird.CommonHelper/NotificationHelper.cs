@@ -1258,7 +1258,7 @@ namespace Risebird.CommonHelper
         //    }
         //    return msg;
         //}
-        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null)
+        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null)
         {
             try
             {
@@ -1346,6 +1346,10 @@ namespace Risebird.CommonHelper
                 obj.InterviewId = interviewId;
                 obj.SentBy = currentUser;
                 obj.IRFName = IRFName;
+                if(interviewIds != null && interviewIds.Count()>0)
+                {
+                    obj.InterviewIdList = interviewIds;
+                }
                 _ = await _sendGridRepository.SaveSentMailDetails(obj);
                 return "Mail sent successfully.";
             }

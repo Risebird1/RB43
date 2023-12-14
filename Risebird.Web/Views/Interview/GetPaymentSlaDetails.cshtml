@@ -15,6 +15,7 @@
     @Html.HiddenFor(m => m.isapprovedchecked)
     @Html.HiddenFor(m => m.PaymentComplianceCount)
     @Html.HiddenFor(m => m.Pagetype)
+    @Html.HiddenFor(m => m.isQcDone)
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
 
@@ -630,6 +631,21 @@
 
                                                     }
                                                 </li>
+
+
+                                                <li>
+                                                    @if (Model.UnethicalPractices.Split(",").Contains("Video off during Onsite/US interview"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyOne" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Video off during Onsite/US interview" /> <label for="checkboxFiftyOne">Video off during Onsite/US interview</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyOne" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Video off during Onsite/US interview" />
+
+                                                        <label for="checkboxFiftyOne">Video off during Onsite/US interview</label>
+
+                                                    }
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -1183,6 +1199,18 @@
                                                     else
                                                     {
                                                         <input type="checkbox" id="checkboxFortyOne" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <label for="checkboxFortyOne">allowing candidates to take interview from mobile<br />&nbsp; / inappropriate environment</label>
+                                                    }
+                                                </li>
+
+
+                                                <li>
+                                                    @if (Model.ProctoringIgnorance.Split(",").Contains("Whether candidate video is clearly visible"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFifty" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Whether candidate video is clearly visible" /> <label for="checkboxFortyOne">Whether candidate video is clearly visible</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFifty" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="Whether candidate video is clearly visible" /> <label for="checkboxFortyOne">Whether candidate video is clearly visible</label>
                                                     }
                                                 </li>
                                             </ul>

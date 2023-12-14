@@ -329,16 +329,20 @@ table.dataTable thead .sorting:after {
 }
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     background: #9a9a9a !important;
+    outline: none !important;
 }
 input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
     background: #9a9a9a !important;
+    outline: none !important;
 }
 
 input[type="radio"]:checked, input[type="checkbox"]:checked {
     border-color: #9a9a9a !important;
+    outline: none !important;
 }
 input[type="radio"]:checked, input[type="checkbox"]:checked {
     border-color: #9a9a9a !important;
+    outline: none !important;
 }
 .format input[type="checkbox"] {
     background: #3e3b3b!important;

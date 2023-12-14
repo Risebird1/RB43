@@ -10,16 +10,18 @@
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
             <div class="card-wrap" style="margin:0px 0px">
-                <div class="checkbox-selectproxy">
-                    <h2>Please select proxy candidate reporting:</h2>
-                    <span class="round">
-                        @*<input type="checkbox" id="isProxyCandidate" name="isProxyCandidate" onclick="checkProxy()" />*@
-                        @Html.CheckBoxFor(m=>m.isProxyCandidate,new{@onclick="checkProxy()"})
-                        <label for="isProxyCandidate"></label>
-                    </span>
+                 @if (Model.type != "Report")
+                {
+                    <div class="checkbox-selectproxy">
+                        <h2>Please select proxy candidate reporting:</h2>
+                        @Html.RadioButtonFor(m=>m.isProxyCandidate,true, new{@onclick="checkProxy()",@checked="checked"})
+                        <label style="padding-top:15px;" for="isProxyCandidate">Yes</label>
 
-                </div>
-                <div class="accordion" id="proxy-content" style="display:none;">
+                        @Html.RadioButtonFor(m=>m.isProxyCandidate,false, new{@onclick="checkProxy()"})
+                        <label for="isProxyCandidate">No</label>
+                    </div>
+                }
+                <div class="accordion" id="proxy-content" style="display:block;">
                     <div class="row">
                         <div class="col-md-6 col-sm-6 border-rv pull-left">
                             <div class="form-group">
@@ -545,8 +547,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12 mc-button-area" style="margin-bottom:10px;">
+                <div class="col-md-12 nopad">
+                    <div class="mc-button-area" style="margin-top:20px;padding: 10px 0px 0px 0px;border-top: 1px #ccc solid;">
                         @if (Model.type != "Report")
                         {
                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Submit</button>
@@ -588,6 +590,7 @@
     function checkProxy() {
         var checkBox = document.getElementById("isProxyCandidate");
         var text = document.getElementById("proxy-content");
+       
         if (checkBox.checked == true) {
             text.style.display = "block";
         } else {

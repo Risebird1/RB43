@@ -6859,6 +6859,14 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("CandidateFeedBack", "Survey", new { type = "Candidate" });
             }
+            else if (model.type == "PotentialRiskRCandidate")
+            {
+                return RedirectToAction("PotentialRiskByCandidate", "Dashboard");
+            }
+            else if (model.type == "PublicFeedbackCandidate")
+            {
+                return RedirectToAction("PublicCandidateFeedback", "Survey", new { emailid = model.ModifiedBy, uniqueid = model.uniqueid });
+            }
             return RedirectToAction("CompletedInterviews");
         }
         [HttpGet]
@@ -7848,7 +7856,7 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type, bool isQcDone)
         {
             try
             {
@@ -7864,6 +7872,7 @@ namespace Risebird.Web.Controllers
                 }
                 model.Interviewer = interviewer;
                 model.isapprovedchecked = isapproved;
+                model.isQcDone = isQcDone;
                 model.Pagetype = pagetype;
                 await SetPaymentSLADropDown(model);
                 await SetInitialValue(model);
