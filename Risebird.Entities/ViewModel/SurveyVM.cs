@@ -60,6 +60,8 @@ namespace Risebird.Entities.ViewModel
         public int? InterviewStatus { get; set; }
         public string intervieweStatusStatDesc { get; set; }
         public string candidateName { get; set; }
+        public int irfIntId {  get; set; }
+        public int InterviewId {  get; set; }
     }
     public class SurveyCandidateInterviewer
     {

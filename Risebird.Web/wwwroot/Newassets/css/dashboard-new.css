@@ -8253,8 +8253,13 @@ option {
     }
     .checkbox-selectproxy input[type="radio"]:checked {
         outline: none!important;
+        background:#fff;
     }
-
+.proxy-radio-button {
+    position: relative;
+    top: 3px;
+    outline: none;
+}
 .saveloader {
     clear: both;
     text-align: center;
@@ -8282,6 +8287,9 @@ option {
 #InterviewerAlert .filavatar {
     width: 37px;
     height: 37px;
+}
+.strict-note {
+color:red;font-size:14px;margin:10px 0px;
 }
 .overflow {
     overflow-x: scroll;
