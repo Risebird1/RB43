@@ -10,6 +10,11 @@ body {
 .main-panel {
     background: #ebecf1;
 }
+.myInterview .pskill {
+    text-decoration: none;
+    color: #837f84 !important;
+    font-size: 14px;
+}
 
 .expiry [type="date"] {
     background: #dddddf url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;

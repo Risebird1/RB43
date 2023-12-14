@@ -17,6 +17,11 @@ body {
     /*  background: #cbe0f5;*/
     color: #5097de;
 }
+.myInterview .pskill {
+    text-decoration: none;
+    color: #9f44af!important;
+    font-size: 14px;
+}
 
 .client #reportId, .client #reportId:hover {
     background: #fff;
@@ -24,8 +29,16 @@ body {
     text-decoration: none;
     color: #007bff !important;
 }
-
-.clickhere_btn {
+.myInterview .clickhere_btn {
+    background: #247fc433 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+    .myInterview .clickhere_btn:hover {
+        background: #54a5f5e0!important;
+        color: #fff !important;
+    }
+    .clickhere_btn {
     color: #2970bbb8 !important;
     background: #54a5f500;
     border: 1px #03a9f469 solid;
