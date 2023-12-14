@@ -2246,13 +2246,6 @@ namespace Risebird.Web.Controllers
                                 item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
                             }
                         }
-
-                            if (item.InterviewStatus.HasValue)
-                            {
-                                item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                            }
-                        }
-
                         return View(model);
                     }
                     else
