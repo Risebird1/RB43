@@ -4813,5 +4813,58 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetRecruiterReport(string clienthr)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Client")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var client = await _userRepository.GetClientUserDetails(emailid);
+                        ViewBag.ButtonAccess = false;
+
+                        if (client.Role == "Multiple IRF owner")
+                        {
+                            ViewBag.ButtonAccess = true;
+                        }
+                        DateTime st = DateTime.Now.AddMonths(-1);
+                        DateTime se = DateTime.Now;
+                        if (HttpContext.Session.GetString("RecruiterReportfilters") != null)
+                        {
+                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RecruiterReportfilters"));
+                            if (filter.StartDate != null && filter.EndDate != null)
+                            {
+                                st = filter.StartDate.Value;
+                                se = filter.EndDate.Value.AddDays(1);
+                            }
+                        }
+                        var model = await _clientService.GetRecruiterReportByClient(emailid, st, se);
+                        model = model.Where(x => x.ClientHrContact == clienthr).ToList();
+                        return PartialView("_GetRecruiterReportDetails", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

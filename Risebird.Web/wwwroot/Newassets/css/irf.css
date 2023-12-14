@@ -981,7 +981,7 @@ input[type=number] {
     text-align: right;
 }
 
-#skill_card .dropdown .btn{
+#skill_card .dropdown .btn {
     position: absolute;
     display: inline-block;
     background: none;
@@ -989,6 +989,7 @@ input[type=number] {
     background: none;
     box-shadow: none;
     border: 0px;
+    height: 18px!important;
 }
 #skill_card .card-footer .tripledot:after {
     content: '\2807';

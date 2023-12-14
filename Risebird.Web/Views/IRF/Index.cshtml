@@ -94,20 +94,20 @@
 
                                     @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                     {
-                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR" )
+                                        @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR")
                                         {
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                                                 <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;font-weight:normal;"> Add Skill Channel</font></span>
                                             </button>
 
-                                          <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InterviewerEntitle", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Assessment Groups</font></span>
                                             </button>
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("LeadInterviewer", "Interviewer",new { uniqueid="74206543283756"})'" data-original-title="Tooltip on top"><font style="font-family:arial;">Lead Interviewers</font></span>
                                             </button>
                                         }
-                                      
+
 
                                     }
 
@@ -387,27 +387,39 @@
                                                             </div>
 
                                                             <div class="w40 card-header-buttons action">
-                                                                @if(Model.Profile == "Client" || Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR"){
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Broadcast Email to the Interviewers of this channel">
-                                                                        <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
+                                                                @if (Model.Profile == "Client" || Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR")
+                                                                {
+                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Broadcast Email to the Interviewers of this channel">
+                                                        <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel" class="mdc-fab__icon material-icons">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
+                                                        </span>
+                                                        </button>*@
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit HM Instruction" style="    position: relative;    top: -10px;">
+                                                                        <span onclick="javascript:openHMLink('@item.id');" title="Edit HM Instruction">
+                                                                            <svg style="color: white;    position: relative;top: 10px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
+                                                                            <svg style="position:relative;top:-7px;right:-6px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Share HM Instruction URL">
+                                                                        <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="Share HM Instruction URL">
+                                                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
                                                                         </span>
                                                                     </button>
                                                                 }
                                                                 @if (Model.Profile == "Client")
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Audio Recording">
-                                                                        <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
-                                                                        </span>
-                                                                    </button>
+                                                                    @* <button class="mdc-fab app-fab--absolute" aria-label="Audio Recording">
+                                                        <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording" class="mdc-fab__icon material-icons">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
+                                                        </span>
+                                                        </button>*@
 
 
                                                                     @*  <button class="mdc-fab app-fab--absolute" aria-label="Upload Resume">
-                                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId');" title="Upload Resume" class="mdc-fab__icon material-icons">
-                                                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16"> <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" fill="white"></path> <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" fill="white"></path> </svg>
-                                                                        </span>
-                                                                    </button> *@
+                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId');" title="Upload Resume" class="mdc-fab__icon material-icons">
+                                                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16"> <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" fill="white"></path> <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" fill="white"></path> </svg>
+                                                        </span>
+                                                        </button> *@
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Upload Resume">
                                                                         <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId');" title="Upload Resume" class="mdc-fab__icon material-icons">
                                                                             <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16"> <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" fill="white"></path> <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" fill="white"></path> </svg>
@@ -433,10 +445,10 @@
                                                                     }
                                                                 }
                                                                 <div class="dropdown">
-                                                                    <button class="btn">
+                                                                    <button id="btn_more" class="btn">
                                                                         <span class="tripledot"></span>
                                                                     </button>
-                                                                    <div class="dropdown-content" style="top:10px !important">
+                                                                    <div class="dropdown-content" style="top:20px !important">
                                                                         @if ((!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser") || (Model.Profile == "Client" && item.CreatedFromTemplateId != null && item.CreatedFromTemplateId.Value > 0))
                                                                         {
                                                                             <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
@@ -458,7 +470,7 @@
                                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback">
                                                                                     <span onclick="javascript:getClientFeedback('@item.id', '@item.IRFId');" title="Client Feedback" class="mdc-fab__icon material-icons"><svg width="18" fill="#ffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 478.248 478.248" xml:space="preserve" stroke="#ffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <g> <path d="M456.02,44.821H264.83c-12.26,0-22.232,9.972-22.232,22.229v98.652c0,12.258,9.974,22.23,22.232,22.23h16.787v39.161 c0,2.707,1.58,5.165,4.043,6.292c0.92,0.42,1.901,0.627,2.875,0.627c1.631,0,3.244-0.576,4.523-1.685l51.383-44.396h111.576 c12.26,0,22.23-9.973,22.23-22.23V67.05C478.25,54.792,468.277,44.821,456.02,44.821z M319.922,112.252l-10.209,9.953 l2.41,14.054c0.174,1.015-0.242,2.038-1.076,2.643c-0.469,0.342-1.027,0.516-1.588,0.516c-0.428,0-0.861-0.103-1.256-0.31 l-12.621-6.635l-12.619,6.635c-0.912,0.478-2.016,0.398-2.848-0.206s-1.248-1.628-1.074-2.643l2.41-14.054l-10.211-9.953 c-0.734-0.718-1.002-1.792-0.685-2.769c0.317-0.978,1.164-1.691,2.183-1.839l14.11-2.05l6.31-12.786 c0.457-0.923,1.396-1.507,2.424-1.507s1.969,0.584,2.422,1.507l6.312,12.786l14.107,2.05c1.02,0.148,1.863,0.861,2.184,1.839 C320.924,110.46,320.658,111.535,319.922,112.252z M384.766,112.252l-10.211,9.953l2.412,14.054 c0.172,1.015-0.244,2.038-1.076,2.643c-0.469,0.342-1.025,0.516-1.588,0.516c-0.43,0-0.859-0.103-1.26-0.31l-12.619-6.635 l-12.619,6.635c-0.912,0.478-2.014,0.398-2.846-0.206c-0.834-0.604-1.25-1.628-1.076-2.643l2.41-14.054l-10.209-9.953 c-0.734-0.718-1.002-1.792-0.684-2.769c0.316-0.978,1.16-1.691,2.182-1.839l14.109-2.05l6.311-12.786 c0.455-0.923,1.396-1.507,2.422-1.507c1.029,0,1.967,0.584,2.422,1.507l6.312,12.786l14.109,2.05 c1.021,0.148,1.863,0.861,2.182,1.839C385.768,110.46,385.5,111.535,384.766,112.252z M449.607,112.252l-10.211,9.953 l2.408,14.054c0.176,1.015-0.238,2.038-1.072,2.643c-0.471,0.342-1.027,0.516-1.59,0.516c-0.43,0-0.859-0.103-1.258-0.31 l-12.621-6.635l-12.621,6.635c-0.908,0.478-2.012,0.398-2.844-0.206c-0.834-0.604-1.248-1.628-1.076-2.643l2.412-14.054 l-10.211-9.953c-0.734-0.718-1-1.792-0.684-2.769c0.316-0.978,1.164-1.691,2.182-1.839l14.111-2.05l6.311-12.786 c0.453-0.923,1.395-1.507,2.42-1.507c1.027,0,1.971,0.584,2.426,1.507L434,105.594l14.109,2.05 c1.018,0.148,1.861,0.861,2.182,1.839C450.609,110.46,450.344,111.535,449.607,112.252z"></path> <path d="M152.844,112.924c-46.76,0-72.639,24.231-72.166,70.921c0.686,63.947,27.859,102.74,72.166,102.063 c0,0,72.131,2.924,72.131-102.063C224.975,137.155,200.605,112.924,152.844,112.924z"></path> <path d="M280.428,334.444l-72.074-28.736l-16.877-14.223c-4.457-3.766-11.041-3.488-15.178,0.621l-23.463,23.336l-23.533-23.342 c-4.137-4.104-10.713-4.369-15.164-0.615l-16.881,14.223l-72.074,28.739C1.975,343.69,1.995,425.884,0,433.427h305.646 C303.656,425.9,303.646,343.679,280.428,334.444z"></path> </g> </g> </g> </g></svg></span>
                                                                                 </button>
-                                                                                
+
                                                                                 <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
                                                                                     <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
                                                                                 </button>
@@ -485,7 +497,7 @@
                                                                                     <a href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
                                                                                         <span title="Interviewer Mail Activity(open)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="'@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>
                                                                                     </a>
-                                                                                 </button>
+                                                                                </button>
                                                                             }
 
                                                                         }
@@ -621,7 +633,7 @@
                                                                     </button>
                                                                 }
                                                                 <div class="dropdown">
-                                                                    <button class="btn">
+                                                                    <button id="btn_more" class="btn">
                                                                         <span class="tripledot"></span>
                                                                     </button>
                                                                     <div class="dropdown-content">
@@ -773,7 +785,7 @@
                                         @*<i class="fa fa-spinner fa-4x fa-spin"></i>*@
                                     </span>
                                 </div>
-                                
+
 
 
 
@@ -982,7 +994,7 @@
                             </div>
                             <!-- end row -->
 
-     
+
 
 
                             <div id="myCallModal" class="modal modal-wrap modal-bg">
@@ -1209,12 +1221,13 @@
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
 @await Html.PartialAsync("~/Views/Candidate/UploadResumePartial.cshtml")
+@await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
 <script src="~/js/FeedbackRecorder/Record.js"></script>
 <script>
 
     var currentPageNumber = 1;
     @*var maxPageCount = parseInt('@Model.MaxPageCount');*@
-                    var allFetched = false;
+                        var allFetched = false;
     var currentDataFetched = true;
     $(document).ready(function () {
 
@@ -1276,7 +1289,7 @@
             swal.fire("Error!", "Kindly select atleast one file to upload!", "error");
             return false;
         }
-     
+
         return true;
     }
 </script>
@@ -1466,12 +1479,11 @@
     function getInterviewerStats(id, Name) {
         var headingElement = document.getElementById("interviewerStatsHeading");
         headingElement.innerHTML = "";
-        headingElement.innerHTML = "Interviewer Stats for " + Name ;
+        headingElement.innerHTML = "Interviewer Stats for " + Name;
         $.ajax({
             url: '/Interviewer/InterviewerStatsAndRatingsByIRF',
             data: { 'irfId': id },
             success: function (data) {
-                debugger;
 
                 var modal = document.getElementById("interviewerStatsModal");
                 modal.style.display = "block";
@@ -1525,100 +1537,100 @@
 
     @*function CheckIntervieweravailbility(id, Name, assessmentGroupId) {
         swal.fire({
-            title: 'Are you sure?',
-            text: "Do you want to send the email to check the interviewer availability!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, go ahead',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        url: '/IRF/CheckIntervieweravailbility',
-                        data: { 'irfId': id, 'IRFName': Name, 'assessmentGroupId' : assessmentGroupId },
-                        success: function (data) {
-                            swal.fire(data);
-                        }
-                    });
-                })
-            },
-            allowOutsideClick: false
+        title: 'Are you sure?',
+        text: "Do you want to send the email to check the interviewer availability!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, go ahead',
+        preConfirm: function () {
+        return new Promise(function (resolve, reject) {
+        $.ajax({
+        url: '/IRF/CheckIntervieweravailbility',
+        data: { 'irfId': id, 'IRFName': Name, 'assessmentGroupId' : assessmentGroupId },
+        success: function (data) {
+        swal.fire(data);
+        }
+        });
+        })
+        },
+        allowOutsideClick: false
         })
 
-    }*@
+        }*@
 </script>
 
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 
-  
+
 <script type="text/javascript">
 
-    function ArchiveIRF(irfId, irfName) {
+        function ArchiveIRF(irfId, irfName) {
 
-        swal.fire({
-            title: 'Are you sure?',
-            text: "The Skill Channel(" + irfName + ") will be archived!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, archive it!',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        url: '/IRF/ArchiveIRF?id=' + irfId,
-                        success: function (result) {
-                            if (result == true) {
-                                //document.getElementById('statusImage_' + irfId).src = '/img/Cards_Png/01_Black-White.png';
-                                //document.getElementById('btnArchive_' + irfId).style.display = 'none';
-                                //document.getElementById('btnUnArchive_' + irfId).style.display = 'block';
-                                resolve(result)
+            swal.fire({
+                title: 'Are you sure?',
+                text: "The Skill Channel(" + irfName + ") will be archived!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, archive it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            url: '/IRF/ArchiveIRF?id=' + irfId,
+                            success: function (result) {
+                                if (result == true) {
+                                    //document.getElementById('statusImage_' + irfId).src = '/img/Cards_Png/01_Black-White.png';
+                                    //document.getElementById('btnArchive_' + irfId).style.display = 'none';
+                                    //document.getElementById('btnUnArchive_' + irfId).style.display = 'block';
+                                    resolve(result)
 
-                            }
-                            else {
+                                }
+                                else {
+                                    swal.fire("Error archiving!", "Please try again", "error");
+
+                                }
+
+                            },
+                            error: function () {
+
                                 swal.fire("Error archiving!", "Please try again", "error");
-
                             }
-
-                        },
-                        error: function () {
-
-                            swal.fire("Error archiving!", "Please try again", "error");
-                        }
+                        })
                     })
-                })
-            },
-            allowOutsideClick: false
-        }).then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Archived!',
-                    type: 'success',
-                    html: '<p>Skill Channel has been archived.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    //window.location = "/IRF/Index";
-                    location.reload(true);
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Archived!',
+                        type: 'success',
+                        html: '<p>Skill Channel has been archived.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        //window.location = "/IRF/Index";
+                        location.reload(true);
 
-                })
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Cancelled',
-                    'IRF has not been archived! :)',
-                    'error'
-                )
-            }
-        })
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'IRF has not been archived! :)',
+                        'error'
+                    )
+                }
+            })
 
 
-    }
+        }
 
     function UnArchiveIRF(irfId, irfName) {
         swal.fire({
@@ -3104,4 +3116,17 @@
 
     }
 }
+<script>
+    $(window).click(function () {
+        //Hide the menus if visible
+        $('.dropdown-content').hide('fast');
+    });
 
+    $("#btn_more ").click(function (e) {
+        e.stopPropagation();
+        var relatedDiv = $(this).closest('.dropdown').find('.dropdown-content');
+        relatedDiv.toggle("fast");
+        $('.dropdown-content').not(relatedDiv).hide('fast');
+
+    });
+</script>

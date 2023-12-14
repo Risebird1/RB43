@@ -60,5 +60,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddRedoIntervies(int InterviewId, string Type);
         Task<IEnumerable<MeetingVM>> PotentialRiskByCandidate();
         Task<List<MeetingVM>> FetchParticipantwaitingDetails();
+        Task<IEnumerable<InterviewerVideoKYCVM>> GeInterviewerVideoKYC();
+        Task<bool> UpdateInterviewerVideoKYC(int id, string type);
     }
 }

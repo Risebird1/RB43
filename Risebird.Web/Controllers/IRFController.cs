@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -1017,7 +1018,7 @@ namespace Risebird.Web.Controllers
 
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
         {
-            var dto = new AvailabilityCheckDTO{ id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
+            var dto = new AvailabilityCheckDTO { id = irfId, AssessmentGroupId = assessmentGroupId, FlatRate = flatRate, PrimarySkillInvite = primarySkillInvite, IRFId = irfName, JDTitle = jdTitle };
             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CheckIRFAvailability";
             //var path = $"http://localhost:7071/api/CheckIRFAvailability";
             var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
@@ -6565,9 +6566,9 @@ namespace Risebird.Web.Controllers
                 //var interviewers = await _irfRepository.GetAvailableAssessmentGroupInterviewerMembers(Convert.ToInt16(irf.AssessmentGroupId));
 
                 //model = model.Where(x => x.Type == "Interviewer").ToList();
-                if (model !=null && model.Count() > 0)
+                if (model != null && model.Count() > 0)
                 {
-                    if(model.FirstOrDefault().AvailbilityHour >= 3600 || model.FirstOrDefault().AvailbilityHour == 0)
+                    if (model.FirstOrDefault().AvailbilityHour >= 3600 || model.FirstOrDefault().AvailbilityHour == 0)
                     {
                         await _irfService.UpdateIntervieweravailbilityDetails(irfId);
                         var skills = await _irfService.GetTechSkillswithWeightage(irfId);
@@ -6604,7 +6605,7 @@ namespace Risebird.Web.Controllers
                                     Subject = "Current Availability (2 days) check for  " + item.JDTitle + " Risebird Interviews"
                                 };
                                 var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), item.FlatRate, dropMyProfileButton + "&rsc=" + source, item.BasicSkill, irfId, item.CompanyTypeDesc, item.CountryTypeDesc, item.PlanTypeDesc, item.SelectedDurationMin, item.RejectedDurationMin);
-                                
+
                                 source = "wp";
 
                                 yesbutton = yesbutton + "&rsc=" + source;
@@ -6658,7 +6659,7 @@ namespace Risebird.Web.Controllers
             //check link expiry befire hitting db
 
             try
-           {
+            {
                 //dec = dec.Replace(" ", "+");
                 //var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
                 //if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
@@ -6676,115 +6677,8 @@ namespace Risebird.Web.Controllers
                 //{
                 //    return Json("Link Expired.");
                 //}
+
                 if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
-                {
-                    return Json("Status updated successfully.");
-                }
-                else
-                {
-                    return Json("Failed to update status, Please try again");
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json("Failed to update status, Please try again");
-            }
-
-        }
-
-        [HttpGet]
-        public async Task<JsonResult> CheckAGLevelInterviewerAvailability(int assessmentGroupId)
-        {
-            try
-            {
-                var model = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(assessmentGroupId);
-                
-                if (model != null && model.Count() > 0)
-                {
-                    if (model.FirstOrDefault().AGAvailabilityCommunicationTimeElapsed >= 3600 || model.FirstOrDefault().AGAvailabilityCommunicationTimeElapsed == 0)
-                    {
-                        
-                        foreach (var item in model)
-                        {
-                            if (!string.IsNullOrEmpty(item.EmailId))
-                            {
-                                
-                                string source = "ml";
-
-                                var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
-                                string yesbutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=true&uniqueid=" + item.uniqueid + "&agId=" + assessmentGroupId + "&dec=" + encryptedDate;
-                                string nobutton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=false&uniqueid=" + item.uniqueid + "&agId=" + assessmentGroupId + "&dec=" + encryptedDate;
-                                //string dropMyProfileButton = "https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=4&uniqueid=" + item.uniqueid + "&agId=" + irfId + "&dec=" + encryptedDate;
-
-                                Mail _mail = new Mail
-                                {
-                                    TO = item.EmailId,
-                                    Subject = "Current Availability (2 days) check for skills based on: " + item.AGName + " Risebird Interviews"
-                                };
-                                var emailresult = await _notificationHelper.CheckAGLevelInterviewerAvailability(_mail, item.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, item.AGName, assessmentGroupId);
-
-                                source = "wp";
-
-                                yesbutton = yesbutton + "&rsc=" + source;
-                                WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                                _whatsAppVM.Emailid = item.EmailId;
-                                _whatsAppVM.PrimarySkill = item.AGName;
-                                //_whatsAppVM.MessageValue = "";
-                                //_whatsAppVM.PerSuccessRate = item.FlatRate.ToString();//interviewer.PerSuccessRate.ToString();
-                                //_whatsAppVM.Interviewduration = "";
-                                //_whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=true&uniqueid=", "");
-                                _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
-                                _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
-                                //await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
-                            }
-                        }
-                        return Json("Emails sent successfully.");
-                    }
-                    else
-                    {
-                        return Json("Emails have already been sent for the Assessment Group Interviewers mapped to this skill channel. Please try notifying(email) at least 1 hour after the last successful notification attempt.");
-
-                    }
-                }
-                else
-                {
-                    return Json("No globally interviewer available in the assessment group. Emails not sent.");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json("Fail");
-            }
-        }
-        [HttpGet]
-        public async Task<JsonResult> UpdateInterviewerAvailbilityStatusForAssessmentGroup(bool isAv, string uniqueid, int agId, string dec, string rsc = null)
-        {
-            //check link expiry befire hitting db
-
-            try
-            {
-                //dec = dec.Replace(" ", "+");
-                //var timeOfCommunication = await _encryptionHelper.DecryptDateTime(dec);
-                //if (timeOfCommunication != null && (DateTime.Now - timeOfCommunication.Value).TotalMinutes <= 60)
-                //{
-                //    if (await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc))
-                //    {
-                //        return Json("Status updated successfully.");
-                //    }
-                //    else
-                //    {
-                //        return Json("Failed to update status, Please try again");
-                //    }
-                //}
-                //else
-                //{
-                //    return Json("Link Expired.");
-                //}
-
-                if(await _meetingService.UpdateInterviewerAvailbilityStatusForAssessmentGroup(isAv, uniqueid, agId, rsc))
                 {
                     return Json("Status updated successfully.");
                 }
@@ -8272,8 +8166,163 @@ namespace Risebird.Web.Controllers
             var interviewlist = (await _irfService.GetSkillChannelStatsDetails(irfid, type))?.ToList();
             return View(interviewlist);
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> DeliveryHeadInstruction(int irfid, string Type = null)//Type = "ublc" stands for public here
+        {
+            ViewBag.PageType = "";
+            if (!string.IsNullOrEmpty(Type) && Type == "ublc" /*&& HttpContext.Session.GetString("email") == null*/)
+            {
+                ViewBag.PageType = "Public";
+                return View(new IRFVm { id = irfid });
+            }
+            else if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+            {
+                var meetingLineUpType = "";
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var model = new IRFVm();
+                ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                var Skillset = await _irfRepository.GetSkills();
+                ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                var result = await _clientService.VerifyClientAuthenticity(irfid, emailid);
+                if (!result && profileName == "Public")
+                {
+                    ViewBag.Message = "Do not have access for this skill Channel instruction";
+                    return View(model);
+                }
+                model = await _irfService.GetEditIRF(irfid, 0, false);
+                model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
 
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeliveryHeadInstruction(IRFVm model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    foreach (var item in model.SkillCollection)
+                    {
+                        item.IRFId = model.id;
+                    }
+                    var result = await _irfService.UpdateTechSkills(model.SkillCollection);
+                    if (result)
+                    {
+                        return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
+                    }
+                    ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                    var Skillset = await _irfRepository.GetSkills();
+                    ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
+                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
+        [HttpPost]
+        public async Task<JsonResult> VerifyClientAuthenticityForDHI(int irfId, string emailId) // DHI stands for Delivery Head Instructions
+        {
+            //HttpContext.Session.SetString("PublicUrlAccessor", JsonConvert.SerializeObject(Emailid));
+            //var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
+            //_trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
+            HttpContext.Session.SetString("profileName", "Public");
+            //bool result = await _clientService.VerifyClientAuthenticity(irfId, emailId);
+            //var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
+            //if (string.IsNullOrEmpty(logovalue))
+            //{
+            //    HttpContext.Session.SetString("Logo", "");
+            //}
+            //else
+            //    HttpContext.Session.SetString("Logo", logovalue);
+            if (await _clientService.VerifyClientAuthenticity(irfId, emailId))
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("This User does not have access");
+            }
+        }
 
+        [HttpPost]
+        public async Task<JsonResult> UpdateJobLevel(int irfid, int joblevel)
+        {
+            var result = await _irfService.UpdateJobLevel(irfid, joblevel);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateDeficultyLevel(int irfid, int deficultylevel)
+        {
+            var result = await _irfService.UpdateDeficultyLevel(irfid, deficultylevel);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateFormat(int irfid, string format)
+        {
+            var result = await _irfService.UpdateFormat(irfid, format);
+            return Json("Successfully");
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetFormatanddifficultylevel(int irfid)
+        {
+            var result = await _irfService.GetFormatanddifficultylevel(irfid);
+            if (result == null)
+            {
+                result = new IRFInstructionDetailsVM();
+            }
+            return Json(result);
+        }
+        [HttpPost]
+        public JsonResult TextInstruction(int irfId, string Comment)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                BroadcastModel model = new BroadcastModel();
+                model.IRFId = irfId;
+                model.Message = Comment;
+                model.SentBy = emailid;
+                var result = _meetingService.StoreClientBroadcastMessage(model);
+                return Json("Successfully");
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Text Instruction failed, Please try again.");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetTextInstruction(int irfid)
+        {
+            var textInstruction = await _irfService.GetTextInstructionService(irfid);
+            return Json(textInstruction);
+        }
     }
 }

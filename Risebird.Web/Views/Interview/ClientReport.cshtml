@@ -83,8 +83,11 @@
 <input type="text" hidden id="hidtxtinterviewid" value="@ViewBag.InterviewId" />
 <input type="text" hidden id="hidtxtirfid" value="@ViewBag.IrfId" />
 
-<div @*class="main-panel"*@ id="main-panel">
+<div id="main-panel">
     <div class="pt30">
+        <div class="col-md-12">
+            @*<span class="discretion"><strong style="font-size:15px;">Report discretion:</strong> Till the time QC is passed, Risebird can not ensure that all quality standards are met on this report. Use this report at your own discretion.</span>*@
+        </div>
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
@@ -119,21 +122,12 @@
                                 <div class="reportdropdown">
                                     <button class="reportdropbtn">Report Quality Issue</button>
                                     <div class="reportdropdown-content">
-                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId, allowClientAction = true})">
                                             <text>Rate Interviewer</text>
                                         </button>
-                                        <button class="dropdown-btn" type="button" data-toggle="ajax-modal-feedback_audio" data-target="#addRecording" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId, profile = "Client", currentUser = ViewBag.CurrentUser})">
-                                            <text> Audio Feedback </text>
-                                        </button>
                                         <button class="dropdown-btn" type="button">
-                                            <span data-toggle="tooltip" data-placement="top" onclick="OpenBroadcastModal('@Model.IRFId', '@Model.IRFName', '@Model.InterviewId', false)" data-original-title="Tooltip on top"><text> Mass Communication</text></span>
+                                            <span data-toggle="tooltip" data-placement="top" onclick="javascript:openHMLink('@Model.IRFId');" data-original-title="Tooltip on top"><text>Edit HM Instruction</text></span>
                                         </button>
-                                        @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
-                                        {
-                                            <button class="dropdown-btn" type="button">
-                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
-                                            </button>
-                                        }
                                         @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                                         {
                                             <button class="dropdown-btn">
@@ -143,6 +137,10 @@
                                     </div>
                                 </div>
                             </div>
+                            @if (Model.IRFInterviewerActive)
+                            {
+                                <div class="pull-right"> <input style="background:red" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Remove Interviewer" onclick="removeInterviewer(@Model.InterviewId)"></div>
+                            }
                         }
 
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
@@ -358,7 +356,13 @@
                                                         @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                         {
                                                             <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                                <h3><svg xmlns="http://www.w3.org/2000/svg" width="33" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment</h3>
+                                                                <h3>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="33" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment
+                                                                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" && ViewBag.SecurelyShared != "True")
+                                                                    {
+                                                                        <span class="fa fa-pencil" style="padding-left:10px;font-size:12px;cursor:pointer" onclick="EditReport()"></span>
+                                                                    }
+                                                                </h3>
                                                                 <div>
                                                                     @if (Model.FeedbackAudioLink != null)
                                                                     {
@@ -366,6 +370,7 @@
                                                                     }
                                                                     @if (Model.InterviewerComment != null)
                                                                     {
+                                                                        @Html.HiddenFor(m=>m.InterviewerComment,new{@id="hidinterviewerComment"})
                                                                         <p>@Model.InterviewerComment</p>
                                                                     }
                                                                     else
@@ -453,414 +458,516 @@
 
 
     </div>
+</div>
+<div id="modal_clientComment_placeholder"></div>
 
-    <div id="modal_clientComment_placeholder"></div>
+@*<div id="modal_clientAudio_placeholder"></div>*@
 
-    @*<div id="modal_clientAudio_placeholder"></div>*@
+<div id="modal_clientAudioFeedback_placeholder"></div>
 
-    <div id="modal_clientAudioFeedback_placeholder"></div>
-
-    <div id="PublicUrlShareModel" class="modal modal-bg">
-        <!-- Modal content -->
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="filheader">
-                    <div class="filavatar">
-                        <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
-                    </div>
-                    <h5 class="modal-title pull-left">Public Share Url</h5>
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
-                </button>
-                <div class="modal-body">
-                    <div class="col-md-12">
-                        <div class="video-url">
-                            <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
-                                <p class="special-text">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
-                                    <span id="special_text" class="special-text__tooltip">
-                                        Copy Link
-                                    </span>
-                                </p>
-                            </button>
-                        </div>
+                <h5 class="modal-title pull-left">Public Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Public Url:  <b id="txtvideoUrls"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtvideoUrls')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
                     </div>
-                    <div class="col-md-12 ">
-                        <div class="text-right">
-                            <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="color: #fff; line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="mdc-fab__icon material-icons">
+                        <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Candidate Verified Data</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div style="padding:10px" id="divAadhaarKYC">
+                </div>
+                <div>
+                    <div class="col-md-12 text-right">
+                        <div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="AadhaarKYCpopup" class="modal modal-bg" style="z-index:5">
-        <div class="modal-dialog modal-lg" role="document" style="max-width:850px !important">
-            <div class="modal-content">
-                <div class="filheader">
-                    <div class="filavatar">
-                        <span class="mdc-fab__icon material-icons">
-                            <img src="~/img/Aadhaar/aadhaar-logo-png.jpg" />
-                        </span>
-                    </div>
-                    <h5 class="modal-title pull-left">Candidate Verified Data</h5>
+</div>
+
+<div id="PublicShareVideo" class="modal modal-bg">
+
+    <div class="blk-bg"></div>
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
                 </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span onclick="closeAadhaarKYCpopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-                </button>
-                <div class="modal-body">
-                    <div style="padding:10px" id="divAadhaarKYC">
+                <h5 class="modal-title pull-left">Your Email Id</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                    <div class="text-areadiv">
+                        <input type="text" id="txtEmailid" class="form-control" />
                     </div>
-                    <div>
-                        <div class="col-md-12 text-right">
-                            <div>
-                            </div>
-                        </div>
+                    <div class="mt-10 text-right">
+                        <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<div id="ClientInterviewRatingModel" class="modal modal-bg" style="z-index:3;overflow:auto;">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <img class="rating-star" src="~/img/rating-star-icon.png" />
 
-    <div id="PublicShareVideo" class="modal modal-bg">
-
-        <div class="blk-bg"></div>
-        <!-- Modal content -->
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="filheader">
-                    <div class="filavatar">
-                        <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
-                    </div>
-                    <h5 class="modal-title pull-left">Your Email Id</h5>
+                    </span>
                 </div>
-                <div class="modal-body">
-                    <div class="col-md-12">
-                        <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
-                        <div class="text-areadiv">
-                            <input type="text" id="txtEmailid" class="form-control" />
-                        </div>
-                        <div class="mt-10 text-right">
-                            <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
-                        </div>
+                <h5 class="modal-title pull-left">Rate Interview</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeClientInterviewRating()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;" id="divClientInterviewRating">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="EditReportModel" class="modal modal-bg" style="z-index:3;overflow:auto;">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-pencil"></span>
+                </div>
+                <h5 class="modal-title pull-left">Edit Interviewer Comment</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeEditReportModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;">
+                @Html.TextArea("edinterviewerComment",@Model.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true", @onpaste = "return false" })
+                <div class="col-md-12 " style="padding-top:10px">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="SaveEditReport()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Update">
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="ClientInterviewRatingModel" class="modal modal-bg" style="z-index:3;overflow:auto;">
-        <!-- Modal content -->
-        <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important">
-            <div class="modal-content">
-                <div class="filheader">
-                    <div class="filavatar">
-                        <span>
-                            <img class="rating-star" src="~/img/rating-star-icon.png" />
+</div>
 
-                        </span>
-                    </div>
-                    <h5 class="modal-title pull-left">Rate Interview</h5>
-                </div>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span onclick="closeClientInterviewRating()" aria-hidden="true" style="cursor:pointer;">&times;</span>
-                </button>
-                <div class="modal-body" style="padding: 2px 16px;" id="divClientInterviewRating">
-                </div>
-            </div>
-        </div>
-    </div>
 
-    @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
-    @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 
-    <script src="~/js/ModalFormServerValidation.js"></script>
-    <script src="~/js/BroadcastMessage.js"></script>
+@await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
+@await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
+@await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
+<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/BroadcastMessage.js"></script>
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
-        $(document).ready(function () {
+    $(document).ready(function () {
 
-            if ($("#id_SecurelyShared").val() == "True" && ($("#id_UniqueId").val() != null || $("#id_UniqueId").val() != "") && $("#id_IsMatched").val() != "True") {
-                var modal = document.getElementById("PublicShareVideo");
-                modal.style.display = "block";
-            }
-
-        })
-
-        function SubmitEmail() {
-            if ($("#txtEmailid").val().trim() != "") {
-                localStorage.setItem('PublicEmailid', $("#txtEmailid").val());
-                $.ajax({
-                    type: "POST",
-                    url: "/Interview/VerifySharedEmail",
-                    data: { uniqueid: $("#id_UniqueId").val(), Emailid: $("#txtEmailid").val().trim(), Interviewid: $("#hidtxtinterviewid").val() },
-                    success: function (data) {
-                        if (data == "success") {
-                            window.location = "/Interview/ClientReport?publicEmailId=" + $("#txtEmailid").val() + "&uniqueid=" + $("#id_UniqueId").val() + "&interviewid=" + $("#hidtxtinterviewid").val() + "&irfid=" + $("#hidtxtirfid").val();
-                        } else {
-                            swal.fire(data);
-                        }
-                    }
-                });
-            }
+        if ($("#id_SecurelyShared").val() == "True" && ($("#id_UniqueId").val() != null || $("#id_UniqueId").val() != "") && $("#id_IsMatched").val() != "True") {
+            var modal = document.getElementById("PublicShareVideo");
+            modal.style.display = "block";
         }
 
-    </script>
+    })
 
-
-    @if (ViewBag.Message != null)
-    {
-        <script type="text/javascript">
-            $(document).ready(function () {
-                my_code();
+    function SubmitEmail() {
+        if ($("#txtEmailid").val().trim() != "") {
+            localStorage.setItem('PublicEmailid', $("#txtEmailid").val());
+            $.ajax({
+                type: "POST",
+                url: "/Interview/VerifySharedEmail",
+                data: { uniqueid: $("#id_UniqueId").val(), Emailid: $("#txtEmailid").val().trim(), Interviewid: $("#hidtxtinterviewid").val() },
+                success: function (data) {
+                    if (data == "success") {
+                        window.location = "/Interview/ClientReport?publicEmailId=" + $("#txtEmailid").val() + "&uniqueid=" + $("#id_UniqueId").val() + "&interviewid=" + $("#hidtxtinterviewid").val() + "&irfid=" + $("#hidtxtirfid").val();
+                    } else {
+                        swal.fire(data);
+                    }
+                }
             });
-            function my_code() {
-                var msg = '@ViewBag.Message';
-                if (msg.toLowerCase().includes("success")) {
-                    swal.fire("successful", '@ViewBag.Message', "success");
-                }
-                else {
-                    swal.fire("Failed", '@ViewBag.Message', "error");
-                }
-            }
-        </script>
+        }
     }
 
-    <script src="~/js/transcriptfunctionalities.js"></script>
+</script>
 
-    @if (Model.IsTranscript && ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
-    {
-        <script>
 
-            $(document).ready(function () {
-                GetMeetingAudioText('@Model.InterviewId', '@Model.AudioTranscriptFileLink');
-            });
-
-        </script>
-    }
-
-    <script>
-        function dropDwnToolTips(id) {
-            if (id.value == 0) {
-                id.title = "";
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@ViewBag.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("successful", '@ViewBag.Message', "success");
             }
             else {
-                id.title = id.value;
+                swal.fire("Failed", '@ViewBag.Message', "error");
             }
         }
+    </script>
+}
+
+<script src="~/js/transcriptfunctionalities.js"></script>
+
+@if (Model.IsTranscript && ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+{
+    <script>
+
+        $(document).ready(function () {
+            GetMeetingAudioText('@Model.InterviewId', '@Model.AudioTranscriptFileLink');
+        });
 
     </script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var meetingStatusElem = document.getElementById('MeetingStatus');
-            if (meetingStatusElem != null) {
-                var meetingStatus = document.getElementById('MeetingStatus').value;
-                if (meetingStatus == null || meetingStatus == '') {
-                    document.getElementById('InterviewerComment').disabled = true;
-                    document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
-                    document.getElementById("InterviewStatus").disabled = true;
-                }
-                else {
-                    document.getElementById('InterviewerComment').disabled = false;
-                    document.getElementById("interviewerComment_Error").innerHTML = "";
-                    if (meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8) {
-                        document.getElementById("InterviewStatus").disabled = true;
-                    }
-                }
-            }
+}
 
-            var hasDistinctParticipants = '@hasDistinctParticipants';
-            if (hasDistinctParticipants != null && hasDistinctParticipants.toLowerCase() == 'false') {
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var meetingStatusElem = document.getElementById('MeetingStatus');
+        if (meetingStatusElem != null) {
+            var meetingStatus = document.getElementById('MeetingStatus').value;
+            if (meetingStatus == null || meetingStatus == '') {
+                document.getElementById('InterviewerComment').disabled = true;
+                document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
                 document.getElementById("InterviewStatus").disabled = true;
             }
+            else {
+                document.getElementById('InterviewerComment').disabled = false;
+                document.getElementById("interviewerComment_Error").innerHTML = "";
+                if (meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8) {
+                    document.getElementById("InterviewStatus").disabled = true;
+                }
+            }
+        }
+
+        var hasDistinctParticipants = '@hasDistinctParticipants';
+        if (hasDistinctParticipants != null && hasDistinctParticipants.toLowerCase() == 'false') {
+            document.getElementById("InterviewStatus").disabled = true;
+        }
+    })
+
+</script>
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+
+<script>
+    function getPDF() {
+        var interviewid = $("#InterviewId").val();
+        var irfid = $("#IRFId").val();
+        var url = "/Interview/GenerateClientReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
+        window.open(url, "_blank");
+    }
+    function GeneratePublicUrl(index) {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "block";
+        var urlcurrent = window.location.href;
+        if (index == 1) {
+            urlcurrent = urlcurrent.replace("Public", "");
+            urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
+        }
+        else {
+            urlcurrent = urlcurrent.replace("Public", "");
+            urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
+        }
+        $("#txtvideoUrls").text(urlcurrent);
+    }
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+</script>
+
+<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+<script>
+
+    function switchtoquestionVedio(questiontime) {
+        var time = 1.0;
+        if (questiontime != '') {
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+    }
+
+    $(document).ready(function () {
+
+        //shorter/better attempt
+        var weightageItems = $('[id$="WeightageActual"]');
+        for (i = 0; i < weightageItems.length; i++) {
+            var id = weightageItems[i].id;
+            var match = id.match(/\d+/g);
+            var digit = match[0];
+
+            var index = weightageItems[i].id.indexOf(digit);
+            var skillName = weightageItems[i].id.substring(0, index);
+            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+
+            var actualWeightage;
+            var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
+            actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
+            if (reqLevel <= actLevel) {
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
+            }
+            else {
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+            }
+        }
+
+        var items = $('[id$="WeightageActual"]');
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
+        }
+        SetTechReportCalculation('TechSkillReportCollection');
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+            average = totalCount / 4;
+        }
+        else {
+            average = totalCount / 2;
+        }
+        $("#OverallScore").val(average);
+
+    });
+
+    function SetTechReportCalculation(techCollectionIdStartsWith) {
+        var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
+        var techItems = $(idSelector);
+        var totalTechSkillScore = 0;
+        if (techItems != null) {
+            var techItemsLength = 0;
+            if (techCollectionIdStartsWith == 'IreportModel_TechSkillReportCollection') {
+                techItemsLength = techItems.length / 2;
+            }
+            else {
+                techItemsLength = techItems.length;
+            }
+            for (i = 0; i < techItemsLength; i++) {
+                var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
+                var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
+
+                if (actualWeightage != null && actualWeightage != '') {
+                    totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
+                }
+            }
+            document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+        }
+    }
+</script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script src="~/js/FeedbackRecorder/Record.js"></script>
+<script src="~/js/Aadhaar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    $(function () {
+        $(".accordion-content:not(:first-of-type)").css("display", "none");
+        $(".js-accordion-title:first-of-type").addClass("open");
+        $(".js-accordion-title:first-of-type").addClass("open");
+        $(".js-accordion-title").click(function () {
+            $(".open").not(this).removeClass("open").next().slideUp(300);
+            $(this).toggleClass("open").next().slideToggle(300);
+        });
+    });
+</script>
+<script>
+    function ClientInterviewRating(interviewid, Reportsnippet) {
+        $.ajax({
+            url: '/Interview/ClientInterviewReview',
+            data: { 'id': interviewid, 'actionType': Reportsnippet },
+            type: "GET",
+            success: function (data) {
+                if (document.getElementById("ClientInterviewRatingModel").style.display != "block") {
+                    openClientInterviewRating();
+                    $('#divClientInterviewRating').html('');
+                    $('#divClientInterviewRating').html(data);
+                }
+            }
+        });
+    }
+    function closeClientInterviewRating() {
+        var modal = document.getElementById("ClientInterviewRatingModel");
+        modal.style.display = "none";
+    }
+    function openClientInterviewRating() {
+        var modal = document.getElementById("ClientInterviewRatingModel");
+        modal.style.display = "block";
+    }
+</script>
+@if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
+{
+    <script>
+        var video = document.getElementById('video');
+        var startTime = 0;
+        var endTime = 15 * 60;
+        function checkTime() {
+            if (video.currentTime >= endTime) {
+                video.pause();
+                ClientInterviewRating($("#hidtxtinterviewid").val());
+            }
+            setTimeout(checkTime, 100);
+        }
+        video.currentTime = startTime;
+        checkTime();
+    </script>
+}
+@if ((ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink)) && (Model.ReportAccepted || Model.Reportsnippet == 0))
+{
+    <script>
+        openSecureReportNotificationModel();
+    </script>
+}
+<script>
+    function removeInterviewer(interviewid) {
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Want to remove interviewer from further this Skill channel interviews',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Remove it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Interview/RemoveInterviewer",
+                        data: { interviewid: interviewid },
+                        success: function (result) {
+                            resolve(result);
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Removed!',
+                    type: 'success',
+                    html: '<p>The Interviewer has been removed.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'remove cancelled! :)',
+                    'error'
+                )
+            }
         })
-
-    </script>
-    <script src="https://www.amcharts.com/lib/4/core.js"></script>
-    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
-    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-
-    <script>
-        function getPDF() {
-            var interviewid = $("#InterviewId").val();
-            var irfid = $("#IRFId").val();
-            var url = "/Interview/GenerateClientReportPDFFile?interviewId=" + interviewid + "&irfId=" + irfid;
-            window.open(url, "_blank");
-        }
-        function GeneratePublicUrl(index) {
-            var modal = document.getElementById("PublicUrlShareModel");
-            modal.style.display = "block";
-            var urlcurrent = window.location.href;
-            if (index == 1) {
-                urlcurrent = urlcurrent.replace("Public", "");
-                urlcurrent = urlcurrent.replace("AddReport", "ExecutiveReport");
-            }
-            else {
-                urlcurrent = urlcurrent.replace("Public", "");
-                urlcurrent = urlcurrent.replace("AddReport", "InstaAddReport");
-            }
-            $("#txtvideoUrls").text(urlcurrent);
-        }
-        function closePublicUrlShareModel() {
-            var modal = document.getElementById("PublicUrlShareModel");
-            modal.style.display = "none";
-        }
-        function copyToClipboard(element) {
-            var temp = $("<input>");
-            $("body").append(temp);
-            temp.val($(element).text()).select();
-            document.execCommand("copy");
-            temp.remove();
-            $('#special_text').text('Copied');
-        }
-    </script>
-
-    <script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
-    <script>
-
-        function switchtoquestionVedio(questiontime) {
-            var time = 1.0;
-            if (questiontime != '') {
-                time = questiontime;
-            }
-            var vid = document.getElementsByClassName("vjs-tech");
-            vid[0].currentTime = time;
-        }
-
-        $(document).ready(function () {
-
-            //shorter/better attempt
-            var weightageItems = $('[id$="WeightageActual"]');
-            for (i = 0; i < weightageItems.length; i++) {
-                var id = weightageItems[i].id;
-                var match = id.match(/\d+/g);
-                var digit = match[0];
-
-                var index = weightageItems[i].id.indexOf(digit);
-                var skillName = weightageItems[i].id.substring(0, index);
-                var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
-                var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
-
-                var actualWeightage;
-                var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
-                actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
-                if (reqLevel <= actLevel) {
-                    $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
-                    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
-                }
-                else {
-                    $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
-                    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
-                }
-            }
-
-            var items = $('[id$="WeightageActual"]');
-            var totalCount = 0;
-
-            for (i = 0; i < items.length; i++) {
-                totalCount += parseInt(items[i].value);
-            }
-            SetTechReportCalculation('TechSkillReportCollection');
-            var average = 0;
-            if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
-                average = totalCount / 4;
-            }
-            else {
-                average = totalCount / 2;
-            }
-            $("#OverallScore").val(average);
-
-        });
-
-        function SetTechReportCalculation(techCollectionIdStartsWith) {
-            var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
-            var techItems = $(idSelector);
-            var totalTechSkillScore = 0;
-            if (techItems != null) {
-                var techItemsLength = 0;
-                if (techCollectionIdStartsWith == 'IreportModel_TechSkillReportCollection') {
-                    techItemsLength = techItems.length / 2;
-                }
-                else {
-                    techItemsLength = techItems.length;
-                }
-                for (i = 0; i < techItemsLength; i++) {
-                    var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
-                    var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
-
-                    if (actualWeightage != null && actualWeightage != '') {
-                        totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
-                    }
-                }
-                document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
-            }
-        }
-    </script>
-
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/data.js"></script>
-    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
-    <script src="~/js/FeedbackRecorder/Record.js"></script>
-    <script src="~/js/Aadhaar.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script>
-        $(function () {
-            $(".accordion-content:not(:first-of-type)").css("display", "none");
-            $(".js-accordion-title:first-of-type").addClass("open");
-            $(".js-accordion-title:first-of-type").addClass("open");
-            $(".js-accordion-title").click(function () {
-                $(".open").not(this).removeClass("open").next().slideUp(300);
-                $(this).toggleClass("open").next().slideToggle(300);
-            });
-        });
-    </script>
-    <script>
-        function ClientInterviewRating(interviewid, Reportsnippet) {
+    }
+</script>
+<script>
+    function EditReport() {
+        var modal = document.getElementById("EditReportModel");
+        modal.style.display = "block";
+        $("#edinterviewerComment").val($("#hidinterviewerComment").val());
+    }
+    function closeEditReportModel() {
+        var modal = document.getElementById("EditReportModel");
+        modal.style.display = "none";
+    }
+    function SaveEditReport() {
+        var comment = $("#edinterviewerComment").val();
+        if (comment != '') {
             $.ajax({
-                url: '/Interview/ClientInterviewReview',
-                data: { 'id': interviewid, 'actionType': Reportsnippet },
-                type: "GET",
+                type: "POST",
+                url: "/Interview/UpdateInterviewReport",
+                data: { comment: comment, interviewid: $("#hidtxtinterviewid").val() },
                 success: function (data) {
-                    if (document.getElementById("ClientInterviewRatingModel").style.display != "block") {
-                        openClientInterviewRating();
-                        $('#divClientInterviewRating').html('');
-                        $('#divClientInterviewRating').html(data);
-                    }
+                    closeEditReportModel();
+                    location.reload();
+                    swal.fire(data);
                 }
             });
+        } else {
+            swal.fire('Comment is required.');
         }
-        function closeClientInterviewRating() {
-            var modal = document.getElementById("ClientInterviewRatingModel");
-            modal.style.display = "none";
-        }
-        function openClientInterviewRating() {
-            var modal = document.getElementById("ClientInterviewRatingModel");
-            modal.style.display = "block";
-        }
-    </script>
-    @if (!Model.ReportAccepted && ViewBag.profile == "Client" && Model.Reportsnippet == 1)
-    {
-        <script>
-            var video = document.getElementById('video');
-            var startTime = 0;
-            var endTime = 15 * 60;
-            function checkTime() {
-                if (video.currentTime >= endTime) {
-                    video.pause();
-                    ClientInterviewRating($("#hidtxtinterviewid").val());
-                }
-                setTimeout(checkTime, 100);
-            }
-            video.currentTime = startTime;
-            checkTime();
-        </script>
     }
-    @if ((ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink)) && (Model.ReportAccepted || Model.Reportsnippet == 0))
-    {
-        <script>
-            openSecureReportNotificationModel();
-        </script>
-    }
+</script>

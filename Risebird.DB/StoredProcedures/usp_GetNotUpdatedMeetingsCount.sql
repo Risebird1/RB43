@@ -9,7 +9,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]                             
+Create PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]                             
 @currentdate datetime,        
 @Emailid varchar(150)          
 AS                                    
@@ -59,7 +59,7 @@ declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Op
 declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId            
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=2 and Cancellationsource like'%Reschedule%' and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))  
   
- declare @PotentialRiskInterviewCount int = (select Count(im.id) from InterviewMeetings im inner join CandidateFeedbackDetails cfd on im.id=cfd.interviewid where cfd.Rating<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<= getdate()))  
+ declare @PotentialRiskInterviewCount int = (select Count(im.id) from InterviewMeetings im inner join CandidateFeedbackDetails cfd on im.id=cfd.interviewid where cfd.Rating<=3 and Cast(interviewDate as Date)<= getdate())  
  declare @SuspeciousInterviewerCount int=(select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.CreatedBy=@Emailid and si.SuspiciousStatus=1)  
    
  declare @CancelledInterviewCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId            
@@ -91,7 +91,8 @@ declare @PotentialRiskByClient int=(select Count(ccfr.id) from  ClientCommentsFo
 declare @PaymentSlacomplianceCount int=(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)  
 declare @RedoRequestCount int=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id where ISNULL(Approved,0)=0)  
 declare @HighRiskInterviewers int=(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)  
-  
+declare @InterviewerVideoKYC int=(Select COUNT(ip.id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where isnull(ip.IsVideoApproved,0)=0)
+
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,  
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink,   
 @MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,  
@@ -107,7 +108,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @PaymentSlacomplianceCount as PaymentSlacomplianceCount,  
 @interviewerChurnCount as InterviewerChurnCount,  
 @RedoRequestCount as RedoRequestCount,  
-@HighRiskInterviewers as HighRiskInterviewers  
+@HighRiskInterviewers as HighRiskInterviewers ,
+@InterviewerVideoKYC as InterviewerVideoKYC
 END          
 ELSE          
 BEGIN    
@@ -140,8 +142,7 @@ set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open')
   
 set @RescheduleInterviewMeetingCount= (select Count(im.id) from InterviewMeetings im  where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))  
   
-set @PotentialRiskInterviewCount = (select Count(im.id) from InterviewMeetings im inner join CandidateFeedbackDetails cfd on im.id=cfd.interviewid where cfd.Rating<=3 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,getdate()) as Date) and Cast(interviewDate as Date)<=
- getdate()))  
+set @PotentialRiskInterviewCount = (select Count(im.id) from InterviewMeetings im inner join CandidateFeedbackDetails cfd on im.id=cfd.interviewid where cfd.Rating<=3 and Cast(interviewDate as Date)<= getdate())  
 set @SuspeciousInterviewerCount= (select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.SuspiciousStatus=1)  
 set @CancelledInterviewCount=(select Count(im.id) from InterviewMeetings im  where confirmationStatus=2  and CAST(interviewDate as DATE) >=CAST(GETDATE() as DATE) and im.RedoInterview=0)  
   
@@ -167,6 +168,7 @@ set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps l
  set @interviewerChurnCount=(select COUNT(Id) from InterviewerProfile where Isavailable in (3,4))  
  set @RedoRequestCount=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id where ISNULL(Approved,0)=0)  
  set @HighRiskInterviewers =(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)  
+ set @InterviewerVideoKYC=(Select COUNT(ip.id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where isnull(ip.IsVideoApproved,0)=0) 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,  
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink,   
 @MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,  
@@ -182,7 +184,9 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @PaymentSlacomplianceCount as PaymentSlacomplianceCount,  
 @interviewerChurnCount as InterviewerChurnCount,  
 @RedoRequestCount as RedoRequestCount,  
-@HighRiskInterviewers as HighRiskInterviewers  
+@RedoRequestCount as RedoRequestCount,  
+@HighRiskInterviewers as HighRiskInterviewers,
+@InterviewerVideoKYC as InterviewerVideoKYC
 END          
-End 
+End
 GO

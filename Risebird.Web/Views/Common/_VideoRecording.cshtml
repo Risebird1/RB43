@@ -1,8 +1,8 @@
 ﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'> 
-<div id="VideoKYCModel" class="modal modal-bg" style="z-index:3">
+<div id="VideoKYCModel" class="modal modal-bg" style="z-index:3;top:30px;">
     <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document" style="max-width: 1050px !important;">
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 1050px !important;top:10px;">
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
@@ -16,40 +16,40 @@
                 <span onclick="closeVideoKYCModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <div class="modal-body" id="divVideoKycmodel" style="padding:20px;">
-               
+
                 <div class="col-md-4 pull-left">
-                  
+
                     <div class="videoContainer">
                         <video id="video" autoplay="true" muted></video><h4 style="font-size: 13px;text-align: center; font-weight: 600;color: #4d4444;">
-                            RECORD YOUR 90SECS VIDEO
+                            RECORD YOUR 90 SECS VIDEO
                         </h4>
                     </div>
                    <div class="videoButtons">
 
-                        <button id="btncamara" class="btncamara">  <i class="fa fa-camera" aria-hidden="true"></i><span class="on-off-txt">ON</span></button>
-                        <button id="btnoffcamara" class="btnoffcamara" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera-off"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34m-7.72-2.06a4 4 0 1 1-5.56-5.56"></path></svg><span class="on-off-txt">OFF</span></button>
+                        <button id="btncamara" class="btncamara" style="display:none;">  <i class="fa fa-camera" aria-hidden="true"></i><span class="on-off-txt">ON</span></button>
+                        <button id="btnoffcamara" class="btnoffcamara"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera-off"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34m-7.72-2.06a4 4 0 1 1-5.56-5.56"></path></svg><span class="on-off-txt">OFF</span></button>
 
                         <button id="btnStart">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record-fill" viewBox="0 0 16 16" style="
-   
+
 ">
                                 <path fill-rule="evenodd" d="M8 13A5 5 0 1 0 8 3a5 5 0 0 0 0 10z"></path>
                             </svg><p class="recording-txt">START REC</p>
                         </button>
                         <button id="btnStop"><svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-fill" viewBox="0 0 16 16"> <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z" fill="white"></path> </svg><p class="recording-txt">STOP REC</p></button>
-                       
+
                 </div>
                 </div>
-              
+
                 <div class="col-md-8 pull-left">
                     <div id="timer-clock">
                         <div id="timer-clock-txt">COUNTER STARTS</div>
                     </div>
                     <div class="rules">
-                        <h3 style="color:green">TELL US ABOUT YOU & YOUR EXPERIENCE</h3>
+                        <h3 style="color:green;font-weight:bold;">TELL US ABOUT YOU & YOUR EXPERIENCE</h3>
                         <p class="about-int">Type of company,  previous companies, overall experience, current projects, any Top Tech Achievement</p>
-                        <h3 style=" color: green;padding: 10px 0px;">
-                            QUESTION TO BE ASKED DURING THE INTERVIEW
+                        <h3 style=" color: green;padding: 10px 0px;font-weight:bold;">
+                            EXPLAIN THE BELOW POINTS DURING THE RECORDING
                         </h3>
                         <p> <span class="number"> 1</span> <span class="number-txt">How will you differentiate between Poor, Average to Good Candidate </span></p>
                         <p>
@@ -59,19 +59,29 @@
                             What tentative questions or strategy you use - only 1-2 example to understand the perspective </span> </p>
                         <p>   <span class="number">   3</span><span class="number-txt"> How do you align to JD, score rubrics to ask 100% relevant questions, practical , discerning questions?</span></p>
                     </div>
-                  
+
                 </div>
                <div class="col-md-12 pull-left">
 
                     <div class="preview-section">
                         <h2 class="preview-txt">
-                            PREVIEW YOUR RECORDING
+                            PREVIEW YOUR RECORDING<br/>
+                            <span>
+                                Preview your recording here. If you wish to re-record, click on the record button above to start over.
+                            </span>
                         </h2>
                         <div class="videoPreviewContainer"> <video id="vid2" controls></video></div>
                     </div>
 
                </div>
-                <div class="col-md-12 pull-left"><button id="btnSave">SAVE</button></div>
+
+                <div class="col-md-12 pull-left" style="padding-bottom:35px;"><button id="btnSave">SAVE</button>
+
+                    <div id="saveLoader" class="saveloader" style="display:none;">Please Wait...Video is uploading <img width="20" src="/img/saveloader.gif"></div>
+
+                
+                </div>
+
             </div>
         </div>
     </div>
@@ -92,7 +102,7 @@
 var width = 165,
   height = 165,
   timePassed = 0,
-  timeLimit = 94
+  timeLimit = 91
 
 var fields = [{
   value: timeLimit,
@@ -137,8 +147,38 @@ var label = field.append("text")
   .attr("class", "label")
   .attr("dy", ".35em");
 
-(function update() {
+//(function update() {
 
+//  field
+//    .each(function(d) {
+//      d.previous = d.value, d.value = d.update(timePassed);
+//    });
+
+//  path.transition()
+//    .ease("elastic")
+//    .duration(500)
+//    .attrTween("d", arcTween);
+
+//  if ((timeLimit - timePassed) <= 10)
+//    pulseText();
+//  else
+//    label
+//    .text(function(d) {
+//      return d.size - d.value;
+//    });
+
+//  if (timePassed <= timeLimit)
+//  {
+//       setTimeout(update, 1000 - (timePassed % 1000));
+//  }
+//  else
+//  {
+//    destroyTimer();
+//    document.getElementById('btnStop').click();
+//  }
+//})();
+var timerclean;
+function update() {
   field
     .each(function(d) {
       d.previous = d.value, d.value = d.update(timePassed);
@@ -158,11 +198,16 @@ var label = field.append("text")
     });
 
   if (timePassed <= timeLimit)
-    setTimeout(update, 1000 - (timePassed % 1000));
+  {
+       timerclean=setTimeout(update, 1000 - (timePassed % 1000));
+  }
   else
-    destroyTimer();
-
-})();
+  {
+    //destroyTimer();
+    clearInterval(timerclean);
+    document.getElementById('btnStop').click();
+  }
+}
 
 function pulseText() {
   back.classed("pulse", true);
@@ -183,32 +228,32 @@ function pulseText() {
     .attr("transform", "translate(0," + -10 + ")");
 }
 
-function destroyTimer() {
-  label.transition()
-    .ease("back")
-    .duration(700)
-    .style("opacity", "0")
-    .style("font-size", "5")
-    .attr("transform", "translate(0," + -40 + ")")
-    .each("end", function() {
-      field.selectAll("text").remove()
+//function destroyTimer() {
+//  label.transition()
+//    .ease("back")
+//    .duration(700)
+//    .style("opacity", "0")
+//    .style("font-size", "5")
+//    .attr("transform", "translate(0," + -40 + ")")
+//    .each("end", function() {
+//      field.selectAll("text").remove()
 
-    });
+//    });
 
-  path.transition()
-    .ease("back")
-    .duration(700)
-    .attr("d", nilArc);
+//  path.transition()
+//    .ease("back")
+//    .duration(700)
+//    .attr("d", nilArc);
 
-  back.transition()
-    .ease("back")
-    .duration(700)
-    .attr("d", nilArc)
-    .each("end", function() {
-      field.selectAll("path").remove()
-       document.getElementById('timer-clock-txt').style.display = 'none';
-    });
-}
+//  back.transition()
+//    .ease("back")
+//    .duration(700)
+//    .attr("d", nilArc)
+//    .each("end", function() {
+//      field.selectAll("path").remove()
+//       document.getElementById('timer-clock-txt').style.display = 'none';
+//    });
+//}
 
 function arcTween(b) {
   var i = d3.interpolate({
@@ -225,7 +270,7 @@ function arcTween(b) {
             audio: true,
             video: true
         };
-    
+
         if (navigator.mediaDevices === undefined) {
             navigator.mediaDevices = {};
             navigator.mediaDevices.getUserMedia = function (constraintObj) {
@@ -251,11 +296,11 @@ function arcTween(b) {
 
         navigator.mediaDevices.getUserMedia(constraintObj)
             .then(function (mediaStreamObj) {
-                console.log('test')
+               // console.log('test')
                 let video=document.getElementById('video');
-                
+
                 let camara = document.getElementById('btncamara');
-                    let offcamara = document.getElementById('btnoffcamara');
+                let offcamara = document.getElementById('btnoffcamara');
 
                 let start = document.getElementById('btnStart');
                 let stop = document.getElementById('btnStop');
@@ -264,49 +309,59 @@ function arcTween(b) {
                 let mediaRecorder = new MediaRecorder(mediaStreamObj);
                 let chunks = [];
                 let blobtransfer;
-                document.getElementById('btnStart').disabled = true;
+                document.getElementById('btnStart').disabled = false;
                 document.getElementById('btnStop').disabled = true;
+                video.srcObject = mediaStreamObj;
+                 console.log(mediaRecorder.state);
+
                 camara.addEventListener('click', (ev) => {
+                $('#btncamara').css('display', 'none')
                     video.srcObject=mediaStreamObj;
                     console.log(mediaRecorder.state);
-                    console.log('test')
+                $('#btnoffcamara').css('display', 'block')
                 })
-            offcamara.addEventListener('click', (ev) => {
-                video.srcObject = null;
-                console.log(mediaRecorder.state);
-                console.log('test')
-            })
+                offcamara.addEventListener('click', (ev) => {
+                $('#btnoffcamara').css('display', 'none')
+                    video.srcObject = null;
+                    console.log(mediaRecorder.state);
+                    $('#btncamara').css('display','block')
+                })
                 start.addEventListener('click', (ev) => {
                     mediaRecorder.start();
-                    //start timer
-                   
-                    // start button disable
-               
-                document.getElementById('btnStart').disabled = true;
-                 //   stop button enable disable false
-                document.getElementById('btnStop').disabled = false;
-                console.log(mediaRecorder.state);
+                    document.getElementById('btnStart').disabled = true;
+                     //   stop button enable disable false
+                    document.getElementById('btnStop').disabled = false;
+                    console.log(mediaRecorder.state);
+                    timePassed = 0;
+                    update();
                 })
                 stop.addEventListener('click', (ev) => {
-                 
                     mediaRecorder.stop();
-                document.getElementById('btnStart').disabled = false;
-                //   stop button enable disable false
-                document.getElementById('btnStop').disabled = true;
+                    document.getElementById('btnStart').disabled = false;
+                    //   stop button enable disable false
+                    document.getElementById('btnStop').disabled = true;
                     console.log(mediaRecorder.state);
+                    clearInterval(timerclean);
                 });
                 save.addEventListener('click', (ev) => {
                     var form_data = new FormData();
+                var vidalert = $('#VideoKYCAlert').css('display','none')
+                var saveloader = $('#saveLoader').css('display','block')
                     form_data.append("file", blobtransfer);
                     $.ajax({
                             type: "POST",
-                            //url: "/MCQ/CandidateQuestionsD",
+                            url: "/Interviewer/UploadVideoKYC",
                             data: form_data,
                             contentType: false,
                             enctype: 'multipart/form-data',
                             processData: false,
+                           
                             success: function (data) {
-                                  console.log("save successully");
+                                 saveloader
+                                  swal.fire(data);
+                                  closeVideoKYCModel();
+                      vidalert;
+                      $('.top-h').css('top','0px');
                             }
                         });
                 });
@@ -327,20 +382,17 @@ function arcTween(b) {
             });
 </script>
 
-   <script>
-   
+<script>
     $('.btncamara').click(function () {
          document.getElementById('btnStart').disabled = false;
         $('#btnoffcamara').show(200);
         $('.btncamara').hide(0);
-       
     });
 
     $('#btnoffcamara').click(function () {
         $('.btncamara').show(200);
-       
         $('#btnoffcamara').hide(0);
     });
-                </script>
+</script>
 
 

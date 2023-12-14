@@ -76,6 +76,7 @@ SELECT [InterviewMeetings].id as imid
   ,InterviewMeetings.SurchargeComment
   ,IRF.Heuristicsscore
   ,AudioTranscriptFileLink
+  ,ti.IsActive as IRFInterviewerActive
 FROM [dbo].[InterviewMeetings]    
 inner join     
 IRF on [InterviewMeetings].IRFId = IRF.IRFId    

@@ -36,6 +36,13 @@
         box-shadow: none !important;
     }
 
+    .swal2-popup .swal2-title {
+        text-transform: capitalize !important;
+        font-weight: 500 !important;
+        padding:10px 0px 0px 0px;
+        line-height:23px;
+
+    }
 </style>
 <script>
     var Header = "<a  style='line-height:50px;'><span id='clientdashboard_1'>Dashboard</span></a>";
@@ -52,6 +59,10 @@
 <!-- END PLUGINS -->
 <!-- START THIS PAGE PLUGINS-->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" defer rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+<div class="video-alert" id="VideoKYCAlert" style="display:none;">
+    <div> <strong>Alert : </strong>Video KYC is now manadatory to continue taking interview in risebrid platform. Please finish this before 21st December otherwise your profie may get deactivated.</div><div>  <span onclick="openVideoKYCModel()" aria-hidden="true" style="cursor:pointer;color: #227622;font-weight: bold;">Please Click here</span></div>
+</div>
 <div class="pt30">
     <div class="col-md-12 nopad" style="margin:0px;">
         <div class="card-header bg-w clearfix">
@@ -325,7 +336,7 @@
                                                         <strong><span style="color:red">Net time of interview- </span></strong>All IAAS platform manually start the recording after the candidate arrival and settlement but Risebird starts the recording  by default automatically, which results in counting unproductive minutes . Our customers have stopped paying for unproductive minutes time in the start and are counting net time which is 5 minutes less than total recorded time. Given the ongoing recession in tech hiring we don't have much say in customer decisions and request your cooperation. From May onwards , net interview time will be applicable for your payments.
                                                     </li>
                                                     <li>
-                                                        <strong> No Payment for Dropped &  Show Candidates- </strong> Customers have never paid Risebird for candidate no-shows while other IAAS platforms also don't pay for candidate noshows, and Risebird is the only platform which paid for candidate no-shows from its inception and has been constantly incurring the losses from last 4 years by paying for candidate noshows. But in the current poor macro environment, it's not possible to continue to pay any amount for candidate no show..
+                                                        <strong> No Payment for Dropped & No Show Candidates- </strong> Customers have never paid Risebird for candidate no-shows while other IAAS platforms also don't pay for candidate noshows, and Risebird is the only platform which paid for candidate no-shows from its inception and has been constantly incurring the losses from last 4 years by paying for candidate noshows. But in the current poor macro environment, it's not possible to continue to pay any amount for candidate no show..
                                                     </li>
                                                     <li>
                                                         <strong>For Late Feedback Report- </strong> Customers demand the feedback report of candidates immediately after the completion of interviews. While other IAAS platforms have been penalizing interviewers for submitting reports after 3 hrs, Risebird has been avoiding any penalties but now our customers are demanding the reporting time to be at par or before the other IAAS platform. In order to achieve the same, we have to penalize for any submission made after 3 hrs (50% deduction on payment) after 24 hrs (100% deduction on payment terms ).
@@ -647,17 +658,24 @@
         });
     </script>
 }
+@if (ViewBag.VideoKYC)
+{
+    <script>
+        $(document).ready(function () {
+            openVideoKYCModel();
+            openVideoKYCAlert();
+            $('.top-h').css('top','50px');
+        });
+    </script>
+}
+
 <script>
-    //$(document).ready(function () {
-    //    $.ajax({
-    //        url: '/DashBoard/FetchAlertMessage',
-    //        type: 'POST',
-    //        success: function (data) {
-    //            binddata(data);
-    //        }
-    //    });
-    //});
+    function openVideoKYCAlert() {
+        var model = document.getElementById("VideoKYCAlert");
+        model.style.display = "block";
+    }
 </script>
+
 <script>
     function closeInterviewerPaymentDetailsModel() {
         var model = document.getElementById("InterviewerPaymentDetailsModel");
@@ -719,7 +737,7 @@
     //    html += '</ul>';
 
     //    $("#divalertmessage").empty().html(html);
-    //           }
+    //}
     function uploadresume() {
         $.ajax({
             url: '/Interviewer/InterviewerResumeupdate',

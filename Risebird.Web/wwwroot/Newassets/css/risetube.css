@@ -114,6 +114,8 @@
     line-height: 40px !important;
 }
 */
+
+
 .text-areadiv #comment:-ms-input-placeholder { /* Internet Explorer 10-11 */
     line-height: 40px !important
 }
@@ -253,7 +255,7 @@
 
 .public-share {
     background-repeat: no-repeat !important;
-    background-size: 14% !important;
+    background-size: 11% !important;
     background-position: 6% 50% !important;
     border: none;
     font-weight: normal;
@@ -265,7 +267,7 @@
 
 .email-share {
     background-repeat: no-repeat !important;
-    background-size: 14% !important;
+    background-size: 12% !important;
     background-position: 6% 50% !important;
     border: none;
     font-weight: normal;
@@ -290,7 +292,7 @@
 
 .edit-share {
     background-repeat: no-repeat !important;
-    background-size: 12% !important;
+    background-size: 11% !important;
     background-position: 6% 50% !important;
     border: none;
     font-weight: normal;
@@ -387,7 +389,7 @@
 
 .publicurl-share {
     background-repeat: no-repeat !important;
-    background-size: 14% !important;
+    background-size: 11% !important;
     background-position: 6% 50% !important;
     border: none;
     font-weight: normal;
@@ -2879,6 +2881,7 @@ table {
 
         #myForm .searchbox input[type=email] {
             width: 270px;
+            height:17px;
         }
 
     .toolbar {
@@ -2992,7 +2995,7 @@ table {
         }
 
         #myForm .searchbox input[type=email] {
-            width: 256px !important;
+            width: 253px !important;
             padding-left: 4px;
             /* height: auto;*/
         }

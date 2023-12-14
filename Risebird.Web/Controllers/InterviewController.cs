@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -52,6 +53,7 @@ namespace Risebird.Web.Controllers
         private readonly IZoomHelper _zoomHelper;
         private readonly IInterviewerService _interviewerService;
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
+        private readonly IIRFService _irfService;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -65,7 +67,7 @@ namespace Risebird.Web.Controllers
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
             IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository)
+            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository, IIRFService irfService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -87,6 +89,7 @@ namespace Risebird.Web.Controllers
             _zoomHelper = zoomHelper;
             _interviewerService = interviewerService;
             _interviewSchedulerRepository = interviewSchedulerRepository;
+            _irfService = irfService;
         }
 
 
@@ -1599,7 +1602,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (string.IsNullOrEmpty(meetingLineUpType))
                         {
-                            meetingLineUpType = MeetingLineUpType.Pending;
+                            meetingLineUpType = MeetingLineUpType.Upcoming;
                         }
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -6852,6 +6855,18 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SecureReport", "Interview", new { interviewId = model.interviewid, irfId = model.IRFId, emailid = model.ModifiedBy, id = model.uniqueid });
             }
+            else if (model.type == "FeedbackCandidate")
+            {
+                return RedirectToAction("CandidateFeedBack", "Survey", new { type = "Candidate" });
+            }
+            else if (model.type == "PotentialRiskRCandidate")
+            {
+                return RedirectToAction("PotentialRiskByCandidate", "Dashboard");
+            }
+            else if (model.type == "PublicFeedbackCandidate")
+            {
+                return RedirectToAction("PublicCandidateFeedback", "Survey", new { emailid = model.ModifiedBy, uniqueid = model.uniqueid });
+            }
             return RedirectToAction("CompletedInterviews");
         }
         [HttpGet]
@@ -7627,7 +7642,14 @@ namespace Risebird.Web.Controllers
                 ViewBag.profile = profileName;
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 string Logo = string.Empty;
-                ViewBag.ClientLogo = await ImageUrlToBase64(model.LogoUrl);
+                if (!string.IsNullOrWhiteSpace(model.LogoUrl))
+                {
+                    ViewBag.ClientLogo = await ImageUrlToBase64(model.LogoUrl);
+                }
+                else
+                {
+                    ViewBag.ClientLogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
+                }
                 ViewBag.Risebirdlogo = await ImageUrlToBase64("https://risebirdportal.blob.core.windows.net/logo/risebird.png");
                 //if (profileName == "Client")
                 //{
@@ -7834,11 +7856,11 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type)
         {
             try
             {
-                var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                var model = await _meetingService.FetchPaymentSlaDetailsById(interviewid, type);
                 if (model == null)
                 {
                     model = new PaymentSLAVM();
@@ -7874,6 +7896,10 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
                     model.CreatedBy = emailId;
+                    if (model.VideoReward > 0)
+                    {
+                        model.VideoEnable = true;
+                    }
                     if (await _meetingService.AddorUpdatePaymentSLADetails(model))
                     {
                         TempData["SuccessErrorMessageInterview"] = "Payment SLA Successfully updated.";
@@ -7883,6 +7909,10 @@ namespace Risebird.Web.Controllers
                             result.InterviewMeetingId = model.Interviewid;
                             result.ReliabilityScoreTypeId = (int)ReliabilityScopeTypeEnum.PerPaymentSLA;
                             await _meetingService.AddTransInterviewersReliabilityScoresService(result);
+                        }
+                        else
+                        {
+                            await _meetingService.ApplyPenaltyQCForm(model.Interviewid, model.Interviewer, 0, model.VideoReward);
                         }
                     }
                     else
@@ -7900,6 +7930,14 @@ namespace Risebird.Web.Controllers
                     else if (model.Pagetype == "PotentailRiskCandidate")
                     {
                         return RedirectToAction("PotentialRiskByCandidate", "DashBoard");
+                    }
+                    else if (model.Pagetype == "PotentailRiskClient")
+                    {
+                        return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.PotentialRiskByClient });
+                    }
+                    else if (model.Pagetype == "QCPendingReport")
+                    {
+                        return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.QCPendingReport });
                     }
                     else
                     {
@@ -8053,11 +8091,11 @@ namespace Risebird.Web.Controllers
             return Json("Success");
         }
         #endregion
-        public async Task<IActionResult> PaymentCompliance(int interviewid)
+        public async Task<IActionResult> PaymentCompliance(int interviewid, string type)
         {
             try
             {
-                var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid);
+                var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid, type);
                 return PartialView(result);
             }
             catch (Exception ex)
@@ -8091,6 +8129,144 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Success");
+            }
+
+        }
+        public async Task<IActionResult> InterviewDetails(int id, int interviewId)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            ViewBag.id = id;
+            ViewBag.InterviewId = interviewId;
+            var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                            select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+            var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
+            result.AudioComment = _irfService.FetchIRFAudioLink(id);
+            return View(result);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> RemoveInterviewer(int interviewid)
+        {
+            var result = await _meetingService.RemoveInterviewer(interviewid);
+            return Json("success");
+        }
+        [HttpPost]
+        public async Task<JsonResult> UpdateInterviewReport(int interviewid, string comment)
+        {
+            var email = HttpContext.Session.GetString("email");
+            email = email.Replace("\"", "");
+            var result = await _meetingService.UpdateInterviewReport(interviewid, comment, email);
+            if (result)
+            {
+                return Json("Successfully updated.");
+            }
+            else
+            {
+                return Json("Fail to update, try again after some time.");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ProxyForm(int interviewid, bool IsQCDone, string type)
+        {
+            try
+            {
+                var model = await _meetingService.GetProctoringReport(interviewid);
+                if (model == null)
+                {
+                    model = new ProctoringReport();
+                }
+                if (!model.IsQCdone)
+                {
+                    model.IsQCdone = IsQCDone;
+                }
+                model.type = type;
+                await SetProxyFormInitialValue(model);
+                return PartialView(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> ProxyForm(ProctoringReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var result = await _meetingService.SaveProctoringReport(model, emailid);
+                    if (result)
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Proxy form filled successfully.";
+                        if (model.type == "QCPendingReport")
+                        {
+                            return RedirectToAction("UnassignedInterviews", "Dashboard", new { actionstatus = RibbonActionType.QCPendingReport });
+                        }
+                    }
+                    return RedirectToAction("ProxyForm", "Interview", new { interviewid = model.InterviewId });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        public async Task SetProxyFormInitialValue(ProctoringReport model)
+        {
+            if (string.IsNullOrEmpty(model.EyeMovement))
+            {
+                model.EyeMovement = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.LipsMovement))
+            {
+                model.LipsMovement = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.CandidateDesktop))
+            {
+                model.CandidateDesktop = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.LinkedinPhoto))
+            {
+                model.LinkedinPhoto = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.HeadMovement))
+            {
+                model.HeadMovement = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.LatencyCheck))
+            {
+                model.LatencyCheck = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.VoiceImpostering))
+            {
+                model.VoiceImpostering = string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(model.SusipicousDevices))
+            {
+                model.SusipicousDevices = string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(model.SuspiciousVoice))
+            {
+                model.SuspiciousVoice = string.Empty;
+            }
+            if (string.IsNullOrEmpty(model.SuspiciousEnvironment))
+            {
+                model.SuspiciousEnvironment = string.Empty;
             }
         }
     }

@@ -357,6 +357,7 @@ namespace Risebird.Entities.ViewModel
         public bool ReportAccepted { get; set; }
         public int Reportsnippet { get; set; }
         public bool IsTranscript { get; set; }
+        public bool IRFInterviewerActive { get; set; }
     }
     public class RBInterviewDetails
     {
@@ -409,6 +410,7 @@ namespace Risebird.Entities.ViewModel
         public string JDLink { get; set; }
         public int id { get; set; }
         public bool IsPaused { get; set; }
+        public bool ShowInterviewInstructions { get; set; }
     }
     public class RBInterviewerPayoutDetails
     {

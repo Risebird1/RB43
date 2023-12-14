@@ -17,7 +17,7 @@
     @Html.HiddenFor(m => m.Pagetype)
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
-            
+
             <div class="card-wrap" style="margin:10px 0px">
                 <div class="accordion" id="accordion2">
                     <div class="row">
@@ -630,6 +630,21 @@
 
                                                     }
                                                 </li>
+
+
+                                                <li>
+                                                    @if (Model.UnethicalPractices.Split(",").Contains("Video off during Onsite/US interview"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyOne" name="UnethicalPractices" checked onclick="ChangeCheckBox('UnethicalPractices')" value="Video off during Onsite/US interview" /> <label for="checkboxFiftyOne">Video off during Onsite/US interview</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyOne" name="UnethicalPractices" onclick="ChangeCheckBox('UnethicalPractices')" value="Video off during Onsite/US interview" />
+
+                                                        <label for="checkboxFiftyOne">Video off during Onsite/US interview</label>
+
+                                                    }
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -682,22 +697,51 @@
                             </div>
                             @if (Model.isapprovedchecked)
                             {
-                            <div class="form-group">
-                                <div class="accordion-group">
-                                    <div class="accordion-heading">
-                                        <a class="accordion-toggle">
-                                            @Html.LabelFor(model => model.PaymentDeduction, htmlAttributes: new { @class = "label-name" })
-                                        </a>
-                                    </div>
-                                    <div class="accordion-body">
-                                        <div class="accordion-inner">
-                                                    <div class="custom-select">
-                                                        @Html.DropDownListFor(model=>model.PaymentDeduction,Model.PaymentDeductionList,new { @class = "pull-left",@style="width:200px;" })
-                                                    </div>
+                                @Html.HiddenFor(model=>model.VideoReward)
+                                <div class="form-group">
+                                    <div class="accordion-group">
+                                        <div class="accordion-heading">
+                                            <a class="accordion-toggle">
+                                                @Html.LabelFor(model => model.PaymentDeduction, htmlAttributes: new { @class = "label-name" })
+                                            </a>
+                                        </div>
+                                        <div class="accordion-body">
+                                            <div class="accordion-inner">
+                                                <div class="custom-select">
+                                                    @Html.DropDownListFor(model=>model.PaymentDeduction,Model.PaymentDeductionList,new { @class = "pull-left",@style="width:200px;" })
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            }
+                            else if (Model.Pagetype == "QCPendingReport" || Model.Pagetype == "CompletedInterview")
+                            {
+                                <div class="form-group">
+                                    <div class="accordion-group">
+                                        <div class="accordion-heading">
+                                            <a class="accordion-toggle">
+                                                @Html.LabelFor(model => model.VideoReward, htmlAttributes: new { @class = "label-name" })
+                                            </a>
+                                        </div>
+                                        <div class="accordion-body">
+                                            <div class="accordion-inner">
+                                                <div class="custom-select">
+                                                    @Html.DropDownListFor(model=>model.VideoReward,new List<SelectListItem>{
+                                                new SelectListItem{Value="0",Text="0%"},
+                                                new SelectListItem{Value="10",Text="10%"},
+                                                new SelectListItem{Value="12",Text="12%"},
+                                                new SelectListItem{Value="15",Text="15%"},
+                                                new SelectListItem{Value="20",Text="20%"}},
+                                                new { @class = "pull-left",@style="width:200px;" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else{
+                                @Html.HiddenFor(model=>model.VideoReward)
                             }
                         </div>
                         <div class="col-md-6 col-sm-6">
@@ -1156,6 +1200,18 @@
                                                         <input type="checkbox" id="checkboxFortyOne" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="allowing candidates to take interview from mobile environment" /> <label for="checkboxFortyOne">allowing candidates to take interview from mobile<br />&nbsp; / inappropriate environment</label>
                                                     }
                                                 </li>
+
+
+                                                <li>
+                                                    @if (Model.ProctoringIgnorance.Split(",").Contains("Whether candidate video is clearly visible"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFifty" name="ProctoringIgnorance" checked onclick="ChangeCheckBox('ProctoringIgnorance')" value="Whether candidate video is clearly visible" /> <label for="checkboxFortyOne">Whether candidate video is clearly visible</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFifty" name="ProctoringIgnorance" onclick="ChangeCheckBox('ProctoringIgnorance')" value="Whether candidate video is clearly visible" /> <label for="checkboxFortyOne">Whether candidate video is clearly visible</label>
+                                                    }
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -1300,8 +1356,8 @@
                 }
                 else
                 {
-                    <button  style="font-size:12px;" type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded">Not Approved</button>
-                    <button  style="font-size:12px;" type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Approved</button>
+                    <button style="font-size:12px;" type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded">Not Approved</button>
+                    <button style="font-size:12px;" type="button" disabled class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Submit">Approved</button>
                 }
             }
             else

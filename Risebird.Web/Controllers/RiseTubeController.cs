@@ -197,7 +197,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var clientName = HttpContext.Session.GetString("clientName")?.Trim();
-                    clientName = clientName.Replace("\"", "");
+                    clientName = clientName?.Replace("\"", "");
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
@@ -390,7 +390,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
                     var clientName = HttpContext.Session.GetString("clientName")?.Trim();
-                    clientName = clientName.Replace("\"", "");
+                    clientName = clientName?.Replace("\"", "");
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
@@ -1444,6 +1444,10 @@ namespace Risebird.Web.Controllers
                 {
                     videoid = videoid.Split("?")[1].ToString();
                 }
+                if (videoid.Contains("="))
+                {
+                    videoid = videoid.Split("=")[1].ToString();
+                }
                 await _meetingService.AddTotalViewCount(Convert.ToInt32(videoid), Emailid, "Shared");
             }
             else
@@ -1795,7 +1799,7 @@ namespace Risebird.Web.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Sharecreatedview(MeetingVM _newobject)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)

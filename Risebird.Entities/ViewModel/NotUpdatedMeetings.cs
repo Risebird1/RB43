@@ -30,10 +30,12 @@ namespace Risebird.Entities.ViewModel
         public int RedoRequestCount { get; set; }
         public int HighRiskInterviewers { get; set; }
         public int CandidatewaitingCount { get; set; }
+        public int InterviewerVideoKYC { get; set; }
 
     }
     public class MeetingDetailsForParticipant
     {
+        public int interviewMeetingId { get; set; }
         public string candidateEmail { get; set; }
         public string risebirdHR { get; set; }
         public string interviewer { get; set; }
@@ -51,5 +53,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientHrContact { get; set; }
         public string LogoLink { get; set; }
         public int irfId { get; set; }
+        public string candidateUniqueId { get; set; }
+        public string JDLink { get; set; }
     }
 }

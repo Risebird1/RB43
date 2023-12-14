@@ -51,9 +51,10 @@ namespace Risebird.Web.Controllers
         private readonly string codeapiendpoint;
         private readonly IAadhaarService _aadhaarService;
         private readonly IWhatsAppHelper _whatsAppHelper;
+        private readonly ISASUrlHelper _sasUrlHelper;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService, IWhatsAppHelper whatsAppHelper)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper)
 
         {
             _interviewerService = interviewerService;
@@ -74,6 +75,7 @@ namespace Risebird.Web.Controllers
             codeapiendpoint = _configuration["CodeApiEndPoint"];
             _aadhaarService = aadhaarService;
             _whatsAppHelper = whatsAppHelper;
+            _sasUrlHelper = sasUrlHelper;
         }
 
 
@@ -2588,13 +2590,13 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.type = "Candidate";
                         modelData = await _interviewerService.fetchClientFeedbackbyInterviewer(emailid, "Candidate");
-                        foreach (var item in modelData)
-                        {
-                            item.StarRating = item.Question2;
-                        }
+                        //foreach (var item in modelData)
+                        //{
+                        //    item.StarRating = item.Question2;
+                        //}
                         if (modelData.Count() != 0)
                         {
-                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.Question2).Average(), 2);
+                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.Rating).Average(), 2);
                         }
                     }
                     else
@@ -2604,7 +2606,7 @@ namespace Risebird.Web.Controllers
                             modelData = results;
                         if (modelData.Count() != 0)
                         {
-                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.StarRating).Average(), 2);
+                            ViewBag.OverallRating = Math.Round(modelData.Select(x => x.Rating).Average(), 2);
                         }
                     }
                     return View(modelData);
@@ -3826,7 +3828,7 @@ namespace Risebird.Web.Controllers
                             CC = "talent@risebird.io",
                             Subject = "New interviews have come up! Please assign."
                         };
-                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total);
+                        var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, irfId);
                         //What's App Message Send
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.EmailId;
@@ -3917,6 +3919,56 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        [HttpPost]
+        public async Task<JsonResult> UploadVideoKYC()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                if (Request.Form.Files.Count() > 0)
+                {
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(Request.Form.Files[0]);
+                    if (fileMimeType == "video/mpeg" || fileMimeType == "video/mp4" || fileMimeType == "video/quicktime" || fileMimeType == "video/x-matroska")
+                    {
+                        var file = Request.Form.Files[0];
+                        var filename = emailId.Replace(".", "_").Replace("@", "a").ToString() + ".mp4";
+                        await _azureStorageHelper.InsertBlob(filename, "videokyc", file);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videokyc");
+                        var blob = containerRef.GetBlockBlobReference(filename);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        var sas = _sasUrlHelper.CreateSasUrl("videokyc");
+                        var VideoLink = string.Empty;
+                        if (!string.IsNullOrEmpty(uploadedvideoFileURL) && !string.IsNullOrEmpty(sas))
+                        {
+                            VideoLink = uploadedvideoFileURL + "?" + sas;
+                        }
+                        var result = await _interviewerService.UpdateVideoKYCDetails(VideoLink, emailId);
+                        return Json("Video KYC uploaded successfully.");
+                    }
+                }
+                return Json("Fail to upload, Please try again");
+            }
+            else
+            {
+                return Json("Fail to upload, Please try again.");
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetInterviwerExists(string interviewer)
+        {
+            var role = _interviewerService.GetUserRolebyEmailid(interviewer);
+
+            if (!string.IsNullOrWhiteSpace(role))
+            {
+                return Json("This mail id already exists in our system as " + role + "  Please check add accordingly.");
+            }
+            else
+            {
+                return Json(null);
+            }
+        }
     }
 }
 

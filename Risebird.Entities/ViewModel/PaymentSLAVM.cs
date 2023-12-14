@@ -9,7 +9,7 @@ namespace Risebird.Entities.ViewModel
 {
     public class PaymentSLAVM
     {
-        public int id{ get; set; }
+        public int id { get; set; }
         public int Interviewid { get; set; }
         public int Userid { get; set; }
         public string Emailid { get; set; }
@@ -67,7 +67,9 @@ namespace Risebird.Entities.ViewModel
         public int RedMarker { get; set; }
         public string interviewer { get; set; }
         public int Rating { get; set; }
-
+        [Display(Name = "Video Reward")]
+        public int VideoReward { get; set; }
+        public bool VideoEnable { get; set; }
     }
     public class PaymentSlabsVM
     {

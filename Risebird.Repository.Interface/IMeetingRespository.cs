@@ -220,7 +220,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddorUpdateQCFormReport(QCFormVM model);
         Task<IEnumerable<CallCatalogueVM>> GetInterviewerCallCatalogueList();
         Task<IEnumerable<ResumeDetailsVM>> NotifiyUploadResumeDetails(DateTime startdate, DateTime enddate);
-        Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags,int VideoReward);
+        Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags, int VideoReward);
         Task<string> GetClientHRContactByInterviewid(int interviewid);
         Task<List<QCFormVM>> FetchAllQCFormDetails(DateTime startDate, DateTime endDate);
         Task<IEnumerable<MeetingVM>> QCReportDetailsByInterviewer(string emailId);
@@ -255,18 +255,23 @@ namespace Risebird.Repository.Interface
         Task<bool> BacklinkFailInterviewStatusUpdate(int id);
         Task<bool> UpdateProbableNoShowCandidates();
         Task<IEnumerable<MeetingVM>> GetProbableNoShowCandidates();
+        Task<bool> UpdateProbableNoShowInterviewers();
         Task<bool> SaveSauveyIRFReview(int rating, string comments, string Emailid, string IRFId);
         Task<bool> SaveCapturedJoinMeetingTime(int interviewid, string emailid);
         Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt);
         Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month);
         Task<string> GetTranscriptUrlByMeeting(int id);
         Task<bool> AddBlackListCompany(BlackListCompanyVM model);
-        Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid);
+        Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type);
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
-        Task<bool> PaymentSlaNotApproved(int interviewid,string emailid);
+        Task<bool> PaymentSlaNotApproved(int interviewid, string emailid);
         Task<bool> AgreeToPaymentSLAConditions(string emailid);
         Task<bool> AddTransInterviewersReliabilityScores(TransInterviewersReliabilityScoresVm model);
         Task<bool> AddTransReliabilityScoresSelectAndReject(int InterviewMeetingId);
+        Task<Meeting> GetAudioCommentDetails(int interviewId);
+        Task<bool> RemoveInterviewer(int interviewid);
+        Task<bool> UpdateInterviewReport(int interviewid, string comment,string emailid);
+        Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
     }
 }

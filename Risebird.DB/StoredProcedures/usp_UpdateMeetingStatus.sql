@@ -21,6 +21,7 @@ set IsPaused = 1
 where IRFId=@IRFId  
 update InterviewComments set MeetingStatus=null where InterviewId in   
 (select id from InterviewMeetings where IRFId=@IRFId and interviewDate>@date)  
+
   DECLARE @OutputTable Table(
   interviewer varchar(200),
   candidateEmail varchar(200),
@@ -35,7 +36,7 @@ SET confirmationStatus = 2
 OUTPUT inserted.interviewer, inserted.candidateEmail, inserted.candidateName, inserted.ClientHrContact, inserted.interviewDate, inserted.id as imid ,inserted.IRFId
 into @OutputTable
 WHERE IRFId = @IRFId and interviewDate >= @date  
-  
+select * from @OutputTable
 End  
   
 

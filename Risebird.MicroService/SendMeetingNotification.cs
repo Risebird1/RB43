@@ -33,7 +33,7 @@ namespace Risebird.MicroService
             _interviewSchedulerRepository = interviewSchedulerRepository;
         }
         [FunctionName("SendMeetingNotification")]
-        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)
         {
 
 
@@ -84,7 +84,11 @@ namespace Risebird.MicroService
                                 CC = CCEmails,
                                 Subject = item.ClientName + " " + item.PrimarySkill + " Interview-  Interviewer is waiting for you. Please join immediately."
                             };
-                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString());
+
+                            string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails/" + item.candidateUniqueId + "?IRFId=" + item.irfId;
+
+                            //var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId);
+                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Interviewer", item.candidateName, item.interviewDate.ToString(), item.interviewMeetingId);
 
                         }
                         else
@@ -93,9 +97,9 @@ namespace Risebird.MicroService
                             {
                                 TO = item.interviewer,
                                 CC = CCEmails,
-                                Subject = "Risebird Interview: Are you late? Candidate (" + item.candidateName + " ) joined the meeting and waiting. Please join immediately."
+                                Subject = "Risebird Interview: Are you late? Candidate (" + item.candidateName + " ) has joined the meeting and is waiting. Please join immediately."
                             };
-                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "");
+                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "", item.interviewMeetingId);
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.interviewer + ";" + CCEmails;
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
@@ -116,7 +120,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = "Risebird Emergency Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
                         };
-                        var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl);
+                        var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId, item.JDLink);
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.emergencyinterviewer;
                         _whatsAppVM.buttonlink = !string.IsNullOrEmpty(linkurl) ? linkurl.Replace("https://portal.risebird.io/", "") : "";
@@ -131,7 +135,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = $"Risebird: We apologise for the delay in the interview"
                         };
-                        var resultset1 = await _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName);
+                        var resultset1 = await _notificationHelper.AppologyNotificationToCandidate(_mail1, item.candidateName, item.interviewMeetingId);
 
                         WhatsAppVM _whatsAppVMC = new WhatsAppVM();
                         _whatsAppVMC.Emailid = item.candidateEmail;
@@ -148,55 +152,38 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = $"Risebird: We apologise for the delay - Please wait for 5 more mins"
                         };
-                        var resultset1 = await _notificationHelper.AppologyNotificationToCandidateSecond(_mail1, item.candidateName);
+                        var resultset1 = await _notificationHelper.AppologyNotificationToCandidateSecond(_mail1, item.candidateName, item.interviewMeetingId);
                     }
                     else if (item.EmailType == "Reschedule")
                     {
                         string oneTimeSchedulingLink = string.Empty;
-                        if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                        string stepfirst = item.CalendlyLink.Split("?").LastOrDefault();
+                        var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
+                        if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                         {
-                            string stepfirst = item.CalendlyLink.Split("?")[item.CalendlyLink.Split("?").Length];
-                            var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
-                            if (string.IsNullOrEmpty(oneTimeSchedulingLink))
-                            {
-                                oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
-                            }
-                            oneTimeSchedulingLink = "https://portal.risebird.io/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                         }
-                        else
-                        {
-                            oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(item.irfId).Result;
-                        }
+                        oneTimeSchedulingLink = item.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+
                         Mail _mail = new Mail
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Risebird: Due to unforeseen circmstances, the interviewer is unable to join the interview. We apologise for the inconvenience. Kindly reschedule."
+                            Subject = $"Risebird: Due to unforeseen circumstances, the interviewer is unable to join the interview. We apologise for the inconvenience. Kindly reschedule."
                         };
-                        var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink);
+                        var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink, item.interviewMeetingId);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.candidateEmail;
-                        if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
-                        {
+                        //if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                        //{
                             _whatsapp.Event = "Interview Reschedule Risebird";
-                        }
-                        else
-                        {
-                            _whatsapp.Event = "Interview Reschedule";
-                        }
-                        if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
-                        {
-                            _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
-                        }
-                        else
-                        {
-                            _whatsapp.buttonlink = !string.IsNullOrEmpty(item.CalendlyLink) ? item.CalendlyLink.Replace("https://calendly.com/", "") : "";
-                        }
-                        if (_whatsapp.buttonlink.Contains("InterviewScheduler/ScheduleEvent"))
-                        {
-                            _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
-                        }
+                        //}
+                        //else
+                        //{
+                        //    _whatsapp.Event = "Interview Reschedule";
+                        //}
+                        _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
                         _whatsapp.irfId = item.irfId;
                         _ = await _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
                     }
