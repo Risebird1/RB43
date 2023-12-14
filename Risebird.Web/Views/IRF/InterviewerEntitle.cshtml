@@ -118,6 +118,15 @@
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Edit" style="position:relative;top:-3px;">
                                                         <span onclick="javascript:GetAllActiveAssessmentGroupInterviewersForSME('@item.id', '@item.AssessmentGroup')" title="Click here to appoint SME" class="mdc-fab__icon material-icons"><i style="font-size:13px;" class="fas fa-user-check"></i></span>
                                                 </button>
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability">
+                                                    <span onclick="javascript:CheckAGLevelInterviewerAvailability('@item.id');" title="Share Email to check Interviewer availability for this Assessment Group" class="mdc-fab__icon material-icons">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                                            <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                                                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+
                                             </td>
 
                                         </tr>
@@ -319,7 +328,7 @@
         return false;
     }
 </script>
-
+<script src="~/js/checkintervieweravailabilitybymail.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {

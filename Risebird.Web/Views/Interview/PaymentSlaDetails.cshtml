@@ -23,16 +23,16 @@
                     <div class="mobile-view"> <h4 class="card-title"> 911 Dashboard</h4></div>
                 </div>
                 <div class="pull-left">
-                        @if (ViewBag.actionstatus == "SLACompleted")
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('PaymentCompliance')"><strong>Payment Compliance</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('SLACompleted')"><strong>SLA Completed</strong></div>
-                        }
-                        else
-                        {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('PaymentCompliance')"><strong>Payment Compliance</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('SLACompleted')"><strong>SLA Completed</strong></div>
-                        }
+                    @if (ViewBag.actionstatus == "SLACompleted")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('PaymentCompliance')"><strong>Payment Compliance</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('SLACompleted')"><strong>SLA Completed</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('PaymentCompliance')"><strong>Payment Compliance</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('SLACompleted')"><strong>SLA Completed</strong></div>
+                    }
                 </div>
                 <div class="pull-right">
                     <div>
@@ -74,11 +74,13 @@
                                                     <td>Channel Owner</td>
                                                     <td>Created By</td>
                                                     <td>Created Date</td>
-                                                    @if (ViewBag.actionstatus == "SLACompleted"){
+                                                    @if (ViewBag.actionstatus == "SLACompleted")
+                                                    {
                                                         <td>Status</td>
                                                     }
-                                                    else{
-                                                    <td>QC Status</td>
+                                                    else
+                                                    {
+                                                        <td>QC Status</td>
                                                     }
                                                     <td>QC RedFlags</td>
                                                     @if (ViewBag.actionstatus != "SLACompleted")
@@ -104,11 +106,13 @@
                                                     <td>Channel Owner</td>
                                                     <td>Created By</td>
                                                     <td>Created Date</td>
-                                                     @if (ViewBag.actionstatus == "SLACompleted"){
+                                                    @if (ViewBag.actionstatus == "SLACompleted")
+                                                    {
                                                         <td>Status</td>
                                                     }
-                                                    else{
-                                                    <td>QC Status</td>
+                                                    else
+                                                    {
+                                                        <td>QC Status</td>
                                                     }
                                                     <td>QC RedFlags</td>
                                                     @if (ViewBag.actionstatus != "SLACompleted")
@@ -132,21 +136,21 @@
                                                         </td>
                                                         <td>@item.candidateEmail</td>
                                                         <td>@item.interviewer</td>
-                                                         @if (!string.IsNullOrWhiteSpace(item.CompanyName))
-                                                         {
-                                                             @if (item.CompanyName.Length > 30)
-                                                             {
-                                                                    <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
-                                                             }
-                                                             else
-                                                             {
-                                                                    <td style="font-size:13px; color:brown">@item.CompanyName</td>
-                                                             }
-                                                         }
-                                                         else
-                                                         {
-                                                                <td></td>
-                                                         }
+                                                        @if (!string.IsNullOrWhiteSpace(item.CompanyName))
+                                                        {
+                                                            @if (item.CompanyName.Length > 30)
+                                                            {
+                                                                <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="font-size:13px; color:brown">@item.CompanyName</td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                         @if (item.ResumeLink != null && item.ResumeLink != "")
                                                         {
                                                             <td>
@@ -175,36 +179,43 @@
                                                             <td style="color:red;text-align:center">@item.RedMarker</td>
                                                         }
                                                         <td>@item.PaymentDeduction %</td>
-                                                      @*   @if (item.PaymentComplianceCount > 0)
-                                                        { *@ 
+                                                        @*   @if (item.PaymentComplianceCount > 0)
+                                                    { *@
                                                         <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
                                                         @*  }
-                                                        else
-                                                        {
-                                                            <td class="text-center">0</td>
-                                                        }  *@
+                                                    else
+                                                    {
+                                                    <td class="text-center">0</td>
+                                                    }  *@
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.CreatedBy</td>
                                                         <td>@item.CreatedOn</td>
                                                         @if (ViewBag.actionstatus == "SLACompleted")
                                                         {
-                                                            if (item.isapproved==1)
+                                                            if (item.isapproved == 1)
                                                             {
                                                                 <td>Approved</td>
-                                                            }else if(item.isapproved==2){
-                                                            <td>Not Approved</td>
-                                                            }else{
+                                                            }
+                                                            else if (item.isapproved == 2)
+                                                            {
+                                                                <td>Not Approved</td>
+                                                            }
+                                                            else
+                                                            {
                                                                 <td></td>
                                                             }
                                                         }
-                                                        else{
+                                                        else
+                                                        {
                                                             if (item.QCStatus)
                                                             {
                                                                 <td>Completed</td>
-                                                            }else{
+                                                            }
+                                                            else
+                                                            {
                                                                 <td>Pending</td>
                                                             }
-                                                         }
+                                                        }
                                                         @if (item.Redflags > 0)
                                                         {
                                                             <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="GetRedFlagsModal('@item.Interviewid')">@item.Redflags</a></td>
@@ -225,12 +236,12 @@
                                                                     </span>
                                                                 }
                                                                 <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.Interviewid, irfId=item.irfIntId})">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
-                                                                            <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                        </button>
-                                                                    </a>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                                        <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                    </button>
+                                                                </a>
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment SLA">
-                                                                    <div onclick="PaymentSLADetails('@item.Interviewid','@item.candidateEmail','@item.Interviewer',true,'PaymentSLA')" title="Palyment SLA" class="mdc-fab__icon material-icons">
+                                                                    <div onclick="PaymentSLADetails('@item.Interviewid','@item.candidateEmail','@item.Interviewer',true,'PaymentSLA',false)" title="Palyment SLA" class="mdc-fab__icon material-icons">
                                                                         <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
                                                                     </div>
                                                                 </button>
@@ -444,7 +455,7 @@
         $("#divcandidateskills").empty().html(html);
     }
     function Changeurldetails(type) {
-        window.location.href = "/Interview/PaymentSlaDetails?actionstatus=" + type ;
+        window.location.href = "/Interview/PaymentSlaDetails?actionstatus=" + type;
     }
 </script>
 <script>
@@ -454,16 +465,16 @@
         modal.style.display = "none";
     }
     function GetRedFlagsModal(Interviewid) {
-            $.ajax({
-                url: '/DashBoard/GetRedFlagsQCReport',
-                data: {'Interviewid': Interviewid },
-                success: function (data) {
-                    var modal = document.getElementById("RedFlagModal");
-                    modal.style.display = "block";
-                    $('#RedFlagTableBody').html('');
-                    $('#RedFlagTableBody').html(data);
-                }
-            });
+        $.ajax({
+            url: '/DashBoard/GetRedFlagsQCReport',
+            data: { 'Interviewid': Interviewid },
+            success: function (data) {
+                var modal = document.getElementById("RedFlagModal");
+                modal.style.display = "block";
+                $('#RedFlagTableBody').html('');
+                $('#RedFlagTableBody').html(data);
+            }
+        });
     }
 </script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>

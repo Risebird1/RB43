@@ -20,7 +20,8 @@ CREATE PROCEDURE [dbo].[usp_SaveSentMailDetails]
 @InterviewId int = null,
 @CreatedAt datetime,
 @SentBy varchar(100),
-@IRFName varchar(20) = null
+@IRFName varchar(20) = null,
+@AssessmentGroupId int = null
 AS    
 Begin  
 
@@ -47,8 +48,8 @@ begin try
 
 	
 
-	Insert into SentMailDetails([To], Cc, Bcc, MailBody, MailSubject, sg_message_id, IRFId, InterviewId, CreatedAt, SentBy)  
-	values(@To, @Cc, @Bcc, @MailBody, @MailSubject, @sg_message_id, @irfIntId, @InterviewId, @CreatedAt, @SentBy)  
+	Insert into SentMailDetails([To], Cc, Bcc, MailBody, MailSubject, sg_message_id, IRFId, InterviewId, CreatedAt, SentBy, AssessmentGroupId)  
+	values(@To, @Cc, @Bcc, @MailBody, @MailSubject, @sg_message_id, @irfIntId, @InterviewId, @CreatedAt, @SentBy, @AssessmentGroupId)  
 
 
 

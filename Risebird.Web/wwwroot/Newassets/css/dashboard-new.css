@@ -8289,8 +8289,13 @@ option {
     }
     .checkbox-selectproxy input[type="radio"]:checked {
         outline: none!important;
+        background:#fff;
     }
-
+.proxy-radio-button {
+    position: relative;
+    top: 3px;
+    outline: none;
+}
 .saveloader {
     clear: both;
     text-align: center;
