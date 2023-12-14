@@ -70,6 +70,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Video Reward")]
         public int VideoReward { get; set; }
         public bool VideoEnable { get; set; }
+        public bool isQcDone { get; set; }
     }
     public class PaymentSlabsVM
     {

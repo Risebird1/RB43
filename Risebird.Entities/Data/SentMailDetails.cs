@@ -18,5 +18,6 @@ namespace Risebird.Entities.Data
         public string SentBy { get; set; }
         public string IRFName { get; set; }
         public List<int> InterviewIdList { get; set; }
+        public int? AssessmentGroupId { get; set; }
     }
 }
