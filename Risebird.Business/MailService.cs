@@ -71,11 +71,11 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetInterviewerMailActivityForAvailabilityByIRFId(int irfId)
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetInterviewerMailActivityForAvailabilityByIRFId(int? irfId = null, int? assessmentGroupId = null)
         {
             try
             {
-                return await _mailRepository.GetInterviewerMailActivityForAvailabilityByIRFId(irfId);
+                return await _mailRepository.GetInterviewerMailActivityForAvailabilityByIRFId(irfId, assessmentGroupId);
             }
             catch (Exception ex)
             {
