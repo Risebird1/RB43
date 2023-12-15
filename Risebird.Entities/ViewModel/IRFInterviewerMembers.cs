@@ -41,6 +41,9 @@ namespace Risebird.Entities.ViewModel
         public int? VideoConfirmation { get; set; }
         public int RedMarker { get; set; }
         public string Source { get; set; }
+        public bool? IsAGLevelAvailable { get; set; }
+        public DateTime? AGAvailabilityCreatedAt { get; set; }
+        public DateTime? AGAvailabilityModifiedAt { get; set; }
     }
     public class AssessmentIRFListVM
     {

@@ -46,7 +46,7 @@
                                                     }
                                                 </li>
                                                 <li>
-                                                    @if (Model.EyeMovement.Split(";").Contains("Zoom the candidate to see how many lights reflection in her eyes"))
+                                                    @if (Model.EyeMovement.Split(";").Contains("Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwo" name="EyeMovement" checked onclick="ChangeCheckBox('EyeMovement')" value="Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]" />
                                                         <label for="checkboxTwo">Multiple reflections from different screen in candidate's eyes. [Zoom on the candidate to check]</label>
@@ -84,35 +84,24 @@
                                                     }
                                                     else
                                                     {
-                                                        <input type="checkbox" id="checkboxThree" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Using overhead light" />
-                                                        <label for="checkboxThree">Using overhead light</label>
+                                                        <input type="checkbox" id="checkboxThree" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Mismatch of the lips and the voice of candidate while speaking" />
+                                                        <label for="checkboxThree">Mismatch of the lips and the voice of candidate while speaking</label>
                                                     }
                                                 </li>
                                                 <li>
 
-                                                    @if (Model.LipsMovement.Split(";").Contains("Dark light in the room or on the face"))
+                                                    @if (Model.LipsMovement.Split(";").Contains("Heavy beard that covers most of the lip movement"))
                                                     {
-                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Dark light in the room or on the face" />
-                                                        <label for="checkboxFour"> Dark light in the room or on the face</label>
+                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Heavy beard that covers most of the lip movement" />
+                                                        <label for="checkboxFour"> Heavy beard that covers most of the lip movement</label>
                                                     }
                                                     else
                                                     {
-                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Dark light in the room or on the face" />
-                                                        <label for="checkboxFour">Dark light in the room or on the face</label>
+                                                        <input type="checkbox" id="checkboxFour" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Heavy beard that covers most of the lip movement" />
+                                                        <label for="checkboxFour">Heavy beard that covers most of the lip movement</label>
                                                     }
                                                 </li>
-                                                <li>
-                                                    @if (Model.LipsMovement.Split(";").Contains("Using Headphone in front of Lips"))
-                                                    {
-                                                        <input type="checkbox" id="checkboxFive" name="LipsMovement" checked onclick="ChangeCheckBox('LipsMovement')" value="Using Headphone in front of Lips" />
-                                                        <label for="checkboxFive">Using Headphone in front of Lips</label>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input type="checkbox" id="checkboxFive" name="LipsMovement" onclick="ChangeCheckBox('LipsMovement')" value="Using Headphone in front of Lips" />
-                                                        <label for="checkboxFive">Using Headphone in front of Lips</label>
-                                                    }
-                                                </li>
+                                               
                                             </ul>
                                         </div>
                                     </div>
@@ -179,6 +168,7 @@
                                                         <input type="checkbox" id="checkboxEight" name="LinkedinPhoto" checked onclick="ChangeCheckBox('LinkedinPhoto')" value="LinkedIn photo verification [Check in case of suspicion]" />
                                                         <label for="checkboxEight">
                                                             LinkedIn photo verification [Check in case of suspicion]
+
                                                         </label>
                                                     }
                                                     else
@@ -186,6 +176,7 @@
                                                         <input type="checkbox" id="checkboxEight" name="LinkedinPhoto" onclick="ChangeCheckBox('LinkedinPhoto')" value="LinkedIn photo verification [Check in case of suspicion]" />
                                                         <label for="checkboxEight">
                                                             LinkedIn photo verification [Check in case of suspicion]
+
                                                         </label>
                                                     }
                                                 </li>
@@ -459,6 +450,71 @@
 
                                                         <label for="checkboxForteen">
                                                             Not sharing the complete screen in desktop but one screen or tab
+                                                        </label>
+                                                    }
+
+                                                </li>
+
+                                                <li>
+                                                    @if (Model.SuspiciousVoice.Split(";").Contains("Non expressive body language"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyThree" name="SuspiciousVoice" checked onclick="ChangeCheckBox('SuspiciousVoice')" value="Non expressive body language" />
+
+                                                        <label for="checkboxTwentyThree">
+                                                            Non expressive body language
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyThree" name="SuspiciousVoice" onclick="ChangeCheckBox('SuspiciousVoice')" value="Non expressive body language" />
+
+                                                        <label for="checkboxTwentyThree">
+                                                            Non expressive body language
+                                                        </label>
+                                                    }
+
+                                                </li>
+
+                                                <li>
+                                                    @if (Model.SuspiciousVoice.Split(";").Contains("Either too much movement or lacking any movement"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyFour" name="SuspiciousVoice" checked onclick="ChangeCheckBox('SuspiciousVoice')" value="Either too much movement or lacking any movement" />
+
+                                                        <label for="checkboxTwentyFour">
+                                                            Either too much movement or lacking any movement
+
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyFour" name="SuspiciousVoice" onclick="ChangeCheckBox('SuspiciousVoice')" value="Either too much movement or lacking any movement" />
+
+                                                        <label for="checkboxTwentyFour">
+                                                            Either too much movement or lacking any movement
+
+                                                        </label>
+                                                    }
+
+                                                </li>
+
+
+                                                <li>
+                                                    @if (Model.SuspiciousVoice.Split(";").Contains("Showing face without lips or showing till upper lip"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyFive" name="SuspiciousVoice" checked onclick="ChangeCheckBox('SuspiciousVoice')" value="Showing face without lips or showing till upper lip" />
+
+                                                        <label for="checkboxTwentyFive">
+                                                            Showing face without lips or showing till upper lip
+
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxTwentyFive" name="SuspiciousVoice" onclick="ChangeCheckBox('SuspiciousVoice')" value="Showing face without lips or showing till upper lip" />
+
+                                                        <label for="checkboxTwentyFive">
+                                                            Showing face without lips or showing till upper lip
+
                                                         </label>
                                                     }
 

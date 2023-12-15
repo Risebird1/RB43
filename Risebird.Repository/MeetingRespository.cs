@@ -5398,6 +5398,30 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> UpdateInterviewerAvailbilityStatusForAssessmentGroup(bool status, string uniqueId, int agId, string rsc = null)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@AssesmentGroupId", agId);
+                dynamicParameters.Add("@uniqueId", uniqueId);
+                dynamicParameters.Add("@IsAvailable", status);
+                dynamicParameters.Add("@rsc", rsc);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerAvailbilityStatusonAGLevel", dynamicParameters,
+                                            commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public string SetInterviewerAvailability(int transid, int isavailable)
         {
             try
