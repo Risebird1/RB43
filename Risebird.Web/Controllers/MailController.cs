@@ -339,7 +339,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetInterviewerMailActivityForAvailability(int irfId, string irfName)
+        public async Task<IActionResult> GetInterviewerMailActivityForAvailability(int? irfId = null, string irfName = null, int? agId = null, string agName = null)
         {
             try
             {
@@ -351,8 +351,9 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "SeniorHR")
                     {
-                        var model = (await _mailService.GetInterviewerMailActivityForAvailabilityByIRFId(irfId))?.ToList();
-                        ViewBag.IrfName = irfName;
+                        
+                        var model = (await _mailService.GetInterviewerMailActivityForAvailabilityByIRFId(irfId, agId))?.ToList();
+                        ViewBag.Name = !string.IsNullOrEmpty(irfName) ? irfName : agName;
                         return View(model);
                     }
                     else
