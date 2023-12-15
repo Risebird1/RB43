@@ -8303,6 +8303,9 @@ namespace Risebird.Web.Controllers
                 }
                 model = await _irfService.GetEditIRF(irfid, 0, false);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
+
+                var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
+                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
                 return View(model);
             }
             else
