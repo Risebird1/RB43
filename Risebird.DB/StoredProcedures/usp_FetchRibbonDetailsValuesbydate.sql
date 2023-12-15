@@ -156,18 +156,18 @@ begin
   begin  
    if (@Profile = 'SeniorHR' or @Profile = 'HR')  
    begin  
-	Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ulsh.Emailid= @Emailid
+	Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ulsh.Emailid= @Emailid and im.RedoInterview<>1
    end  
    else  
    begin  
-    Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null
+    Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and im.RedoInterview<>1
    end  
   end  
   else  
   begin  
-   select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,uli.MobileNumber as InterviewerMobileNumber  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ul.EmailId=@emailID 
+   select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ul.EmailId=@emailID and im.RedoInterview<>1
    union 
-   select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,uli.MobileNumber as InterviewerMobileNumber  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ul.EmailId=@emailID
+   select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ul.EmailId=@emailID and im.RedoInterview<>1
   end  
  end  
  else If(@actionstatus ='QCReport')  
@@ -217,56 +217,7 @@ begin
    where confirmationStatus=2 and ul.EmailId=@emailID  
   end  
  end
- else If(@actionstatus ='PotentialRiskByClient')  
- begin  
-  if (@actiontype = 0)  
-  begin  
-   if (@Profile = 'SeniorHR' or @Profile = 'HR')  
-   begin  
-    select distinct ccfr.Comment,ccfr.Interviewid,im.*, cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId ,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy  
-     from  ClientCommentsForReport ccfr   
-     join InterviewMeetings im on ccfr.InterviewId=im.id  
-     join InterviewComments ic on ic.InterviewId=im.id   
-       left join Trans_QCFormReport tq on tq.Interviewid=im.id  
-    join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id   
-    join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid   
-    join UserList ul on ul.id=  irf.RisebirdHr   
-	where  ccfr.Rating<=3 and ulsh.Emailid= @Emailid  
-   end  
-   else  
-   begin  
-    select distinct ccfr.Comment,ccfr.Interviewid,im.*, cl.Name,ul.EmailId as ChannelOwner, IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy  
-    ,ic.InterviewStatus,tq.Redflags  
-    from  ClientCommentsForReport ccfr   
-    join InterviewMeetings im on ccfr.InterviewId=im.id  
-    join InterviewComments ic on ic.InterviewId=im.id   
-       left join Trans_QCFormReport tq on tq.Interviewid=im.id   
-    join IRF on im.IRFId=irf.IRFId  join Client cl on irf.ClientId=cl.id   
-    join UserList ul on ul.id=  irf.RisebirdHr   
-	where ccfr.Rating<=3  
-   end  
-  end  
-  else  
-  begin  
-   select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ulc.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags  from  ClientCommentsForReport ccfr   
-   join InterviewMeetings im on ccfr.InterviewId=im.id  
-   join InterviewComments ic on ic.InterviewId=im.id   
-   left join Trans_QCFormReport tq on tq.Interviewid=im.id  
-   join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id   
-   join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId  
-   join Userlist ul on ul.id=HR.UserId   
-   join UserList ulc on ulc.id=  irf.RisebirdHr  
-   where ccfr.Rating<=3 and ul.EmailId=@emailID 
-   union   
-   select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags from  ClientCommentsForReport ccfr   
-    join InterviewMeetings im on ccfr.InterviewId=im.id  
-    join InterviewComments ic on ic.InterviewId=im.id   
-       left join Trans_QCFormReport tq on tq.Interviewid=im.id  
-    join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id   
-    join Userlist ul on ul.id=irf.RisebirdHr   
-   where ccfr.Rating<=3 and ul.EmailId=@emailID 
-  end  
- end  
+
  
 END
 GO

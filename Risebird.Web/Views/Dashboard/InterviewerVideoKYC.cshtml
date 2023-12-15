@@ -96,12 +96,11 @@
                                                         <td>
                                                             @if (item.VideoLink != null && item.VideoLink != "")
                                                             {
-                                                                @* @item.VideoLink *@
-                                                             
-                                                                    <video controls="controls" height="300px" width="300px">
-                                                                    <source src="@item.VideoLink" />
-                                                                    </video>
-                                                                
+                                                                <a target="_blank" onclick="javascript:OpenVideoKYCDetails('@item.VideoLink');">
+                                                                    <button class="btn btn-link">
+                                                                        <spam>Video KYC link</spam>
+                                                                       </button>
+                                                                </a>
                                                             }
                                                             else
                                                             {
@@ -143,12 +142,36 @@
     </div>
     <!-- end col-md-12 -->
 </div>
+
+<div id="VideoKYCModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-video-camera" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Video KYC</h5>
+            </div>
+            <button onclick="closeVideoKYCModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="VideoKYCModal" style="overflow:auto;max-height:30vw">
+                <video controls="controls" height="400px" width="500px" id="myVideo">
+                    <source src="" />
+                </video>
+
+            </div>
+           
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
-
+      
         applyDataTable();
     });
-
     function applyDataTable() {
         $('#detailsTable').DataTable({
             "pagingType": "full_numbers",
@@ -184,3 +207,27 @@
         }
     }
 </script>
+<script>
+    function closeVideoKYCModal() {
+        var modal = document.getElementById("VideoKYCModal");
+       
+        var videoElement = document.getElementById("myVideo");
+        videoElement.pause();
+        modal.style.display = "none";
+    }
+
+    function OpenVideoKYCDetails(VideoKYC) { 
+        var modal = document.getElementById("VideoKYCModal");
+       
+        var videoElement = document.getElementById("myVideo");
+        var sourceElement = videoElement.getElementsByTagName("source")[0];
+        sourceElement.src = VideoKYC;
+
+        // Load and play the video
+        videoElement.load();
+        videoElement.play();
+        modal.style.display = "block";
+    }
+</script> 
+
+

@@ -9,7 +9,11 @@ a {
     text-decoration: underline;
 }
 
-
+.myInterview .pskill {
+    text-decoration: none;
+    color: #837f84 !important;
+    font-size: 14px;
+}
 .can-details a, .callatag {
     color: #9a9a9a !important;
     background: #151515 !important;

@@ -21,6 +21,8 @@
                         <th>Total Interviews</th>
                         <th>Red Marker</th>
                         <th>Source</th>
+                        <th>AG Level Available</th>
+                        <th>AG Level Available Response</th>
                         <th>Action</th>
                         @* @if (ViewBag.Type != "IRF")
                     {
@@ -177,6 +179,43 @@
                             else
                             {
                                 <td></td>
+                            }
+                            @if(item.IsAGLevelAvailable == null)
+                            {
+                                <td class="text-center">
+                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;"> </span>
+                                </td>
+                            }
+
+                            else if(item.IsAGLevelAvailable.HasValue && item.IsAGLevelAvailable.Value == true)
+                            {
+                                <td class="text-center">
+                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">Yes</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="text-center">
+                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">No</span>
+                                </td>
+                            }
+                            @if(item.AGAvailabilityModifiedAt.HasValue)
+                            {
+                                <td class="text-center">
+                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">item.AGAvailabilityModifiedAt.Value</span>
+                                </td>
+                            }
+                            else if(item.AGAvailabilityCreatedAt.HasValue)
+                            {
+                                <td class="text-center">
+                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">item.AGAvailabilityCreatedAt.Value</span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="text-center">
+                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;"></span>
+                                </td>
                             }
                             <td>
                                 <button class="mdc-fab app-fab--absolute " aria-label="Interviewer Flags details">
