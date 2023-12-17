@@ -247,6 +247,10 @@
                                                         <th>IRF ID</th>
 
                                                     }
+                                                    @if(ViewBag.actionstatus == "InterviewCount")
+                                                    {
+                                                        <th>Assessment Group</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
                                                     {
                                                         <th>Skill Channel ID</th>
@@ -466,6 +470,10 @@
 
                                                         <th>IRF ID</th>
 
+                                                    }
+                                                    @if(ViewBag.actionstatus == "InterviewCount")
+                                                    {
+                                                        <th>Assessment Group</th>
                                                     }
                                                     @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
                                                     {
@@ -748,6 +756,10 @@
                                                         @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
+                                                        }
+                                                        @if(ViewBag.actionstatus == "InterviewCount")
+                                                        {
+                                                            <td>@item.AssessmentGroup</td>
                                                         }
                                                         @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
                                                         {
