@@ -109,5 +109,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<InterviewerRedmarkers>> FecthUpcomingInterviewsRedMarkers();
         Task<bool> updateRedmarkerAcknowledge(string uniqueid);
         Task<bool> UpdateVideoKYCDetails(string videolink, string Emailid);
+        Task<bool> SaveInterviewerCodedResume(InterviewerProfileVM model);
     }
 }

@@ -16,11 +16,14 @@ Create PROCEDURE [dbo].[usp_DeactivateSkillChannelInterviewer]
 @interviewerEmail varchar(100)
 AS
 BEGIN
+Declare @IRF varchar(50)
+Select @IRF=@IRFId From IRF where id=@irfId
   Declare @interviewerUserId int = (select id from UserList where EmailId = @interviewerEmail)
 		
 	IF EXISTS (SELECT 1 FROM TransInterviewer where IRFId = @irfId and UserId = @interviewerUserId) 
 	BEGIN
 		update TransInterviewer set IsActive = 0,IsAvailable=0 where IRFId = @irfId and UserId = @interviewerUserId
+		update InterviewMeetings set Interviewer=null where IRFId=@IRF and Interviewer=@interviewerEmail and interviewDate>DateAdd(MINUTE,330, Getdate())
 	END
 END
 GO

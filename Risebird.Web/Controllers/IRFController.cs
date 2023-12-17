@@ -8285,6 +8285,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                ViewBag.profileName = profileName;
                 var model = new IRFVm();
                 ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
                 var Skillset = await _irfRepository.GetSkills();
