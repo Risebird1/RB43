@@ -8363,6 +8363,25 @@ option {
     font-size: 14px;
     margin: 10px 0px;
 }
+.assessmentgrp-btn {
+    background: #42a5f5 !important;
+    padding: 7px 15px;
+    margin: 0px 20px 10px 20px;
+    color: #fff;
+    border: 0px;
+    border-radius: 4px;
+    float:right;
+    text-transform: uppercase;
+    position:relative;
+    
+}
+.videoOn-content {
+    font-size: 14px;
+    line-height: 21px;
+    margin: 10px 0px;
+    color: #ea4848f5; font-family: 'Roboto';
+    text-align: center;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -9616,7 +9635,9 @@ option {
             width: 100%;
             float: left;
         }
-
+        .assessmentgrp-btn{
+            float:none;
+        }
         .mobile-view-cl {
             position: absolute !important;
             right: 15px;
