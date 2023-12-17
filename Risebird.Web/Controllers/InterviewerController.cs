@@ -3182,11 +3182,19 @@ namespace Risebird.Web.Controllers
                 ModelState.AddModelError(string.Empty, "Please add a Resume File");
                 return View(model);
             }
-            var result = await _interviewerService.SaveInterviewerResume(model);
-            ViewBag.status = 1;
-            if (model.type == "InterviewIndex")
+            if (model.type == "HMUpload")
             {
-                return RedirectToAction("InterviewerIndex", "Dashboard");
+                var result = await _interviewerService.SaveInterviewerCodedResume(model);
+                return RedirectToAction("DeliveryHeadInstruction", "IRF", new { irfid = model.id });
+            }
+            else
+            {
+                var result = await _interviewerService.SaveInterviewerResume(model);
+                ViewBag.status = 1;
+                if (model.type == "InterviewIndex")
+                {
+                    return RedirectToAction("InterviewerIndex", "Dashboard");
+                }
             }
             return View(model);
         }
@@ -3512,7 +3520,7 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
-        public ActionResult InterviewerResumeupdate()
+        public ActionResult InterviewerResumeupdate(int userid, int irfid)
         {
             var model = new InterviewerProfileVM();
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -3526,6 +3534,12 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     model.EmailId = emailid;
                     model.type = "InterviewIndex";
+                }
+                else if (profileName != "Client" && profileName != "Public")
+                {
+                    model.type = "HMUpload";
+                    model.UserId = userid;
+                    model.id = irfid;
                 }
             }
             return PartialView(model);

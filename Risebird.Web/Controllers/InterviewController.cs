@@ -8266,5 +8266,12 @@ namespace Risebird.Web.Controllers
                 model.SuspiciousEnvironment = string.Empty;
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> RemoveInterviewerFromIRF(string interviewerEmail, int irfid)
+        {
+            //var result = await _meetingService.RemoveInterviewer(interviewid);
+            var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfid, interviewerEmail);
+            return Json("success");
+        }
     }
 }
