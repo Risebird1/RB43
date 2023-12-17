@@ -5,6 +5,8 @@
     @Html.HiddenFor(m => m.uniqueid)
     @Html.HiddenFor(m => m.EmailId)
     @Html.HiddenFor(m => m.type)
+    @Html.HiddenFor(m => m.UserId)
+    @Html.HiddenFor(m => m.id)
     <div class="row" style="padding:10px" id="divcandidateskills">
         @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt" })
     </div>

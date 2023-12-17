@@ -211,9 +211,18 @@
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <td class="cadName">
-                                                                                            <a onclick="" id=@("InterviewerCollection_" + i + "__ResumeLink") data-tooltip="">No Resume</a>
-                                                                                        </td>
+                                                                                        if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                                        {
+                                                                                            <td>
+                                                                                                <a onclick="UploadInterviewerResume(@Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId')" id=@("InterviewerCollection_" + i + "__ResumeLink") data-tooltip="">Upload Resume</a>
+                                                                                            </td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td class="cadName">
+                                                                                                <a onclick="" id=@("InterviewerCollection_" + i + "__ResumeLink") data-tooltip="">No Resume</a>
+                                                                                            </td>
+                                                                                        }
                                                                                     }
                                                                                     <td>
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
@@ -695,7 +704,19 @@
         </div>
     </div>
 </div>
-
+<div id="Resumepopup" class="modal modal-bg" style="z-index:1032">
+    <div class="blk-bg"></div>
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <h5 class="modal-title pull-left">Upload Resume</h5><span id="txtheaderinterviewer"></span>
+            </div>
+            <div class="modal-body" id="divresumepopup">
+            </div>
+        </div>
+        <p>*Please upload your latest resume to process further.</p>
+    </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
@@ -1098,8 +1119,8 @@ else
     }
 </script>
 <script>
-    function RemoveInterviewerFromSkillChannel(interviewerEmail,irfid){
-         swal.fire({
+    function RemoveInterviewerFromSkillChannel(interviewerEmail, irfid) {
+        swal.fire({
             title: 'Are you sure?',
             text: 'Want to remove interviewer from the Skill channel interviews',
             type: 'warning',
@@ -1112,7 +1133,7 @@ else
                     $.ajax({
                         type: "POST",
                         url: "/Interview/RemoveInterviewerFromIRF",
-                        data: { interviewerEmail: interviewerEmail,irfid:irfid },
+                        data: { interviewerEmail: interviewerEmail, irfid: irfid },
                         success: function (result) {
                             resolve(result);
                         }
@@ -1142,5 +1163,18 @@ else
                 )
             }
         })
+    }
+    function UploadInterviewerResume(userid, irfid, interviewer) {
+        $.ajax({
+            url: '/Interviewer/InterviewerResumeupdate',
+            data: { userid: userid, irfid: irfid },
+            success: function (data) {
+                var modal = document.getElementById("Resumepopup");
+                modal.style.display = "block";
+                $('#divresumepopup').html('');
+                $('#divresumepopup').html(data);
+                $('#txtheaderinterviewer').text(interviewer);
+            }
+        });
     }
 </script>
