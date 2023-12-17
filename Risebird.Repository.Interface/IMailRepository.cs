@@ -12,6 +12,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientActivities(string recipientEmail, DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsLatestActivity(string recipientType, DateTime? startDate = null, DateTime? endDate = null);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetRecipientMailActivitiesByMessageId(string recipientEmail, string messageId, DateTime? startDate = null, DateTime? endDate = null);
-        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetInterviewerMailActivityForAvailabilityByIRFId(int irfId);
+        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetInterviewerMailActivityForAvailabilityByIRFId(int? irfId = null, int? agId = null);
     }
 }

@@ -27,7 +27,7 @@ namespace Risebird.Entities.ViewModel
         public string LipsMovement { get; set; }
         [DisplayName("Using Suspicious applications")]
         public string CandidateDesktop { get; set; }
-        [DisplayName("Linkedin Photo")]
+        [DisplayName("Photo Verification")]
         public string LinkedinPhoto { get; set; }
 
 
