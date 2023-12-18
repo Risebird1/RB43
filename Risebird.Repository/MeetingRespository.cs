@@ -7003,6 +7003,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IsQCdone", model.IsQCdone);
                 dynamicParameters.Add("@emailId", emailId);
                 dynamicParameters.Add("@CreatedOn", DateTime.Now);
+                dynamicParameters.Add("@ProxyvotingCount", model.ProxyvotingCount);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_SaveorUpdateProxyReport", dynamicParameters,

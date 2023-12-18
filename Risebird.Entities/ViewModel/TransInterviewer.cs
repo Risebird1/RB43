@@ -19,5 +19,6 @@
         public bool IsSMEVerified { get; set; }
         public int Surcharge { get; set; }
         public string Source { get; set; }
+        public string CompanyName { get; set; }
     }
 }

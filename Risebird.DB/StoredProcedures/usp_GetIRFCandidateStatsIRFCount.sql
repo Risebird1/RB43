@@ -16,7 +16,7 @@ CREATE PROCEDURE usp_GetIRFCandidateStatsIRFCount
 @profile varchar(50),  
 @emailid varchar(200)  
 AS          
-BEGIN          
+BEGIN 
 DECLARE @tbl_Temp TABLE (                    
     IRFId INT                      
 );                    
@@ -51,7 +51,9 @@ where cs.[Status] =12 and cast([Date] as date) <=cast(@endDate as date) and cast
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId              
               
               
-  select irf.id, irf.IRFId, irf.JDTiltle, cl.[Name] as ClientCompName, irf.JobCountry, IsNULL(ulb.EmailId, '') as BillingOwnerEmailId, ul.EmailId as RisebirdHrEmail,IRF.IsPaused,                 
+  select irf.id, irf.IRFId, irf.JDTiltle, cl.[Name] as ClientCompName, irf.JobCountry, IsNULL(ulb.EmailId, '') as BillingOwnerEmailId, ul.EmailId as RisebirdHrEmail,
+  IRF.IsPaused,IRF.CreatedFromTemplateId,IRF.AssessmentGroupId,IRF.CalendlyLink,IRF.IsDeleted,
+  (CASE WHEN IRF.IsPaused=1 Then'Paused' WHEN IRF.IsDeleted=1 THEN 'Archived' WHEN IRF.EndDate>=GETDATE() THEN 'Active' ELSE 'Archived' END) AS IRFStatus,
  (select count(UserId) from @TemporaryCandidateTableVariable where IRFId = irf.id) as CandidateCount,                
  (select count(UserId) from @TemporaryCandidateTableVariable                  
  where IRFId=IRF.id and CandidateLatestStatus = 'FUTURESCHEDULE') as FutureScheduledMeetings,               
@@ -89,6 +91,6 @@ where cir.id is null and a.id=IRF.id),0) FeedbackCount
  join Client cl on cl.id = irf.ClientId                
  join UserList ul on ul.id = irf.RisebirdHr                
  left join UserList ulb on ulb.id = irf.BillingOwner      
-END        
+END          
   
 GO            

@@ -13,6 +13,15 @@ Create PROCEDURE [dbo].usp_addRedoInterview
 @Type varchar(100)
 as
 begin
-Insert Into RedoInterviews(interviewid,Type,Approved)values(@InterviewId,@Type,0)
+Declare @CreadtedBy varchar(200)
+Select @CreadtedBy=candidateEmail From InterviewMeetings where id=@InterviewId
+IF EXISTS(select * from RedoInterviews where interviewid=@interviewid)
+begin
+Update RedoInterviews set ModifiedOn=GETDATE(),ModifiedBy=@CreadtedBy where interviewid=@interviewid
+end
+else
+begin
+Insert Into RedoInterviews(interviewid,Type,Approved,Createdon,CreatedBy)values(@InterviewId,@Type,0,Getdate(),@CreadtedBy)
+end
 End
 Go

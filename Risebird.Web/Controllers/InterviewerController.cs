@@ -3897,6 +3897,10 @@ namespace Risebird.Web.Controllers
             {
                 result = new InterviewerInsightsVM();
             }
+            if (!string.IsNullOrEmpty(result.ResumeLink))
+            {
+                result.ResumeLink = result.ResumeLink.Replace(" ", "%20");
+            }
             return PartialView(result);
         }
         public async Task<IActionResult> ReliabilityScoreDetails(string interviewer)

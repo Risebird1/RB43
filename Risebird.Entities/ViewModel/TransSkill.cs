@@ -12,6 +12,7 @@
         public string Concepts { get; set; }
         public string Natureofquestion { get; set; }
         public int Timelimit { get; set; }
+        public bool isEliminationskill { get; set; }
     }
     public class TransSkillGeneral
     {

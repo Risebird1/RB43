@@ -2237,13 +2237,11 @@ namespace Risebird.Web.Controllers
                         var model = await _dashboardService.GetPotentialRiskByCandidateService();
                         foreach (var item in model)
                         {
-
                             if (item.InterviewStatus.HasValue)
                             {
                                 item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
                             }
                         }
-
                         return View(model);
                     }
                     else
@@ -2262,7 +2260,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
         [Authorize]
         [HttpGet]
         public async Task<FileContentResult> ExportPotentialRiskByCandidate()
@@ -2303,7 +2300,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 10].Value = "Red Marker";
                 Sheet.Cells[1, 11].Value = "Rating";
                 Sheet.Cells[1, 12].Value = "Rated On";
-                
+
                 int i = 2;
                 if (modelList.Count() > 0)
                 {
@@ -2340,6 +2337,7 @@ namespace Risebird.Web.Controllers
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
+
 
 
         [Authorize]

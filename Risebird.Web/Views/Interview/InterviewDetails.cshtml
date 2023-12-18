@@ -783,6 +783,7 @@
             html += '  <th width="20%" class="table_heading">Level<span class="red">*</span></th>';
             html += '  <th width="40%" class="table_heading">Skill Name<span class="red">*</span></th>';
             html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Skills Info <span class="red">*</span></th>';
             html += '  </tr>';
             html += '  </thead>';
             html += '  <tbody>';
@@ -791,6 +792,11 @@
                 html += '  <td>' + data[i].levelName + '</td>';
                 html += '  <td>' + data[i].skillName + '</td>';
                 html += '  <td>' + data[i].weightage + '</td>';
+                if(data[i].isEliminationskill==true){
+                html += '  <td style="color:red">Elimination Skill</td>';
+                }else{
+                    html += '  <td></td>';
+                }
                 html += '  </tr>';
             }
             html += '</tbody>';

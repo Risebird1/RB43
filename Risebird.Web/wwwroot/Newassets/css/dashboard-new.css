@@ -8382,6 +8382,10 @@ option {
     color: #ea4848f5; font-family: 'Roboto';
     text-align: center;
 }
+.overflow {
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
