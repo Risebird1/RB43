@@ -189,6 +189,10 @@
                                                                     <thead>
                                                                         <tr>
                                                                             <th width="20%" class="table_heading">User <span class="red">*</span></th>
+                                                                            @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                            {
+                                                                                <th width="20%" class="table_heading">Email</th>
+                                                                            }
                                                                             <th width="20%" class="table_heading">Resume</th>
                                                                             <th width="20%" class="table_heading">Skills</th>
                                                                             <th width="30%" class="table_heading">Company Name</th>
@@ -201,7 +205,14 @@
                                                                         @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                         {
                                                                             <tr>
+                                                                            @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                            {
+                                                                                <td colspan="6">No Interviewer</td>
+                                                                            }
+                                                                            else
+                                                                            {
                                                                                 <td colspan="5">No Interviewer</td>
+                                                                            }
                                                                             </tr>
                                                                         }
                                                                         else
@@ -214,6 +225,12 @@
                                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
                                                                                     </td>
+                                                                                    @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                                    {
+                                                                                    <td>
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                                    </td>
+                                                                                    }
                                                                                     @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink)) //CodedResumeLink
                                                                                     {
                                                                                         <td class="cadName">
