@@ -246,6 +246,7 @@
 
                                                         <th>Client</th>
                                                         <th>Billing Owner</th>
+                                                        <th>Status</th>
 
                                                     }
 
@@ -284,7 +285,7 @@
 
                                                         <th>Client</th>
                                                         <th>Billing Owner</th>
-
+                                                        <th>Status</th>
                                                     }
 
                                                     <th>Risebird Channel Owner</th>
@@ -327,7 +328,7 @@
 
                                                                 <td>@item.ClientCompName</td>
                                                                 <td>@item.BillingOwnerEmailId</td>
-
+                                                                <td>@item.IRFStatus</td>
                                                             }
 
                                                             <td> @item.RisebirdHREmail </td>
@@ -524,6 +525,11 @@
                                                                     <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
                                                                         <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink ,type=3})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
                                                                     </button>
+                                                                    <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { irfId = item.id, irfName = item.IRFId})" title="Client Interview Report">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity For Availability" style="position:relative;top:3px;">
+                                                                            <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
+                                                                        </button>
+                                                                    </a>
                                                                 </td>      
                                                             }
                                                            

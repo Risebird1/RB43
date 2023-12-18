@@ -6484,6 +6484,7 @@ namespace Risebird.Web.Controllers
                 if (type == "IRF")
                 {
                     Sheet.Cells[1, 10].Value = "Client";
+                    Sheet.Cells[1, 11].Value = "Status";
                 }
                 int i = 2;
                 if (irfList.Count() > 0)
@@ -6502,6 +6503,7 @@ namespace Risebird.Web.Controllers
                         if (type == "IRF")
                         {
                             Sheet.Cells[i, 10].Value = item.ClientCompName;
+                            Sheet.Cells[i, 11].Value = item.IRFStatus;
                         }
                         i++;
                     }
