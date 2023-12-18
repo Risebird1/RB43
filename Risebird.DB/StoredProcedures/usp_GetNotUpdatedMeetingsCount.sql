@@ -49,7 +49,7 @@ declare @NotProcessedCandidateResume int = (Select count(cr.id) from CandidateRe
 declare @QCPendingReportCount int = (Select Count(distinct im.id)  from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join IRF on IRF.IRFId=im.IRFId      
 join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id 
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1       
-where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<Getdate() and DATEDIFF(DAY, interviewDate, Getdate())<7 and ISNULL(im.RedoInterview,0)=0 and ulsh.Emailid= @Emailid)  
+where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ulsh.Emailid= @Emailid)  
     
 declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid where  confirmationStatus=1 and CandidateResponse=4
  and interviewdate>=@currentdate and ulsh.Emailid= @Emailid)  
@@ -133,7 +133,7 @@ set @NotProcessedCandidateResume = (Select count(*) from CandidateResume where I
   
 set @QCPendingReportCount = (Select Count(distinct im.id)  from InterviewMeetings im join IRF on im.IRFId=im.IRFId join InterviewComments ic on im.id=ic.InterviewId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id 
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) 
-and tq.id is null and interviewDate<Getdate() and DATEDIFF(DAY, interviewDate, Getdate())<7 and ISNULL(im.RedoInterview,0)=0)  
+and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0)  
   
 set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid where  confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate)  
   
