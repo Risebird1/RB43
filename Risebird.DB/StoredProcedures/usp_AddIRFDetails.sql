@@ -186,9 +186,9 @@ Begin
 					[IRFId] ,    
 					[LevelId],    
 					[SkillId],    
-					[Weightage],[Concepts],[Natureofquestion],[Timelimit])    
+					[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill])    
     
-					SELECT @idIrf, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit FROM @TechSkillBulkData tsbd
+					SELECT @idIrf, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit,tsbd.isEliminationskill FROM @TechSkillBulkData tsbd
 					--interviewers
 
 					INSERT INTO [dbo].[TransInterviewer](  
