@@ -18,6 +18,9 @@
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <div class="main-panel " id="main-panel">
     <!-- Navbar -->
     <!-- End Navbar -->
@@ -70,6 +73,7 @@
                                                                                 <th width="15%" class="table_heading">Level<span class="red">*</span></th>
                                                                                 <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
                                                                                 <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
+                                                                                <th width="10%" class="table_heading">Elimination Skill</th>
                                                                                 @* <th width="10%" class="table_heading">Concepts</th>
                                                                         <th width="30%" class="table_heading">Nature of questions</th>
                                                                         <th width="10%" class="table_heading">Time limit</th*@
@@ -98,6 +102,9 @@
                                                                         <td>
                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="0">
                                                                         </td>*@
+                                                                        <td class="text-center">
+                                                                                @Html.CheckBox("SkillCollection[0].isEliminationskill") @*, new { @checked = "checked" }*@
+                                                                            </td>
                                                                                     <td class="action text-center">
                                                                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
@@ -127,6 +134,9 @@
                                                                         <td>
                                                                         @Html.EditorFor(m => m.SkillCollection[i].Timelimit, new { htmlAttributes = new { @class = "weight form-control text-box single-line", @type = "number", @max = "30", @min = "0" } })
                                                                         </td>*@
+                                                                                        <td class="text-center">
+                                                                                            @Html.CheckBoxFor(m => m.SkillCollection[i].isEliminationskill)
+                                                                                        </td>
                                                                                         <td class="action text-center">
                                                                                             <div>
                                                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
@@ -178,9 +188,14 @@
                                                                 <table class="table table-bordered mbn" id="InterviewerTable">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th width="30%" class="table_heading">User <span class="red">*</span></th>
-                                                                            <th width="30%" class="table_heading">Resume</th>
-                                                                            <th width="30%" class="table_heading">Skills</th>
+                                                                            <th width="20%" class="table_heading">User <span class="red">*</span></th>
+                                                                            @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                            {
+                                                                                <th width="20%" class="table_heading">Email</th>
+                                                                            }
+                                                                            <th width="20%" class="table_heading">Resume</th>
+                                                                            <th width="20%" class="table_heading">Skills</th>
+                                                                            <th width="30%" class="table_heading">Company Name</th>
                                                                             @* <th width="10%" class="table_heading" title="No indicates deleted from Skill Channel">Active</th>
                                                                         <th width="10%" class="table_heading">Availability</th> *@
                                                                             <th width="10%" class="table_heading text-center">Action</th>
@@ -190,7 +205,14 @@
                                                                         @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                         {
                                                                             <tr>
-                                                                                <td colspan="4">No Interviewer</td>
+                                                                            @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                            {
+                                                                                <td colspan="6">No Interviewer</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td colspan="5">No Interviewer</td>
+                                                                            }
                                                                             </tr>
                                                                         }
                                                                         else
@@ -203,6 +225,12 @@
                                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
                                                                                     </td>
+                                                                                    @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                                    {
+                                                                                    <td>
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                                    </td>
+                                                                                    }
                                                                                     @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink)) //CodedResumeLink
                                                                                     {
                                                                                         <td class="cadName">
@@ -226,6 +254,9 @@
                                                                                     }
                                                                                     <td>
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].CompanyName, new { @class = "form-control", @readonly = "readonly" })
                                                                                     </td>
                                                                                     @* <td class="text-center">
                                                                         @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
@@ -1178,3 +1209,25 @@ else
         });
     }
 </script>
+@* <script>
+     function closeTextInstructionTypeModal() {
+        var modal = document.getElementById("TextInstructionTypeModal");
+        tinymce.remove('#Comment');
+        modal.style.display = "none";
+    }
+    function TextInstructionDetails(irfId) {
+        var modal = document.getElementById("TextInstructionTypeModal");
+        tinymce.init({
+            selector: "#Comment",
+            menubar: false,
+            statusbar: false,
+            plugins: 'link',
+            height: "300",
+            toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen  preview save | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment',
+
+        });
+        modal.style.display = "block";
+        $('#hdnIirfId').val(irfId);
+        return;
+    }
+</script> *@

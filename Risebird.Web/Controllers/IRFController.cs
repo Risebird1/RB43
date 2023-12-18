@@ -6190,6 +6190,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                //profileName = "Client";
                 ViewBag.profile = profileName;
                 ViewBag.PageStatus = "Main";
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -6480,6 +6481,7 @@ namespace Risebird.Web.Controllers
                 if (type == "IRF")
                 {
                     Sheet.Cells[1, 10].Value = "Client";
+                    Sheet.Cells[1, 11].Value = "Status";
                 }
                 int i = 2;
                 if (irfList.Count() > 0)
@@ -6498,6 +6500,7 @@ namespace Risebird.Web.Controllers
                         if (type == "IRF")
                         {
                             Sheet.Cells[i, 10].Value = item.ClientCompName;
+                            Sheet.Cells[i, 11].Value = item.IRFStatus;
                         }
                         i++;
                     }
@@ -8301,6 +8304,7 @@ namespace Risebird.Web.Controllers
                 }
                 model = await _irfService.GetEditIRF(irfid, 0, false);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
+                model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
                 return View(model);
             }
             else

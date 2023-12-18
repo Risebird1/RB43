@@ -170,10 +170,11 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("Concepts", typeof(string));
                         techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                         techSkillDt.Columns.Add("Timelimit", typeof(int));
+                        techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                         foreach (var item in irfDetails.SkillCollection)
                         {
-                            techSkillDt.Rows.Add(irfID, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                            techSkillDt.Rows.Add(irfID, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
@@ -312,10 +313,11 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Concepts", typeof(string));
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
-                        techSkillDt.Rows.Add(irfID, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        techSkillDt.Rows.Add(irfID, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
                     }
 
                     SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);

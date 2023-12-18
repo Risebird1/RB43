@@ -168,7 +168,7 @@
 
 
                 <div class="reportdropdown-content">
-                    <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId})">
+                    <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = Model.InterviewId })">
                         <text> Rate Interviewer </text>
                     </button>
                     @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
@@ -194,7 +194,7 @@
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public URL for Instant Report" onclick="GeneratePublicUrl(3)"></div>
         }
-       
+
         @if (ViewBag.profile == "Client")
         {
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
@@ -278,7 +278,7 @@
                                         </div>
                                         }*@
                                         <div class="row">
-                                           
+
                                             <div class="col-md-6 col-sm-6 border-rv">
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -321,8 +321,8 @@
                                     </div>
 
                                 </div>
-                              
-                                 @if (ViewBag.PageStatus != "PublicExternal")
+
+                                @if (ViewBag.PageStatus != "PublicExternal")
                                 {
 
                                     <div>
@@ -340,24 +340,24 @@
                                                 </select>
                                             </span>
                                         </div>
-                                        @Html.HiddenFor(m=>m.Proctoring.InterviewId)
-                                        @Html.HiddenFor(m=>m.Proctoring.isProxyCandidate)
-                                        @Html.HiddenFor(m=>m.Proctoring.EyeMovement)
-                                        @Html.HiddenFor(m=>m.Proctoring.LipsMovement)
-                                        @Html.HiddenFor(m=>m.Proctoring.CandidateDesktop)
-                                        @Html.HiddenFor(m=>m.Proctoring.LinkedinPhoto)
-                                        @Html.HiddenFor(m=>m.Proctoring.HeadMovement)
-                                        @Html.HiddenFor(m=>m.Proctoring.LatencyCheck)
-                                        @Html.HiddenFor(m=>m.Proctoring.VoiceImpostering)
-                                        @Html.HiddenFor(m=>m.Proctoring.SusipicousDevices)
-                                        @Html.HiddenFor(m=>m.Proctoring.SuspiciousVoice)
-                                        @Html.HiddenFor(m=>m.Proctoring.SuspiciousEnvironment)
-                                        @Html.HiddenFor(m=>m.Proctoring.IsQCdone)
+                                        @Html.HiddenFor(m => m.Proctoring.InterviewId)
+                                        @Html.HiddenFor(m => m.Proctoring.isProxyCandidate)
+                                        @Html.HiddenFor(m => m.Proctoring.EyeMovement)
+                                        @Html.HiddenFor(m => m.Proctoring.LipsMovement)
+                                        @Html.HiddenFor(m => m.Proctoring.CandidateDesktop)
+                                        @Html.HiddenFor(m => m.Proctoring.LinkedinPhoto)
+                                        @Html.HiddenFor(m => m.Proctoring.HeadMovement)
+                                        @Html.HiddenFor(m => m.Proctoring.LatencyCheck)
+                                        @Html.HiddenFor(m => m.Proctoring.VoiceImpostering)
+                                        @Html.HiddenFor(m => m.Proctoring.SusipicousDevices)
+                                        @Html.HiddenFor(m => m.Proctoring.SuspiciousVoice)
+                                        @Html.HiddenFor(m => m.Proctoring.SuspiciousEnvironment)
+                                        @Html.HiddenFor(m => m.Proctoring.IsQCdone)
 
                                         <!--end of multiple location-->
                                     </div>
 
-                                
+
                                 }
 
 
@@ -368,10 +368,10 @@
                                         </div><!--end of multiple location-->
                                     </div>
                                     <div class="col-md-12 strict-note">
-                                       Do not select the average candidates, unless it is informed to you and make sure the
-                                       interview status is aligned with
-                                       your comments and overall rating.
-                                       otherwise, Customer may apply penalty from 10-100%
+                                        Do not select the average candidates, unless it is informed to you and make sure the
+                                        interview status is aligned with
+                                        your comments and overall rating.
+                                        otherwise, Customer may apply penalty from 10-100%
 
                                     </div>
                                     <div class="report-wrap">
@@ -391,7 +391,7 @@
                                                         <label class="text-danger" id="meetingStatus_Error" style="color: red;margin-left: 12px;font-size: 12px"></label>
                                                     </div>
                                                 </div>
-                                             
+
                                             </div>
                                             <div class="col-md-6 col-sm-6 pull-left">
 
@@ -413,11 +413,11 @@
                                                     <div class="p15">
                                                         <div class="form-group" style="margin-bottom:0px;margin-top:10px">
                                                             <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })</strong>
-                                                           <div class="strict-note">
-                                                              Strictly avoid in Comments - grammatical errors, generic comments,
-                                                              short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.
-                                                              otherwise, Customer may apply penalty from 10-100%
-                                                           </div>
+                                                            <div class="strict-note">
+                                                                Strictly avoid in Comments - grammatical errors, generic comments,
+                                                                short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.
+                                                                otherwise, Customer may apply penalty from 10-100%
+                                                            </div>
                                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                 <div class="talktext">
                                                                     @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true", @onpaste = "return false" })
@@ -851,11 +851,13 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                         <div class="strict-note">Strictly Avoid writing questions/comments
-                                             that are not linked to desired score rubric.
-                                             Kindly ask Scenario based questions and Coding 
-                                             is mandatory in all Technical interviews.
-                                             . otherwise, Customer may apply penalty from 10-100%.</div>
+                                        <div class="strict-note">
+                                            Strictly Avoid writing questions/comments
+                                            that are not linked to desired score rubric.
+                                            Kindly ask Scenario based questions and Coding
+                                            is mandatory in all Technical interviews.
+                                            . otherwise, Customer may apply penalty from 10-100%.
+                                        </div>
                                         <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="SkillTable">
                                                 <thead>
@@ -907,7 +909,7 @@
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Characters limit 25 to 250.", maxlength = "250",@style="font-weight: bold !important;" })</td>
+                                                                <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Characters limit 25 to 250.", maxlength = "250", @style = "font-weight: bold !important;" })</td>
                                                             </tr>
                                                         }
                                                     }
@@ -1267,7 +1269,7 @@
                                         </div>
 
                                     }
-                                   
+
 
                                     <!--end of col-md-12-->
                                     <!--end of col-md-12-->
@@ -1437,7 +1439,7 @@
             </button> *@
             <div class="modal-body">
                 <div style="padding:10px">
-                    <h2 style="font-size:20px; line-height:32px; text-align:center";>  If you haven't added any questions, please add <br/> your questions before filling candidate report <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank">Click Here</a></h2>
+                    <h2 style="font-size:20px; line-height:32px; text-align:center" ;>  If you haven't added any questions, please add <br /> your questions before filling candidate report <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank">Click Here</a></h2>
                 </div>
             </div>
         </div>
@@ -1898,11 +1900,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-                                                                                                                                                                            //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-                                                                                                                                                                            // Check document for changes
-                                                                                                                                                                            //$.validator.unobtrusive.parse(document);
+                                                                                                                                                                                                            //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                                                                                                                                                                                                            // Check document for changes
+                                                                                                                                                                                                            //$.validator.unobtrusive.parse(document);
 
-                                                                                                                                                                        }
+                                                                                                                                                                                                        }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2002,7 +2004,7 @@
             });*@
 
 
-                                                                                                                                                                        }
+                                                                                                                                                                                                        }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2058,7 +2060,7 @@
 
     function CheckConditions() {
 
-        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckTechSkills() && CheckQuestionsCount() && InterviewStatusChangedValue()); //&& CheckQuestionsTiming()
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckTechSkills() && CheckQuestionsCount() && InterviewStatusChangedValue() && Proxyvalidation()); //&& CheckQuestionsTiming()
 
     }
 
@@ -2111,7 +2113,7 @@
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
                 }*@
-                                                                                           return CheckLength(250);
+                                                                                                                           return CheckLength(250);
         }
         else if (interviewStatusValue == 1 || interviewStatusValue == 3) {
             return CheckLength(50);
@@ -2291,11 +2293,17 @@
                 }
                 });*@
 
-                                                                                                                                                                            }
+                                                                                                                                                                                                            }
 
 
     });
-
+    function Proxyvalidation() {
+        if ($('#isProxy').val() == "yes" || $('#isProxy').val() == "no") {
+            return true;
+        }
+        alert('Please select the proxy status of candidate.');
+        return false;
+    }
 </script>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -2457,6 +2465,11 @@
         $("#Proctoring_InterviewId").val($("#InterviewId").val());
         if (document.getElementById('Proctoring_isProxyCandidate').value == 'True') {
             document.getElementById('isProxy').value = "yes";
+        }
+        else {
+            if ($('#IsEdited').val() == 'True') {
+                document.getElementById('isProxy').value = "no";
+            }
         }
 
     });

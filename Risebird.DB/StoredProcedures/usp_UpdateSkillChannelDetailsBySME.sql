@@ -49,7 +49,7 @@ BEGIN
 
 if exists(
 Select * from
-(select IRFId, LevelId, SkillId, Weightage, Concepts, Natureofquestion, Timelimit from TransTechSkill where IRFId=@irfId
+(select IRFId, LevelId, SkillId, Weightage, Concepts, Natureofquestion, Timelimit,isEliminationskill from TransTechSkill where IRFId=@irfId
 UNION ALL
 select * from @TechSkillBulkData)
 MergedTechTable
@@ -66,7 +66,7 @@ End
 	[IRFId] ,    
 	[LevelId],    
 	[SkillId],    
-	[Weightage],[Concepts],[Natureofquestion],[Timelimit])    
+	[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill])    
     
 	SELECT * FROM @TechSkillBulkData 
 

@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[TransTechSkill](
 	[Concepts] [varchar](50) NULL,
 	[Natureofquestion] [varchar](50) NULL,
 	[Timelimit] [int] NULL,
+	[isEliminationskill] [bit] NULL,
  CONSTRAINT [PK_TransTechSkill] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -59,4 +60,13 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE TransTechSkill
     Add [Timelimit] INT
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'isEliminationskill')
+      AND Object_ID = Object_ID(N'TransTechSkill'))
+BEGIN
+    ALTER TABLE TransTechSkill
+    Add isEliminationskill bit
 END

@@ -246,6 +246,7 @@
 
                                                         <th>Client</th>
                                                         <th>Billing Owner</th>
+                                                        <th>Status</th>
 
                                                     }
 
@@ -284,7 +285,7 @@
 
                                                         <th>Client</th>
                                                         <th>Billing Owner</th>
-
+                                                        <th>Status</th>
                                                     }
 
                                                     <th>Risebird Channel Owner</th>
@@ -327,7 +328,7 @@
 
                                                                 <td>@item.ClientCompName</td>
                                                                 <td>@item.BillingOwnerEmailId</td>
-
+                                                                <td>@item.IRFStatus</td>
                                                             }
 
                                                             <td> @item.RisebirdHREmail </td>
@@ -449,6 +450,14 @@
                                                                         </a>
 
                                                                     </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Upload Resume">
+                                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId');" title="Upload Resume" class="mdc-fab__icon material-icons">
+                                                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16"> <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" fill="white"></path> <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" fill="white"></path> </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                        <span onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                    </button>
                                                                 </td>
                                                             }
                                                             else if ((ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement") && ViewBag.Type != "ChannelOwner")
@@ -456,10 +465,10 @@
                                                                 <td>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Edit HM Instruction" style="position: relative;">
                                                                         <span onclick="javascript:openHMLink('@item.id');" title="Edit HM Instruction">
-                                                                            <svg style="color: white;position: relative;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16">
+                                                                            <svg style="color: white;position: relative;left: 5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16">
                                                                                 <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path>
                                                                             </svg>
-                                                                            <svg style="position:relative;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                                            <svg style="position:relative;left:-4px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
                                                                         </span>
                                                                     </button>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Share HM Instruction URL">
@@ -492,10 +501,38 @@
                                                                         </a>
 
                                                                     </button>
+                                                                    <button id="skill_10" class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
+                                                                        <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
+                                                                    </button>
+                                                                    <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                        <span onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                    </button><br/>
+                                                                    <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
+                                                                        <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability">
+                                                                        <span onclick="javascript:CheckIntervieweravailbility('@item.id', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+                                                                                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="mdc-fab app-fab--absolute subc" aria-label="Edit Scheduler Event">
+                                                                        <span onclick="javascript:EditSchedulerEvent('@item.CalendlyLink')" title="Edit Scheduler Event" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fa fa-calendar-check-o"></i></span>
+                                                                    </button>
 
-                                                                </td>
+                                                                    <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
+                                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink ,type=3})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                    </button>
+                                                                    <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { irfId = item.id, irfName = item.IRFId})" title="Client Interview Report">
+                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity For Availability" style="position:relative;top:3px;">
+                                                                            <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
+                                                                        </button>
+                                                                    </a>
+                                                                </td>      
                                                             }
-
+                                                           
                                                         </tr>
                                                     }
                                                 }
@@ -601,8 +638,35 @@
     </div>
 </div>
 
-@await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
 
+
+<div id="interviewerMemberModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;" onclick="closeMember()">&times;</span>
+            </button>
+
+            <div class="modal-body" id="memberTableBody">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
+@await Html.PartialAsync("~/Views/Candidate/UploadResumePartial.cshtml")
+
+<script src="~/js/checkintervieweravailabilitybymail.js"></script>
 
 <script>
     var closeMember = document.getElementById("interviewerStatsPopUp");
@@ -1123,7 +1187,67 @@ else
         window.open('/IRF/SkillChannelDetailedView?type=' + type + '&irfid=' + irfid, '_blank');
     }
 </script>
+<script>
+    //Candidates
+    function Candidates(id, IRFid) {
 
+        var url = '/Candidate/GetCandidates?id=' + id + '&irfName=' + IRFid;
+        window.location.href = url;
+    };
+    </script>
+    <script>
+
+    function EditIRF(id, templateId) {
+        if ('@ViewBag.profile' == 'Client' && templateId != null && templateId > 0) {
+            var url = '/IRF/EditIRF?id=' + id + '&templateId=' + templateId;
+            window.location.href = url;
+        }
+        else {
+            $.ajax({
+                url: '/IRF/CheckEditCondition?IRFId=' + id,
+                type: 'POST',
+                success: function (result) {
+                    if (result == "Success") {
+                        var url = '/IRF/EditIRF?id=' + id;
+                        window.location.href = url;
+                    }
+                    else {
+                        swal.fire("You are not authorize to edit this skill channel, Please contact Admin or Channel Owner.");
+                    }
+                }
+            });
+        }
+
+    };
+    </script>
+
+    <script>
+    // var closeMember = document.getElementById("membersPopUp");
+    function closeMember() {
+        var modal = document.getElementById("interviewerMemberModal");
+        modal.style.display = "none";
+    }
+    function getIRFMembers(id, Name) {
+        $.ajax({
+            url: '/IRF/GetIRFInterviewerMembers',
+            data: { 'irfId': id },
+            success: function (data) {
+                var modal = document.getElementById("interviewerMemberModal");
+                modal.style.display = "block";
+                $('#memberTableBody').html('');
+                $('#memberTableBody').html(data);
+            }
+        });
+    }
+
+    function EditSchedulerEvent(schedulerlink) {
+        if (schedulerlink != '') {
+            var _uniqueid = schedulerlink.split('?')[schedulerlink.split('?').length - 1].split('=')[1];
+            window.location.href = "/InterviewScheduler/IRFSchedulerEventEdit?id=" + _uniqueid;
+        }
+    }
+
+    </script>
 @*<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
 <script src="~/js/filtervalidation.js"></script>
 
