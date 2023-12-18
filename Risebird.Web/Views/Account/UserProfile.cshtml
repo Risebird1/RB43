@@ -244,19 +244,17 @@
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <div>Do you want to enable your video while taking Interview? Yes or No</div>
+                                                                <div> Do you want to enable your video while taking Interview? Yes or No</div>
 
                                                                 @Html.RadioButtonFor(model => model.VideoConfirmation,1) Yes
 
-                                                                @Html.RadioButtonFor(model => model.VideoConfirmation,2)No
-
+                                                                @Html.RadioButtonFor(model => model.VideoConfirmation,2) No
 
                                                             </div>
                                                         }
                                                     }
                                                 </div>
-                                                <div class="col-sm-12 pull-left">
-                                                </div>
+                                                
                                             </div>
                                         </div>
                                         @if (@HttpContextAccessor.HttpContext.Session.GetString("profileName") != null)
