@@ -3,7 +3,7 @@
 <div>
     @if (Model != null && Model.Count() != 0)
     {
-        <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+       <div style="height:450px;overflow-y:scroll;"> <div  class="scrollbar" id="style-2">
 
             <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;" id="InterviewingMenbers">
                 <thead>
@@ -183,38 +183,38 @@
                             @if(item.IsAGLevelAvailable == null)
                             {
                                 <td class="text-center">
-                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;"> </span>
+                                    <span></span>
                                 </td>
                             }
 
                             else if(item.IsAGLevelAvailable.HasValue && item.IsAGLevelAvailable.Value == true)
                             {
                                 <td class="text-center">
-                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">Yes</span>
+                                    <span style="color:green">Yes</span>
                                 </td>
                             }
                             else
                             {
                                 <td class="text-center">
-                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">No</span>
+                                    <span style="color:darkred">No</span>
                                 </td>
                             }
                             @if(item.AGAvailabilityModifiedAt.HasValue)
                             {
                                 <td class="text-center">
-                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">item.AGAvailabilityModifiedAt.Value</span>
+                                    <span>item.AGAvailabilityModifiedAt.Value</span>
                                 </td>
                             }
                             else if(item.AGAvailabilityCreatedAt.HasValue)
                             {
                                 <td class="text-center">
-                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">item.AGAvailabilityCreatedAt.Value</span>
+                                    <span>item.AGAvailabilityCreatedAt.Value</span>
                                 </td>
                             }
                             else
                             {
                                 <td class="text-center">
-                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;"></span>
+                                    <span></span>
                                 </td>
                             }
                             <td>
@@ -273,7 +273,7 @@
                 </tbody>
             </table>
 
-        </div>
+        </div></div>
     }
     else
     {
