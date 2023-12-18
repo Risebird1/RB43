@@ -1,0 +1,145 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.ProctoringReport>
+@{
+    ViewData["Title"] = "ProxyReport";
+}
+<script>
+    var Header = "<div>Proxy Report</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<style>
+    .swal2-popup .swal2-title {
+        font-size: 1.5em !important;
+        text-transform: none !important;
+        font-weight: 400 !important;
+        line-height: 28px;
+    }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div>
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+
+                        <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title">BlackList Company</h4></div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                @* <img src="~/Newassets/img/lazyload.gif" /> *@
+                            </div>
+
+                            <div style="overflow-x:scroll" class="scrollbar">
+                                <div id="tableID" class="second">
+                                    <table id="detailsTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Eye Movement</th>
+                                                <th>Lips Movement</th>
+                                                <th>Candidate Desktop</th>
+                                                <th>LinkedIn Photo</th>
+                                                <th>Head Movement</th>
+                                                <th>Latency Check</th>
+                                                <th>Voice Impostering</th>
+                                                <th>Suspicious Devices</th>
+                                                <th>Suspicious Voice</th>
+                                                <th>Suspicious Environment</th>
+                                                <td>CreatedBy</td>
+                                                <th>CreatedOn</th> 
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Eye Movement</th>
+                                                <th>Lips Movement</th>
+                                                <th>Candidate Desktop</th>
+                                                <th>LinkedIn Photo</th>
+                                                <th>Head Movement</th>
+                                                <th>Latency Check</th>
+                                                <th>Voice Impostering</th>
+                                                <th>Suspicious Devices</th>
+                                                <th>Suspicious Voice</th>
+                                                <th>Suspicious Environment</th>
+                                                 <th>CreatedBy</th>
+                                                <th>CreatedOn</th> 
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+
+                                            @if (Model != null && Model.Count() > 0)
+                                            {
+
+
+                                                foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        <td>@item.EyeMovement</td>
+                                                        <td>@item.LipsMovement</td>
+                                                        <td>@item.CandidateDesktop</td>
+                                                        <td>@item.LinkedinPhoto</td>
+                                                        <td>@item.HeadMovement</td>
+                                                        <td>@item.LatencyCheck</td>
+                                                        <td>@item.VoiceImpostering</td>
+                                                        <td>@item.SusipicousDevices</td>
+                                                        <td>@item.SuspiciousVoice</td>
+                                                        <td>@item.SuspiciousEnvironment</td>
+                                                      <td>@item.CreatedBy</td>
+                                                        <td>@item.CreatedOn</td>
+                                                    </tr>
+                                                }
+
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end content-->
+
+        </div>
+        <!--  end card  -->
+    </div>
+    <!-- end col-md-12 -->
+</div>
+<script>
+    $(document).ready(function () {
+
+        applyDataTable();
+    });
+    function applyDataTable() {
+        $('#detailsTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+    }
+    </Script>

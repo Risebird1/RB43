@@ -826,5 +826,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<ProctoringReport>> GetProxyReport()
+        {
+            try
+            {
+                return await _dashboardRespository.GeProxyReport();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
