@@ -135,17 +135,13 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetInterviewerMailActivityForAvailabilityByIRFId(int irfId)
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetInterviewerMailActivityForAvailabilityByIRFId(int? irfId = null, int? agId = null)
         {
             try
             {
                 var parameters = new DynamicParameters();
-                //parameters.Add("@recipientEmail", recipientEmail);
-                //parameters.Add("@startDate", startDate);
-                //parameters.Add("@endDate", endDate);
-                //parameters.Add("@timeNow", DateTime.Now);
-                //parameters.Add("@messageId", messageId);
-                parameters.Add("@irfId", irfId);
+                parameters.Add("@irfId", irfId.HasValue ? irfId.Value : null);
+                parameters.Add("@assessmentGroupId", agId.HasValue ? agId.Value : null);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetInterviewerMailActivityForAvailabilityByIRFId", parameters,

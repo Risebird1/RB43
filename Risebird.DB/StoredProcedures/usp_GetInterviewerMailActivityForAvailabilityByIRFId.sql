@@ -13,11 +13,14 @@ GO
   
 CREATE PROCEDURE [dbo].[usp_GetInterviewerMailActivityForAvailabilityByIRFId]    
 
-@irfId int
+@irfId int = null,
+@assessmentGroupId  int  = null
 
 AS    
 Begin
 
+if(@irfId is not null)
+Begin
 	declare @irfName varchar(100) = (select irfid from irf where id = @irfId)
 	declare @jdTitle nvarchar(500) = (select JDTiltle from irf where id = @irfId)
 
@@ -38,6 +41,24 @@ Begin
   --or charindex('Current availability (2 days) check for Skill Channel ' + @irfName, smd.MailSubject) > 0
   --or charindex('Current availability (2 days) check for  ' + @jdTitle, smd.MailSubject) > 0)--and smd.MailSubject like '%Risebird: Availability check for Skill Channel%' 
   order by smd.CreatedAt desc
+End
+Else if(@assessmentGroupId is not null)
+Begin
+
+	select distinct smd.MailSubject, smd.MailBody, smd.CreatedAt , sge.email, sge.[event] as eventType, sge.[timestamp], sge.[url],
+	smd.InterviewId, smd.SentBy, irf.IRFId as SkillChannelName, irf.id as IRFId, ipr.CompanyName, ipr.ResumeLink, ipr.VideoConfirmation,ipr.RedMarker,   
+	smd.SentBy, ul.MobileNumber, dbo.fn_GetInterviewerOrQCMeetingsCount(IRF.IRFId, ul.EmailId, 'I') as TotalInterviews, ul.EmailId, ul.FirstName + ' ' + ul.LastName as RecipientName--im.interviewDate, 
+	from SendgridEventData sge 
+	join SentMailDetails smd on smd.sg_message_id = sge.Split_Message_Id
+	join UserList ul on ul.EmailId = sge.email
+	join InterviewerProfile ipr on ipr.UserId  = ul.id
+	left join IRF on IRF.id = smd.IRFId
+	--left join InterviewMeetings im on im.interviewer = ul.EmailId
+	where (sge.[event] = 'open' or sge.[event]='click') and ul.idProfile = 3--profile id for Interviewer and irf.id =@irfId and
+	and smd.AssessmentGroupId = @assessmentGroupId
+	order by smd.CreatedAt desc
+End
+	
  
 End  
   

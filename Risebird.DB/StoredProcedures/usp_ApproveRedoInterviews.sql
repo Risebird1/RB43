@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create Procedure usp_ApproveRedoInterviews
+CREATE Procedure usp_ApproveRedoInterviews
 @InterviewId int,
 @ModifyBy varchar(100),
 @ModifyDate DateTime
@@ -16,5 +16,6 @@ AS
 BEGIN 
 UPDATE RedoInterviews set Approved =1,ModifiedBy=@ModifyBy,ModifiedOn=@ModifyDate where interviewid=@InterviewId
 UPDATE InterviewMeetings set RedoInterview=1,sModifiedBy=@ModifyBy,dtModifiedOn=@ModifyDate where id=@InterviewId
+exec usp_ResetInterviewPayment @InterviewId
 END
 GO

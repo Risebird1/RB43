@@ -1527,5 +1527,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> SaveInterviewerCodedResume(InterviewerProfileVM model)
+        {
+            try
+            {
+                return await _interviewerRepository.SaveInterviewerCodedResume(model);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

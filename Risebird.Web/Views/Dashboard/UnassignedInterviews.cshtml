@@ -247,6 +247,10 @@
                                                         <th>IRF ID</th>
 
                                                     }
+                                                    @if(ViewBag.actionstatus == "InterviewCount")
+                                                    {
+                                                        <th>Assessment Group</th>
+                                                    }
                                                     @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
                                                     {
                                                         <th>Skill Channel ID</th>
@@ -466,6 +470,10 @@
 
                                                         <th>IRF ID</th>
 
+                                                    }
+                                                    @if(ViewBag.actionstatus == "InterviewCount")
+                                                    {
+                                                        <th>Assessment Group</th>
                                                     }
                                                     @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
                                                     {
@@ -748,6 +756,10 @@
                                                         @if (ViewBag.actionstatus != "ReScheduleCount" && ViewBag.actionstatus != "PotentialRiskInterviewCount" && ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                         {
                                                             <td title=@item.IRFId> @item.IRFId </td>
+                                                        }
+                                                        @if(ViewBag.actionstatus == "InterviewCount")
+                                                        {
+                                                            <td>@item.AssessmentGroup</td>
                                                         }
                                                         @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "RedoInterviewCount")
                                                         {
@@ -1384,11 +1396,11 @@
                                                         {
                                                             <td>
 
-                                                                <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
+                                                                @* <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
                                                                     <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
                                                                         <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
                                                                     </button>
-                                                                </a>
+                                                                </a> *@
 
                                                                 <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
@@ -1419,13 +1431,13 @@
                                                                         </button>
                                                                     </a>
                                                                 </span>
-                                                                <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
+                                                               @*  <a style="text-decoration:none;" target="_blank" href="@Url.Action("QCReportForm", "Interview", new { interviewid = item.imid, interviewer = item.interviewer,pageStatus="1" })" title="QC Form" class="mdc-fab__icon material-icons">
 
                                                                     <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="QC Form" style=" position: relative; top: -1px;">
                                                                         <i style="font-size: 16px; position: relative; top: -1px;" class="far fa-comment-dots"></i>
 
                                                                     </button>
-                                                                </a>
+                                                                </a> *@
 
                                                                @*  <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report" style="margin: 0px 3px;">
