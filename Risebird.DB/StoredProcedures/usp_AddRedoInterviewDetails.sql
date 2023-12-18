@@ -22,7 +22,8 @@ BEGIN
 IF EXISTS(select * from RedoInterviews where interviewid=@interviewid)
 BEGIN
 Update RedoInterviews set  interviewid=@interviewid,CandidateFace=@CandidateFace,Inappropriate=@Inappropriate,RequiredDuration=@RequiredDuration,
-ActualDuration=@ActualDuration,HandsOfCoding=@HandsOfCoding,Comments=@Comments,RejectionComment=@RequiredDuration,ModifiedOn=GETDATE(),ModifiedBy=@ModifiedBy
+ActualDuration=@ActualDuration,HandsOfCoding=@HandsOfCoding,Comments=@Comments,RejectionComment=@RequiredDuration,ModifiedOn=GETDATE(),ModifiedBy=@ModifiedBy,
+Type=null
 where interviewid=@interviewid
 END
 ELSE

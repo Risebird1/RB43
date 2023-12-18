@@ -7,6 +7,7 @@
     @Html.HiddenFor(m => m.InterviewId,new{@id="hidInterviewid"})
     @Html.HiddenFor(m => m.IsQCdone)
     @Html.HiddenFor(m => m.type)
+    @Html.HiddenFor(m => m.ProxyvotingCount)
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
             <div class="card-wrap" style="margin:0px 0px">
@@ -639,6 +640,17 @@
         else {
             $('#' + groupName).val("");
         }
+        CountCheckBox();
+    }
+    function CountCheckBox() {
+        var countcheck = 0;
+        $('#proxy-content').find(':checkbox').each(function () {
+            var vlucheck = $(this)[0].checked;
+            if (vlucheck) {
+                countcheck = countcheck + 1;
+            }
+        });
+        $("#ProxyvotingCount").val(countcheck);
     }
 </script>
 

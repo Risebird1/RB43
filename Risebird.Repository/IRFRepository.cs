@@ -658,7 +658,7 @@ namespace Risebird.Repository
                                     Natureofquestion = !string.IsNullOrEmpty(dt.Rows[i]["Natureofquestion"].ToString()) ? dt.Rows[i]["Natureofquestion"].ToString() : null,
                                     Timelimit = !string.IsNullOrEmpty(dt.Rows[i]["Timelimit"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Timelimit"]) : 0,
                                     SkillName = !string.IsNullOrEmpty(dt.Rows[i]["SkillName"].ToString()) ? dt.Rows[i]["SkillName"].ToString() : null,
-
+                                    isEliminationskill = !string.IsNullOrEmpty(dt.Rows[i]["isEliminationskill"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["isEliminationskill"]) : false,
 
                                 });
                             }
@@ -737,6 +737,7 @@ namespace Risebird.Repository
                                     ResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["ResumeLink"].ToString()) ? dt.Rows[i]["ResumeLink"].ToString() : null,
                                     CodedResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["CodedResumeLink"].ToString()) ? dt.Rows[i]["CodedResumeLink"].ToString() : null,
                                     Source = !string.IsNullOrEmpty(dt.Rows[i]["Source"].ToString()) ? dt.Rows[i]["Source"].ToString() : null,
+                                    CompanyName = !string.IsNullOrEmpty(dt.Rows[i]["CompanyName"].ToString()) ? dt.Rows[i]["CompanyName"].ToString() : null,
 
                                 });
                             }
@@ -1185,6 +1186,7 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("Concepts", typeof(string));
                         techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                         techSkillDt.Columns.Add("Timelimit", typeof(int));
+                        techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                         foreach (var item in irfDetails.SkillCollection)
                         {
@@ -1196,7 +1198,7 @@ namespace Risebird.Repository
                             {
                                 item.Natureofquestion = "";
                             }
-                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
                         }
                     }
 
@@ -2113,6 +2115,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Concepts", typeof(string));
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
@@ -2124,7 +2127,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
                     }
 
                     DataTable interviewerDt = new DataTable();
@@ -6238,6 +6241,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Concepts", typeof(string));
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
@@ -6249,7 +6253,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, "", "", 0);
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, "", "", 0, item.isEliminationskill);
                     }
 
                     DataTable clientUserDt = new DataTable();
@@ -6481,6 +6485,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Concepts", typeof(string));
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
@@ -6492,7 +6497,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, "", "", 0);
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, "", "", 0, item.isEliminationskill);
                     }
 
                     DataTable clientUserDt = new DataTable();
@@ -6577,7 +6582,7 @@ namespace Risebird.Repository
 
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 //return false;
-                return new Tuple<bool, int>(false, 0); 
+                return new Tuple<bool, int>(false, 0);
 
             }
         }
@@ -6721,6 +6726,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Concepts", typeof(string));
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
@@ -6732,7 +6738,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
                     }
 
                     DataTable clientUserDt = new DataTable();
@@ -7408,10 +7414,11 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("Concepts", typeof(string));
                         techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                         techSkillDt.Columns.Add("Timelimit", typeof(int));
+                        techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                         foreach (var item in techskills)
                         {
-                            techSkillDt.Rows.Add(item.IRFId, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                            techSkillDt.Rows.Add(item.IRFId, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
@@ -7565,7 +7572,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<BroadcastModel>> GetTextInstruction( int irfId)
+        public async Task<IEnumerable<BroadcastModel>> GetTextInstruction(int irfId)
         {
             try
             {

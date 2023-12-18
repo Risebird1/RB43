@@ -8304,6 +8304,7 @@ namespace Risebird.Web.Controllers
                 }
                 model = await _irfService.GetEditIRF(irfid, 0, false);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
+                model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
                 return View(model);
             }
             else
