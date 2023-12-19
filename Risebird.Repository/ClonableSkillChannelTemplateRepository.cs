@@ -111,6 +111,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Concepts", typeof(string));
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                     foreach (var item in templateDetails.SkillCollection)
                     {
@@ -122,7 +123,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(templateDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        techSkillDt.Rows.Add(templateDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit,item.isEliminationskill);
                     }
 
                     DataTable interviewerDt = new DataTable();
@@ -357,6 +358,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Concepts", typeof(string));
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    techSkillDt.Columns.Add("isEliminationskill", typeof(int));
 
                     foreach (var item in templateDetails.SkillCollection)
                     {
@@ -368,7 +370,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(templateDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        techSkillDt.Rows.Add(templateDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit,item.isEliminationskill);
                     }
 
                     DataTable interviewerDt = new DataTable();

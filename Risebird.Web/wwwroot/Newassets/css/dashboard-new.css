@@ -8391,6 +8391,10 @@ option {
     cursor:pointer;
     text-decoration:none;
 }
+.overflow {
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
