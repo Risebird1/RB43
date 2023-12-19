@@ -168,7 +168,7 @@
                                     <div class="card">
                                         <label class="question" for="checkbox_eight">
                                             <label for="checkbox_eight">
-                                                <i class="fa fa-cogs" aria-hidden="true"></i>
+                                                <i class="fas fa-users" aria-hidden="true" style="font-size:18px;margin-right:10px;"></i>
                                                 Interviewers
                                             </label>
                                             <span class="round">
@@ -242,13 +242,13 @@
                                                                                         if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
                                                                                         {
                                                                                             <td>
-                                                                                                <a onclick="UploadInterviewerResume(@Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId')" id=@("InterviewerCollection_" + i + "__ResumeLink") data-tooltip="">Upload Resume</a>
+                                                                                                <a class="upload-resume-btn" onclick="UploadInterviewerResume(@Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Upload Resume</a>
                                                                                             </td>
                                                                                         }
                                                                                         else
                                                                                         {
                                                                                             <td class="cadName">
-                                                                                                <a onclick="" id=@("InterviewerCollection_" + i + "__ResumeLink") data-tooltip="">No Resume</a>
+                                                                                                <a  id=@("InterviewerCollection_" + i + "__ResumeLink")>No Resume</a>
                                                                                             </td>
                                                                                         }
                                                                                     }
@@ -740,8 +740,14 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
-                <h5 class="modal-title pull-left">Upload Resume</h5><span id="txtheaderinterviewer"></span>
+                <h5 class="modal-title pull-left">Upload Resume</h5><span style="float: right;color:green;padding: 10px;font-size: 15px;" id="txtheaderinterviewer"></span>                
             </div>
+
+            <a onclick="closeResumewModel()" href="#">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="cursor:pointer;position:absolute;top:20px;right:20px;">
+                <span aria-hidden="true">×</span>
+                </button>
+            </a>
             <div class="modal-body" id="divresumepopup">
             </div>
         </div>
@@ -1077,12 +1083,10 @@ else
 {
     <script>
         $(document).ready(function () {
-
             var modal = document.getElementById("EmailAuthentication");
             modal.style.display = "block";
 
         });
-
         function SubmitEmail() {
             if ($("#txtemailid").val().trim() != "") {
                 localStorage.setItem('PublicEmailid', $("#txtemailid").val());
@@ -1103,7 +1107,6 @@ else
         }
     </script>
 }
-
 <script>
     function ChangeJobLevel() {
         var joblevel = document.getElementById("JobLevel").value;
@@ -1209,25 +1212,3 @@ else
         });
     }
 </script>
-@* <script>
-     function closeTextInstructionTypeModal() {
-        var modal = document.getElementById("TextInstructionTypeModal");
-        tinymce.remove('#Comment');
-        modal.style.display = "none";
-    }
-    function TextInstructionDetails(irfId) {
-        var modal = document.getElementById("TextInstructionTypeModal");
-        tinymce.init({
-            selector: "#Comment",
-            menubar: false,
-            statusbar: false,
-            plugins: 'link',
-            height: "300",
-            toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen  preview save | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment',
-
-        });
-        modal.style.display = "block";
-        $('#hdnIirfId').val(irfId);
-        return;
-    }
-</script> *@
