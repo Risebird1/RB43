@@ -142,7 +142,9 @@
                             </div>
                             @if (Model.IRFInterviewerActive)
                             {
-                                <div class="pull-right"> <input style="background:red" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Remove Interviewer" onclick="removeInterviewer(@Model.InterviewId)"></div>
+                                <div class="pull-right"> <input style="background:green" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
+
+                                <div class="pull-right"> <input style="background:red" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
                             }
                         }
 
@@ -900,21 +902,37 @@
     </script>
 }
 <script>
-    function removeInterviewer(interviewid) {
+    function removeOrShortlistInterviewer(interviewid, action) {
+        var bodyText;
+        var confirmationButtonText;
+        var successHtmlText;
+        if(action =='Rejected')
+        {
+            bodyText = 'Do you want to terminate this interviewer from taking further interviews for this Skill Channel?';
+            confirmationButtonText = 'Yes, Remove it!';
+            successHtmlText = '<p>The Interviewer has been removed.</p>';
+        }
+        else
+        {
+            bodyText = 'Do you want to shortlist this interviewer?';
+            confirmationButtonText = 'Yes';
+            successHtmlText='<p>The Interviewer has been shortlisted.</p>';
+        }
+
         swal.fire({
             title: 'Are you sure?',
-            text: 'Want to remove interviewer from further this Skill channel interviews',
+            text: bodyText,
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Remove it!',
+            confirmButtonText: confirmationButtonText,
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
                         type: "POST",
-                        url: "/Interview/RemoveInterviewer",
-                        data: { interviewid: interviewid },
+                        url: "/Interview/RemoveOrShortlistInterviewer",
+                        data: { 'interviewid': interviewid, 'action' : action },
                         success: function (result) {
                             resolve(result);
                         }
@@ -925,9 +943,9 @@
         }).then(function (result) {
             if (result.dismiss !== 'cancel') {
                 swal.fire({
-                    title: 'Removed!',
+                    title: 'Successful!',
                     type: 'success',
-                    html: '<p>The Interviewer has been removed.</p>',
+                    html: successHtmlText,
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',
@@ -939,7 +957,7 @@
             else if (result.dismiss === 'cancel') {
                 swal.fire(
                     'Cancelled',
-                    'remove cancelled! :)',
+                    'Operation cancelled! :)',
                     'error'
                 )
             }

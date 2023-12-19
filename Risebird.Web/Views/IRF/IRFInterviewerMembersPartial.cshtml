@@ -9,6 +9,7 @@
                 <thead>
                     <tr>
                         <th>EmailId</th>
+                        <th>Client Action</th>
                         @* <th>Type</th>*@
                         <th class="text-center">Mobile</th>
                         <th>Resume Link</th>
@@ -53,15 +54,7 @@
                             }
                         }
                         <tr style="background:@colorcode" title="@item.CompanyName">
-                            @*  @if (item.Type == "Interviewer")
-                    {
-                    <td style="color: #17c317">@item.Type</td>
-                    }
-                    else
-                    {
-                    <td style="color: #ff7bf5">@item.Type</td>
-                    }*@
-                            @*<td title="@item.EmailId">@item.EmailId</td>*@
+                            
 
                            @if (@item.EmailId != null && @item.EmailId != "")
                             {
@@ -84,7 +77,23 @@
                                 <td></td>
                             }
 
+                            @if(!string.IsNullOrEmpty(item.ClientAction))
+                            {
+                                if(item.ClientAction == "Shortlisted")
+                                {
+                                    <td style="color:green">@item.ClientAction</td>
+                                }
+                                else
+                                {
+                                    <td style="color:red">@item.ClientAction</td>
 
+                                }
+
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
                             <td class="text-center flex-w">
                                 <span class="call-area">
                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
