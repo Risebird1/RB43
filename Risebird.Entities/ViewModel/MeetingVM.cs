@@ -317,6 +317,7 @@ namespace Risebird.Entities.ViewModel
         public string SuspiciousEmail { get; set; }
         public string InterviewAddedOn { get; set; }
         public string CreatedBy { get; set; }
+        public DateTime? Createdon { get; set; }
         public string ResumeLink { get; set; }
         public string SuspiciousComment { get; set; }
         public string SuspiciousAddedBy { get; set; }

@@ -211,13 +211,13 @@
                             @if(item.AGAvailabilityModifiedAt.HasValue)
                             {
                                 <td class="text-center">
-                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">@item.AGAvailabilityModifiedAt.Value</span>
+                                    <span>@item.AGAvailabilityModifiedAt.Value</span>
                                 </td>
                             }
                             else if(item.AGAvailabilityCreatedAt.HasValue)
                             {
                                 <td class="text-center">
-                                    <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">@item.AGAvailabilityCreatedAt.Value</span>
+                                    <span>@item.AGAvailabilityCreatedAt.Value</span>
                                 </td>
                             }
                             else
