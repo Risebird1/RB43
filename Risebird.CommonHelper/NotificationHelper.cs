@@ -1345,7 +1345,7 @@ namespace Risebird.CommonHelper
                 obj.InterviewId = interviewId;
                 obj.SentBy = currentUser;
                 obj.IRFName = IRFName;
-                if(interviewIds != null && interviewIds.Count()>0)
+                if (interviewIds != null && interviewIds.Count() > 0)
                 {
                     obj.InterviewIdList = interviewIds;
                 }
@@ -2063,7 +2063,10 @@ namespace Risebird.CommonHelper
 
                 foreach (var mail in toMails)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    if (!string.IsNullOrEmpty(mail))
+                    {
+                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    }
                 }
                 if (!string.IsNullOrEmpty(model.CC))
                 {
@@ -2242,7 +2245,7 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                object[] parameters = new object[] { Interviewname, yesbutton, nobutton, agName};
+                object[] parameters = new object[] { Interviewname, yesbutton, nobutton, agName };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckIntervieweravailbility.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckAGLevelInterviewerAvailability.html");
 
