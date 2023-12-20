@@ -1103,7 +1103,13 @@ table {
     color: #244871!important;
     background: #42a5f5 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
-
+.report-iconcolor {
+    color: #244871 !important;
+    background: #42a5f5 url(../../img/report-icon.png) 7px 7px no-repeat !important;
+}
+.report-txt {
+    color: #244871 !important;
+}
 .wallet-txt {
     color: #254b76;
 }
