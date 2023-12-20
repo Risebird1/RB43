@@ -738,6 +738,7 @@ namespace Risebird.Repository
                                     CodedResumeLink = !string.IsNullOrEmpty(dt.Rows[i]["CodedResumeLink"].ToString()) ? dt.Rows[i]["CodedResumeLink"].ToString() : null,
                                     Source = !string.IsNullOrEmpty(dt.Rows[i]["Source"].ToString()) ? dt.Rows[i]["Source"].ToString() : null,
                                     CompanyName = !string.IsNullOrEmpty(dt.Rows[i]["CompanyName"].ToString()) ? dt.Rows[i]["CompanyName"].ToString() : null,
+                                    ClientAction = !string.IsNullOrEmpty(dt.Rows[i]["ClientAction"].ToString()) ? dt.Rows[i]["ClientAction"].ToString() : null,
 
                                 });
                             }
