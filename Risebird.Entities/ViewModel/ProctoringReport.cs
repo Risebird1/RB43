@@ -52,6 +52,7 @@ namespace Risebird.Entities.ViewModel
         public bool isProxyCandidate { get; set; }
         public bool IsQCdone { get; set; }
         public string type { get; set; }
+        public int ProxyvotingCount { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public int irfIntId { get; set; }
