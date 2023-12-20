@@ -539,7 +539,14 @@
     });
 
 </script>
-
+@if (ViewBag.profileName == "Client")
+{
+    <script>
+        $(document).ready(function () {
+            $("#main-panel").removeClass("main-panel");
+        });
+    </script>
+}
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();
