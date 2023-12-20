@@ -8443,7 +8443,6 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 TechSkillComments model = new TechSkillComments();
                 //var result = _irfService.GetTechSkillComments(id, emailid);
-                model.SkillCollection = new List<SkillComment>();
                 var skills = await _irfService.GetTechSkills(id);
                 ViewBag.Skills = new SelectList(skills, "id", "Name");
                 model.IRFId = id;
