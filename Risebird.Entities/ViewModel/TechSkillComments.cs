@@ -18,5 +18,6 @@ namespace Risebird.Entities.ViewModel
         public SelectList Skills { get; set; }
         public string SkillsOptionsData { get; set; }
         public string IrfName { get; set; }
+        public string CreatedBy { get; set; }
     }
 }

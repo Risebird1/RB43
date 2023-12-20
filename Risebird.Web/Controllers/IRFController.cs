@@ -8431,5 +8431,92 @@ namespace Risebird.Web.Controllers
             var textInstruction = await _irfService.GetTextInstructionService(irfid);
             return Json(textInstruction);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelSampleQuestions(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                TechSkillComments model = new TechSkillComments();
+                //var result = _irfService.GetTechSkillComments(id, emailid);
+                model.SkillCollection = new List<SkillComment>();
+                var skills = await _irfService.GetTechSkills(id);
+                ViewBag.Skills = new SelectList(skills, "id", "Name");
+                model.IRFId = id;
+                model.Profile = profileName;
+                model.CreatedBy = emailid;
+                return PartialView(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SkillChannelSampleQuestions(TechSkillComments model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (ModelState.IsValid)
+                    {
+                        var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId)).Where(x => x.UserId == model.UserId);
+
+                        if (questionsCollection.Count() != questionsCollection.Distinct().Count())
+                        {
+                            //duplicates exist
+                            ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
+                            var skills = await _irfService.GetTechSkills(model.IRFId);
+                            ViewBag.Skills = new SelectList(skills, "id", "Name");
+                            //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+                            model.Profile = profileName;
+                            return View(model);
+                        }
+
+                        //if (await _irfService.AddSkillComments(model))
+                        //{
+                        //    TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";
+                        //    return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
+                        //}
+                        //else
+                        //{
+                        //    TempData["SuccessErrorMessageQuestions"] = "Failed to save Question(s)!";
+                        return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
+                        //}
+                    }
+                    else
+                    {
+                        var skills = await _irfService.GetTechSkills(model.IRFId);
+                        ViewBag.Skills = new SelectList(skills, "id", "Name");
+                        //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
+
+                        model.Profile = profileName;
+                        //ModelState.AddModelError
+                        return PartialView(model);
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageQuestions"] = "Questions were not saved";
+                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
+            }
+        }
     }
 }
