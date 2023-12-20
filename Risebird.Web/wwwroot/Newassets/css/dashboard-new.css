@@ -16862,7 +16862,7 @@ div.tagsinput {
     }
 
     .razorpay_details {
-        width: 100%;
+        width: 100%!important;
         float: left;
         position: absolute;
         left: 0;
