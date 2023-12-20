@@ -719,10 +719,10 @@
     }
 </script>
 <script>
-    function OpenRedoFormModel(interviewid, interviewstatus, type) {
+    function OpenRedoFormModel(interviewid, interviewstatus, type,uniqueid) {
         $.ajax({
             url: '/Interview/RedoInterviewDetails',
-            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus, 'type': type },
+            data: { 'interviewid': interviewid, 'interviewstatus': interviewstatus, 'type': type,'uniqueid':uniqueid },
             success: function (data) {
                 $('#divredoInterview').html('')
                 $('#divredoInterview').html(data);
