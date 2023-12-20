@@ -6427,7 +6427,7 @@ input[type="date"].form-control {
     background: #18188069;
 }
 .videokyc {
-    background: #206870;
+    background: #80cbc46b;
 }
 .clarity {
     background: #25bd6a8a;
@@ -6888,7 +6888,9 @@ input[type="date"].form-control {
     background: green;
     color: #fff;
 }
-
+.proxy-report {
+    background: #7667f0;
+}
 .waiting {
     background: orange;
     color: #94207bbd;
