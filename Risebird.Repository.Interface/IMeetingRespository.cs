@@ -270,7 +270,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddTransInterviewersReliabilityScores(TransInterviewersReliabilityScoresVm model);
         Task<bool> AddTransReliabilityScoresSelectAndReject(int InterviewMeetingId);
         Task<Meeting> GetAudioCommentDetails(int interviewId);
-        Task<bool> RemoveInterviewer(int interviewid);
+        Task<bool> RemoveOrShortlistInterviewer(int interviewid, string action = null);
         Task<bool> UpdateInterviewReport(int interviewid, string comment,string emailid);
         Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
     }
