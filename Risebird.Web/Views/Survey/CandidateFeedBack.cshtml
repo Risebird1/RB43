@@ -8,7 +8,12 @@
 @{
     ViewData["Title"] = "FeedBack";
     ViewBag.PageHeader = "FeedBack";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (ViewBag.profileName != "Client")
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }else{
+        Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    }
     dynamic filter = null;
     string[] ProfileSource = new string[] { };
     string[] HREmail = new string[] { };
@@ -65,34 +70,43 @@
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title"> FeedBack</h4></div>
                     </div>
-                    <div class="col-md-12">
-                        @if (ViewBag.type == "Client")
-                        {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
-                        }
-                        else
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
-                        }
-                    </div>
+                    @if (ViewBag.profileName != "Client")
+                    {
+                        <div class="col-md-12">
+                            @if (ViewBag.type == "Client")
+                            {
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
+                                <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
+                            }
+                            else
+                            {
+                                <div class="feedback-tab" onclick="Changeurldetails('Client','@ViewBag.PageName')"><strong>Client Feedback</strong></div>
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.PageName')"><strong>Candidate Feedback</strong></div>
+                            }
+                        </div>
+                    }
                     <div class="pull-right">
-                        @if (ViewBag.PageName == "IRF")
+                        @if (ViewBag.profileName != "Client")
                         {
-                            <input type="hidden" value="@ViewBag.IRFId" id="_hidIRF" />
-                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="position:relative;top:-9px;">Back</a>
-                            @*<i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedBackByIRFIdExporttoExcel", "Survey", new { IRFId = ViewBag.IRFId })'"></i>*@
+                            @if (ViewBag.PageName == "IRF")
+                            {
+                                <input type="hidden" value="@ViewBag.IRFId" id="_hidIRF" />
+                                <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="position:relative;top:-9px;">Back</a>
+                                @*<i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedBackByIRFIdExporttoExcel", "Survey", new { IRFId = ViewBag.IRFId })'"></i>*@
+                            }
+                            else
+                            {
+                                <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
+                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                    <div class="mdc-button__ripple"></div>
+                                </button>
+                            }
                         }
                         else
                         {
-                            <button id="cfeedback_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top">
-                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                <div class="mdc-button__ripple"></div>
-                            </button>
-                            @*<span id="cfeedback_3">
-                        <i id="allinterview_3" data-intro='Click here to export the Candidate data in excel sheet' data-position='left' type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CandidateFeedbackExporttoExcel", "Survey")'"></i>
-                        </span>*@
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("PublicCandidateStatus", "Candidate", new { emailid=ViewBag.emailid,id=ViewBag.uniqueid })'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
                         }
                     </div>
                 </div>
@@ -330,16 +344,16 @@
                                                             </button>
                                                             @if (ViewBag.type == "Candidate")
                                                             {
-                                                                <span class="interview_9">
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Report">
-                                                                        <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
+                                                                <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.irfIntId})">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Interview Report">
+                                                                           <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                     </button>
-                                                                </span>
+                                                                </a>
                                                             }
                                                             @if (ViewBag.profileName != "Client")
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview">
-                                                                    <span onclick="OpenRedoFormModel('@item.interviewid','@item.intervieweStatusStatDesc','PublicFeedbackCandidate','@ViewBag.uniqueid')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                    <span onclick="OpenRedoFormModel('@item.InterviewId','@item.intervieweStatusStatDesc','FeedbackCandidate')" title="ReDo Interview" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                                                             <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
                                                                             <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
@@ -350,7 +364,7 @@
                                                             else
                                                             {
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview">
-                                                                    <span onclick="OpenRedoFormModel('@item.interviewid','@item.intervieweStatusStatDesc','PublicFeedbackCandidate','@ViewBag.uniqueid')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                    <span onclick="OpenRedoFormModel('@item.InterviewId','@item.intervieweStatusStatDesc','PublicFeedbackCandidate','@ViewBag.uniqueid')" title="ReDo Interview" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                                                             <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
                                                                             <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
