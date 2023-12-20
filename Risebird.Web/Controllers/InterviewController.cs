@@ -8147,9 +8147,9 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> RemoveInterviewer(int interviewid)
+        public async Task<JsonResult> RemoveOrShortlistInterviewer(int interviewid, string action = null)
         {
-            var result = await _meetingService.RemoveInterviewer(interviewid);
+            var result = await _meetingService.RemoveOrShortlistInterviewer(interviewid, action);
             return Json("success");
         }
         [HttpPost]
