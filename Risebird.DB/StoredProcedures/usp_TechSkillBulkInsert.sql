@@ -26,12 +26,13 @@ INSERT INTO [dbo].[TransTechSkill](
  [IRFId] ,    
  [LevelId],    
  [SkillId],    
- [Weightage],[Concepts],[Natureofquestion],[Timelimit])    
+ [Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill])    
     
 SELECT * FROM @TechSkillBulkData    
     
     
 END 
+
 GO
 
 

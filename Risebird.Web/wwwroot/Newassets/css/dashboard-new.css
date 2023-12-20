@@ -40,7 +40,7 @@ body {
 .table td, .table th {
     padding: 0.75rem;
     vertical-align: top;
-    border-top: 1px solid #dee2e65e;
+    border-top: 1px solid #abadaf3d;
 }
 
 .modal {
@@ -8381,6 +8381,19 @@ option {
     margin: 10px 0px;
     color: #ea4848f5; font-family: 'Roboto';
     text-align: center;
+}
+.upload-resume-btn {
+    background: #42a5f5;
+    color:#fff!important;
+    font-size:13px;
+    padding:5px;
+    border-radius:5px;
+    cursor:pointer;
+    text-decoration:none;
+}
+.overflow {
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {

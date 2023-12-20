@@ -2764,6 +2764,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Concepts", typeof(string));
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
+                    techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
 
                     foreach (var item in model.SkillCollection)
                     {
@@ -2775,7 +2776,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(model.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit);
+                        techSkillDt.Rows.Add(model.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
                     }
 
                     SqlCommand cmdUpdateIRF = new SqlCommand("usp_UpdateSkillChannelDetailsBySME", con);
