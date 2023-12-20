@@ -2468,7 +2468,28 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         var model = await _dashboardService.GetProxyReport();
+                        model = model.Select(x =>
+                        {
+                            x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+                        foreach (var item in model)
+                        {
 
+                            if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                            {
+                                if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
+                                {
+                                    item.MeetingStatusStatusDesc = "Status Pending";
+                                }   
+                            }
+                            else
+                            {
+                                item.MeetingStatusStatusDesc = string.Empty;
+
+                            }
+                        }
                         return View(model);
                     }
                     else

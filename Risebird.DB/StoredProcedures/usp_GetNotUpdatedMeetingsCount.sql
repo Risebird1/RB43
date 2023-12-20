@@ -49,7 +49,7 @@ declare @NotProcessedCandidateResume int = (Select count(cr.id) from CandidateRe
 declare @QCPendingReportCount int = (Select Count(distinct im.id)  from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join IRF on IRF.IRFId=im.IRFId      
 join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id 
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1       
-where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<Getdate() and DATEDIFF(DAY, interviewDate, Getdate())<7 and ulsh.Emailid= @Emailid)  
+where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ulsh.Emailid= @Emailid)  
     
 declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid where  confirmationStatus=1 and CandidateResponse=4
  and interviewdate>=@currentdate and ulsh.Emailid= @Emailid)  
@@ -92,6 +92,7 @@ declare @PaymentSlacomplianceCount int=(Select count(ps.id) From PaymentSLADetai
 declare @RedoRequestCount int=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id where ISNULL(Approved,0)=0)  
 declare @HighRiskInterviewers int=(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)  
 declare @InterviewerVideoKYC int=(Select COUNT(ip.id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where isnull(ip.IsVideoApproved,0)=0 and ul.IsActive=1 and ip.VideoLink is not null)
+declare @ProxyCount int=(Select COUNT(pr.id) from ProxyReport pr Join InterviewMeetings im on pr.interviewid=im.id join IRF on IRF.IRFId=im.IRFId join [dbo].[InterviewComments] ic on im.id = ic.InterviewId where isProxyCandidate=0)
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,  
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink,   
@@ -109,7 +110,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @interviewerChurnCount as InterviewerChurnCount,  
 @RedoRequestCount as RedoRequestCount,  
 @HighRiskInterviewers as HighRiskInterviewers ,
-@InterviewerVideoKYC as InterviewerVideoKYC
+@InterviewerVideoKYC as InterviewerVideoKYC,
+@ProxyCount as ProxyCount
 END          
 ELSE          
 BEGIN    
@@ -127,14 +129,13 @@ left join (Select meetingid,Count(*) as meetingMember from ZoomMeetingTransmissi
 join InterviewMeetings im on im.ZoomMeetingid=t1.meetingid            
 where (ISNULL(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and dateadd(minute,15,im.Interviewdate)>=dateadd(minute,330,getdate()))  
   
-set @MissingVideoLink = (select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,
- @currentdate)<7)  
+set @MissingVideoLink = (select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id where ic.MeetingStatus=4 and (ic.VideoLink is null or ic.VideoLink='') and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7)  
   
 set @NotProcessedCandidateResume = (Select count(*) from CandidateResume where IsnUll(Isprocessed,0)=0)  
   
 set @QCPendingReportCount = (Select Count(distinct im.id)  from InterviewMeetings im join IRF on im.IRFId=im.IRFId join InterviewComments ic on im.id=ic.InterviewId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id 
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) 
-and tq.id is null and interviewDate<Getdate() and DATEDIFF(DAY, interviewDate, Getdate())<7)  
+and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0)  
   
 set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid where  confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate)  
   
@@ -159,8 +160,7 @@ join InterviewMeetings im on im.id = pnc.InterviewId
 join UserList ul on ul.id = pnc.CandidateUserId    
 join InterviewComments ic on ic.Interviewid=im.id)  
   
-set @PotentialRiskByClient =(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=
-3)  
+set @PotentialRiskByClient =(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)  
 set @BlackListCompanyCount=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)  
 set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)  
   
@@ -169,6 +169,7 @@ set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps l
  set @RedoRequestCount=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id where ISNULL(Approved,0)=0)  
  set @HighRiskInterviewers =(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)  
  set @InterviewerVideoKYC=(Select COUNT(ip.id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where isnull(ip.IsVideoApproved,0)=0 and ul.IsActive=1 and ip.VideoLink is not null) 
+ set @ProxyCount=(Select COUNT(pr.id) from ProxyReport pr Join InterviewMeetings im on pr.interviewid=im.id join IRF on IRF.IRFId=im.IRFId join [dbo].[InterviewComments] ic on im.id = ic.InterviewId where isProxyCandidate=0)
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,  
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink,   
 @MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,  
@@ -185,7 +186,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @interviewerChurnCount as InterviewerChurnCount,  
 @RedoRequestCount as RedoRequestCount,  
 @HighRiskInterviewers as HighRiskInterviewers,
-@InterviewerVideoKYC as InterviewerVideoKYC
+@InterviewerVideoKYC as InterviewerVideoKYC,
+@ProxyCount as ProxyCount
 END          
-End 
+End  
 GO

@@ -54,5 +54,10 @@ namespace Risebird.Entities.ViewModel
         public string type { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
+        public int irfIntId { get; set; }
+        public string confirmationStatus { get; set; }
+        public int? MeetingStatus { get; set; }
+        public string MeetingStatusStatusDesc { get; set; }
+        public DateTime? interviewDate { get; set; }
     }
 }
