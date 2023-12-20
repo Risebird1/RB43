@@ -20,5 +20,6 @@
         public int Surcharge { get; set; }
         public string Source { get; set; }
         public string CompanyName { get; set; }
+        public string ClientAction { get; set; }
     }
 }

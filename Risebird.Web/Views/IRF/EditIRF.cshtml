@@ -1200,6 +1200,7 @@
                                                                             <th width="10%" class="table_heading">Surcharge</th>
 
                                                                         }
+                                                                        <th width="10%" class="table_heading" title="'Rejected' indicates client is not happy with this interviewer and has removed him/her.">Client Action</th>
                                                                         <th width="10%" class="table_heading" title="No indicates deleted from Skill Channel">Active</th>
                                                                         <th width="10%" class="table_heading">Availability</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
@@ -1249,7 +1250,9 @@
                                                                                     @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
                                                                                 </td>
                                                                             }
-                                                                            
+                                                                            <td>
+                                                                                @Html.TextBox("InterviewerCollection[0].ClientAction", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                            </td>
                                                                             <td class="text-center">
                                                                                 @Html.CheckBox("InterviewerCollection[0].IsActive") @*, new { @checked = "checked" }*@
                                                                             </td>
@@ -1323,7 +1326,9 @@
                                                                                     </td>
 
                                                                                 }
-                                                                                
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].ClientAction, new { @class = "form-control", @readonly = "readonly" })
+                                                                                </td>
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
                                                                                 </td>

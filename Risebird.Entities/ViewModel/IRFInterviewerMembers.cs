@@ -44,6 +44,7 @@ namespace Risebird.Entities.ViewModel
         public bool? IsAGLevelAvailable { get; set; }
         public DateTime? AGAvailabilityCreatedAt { get; set; }
         public DateTime? AGAvailabilityModifiedAt { get; set; }
+        public string ClientAction { get; set; }
     }
     public class AssessmentIRFListVM
     {

@@ -4046,11 +4046,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> RemoveInterviewer(int interviewid)
+        public async Task<bool> RemoveOrShortlistInterviewer(int interviewid, string action = null)
         {
             try
             {
-                var result = await _meetingRespository.RemoveInterviewer(interviewid);
+                var result = await _meetingRespository.RemoveOrShortlistInterviewer(interviewid, action);
                 return result;
             }
             catch (Exception e)
