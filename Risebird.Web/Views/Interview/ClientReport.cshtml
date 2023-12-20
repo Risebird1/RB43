@@ -142,9 +142,9 @@
                             </div>
                             @if (Model.IRFInterviewerActive)
                             {
-                                <div class="pull-right"> <input style="background:green" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
+                                <div class="pull-right"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right"  value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
 
-                                <div class="pull-right"> <input style="background:red" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
+                                <div class="pull-right"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
                             }
                         }
 
@@ -175,6 +175,24 @@
                     <div class="col-md-12">
                         <div class="mdc-card card bl-bg">
                             <div class="mdc-card-wrapper__text-section">
+                              <div>  @if (!string.IsNullOrEmpty(Model.ClientAction))
+                                {
+                                    if (Model.ClientAction == "Shortlisted")
+                                    {
+                                            <span style="color:green; width: 100%;font-size:16px;background: #c9f6c9;padding: 2px;display: block; position: relative;top: -15px;text-align: center;font-weight:bold;">This interview has been shortlisted by the Client</span>
+                                    }
+                                    else if (Model.ClientAction == "Rejected")
+                                    {
+                                            <span style="color: #e21c1c;width: 100%;font-size:16px;background: #f4433633;padding: 2px;display: block; position: relative;top: -15px;text-align: center;font-weight:bold;">This interview has been rejected by the Client</span>
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    <span></span>
+                                }
+                                </div>
                                 <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
                                     @Html.AntiForgeryToken()
                                     <div class="canvas_div_pdf">
