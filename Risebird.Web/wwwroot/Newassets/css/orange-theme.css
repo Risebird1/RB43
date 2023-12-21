@@ -1181,7 +1181,13 @@ input[type="radio"]:checked {
     color: #f28542!important;
     background: #f98a46 url(../../img/dashboard-view.png) 7px 9px no-repeat !important;
 }
-
+.report-iconcolor {
+    color: #f28542 !important;
+    background: #f98a46 url(../../img/report-icon.png) 7px 7px no-repeat !important;
+}
+.report-txt {
+    color: #6a6866 !important;
+}
 .wallet-txt {
     color: #6a6866;
 }

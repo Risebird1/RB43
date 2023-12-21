@@ -7594,6 +7594,84 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<bool> AddIRFSampleQuestions(TechSkillComments obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable techSkillCommentsDt = new DataTable();
+                    techSkillCommentsDt.Columns.Add("IRFId", typeof(int));
+                    techSkillCommentsDt.Columns.Add("Skill", typeof(int));
+                    techSkillCommentsDt.Columns.Add("Comment", typeof(string));
+                    techSkillCommentsDt.Columns.Add("CreatedBy", typeof(string));
+                    foreach (var item in obj.SkillCollection)
+                    {
+                        techSkillCommentsDt.Rows.Add(obj.IRFId, Convert.ToInt32(item.Skill), item.Comment, item.CreatedBy);
+                    }
+                    SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddIRFSampleQuestions", con);
+                    cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
+                    cmdAddSkillComments.Parameters.Add(new SqlParameter("@IRFSampleQuestionsBulkData", SqlDbType.Structured));
+                    cmdAddSkillComments.Parameters["@IRFSampleQuestionsBulkData"].Value = techSkillCommentsDt;
+                    cmdAddSkillComments.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int));
+                    cmdAddSkillComments.Parameters["@IRFId"].Value = obj.IRFId;
+                    con.Open();
+
+                    if (await cmdAddSkillComments.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
+        }
+        public async Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<SkillComment>(con, "usp_GetSkillSampleQuestions", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> DeleteSkillChannelSampleQuestions(int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@questionid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<SkillComment>(con, "usp_DeleteSkillSampleQuestions", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
 
