@@ -1962,14 +1962,28 @@
                     else {
                         document.getElementById("uniqueMsg").innerHTML = "";
                         //document.getElementById("btnUpload").disabled = false;
+                        disableSubmitButton(); // for 5 seconds
                         return true;
                     }
 
                 }
             });
+                disableSubmitButton(); // for 5 seconds
             return true;
         }
     }
+
+    function disableSubmitButton() {
+    var button = document.getElementById("btnUpload");
+
+    // Disable the button
+    button.disabled = true;
+
+    // Enable the button after 5 seconds
+    setTimeout(function() {
+        button.disabled = false;
+    }, 5000);
+}
 
     function AddRow() {
         //document.getElementById("btnUpload").disabled = false;
