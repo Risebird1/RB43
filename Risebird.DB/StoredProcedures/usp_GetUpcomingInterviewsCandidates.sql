@@ -11,8 +11,9 @@ GO
 Create Procedure usp_GetUpcomingInterviewsCandidates
 AS
 BEGIN
-Select ul.uniqueid,im.candidateEmail as EmailId,im.candidateName as Name,IRF.JobCountry from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId 
+Select ul.uniqueid,im.candidateEmail as EmailId,im.candidateName as Name,IRF.JobCountry,cl.Name as ClientName from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId 
 join UserList ul on im.candidateEmail=ul.EmailId left join AadhaarDetails ad on im.candidateEmail=ad.email 
+join Client cl on cl.id=IRF.Clientid
 where interviewDate>=dateadd(minute,330,GetDate()) and interviewDate<dateadd(minute,390,GetDate()) 
 and ad.id is null and IRF.IsAadhaarVerificationRequired=1
 

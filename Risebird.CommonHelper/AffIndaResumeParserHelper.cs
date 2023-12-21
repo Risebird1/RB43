@@ -108,5 +108,134 @@ namespace Risebird.CommonHelper
             //var response = _httpRequestHelper.MakeHttpRequest("https://api.calendly.com/event_types", Method.Get, null, headers, parameters).Result;
 
         }
+
+        public async Task<string> UploadResumeForRedaction(string fileUrl = null)
+        {
+            try
+            {
+                var apiKey = _configuration["AffIndaResumeParser:apiKey"];
+                var collectionId = _configuration["AffIndaResumeParser:redactorCollectionId"];
+                string result = string.Empty;
+
+                var client = new HttpClient();
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri("https://api.affinda.com/v2/redacted_resumes"),
+                    Headers =
+                {
+                    { "accept", "application/json" },
+                    { "authorization", $"Bearer {apiKey}" },
+                },
+                    Content = new MultipartFormDataContent
+                    {
+                        new StringContent("true")
+                        {
+                            Headers =
+                            {
+                                ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                                {
+                                    Name = "wait",
+                                }
+                            }
+                        },
+
+                        new StringContent(fileUrl)
+                        {
+                            Headers =
+                            {
+                                ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                                {
+                                    Name = "url",
+                                }
+                            }
+                        },
+                        new StringContent(collectionId)
+                        {
+                            Headers =
+                            {
+                                ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                                {
+                                    Name = "collection",
+                                }
+                            }
+                        },
+                        new StringContent("true")
+                        {
+                            Headers =
+                            {
+                                ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                                {
+                                    Name = "redactHeadshot",
+                                }
+                            }
+                        },
+                        new StringContent("true")
+                        {
+                            Headers =
+                            {
+                                ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                                {
+                                    Name = "redactPersonalDetails",
+                                }
+                            }
+                        },
+                        new StringContent("true")
+                        {
+                            Headers =
+                            {
+                                ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                                {
+                                    Name = "redactReferees",
+                                }
+                            }
+                        },
+                        new StringContent("true")
+                        {
+                            Headers =
+                            {
+                                ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                                {
+                                    Name = "redactPdfMetadata",
+                                }
+                            }
+                        }
+                    }
+                };
+                using (var response = await client.SendAsync(request))
+                {
+                    response.EnsureSuccessStatusCode();
+                    //response.StatusCode
+                    var body = await response.Content.ReadAsStringAsync();
+                    result = body;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+
+            //RestResponse response = client.Execute(request);
+
+            //Dictionary<string, string> headers = new Dictionary<string, string>
+            //    {
+            //        { "Authorization", "Bearer " + apiKey },
+            //        //{ "Content-Type", "multipart/form-data" },
+            //        { "Content-Type", "application/json" },
+            //        { "accept", "application/json" }
+            //    };
+
+            //List<HttpParameters> parameters = new List<HttpParameters>
+            //    {
+            //        new HttpParameters() { name = "file", value = fileStream, parameterType = ParameterType.RequestBody },
+            //        new HttpParameters() { name = "application/json", value = 100, parameterType = ParameterType.QueryString }
+            //    };
+
+            //var response = _httpRequestHelper.MakeHttpRequest("https://api.calendly.com/event_types", Method.Get, null, headers, parameters).Result;
+
+        }
     }
 }

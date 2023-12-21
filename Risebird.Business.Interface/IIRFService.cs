@@ -148,7 +148,8 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateDeficultyLevel(int irf, int difficultylevel);
         Task<bool> UpdateFormat(int irf, string format);
         Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf);
-
-
+        Task<bool> AddIRFSampleQuestions(TechSkillComments skillComments);
+        Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
+        Task<bool> DeleteSkillChannelSampleQuestions(int id);
     }
 }

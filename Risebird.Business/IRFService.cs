@@ -3613,7 +3613,43 @@ namespace Risebird.Business
                 return null;
             }
         }
-
-
+        public async Task<bool> AddIRFSampleQuestions(TechSkillComments skillComments)
+        {
+            try
+            {
+                return await _irfRepository.AddIRFSampleQuestions(skillComments);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id)
+        {
+            try
+            {
+                var result = await _irfRepository.GetSkillSampleQuestions(id);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> DeleteSkillChannelSampleQuestions(int id)
+        {
+            try
+            {
+                var result = await _irfRepository.DeleteSkillChannelSampleQuestions(id);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

@@ -31,6 +31,7 @@ namespace Risebird.Entities.ViewModel
         public int HighRiskInterviewers { get; set; }
         public int CandidatewaitingCount { get; set; }
         public int InterviewerVideoKYC { get; set; }
+        public int ProxyCount { get; set; }
 
     }
     public class MeetingDetailsForParticipant

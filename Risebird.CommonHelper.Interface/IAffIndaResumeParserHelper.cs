@@ -5,5 +5,6 @@ namespace Risebird.CommonHelper.Interface
     public interface IAffIndaResumeParserHelper
     {
         Task<string> UploadAndParseResume(string fileUrl = null);
+        Task<string> UploadResumeForRedaction(string fileUrl = null);
     }
 }

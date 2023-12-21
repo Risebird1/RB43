@@ -328,7 +328,7 @@
                                     <div>
 
                                         <div class="multiple_row">
-                                            <h2 style="margin:0px;">Proxy Candidate Reporting</h2>
+                                            <h2 style="margin:0px;font-weight:bold;">Proxy Candidate Reporting <span style="color:#c94319;text-transform:lowercase;font-size:14px;">(this is mandatory field)</span></h2>
                                         </div>
                                         <div class="card-wrap" style="margin-bottom:0px; padding:30px 20px 20px 20px;">
                                             <span class="heading pull-left"><span style="color:red;font-weight:bold;font-size:13px;">*</span> Please select the option  </span>
@@ -2301,7 +2301,7 @@
         if ($('#isProxy').val() == "yes" || $('#isProxy').val() == "no") {
             return true;
         }
-        alert('Please select the proxy status of candidate.');
+        swal.fire('Please select the proxy status of candidate in Proxy Candidate reporting section to submit the report successfully.');
         return false;
     }
 </script>
