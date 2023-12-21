@@ -8271,6 +8271,7 @@ namespace Risebird.Web.Controllers
             var interviewlist = (await _irfService.GetSkillChannelStatsDetails(irfid, type))?.ToList();
             return View(interviewlist);
         }
+        #region Delivery Head Instruction
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> DeliveryHeadInstruction(int irfid, string Type = null)//Type = "ublc" stands for public here
@@ -8431,5 +8432,88 @@ namespace Risebird.Web.Controllers
             var textInstruction = await _irfService.GetTextInstructionService(irfid);
             return Json(textInstruction);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelSampleQuestions(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                TechSkillComments model = new TechSkillComments();
+                var skills = await _irfService.GetTechSkills(id);
+                ViewBag.Skills = new SelectList(skills, "id", "Name");
+                model.IRFId = id;
+                model.Profile = profileName;
+                model.CreatedBy = emailid;
+                return PartialView(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SkillChannelSampleQuestions(TechSkillComments model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.CreatedBy)).Where(x => x.CreatedBy == model.CreatedBy);
+
+                    if (questionsCollection.Count() != questionsCollection.Distinct().Count())
+                    {
+                        //duplicates exist
+                        TempData["SuccessErrorMessageQuestions"] = "The skill-question combination added by you should contain unique entries.";
+                        return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                    }
+                    if (await _irfService.AddIRFSampleQuestions(model))
+                    {
+                        TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageQuestions"] = "Failed to save Question(s)!";
+                    }
+                    return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageQuestions"] = "Questions were not saved";
+                    return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageQuestions"] = "Questions were not saved";
+                return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetSkillChannelSampleQuestions(int irfid)
+        {
+            var questions = await _irfService.GetSkillSampleQuestions(irfid);
+            if (questions == null)
+            {
+                questions = new List<SkillComment>();
+            }
+            return Json(questions);
+        }
+        [HttpPost]
+        public async Task<JsonResult> DeleteSkillChannelSampleQuestions(int questionid)
+        {
+            var result = await _irfService.DeleteSkillChannelSampleQuestions(questionid);
+            return Json("success");
+        }
+        #endregion
     }
 }

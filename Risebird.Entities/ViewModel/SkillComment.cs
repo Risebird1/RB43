@@ -14,6 +14,6 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string Comment { get; set; }
         public int? UserId { get; set; }
-
+        public string CreatedBy { get; set; }
     }
 }

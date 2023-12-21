@@ -293,125 +293,58 @@
                                     </div>
                                 </div>
                                 @* End:Interviewer *@
+                                @* Start:Questions *@
+                                <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
+                                    <div class="card">
+                                        <label class="question" for="checkbox_nine">
+                                            <label for="checkbox_nine">
+                                                <i class="fas fa-users" aria-hidden="true" style="font-size:18px;margin-right:10px;"></i>
+                                                Questions
+                                            </label>
+                                            <span class="round">
+                                                <input type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
+                                                <label class="edit-wrap" onclick="javascript:OpenQuestionModal('@Model.id');"><i class='fa fa-edit' style='color: white'></i></label>
+                                                <span id="hidden_fields_nine_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                                                <span id="hidden_fields_nine_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                                            </span>
+                                        </label>
 
+                                        <fieldset class="answer hidden" id="hidden_fields_nine">
+                                            <div>
+                                                <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="table-responsive-sm">
+                                                                 <div id="divquestionslist"></div>
+                                                                
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                @* End:Questions *@
                                 <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
                                     <div class="card">
-
                                         <label class="question" for="checkbox_three">
                                             <label for="checkbox_three">
                                                 <i class="fa fa-file-audio-o" aria-hidden="true"></i>
                                                 Audio Instruction
-
-
                                             </label>
-
                                             <span class="round">
                                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
                                                 <label class="edit-wrap" onclick="javascript:OpenVoiceRecordingModal('@Model.id');"><i class='fa fa-edit' style='color: white'></i></label>
-
                                                 <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
-
                                                 <span id="hidden_fields_three_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                                             </span>
                                         </label>
 
                                         <fieldset class="answer hidden" id="hidden_fields_three">
-
                                             <audio controls><source src="@Model.AudioComment">Recording</audio>
-                                            @* @if (!string.IsNullOrEmpty(Model.AudioComment))
-                                        {
-                                        string audiofileName = string.Empty;
-                                        audiofileName = Model.AudioComment.Split('/').Last();
-                                        if (audiofileName?.Length >= 25)
-                                        {
-                                        audiofileName = audiofileName.Substring(0, 24) + "...";
-                                        }
-                                        <span> <a href='@Model.AudioComment' asp-append-version="true" download>@audiofileName</a></span>
-                                        }
-                                        else
-                                        {
-                                        @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
-                                        {
-                                        <span>
-                                        <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", " %20")>Instructions</a>
-                                        </span>
-                                        }
-                                        else
-                                        {
-                                        <span>
-                                        No Instructions
-                                        </span>
-                                        }
-                                        }*@
-                                            @*   @foreach(var item in Model)
-                                        {
-                                        <div id="AudioInstruction">
-
-                                        @if (!string.IsNullOrEmpty(item.AudioComment))
-                                        {
-                                        string audiofileName = string.Empty;
-                                        audiofileName = item.AudioComment.Split('/').Last();
-                                        if (audiofileName?.Length >= 25)
-                                        {
-                                        audiofileName = audiofileName.Substring(0, 24) + "...";
-                                        }
-                                        <div><a href='@item.AudioComment' asp-append-version="true" download>@audiofileName</a></div>
-                                        }
-                                        else
-                                        {
-                                        @if (item.CompanyDetails != null && item.CompanyDetails != "")
-                                        {
-                                        <div>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", " %20")>Instructions</a></div>
-                                        }
-                                        else
-                                        {
-                                        <div> No Instructions</div>
-                                        }
-                                        }
-
-                                        ya
-
-                                        </div>
-                                        } *@
-
-
-                                            @*    @if (!string.IsNullOrEmpty(Model.AudioComment))
-                                        {
-                                        string audiofileName = string.Empty;
-                                        audiofileName = @Model.AudioComment.Split('/').Last();
-                                        if (audiofileName?.Length >= 50)
-                                        {
-                                        audiofileName = audiofileName.Substring(0, 50) + "...";
-                                        }
-                                        <div>
-                                        <div>
-                                        <audio controls style="height:40px;margin-top:10px;">
-                                        <source src="@Url.Content(Model.AudioComment)" type="audio/ogg">
-                                        </audio>
-                                        </div>
-                                        <div style="margin: 10px;color: steelblue;">  @audiofileName</div>
-                                        </div>
-                                        }
-                                        else
-                                        {
-                                        @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
-                                        {
-                                        <div>
-                                        <audio controls>
-                                        <source src="@Url.Content(Model.CompanyDetails.Replace(" ", " %20"))" type="audio/ogg">
-
-                                        </audio>
-                                        Instructions
-                                        </div>
-                                        }
-                                        else
-                                        {
-                                        <div>No Instructions</div>
-                                        }
-                                        } *@
-
                                         </fieldset>
-
                                     </div>
 
                                     <div class="card">
@@ -497,78 +430,57 @@
                                         <label class="question" for="checkbox_six">
                                             <label for="checkbox_six">
                                                 <i class="fa fa-file-text-o" aria-hidden="true"></i>
-
                                                 Format
                                             </label>
                                             <span class="round">
                                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
                                                 @* <label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
-
                                                 <span id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
-
                                                 <span id="hidden_fields_six_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-
                                             </span>
                                         </label>
-
                                         <fieldset class="format answer hidden" id="hidden_fields_six">
-                                            <div class="answer-label" style="float: left;
-    width: auto;">
+                                            <div class="answer-label" style="float: left;width: auto;">
                                                 <span class="heading pull-left">
                                                     <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" />
-
                                                 </span><span class="pull-left"> Coding</span>
                                             </div>
-                                            <div class="answer-label" style="float: left;
-    width: auto;">
+                                            <div class="answer-label" style="float: left;width: auto;">
                                                 <span class="heading pull-left">
                                                     <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" />
-
                                                 </span><span class="pull-left"> Current project</span>
                                             </div>
-                                            <div class="answer-label" style="float: left;
-    width: auto;">
+                                            <div class="answer-label" style="float: left;width: auto;">
                                                 <span class="heading  pull-left">
                                                     <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" />
-
                                                 </span><span class="pull-left"> Conceptual</span>
                                             </div>
 
-                                            <div class="answer-label" style="float: left;
-    width: auto;">
+                                            <div class="answer-label" style="float: left;width: auto;">
                                                 <span class="heading pull-left">
                                                     <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" />
-
                                                 </span><span class="pull-left">  Scenario</span>
                                             </div>
 
-                                            <div class="answer-label" style="float: left;
-    width: auto;">
+                                            <div class="answer-label" style="float: left;width: auto;">
                                                 <span class="heading pull-left">
                                                     <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" />
-
                                                 </span><span class="pull-left">System Design</span>
                                             </div>
 
-                                            <div class="answer-label" style="float: left;
-    width: auto;">
+                                            <div class="answer-label" style="float: left;width: auto;">
                                                 <span class="heading pull-left">
                                                     <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" />
-
                                                 </span><span class="pull-left">People management</span>
                                             </div>
-                                            <div class="answer-label" style="float: left;
-    width: auto;">
+                                            <div class="answer-label" style="float: left;width: auto;">
                                                 <span class="heading pull-left">
                                                     <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" />
-
                                                 </span><span class="pull-left"> Client management</span>
                                             </div>
 
                                         </fieldset>
                                     </div>
-
-
                                 </div>
                                 <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;padding-left:11px;padding-right:11px">
                                     <div class="card">
@@ -582,52 +494,25 @@
                                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
                                                 <label class="edit-wrap" onclick="javascript:TextInstructionDetails('@Model.id');">
                                                     <i class='fa fa-edit' style='color: white'></i>
-
                                                 </label>
                                                 <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
-
                                                 <span id="hidden_fields_seven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-
                                             </span>
                                         </label>
 
                                         <fieldset class="answer hidden" id="hidden_fields_seven">
-
                                             <div id="CandidateDetails"></div>
                                             <label id="lblComments"></label>
                                         </fieldset>
-
                                     </div>
                                 </div>
-                                @* <div class="button-wrapper">
-                            <h2 class="text-center pad10 pull-left">Click here to join the meeting</h2>
-                            <a class="join-button" target="_blank" title="Meeting Link" href="#">Join now</a>
-                            @if (Model.zoomLink != null && Model.zoomLink != "")
-                            {
-                            @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
-                            {
-                            <div>
-                            <a target="_blank" class="join-button" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
                             </div>
-
-                            }
-
-                            }
-                            </div>
-                            *@
-                            </div>
-
-
-
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     }
-
-
 </div>
 <div id="VoiceRecordingModal" class="modal modal-bg">
     <!-- Modal content -->
@@ -758,6 +643,24 @@
         <p>*Please upload your latest resume to process further.</p>
     </div>
 </div>
+<div id="PopupDetailsModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-file-text-o" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="changememberHeading"></h5>
+            </div>
+            <button onclick="closePopupDetailsModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="divpopupModel">
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
@@ -772,6 +675,7 @@
             var msg = '@ViewBag.Message';
             swal.fire("Failed", '@ViewBag.Message', "error");
         }
+        
     </script>
 }
 <script>
@@ -919,19 +823,16 @@
 
 
     $(function () {
-
         // Hide the hidden sections.
         // Use JS to do this in case the user doesn't have JS
         // enabled.
         $('.hidden').hide();
-
         // Setup an event listener for each trigger checkbox that
         // fires when the state of the checkbox changes.
         $('.trigger').change(function () {
             // Get the ID of the hidden area from the data-trigger
             // attribute.
             var hiddenId = $(this).attr("data-trigger");
-
             // Check to see if the checkbox is checked.
             // If it is, show the fields and populate the input.
             // If not, hide the fields.
@@ -998,14 +899,6 @@
         modalBct.style.display = "none";
         cancelRecording();
         location.reload();
-        //$.ajax({
-        //    type: "POST",
-        //    url: "/IRF/DeliveryHeadInstruction",
-        //    data: { 'irfid': irfid },
-        //    success: function (data) {
-        //        location.reload();
-        //    }
-        //});
     }
 </script>
 <script>
@@ -1044,6 +937,7 @@
 
     <script>
         $(document).ready(function () {
+            GetquestionList();
             GetInstruction();
         });
         function GetInstruction() {
@@ -1081,6 +975,83 @@
                 }
             });
         });
+        function GetquestionList(){
+            $.ajax({
+                type: "POST",
+                url: "/IRF/GetSkillChannelSampleQuestions",
+                data: { irfid: $("#id").val() },
+                success: function (data) {
+                    bindquestionsData(data);
+                }
+            });
+        }
+        function bindquestionsData(data) {
+            var html = '';
+            html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+            html += '  <thead>';
+            html += '  <tr>';
+            html += '  <th width="20%" class="table_heading">Skill<span class="red">*</span></th>';
+            html += '  <th width="70%" class="table_heading">Question<span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Action <span class="red">*</span></th>';
+            html += '  </tr>';
+            html += '  </thead>';
+            html += '  <tbody>';
+            for (i = 0; i < data.length; i++) {
+                html += '   <tr>';
+                html += '  <td>' + data[i].skillName + '</td>';
+                html += '  <td>' + data[i].comment + '</td>';
+                html += '  <td><div class="sample-btn"><span style="float:right;" onclick="DeleteSampleQuestion('+data[i].id+')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
+                html += '  </tr>';
+            }
+            html += '</tbody>';
+            html += ' </table></div>';
+            $("#divquestionslist").empty().html(html);
+        }
+        function DeleteSampleQuestion(questionid){
+            swal.fire({
+            title: 'Are you sure?',
+            text: 'Want to remove question from the Skill channel',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Remove it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/IRF/RemoveInterviewerFromIRF",
+                        data: { questionid: questionid },
+                        success: function (result) {
+                            resolve(result);
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Removed!',
+                    type: 'success',
+                    html: '<p>Question has been removed.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'remove cancelled! :)',
+                    'error'
+                )
+            }
+        })
+        }
     </script>
 }
 else
@@ -1212,6 +1183,28 @@ else
                 $('#divresumepopup').html('');
                 $('#divresumepopup').html(data);
                 $('#txtheaderinterviewer').text(interviewer);
+            }
+        });
+    }
+</script>
+<script>
+    function closePopupDetailsModal(){
+        var modal = document.getElementById("PopupDetailsModal");
+        modal.style.display = "none";
+    }
+     function openPopupDetailsModal(){
+        var modal = document.getElementById("PopupDetailsModal");
+        modal.style.display = "block";
+    }
+    function OpenQuestionModal(irfid){
+        $("#changememberHeading").text('Questions');
+        $.ajax({
+            url: '/IRF/SkillChannelSampleQuestions',
+            data: { id: irfid },
+            success: function (data) {
+                openPopupDetailsModal();
+                $('#divpopupModel').html('');
+                $('#divpopupModel').html(data);
             }
         });
     }
