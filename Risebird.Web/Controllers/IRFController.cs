@@ -8271,6 +8271,7 @@ namespace Risebird.Web.Controllers
             var interviewlist = (await _irfService.GetSkillChannelStatsDetails(irfid, type))?.ToList();
             return View(interviewlist);
         }
+        #region Delivery Head Instruction
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> DeliveryHeadInstruction(int irfid, string Type = null)//Type = "ublc" stands for public here
@@ -8442,7 +8443,6 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 TechSkillComments model = new TechSkillComments();
-                //var result = _irfService.GetTechSkillComments(id, emailid);
                 var skills = await _irfService.GetTechSkills(id);
                 ViewBag.Skills = new SelectList(skills, "id", "Name");
                 model.IRFId = id;
@@ -8467,55 +8467,53 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (ModelState.IsValid)
+                    var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.CreatedBy)).Where(x => x.CreatedBy == model.CreatedBy);
+
+                    if (questionsCollection.Count() != questionsCollection.Distinct().Count())
                     {
-                        var questionsCollection = model.SkillCollection.Select(x => (x.Comment, x.Skill, x.UserId)).Where(x => x.UserId == model.UserId);
-
-                        if (questionsCollection.Count() != questionsCollection.Distinct().Count())
-                        {
-                            //duplicates exist
-                            ModelState.AddModelError("", "The skill-question combination added by you should contain unique entries.");
-                            var skills = await _irfService.GetTechSkills(model.IRFId);
-                            ViewBag.Skills = new SelectList(skills, "id", "Name");
-                            //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
-                            model.Profile = profileName;
-                            return View(model);
-                        }
-
-                        //if (await _irfService.AddSkillComments(model))
-                        //{
-                        //    TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";
-                        //    return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
-                        //}
-                        //else
-                        //{
-                        //    TempData["SuccessErrorMessageQuestions"] = "Failed to save Question(s)!";
-                        return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
-                        //}
+                        //duplicates exist
+                        TempData["SuccessErrorMessageQuestions"] = "The skill-question combination added by you should contain unique entries.";
+                        return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                    }
+                    if (await _irfService.AddIRFSampleQuestions(model))
+                    {
+                        TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";
                     }
                     else
                     {
-                        var skills = await _irfService.GetTechSkills(model.IRFId);
-                        ViewBag.Skills = new SelectList(skills, "id", "Name");
-                        //model.SkillsOptionsData = JsonConvert.SerializeObject(skills);
-
-                        model.Profile = profileName;
-                        //ModelState.AddModelError
-                        return PartialView(model);
+                        TempData["SuccessErrorMessageQuestions"] = "Failed to save Question(s)!";
                     }
-
+                    return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Session");
+                    TempData["SuccessErrorMessageQuestions"] = "Questions were not saved";
+                    return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
                 }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageQuestions"] = "Questions were not saved";
-                return RedirectToAction("SampleQuestions", new { id = model.IRFId, irf = model.IrfName });
+                return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> GetSkillChannelSampleQuestions(int irfid)
+        {
+            var questions = await _irfService.GetSkillSampleQuestions(irfid);
+            if (questions == null)
+            {
+                questions = new List<SkillComment>();
+            }
+            return Json(questions);
+        }
+        [HttpPost]
+        public async Task<JsonResult> DeleteSkillChannelSampleQuestions(int questionid)
+        {
+            var result = await _irfService.DeleteSkillChannelSampleQuestions(questionid);
+            return Json("success");
+        }
+        #endregion
     }
 }

@@ -52,6 +52,30 @@
 
             </div>
                 </div>
+
+       <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+            <div class="card" style="margin-bottom:10px;">
+                <label class="question" for="checkbox_nine">
+                    <label for="checkbox_nine">
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                        Sample Questions
+                    </label>
+                    <span class="round">
+                        <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
+                        <label style="visibility:hidden" for="checkbox_nine"></label>
+                        <input  type="checkbox" class="coupon_question" disabled id="hidden_fields_nine_1" name="Checkshow" />
+                        <label  for="hidden_fields_nine_1"></label>
+                        <span  id="hidden_fields_nine_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                        <span id="hidden_fields_nine_1" class="collapsible-panel"><i  class='fas fa-chevron-up'></i></span>
+                    </span>
+                </label>
+                
+                <fieldset class="answer hidden" id="hidden_fields_nine">
+                    <div class="answer-label"></div>
+                    <div id="divquestionslist"></div>
+                </fieldset>
+            </div>
+       </div>
         <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;">
 
 
@@ -917,7 +941,7 @@
                 countcheck = countcheck + 1;
             }
         });
-        if(countcheck==7){
+        if(countcheck==8){
            $(".join-button").removeClass('disable-link')
             //enable meeting link
         }
@@ -942,4 +966,39 @@
         var model = document.getElementById("InterviewerAlert");
         model.style.display = "none";
     }
+</script>
+<script>
+     $(document).ready(function () {
+            GetquestionList();
+     });
+    function GetquestionList(){
+            $.ajax({
+                type: "POST",
+                url: "/IRF/GetSkillChannelSampleQuestions",
+                data: { irfid: $("#id").val() },
+                success: function (data) {
+                    bindquestionsData(data);
+                }
+            });
+        }
+        function bindquestionsData(data) {
+            var html = '';
+            html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+            html += '  <thead>';
+            html += '  <tr>';
+            html += '  <th width="20%" class="table_heading">Skill<span class="red">*</span></th>';
+            html += '  <th width="80%" class="table_heading">Question<span class="red">*</span></th>';
+            html += '  </tr>';
+            html += '  </thead>';
+            html += '  <tbody>';
+            for (i = 0; i < data.length; i++) {
+                html += '   <tr>';
+                html += '  <td>' + data[i].skillName + '</td>';
+                html += '  <td>' + data[i].comment + '</td>';
+                html += '  </tr>';
+            }
+            html += '</tbody>';
+            html += ' </table></div>';
+            $("#divquestionslist").empty().html(html);
+        }
 </script>
