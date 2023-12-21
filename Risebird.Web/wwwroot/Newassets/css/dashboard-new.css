@@ -6545,7 +6545,7 @@ input[type="date"].form-control {
     font-weight: bold;
 }
 
-.dashboard-iconcolor {
+.dashboard-iconcolor, .report-iconcolor{
     padding: 10px 0px 10px 10px;
     display: block;
     background-size: 60% !important;
@@ -8397,6 +8397,9 @@ option {
     overflow-x: scroll;
     overflow-y: hidden;
 }
+.risebirdPay-con {
+    width: calc(100% - -8%);
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -9652,6 +9655,9 @@ option {
         }
         .assessmentgrp-btn{
             float:none;
+        }
+        .risebirdPay-con {
+            width: calc(100% - 0%);
         }
         .mobile-view-cl {
             position: absolute !important;
@@ -16873,7 +16879,7 @@ div.tagsinput {
     }
 
     .razorpay_details {
-        width: 100%;
+        width: 100%!important;
         float: left;
         position: absolute;
         left: 0;
