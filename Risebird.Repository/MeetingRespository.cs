@@ -6966,6 +6966,41 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> SavePoorQOSDetails(PoorQOSZoomData data)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@participantEmail", data.participantEmail);
+                    parameters.Add("@ZoomMeetingId", data.ZoomMeetingId);
+                    parameters.Add("@qosType", data.qosType);
+                    parameters.Add("@jitter", data.jitter);
+                    parameters.Add("@quality", data.quality);
+                    parameters.Add("@quality_score", data.quality_score);
+                    parameters.Add("@latency", data.latency);
+                    parameters.Add("@avg_loss", data.avg_loss);
+                    parameters.Add("@max_loss", data.max_loss);
+                    parameters.Add("@CreatedAt", DateTime.Now);
+                    
+                    await SqlMapper.QueryAsync(con, "usp_SavePoorQOSDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<bool> UpdateInterviewReport(int interviewid, string comment, string emailid)
         {
             try
