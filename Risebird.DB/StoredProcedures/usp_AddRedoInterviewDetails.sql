@@ -16,13 +16,14 @@ Create Procedure usp_AddRedoInterviewDetails
 @Inappropriate varchar(20),
 @HandsOfCoding varchar(20),
 @Comments varchar(500),
-@ModifiedBy varchar(200)
+@ModifiedBy varchar(200),
+@ModifiedOn datetime
 AS
 BEGIN
 IF EXISTS(select * from RedoInterviews where interviewid=@interviewid)
 BEGIN
 Update RedoInterviews set  interviewid=@interviewid,CandidateFace=@CandidateFace,Inappropriate=@Inappropriate,RequiredDuration=@RequiredDuration,
-ActualDuration=@ActualDuration,HandsOfCoding=@HandsOfCoding,Comments=@Comments,RejectionComment=@RequiredDuration,ModifiedOn=GETDATE(),ModifiedBy=@ModifiedBy,
+ActualDuration=@ActualDuration,HandsOfCoding=@HandsOfCoding,Comments=@Comments,RejectionComment=@RequiredDuration,ModifiedOn=@ModifiedOn,ModifiedBy=@ModifiedBy,
 Type=null
 where interviewid=@interviewid
 END
@@ -31,7 +32,7 @@ BEGIN
 Insert into RedoInterviews(interviewid,CandidateFace,Inappropriate,RequiredDuration,ActualDuration,HandsOfCoding,Comments,
 RejectionComment,Createdon,CreatedBy,ModifiedOn,ModifiedBy) values
 (@interviewid,@CandidateFace,@Inappropriate,@RequiredDuration,@ActualDuration,@HandsOfCoding,@Comments,
-null,Getdate(),@ModifiedBy,Getdate(),@ModifiedBy)
+null,@ModifiedOn,@ModifiedBy,@ModifiedOn,@ModifiedBy)
 END 
 END
 Go

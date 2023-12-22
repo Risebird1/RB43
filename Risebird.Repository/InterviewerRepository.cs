@@ -3273,6 +3273,65 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewerResumeForRedaction()
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_GetInterviewerResumeForRedaction", null,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateInterviewerCodedResumeInBulk(List<InterviewerProfileVM> resumeList)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable resumeListDt = new DataTable();
+                    resumeListDt.Columns.Add("id", typeof(int));
+                    resumeListDt.Columns.Add("CodedResumeLink", typeof(string));
+                    resumeListDt.Columns.Add("IsResumeRedactAttempted", typeof(bool));
+                    resumeListDt.Columns.Add("IsResumeRedactFailed", typeof(bool));
+
+
+                    foreach (var item in resumeList)
+                    {
+                        resumeListDt.Rows.Add(item.id, item.CodedResumeLink, item.IsResumeRedactAttempted, item.IsResumeRedactFailed);
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_InterviewerCodedResumeBulkUpdate", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@InterviewerCodedResumeBulkUpdateData", SqlDbType.Structured));
+                    cmd.Parameters["@InterviewerCodedResumeBulkUpdateData"].Value = resumeListDt;
+                    con.Open();
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 
 }
