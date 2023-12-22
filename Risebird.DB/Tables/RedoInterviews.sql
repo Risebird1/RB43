@@ -17,6 +17,7 @@ CREATE TABLE [dbo].[RedoInterviews](
 	[ModifiedBy] [varchar](200) NULL,
 	[Approved][bit],
 	[Type][varchar](100) NULL,
+	[Rejected][bit] NULL,
  CONSTRAINT [PK_RedoInterviews] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -43,6 +44,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE RedoInterviews
     Add Type varchar(100)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Rejected')
+      AND Object_ID = Object_ID(N'RedoInterviews'))
+BEGIN
+    ALTER TABLE RedoInterviews
+    Add Rejected bit
 END
 
 END
