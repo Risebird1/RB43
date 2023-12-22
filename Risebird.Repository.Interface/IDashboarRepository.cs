@@ -62,5 +62,6 @@ namespace Risebird.Repository.Interface
         Task<List<MeetingVM>> FetchParticipantwaitingDetails();
         Task<IEnumerable<InterviewerVideoKYCVM>> GeInterviewerVideoKYC();
         Task<bool> UpdateInterviewerVideoKYC(int id, string type);
+        Task<IEnumerable<ProctoringReport>> GeProxyReport();
     }
 }

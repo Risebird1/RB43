@@ -1419,5 +1419,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+
+        public async Task<IEnumerable<ProctoringReport>> GeProxyReport()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var result = await SqlMapper.QueryAsync<ProctoringReport>(con, "usp_ProxyReortDetail", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

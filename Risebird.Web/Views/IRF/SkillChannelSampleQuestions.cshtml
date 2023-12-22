@@ -1,0 +1,214 @@
+﻿@model Risebird.Entities.ViewModel.TechSkillComments
+@inject IJsonHelper Json;
+
+<form action="/IRF/SkillChannelSampleQuestions" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
+                            @Html.AntiForgeryToken()
+                            <div class="row">
+                                <div class="card-header">
+                                    <h4 class="card-title">Sample Questions (Add Your Questions Here)</h4>
+                                </div>
+                                <div style="width:100%; float:left;height:10px;"></div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="sample-qs">
+                                        <table class="table mbn" id="QuestionsNewTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading b-right">Skill Name</th>
+                                                    <th class="table_heading b-right">Questions</th>
+                                                    <th colspan="2" class="table_heading text-center">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                        <td class="b-right">
+                                                            @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
+                                                        </td>
+                                                        <td class="b-right">
+                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                <div class="talktext">
+                                                                    <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__Comment" style="width:100%" name="SkillCollection[0].Comment" class="valid" aria-invalid="false" onblur="checkQuestionLength(this.id)"></textarea>
+                                                                </div>
+                                                                <label id="questionError_0" class="text-danger"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center action-area">
+                                                            <div class="sample-btn">
+                                                                <span style="float:right;" id="btnMinus_0" onclick="DeleteQuestionRow(this, 'SkillCollection','Skill','Comment', 'CreatedBy')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            </div>
+                                                        </td>
+                                                        @* @Html.Hidden("SkillCollection[0].CreatedBy") *@
+                                                        <td class="HiddenUserIdElement">
+                                                        </td>
+                                                    </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div><!--end of col-md-12-->
+
+                            </div>
+                            <div class="row"><div class="col-md-12 text-right" style="padding-right:30%"> <span id="error_0"></span></div></div>
+                            <div class="card-footer mt-10">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        <div class="pull-left">
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Question" onclick="AddQuestionRow()" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Question</font></span>
+                                            </button>
+                                        </div>
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="return errorMessage();">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.HiddenFor(m => m.IRFId)
+                            @Html.HiddenFor(m => m.CreatedBy)
+</form>
+
+<script>
+    $(document).ready(function () {
+        if ('@Model.SkillCollection.Count()' == '0') {
+            var x = document.createElement("INPUT");
+            x.setAttribute("type", "hidden");
+            x.setAttribute("id", 'SkillCollection_0__CreatedBy');
+            document.getElementsByClassName("HiddenUserIdElement")[0].appendChild(x);
+            $("#SkillCollection_0__CreatedBy").val('@Model.CreatedBy');
+            $("#SkillCollection_0__CreatedBy").prop('name', 'SkillCollection[0].CreatedBy');;
+            if (document.getElementById('btnMinus_0').style.display == 'none') {
+                document.getElementById('btnMinus_0').style.display = "block";
+            }
+        }
+    });
+
+    function AddQuestionRow() {
+        var $ttc = $("#QuestionsNewTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        //var $tr = $ttc.clone();
+        //var trIndexReplaced = $("#QuestionsNewTable tr").length - 1;
+        $tr.find("textarea,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("textarea[type=text]").val("");
+        //$tr.find("textarea[type=text]").removeProp("readonly");
+        $tr.find("input[type=hidden]").val('@Model.CreatedBy');
+        var rowCount = $('#QuestionsNewTable tr').length;
+        var finalIndex = rowCount-1;
+        $tr.find("input[type=hidden]").prop('id', 'SkillCollection_' + finalIndex + '__CreatedBy');
+        $tr.find("input[type=hidden]").prop('name', 'SkillCollection[' + finalIndex + '].CreatedBy');
+        $tr.find('span:last').prop('style', 'display:block');
+        $tr.find('span:last').prop('id', 'btnMinus_' + finalIndex);
+        
+        
+        $tr.prop('style', 'visibility : visible');
+        
+        // add cloned row as last row
+        $("#QuestionsNewTable").find("tbody tr:last").after($tr);
+        var $ttlast = $("#QuestionsNewTable").find("tbody tr:last");
+        $ttlast.find("textarea").val("");
+        $ttlast.find("textarea").removeAttr("readonly");
+        
+        $ttlast.find("textarea").blur(function () {
+            checkQuestionLength('SkillCollection_' + finalIndex + '__Comment');
+        });
+        var errorLabelIdValue = "questionError_" + finalIndex;
+        $ttlast.find("label").attr("id", errorLabelIdValue);
+        //$ttlast.find("label").removeAttr("name");
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        var options = @Html.Raw(Json.Serialize(ViewBag.Skills));
+        $("#SkillCollection_" + finalIndex + "__Skill" + " option").remove();
+       
+        $(options).each(function () {
+            var option = $("<option />");
+            //Set Text part.
+            option.html(this.text);
+            //Set Value part.
+            option.val(this.value);
+            //Add the Option element to DropDownList.
+            $("#SkillCollection_" + finalIndex + "__Skill").append(option);
+        });
+    }
+
+
+    function DeleteQuestionRow(element, collectionName, tdOne, tdTwo, tdThree) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    //name="ClientCollection[3].ClientUserId"
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+                }
+            }
+        }
+    }
+</script>
+
+<script>
+    function errorMessage() {
+        var items = $('[id^=SkillCollection][id$="Comment"]');
+        for (j = 0; j < items.length; j++) {
+            if ($('#SkillCollection_' + j + '__Comment').val() == '') {
+                var error = document.getElementById("error_0");
+                error.textContent = "Question field should not be blank";
+                error.style.color = "red";
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function checkQuestionLength(elementId) {
+        var index = elementId.match(/\d+/);
+        var val = document.getElementById(elementId).value;
+        var errorElementId = "questionError_" + index;
+
+        if (val != null && val.length > 300) {
+            document.getElementById(errorElementId).innerHTML = "The Question should not exceed 300 characters.";
+            //alert("The Question should not exceed 300 characters.");
+            document.getElementById("btnUpload").disabled = true;
+            document.getElementById(elementId).focus();
+            return;
+        }
+        else {
+            document.getElementById(errorElementId).innerHTML = "";
+            document.getElementById("btnUpload").disabled = false;
+            return;
+        }
+    }
+</script>
