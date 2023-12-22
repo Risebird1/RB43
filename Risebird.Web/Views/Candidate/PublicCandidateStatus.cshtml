@@ -93,7 +93,7 @@
     .mb10 {
         margin-bottom: 10px
     }
-  
+
     .topheader-header [data-tooltip]:before {
         background: #92938b !important;
         color: #fff !important;
@@ -107,7 +107,6 @@
         z-index: 100;
         border: none !important;
         font-size: 11px;
-        
     }
 
     .topheader-header [data-tooltip]:after {
@@ -116,7 +115,6 @@
         border-left: 7px solid transparent !important;
         top: 35px;
         transform: rotate(180deg);
-
     }
 </style>
 
@@ -132,8 +130,8 @@
     }
 
     /*.mob_h {
-  display: none !important
-     }*/
+          display: none !important
+             }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -154,103 +152,104 @@
                 <div>
                     <img style="visibility:hidden" src="" data-position="right" />
                     <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
-                 @*   <div class="pull-left clientlogoarea">
-                           @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
-            {
-                <img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
-            }
-            else
-            {
-                <img src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />
-            }
+                    @*   <div class="pull-left clientlogoarea">
+                    @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
+                    {
+                    <img src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
+                    }
+                    else
+                    {
+                    <img src="@HttpContextAccessor.HttpContext.Session.GetString("Logo")" />
+                    }
 
-                        <div class="mobile-view"> <h4 class="card-title risetubeid"></h4></div>
+                    <div class="mobile-view"> <h4 class="card-title risetubeid"></h4></div>
                     </div>*@
 
                     <div class="pull-right">
                         <div class="topheader-header">
-                            <div class="topheader-link-wrap" >
-                                @if(ViewBag.ClientId == 23)//Risebird
+                            <div class="topheader-link-wrap">
+                                @if (ViewBag.ClientId == 23)//Risebird
                                 {
                                     var templateUrl = "/Template/Index?emailId=" + @ViewBag.emailid + "&uniqueId=" + @ViewBag.id + "&type=pbc&profile=Client";
-                                    <button title = "Book interviews based on dynamic marketplace rates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl)'"> @* '@Url.Action(action : "Index", controller : "Template", new { emailId = ViewBag.emailid, uniqueId = ViewBag.id, type = "pbc", profile = "client" })' *@
+                                    <button title="Book interviews based on dynamic marketplace rates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl)'">
+                                        @* '@Url.Action(action : "Index", controller : "Template", new { emailId = ViewBag.emailid, uniqueId = ViewBag.id, type = "pbc", profile = "client" })' *@
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad7">
                                             Book Interviews
                                         </div>
 
                                     </button>
-                                    
+
                                 }
                                 <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCandidateFeedback", "Survey", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'">
-                                <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
-                                <div class="d-lg-inline-flex pad7">
-                                    Candidate Feedback
-                                </div>
-                            
-                            </button>    
-          
-                            <button type="button"  data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'">
-                                <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
-                                <div class="d-lg-inline-flex pad7">
-                                    Skill Channel Stats
-                                </div>
-                            
-                            </button>
-                            @if (ViewBag.ClientRole != "Client Admin")
-                            {
-                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                                    <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
+                                    <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                    <div class="d-lg-inline-flex pad7">
+                                        Candidate Feedback
+                                    </div>
+
+                                </button>
+
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'">
+                                    <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                    <div class="d-lg-inline-flex pad7">
+                                        Skill Channel Stats
+                                    </div>
+
+                                </button>
+                                @if (ViewBag.ClientRole != "Client Admin")
+                                {
+                                    @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("RecommendatedIRFFilter", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Templates</font></span>
                                 </button>*@
-                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
-                            <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
-                            </button>*@
-                               @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                                    <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
+                                    @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;" title="Choose template to create a Interviewing channnel">
+                                <span data-toggle="tooltip" data-placement="top" title="Choose template to create a Interviewing channnel" onclick="location.href='@Url.Action("Index", "RecommendedIRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" data-original-title="Tooltip on top"><font style="font-family:arial;">Your Skill Channels</font></span>
                                 </button>*@
-                                @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
-                            <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
-                            </button>*@
-                            }
+                                    @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <span data-toggle="tooltip" data-placement="top" onclick="openCreateRequest('@ViewBag.emailid','@ViewBag.Id')" data-original-title="Tooltip on top"><font style="font-family:arial;">New Interview Request</font></span>
+                                </button>*@
+                                    @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                <span data-toggle="tooltip" data-placement="top" onclick="openSchedulingLinks('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Candidate Submission Form</font></span>
+                                </button>*@
+                                }
 
 
-                         @*   <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
+                                @*   <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="vertical-align:top;margin-right:5px;">
                                 <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
-                            </button>*@
+                                </button>*@
 
-                            <button type="button"  data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;">
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;">
                                     <span class="topheader-link"><i class="fa fa-users" style="color:#fff"></i></span>
-                                <div class="d-lg-inline-flex pad7">
-                                    Manage Interviews
-                                </div>
+                                    <div class="d-lg-inline-flex pad7">
+                                        Manage Interviews
+                                    </div>
 
-                            </button>
+                                </button>
 
                             </div>
 
 
-                      
-                       <span class="filter">
+
+                            <span class="filter">
 
                                 <span id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter" data-original-title="Filter">
 
                                     <span class="mdc-button__label"><span class="fa fa-filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                     <span class="mdc-button__ripple"></span>
                                 </span>
-                                </span>
+                            </span>
 
-                           
-                            <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom"  data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
+
+                            <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
 
 
                         </div>
 
-                    @*    @if (ViewBag.ClientName != "FoundIt (Monster.com)")
+                        @*    @if (ViewBag.ClientName != "FoundIt (Monster.com)")
                         {
-                            <div class="note-filter" style="text-align: right;"> Note: To visualize data older and greater than 15 days, please apply filter</div>
+                        <div class="note-filter" style="text-align: right;"> Note: To visualize data older and greater than 15 days, please apply filter</div>
                         }*@
                     </div>
-                   
+
                 </div>
             </div>
         </div>
@@ -405,14 +404,14 @@
                                                                     <th class="text-left">Interview Date</th>
                                                                     <th id="status_9">Report</th>
                                                                     @*<th id="status_4" class="text-left">JD Title</th>*@
-                                                                 @*   <th id="status_8">Current Status</th>*@
-                                                                   @* <th>Client Hr</th>*@
-                                                                   @* <th>Staffing Agency</th>*@
-                                                                   <th>Action</th>
+                                                                    @*   <th id="status_8">Current Status</th>*@
+                                                                    @* <th>Client Hr</th>*@
+                                                                    @* <th>Staffing Agency</th>*@
+                                                                    <th>Action</th>
                                                                     <th title="Communication attempts count">Communications</th>
                                                                     @*<th>Interviewer</th>*@
-                                                                    
-                                                                   
+
+
                                                                 </tr>
                                                             </thead>
                                                             <tfoot>
@@ -421,13 +420,13 @@
                                                                     <th class="text-left">Interview Date</th>
                                                                     <th>Report</th>
                                                                     @*<th class="text-left">JD Title</th>*@
-                                                               @*     <th>Current Status</th>*@
-                                                                   @* <th>Client Hr</th>*@
-                                                                   @* <th>Staffing Agency</th>*@
+                                                                    @*     <th>Current Status</th>*@
+                                                                    @* <th>Client Hr</th>*@
+                                                                    @* <th>Staffing Agency</th>*@
                                                                     <th>Action</th>
                                                                     <th title="Communication attempts count">Communication</th>
-                                                                   
-                                                                    
+
+
 
                                                                 </tr>
                                                             </tfoot>
@@ -444,109 +443,109 @@
                                                                         <td class="cadName text-left pl15">
                                                                             <div class="candidate-field">
                                                                                 <span class="pull-left">
-                                                                            @if (item.CandidateName != null && item.CandidateName != "")
-                                                                            {
-                                                                                @if (item.CandidateName.Length > 15)
-                                                                                {
-                                                                                    @if (item.reportcount > 1)
+                                                                                    @if (item.CandidateName != null && item.CandidateName != "")
                                                                                     {
-                                                                                        <p class="name-field" title="@item.CandidateName"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName.Substring(0, 15) ... </p>
+                                                                                        @if (item.CandidateName.Length > 15)
+                                                                                        {
+                                                                                            @if (item.reportcount > 1)
+                                                                                            {
+                                                                                                <p class="name-field" title="@item.CandidateName"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName.Substring(0, 15) ... </p>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <p class="name-field" title="@item.CandidateName"> @item.CandidateName.Substring(0, 15) ... </p>
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @if (item.reportcount > 1)
+                                                                                            {
+                                                                                                <p class="name-field"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName </p>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <p class="name-field">@item.CandidateName </p>
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                </span><span class="pull-left">
+
+
+                                                                                    @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                                                    {
+
+                                                                                        @if (item.PrimarySkill.Length > 22)
+                                                                                        {
+                                                                                            <p class="cadEmail text-left">
+                                                                                                <a class="pskill" data-tooltip="@item.PrimarySkill">( @item.PrimarySkill.Substring(0, 22) ...)</a>
+                                                                                            </p>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <p class="text-left">
+                                                                                                <a class="pskill">(@item.PrimarySkill)</a>
+                                                                                            </p>
+                                                                                        }
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <p class="name-field" title="@item.CandidateName"> @item.CandidateName.Substring(0, 15) ... </p>
+                                                                                        <p></p>
                                                                                     }
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    @if (item.reportcount > 1)
-                                                                                    {
-                                                                                        <p class="name-field"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName </p>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <p class="name-field">@item.CandidateName </p>
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                            </span><span class="pull-left">
-
-
-                                                                                             @if (item.PrimarySkill != null && item.PrimarySkill != "")
-                                                                        {
-
-                                                                            @if (item.PrimarySkill.Length > 22)
-                                                                            {
-                                                                                <p class="cadEmail text-left">
-                                                                                    <a class="pskill" data-tooltip="@item.PrimarySkill">( @item.PrimarySkill.Substring(0, 22) ...)</a>
-                                                                                </p>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <p class="text-left">
-                                                                                    <a class="pskill">(@item.PrimarySkill)</a>
-                                                                                </p>
-                                                                            }
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <p></p>
-                                                                        }
-                                                                        </span>
-                                                                        </div>
+                                                                                </span>
+                                                                            </div>
 
 
                                                                             <div class="candidate-field">
-                                                                               @if(item.RedoInterview==true)
+                                                                                @if (item.RedoInterview == true)
                                                                                 {
-                                                                                   <p>Redo Interview</p>
+                                                                                    <p>Redo Interview</p>
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                @if (item.CurrentStatus == "Selected")
-                                                                                {
-                                                                                    <p class="current selected">@item.CurrentStatus</p>
+                                                                                    @if (item.CurrentStatus == "Selected")
+                                                                                    {
+                                                                                        <p class="current selected">@item.CurrentStatus</p>
+                                                                                    }
+
+                                                                                    else if (item.CurrentStatus == "Rejected")
+                                                                                    {
+                                                                                        <p class="current rejected">@item.CurrentStatus</p>
+                                                                                    }
+                                                                                    else if (item.CurrentStatus == "Scheduled")
+                                                                                    {
+                                                                                        <p class="current scheduled">@item.CurrentStatus</p>
+                                                                                    }
+                                                                                    else if (item.CurrentStatus == "Cancelled")
+                                                                                    {
+                                                                                        <p class="current cancelled">@item.CurrentStatus</p>
+                                                                                    }
+                                                                                    else if (item.CurrentStatus == "No Show(Candidate)")
+                                                                                    {
+                                                                                        <p class="current noshowcandidate">@item.CurrentStatus</p>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <p>@item.CurrentStatus</p>
+                                                                                    }
                                                                                 }
 
-                                                                                else if (item.CurrentStatus == "Rejected")
+                                                                            </div>
+                                                                            <div class="candidate-field">
+                                                                                @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
                                                                                 {
-                                                                                    <p class="current rejected">@item.CurrentStatus</p>
+                                                                                    @if (item.CandidateEmailId.Length > 30)
+                                                                                    {
+                                                                                        <p class="email-field" title="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 30) ...</p>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <p class="email-field">Email: @item.CandidateEmailId </p>
+                                                                                    }
                                                                                 }
-                                                                                else if (item.CurrentStatus == "Scheduled")
-                                                                                {
-                                                                                    <p class="current scheduled">@item.CurrentStatus</p>
-                                                                                }
-                                                                                 else if (item.CurrentStatus == "Cancelled")
-                                                                                {
-                                                                                    <p class="current cancelled">@item.CurrentStatus</p>
-                                                                                }
-                                                                                else if (item.CurrentStatus == "No Show(Candidate)")
-                                                                                {
-                                                                                    <p class="current noshowcandidate">@item.CurrentStatus</p>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <p>@item.CurrentStatus</p>
-                                                                                }
-                                                                               }
-
-                                                                    </div>
-                                                                             <div class="candidate-field">
-                                                                            @if (item.CandidateEmailId != null && item.CandidateEmailId != "")
-                                                                            {
-                                                                                @if (item.CandidateEmailId.Length > 30)
-                                                                                {
-                                                                                    <p class="email-field" title="@item.CandidateEmailId"> @item.CandidateEmailId.Substring(0, 30) ...</p>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <p class="email-field">Email: @item.CandidateEmailId </p>
-                                                                                }
-                                                                            }
                                                                                 <p class="email-field" hidden>Email: @item.CandidateEmailId </p>
                                                                             </div>
-                                                                             <div class="candidate-field">
-                                                                            <p>Client Hr:@item.HREmail</p>
+                                                                            <div class="candidate-field">
+                                                                                <p>Client Hr:@item.HREmail</p>
                                                                             </div>
                                                                         </td>
                                                                         @if (item.interviewDate != DateTime.MinValue)
@@ -560,154 +559,155 @@
                                                                             <td></td>
                                                                         }
                                                                         <td>
-                                                                            @if(item.RedoInterview==true)
+                                                                            @if (item.RedoInterview == true)
                                                                             {
                                                                                 <p>No Report</p>
-                                                                            }
-                                                                            else{
-                                                                            @if (!item.IsReportBlocked && ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
-                                                                            {
-                                                                                @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">Report</a>*@
-                                                                                <a style="text-decoration:none;" target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
-                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                        </button>
-                                                                        </a>
-                                                                                <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
-                                                                                        <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                                    </button>
-                                                                                </a>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <p>No Report</p>
-                                                                            }
+                                                                                @if (!item.IsReportBlocked && ((item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1)))
+                                                                                {
+                                                                                    @*<a target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">Report</a>*@
+                                                                                    <a style="text-decoration:none;" target="_blank" href="@Url.Action("PublicAddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId, isClient = true, actiontype = "Candidate", currentUser = currentUser })" title="Feedback Report">
+                                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
+                                                                                            <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                                        </button>
+                                                                                    </a>
+                                                                                    <a target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.InterviewId, irfId=item.IRFId,isClient = true})">
+                                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
+                                                                                            <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                                        </button>
+                                                                                    </a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <p>No Report</p>
+                                                                                }
                                                                             }
                                                                         </td>
 
 
-                                                       @*                 @if (item.PrimarySkill != null && item.PrimarySkill != "")
-                                                                        {
+                                                                        @*                 @if (item.PrimarySkill != null && item.PrimarySkill != "")
+                                                                    {
 
-                                                                            @if (item.PrimarySkill.Length > 15)
-                                                                            {
-                                                                                <td class="cadEmail text-left pl15">
-                                                                                    <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill </a>
-                                                                                </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td class="text-left pl15">
-                                                                                    <a onclick="">@item.PrimarySkill</a>
-                                                                                </td>
-                                                                            }
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }*@
-                                                                     @*   <td>
-                                                                            @if (item.CurrentStatus == "Selected")
-                                                                            {
-                                                                                <p class="selected">@item.CurrentStatus</p>
-                                                                            }
+                                                                    @if (item.PrimarySkill.Length > 15)
+                                                                    {
+                                                                    <td class="cadEmail text-left pl15">
+                                                                    <a onclick="" data-tooltip="@item.PrimarySkill"> @item.PrimarySkill </a>
+                                                                    </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <td class="text-left pl15">
+                                                                    <a onclick="">@item.PrimarySkill</a>
+                                                                    </td>
+                                                                    }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <td></td>
+                                                                    }*@
+                                                                        @*   <td>
+                                                                    @if (item.CurrentStatus == "Selected")
+                                                                    {
+                                                                    <p class="selected">@item.CurrentStatus</p>
+                                                                    }
 
-                                                                            else if (item.CurrentStatus == "Rejected")
-                                                                            {
-                                                                                <p class="rejected">@item.CurrentStatus</p>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <p>@item.CurrentStatus</p>
-                                                                            }
-                                                                        </td>*@
-                                                                       @* <td>@item.HREmail</td>*@
+                                                                    else if (item.CurrentStatus == "Rejected")
+                                                                    {
+                                                                    <p class="rejected">@item.CurrentStatus</p>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    <p>@item.CurrentStatus</p>
+                                                                    }
+                                                                    </td>*@
+                                                                        @* <td>@item.HREmail</td>*@
                                                                         @*<td>@item.staffingAgency</td>*@
                                                                         @*<td>@item.ProfileSource</td>*@
                                                                         <td>
 
                                                                             <!---client buttons-->
                                                                             <div>
-                                                                          @*  @if (item.CurrentStatus != "Scheduled")
+                                                                                @*  @if (item.CurrentStatus != "Scheduled")
                                                                             {
-                                                                              
-                                                                                <a target="_blank" class="btn btn-primary shadow btn-xs sharp me-1 item4 item4" href="@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 3 })" title="Schedule Meeting" style="cursor: pointer;">
-                                                                                    <span title="Schedule Meeting"><span class="fas fa-calendar"></span></span>
-                                                                                    </a>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <div class="mdc-fab app-fab--absolute" style="position:relative;left:5px">
-                                                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
-                                                                                    </div>
-                                                                                }*@
+
+                                                                            <a target="_blank" class="btn btn-primary shadow btn-xs sharp me-1 item4 item4" href="@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFname, calendlyLink = item.CalendlyLink, type = 3 })" title="Schedule Meeting" style="cursor: pointer;">
+                                                                            <span title="Schedule Meeting"><span class="fas fa-calendar"></span></span>
+                                                                            </a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                            <div class="mdc-fab app-fab--absolute" style="position:relative;left:5px">
+                                                                            <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" aria-hidden="true"></i></span>
+                                                                            </div>
+                                                                            }*@
                                                                                 @if (item.CurrentStatus == "Scheduled" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "No Show(Candidate)" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Dropped")
                                                                                 {
                                                                                     <div class="btn btn-reschedule shadow btn-xs sharp me-1">
                                                                                         <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" style="color:#fff" aria-hidden="true"></i></span>
                                                                                     </div>
-                                                                                 }
-                                                                                  @if (item.CurrentStatus == "Cancelled" || item.CurrentStatus == "No Show(Candidate)" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Dropped")
+                                                                                }
+                                                                                @if (item.CurrentStatus == "Cancelled" || item.CurrentStatus == "No Show(Candidate)" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Dropped")
                                                                                 {
                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
                                                                                         <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send"></span></span>
                                                                                     </span>
                                                                                 }
                                                                                 @if (item.IsClientCancelInterview && item.CurrentStatus == "Scheduled")
-                                                                            {
-                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId','@item.IRFId')" data-original-title="Tooltip on top"><span class="btn shadow btn-xs sharp me-1 trash-btn" style="cursor: pointer;" title="Cancel Interview"><span class="fas fa-close"></span></span></span>
-                                                                            }
-                                                                            @if (item.Phone != null && item.Phone != string.Empty)
-                                                                            {
-                                                                                <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span></span>
-                                                                            }
-                                                                            <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Candidate Status">
-                                                                                <span onclick="PublicStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFname','@item.CandidateName')" title="Candidate Status">
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
-                                                                                </span>
-                                                                            </button>
-                                                                            @*<button aria-label="Rate Interviewer" style="border:0px;background:none">
-                                                                        <span onclick="openpopUpRating('@item.CandidateName','@item.InterviewId')" title="Rate Interviewer">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
-                                                                        </span>
-                                                                        </button>*@
-                                                                            @{
-                                                                                bool allowClientAction = false; //allow client action to remove or shortlist an interviewer
-                                                                                if (!string.IsNullOrEmpty(ViewBag.emailid))
                                                                                 {
-                                                                                    allowClientAction = true;
+                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Cancelinvite(@item.InterviewId,'@item.interviewDate','@item.CandidateEmailId','@item.IRFId')" data-original-title="Tooltip on top"><span class="btn shadow btn-xs sharp me-1 trash-btn" style="cursor: pointer;" title="Cancel Interview"><span class="fas fa-close"></span></span></span>
                                                                                 }
-                                                                            }
-                                                                           
-                                                                         @*   @if (item.IsQCRequired && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
-                                                                            {
-                                                                                <button class="btn btn-primary shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="QC Form">
-                                                                                    <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.InterviewId, interviewer = item.Interviewer,type="ClientPublic",uniqueid=ViewBag.id })'" title="QC Form">
-                                                                                        <i class="far fa-comment-dots"></i>
+                                                                                @if (item.Phone != null && item.Phone != string.Empty)
+                                                                                {
+                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.CandidateName', '@item.Phone')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span></span>
+                                                                                }
+                                                                                <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Candidate Status">
+                                                                                    <span onclick="PublicStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFname','@item.CandidateName')" title="Candidate Status">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
                                                                                     </span>
                                                                                 </button>
+                                                                                @*<button aria-label="Rate Interviewer" style="border:0px;background:none">
+                                                                            <span onclick="openpopUpRating('@item.CandidateName','@item.InterviewId')" title="Rate Interviewer">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="rgb(169,168,168)" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z" /></svg>
+                                                                            </span>
+                                                                            </button>*@
+                                                                                @{
+                                                                                    bool allowClientAction = false; //allow client action to remove or shortlist an interviewer
+                                                                                    if (!string.IsNullOrEmpty(ViewBag.emailid))
+                                                                                    {
+                                                                                        allowClientAction = true;
+                                                                                    }
+                                                                                }
+
+                                                                                @*   @if (item.IsQCRequired && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8) && (item.confirmationStatus.HasValue && item.confirmationStatus == 1))
+                                                                            {
+                                                                            <button class="btn btn-primary shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="QC Form">
+                                                                            <span onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = item.InterviewId, interviewer = item.Interviewer,type="ClientPublic",uniqueid=ViewBag.id })'" title="QC Form">
+                                                                            <i class="far fa-comment-dots"></i>
+                                                                            </span>
+                                                                            </button>
                                                                             }*@
-                                                                            @*@if (item.IsRedoInterview && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8))
-                                                                        {
-                                                                        <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
-                                                                        <span onclick="OpenRedoFormModel('@item.InterviewId','@item.CurrentStatus')" title="ReDo Interview" class="mdc-fab__icon material-icons">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                                                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
-                                                                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
-                                                                        </svg>
-                                                                        </span>
-                                                                        </button>
-                                                                        }*@
+                                                                                @*@if (item.IsRedoInterview && (item.CurrentMeetingStatus == 4 || item.CurrentMeetingStatus == 6 || item.CurrentMeetingStatus == 7 || item.CurrentMeetingStatus == 8))
+                                                                            {
+                                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="ReDo Interview" style=" position: relative; top: -3px;">
+                                                                            <span onclick="OpenRedoFormModel('@item.InterviewId','@item.CurrentStatus')" title="ReDo Interview" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z" />
+                                                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z" />
+                                                                            </svg>
+                                                                            </span>
+                                                                            </button>
+                                                                            }*@
                                                                             </div>
                                                                             <!---interviewer buttons-->
                                                                             <div class="mt-10">
                                                                                 <button class="btn btn-rating shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Rate Interviewer"
-                                                                                    data-toggle="ajax-modal" data-target="#addComment"
-                                                                                    data-interviewdate="@item.interviewDate"
-                                                                                    data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction})">
-                                                                                <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
-                                                                            </button>
+                                                                                        data-toggle="ajax-modal" data-target="#addComment"
+                                                                                        data-interviewdate="@item.interviewDate"
+                                                                                        data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction })">
+                                                                                    <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
+                                                                                </button>
                                                                                 @if (string.IsNullOrWhiteSpace(item.CompanyName))
                                                                                 {
                                                                                     <span>
@@ -717,7 +717,7 @@
                                                                                     </span>
 
                                                                                 }
-                                                                                
+
                                                                             </div>
                                                                         </td>
                                                                         <td>
@@ -725,9 +725,10 @@
                                                                             {
                                                                                 <div class="row">
                                                                                     <span class="icon-field"> <img class="icon ml" src="~/img/email.png" />    Emails :</span>    <span class="icon-field">
-                                                                                        <a class="icon-link" href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email})">
-                                                                                       @item.MailCount
-                                                                                    </a></span>
+                                                                                        <a class="icon-link" href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email })">
+                                                                                            @item.MailCount
+                                                                                        </a>
+                                                                                    </span>
                                                                                 </div>
                                                                             }
                                                                             @if (item.CallsCount != 0)
@@ -736,9 +737,10 @@
                                                                                     <span class="icon-field">
                                                                                         <img class="icon vc" src="~/img/voice-call.png" />  Voice Calls :
                                                                                     </span>   <span class="icon-field">
-                                                                                        <a class="icon-link" href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
-                                                                                       @item.CallsCount
-                                                                                    </a></span>
+                                                                                        <a class="icon-link" href="#!!_@item.InterviewId" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.VoiceCall })">
+                                                                                            @item.CallsCount
+                                                                                        </a>
+                                                                                    </span>
                                                                                 </div>
                                                                             }
 
@@ -748,16 +750,17 @@
                                                                                     <span class="icon-field">
                                                                                         <img class="icon wp" src="~/img/whatsapp.png" />   Whatsapp Messages :
                                                                                     </span>  <span class="icon-field">
-                                                                                        <a class="icon-link" href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
-                                                                                        @item.WhatsappCount
-                                                                                    </a></span>
+                                                                                        <a class="icon-link" href="#!!!_@item.InterviewId" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Whatsapp })">
+                                                                                            @item.WhatsappCount
+                                                                                        </a>
+                                                                                    </span>
                                                                                 </div>
                                                                             }
 
                                                                         </td>
                                                                         @*<td>@item.NickName</td>*@
-                                                                       
-                                                                      
+
+
                                                                     </tr>
                                                                 }
                                                             </tbody>
@@ -936,13 +939,15 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
-              <div class="modal-footer"><div class="col-md-12 text-right clearfix">
+            <div class="modal-footer">
+                <div class="col-md-12 text-right clearfix">
                     <input type="button" onclick="closemyStatusListpopup()" style="margin-top:10px;" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Close">
-                </div></div>
+                </div>
+            </div>
         </div>
-      
+
     </div>
 </div>
 <div id="myRaitingPopup" class="modal modal-wrap modal-bg">
@@ -1209,7 +1214,7 @@
     function applyDataTable() {
 
         var table = $('#candidateTable').DataTable({
-         
+
             order: [],
             language: {
                 search: "_INPUT_",
@@ -1234,9 +1239,9 @@
 
     };
 
-   
 
-    
+
+
 </script>
 <script>
     var candidate = "";
@@ -1442,44 +1447,50 @@
         var html = '';
         for (var i = 0; i < data.length; i++) {
             html += '<tr><td>' + data[i].date.replace("T", " ") + '</td>';
-            if (data[i].statusValue == "In Progress") {
-                html += '    <td>span class="current progress"> ' + data[i].statusValue + '</span></td>';
+            if(data[i].redoInterview==true && data[i].statusValue == "Meeting Status" && (data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 7 || data[i].meetingStatus == 8) && (data[i].confirmationStatus == 1)){
+                html+='<td><p>Redo Interview</p></td>';
             }
-            else if (data[i].statusValue == "New") {
-                html += '<td><span class="current new">' + data[i].statusValue + '</span></td>';
-            }
-            else if (data[i].statusValue == "Waiting For Response") {
-                html += '<td style="color: orange;font-weight: 500"> ' + data[i].statusValue + '</td>';
-            }
-            else if (data[i].statusValue == "Scheduled") {
-                html += '<td><span class="current scheduled">' + data[i].statusValue + '</span></td>';
-            }
-             else if (data[i].statusValue == "Added") {
-                html += '<td><span class="current added">' + data[i].statusValue + '</span></td>';
-            }
-             else if (data[i].statusValue == "Cancelled") {
-                html += '<td><span class="current cancelled">' + data[i].statusValue + '</span></td>';
-            }
-            else if (data[i].statusValue == "No Show(Candidate)") {
-                html += '<td><span class="current noshowcandidate">' + data[i].statusValue + '</span></td>';
-            }
-            else if (data[i].statusValue == "Irrelevant") {
-                html += '<td><span class="current irrelevant"> ' + data[i].statusValue + '</span></td>';
-            }
-            else if (data[i].statusValue == "Duplicate") {
-                html += '<td style=" color: hotpink;font-weight: 500">' + data[i].statusValue + '</td>';
-            }
-            else if (data[i].statusValue == "Not Interested") {
-                html += '<td style=" color:purple;font-weight: 500">' + data[i].statusValue + '</td>';
-            }
-            else if (data[i].statusValue == "Got Another Offer") {
-                html += '<td style=" color: darkgreen;font-weight: 500"> ' + data[i].statusValue + '</td>';
-            }
-            else if (data[i].statusValue == "Hold") {
-                html += '<td style="color: orangered;font-weight: 500"> ' + data[i].statusValue + '</td>';
-            }
-            else {
-                html += '<td>' + data[i].statusValue + '</td>';
+            else
+            {
+                if (data[i].statusValue == "In Progress") {
+                    html += '    <td>span class="current progress"> ' + data[i].statusValue + '</span></td>';
+                }
+                else if (data[i].statusValue == "New") {
+                    html += '<td><span class="current new">' + data[i].statusValue + '</span></td>';
+                }
+                else if (data[i].statusValue == "Waiting For Response") {
+                    html += '<td style="color: orange;font-weight: 500"> ' + data[i].statusValue + '</td>';
+                }
+                else if (data[i].statusValue == "Scheduled") {
+                    html += '<td><span class="current scheduled">' + data[i].statusValue + '</span></td>';
+                }
+                 else if (data[i].statusValue == "Added") {
+                    html += '<td><span class="current added">' + data[i].statusValue + '</span></td>';
+                }
+                 else if (data[i].statusValue == "Cancelled") {
+                    html += '<td><span class="current cancelled">' + data[i].statusValue + '</span></td>';
+                }
+                else if (data[i].statusValue == "No Show(Candidate)") {
+                    html += '<td><span class="current noshowcandidate">' + data[i].statusValue + '</span></td>';
+                }
+                else if (data[i].statusValue == "Irrelevant") {
+                    html += '<td><span class="current irrelevant"> ' + data[i].statusValue + '</span></td>';
+                }
+                else if (data[i].statusValue == "Duplicate") {
+                    html += '<td style=" color: hotpink;font-weight: 500">' + data[i].statusValue + '</td>';
+                }
+                else if (data[i].statusValue == "Not Interested") {
+                    html += '<td style=" color:purple;font-weight: 500">' + data[i].statusValue + '</td>';
+                }
+                else if (data[i].statusValue == "Got Another Offer") {
+                    html += '<td style=" color: darkgreen;font-weight: 500"> ' + data[i].statusValue + '</td>';
+                }
+                else if (data[i].statusValue == "Hold") {
+                    html += '<td style="color: orangered;font-weight: 500"> ' + data[i].statusValue + '</td>';
+                }
+                else {
+                    html += '<td>' + data[i].statusValue + '</td>';
+                }
             }
             html += '<td><div>';
             if (data[i].comments != null && data[i].comments.Length > 18) {
@@ -1493,14 +1504,21 @@
             html += '<td>';
             if (data[i].statusValue == "Meeting Status") {
                 if (!data[i].isReportBlocked && ((data[i].meetingStatus == 4 || data[i].meetingStatus == 6 || data[i].meetingStatus == 7 || data[i].meetingStatus == 8) && (data[i].confirmationStatus == 1))) {
-                    html += '<a target="_blank" href="/Interview/PublicAddReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true&actiontype=Candidate" title="Feedback Report">';
-                    html += '<button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">';
-                    html += '<span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>';
-                    html += '</button></a>';
-                    html += '<a target="_blank" href="/Interview/ClientReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true">';
-                    html += '<button class="mdc-fab app-fab--absolute" aria - label="Client Interview Report" style="margin-left:5px;" >';
-                    html += '<span title="Client Interview Report" class="mdc-fab__icon material-icons" > <svg xmlns="http://www.w3.org/2000/svg" width = "16" height = "16" fill = "currentColor" class="bi bi-file-earmark-ruled" viewBox = "0 0 16 16" > <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /> </svg></span>';
-                    html += '</button></a>';
+                   if(data[i].redoInterview==true)
+                   {
+                        html += '<p>No Report</p>';
+                   }
+                   else
+                   {
+                        html += '<a target="_blank" href="/Interview/PublicAddReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true&actiontype=Candidate" title="Feedback Report">';
+                        html += '<button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">';
+                        html += '<span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>';
+                        html += '</button></a>';
+                        html += '<a target="_blank" href="/Interview/ClientReport?interviewId= ' + data[i].interviewId + '&irfId=' + data[i].irfId + '&currentUser=' + '@currentUser' + '&isClient=true">';
+                        html += '<button class="mdc-fab app-fab--absolute" aria - label="Client Interview Report" style="margin-left:5px;" >';
+                        html += '<span title="Client Interview Report" class="mdc-fab__icon material-icons" > <svg xmlns="http://www.w3.org/2000/svg" width = "16" height = "16" fill = "currentColor" class="bi bi-file-earmark-ruled" viewBox = "0 0 16 16" > <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /> </svg></span>';
+                        html += '</button></a>';
+                    }
                 }
                 else {
                     html += '<p></p>';
