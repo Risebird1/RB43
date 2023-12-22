@@ -1020,7 +1020,7 @@
                 return new Promise(function (resolve, reject) {
                     $.ajax({
                         type: "POST",
-                        url: "/IRF/RemoveInterviewerFromIRF",
+                        url: "/IRF/DeleteSkillChannelSampleQuestions",
                         data: { questionid: questionid },
                         success: function (result) {
                             resolve(result);
