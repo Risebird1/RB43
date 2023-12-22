@@ -43,7 +43,9 @@ CREATE TABLE [dbo].[InterviewerProfile](
 	[RedmarkerAcknowledge] [bit] NULL,
     [VideoLink][varchar](1000) NULL,
     [IsVideoApproved][bit] NUll,
-    [LinkAddedOn][datetime] Null
+    [LinkAddedOn][datetime] Null,
+    [IsResumeRedactAttempted][bit] Null,
+    [IsResumeRedactFailed][bit] Null,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -418,6 +420,20 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewerProfile
     Add LinkAddedOn datetime
+END
+
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'IsResumeRedactAttempted')
+AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+	alter table InterviewerProfile
+	Add IsResumeRedactAttempted bit null
+END
+
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'IsResumeRedactFailed')
+AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+	alter table InterviewerProfile
+	Add IsResumeRedactFailed bit null
 END
 
 End
