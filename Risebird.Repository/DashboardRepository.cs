@@ -11,6 +11,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 
 namespace Risebird.Repository
@@ -1429,6 +1430,30 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     var result = await SqlMapper.QueryAsync<ProctoringReport>(con, "usp_ProxyReortDetail", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<ProctoringReport> GetProxyReportCountDetails(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id",id);
+                    var result = await SqlMapper.QueryFirstOrDefaultAsync<ProctoringReport>(con, "usp_GetProxyCountDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }

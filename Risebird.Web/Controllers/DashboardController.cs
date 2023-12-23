@@ -2470,6 +2470,7 @@ namespace Risebird.Web.Controllers
                         {
                             x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
                             x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription();
                             return x;
                         }).ToList();
                         foreach (var item in model)
@@ -2488,6 +2489,7 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
+                       
                         return View(model);
                     }
                     else
@@ -2506,6 +2508,20 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
+        [HttpGet]
+        public async Task<IActionResult> GetProxyReportCountDetails(int id)
+        {
+            try
+            {
+                var model = await _dashboardService.GetProxyReportCountDetails(id);
+         
+                return PartialView(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
