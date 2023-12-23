@@ -1319,6 +1319,7 @@ namespace Risebird.Repository
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@InterviewId", InterviewId);
                 dynamicParam.Add("@Type", Type);
+                dynamicParam.Add("@CreatedOn", DateTime.Now);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_addRedoInterview", dynamicParam,

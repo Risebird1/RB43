@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
@@ -206,8 +207,16 @@ namespace Risebird.CommonHelper
                 {
                     response.EnsureSuccessStatusCode();
                     //response.StatusCode
+                    var responseObjTypeDefinition = new
+                    { 
+                        data = new { redactedPdf  = string.Empty}
+                    };
+
                     var body = await response.Content.ReadAsStringAsync();
-                    result = body;
+
+                    var responseObj = JsonConvert.DeserializeAnonymousType(body, responseObjTypeDefinition);
+                    //result = body;
+                    result = responseObj.data.redactedPdf; ;
                 }
 
                 return result;

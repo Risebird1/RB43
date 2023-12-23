@@ -14,10 +14,11 @@ BEGIN
 Select im.*,case when ulc.LastName is null then ulc.FirstName                  
   else RTRIM(LTRIM(ulc.FirstName)) + SPACE(1) + RTRIM(LTRIM(ulc.LastName))                  
   end as candidateName ,  
-  ulc.EmailId as ChannelOwner,IRF.id as irfIntId, ri.CreatedBy, ri.Createdon  
+  ulc.EmailId as ChannelOwner,IRF.id as irfIntId, ri.CreatedBy, ri.Createdon,ulco.EmailId as ChannelOwner  
   from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id  
 inner join IRF on im.IRFId=irf.IRFId  
 left join UserList ulc on im.candidateEmail= ulc.EmailId   
+left join UserList ulco on ulco.id=IRF.Risebirdhr
 where ISNULL(Approved,0)=0 and  ISNULL(Rejected,0)=0
 END  
 GO

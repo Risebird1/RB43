@@ -110,5 +110,7 @@ namespace Risebird.Repository.Interface
         Task<bool> updateRedmarkerAcknowledge(string uniqueid);
         Task<bool> UpdateVideoKYCDetails(string videolink, string Emailid);
         Task<bool> SaveInterviewerCodedResume(InterviewerProfileVM model);
+        Task<IEnumerable<InterviewerProfileVM>> GetInterviewerResumeForRedaction();
+        Task<bool> UpdateInterviewerCodedResumeInBulk(List<InterviewerProfileVM> resumeList);
     }
 }

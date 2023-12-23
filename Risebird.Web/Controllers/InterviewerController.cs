@@ -3966,7 +3966,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                return Json("Fail to upload, Please try again.");
+                return Json("Fail to upload, Please try after some time.");
             }
         }
 

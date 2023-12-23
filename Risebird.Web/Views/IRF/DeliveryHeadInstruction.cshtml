@@ -298,7 +298,7 @@
                                     <div class="card">
                                         <label class="question" for="checkbox_nine">
                                             <label for="checkbox_nine">
-                                                <i class="fas fa-users" aria-hidden="true" style="font-size:18px;margin-right:10px;"></i>
+                                                <i class="fas fa-comments" aria-hidden="true" style="font-size:18px;margin-right:10px;"></i>
                                                 Questions
                                             </label>
                                             <span class="round">
@@ -632,11 +632,11 @@
                 <h5 class="modal-title pull-left">Upload Resume</h5><span style="float: right;color:green;padding: 10px;font-size: 15px;" id="txtheaderinterviewer"></span>                
             </div>
 
-            <a onclick="closeResumewModel()" href="#">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="cursor:pointer;position:absolute;top:20px;right:20px;">
+           
+                <button type="button" class="close" onclick="closeResumewModel()" data-dismiss="modal" aria-label="Close" style="cursor:pointer;position:absolute;top:20px;right:20px;">
                 <span aria-hidden="true">×</span>
                 </button>
-            </a>
+           
             <div class="modal-body" id="divresumepopup">
             </div>
         </div>
@@ -1020,7 +1020,7 @@
                 return new Promise(function (resolve, reject) {
                     $.ajax({
                         type: "POST",
-                        url: "/IRF/RemoveInterviewerFromIRF",
+                        url: "/IRF/DeleteSkillChannelSampleQuestions",
                         data: { questionid: questionid },
                         success: function (result) {
                             resolve(result);
@@ -1190,6 +1190,11 @@ else
 <script>
     function closePopupDetailsModal(){
         var modal = document.getElementById("PopupDetailsModal");
+        modal.style.display = "none";
+    }
+
+      function closeResumewModel(){
+        var modal = document.getElementById("Resumepopup");
         modal.style.display = "none";
     }
      function openPopupDetailsModal(){
