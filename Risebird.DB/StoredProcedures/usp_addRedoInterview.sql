@@ -10,18 +10,19 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE [dbo].usp_addRedoInterview     
 @InterviewId int,
-@Type varchar(100)
+@Type varchar(100),
+@CreatedOn datetime
 as
 begin
 Declare @CreadtedBy varchar(200)
 Select @CreadtedBy=candidateEmail From InterviewMeetings where id=@InterviewId
 IF EXISTS(select * from RedoInterviews where interviewid=@interviewid)
 begin
-Update RedoInterviews set ModifiedOn=GETDATE(),ModifiedBy=@CreadtedBy where interviewid=@interviewid
+Update RedoInterviews set ModifiedOn=@CreatedOn,ModifiedBy=@CreadtedBy where interviewid=@interviewid
 end
 else
 begin
-Insert Into RedoInterviews(interviewid,Type,Approved,Createdon,CreatedBy)values(@InterviewId,@Type,0,Getdate(),@CreadtedBy)
+Insert Into RedoInterviews(interviewid,Type,Approved,Createdon,CreatedBy)values(@InterviewId,@Type,0,@CreatedOn,@CreadtedBy)
 end
 End
 Go
