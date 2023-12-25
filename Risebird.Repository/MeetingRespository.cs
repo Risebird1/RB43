@@ -6977,10 +6977,12 @@ namespace Risebird.Repository
                     parameters.Add("@participantEmail", data.participantEmail);
                     parameters.Add("@ZoomMeetingId", data.ZoomMeetingId);
                     parameters.Add("@qosType", data.qosType);
-                    parameters.Add("@jitter", data.jitter);
-                    parameters.Add("@quality", data.quality);
+                    parameters.Add("@max_jitter", data.max_jitter);
+                    parameters.Add("@min_jitter", data.min_jitter);
+                    parameters.Add("@avg_jitter", data.avg_jitter);
+                    //parameters.Add("@quality", data.quality);
                     parameters.Add("@quality_score", data.quality_score);
-                    parameters.Add("@latency", data.latency);
+                    parameters.Add("@max_latency", data.max_latency);
                     parameters.Add("@avg_loss", data.avg_loss);
                     parameters.Add("@max_loss", data.max_loss);
                     parameters.Add("@CreatedAt", DateTime.Now);
