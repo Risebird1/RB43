@@ -29,7 +29,7 @@ BEGIN
 
   Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate 
   ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
-cl.Name as ClientName,ip.NickName as Interviewer,ic.InterviewStatus,IRF.id as irfIntId
+cl.Name as ClientName,ip.NickName as Interviewer,ic.InterviewStatus,IRF.id as irfIntId,im.RedoInterview
   from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId 
   join InterviewComments ic on ic.InterviewId=im.id
  join TransClientUser tcu on tcu.IRFId=IRF.id   
@@ -46,7 +46,7 @@ BEGIN
  --where ul.Emailid=@Emailid and im.confirmationStatus=1 
   Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,1 as IsClient,im.Interviewdate 
   ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
-cl.Name as ClientName,ip.NickName as Interviewer,ic.InterviewStatus,IRF.id as irfIntId
+cl.Name as ClientName,ip.NickName as Interviewer,ic.InterviewStatus,IRF.id as irfIntId,im.RedoInterview
   from 
   CandidateFeedbackDetails cfd  
   join InterviewMeetings im on cfd.Interviewid=im.id
@@ -67,7 +67,7 @@ BEGIN
 
  Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate
 ,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
-cl.Name as ClientName,ip.NickName as Interviewer,IRF.id as irfIntId
+cl.Name as ClientName,ip.NickName as Interviewer,IRF.id as irfIntId,im.RedoInterview
 from CandidateFeedbackDetails cfd  join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId 
 join InterviewComments ic on ic.InterviewId=im.id
 join Client cl on irf.ClientId=cl.id 

@@ -6224,6 +6224,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@HandsOfCoding", model.HandsOfCoding);
                 dynamicParameters.Add("@Comments", model.Comments);
                 dynamicParameters.Add("@ModifiedBy", model.ModifiedBy);
+                dynamicParameters.Add("@ModifiedOn", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_AddRedoInterviewDetails", dynamicParameters,
@@ -6265,6 +6266,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", model.id);
                 dynamicParameters.Add("@RejectionComment", model.RejectionComment);
                 dynamicParameters.Add("@ModifiedBy", model.ModifiedBy);
+                dynamicParameters.Add("@ModifiedOn", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateRejectRedoInterviewDetails", dynamicParameters,

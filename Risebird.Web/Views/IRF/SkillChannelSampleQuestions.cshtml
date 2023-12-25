@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.TechSkillComments
 @inject IJsonHelper Json;
 
-<form action="/IRF/SkillChannelSampleQuestions" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
+<form action="/IRF/SkillChannelSampleQuestions" enctype="multipart/form-data" id="questionform" method="post" class="ng-pristine ng-valid">
                             @Html.AntiForgeryToken()
                             <div class="row">
                                 <div class="card-header">
@@ -56,7 +56,7 @@
                                                 <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Question" onclick="AddQuestionRow()" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Question</font></span>
                                             </button>
                                         </div>
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="return errorMessage();">Submit</button>
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="return errorMessage();">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -190,6 +190,7 @@
                 return false;
             }
         }
+        document.getElementById("questionform").submit();
         return true;
     }
 

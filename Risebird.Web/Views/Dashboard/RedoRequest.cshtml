@@ -248,7 +248,10 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            order: [],
+          "order": [[1, 'desc']],//order column in descending order.
+           "columnDefs": [
+          { "type": "date", "targets": [1] }
+           ],
             responsive: true,
             language: {
                 search: "_INPUT_",
