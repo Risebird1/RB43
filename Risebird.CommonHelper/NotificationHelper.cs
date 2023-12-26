@@ -1522,16 +1522,22 @@ namespace Risebird.CommonHelper
                 msg.AddTo(msg.From);
                 foreach (var mail in toMails)
                 {
-                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    if (!string.IsNullOrEmpty(mail))
+                    {
+                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    }
                 }
                 var ccMails = model.CC.Split(";");
                 foreach (var mail in ccMails)
                 {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    if (!string.IsNullOrEmpty(mail))
+                    {
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    }
                 }
-                object[] parameters = new object[] { ressignmentlink, zoomlink, jdLink };
+                object[] parameters = new object[] { ressignmentlink, jdLink };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotificationV2.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotificationV3.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, null, interviewId);

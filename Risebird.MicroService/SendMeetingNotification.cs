@@ -99,7 +99,9 @@ namespace Risebird.MicroService
                                 CC = CCEmails,
                                 Subject = "Risebird Interview: Are you late? Candidate (" + item.candidateName + " ) has joined the meeting and is waiting. Please join immediately."
                             };
-                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "", item.interviewMeetingId);
+                            string dashboardLink = "https://portal.risebird.io/Interview/InterviewDetails?id=" + item.irfId + "&interviewId=" + item.interviewMeetingId;
+                            //var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, item.zoomlink, "Candidate", item.candidateName, "", item.interviewMeetingId);
+                            var resultset = await _notificationHelper.InterviewerWaitingNotification(_mail, dashboardLink, "Candidate", item.candidateName, "", item.interviewMeetingId);
                             WhatsAppVM _whatsAppVM = new WhatsAppVM();
                             _whatsAppVM.Emailid = item.interviewer + ";" + CCEmails;
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
