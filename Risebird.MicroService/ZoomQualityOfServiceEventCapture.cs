@@ -46,29 +46,25 @@ namespace Risebird.MicroService
 
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-                log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
+                //log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
 
                 string eventType = string.Empty;
                 
                 dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
 
-                log.LogInformation($"ZoomQualityOfServiceEventCapture : Deserialized with value of stuff:  {stuff}");
 
                 string plainToken = string.Empty;
                 var children = stuff.Children().GetEnumerator();
 
-                log.LogInformation($"ZoomQualityOfServiceEventCapture : Deserialized with value of children:  {children}");
 
 
                 while (children.MoveNext())
                 {
-                    log.LogInformation($"ZoomQualityOfServiceEventCapture : Entered while loop");
 
                     var mainDetails = children.Current;
 
                     if (((JProperty)mainDetails).Name == "event")
                     {
-                        log.LogInformation($"ZoomQualityOfServiceEventCapture : event property value");
 
                         eventType = ((JProperty)mainDetails).Value.ToString().Split('.').Last().ToUpper();
                     }
@@ -77,7 +73,6 @@ namespace Risebird.MicroService
                     {
                         foreach (var dataItem in mainDetails.Children())
                         {
-                            log.LogInformation($"ZoomQualityOfServiceEventCapture : payload property value");
 
                             var internalNodes = dataItem.Children().GetEnumerator();
                             while (internalNodes.MoveNext())
@@ -95,7 +90,6 @@ namespace Risebird.MicroService
 
                 if (eventType == "URL_VALIDATION")
                 {
-                    log.LogInformation($"ZoomQualityOfServiceEventCapture : event property value");
 
                     var validationkey = _configuration["ZoomAppDetails:apivalidationKey"].ToString();
                     var enc = Encoding.Default;
@@ -112,10 +106,15 @@ namespace Risebird.MicroService
 
                 var data = JsonConvert.DeserializeObject<ZoomQualityOfServiceData>(requestBody);
 
+                log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
+
+
                 if (data != null)
                 {
                     if(data.payload.@object.participant.qos.Where(x => x.type == "audio_input") != null)
                     {
+                        log.LogInformation($"ZoomQualityOfServiceEventCapture : qos type audio_input found");
+
                         foreach (var item in data.payload.@object.participant.qos.Where(x => x.type == "audio_input"))
                         {
                             // Extracting integer using regular expression
@@ -123,8 +122,12 @@ namespace Risebird.MicroService
                             if (match.Success)
                             {
                                 int jitterValue = int.Parse(match.Value);
-                                if(jitterValue > 40)
+                                log.LogInformation($"ZoomQualityOfServiceEventCapture : jitter Value : {jitterValue}");
+
+                                if (jitterValue > 40)
                                 {
+                                    log.LogInformation($"ZoomQualityOfServiceEventCapture : jitter Value : {jitterValue}");
+
                                     var qosDataObj = new PoorQOSZoomData 
                                     { 
                                         ZoomMeetingId = data.payload.@object.uuid, 
@@ -142,6 +145,8 @@ namespace Risebird.MicroService
                                     };
 
                                     //store in db
+                                    log.LogInformation($"ZoomQualityOfServiceEventCapture : qosDataObj : {qosDataObj}");
+
                                     await _meetingRespository.SavePoorQOSDetails(qosDataObj);
 
                                 }
