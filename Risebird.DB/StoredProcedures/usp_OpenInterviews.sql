@@ -19,7 +19,7 @@ im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewO
 im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,    
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,    
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink,irf.JDTiltle,irf.id as irfIntId, ul.IsActive as IsInterviewerActive,   
-irf.JDLink,tirf.PerSuccessRate as ExpectedPerHourRate,irf.IsNewSkillChannel,
+irf.JDLink,tirf.PerSuccessRate as ExpectedPerHourRate,irf.IsNewSkillChannel,Cl.Name as ClientName,
 Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge from InterviewMeetings im      
 inner join IRF irf on im.IRFId=irf.IRFId
 join Client cl on cl.id=irf.Clientid
