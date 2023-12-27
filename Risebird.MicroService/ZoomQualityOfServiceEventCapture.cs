@@ -48,60 +48,60 @@ namespace Risebird.MicroService
 
                 log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
 
-                //string eventType = string.Empty;
+                string eventType = string.Empty;
 
-                //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
-
-
-                //string plainToken = string.Empty;
-                //var children = stuff.Children().GetEnumerator();
+                dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
 
 
+                string plainToken = string.Empty;
+                var children = stuff.Children().GetEnumerator();
 
-                //while (children.MoveNext())
-                //{
 
-                //    var mainDetails = children.Current;
 
-                //    if (((JProperty)mainDetails).Name == "event")
-                //    {
+                while (children.MoveNext())
+                {
 
-                //        eventType = ((JProperty)mainDetails).Value.ToString().Split('.').Last().ToUpper();
-                //    }
+                    var mainDetails = children.Current;
 
-                //    if (((JProperty)mainDetails).Name == "payload")
-                //    {
-                //        foreach (var dataItem in mainDetails.Children())
-                //        {
+                    if (((JProperty)mainDetails).Name == "event")
+                    {
 
-                //            var internalNodes = dataItem.Children().GetEnumerator();
-                //            while (internalNodes.MoveNext())
-                //            {
-                //                var mainFamilies1 = internalNodes.Current;
-                //                if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "plainToken")
-                //                {
-                //                    plainToken = ((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Value.ToString();
-                //                }
+                        eventType = ((JProperty)mainDetails).Value.ToString().Split('.').Last().ToUpper();
+                    }
 
-                //            }
-                //        }
-                //    }
-                //}
+                    if (((JProperty)mainDetails).Name == "payload")
+                    {
+                        foreach (var dataItem in mainDetails.Children())
+                        {
 
-                //if (eventType == "URL_VALIDATION")
-                //{
+                            var internalNodes = dataItem.Children().GetEnumerator();
+                            while (internalNodes.MoveNext())
+                            {
+                                var mainFamilies1 = internalNodes.Current;
+                                if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "plainToken")
+                                {
+                                    plainToken = ((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Value.ToString();
+                                }
 
-                //    var validationkey = _configuration["ZoomAppDetails:apivalidationKey"].ToString();
-                //    var enc = Encoding.Default;
-                //    HMACSHA256 hmac = new HMACSHA256(enc.GetBytes(validationkey));
-                //    hmac.Initialize();
-                //    byte[] buffer = enc.GetBytes(plainToken);
-                //    var hashForValidate = BitConverter.ToString(hmac.ComputeHash(buffer)).Replace("-", "").ToLower();
-                //    ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
-                //    _zoom.plainToken = plainToken;
-                //    _zoom.encryptedToken = hashForValidate;
-                //    return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
-                //}
+                            }
+                        }
+                    }
+                }
+
+                if (eventType == "URL_VALIDATION")
+                {
+
+                    var validationkey = _configuration["ZoomAppDetails:apivalidationKey"].ToString();
+                    var enc = Encoding.Default;
+                    HMACSHA256 hmac = new HMACSHA256(enc.GetBytes(validationkey));
+                    hmac.Initialize();
+                    byte[] buffer = enc.GetBytes(plainToken);
+                    var hashForValidate = BitConverter.ToString(hmac.ComputeHash(buffer)).Replace("-", "").ToLower();
+                    ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
+                    _zoom.plainToken = plainToken;
+                    _zoom.encryptedToken = hashForValidate;
+                    return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
+                }
 
 
                 var data = JsonConvert.DeserializeObject<ZoomQualityOfServiceData>(requestBody);
