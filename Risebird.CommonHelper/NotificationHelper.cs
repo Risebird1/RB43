@@ -1524,7 +1524,8 @@ namespace Risebird.CommonHelper
                 {
                     if (!string.IsNullOrEmpty(mail))
                     {
-                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                        var interviews = mail.Replace(" ", "");
+                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(interviews, null));
                     }
                 }
                 var ccMails = model.CC.Split(";");
