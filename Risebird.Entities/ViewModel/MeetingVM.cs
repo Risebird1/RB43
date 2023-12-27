@@ -333,6 +333,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerResume { get; set; }
         public int Isavailable { get; set; }
         public DateTime? AvailabilityResponseDate { get; set; }
+        public string candidateEmailId { get; set; }
         //public string EmploymentComment { get; set; }
         //public string CompanyName { get; set; }
         public int RedMarker { get; set; }

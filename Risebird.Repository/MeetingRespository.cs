@@ -6980,11 +6980,12 @@ namespace Risebird.Repository
                     parameters.Add("@max_jitter", data.max_jitter);
                     parameters.Add("@min_jitter", data.min_jitter);
                     parameters.Add("@avg_jitter", data.avg_jitter);
-                    //parameters.Add("@quality", data.quality);
+                    parameters.Add("@quality", data.quality);
                     parameters.Add("@quality_score", data.quality_score);
                     parameters.Add("@max_latency", data.max_latency);
                     parameters.Add("@avg_loss", data.avg_loss);
                     parameters.Add("@max_loss", data.max_loss);
+                    parameters.Add("@user_name", data.user_name);
                     parameters.Add("@CreatedAt", DateTime.Now);
                     
                     await SqlMapper.QueryAsync(con, "usp_SavePoorQOSDetails", parameters,

@@ -46,7 +46,7 @@ namespace Risebird.MicroService
 
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-                log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
+                //log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
 
                 string eventType = string.Empty;
 
@@ -111,44 +111,61 @@ namespace Risebird.MicroService
 
                 if (data != null)
                 {
-                    log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {data}");
-
-                    if (data.payload.@object.participant.qos.Where(x => x.type == "audio_input") != null)
+                    if (data.payload.@object.participant.qos.Where(x => x.type == "audio_output") != null)
                     {
-                        log.LogInformation($"ZoomQualityOfServiceEventCapture : qos type audio_input found");
+                        log.LogInformation($"ZoomQualityOfServiceEventCapture : qos type audio_output found");
 
-                        foreach (var item in data.payload.@object.participant.qos.Where(x => x.type == "audio_input"))
+                        foreach (var item in data.payload.@object.participant.qos.Where(x => x.type == "audio_output"))
                         {
-                            log.LogInformation($"ZoomQualityOfServiceEventCapture : for loop object :  {item}");
-
                             // Extracting integer using regular expression
-                            Match match = Regex.Match(item.details.max_jitter, @"\d+");
-                            if (match.Success)
+                            //Match match = Regex.Match(item.details.max_jitter, @"\d+");
+                            //if (match.Success)
+                            //{
+                            //    //int jitterValue = int.Parse(match.Value);
+                            //    //log.LogInformation($"ZoomQualityOfServiceEventCapture : jitter Value : {jitterValue}");
+
+                            //    var qosDataObj = new PoorQOSZoomData
+                            //    {
+                            //        ZoomMeetingId = data.payload.@object.id,
+                            //        participantEmail = data.payload.@object.participant.email,
+                            //        qosType = "audio_output",
+                            //        max_jitter = item.details.max_jitter,
+                            //        min_jitter = item.details.min_jitter,
+                            //        avg_jitter = item.details.avg_jitter,
+                            //        avg_loss = item.details.avg_loss,
+                            //        max_loss = item.details.max_loss,
+                            //        user_name = data.payload.@object.participant.user_name,
+                            //        quality = item.details.quality,
+                            //        quality_score = item.details.quality_score,
+                            //        max_latency = item.details.max_latency,
+                            //    };
+
+                            //    //store in db
+                            //    log.LogInformation($"ZoomQualityOfServiceEventCapture : qosDataObj : {qosDataObj}");
+
+                            //    await _meetingRespository.SavePoorQOSDetails(qosDataObj);
+                            //}
+
+                            var qosDataObj = new PoorQOSZoomData
                             {
-                                int jitterValue = int.Parse(match.Value);
-                                log.LogInformation($"ZoomQualityOfServiceEventCapture : jitter Value : {jitterValue}");
+                                ZoomMeetingId = data.payload.@object.id,
+                                participantEmail = data.payload.@object.participant.email,
+                                qosType = "audio_output",
+                                max_jitter = item.details.max_jitter,
+                                min_jitter = item.details.min_jitter,
+                                avg_jitter = item.details.avg_jitter,
+                                avg_loss = item.details.avg_loss,
+                                max_loss = item.details.max_loss,
+                                user_name = data.payload.@object.participant.user_name,
+                                quality = item.details.quality,
+                                quality_score = item.details.quality_score,
+                                max_latency = item.details.max_latency,
+                            };
 
-                                var qosDataObj = new PoorQOSZoomData
-                                {
-                                    ZoomMeetingId = data.payload.@object.uuid,
-                                    participantEmail = data.payload.@object.participant.email,
-                                    qosType = "audio_input",
-                                    max_jitter = item.details.max_jitter,
-                                    min_jitter = item.details.min_jitter,
-                                    avg_jitter = item.details.avg_jitter,
-                                    avg_loss = item.details.avg_loss,
-                                    max_loss = item.details.max_loss,
+                            //store in db
+                            log.LogInformation($"ZoomQualityOfServiceEventCapture : qosDataObj : {qosDataObj}");
 
-                                    //quality = item.details.quality,
-                                    quality_score = item.details.quality_score,
-                                    max_latency = item.details.max_jitter,
-                                };
-
-                                //store in db
-                                log.LogInformation($"ZoomQualityOfServiceEventCapture : qosDataObj : {qosDataObj}");
-
-                                await _meetingRespository.SavePoorQOSDetails(qosDataObj);
-                            }
+                            await _meetingRespository.SavePoorQOSDetails(qosDataObj);
 
 
                         }

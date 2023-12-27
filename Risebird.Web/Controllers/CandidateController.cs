@@ -3867,6 +3867,8 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IRFName = firstData.IRFName;
                     candidateTimeline.Phone = firstData.Phone;
                     candidateTimeline.interviewDate = firstData.interviewDate;
+                    candidateTimeline.InterviewerComment = firstData.InterviewerComment;
+
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
                     //var scheduleStatusData = data.Select(x => (x.ScheduleStatusDate, x.ScheduleStatusValue, x.ScheduleStatusComments)).Distinct();
@@ -3946,7 +3948,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 9].Value = "Skill Channel ID";
                 Sheet.Cells[1, 10].Value = "Client Hr";
                 Sheet.Cells[1, 11].Value = "Executive URL";
-
+                Sheet.Cells[1, 12].Value = "Interviewer Comment";
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -4008,6 +4010,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 11].Value = "No Report";
                         }
+                        Sheet.Cells[i, 12].Value = item.InterviewerComment;
 
                         i++;
                     }
