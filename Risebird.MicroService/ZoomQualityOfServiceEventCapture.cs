@@ -34,7 +34,7 @@ namespace Risebird.MicroService
 
         [FunctionName("ZoomQualityOfServiceEventCapture")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "ZoomQualityOfServiceEventCapture")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "ZoomQualityOfServiceEventCapture")] HttpRequest req,
             ILogger log)
         {
             try
