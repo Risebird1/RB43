@@ -46,7 +46,7 @@ namespace Risebird.MicroService
 
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-                //log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
+                log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
 
                 //string eventType = string.Empty;
 
