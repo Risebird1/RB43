@@ -36,9 +36,10 @@ namespace Risebird.Entities.Data
         public string max_jitter { get; set; }
         public string min_jitter { get; set; }
         public string quality_score { get; set; }
-        //public string quality { get; set; }
+        public string quality { get; set; }
         public string max_latency { get; set; }
         public string avg_loss { get; set; }
         public string max_loss { get; set; }
+        public string user_name { get; set; }
     }
 }

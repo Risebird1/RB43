@@ -30,6 +30,7 @@ namespace Risebird.Entities.Data
         public string IRFName { get; set; }
         public string Phone { get; set; }
         public DateTime interviewDate { get; set; }
+        public string InterviewerComment { get; set; }
         public string MobileNumber { get; set; }
         public string IRFname { get; set; }
         public int imid { get; set; }
