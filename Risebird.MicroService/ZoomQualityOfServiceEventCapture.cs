@@ -51,19 +51,52 @@ namespace Risebird.MicroService
                 string eventType = string.Empty;
                 
                 dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
+
+                log.LogInformation($"ZoomQualityOfServiceEventCapture : Deserialized with value of stuff:  {stuff}");
+
                 string plainToken = string.Empty;
                 var children = stuff.Children().GetEnumerator();
 
+                log.LogInformation($"ZoomQualityOfServiceEventCapture : Deserialized with value of children:  {children}");
+
+
                 while (children.MoveNext())
                 {
+                    log.LogInformation($"ZoomQualityOfServiceEventCapture : Entered while loop");
+
                     var mainDetails = children.Current;
+
                     if (((JProperty)mainDetails).Name == "event")
                     {
+                        log.LogInformation($"ZoomQualityOfServiceEventCapture : event property value");
+
                         eventType = ((JProperty)mainDetails).Value.ToString().Split('.').Last().ToUpper();
                     }
+
+                    if (((JProperty)mainDetails).Name == "payload")
+                    {
+                        foreach (var dataItem in mainDetails.Children())
+                        {
+                            log.LogInformation($"ZoomQualityOfServiceEventCapture : payload property value");
+
+                            var internalNodes = dataItem.Children().GetEnumerator();
+                            while (internalNodes.MoveNext())
+                            {
+                                var mainFamilies1 = internalNodes.Current;
+                                if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "plainToken")
+                                {
+                                    plainToken = ((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Value.ToString();
+                                }
+                                
+                            }
+                        }
+                    }
                 }
+
                 if (eventType == "URL_VALIDATION")
                 {
+                    log.LogInformation($"ZoomQualityOfServiceEventCapture : event property value");
+
                     var validationkey = _configuration["ZoomAppDetails:apivalidationKey"].ToString();
                     var enc = Encoding.Default;
                     HMACSHA256 hmac = new HMACSHA256(enc.GetBytes(validationkey));
