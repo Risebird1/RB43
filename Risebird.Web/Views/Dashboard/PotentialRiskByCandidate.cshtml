@@ -57,6 +57,7 @@
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Candidate Contact</th>
+                                                <th>Payment SLA Status</th>
                                                 <th>Interview Status</th>
                                                 <th>Client Name</th>
                                                 <th>Channel Owner</th>
@@ -74,7 +75,8 @@
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Candidate Contact</th>
-                                                <th >Interview Status</th>
+                                                <th>Payment SLA Status</th>
+                                                <th>Interview Status</th>
                                                 <th>Client Name</th>
                                                 <th>Channel Owner</th>
                                                 <th>Red Marker</th>
@@ -119,6 +121,19 @@
                                                                     <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
                                                                 </span>@item.MobileNumber
                                                             </td>
+                                                        }
+
+                                                        @if (item.IsApproved == 1)
+                                                        {
+                                                        <td>Approved</td>
+                                                        }
+                                                        else if (item.IsApproved == 2)
+                                                        {
+                                                        <td>Not Approved</td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td></td>
                                                         }
                                                         @if (item.InterviewStatus == 2)
                                                         {

@@ -59,7 +59,7 @@ declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Op
 declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId            
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=2 and Cancellationsource like'%Reschedule%' and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))  
   
- declare @PotentialRiskInterviewCount int = (select Count(im.id) from InterviewMeetings im inner join CandidateFeedbackDetails cfd on im.id=cfd.interviewid where cfd.Rating<=3 and Cast(interviewDate as Date)<= getdate())  
+ declare @PotentialRiskInterviewCount int = (select Count(im.id) from InterviewMeetings im inner join CandidateFeedbackDetails cfd on im.id=cfd.interviewid left join PaymentSLADetails ps on im.id=ps.Interviewid where cfd.Rating<=3 and Cast(interviewDate as Date)<= getdate())  
  declare @SuspeciousInterviewerCount int=(select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.CreatedBy=@Emailid and si.SuspiciousStatus=1)  
    
  declare @CancelledInterviewCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId            
@@ -78,10 +78,16 @@ where im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,g
  declare @ProbableNoShowCount int=( select COUNT(pnc.id) from ProbableNoShowCandidates pnc    
 join InterviewMeetings im on im.id = pnc.InterviewId    
 join UserList ul on ul.id = pnc.CandidateUserId    
-join InterviewComments ic on ic.Interviewid=im.id where ul.EmailId= @Emailid)  
+join InterviewComments ic on ic.Interviewid=im.id 
+inner join IRF on im.IRFId=irf.IRFId 
+left join UserList uli on uli.id=  irf.RisebirdHr
+where ul.EmailId= @Emailid)  
   
 declare @PotentialRiskByClient int=(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId            
- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)   
+ left join UserList ulsh on ulsh.id=sh.Userid
+ left join PaymentSLADetails ps on ps.Interviewid=im.id
+ left join InterviewerProfile itp on itp.UserId = ulsh.id
+ where ulsh.Emailid= @Emailid and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)   
   
  declare @BlackListCompanyCount int=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)  
   
@@ -143,7 +149,7 @@ set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open')
   
 set @RescheduleInterviewMeetingCount= (select Count(im.id) from InterviewMeetings im  where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))  
   
-set @PotentialRiskInterviewCount = (select Count(im.id) from InterviewMeetings im inner join CandidateFeedbackDetails cfd on im.id=cfd.interviewid where cfd.Rating<=3 and Cast(interviewDate as Date)<= getdate())  
+set @PotentialRiskInterviewCount = (select Count(im.id) from InterviewMeetings im inner join CandidateFeedbackDetails cfd on im.id=cfd.interviewid left join PaymentSLADetails ps on im.id=ps.Interviewid where cfd.Rating<=3 and Cast(interviewDate as Date)<= getdate())  
 set @SuspeciousInterviewerCount= (select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.SuspiciousStatus=1)  
 set @CancelledInterviewCount=(select Count(im.id) from InterviewMeetings im  where confirmationStatus=2  and CAST(interviewDate as DATE) >=CAST(GETDATE() as DATE) and im.RedoInterview=0)  
   
@@ -158,9 +164,15 @@ where im.RedoInterview=1 and (Cast(interviewDate as Date)> Cast(DATEADD(day,-7,g
 set  @ProbableNoShowCount =(select COUNT(pnc.id) from ProbableNoShowCandidates pnc    
 join InterviewMeetings im on im.id = pnc.InterviewId    
 join UserList ul on ul.id = pnc.CandidateUserId    
-join InterviewComments ic on ic.Interviewid=im.id)  
+join InterviewComments ic on ic.Interviewid=im.id
+inner join IRF on im.IRFId=irf.IRFId 
+left join UserList uli on uli.id=  irf.RisebirdHr)  
   
-set @PotentialRiskByClient =(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)  
+set @PotentialRiskByClient =(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId
+left join PaymentSLADetails ps on ps.Interviewid=im.id
+join UserList ul on ul.id=  irf.RisebirdHr
+left join InterviewerProfile itp on itp.UserId = ul.id
+where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)  
 set @BlackListCompanyCount=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)  
 set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)  
   
@@ -189,5 +201,5 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @InterviewerVideoKYC as InterviewerVideoKYC,
 @ProxyCount as ProxyCount
 END          
-End  
+End
 GO
