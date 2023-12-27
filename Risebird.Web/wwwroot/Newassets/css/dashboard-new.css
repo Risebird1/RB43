@@ -6114,6 +6114,7 @@ input[type="date"].form-control {
     float: left;
     color: green;
     font-weight: bold;
+    padding-left:5px;
 }
 
 .content-wrapper {
@@ -8399,6 +8400,15 @@ option {
 }
 .risebirdPay-con {
     width: calc(100% - -8%);
+}
+.proxy-count {
+    background: #eae6e6;
+    color: #423d3d;
+    border: none;
+    border-radius: 100px;
+    padding: 4px;
+    width: 28px;
+    cursor:pointer;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
