@@ -22,7 +22,7 @@ namespace Risebird.Entities.Data
         //      "rssi_unit": "dBm"
         //public string jitter { get; set; }
         public string quality_score { get; set; }
-        //public string quality { get; set; }
+        public string quality { get; set; }
         public string avg_loss { get; set; }
         public string max_latency { get; set; }
         public string min_latency { get; set; }
