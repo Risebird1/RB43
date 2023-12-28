@@ -1,16 +1,46 @@
 ﻿@model Risebird.Entities.ViewModel.ProctoringReport
 <div class="paymentli">
 	<ul>
+		@if (!string.IsNullOrWhiteSpace(Model.EyeMovement))
+            {
 		<li><b>Eye Movement:</b> <div class="tags">@Model.EyeMovement</div></li>
+	       }
+		@if (!string.IsNullOrWhiteSpace(Model.LipsMovement))
+            {
 		<li><b>Lips Movement:</b> <div class="tags">@Model.LipsMovement</div></li>
+			}
+		@if (!string.IsNullOrWhiteSpace(Model.CandidateDesktop))
+            {
 		<li><b>Candidate Desktop:</b> <div class="tags">@Model.CandidateDesktop</div></li>
+			}
+		@if (!string.IsNullOrWhiteSpace(Model.LinkedinPhoto))
+    {
 		<li><b>Linkedin Photo:</b> <div class="tags">@Model.LinkedinPhoto</div></li>
+	}
+		@if (!string.IsNullOrWhiteSpace(Model.HeadMovement))
+    {
 		<li><b>Head Movement:</b> <div class="tags">@Model.HeadMovement</div></li>
+	}
+		@if (!string.IsNullOrWhiteSpace(Model.LatencyCheck))
+    {
 		<li><b>Latency Check:</b> <div class="tags">@Model.LatencyCheck</div></li>
+	}
+		@if (!string.IsNullOrWhiteSpace(Model.VoiceImpostering))
+    {
 		<li><b>Voice Impostering:</b> <div class="tags">@Model.VoiceImpostering</div></li>
+	}
+		@if (!string.IsNullOrWhiteSpace(Model.SusipicousDevices))
+    {    
 		<li><b>Suspicious Devices:</b> <div class="tags">@Model.SusipicousDevices</div></li>
+	}
+		@if (!string.IsNullOrWhiteSpace(Model.SuspiciousVoice))
+    {
 		<li><b>Suspicious Voice:</b> <div class="tags">@Model.SuspiciousVoice</div></li>
+	}
+		@if (!string.IsNullOrWhiteSpace(Model.SuspiciousEnvironment))
+    {
 		<li><b>Suspicious Environment:</b> <div class="tags">@Model.SuspiciousEnvironment</div></li>
+	}
 	</ul>
 </div>
 
