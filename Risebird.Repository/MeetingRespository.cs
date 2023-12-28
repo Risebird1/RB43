@@ -4553,9 +4553,13 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query<string>(
-                        con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1,IsEmergency=1 where id = @meetingid and ISNULL(im.EIAssigned,0)!=1", new { value = interviewerMail, meetingid = id }, commandType: Text);
-                    return "Interview assigned Successfully.";
+                    //SqlMapper.Query<string>(con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1,IsEmergency=1 where id = @meetingid and ISNULL(im.EIAssigned,0)!=1", new { value = interviewerMail, meetingid = id }, commandType: Text);
+                    var result = SqlMapper.Query<int>(con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1,IsEmergency=1 Output inserted.id where id = @meetingid and ISNULL(im.EIAssigned,0)!=1", new { value = interviewerMail, meetingid = id }, commandType: Text);
+                    if (result?.FirstOrDefault() > 0)
+                    {
+                        return "Interview assigned Successfully.";
+                    }
+                    return "Interview already assigned to someone else.";
                 }
             }
             catch (SqlException ex)

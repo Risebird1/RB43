@@ -16,7 +16,7 @@ im.confirmationStatus, im.zoomLink, im.risebirdHR, im.interviewer, im.IntervIewO
 im.ExpectedPerHourRate, im.staffingAgency, im.joiningTime, im.sCreatedBy, im.dtCreatedOn, im.sModifiedBy, im.candidateName,        
 im.currentEmployerName, im.QCInterviewer, im.IsEmergency, im.InterviewBiometryScore, im.JoiningBiometryScore,        
 ca.Phone as MobileNumber, ca.ResumeLink as resumeLink, im.ZoomMeetingId as ZoomId,        
-irf.JDLink from InterviewMeetings im          
+irf.JDLink,irf.id as irfIntId from InterviewMeetings im          
 inner join IRF irf on im.IRFId=irf.IRFId           
 inner join [dbo].[TransInterviewer] tirf on IRF.id =tirf.IRFId          
 left join [dbo].[InterviewerProfile] inte on tirf.InterviewerId = inte.id      
@@ -26,12 +26,5 @@ join CandidatesMaster cm on cm.UserId = ulc.id
 join Candidate ca on ca.CandidateMasterId = cm.id and ca.IRFId=irf.id        
 where im.ZoomMeetingId = @meetingid and confirmationStatus = 1 and ISNULL(im.IsRescheduleNotificationSent,0)!=1 and ISNULL(im.EIAssigned,0)!=1    --and im.IsNotificationSentToEI=1  
 END    
+GO  
   
-  
-  
-  
-  
-
-
-
-

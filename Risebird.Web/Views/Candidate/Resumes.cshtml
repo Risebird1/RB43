@@ -135,6 +135,7 @@
 
                                                 <th>Date</th>
                                                 <th>File Name</th>
+                                                <th>Added By</th>
                                                 <th class="text-center">Actions</th>
 
                                             </tr>
@@ -144,6 +145,7 @@
                                             <tr>
                                                 <th>Date</th>
                                                 <th>File Name</th>
+                                                <th>Added By</th>
                                                 <th class="text-center">Actions</th>
                                             </tr>
 
@@ -154,7 +156,7 @@
                                                 <tr id=@item.id>
 
                                                     <td> @item.AddedOn</td>
-
+                                                    <td> @item.AddedByEmailId</td>
                                                     <td>
                                                         @{
                                                             var fileName = string.Empty;

@@ -11,7 +11,7 @@ namespace Risebird.Entities.ViewModel
         public string HREmail { get; set; }
         public string CurrentStatus { get; set; }
         public string Report { get; set; }
-
+        public string InterviewerComment { get; set; }
         public List<TimelineStatus> RisebirdAttempt { get; set; }
         public List<TimelineStatus> MeetingStatus { get; set; }
         public List<TimelineStatus> InterviewStatus { get; set; }
