@@ -1521,16 +1521,23 @@ namespace Risebird.CommonHelper
                 msg.AddTo(msg.From);
                 foreach (var mail in toMails)
                 {
-                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    if (!string.IsNullOrEmpty(mail))
+                    {
+                        var interviews = mail.Replace(" ", "");
+                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(interviews, null));
+                    }
                 }
                 var ccMails = model.CC.Split(";");
                 foreach (var mail in ccMails)
                 {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    if (!string.IsNullOrEmpty(mail))
+                    {
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    }
                 }
-                object[] parameters = new object[] { ressignmentlink, zoomlink, jdLink };
+                object[] parameters = new object[] { ressignmentlink, jdLink };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotification.html");
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotificationV2.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewerNotificationV3.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, null, interviewId);
@@ -2091,9 +2098,9 @@ namespace Risebird.CommonHelper
                 //    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(StaffingAgiencies, staffingEmail.FirstOrDefault()));
                 //}
                 var interviewdate = interviewdatetime.ToString() + "(" + timezonevalue + ")";
-                object[] parameters = new object[] { interviewdate, join_url, Email, HRCoordinator, StaffingAgiencies, Name, ClientName, clientLogoLink, companyLink };
+                object[] parameters = new object[] { interviewdate, join_url, Email, HRCoordinator, StaffingAgiencies, Name, ClientName, jdLink, clientLogoLink, companyLink };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeeting.html");
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeetingV3.html");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "schedulingmeetingV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 //Start: Attachment
