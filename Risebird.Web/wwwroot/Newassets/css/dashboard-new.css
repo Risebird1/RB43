@@ -8400,6 +8400,9 @@ option {
 .risebirdPay-con {
     width: calc(100% - -8%);
 }
+.jitter-table .table > tbody > tr > td {
+    padding: 7px 9px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

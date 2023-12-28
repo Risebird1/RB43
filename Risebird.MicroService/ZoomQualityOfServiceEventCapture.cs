@@ -46,62 +46,62 @@ namespace Risebird.MicroService
 
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-                //log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
+                log.LogInformation($"ZoomQualityOfServiceEventCapture : Event data recieved with request body :  {requestBody}");
 
                 string eventType = string.Empty;
 
-                dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
+                //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
 
 
-                string plainToken = string.Empty;
-                var children = stuff.Children().GetEnumerator();
+                //string plainToken = string.Empty;
+                //var children = stuff.Children().GetEnumerator();
 
 
 
-                while (children.MoveNext())
-                {
+                //while (children.MoveNext())
+                //{
 
-                    var mainDetails = children.Current;
+                //    var mainDetails = children.Current;
 
-                    if (((JProperty)mainDetails).Name == "event")
-                    {
+                //    if (((JProperty)mainDetails).Name == "event")
+                //    {
 
-                        eventType = ((JProperty)mainDetails).Value.ToString().Split('.').Last().ToUpper();
-                    }
+                //        eventType = ((JProperty)mainDetails).Value.ToString().Split('.').Last().ToUpper();
+                //    }
 
-                    if (((JProperty)mainDetails).Name == "payload")
-                    {
-                        foreach (var dataItem in mainDetails.Children())
-                        {
+                //    if (((JProperty)mainDetails).Name == "payload")
+                //    {
+                //        foreach (var dataItem in mainDetails.Children())
+                //        {
 
-                            var internalNodes = dataItem.Children().GetEnumerator();
-                            while (internalNodes.MoveNext())
-                            {
-                                var mainFamilies1 = internalNodes.Current;
-                                if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "plainToken")
-                                {
-                                    plainToken = ((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Value.ToString();
-                                }
+                //            var internalNodes = dataItem.Children().GetEnumerator();
+                //            while (internalNodes.MoveNext())
+                //            {
+                //                var mainFamilies1 = internalNodes.Current;
+                //                if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "plainToken")
+                //                {
+                //                    plainToken = ((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Value.ToString();
+                //                }
 
-                            }
-                        }
-                    }
-                }
+                //            }
+                //        }
+                //    }
+                //}
 
-                if (eventType == "URL_VALIDATION")
-                {
+                //if (eventType == "URL_VALIDATION")
+                //{
 
-                    var validationkey = _configuration["ZoomAppDetails:apivalidationKey"].ToString();
-                    var enc = Encoding.Default;
-                    HMACSHA256 hmac = new HMACSHA256(enc.GetBytes(validationkey));
-                    hmac.Initialize();
-                    byte[] buffer = enc.GetBytes(plainToken);
-                    var hashForValidate = BitConverter.ToString(hmac.ComputeHash(buffer)).Replace("-", "").ToLower();
-                    ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
-                    _zoom.plainToken = plainToken;
-                    _zoom.encryptedToken = hashForValidate;
-                    return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
-                }
+                //    var validationkey = _configuration["ZoomAppDetails:apivalidationKey"].ToString();
+                //    var enc = Encoding.Default;
+                //    HMACSHA256 hmac = new HMACSHA256(enc.GetBytes(validationkey));
+                //    hmac.Initialize();
+                //    byte[] buffer = enc.GetBytes(plainToken);
+                //    var hashForValidate = BitConverter.ToString(hmac.ComputeHash(buffer)).Replace("-", "").ToLower();
+                //    ZoomParticipentResponse _zoom = new ZoomParticipentResponse();
+                //    _zoom.plainToken = plainToken;
+                //    _zoom.encryptedToken = hashForValidate;
+                //    return new OkObjectResult(Newtonsoft.Json.JsonConvert.SerializeObject(_zoom));
+                //}
 
 
                 var data = JsonConvert.DeserializeObject<ZoomQualityOfServiceData>(requestBody);
@@ -196,6 +196,8 @@ namespace Risebird.MicroService
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                log.LogInformation($"ZoomQualityOfServiceEventCapture : Exception encountered :  {ex.Message}");
+
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }

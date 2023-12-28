@@ -7065,5 +7065,26 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<IEnumerable<ZoomVideoQOSVM>> GetZoomQOSDataByMeetingId(int interviewId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewId);
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<ZoomVideoQOSVM>(con, "usp_GetZoomQOSDataByMeetingId", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
