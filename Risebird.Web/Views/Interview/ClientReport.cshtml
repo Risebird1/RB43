@@ -444,6 +444,33 @@
                                         @Html.HiddenFor(m => m.IsGeneralSkillRequired)
                                     </div>
 
+                                    <div>
+                                        @if(Model.QOSData != null && Model.QOSData.Count()>0)
+                                        {
+                                            foreach (var item in Model.QOSData)
+                                            {
+                                                if (!string.IsNullOrEmpty(item.max_jitter) && !string.IsNullOrEmpty(item.user_name))
+                                                {
+                                                    Match match = Regex.Match(item.max_jitter, @"\d+");
+                                                    if (match.Success)
+                                                    {
+                                                        string color = "black";
+                                                        int jitterValue = int.Parse(match.Value);
+                                                        if(jitterValue > 40)
+                                                        {
+                                                            color = "red";
+                                                        }
+
+                                                        <p>Video Quality indicator : Jitter data for @item.user_name is <span style="color:@color">@item.max_jitter</span></p>
+                                                        <br />
+                                                    }
+                                                }
+                                                
+                                            }
+                                        }
+                                    </div>
+
+
                                     @Html.HiddenFor(m => m.id)
                                     @Html.HiddenFor(m => m.IRFId)
                                     @Html.HiddenFor(m => m.InterviewId)

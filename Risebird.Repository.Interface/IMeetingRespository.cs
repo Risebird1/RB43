@@ -275,5 +275,6 @@ namespace Risebird.Repository.Interface
         Task<bool> RemoveOrShortlistInterviewer(int interviewid, string action = null);
         Task<bool> UpdateInterviewReport(int interviewid, string comment,string emailid);
         Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
+        Task<IEnumerable<ZoomVideoQOSVM>> GetZoomQOSDataByMeetingId(int interviewId);
     }
 }
