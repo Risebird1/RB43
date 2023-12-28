@@ -220,6 +220,7 @@ namespace Risebird.Entities.ViewModel
         public string LogoUrl { get; set; }
         public int? VideoSentimentImid { get; set; }
         public string Client { get; set; }
+        public string ChannelOwner { get; set; }
         public List<QuestionDetails> MeetingPatch { get; set; }
         public int MeetingPatchCount { get; set; }
         public string CostEstimate { get; set; }
