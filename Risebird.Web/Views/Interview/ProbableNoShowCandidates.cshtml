@@ -60,7 +60,7 @@
                                                 <th>Mobile Number</th>
                                                 <th>Skill Channel</th>
                                                 <th>Actual Meeting Status</th>
-
+                                                <th>Channel Owner</th>
                                                 <th style="text-align:center">Call</th>
                                             </tr>
                                         </thead>
@@ -71,6 +71,7 @@
                                                 <th>Mobile Number</th>
                                                 <th>Skill Channel</th>
                                                 <th>Actual Meeting Status</th>
+                                                <th>Channel Owner</th>
                                                 <th style="text-align:center">Call</th>
                                             </tr>
                                         </tfoot>
@@ -86,6 +87,7 @@
                                                         <td>@item.MobileNumber</td>
                                                         <td>@item.IRFId</td>
                                                         <td>@item.MeetingStatusStatusDesc</td>
+                                                        <td>@item.candidateEmail</td>
                                                         <td>
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {

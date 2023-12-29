@@ -63,5 +63,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<InterviewerVideoKYCVM>> GeInterviewerVideoKYC();
         Task<bool> UpdateInterviewerVideoKYC(int id, string type);
         Task<IEnumerable<ProctoringReport>> GeProxyReport();
+        Task<ProctoringReport> GetProxyReportCountDetails(int id);
     }
 }

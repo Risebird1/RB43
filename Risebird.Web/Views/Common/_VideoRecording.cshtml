@@ -1,5 +1,5 @@
 ﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'> 
+<link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
 <div id="VideoKYCModel" class="modal modal-bg" style="z-index:3;top:30px;">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document" style="max-width: 1050px !important;top:10px;">
@@ -24,7 +24,7 @@
                             RECORD YOUR 90 SECS VIDEO
                         </h4>
                     </div>
-                   <div class="videoButtons">
+                    <div class="videoButtons">
 
                         <button id="btncamara" class="btncamara" style="display:none;">  <i class="fa fa-camera" aria-hidden="true"></i><span class="on-off-txt">ON</span></button>
                         <button id="btnoffcamara" class="btnoffcamara"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="#fff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera-off"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34m-7.72-2.06a4 4 0 1 1-5.56-5.56"></path></svg><span class="on-off-txt">OFF</span></button>
@@ -38,7 +38,7 @@
                         </button>
                         <button id="btnStop"><svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-fill" viewBox="0 0 16 16"> <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z" fill="white"></path> </svg><p class="recording-txt">STOP REC</p></button>
 
-                </div>
+                    </div>
                 </div>
 
                 <div class="col-md-8 pull-left">
@@ -56,16 +56,18 @@
                             <span class="number">
                                 2
                             </span> <span class="number-txt">
-                            What tentative questions or strategy you use - only 1-2 example to understand the perspective </span> </p>
+                                What tentative questions or strategy you use - only 1-2 example to understand the perspective
+                            </span>
+                        </p>
                         <p>   <span class="number">   3</span><span class="number-txt"> How do you align to JD, score rubrics to ask 100% relevant questions, practical , discerning questions?</span></p>
                     </div>
 
                 </div>
-               <div class="col-md-12 pull-left">
+                <div class="col-md-12 pull-left">
 
                     <div class="preview-section">
                         <h2 class="preview-txt">
-                            PREVIEW YOUR RECORDING<br/>
+                            PREVIEW YOUR RECORDING<br />
                             <span>
                                 Preview your recording here. If you wish to re-record, click on the record button above to start over.
                             </span>
@@ -73,13 +75,14 @@
                         <div class="videoPreviewContainer"> <video id="vid2" controls></video></div>
                     </div>
 
-               </div>
+                </div>
 
-                <div class="col-md-12 pull-left" style="padding-bottom:35px;"><button id="btnSave">SAVE</button>
+                <div class="col-md-12 pull-left" style="padding-bottom:35px;">
+                    <button id="btnSave">SAVE</button>
 
                     <div id="saveLoader" class="saveloader" style="display:none;">Please Wait...Video is uploading <img width="20" src="/img/saveloader.gif"></div>
 
-                
+
                 </div>
 
             </div>
@@ -95,178 +98,178 @@
     function openVideoKYCModel() {
         var model = document.getElementById("VideoKYCModel");
         model.style.display = "block";
+        openpopupfunction();
     }
 </script>
- <script>
-
-var width = 165,
-  height = 165,
-  timePassed = 0,
-  timeLimit = 91
-
-var fields = [{
-  value: timeLimit,
-  size: timeLimit,
-  update: function() {
-    return timePassed = timePassed + 1;
-  }
-}];
-
-var nilArc = d3.svg.arc()
-  .innerRadius(width / 3 - 120)
-  .outerRadius(width / 3 - 120)
-  .startAngle(0)
-  .endAngle(2 * Math.PI);
-
-var arc = d3.svg.arc()
-  .innerRadius(width / 3 - 28)
-  .outerRadius(width / 3 - 20)
-  .startAngle(0)
-  .endAngle(function(d) {
-    return ((d.value / d.size) * 2 * Math.PI);
-  });
-
-var svg = d3.select("#timer-clock").append("svg")
-  .attr("width", width)
-  .attr("height", height);
-
-var field = svg.selectAll(".field")
-  .data(fields)
-  .enter().append("g")
-  .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-  .attr("class", "field");
-
-var back = field.append("path")
-  .attr("class", "path path--background")
-  .attr("d", arc);
-
-var path = field.append("path")
-  .attr("class", "path path--foreground");
-
-var label = field.append("text")
-  .attr("class", "label")
-  .attr("dy", ".35em");
-
-//(function update() {
-
-//  field
-//    .each(function(d) {
-//      d.previous = d.value, d.value = d.update(timePassed);
-//    });
-
-//  path.transition()
-//    .ease("elastic")
-//    .duration(500)
-//    .attrTween("d", arcTween);
-
-//  if ((timeLimit - timePassed) <= 10)
-//    pulseText();
-//  else
-//    label
-//    .text(function(d) {
-//      return d.size - d.value;
-//    });
-
-//  if (timePassed <= timeLimit)
-//  {
-//       setTimeout(update, 1000 - (timePassed % 1000));
-//  }
-//  else
-//  {
-//    destroyTimer();
-//    document.getElementById('btnStop').click();
-//  }
-//})();
-var timerclean;
-function update() {
-  field
-    .each(function(d) {
-      d.previous = d.value, d.value = d.update(timePassed);
-    });
-
-  path.transition()
-    .ease("elastic")
-    .duration(500)
-    .attrTween("d", arcTween);
-
-  if ((timeLimit - timePassed) <= 10)
-    pulseText();
-  else
-    label
-    .text(function(d) {
-      return d.size - d.value;
-    });
-
-  if (timePassed <= timeLimit)
-  {
-       timerclean=setTimeout(update, 1000 - (timePassed % 1000));
-  }
-  else
-  {
-    //destroyTimer();
-    clearInterval(timerclean);
-    document.getElementById('btnStop').click();
-  }
-}
-
-function pulseText() {
-  back.classed("pulse", true);
-  label.classed("pulse", true);
-
-  if ((timeLimit - timePassed) >= 0) {
-    label.style("font-size", "35px")
-      .attr("transform", "translate(0," + +4 + ")")
-      .text(function(d) {
-        return d.size - d.value;
-      });
-  }
-
-  label.transition()
-    .ease("elastic")
-    .duration(900)
-    .style("font-size", "35px")
-    .attr("transform", "translate(0," + -10 + ")");
-}
-
-//function destroyTimer() {
-//  label.transition()
-//    .ease("back")
-//    .duration(700)
-//    .style("opacity", "0")
-//    .style("font-size", "5")
-//    .attr("transform", "translate(0," + -40 + ")")
-//    .each("end", function() {
-//      field.selectAll("text").remove()
-
-//    });
-
-//  path.transition()
-//    .ease("back")
-//    .duration(700)
-//    .attr("d", nilArc);
-
-//  back.transition()
-//    .ease("back")
-//    .duration(700)
-//    .attr("d", nilArc)
-//    .each("end", function() {
-//      field.selectAll("path").remove()
-//       document.getElementById('timer-clock-txt').style.display = 'none';
-//    });
-//}
-
-function arcTween(b) {
-  var i = d3.interpolate({
-    value: b.previous
-  }, b);
-  return function(t) {
-    return arc(i(t));
-  };
-}
-
- </script>
 <script>
-    let constraintObj = {
+
+    var width = 165,
+        height = 165,
+        timePassed = 0,
+        timeLimit = 91
+
+    var fields = [{
+        value: timeLimit,
+        size: timeLimit,
+        update: function () {
+            return timePassed = timePassed + 1;
+        }
+    }];
+
+    var nilArc = d3.svg.arc()
+        .innerRadius(width / 3 - 120)
+        .outerRadius(width / 3 - 120)
+        .startAngle(0)
+        .endAngle(2 * Math.PI);
+
+    var arc = d3.svg.arc()
+        .innerRadius(width / 3 - 28)
+        .outerRadius(width / 3 - 20)
+        .startAngle(0)
+        .endAngle(function (d) {
+            return ((d.value / d.size) * 2 * Math.PI);
+        });
+
+    var svg = d3.select("#timer-clock").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    var field = svg.selectAll(".field")
+        .data(fields)
+        .enter().append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+        .attr("class", "field");
+
+    var back = field.append("path")
+        .attr("class", "path path--background")
+        .attr("d", arc);
+
+    var path = field.append("path")
+        .attr("class", "path path--foreground");
+
+    var label = field.append("text")
+        .attr("class", "label")
+        .attr("dy", ".35em");
+
+    //(function update() {
+
+    //  field
+    //    .each(function(d) {
+    //      d.previous = d.value, d.value = d.update(timePassed);
+    //    });
+
+    //  path.transition()
+    //    .ease("elastic")
+    //    .duration(500)
+    //    .attrTween("d", arcTween);
+
+    //  if ((timeLimit - timePassed) <= 10)
+    //    pulseText();
+    //  else
+    //    label
+    //    .text(function(d) {
+    //      return d.size - d.value;
+    //    });
+
+    //  if (timePassed <= timeLimit)
+    //  {
+    //       setTimeout(update, 1000 - (timePassed % 1000));
+    //  }
+    //  else
+    //  {
+    //    destroyTimer();
+    //    document.getElementById('btnStop').click();
+    //  }
+    //})();
+    var timerclean;
+    function update() {
+        field
+            .each(function (d) {
+                d.previous = d.value, d.value = d.update(timePassed);
+            });
+
+        path.transition()
+            .ease("elastic")
+            .duration(500)
+            .attrTween("d", arcTween);
+
+        if ((timeLimit - timePassed) <= 10)
+            pulseText();
+        else
+            label
+                .text(function (d) {
+                    return d.size - d.value;
+                });
+
+        if (timePassed <= timeLimit) {
+            timerclean = setTimeout(update, 1000 - (timePassed % 1000));
+        }
+        else {
+            //destroyTimer();
+            clearInterval(timerclean);
+            document.getElementById('btnStop').click();
+        }
+    }
+
+    function pulseText() {
+        back.classed("pulse", true);
+        label.classed("pulse", true);
+
+        if ((timeLimit - timePassed) >= 0) {
+            label.style("font-size", "35px")
+                .attr("transform", "translate(0," + +4 + ")")
+                .text(function (d) {
+                    return d.size - d.value;
+                });
+        }
+
+        label.transition()
+            .ease("elastic")
+            .duration(900)
+            .style("font-size", "35px")
+            .attr("transform", "translate(0," + -10 + ")");
+    }
+
+    //function destroyTimer() {
+    //  label.transition()
+    //    .ease("back")
+    //    .duration(700)
+    //    .style("opacity", "0")
+    //    .style("font-size", "5")
+    //    .attr("transform", "translate(0," + -40 + ")")
+    //    .each("end", function() {
+    //      field.selectAll("text").remove()
+
+    //    });
+
+    //  path.transition()
+    //    .ease("back")
+    //    .duration(700)
+    //    .attr("d", nilArc);
+
+    //  back.transition()
+    //    .ease("back")
+    //    .duration(700)
+    //    .attr("d", nilArc)
+    //    .each("end", function() {
+    //      field.selectAll("path").remove()
+    //       document.getElementById('timer-clock-txt').style.display = 'none';
+    //    });
+    //}
+
+    function arcTween(b) {
+        var i = d3.interpolate({
+            value: b.previous
+        }, b);
+        return function (t) {
+            return arc(i(t));
+        };
+    }
+
+</script>
+<script>
+    function openpopupfunction() {
+        let constraintObj = {
             audio: true,
             video: true
         };
@@ -296,8 +299,8 @@ function arcTween(b) {
 
         navigator.mediaDevices.getUserMedia(constraintObj)
             .then(function (mediaStreamObj) {
-               // console.log('test')
-                let video=document.getElementById('video');
+                // console.log('test')
+                let video = document.getElementById('video');
 
                 let camara = document.getElementById('btncamara');
                 let offcamara = document.getElementById('btnoffcamara');
@@ -312,24 +315,24 @@ function arcTween(b) {
                 document.getElementById('btnStart').disabled = false;
                 document.getElementById('btnStop').disabled = true;
                 video.srcObject = mediaStreamObj;
-                 console.log(mediaRecorder.state);
+                console.log(mediaRecorder.state);
 
                 camara.addEventListener('click', (ev) => {
-                $('#btncamara').css('display', 'none')
-                    video.srcObject=mediaStreamObj;
+                    $('#btncamara').css('display', 'none')
+                    video.srcObject = mediaStreamObj;
                     console.log(mediaRecorder.state);
-                $('#btnoffcamara').css('display', 'block')
+                    $('#btnoffcamara').css('display', 'block')
                 })
                 offcamara.addEventListener('click', (ev) => {
-                $('#btnoffcamara').css('display', 'none')
+                    $('#btnoffcamara').css('display', 'none')
                     video.srcObject = null;
                     console.log(mediaRecorder.state);
-                    $('#btncamara').css('display','block')
+                    $('#btncamara').css('display', 'block')
                 })
                 start.addEventListener('click', (ev) => {
                     mediaRecorder.start();
                     document.getElementById('btnStart').disabled = true;
-                     //   stop button enable disable false
+                    //   stop button enable disable false
                     document.getElementById('btnStop').disabled = false;
                     console.log(mediaRecorder.state);
                     timePassed = 0;
@@ -345,25 +348,25 @@ function arcTween(b) {
                 });
                 save.addEventListener('click', (ev) => {
                     var form_data = new FormData();
-                var vidalert = $('#VideoKYCAlert').css('display','none')
-                var saveloader = $('#saveLoader').css('display','block')
+                    var vidalert = $('#VideoKYCAlert').css('display', 'none')
+                    var saveloader = $('#saveLoader').css('display', 'block')
                     form_data.append("file", blobtransfer);
                     $.ajax({
-                            type: "POST",
-                            url: "/Interviewer/UploadVideoKYC",
-                            data: form_data,
-                            contentType: false,
-                            enctype: 'multipart/form-data',
-                            processData: false,
-                           
-                            success: function (data) {
-                                 saveloader
-                                  swal.fire(data);
-                                  closeVideoKYCModel();
-                      vidalert;
-                      $('.top-h').css('top','0px');
-                            }
-                        });
+                        type: "POST",
+                        url: "/Interviewer/UploadVideoKYC",
+                        data: form_data,
+                        contentType: false,
+                        enctype: 'multipart/form-data',
+                        processData: false,
+
+                        success: function (data) {
+                            saveloader
+                            swal.fire(data);
+                            closeVideoKYCModel();
+                            vidalert;
+                            $('.top-h').css('top', '0px');
+                        }
+                    });
                 });
                 mediaRecorder.ondataavailable = function (ev) {
                     chunks.push(ev.data);
@@ -374,17 +377,18 @@ function arcTween(b) {
                     let videoURL = window.URL.createObjectURL(blob);
                     vidSave.src = videoURL;
                     console.log(videoURL);
-                    blobtransfer=blob;
+                    blobtransfer = blob;
                 }
             })
             .catch(function (err) {
                 console.log(err.name, err.message);
             });
+    }
 </script>
 
 <script>
     $('.btncamara').click(function () {
-         document.getElementById('btnStart').disabled = false;
+        document.getElementById('btnStart').disabled = false;
         $('#btnoffcamara').show(200);
         $('.btncamara').hide(0);
     });
