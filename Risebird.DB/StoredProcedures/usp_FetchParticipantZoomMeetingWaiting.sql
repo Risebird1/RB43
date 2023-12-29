@@ -162,7 +162,7 @@ left join Client cl on cl.id=irf.Clientid
 left join UserList ulr on IRF.risebirdHR=ulr.id                    
 Outer Apply (select distinct STUFF((SELECT distinct '; ' + CONVERT(varchar(150),ul.EmailId) as Num2                             
 from TransInterviewer t1 join Userlist ul on ul.id=t1.UserId                            
-where t.IRFId = t1.IRFId FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                             
+where t.IRFId = t1.IRFId and t1.isactive=1 FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                             
 from TransInterviewer t                            
 where t.IRFId=IRF.id) ei         
 --left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId     
@@ -191,7 +191,7 @@ left join Client cl on cl.id=irf.Clientid
 left join UserList ulr on IRF.risebirdHR=ulr.id                    
 Outer Apply (select distinct STUFF((SELECT distinct '; ' + CONVERT(varchar(150),ul.EmailId) as Num2                             
 from TransInterviewer t1 join Userlist ul on ul.id=t1.UserId                            
-where t.IRFId = t1.IRFId FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                             
+where t.IRFId = t1.IRFId and t1.isactive=1 FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                             
 from TransInterviewer t                            
 where t.IRFId=IRF.id) ei       
 --left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId      
@@ -217,7 +217,7 @@ left join Client cl on cl.id=irf.Clientid
 left join UserList ulr on IRF.risebirdHR=ulr.id                    
 Outer Apply (select distinct STUFF((SELECT distinct '; ' + CONVERT(varchar(150),ul.EmailId) as Num2                             
 from TransInterviewer t1 join Userlist ul on ul.id=t1.UserId                            
-where t.IRFId = t1.IRFId FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                             
+where t.IRFId = t1.IRFId and t1.isactive=1 FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                             
 from TransInterviewer t                            
 where t.IRFId=IRF.id) ei       
 --left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId      

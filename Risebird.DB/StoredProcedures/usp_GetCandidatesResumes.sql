@@ -15,10 +15,9 @@ Create PROCEDURE [dbo].[usp_GetCandidatesResumes]
 @IRFId int   
 AS  
 Begin
-	
-	select * from CandidateResume where IRFId=@IRFId order by AddedOn desc
-
+	select cr.*,ul.Emailid as AddedByEmailId from CandidateResume cr join UserList ul on cr.AddedBy=ul.id  where cr.IRFId=@IRFId order by AddedOn desc
 End
+
 GO
 
 

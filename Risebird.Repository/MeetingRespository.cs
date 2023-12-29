@@ -4553,9 +4553,17 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SqlMapper.Query<string>(
-                        con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1,IsEmergency=1 where id = @meetingid and ISNULL(im.EIAssigned,0)!=1", new { value = interviewerMail, meetingid = id }, commandType: Text);
-                    return "Interview assigned Successfully.";
+                    //var result = SqlMapper.Query<int>(con, "update [dbo].[InterviewMeetings] set interviewer=@value,EIAssigned=1,IsEmergency=1 Output inserted.id where id = @meetingid and ISNULL(EIAssigned,0)!=1", new { value = interviewerMail, meetingid = id }, commandType: Text);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetingid", id);
+                    parameters.Add("@interviewer", interviewerMail);
+                    var result = SqlMapper.Query<int>(con, "usp_reassignEiInterview", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    if (result?.FirstOrDefault() > 0)
+                    {
+                        return "Interview assigned Successfully.";
+                    }
+                    return "Interview already assigned to someone else.";
                 }
             }
             catch (SqlException ex)
@@ -6982,13 +6990,14 @@ namespace Risebird.Repository
                     parameters.Add("@max_jitter", data.max_jitter);
                     parameters.Add("@min_jitter", data.min_jitter);
                     parameters.Add("@avg_jitter", data.avg_jitter);
-                    //parameters.Add("@quality", data.quality);
+                    parameters.Add("@quality", data.quality);
                     parameters.Add("@quality_score", data.quality_score);
                     parameters.Add("@max_latency", data.max_latency);
                     parameters.Add("@avg_loss", data.avg_loss);
                     parameters.Add("@max_loss", data.max_loss);
+                    parameters.Add("@user_name", data.user_name);
                     parameters.Add("@CreatedAt", DateTime.Now);
-                    
+
                     await SqlMapper.QueryAsync(con, "usp_SavePoorQOSDetails", parameters,
                          commandType: CommandType.StoredProcedure);
                     return true;
@@ -7058,6 +7067,27 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public async Task<IEnumerable<ZoomVideoQOSVM>> GetZoomQOSDataByMeetingId(int interviewId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewId);
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<ZoomVideoQOSVM>(con, "usp_GetZoomQOSDataByMeetingId", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

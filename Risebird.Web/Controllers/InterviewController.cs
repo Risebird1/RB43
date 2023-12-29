@@ -5379,6 +5379,10 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> ReassignMeetingByEI(string id)
         {
             var meetings = await _meetingService.FetchOpenMeetingById(id);
+            foreach (var item in meetings)
+            {
+                item.zoomLink = Request.Scheme + "://" + Request.Host.ToString() + "/Interview/InterviewDetails?id=" + item.irfIntId + "&interviewId=" + item.id;
+            }
             var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
             var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
             if (menus != null)
@@ -5393,6 +5397,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> ReassignMeeting(string id, string meetingid, string Emailid)
         {
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
             var codedname = (await _meetingService.FetchInterviewerCodedName(Emailid)).NickName;
             return Json(new { meetings = meetings, codedname = codedname });
