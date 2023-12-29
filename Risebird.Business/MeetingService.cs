@@ -1247,6 +1247,8 @@ namespace Risebird.Business
                 reportModel.LogoUrl = interviewDetails.LogoUrl;
                 reportModel.AudioTranscriptFileLink = interviewDetails.AudioTranscriptFileLink;
                 reportModel.IRFInterviewerActive = interviewDetails.IRFInterviewerActive;
+                reportModel.QOSData = (await _meetingRespository.GetZoomQOSDataByMeetingId(interviewId))?.ToList();
+
                 return reportModel;
             }
             catch (Exception e)
