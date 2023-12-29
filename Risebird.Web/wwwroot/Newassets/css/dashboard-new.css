@@ -8401,6 +8401,9 @@ option {
 .risebirdPay-con {
     width: calc(100% - -8%);
 }
+.jitter-table .table > tbody > tr > td {
+    padding: 7px 9px;
+}
 .proxy-count {
     background: #eae6e6;
     color: #423d3d;
