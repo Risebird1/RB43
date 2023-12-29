@@ -506,6 +506,21 @@
                                                         <label for="checkboxThirtySeven">Using Mobile phones</label>
                                                     }
                                                 </li>
+
+                                                <li>
+                                                    @if (Model.WeakInfrastructure.Split(",").Contains("Suspicious Interviewer Infrastructure Qualtiy"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxThirtyEight" name="WeakInfrastructure" checked onclick="ChangeCheckBox('WeakInfrastructure')" value="Suspicious Interviewer Infrastructure Qualtiy" />
+
+                                                        <label for="checkboxThirtyEight">Suspicious Interviewer Infrastructure Qualtiy</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxThirtyEight" name="WeakInfrastructure" onclick="ChangeCheckBox('WeakInfrastructure')" value="Suspicious Interviewer Infrastructure Qualtiy" />
+
+                                                        <label for="checkboxThirtyEight">Suspicious Interviewer Infrastructure Qualtiy</label>
+                                                    }
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -1012,6 +1027,20 @@
                                                         <label for="checkboxTwentyEight">Disrespect</label>
                                                     }
                                                 </li>
+
+
+                                                <li>
+                                                    @if (Model.CandidateInteractionQuality.Split(",").Contains("Poor Interaction"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyTwo" name="CandidateInteractionQuality" checked onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Poor Interaction" /> <label for="checkboxFiftyTwo">Poor Interaction</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyTwo" name="CandidateInteractionQuality" onclick="ChangeCheckBox('CandidateInteractionQuality')" value="Poor Interaction" />
+
+                                                        <label for="checkboxFiftyTwo">Poor Interaction</label>
+                                                    }
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
@@ -1120,10 +1149,20 @@
                                                         <input type="checkbox" id="checkboxThirtyOne" name="WrongStatusUpdates" onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking not qualified candidate as selected" /> <label for="checkboxThirtyOne">Marking not qualified candidate as selected</label>
                                                     }
                                                 </li>
+                                                <li>
+                                                    @if (Model.WrongStatusUpdates.Split(",").Contains("Marking reject candidate as selected"))
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyOne" name="WrongStatusUpdates" checked onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking reject candidate as selected" /> <label for="checkboxFiftyOne">Marking reject candidate as selected</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="checkboxFiftyOne" name="WrongStatusUpdates" onclick="ChangeCheckBox('WrongStatusUpdates')" value="Marking reject candidate as selected" /> <label for="checkboxFiftyOne">Marking reject candidate as selected</label>
+                                                    }
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
-                                </div>
+                                    </div>
                                 @*   <i class="fa fa-chevron-right pull-left" style="font-weight: 700!important; color: lightslategrey; padding: 6px 0px;display:inline-block"></i>
                                 @Html.LabelFor(model => model.WrongStatusUpdates, htmlAttributes: new { @class = "bolder desp-label" })
                                 <div>
