@@ -8,9 +8,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE usp_SaveInterviewerCodedResume
 @Userid int,
-@CodedResumeLink varchar(1000)
+@CodedResumeLink varchar(1000),
+@IsResumeRedactAttempted bit=null,
+@IsResumeRedactFailed bit=null
 AS
 BEGIN
-Update ip set ip.CodedResumeLink=@CodedResumeLink From InterviewerProfile ip where ip.Userid=@Userid
+Update ip set ip.CodedResumeLink=@CodedResumeLink, IsResumeRedactAttempted = @IsResumeRedactAttempted, IsResumeRedactFailed = @IsResumeRedactFailed From InterviewerProfile ip where ip.Userid=@Userid
 END
 Go
