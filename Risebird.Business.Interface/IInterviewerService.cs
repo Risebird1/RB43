@@ -92,5 +92,6 @@ namespace Risebird.Business.Interface
         Task<bool> updateRedmarkerAcknowledge(string uniqueid);
         Task<bool> UpdateVideoKYCDetails(string videolink, string Emailid);
         Task<bool> SaveInterviewerCodedResume(InterviewerProfileVM model);
+        Task<bool> SaveInterviewerResumesAndCodedResume(InterviewerProfileVM model);
     }
 }

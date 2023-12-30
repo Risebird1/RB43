@@ -21,6 +21,24 @@
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+@* <style>
+    #loader {
+    display: none;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: @@keyframes spin 1s linear infinite;
+}
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style> *@
+
 <div class="main-panel " id="main-panel">
     <!-- Navbar -->
     <!-- End Navbar -->
@@ -32,8 +50,10 @@
                     <div class="mdc-card card bl-bg">
 
                         <div style="margin-top:30px;">
-
-                            <div class="interviewWrapper" style="left:0px;">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+                            <div class="interviewWrapper dataloading" style="left:0px;">
                                 <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
                                     <div class="heading-txt">
                                         Instructions for Interviewer Guidance
@@ -242,9 +262,19 @@
                                                                                     {
                                                                                         if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
                                                                                         {
-                                                                                            <td>
-                                                                                                <a class="upload-resume-btn" onclick="UploadInterviewerResume(@Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Upload Resume</a>
-                                                                                            </td>
+                                                                                            if (!Model.InterviewerCollection[i].IsResumeRedactAttempted && string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                                            {
+                                                                                                <td>
+                                                                                                    <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(@Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Upload Resume</a>
+                                                                                                </td>
+                                                                                            }
+                                                                                            else if (!Model.InterviewerCollection[i].IsResumeRedactAttempted && !string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
+                                                                                            {
+                                                                                                <td>
+                                                                                                    <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(@Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId', '@Model.InterviewerCollection[i].ResumeLink')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Upload Resume</a>
+                                                                                                </td>
+                                                                                            }
+                                                                                            
                                                                                         }
                                                                                         else
                                                                                         {
@@ -665,6 +695,8 @@
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
 <script src="~/js/FeedbackRecorder/Record.js"></script>
+
+
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -678,6 +710,18 @@
         
     </script>
 }
+<script>
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+</script>
 <script>
     function AddRow() {
         var table = document.getElementById("SkillTable");
@@ -1173,16 +1217,63 @@ else
             }
         })
     }
-    function UploadInterviewerResume(userid, irfid, interviewer) {
+    function UploadOrConvertIntoCodedInterviewerResume(userid, irfid, interviewer, resumeLink = null) {
+        if(resumeLink != null)
+        {
+            ShowProgress();
+        }
         $.ajax({
             url: '/Interviewer/InterviewerResumeupdate',
-            data: { userid: userid, irfid: irfid },
+            data: { userid: userid, irfid: irfid, resumeLink : resumeLink },
+            async: true,
             success: function (data) {
-                var modal = document.getElementById("Resumepopup");
-                modal.style.display = "block";
-                $('#divresumepopup').html('');
-                $('#divresumepopup').html(data);
-                $('#txtheaderinterviewer').text(interviewer);
+                if(resumeLink != null)
+                {
+                    loader.style.display = "none";
+                    $(".dataloading").show();
+
+                    if(data ==true)
+                    {
+                        swal.fire({
+                            title: 'Redacted!',
+                            type: 'success',
+                            html: '<p>The Resume for ' + interviewer + ' has been redacted.</p>',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Close!',
+                            allowOutsideClick: false
+                        }).then(function () {
+                            location.reload(true);
+                        })
+
+                    }
+                    else
+                    {
+                        swal.fire({
+                            title: 'Failed!',
+                            type: 'error',
+                            html: '<p>The Resume for ' + interviewer + ' could not be redacted.</p>',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Close!',
+                            allowOutsideClick: false
+                        }).then(function () {
+                            
+                        })
+
+                    }
+                    
+
+                }
+                else
+                {
+                    var modal = document.getElementById("Resumepopup");
+                    modal.style.display = "block";
+                    $('#divresumepopup').html('');
+                    $('#divresumepopup').html(data);
+                    $('#txtheaderinterviewer').text(interviewer);
+                }
+                
             }
         });
     }
