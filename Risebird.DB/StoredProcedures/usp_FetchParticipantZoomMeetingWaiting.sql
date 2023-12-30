@@ -162,7 +162,7 @@ left join Client cl on cl.id=irf.Clientid
 left join UserList ulr on IRF.risebirdHR=ulr.id                    
 Outer Apply (select distinct STUFF((SELECT distinct '; ' + CONVERT(varchar(150),ul.EmailId) as Num2                             
 from TransInterviewer t1 join Userlist ul on ul.id=t1.UserId                            
-where t.IRFId = t1.IRFId and t1.isactive=1 FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                             
+where t.IRFId = t1.IRFId and t1.isactive=1 and ul.EmailId!=im.interviewer FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'),1,2,'') emergencyinterviewer                             
 from TransInterviewer t                            
 where t.IRFId=IRF.id) ei         
 --left join #ZoomMeetingTransmissionTempTbl zmt on zmt.Meetingid = im.ZoomMeetingId     
@@ -171,9 +171,7 @@ Outer Apply(Select Max(Joinedon) as Joinedon From InterviewMeetingsJoinTime imjt
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt                
 left join UserList ulc on ulc.EmailId  = im.candidateEmail  
 --left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                     
-where ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,4,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)!=1 and (CASE WHEN (imj.Joinedon is null
-  
-) THEN 0 ELSE 1 END)=0    
+where ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,4,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0    
           
                           
 Update InterviewMeetings set IsNotificationSentToEI=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationEI)                            
@@ -238,9 +236,6 @@ Union
 Select * from @MeetingNotificationCandidate                      
 Union                          
 Select * from @MeetingNotificationReschedule                          
-      
-      
---drop table #ZoomMeetingTransmissionTempTbl      
                           
 END   
   
