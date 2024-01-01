@@ -111,11 +111,11 @@ namespace Risebird.MicroService
 
                 if (data != null)
                 {
-                    if (data.payload.@object.participant.qos.Where(x => x.type == "audio_output" || x.type == "video_output") != null)
+                    if (data.payload.@object.participant.qos.Where(x => x.type == "audio_output" || x.type == "video_output" || x.type == "audio_input" || x.type == "video_intput") != null)
                     {
                         log.LogInformation($"ZoomQualityOfServiceEventCapture : qos found");
 
-                        foreach (var item in data.payload.@object.participant.qos.Where(x => x.type == "audio_output" || x.type == "video_output"))
+                        foreach (var item in data.payload.@object.participant.qos.Where(x => x.type == "audio_output" || x.type == "video_output" || x.type == "audio_input" || x.type == "video_input"))
                         {
                             // Extracting integer using regular expression
                             //Match match = Regex.Match(item.details.max_jitter, @"\d+");
