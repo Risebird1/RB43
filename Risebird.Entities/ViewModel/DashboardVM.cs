@@ -37,5 +37,11 @@ namespace Risebird.Entities.ViewModel
         public int TotalCount { get; set; }
         public int IsMeetingNotificationSent { get; set; }
         public int IsRescheduleNotificationSent { get; set; }
+        public int IsNotificationSentToEI { get; set; }
+        public DateTime? Joinedon { get; set; }
+        public DateTime? PerformedOn { get; set; }
+        public bool EIAssigned { get; set; }
+        public string confirmationStatus { get; set; }
+        public string MeetingStatusStatusDesc { get; set; }
     }
 }

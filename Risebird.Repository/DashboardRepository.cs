@@ -1400,14 +1400,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> UpdateInterviewerVideoKYC(int id,string type)
+        public async Task<bool> UpdateInterviewerVideoKYC(int id, string type)
         {
             try
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@id", id);
                 dynamicParam.Add("@type", type);
-                
+
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_UpdateStatusInterviewerVideoKYC", dynamicParam,
@@ -1453,7 +1453,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@id",id);
+                    parameters.Add("@id", id);
                     var result = await SqlMapper.QueryFirstOrDefaultAsync<ProctoringReport>(con, "usp_GetProxyCountDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -1464,6 +1464,29 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate,string Emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var date = DateTime.Now.AddDays(1);
+                    var startdate = date.AddDays(-7);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", startdate);
+                    parameters.Add("@enddate", date);
+                    parameters.Add("@Emailid", Emailid);
+                    var result = await SqlMapper.QueryAsync<InterviewManagementVM>(con, "usp_GetInterviewManagementDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
