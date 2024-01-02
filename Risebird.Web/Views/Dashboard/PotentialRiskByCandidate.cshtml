@@ -100,7 +100,14 @@
 
                                                         <td>@item.IRFId</td>
                                                         <td>@item.interviewDate</td>
-                                                        <td>@item.interviewer</td>
+                                                        @if (item.interviewer != null && item.interviewer != string.Empty)
+                                                        {
+                                                            <td>@item.interviewer</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
 
                                                         @*  @if (@item.interviewer != null || @item.interviewer != "")
                                                 {
@@ -112,7 +119,13 @@
                                                 } *@
 
                                                         <td>@item.candidateName</td>
-                                                        <td>@item.candidateEmail</td>
+                                                        @if (item.candidateEmail != null && item.candidateEmail != string.Empty)
+                                                        {
+                                                            <td>@item.candidateEmail</td>
+                                                        }
+                                                       else{ 
+                                                           <td></td>
+                                                       }
 
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
@@ -121,6 +134,10 @@
                                                                     <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
                                                                 </span>@item.MobileNumber
                                                             </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
                                                         }
 
                                                         @if (item.IsApproved == 1)
@@ -157,7 +174,14 @@
                                                         {
                                                             <td class="text-center">@item.intervieweStatusStatDesc</td>
                                                         }
-                                                        <td> @item.Name </td>
+                                                        @if (item.Name != null || item.Name != "")
+                                                        {
+                                                            <td> @item.Name </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                         <td>@item.ChannelOwner</td>
                                                         @if (item.interviewer != null || item.interviewer != "")
                                                         {
