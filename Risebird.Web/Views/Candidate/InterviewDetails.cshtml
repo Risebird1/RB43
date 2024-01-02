@@ -67,7 +67,7 @@
     </div>
     <div>
         <div class="content-wrappers">
-            <div class="row">
+          @*  <div class="row">
 
                 <div class="col-md-12 col-xl-12 col-sm-12">
                     @if (Model.Timer > 0)
@@ -78,7 +78,7 @@
 
                 </div>
 
-            </div>
+            </div>*@
             <div class="row">
                 <div class="candidate-tab">
                     <div class="col-md-3 pull-left tab-block">
@@ -114,12 +114,23 @@
                     </div>
                     <div class="col-md-9 pull-left">
                         <div id="Interviews" class="tabcontent">
+
                             @foreach (var item in Model.Meetings)
                             {
                                 @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.confirmationStatus == "Confirmed")
                                 {
                                     @* <b>Scheduled Interview</b>
                             <br />*@
+                                   <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;position:relative">
+                                        <div class="calling" style="top:-18px;right:0px;">
+                                            <h1 style="line-height: 25px;
+    color: green;"> Call the Interviewer</h1> <span class="calling-icon" aria-label="Click here to call the candidate" style="line-height: 23px;">
+                                                <span onclick="CommonCallButtonClick('Interviewer','@item.InterviewerMobile', 'Interviewer','@item.Interviewid', null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="16"></span>
+                                            </span>
+                                        </div>
+
+                                    </div>
+
                                     <p style="margin-bottom:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
 
                                     <p style="padding-top:10px;"><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b><span style="color:green; font-weight:600"> @item.interviewDate</span></p>
@@ -150,6 +161,8 @@
 
                             @foreach (var item in Model.Meetings)
                             {
+                              
+
                                 @if (item.interviewDate < DateTime.Now || item.confirmationStatus != "Confirmed")
                                 {
                                     <p> <b style="margin-bottom:10px;">Interview</b></p>
@@ -170,6 +183,8 @@
                                     }
                                 }
                             }
+
+
                         </div>
                         <div id="Employer" class="tabcontent">
                             <div class="row">
@@ -440,3 +455,6 @@
         }
     }
 </script>
+
+            @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js"></script>

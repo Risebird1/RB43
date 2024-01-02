@@ -42,8 +42,10 @@ Begin
  where ul.IsActive =1 and ul.emailid =@EmailParam and ir.Id = @irfIdParam  
   
  select im.id as Interviewid, im.resumeLink, im.zoomLink, im.interviewDate, im.candidateEmail, im.interviewSlot,  
- im.ConfirmationStatus,ic.MeetingStatus,ic.InterviewStatus   
- from InterviewMeetings im join InterviewComments ic on ic.interviewid=im.id where IRFId = @IRFName and candidateEmail = @EmailParam  
+ im.ConfirmationStatus,ic.MeetingStatus,ic.InterviewStatus, ulim.MobileNumber as InterviewerMobile   
+ from InterviewMeetings im join InterviewComments ic on ic.interviewid=im.id
+ left join UserList ulim on ulim.EmaiId=im.interviewer
+ where IRFId = @IRFName and candidateEmail = @EmailParam  
   
  Select Uniqueid From ScheduleInterviewEvent where SkillChannel=@IRFName
   
