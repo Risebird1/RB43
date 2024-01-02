@@ -810,7 +810,9 @@ namespace Risebird.Repository
                                     interviewSlot = dt.Rows[i]["interviewSlot"] != null ? dt.Rows[i]["interviewSlot"].ToString() : null,
                                     confirmationStatus = dt.Rows[i]["ConfirmationStatus"] != null ? dt.Rows[i]["ConfirmationStatus"].ToString() : null,
                                     MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? !string.IsNullOrWhiteSpace(dt.Rows[i]["MeetingStatus"].ToString()) ? Convert.ToInt32(dt.Rows[i]["MeetingStatus"]) : null : null,
-                                    InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? !string.IsNullOrWhiteSpace(dt.Rows[i]["InterviewStatus"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewStatus"]) : null : null
+                                    InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? !string.IsNullOrWhiteSpace(dt.Rows[i]["InterviewStatus"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewStatus"]) : null : null,
+                                    MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null
+
                                 });
                             }
                             _resultVM.Meetings = listMeetings;
