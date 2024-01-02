@@ -163,6 +163,7 @@
             processData: false,
             data: formdata,
             success: function (data) {
+                swal.fire(data);
                 location.reload(true);
             }
         });
