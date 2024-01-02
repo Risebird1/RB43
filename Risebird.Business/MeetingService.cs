@@ -761,7 +761,7 @@ namespace Risebird.Business
         {
             try
             {
-                var assignedMeeting = (await _meetingRespository.GetAllAssignedInterview(emailID, meetingLineUpType)).OrderByDescending(x => x.interviewDate).ToList();
+                var assignedMeeting = (await _meetingRespository.GetAllAssignedInterview(emailID, meetingLineUpType)).OrderBy(x => x.interviewDate).ToList();
                 return assignedMeeting;
             }
             catch (Exception ex)

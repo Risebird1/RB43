@@ -8413,6 +8413,33 @@ option {
     width: 28px;
     cursor:pointer;
 }
+.calling-area {
+    background: #eee4e4;
+    font-size: 15px;
+    padding: 10px 100px;
+    color: #cb2c2c;
+    text-align:center;
+}
+    .calling-area span{
+        display:block;
+    }
+    .calling {
+        position: absolute;
+        top: -65px;
+        right: 30px;
+    }
+.calling h1 {
+    float: left;
+    font-size: 15px;
+    padding: 5px;
+}
+.calling-icon {
+    float: left;
+    border-radius: 100%;
+    border: 2px green solid;
+    background: #fff;
+    padding: 0px 3px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -8840,7 +8867,13 @@ option {
             width: 100%;
             left: 0px;
         }
-
+        .calling-area {
+            background: #eee4e4;
+            font-size: 15px;
+            padding: 10px 10px !important;
+            color: #cb2c2c;
+            text-align: left !important;
+        }
         #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
             width: 285px !important;
             height: 160px !important;
@@ -9234,7 +9267,7 @@ option {
             padding: 20px 10px;
             margin-bottom: 10px;
         }
-
+      
         .nodata {
             text-align: center;
             font-size: 17px !important;
@@ -9355,12 +9388,21 @@ option {
         #calenderTimeslot {
             left: 20px;
         }
+        .calling-area span {
+            text-align:left!important;
 
-        .interview-status {
+        }
+            .interview-status {
             position: absolute !important;
             top: -56px !important;
         }
-
+        .calling-area {
+            background: #eee4e4;
+            font-size: 15px;
+            padding: 10px 10px !important;
+            color: #cb2c2c;
+            text-align:left!important;
+        }
         .event .calendar-con {
             min-width: 90% !important;
             max-width: 90% !important;
@@ -9375,7 +9417,12 @@ option {
         .filter-note {
             right: 15%
         }
-
+        .calling-area {
+            padding: 20px 10px !important;
+        }
+        .calling-area span {
+            display: none;
+        }
         .tabCon .tab_drawer_heading {
             background-color: #ececec;
             color: #5a5757cc;
@@ -9665,6 +9712,13 @@ option {
         #clientduser li {
             width: 100%;
             float: left;
+        }
+        .calling-area {
+            font-size: 13.5px!important;
+            padding: 20px 10px!important;
+        }
+        .calling-area span {
+            display: none;
         }
         .assessmentgrp-btn{
             float:none;
