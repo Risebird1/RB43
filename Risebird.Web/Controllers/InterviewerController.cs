@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
@@ -16,7 +17,9 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -49,9 +52,15 @@ namespace Risebird.Web.Controllers
         private readonly IAadhaarService _aadhaarService;
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService, IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService, INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository, IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService, IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper)
+        ISkillService skillService, IProfileService profileService, 
+        IInterviewerRepository interviewerRepository, IMeetingService meetingService, 
+        IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService,
+        INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository,
+        IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService, 
+        IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper)
 
         {
             _interviewerService = interviewerService;
@@ -73,6 +82,7 @@ namespace Risebird.Web.Controllers
             _aadhaarService = aadhaarService;
             _whatsAppHelper = whatsAppHelper;
             _sasUrlHelper = sasUrlHelper;
+            _affIndaResumeParserHelper = affIndaResumeParserHelper;
         }
 
 
@@ -3520,7 +3530,7 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
-        public ActionResult InterviewerResumeupdate(int userid, int irfid)
+        public async Task<IActionResult> InterviewerResumeupdate(int userid, int irfid, string resumeLink = null)
         {
             var model = new InterviewerProfileVM();
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -3541,8 +3551,87 @@ namespace Risebird.Web.Controllers
                     model.UserId = userid;
                     model.id = irfid;
                 }
+                if(!string.IsNullOrEmpty(resumeLink) && userid != 0)
+                {
+                    //call method to redact resume and save the redacted resume
+                    var redactedResumeLink = await RedactResume(resumeLink, userid);
+                    if(!string.IsNullOrEmpty(redactedResumeLink))
+                    {
+                        return Json(true);
+                    }
+                    else
+                    {
+                        return Json(false);
+                    }
+                }
             }
             return PartialView(model);
+        }
+
+        private async Task<string> RedactResume(string resumeLink, int userId)
+        {
+            try
+            {
+                var redactedResumeLink = await _affIndaResumeParserHelper.UploadResumeForRedaction(resumeLink);
+                var resumeFileName = resumeLink?.Split('/')?.Last();
+                if (!string.IsNullOrEmpty(redactedResumeLink))
+                {
+                    var model = new InterviewerProfileVM();
+
+                    HttpClient myWebClient = new HttpClient();
+                    string uploadedCodedResumeLink = string.Empty;
+                    using (Stream myStream = myWebClient.GetStreamAsync(redactedResumeLink).Result)
+                    {
+                        long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+                        var fileName = "Redacted_" + unixTime.ToString() + "_" + resumeFileName;
+                        //var fileName = resumeFileName + "_redacted" + "_" + unixTime.ToString();
+                        try
+                        {
+                            uploadedCodedResumeLink = _azureStorageHelper.InsertBlobCloudCompare(fileName, "resumes", null, myStream, contentType: "application/pdf").Result;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                        }
+
+
+
+                        //generate SAS URL from the uploaded video url
+                        var sas = _sasUrlHelper.CreateSasUrl("resumes");
+
+                        if (!string.IsNullOrEmpty(uploadedCodedResumeLink) && !string.IsNullOrEmpty(sas))
+                        {
+                            uploadedCodedResumeLink = uploadedCodedResumeLink + "?" + sas;
+                        }
+                    }
+
+                    model.UserId = userId;
+                    model.CodedResumeLink = uploadedCodedResumeLink;
+                    model.IsResumeRedactAttempted = true;
+                    model.IsResumeRedactFailed = false;
+
+                    //save the codedResumeLink and the resume link to database;
+
+                    var result = await _interviewerService.SaveInterviewerCodedResume(model);
+                    if (result)
+                    {
+                        return redactedResumeLink;
+
+                    }
+                    else
+                        return null;
+
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
         public async Task<IActionResult> FetchInterviewerFlagDetails(string InterviewerEmailid)
         {
