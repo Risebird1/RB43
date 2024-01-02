@@ -141,7 +141,7 @@ left join UserList ulc on ulc.EmailId = im.candidateEmail
 where im.Confirmationstatus=1 and ISNULL(Case When IRF.IsCandidateavailability is null and   
 IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1    
 and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and IsNull(im.IsMeetingNotificationSent,0)!=1 and  
-dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and   
+dateadd(minute,5,im.Interviewdate)<=dateadd(minute,330,getdate()) and   
 dateadd(minute,10,im.Interviewdate)>=dateadd(minute,330,getdate())                   
                
 )                            
