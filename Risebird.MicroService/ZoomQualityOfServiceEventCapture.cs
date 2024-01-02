@@ -111,11 +111,11 @@ namespace Risebird.MicroService
 
                 if (data != null)
                 {
-                    if (data.payload.@object.participant.qos.Where(x => x.type == "audio_output") != null)
+                    if (data.payload.@object.participant.qos.Where(x => x.type == "audio_output" || x.type == "video_output") != null)
                     {
-                        log.LogInformation($"ZoomQualityOfServiceEventCapture : qos type audio_output found");
+                        log.LogInformation($"ZoomQualityOfServiceEventCapture : qos found");
 
-                        foreach (var item in data.payload.@object.participant.qos.Where(x => x.type == "audio_output"))
+                        foreach (var item in data.payload.@object.participant.qos.Where(x => x.type == "audio_output" || x.type == "video_output"))
                         {
                             // Extracting integer using regular expression
                             //Match match = Regex.Match(item.details.max_jitter, @"\d+");
@@ -150,7 +150,7 @@ namespace Risebird.MicroService
                             {
                                 ZoomMeetingId = data.payload.@object.id,
                                 participantEmail = data.payload.@object.participant.email,
-                                qosType = "audio_output",
+                                qosType = item.type,//"audio_output",
                                 max_jitter = item.details.max_jitter,
                                 min_jitter = item.details.min_jitter,
                                 avg_jitter = item.details.avg_jitter,

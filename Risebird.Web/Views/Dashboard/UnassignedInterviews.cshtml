@@ -446,6 +446,8 @@
                                                         <th>Rating</th>
                                                         <th>Rated By</th>
                                                         <th>Rated</th>
+                                                        <th>Payment SLA Status</th>
+                                                        <th>Red Marker</th>
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
                                                 </tr>
@@ -668,6 +670,8 @@
                                                         <th>Rating</th>
                                                         <th>Rated By</th>
                                                         <th>Rated</th>
+                                                        <th>Payment SLA Status</th>
+                                                        <th>Red Marker</th>
                                                         <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     }
                                                 </tr>
@@ -1632,7 +1636,39 @@
                                                             </td>
                                                             <td>@item.RateAddedBy</td>
                                                             <td>@item.RateAddedOn</td>
+                                                            @if (item.IsApproved == 1)
+                                                            {
+                                                                <td>Approved</td>
+                                                            }
+                                                            else if (item.IsApproved == 2)
+                                                            {
+                                                                <td>Not Approved</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            @if (item.RedMarker > 0)
+                                                            {
+                                                                if (item.interviewer != null || item.interviewer != "")
+                                                                {
+                                                                    <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.interviewer')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td style="color:red;text-align:center">item.RedMarker
+                                                                    </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="color:red;text-align:center">
+                                                                    @item.RedMarker
+                                                                </td>
+                                                            }
+
                                                             <td align="center">
+
                                                                 @if (!string.IsNullOrWhiteSpace(item.interviewer))
                                                                 {
                                                                     <span>

@@ -16,13 +16,15 @@ CREATE PROCEDURE [dbo].[usp_GetProbableNoShowCandidates]
   
 AS      
 Begin     
-  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber   
+  select ul.EmailId as candidateEmail, im.interviewDate, im.IRFId,ic.MeetingStatus,ic.InterviewStatus,ul.MobileNumber,uli.EmailId as ChannelOwner
 from ProbableNoShowCandidates pnc  
 join InterviewMeetings im on im.id = pnc.InterviewId  
 join UserList ul on ul.id = pnc.CandidateUserId  
-join InterviewComments ic on ic.Interviewid=im.id  
-where interviewDate >= dateadd(DAY, -8, getdate())
+join InterviewComments ic on ic.Interviewid=im.id
+inner join IRF on im.IRFId=irf.IRFId 
+left join UserList uli on uli.id=  irf.RisebirdHr
+--where interviewDate >= dateadd(DAY, -8, getdate())
 order by im.interviewDate desc  
-End    
+End   
 GO
 

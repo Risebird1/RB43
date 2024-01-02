@@ -3261,7 +3261,9 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Userid", model.UserId);
-                    parameters.Add("@CodedResumeLink", model.ResumeLink);
+                    parameters.Add("@CodedResumeLink", model.CodedResumeLink);
+                    parameters.Add("@IsResumeRedactAttempted", model.IsResumeRedactAttempted);
+                    parameters.Add("@IsResumeRedactFailed", model.IsResumeRedactFailed);
                     var results = await SqlMapper.QueryAsync(con, "usp_SaveInterviewerCodedResume", parameters,
                            commandType: CommandType.StoredProcedure);
                     return true;
@@ -3325,6 +3327,30 @@ namespace Risebird.Repository
                     return true;
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> SaveInterviewerResumesAndCodedResume(InterviewerProfileVM model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Userid", model.UserId);
+                    parameters.Add("@CodedResumeLink", model.CodedResumeLink);
+                    parameters.Add("@ResumeLink", model.ResumeLink);
+                    parameters.Add("@IsResumeRedactAttempted", model.IsResumeRedactAttempted);
+                    parameters.Add("@IsResumeRedactFailed", model.IsResumeRedactFailed);
+                    var results = await SqlMapper.QueryAsync(con, "usp_SaveInterviewerResumesAndCodedResume", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
             }
             catch (SqlException ex)
             {

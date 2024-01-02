@@ -54,6 +54,7 @@
                                             <th>Candidate Name</th>
                                             <th>Interviewer</th>
                                             <th>Candidate Email</th>
+                                            <th>Channel Owner</th>
                                             <th>Created On</th>
                                             <th>Created By</th>
                                             <th>Channel Owner</th>
@@ -67,6 +68,7 @@
                                             <th>Candidate Name</th>
                                             <th>Interviewer</th>
                                             <th>Candidate Email</th>
+                                            <th>Channel Owner</th>
                                             <th>Created On</th>
                                             <th>Created By</th>
                                             <th>Channel Owner</th>
@@ -100,7 +102,10 @@
                                                 {
                                                     <td></td>
                                                 }
-                                                <td>@item.candidateEmailId</td>
+                                                
+                                                <td>@item.candidateEmail</td>
+                                                <td>@item.ChannelOwner</td>
+
                                                 @if (item.Createdon.HasValue)
                                                 {
                                                     <td>@item.Createdon.Value</td>

@@ -90,8 +90,8 @@
                                                         <th>Candidate Name</th>
                                                         <th>Resume</th>
                                                         <th>JD Link</th>
+                                                        <th>Client Name</th>
                                                         <th class="disabled-sorting text-right">Actions</th>
-
                                                     </tr>
                                                 </thead>
                                                 <tfoot>
@@ -101,9 +101,8 @@
                                                         <th>Candidate Name</th>
                                                         <th>Resume</th>
                                                         <th>JD Link</th>
+                                                        <th>Client Name</th>
                                                         <th class="disabled-sorting text-right">Actions</th>
-
-
                                                     </tr>
                                                 </tfoot>
                                                 <tbody>
@@ -118,7 +117,7 @@
                                                     {
                                                         <tr id=@item.id>
                                                             <td> @item.interviewDate<input type="hidden" value="@item.zoomLink" id="zoomlink_@item.id" /> </td>
-                                                            <td> @item.interviewDuration </td>
+                                                            <td> @item.interviewDuration</td>
                                                             <td> @item.candidateName</td>
                                                             @if (item.resumeLink != null && item.resumeLink != "")
                                                             {
@@ -136,7 +135,7 @@
                                                             {
                                                                 <td>No JD</td>
                                                             }
-
+                                                            <td>@item.ClientName</td>
 
                                                             <td class="text-right">
                                                                 <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="openAssignationPopup('@item.id', '@item.ZoomId')" title="Assign Yourself"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>

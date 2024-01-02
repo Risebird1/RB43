@@ -57,6 +57,7 @@
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Candidate Contact</th>
+                                                <th>Payment SLA Status</th>
                                                 <th>Interview Status</th>
                                                 <th>Client Name</th>
                                                 <th>Channel Owner</th>
@@ -74,7 +75,8 @@
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Candidate Contact</th>
-                                                <th >Interview Status</th>
+                                                <th>Payment SLA Status</th>
+                                                <th>Interview Status</th>
                                                 <th>Client Name</th>
                                                 <th>Channel Owner</th>
                                                 <th>Red Marker</th>
@@ -98,7 +100,14 @@
 
                                                         <td>@item.IRFId</td>
                                                         <td>@item.interviewDate</td>
-                                                        <td>@item.interviewer</td>
+                                                        @if (item.interviewer != null && item.interviewer != string.Empty)
+                                                        {
+                                                            <td>@item.interviewer</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
 
                                                         @*  @if (@item.interviewer != null || @item.interviewer != "")
                                                 {
@@ -110,7 +119,13 @@
                                                 } *@
 
                                                         <td>@item.candidateName</td>
-                                                        <td>@item.candidateEmail</td>
+                                                        @if (item.candidateEmail != null && item.candidateEmail != string.Empty)
+                                                        {
+                                                            <td>@item.candidateEmail</td>
+                                                        }
+                                                       else{ 
+                                                           <td></td>
+                                                       }
 
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
@@ -123,6 +138,19 @@
                                                         else
                                                         {
                                                             <td></td>
+                                                        }
+
+                                                        @if (item.IsApproved == 1)
+                                                        {
+                                                        <td>Approved</td>
+                                                        }
+                                                        else if (item.IsApproved == 2)
+                                                        {
+                                                        <td>Not Approved</td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td></td>
                                                         }
                                                         @if (item.InterviewStatus == 2)
                                                         {
@@ -146,7 +174,14 @@
                                                         {
                                                             <td class="text-center">@item.intervieweStatusStatDesc</td>
                                                         }
-                                                        <td> @item.Name </td>
+                                                        @if (item.Name != null || item.Name != "")
+                                                        {
+                                                            <td> @item.Name </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
                                                         <td>@item.ChannelOwner</td>
                                                         @if (item.interviewer != null || item.interviewer != "")
                                                         {
