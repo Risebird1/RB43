@@ -17,7 +17,16 @@
     </script>
 
 <input type="hidden" value="@ViewBag.id" id="id" />
+<div class="calling-area">
+    <span><img src="/img/note.png" width="20"> Talking anything <b>personal</b> or <b>suspicious</b> with the candidate shall result in strict legal action</span></div>
             <div class="interviewWrapper">
+<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+ <div class="calling"><h1> Call the candidate</h1> <span class="calling-icon" aria-label="Click here to call the candidate">
+<span onclick="CommonCallButtonClick('@Model.candidateName','@Model.MobileNumber', 'Candidate','@Model.id', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="16"></span>
+ </span>
+ </div>
+
+</div>
         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="heading-txt">
             Review the below client instructions to get the meeting link<br/>
@@ -293,21 +302,21 @@
                     <div class="answer-label" style="float: left;
     width: auto;">
                         <span class="heading pull-left">
-                            <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" />
+                            <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" disabled />
 
                         </span><span class="pull-left"> Coding</span>
                     </div>
                     <div class="answer-label" style="float: left;
     width: auto;">
                         <span class="heading pull-left">
-                            <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" />
+                        <input type="checkbox" name="format" value="Current project" onchange="ChangeCheckBox('format')" disabled />
 
                         </span><span class="pull-left"> Current project</span>
                     </div>
                     <div class="answer-label" style="float: left;
     width: auto;">
                         <span class="heading  pull-left">
-                            <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" />
+                        <input type="checkbox" name="format" value="Conceptual" onchange="ChangeCheckBox('format')" disabled />
 
                         </span><span class="pull-left"> Conceptual</span>
                     </div>
@@ -315,7 +324,7 @@
                     <div class="answer-label" style="float: left;
     width: auto;">
                         <span class="heading pull-left">
-                            <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" />
+                        <input type="checkbox" name="format" value="Scenario" onchange="ChangeCheckBox('format')" disabled />
 
                         </span><span class="pull-left">  Scenario</span>
                     </div>
@@ -323,7 +332,7 @@
                     <div class="answer-label" style="float: left;
     width: auto;">
                         <span class="heading pull-left">
-                            <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" />
+                        <input type="checkbox" name="format" value="System Design" onchange="ChangeCheckBox('format')" disabled />
 
                         </span><span class="pull-left">System Design</span>
                     </div>
@@ -331,14 +340,14 @@
                     <div class="answer-label" style="float: left;
     width: auto;">
                         <span class="heading pull-left">
-                            <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" />
+                        <input type="checkbox" name="format" value="People management" onchange="ChangeCheckBox('format')" disabled />
 
                         </span><span class="pull-left">People management</span>
                     </div>
                     <div class="answer-label" style="float: left;
     width: auto;">
                         <span class="heading pull-left">
-                            <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" />
+                        <input type="checkbox" name="format" value="Client management" onchange="ChangeCheckBox('format')" disabled />
 
                         </span><span class="pull-left"> Client management</span>
                     </div>
@@ -1004,3 +1013,5 @@
             $("#divquestionslist").empty().html(html);
         }
 </script>
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js"></script>
