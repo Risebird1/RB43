@@ -1348,7 +1348,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName);
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName,filter);
                         }
                         if (modelList == null)
                         {
@@ -1760,7 +1760,7 @@ namespace Risebird.Web.Controllers
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
                         {
                             filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContext.Session.GetString("UnassignedInterviewsFilters"));
-                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName);
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName, filter);
                         }
                         else
                         {

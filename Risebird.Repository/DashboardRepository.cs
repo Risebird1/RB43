@@ -893,7 +893,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName)
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName, UnassignedInterviewsFilter filters)
         {
             try
             {
@@ -902,6 +902,8 @@ namespace Risebird.Repository
                 parameters.Add("@actiontype", actiontype);
                 parameters.Add("@emailid", emailid);
                 parameters.Add("@currentdate", DateTime.Now);
+                parameters.Add("@StartDate", filters.StartDate);
+                parameters.Add("@EndDate", filters.EndDate);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchRibbonDetailsValuesbydate", parameters,

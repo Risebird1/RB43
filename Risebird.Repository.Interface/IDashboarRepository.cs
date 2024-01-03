@@ -40,7 +40,7 @@ namespace Risebird.Repository.Interface
         Task<bool> ChannelInterviewerAction(int id, string action);
         Task<IEnumerable<CandidateStatus>> GetClientCandidatesCurrentStatus(string emailId);
         Task<List<MeetingVM>> FetchRibbonDetailsValues(string actionstatus, string emailid, int actiontype, string profileName);
-        Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName);
+        Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName, UnassignedInterviewsFilter filters);
         Task<NotUpdatedMeetings> GetNotUpdatedMeetingsCountbyHr(string Emailid);
         Task<List<MeetingDetailsForParticipant>> SendNotoificationForParticipantWaiting();
         Task<List<ZoomMeetingHistoryDetails>> FetchZoomMeetingHistory(string meetingid);
