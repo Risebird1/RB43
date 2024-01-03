@@ -43,5 +43,7 @@ namespace Risebird.Entities.ViewModel
         public bool EIAssigned { get; set; }
         public string confirmationStatus { get; set; }
         public string MeetingStatusStatusDesc { get; set; }
+        public string interviewer { get; set; }
+        public string candidateEmail { get; set; }
     }
 }
