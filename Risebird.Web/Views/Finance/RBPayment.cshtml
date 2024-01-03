@@ -151,7 +151,7 @@
                                                     <td>@item.Penaltyamount</td>
                                                     <td>@(item.CandidateRatingAmount+item.ClientRatingAmount)</td>
                                                     <td>@item.QCPoints</td>
-                                                    <td>@item.PaymentSLA</td>
+                                                    <td onClick="PaymentComplianceDetails('@item.InterviewId')">@item.PaymentSLA</td>
                                                     <td>@item.VideoReward</td>
                                                     <td>@item.Points</td>
                                                     <td>@item.Status</td>
@@ -181,7 +181,7 @@
     </div>
 
 </div>
-
+@await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")
 
 
 

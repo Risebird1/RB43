@@ -370,6 +370,7 @@
                                                                             <th>Candidate Detail</th>
                                                                             <th>Resume</th>
                                                                             <th>Client HR</th>
+                                                                            <th>Channel Owner</th>
                                                                            
                                                                             @if (ViewBag.profile != "Client")
                                                                             {
@@ -386,7 +387,7 @@
                                                                             <th>Candidate Detail</th>
                                                                             <th>Resume</th>
                                                                             <th class="candidate-hr">Client HR</th>
-                                                                           
+                                                                            <th>Channel Owner</th>
                                                                             @if (ViewBag.profile != "Client")
                                                                             {
                                                                                 <th>Client</th>
@@ -467,7 +468,7 @@
                                                                                         }
                                                                                     }
                                                                                 </td>
-
+                                                                                <td>@item.ChannelOwner</td>
                                                                                 @if (ViewBag.profile != "Client")
                                                                                 {
                                                                                     <td>@item.ClientName</td>

@@ -106,6 +106,7 @@ namespace Risebird.Web.Controllers
                         foreach (var item in interviewmanagement)
                         {
                             item.interviewDate = item.interviewDate.Date;
+                            item.orginaldate = item.interviewDate.Date;
                         }
                         model.InterviewManagement = interviewmanagement;
                         return View(model);
@@ -1343,7 +1344,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName);
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName,filter);
                         }
                         if (modelList == null)
                         {
@@ -1755,7 +1756,7 @@ namespace Risebird.Web.Controllers
                         if (HttpContext.Session.GetString("UnassignedInterviewsFilters") != null)
                         {
                             filter = JsonConvert.DeserializeObject<UnassignedInterviewsFilter>(HttpContext.Session.GetString("UnassignedInterviewsFilters"));
-                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName);
+                            modelList = await _dashboardService.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName, filter);
                         }
                         else
                         {
@@ -1951,7 +1952,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName== "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _dashboardService.GetBlackkListComapany();
 
@@ -2328,7 +2329,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 13].Value = "Not Approved";
                         }
-                            i++;
+                        i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 }
@@ -2415,14 +2416,14 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> ApprovedInterviewerVideoKYC(int id,string type)
+        public async Task<JsonResult> ApprovedInterviewerVideoKYC(int id, string type)
         {
             try
             {
 
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                var data = await _dashboardService.UpdateInterviewerVideoKYC(id,type);
+                var data = await _dashboardService.UpdateInterviewerVideoKYC(id, type);
                 if (type == "Approve")
                 {
                     if (data == true)
@@ -2445,7 +2446,7 @@ namespace Risebird.Web.Controllers
                         return Json("Failed to mark whether Re-Record.");
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -2485,7 +2486,7 @@ namespace Risebird.Web.Controllers
                                 if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
                                 {
                                     item.MeetingStatusStatusDesc = "Status Pending";
-                                }   
+                                }
                             }
                             else
                             {
@@ -2493,7 +2494,7 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-                       
+
                         return View(model);
                     }
                     else
@@ -2518,13 +2519,118 @@ namespace Risebird.Web.Controllers
             try
             {
                 var model = await _dashboardService.GetProxyReportCountDetails(id);
-         
+
                 return PartialView(model);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> InterviewManagementDetails(DateTime interviewdate)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+                var interviewmanagement = await _dashboardService.GetInterviewManagementDetails(interviewdate, interviewdate.AddDays(1), Emailid);
+                interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 1).ToList();
+                interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                return View(interviewmanagement);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> EmergencyInterviewDetails(string interviewdate)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+                DateTime startdate;
+                DateTime enddate;
+                if (string.IsNullOrEmpty(interviewdate))
+                {
+                    startdate = DateTime.Now.Date;
+                }
+                else
+                {
+                    startdate = Convert.ToDateTime(interviewdate);
+                }
+                enddate = startdate.AddDays(1);
+                if (HttpContext.Session.GetString("EmergencyInterviewDetailsfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("EmergencyInterviewDetailsfilters"));
+                    startdate = Convert.ToDateTime(filter.StartDate);
+                    enddate = Convert.ToDateTime(filter.EndDate);
+                }
+                var interviewmanagement = await _dashboardService.GetInterviewManagementDetails(startdate, enddate, Emailid);
+                interviewmanagement = interviewmanagement.Where(x => x.IsNotificationSentToEI == 1).ToList();
+                interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                return View(interviewmanagement);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EmergencyInterviewDetails(MyInterviewFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("EmergencyInterviewDetailsfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString() });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ResetEmergencyInterviewDetailsfilters()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("EmergencyInterviewDetailsfilters");
+                    return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString() });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString() });
             }
         }
     }

@@ -33,9 +33,18 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
         public DateTime interviewDate { get; set; }
+        public DateTime orginaldate { get; set; }
         public int MeetingStatus { get; set; }
         public int TotalCount { get; set; }
         public int IsMeetingNotificationSent { get; set; }
         public int IsRescheduleNotificationSent { get; set; }
+        public int IsNotificationSentToEI { get; set; }
+        public DateTime? Joinedon { get; set; }
+        public DateTime? PerformedOn { get; set; }
+        public bool EIAssigned { get; set; }
+        public string confirmationStatus { get; set; }
+        public string MeetingStatusStatusDesc { get; set; }
+        public string interviewer { get; set; }
+        public string candidateEmail { get; set; }
     }
 }

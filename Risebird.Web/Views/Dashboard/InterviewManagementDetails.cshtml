@@ -1,0 +1,200 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewManagementVM>
+@using Risebird.Entities.Data;
+@using Risebird.Entities.Enum
+@{
+
+    ViewData["Title"] = "Interview Management";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    var Header = "<div>Interview Management</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title"> Interview Management</h4></div>
+                </div>
+                <div class="pull-left">
+                </div>
+                <div class="pull-right">
+                    <div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                <div class="scrollbar int-table" id="style-2">
+                                    <div id="tableID" class="second ">
+                                        <table id="meeting" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <td>Interview Date</td>
+                                                    <td>Interviewer Joinedon</td>
+                                                    <td>Candidate Joinedon</td>
+                                                    <td>Interviewer</td>
+                                                    <td>Candidate Email</td>
+                                                    <td>Emergency Interview</td>
+                                                    <td>Meeting Status</td>
+                                                    <td>Status</td>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Interview Date</td>
+                                                    <td>Interviewer Joinedon</td>
+                                                    <td>Candidate Joinedon</td>
+                                                    <td>Interviewer</td>
+                                                    <td>Candidate Email</td>
+                                                    <td>Emergency Interview</td>
+                                                    <td>Meeting Status</td>
+                                                    <td>Status</td>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        <td>@item.interviewDate</td>
+                                                        <td>@item.Joinedon</td>
+                                                        <td>@item.PerformedOn</td>
+                                                        <td>@item.interviewer</td>
+                                                        <td>@item.candidateEmail</td>
+                                                        @if (item.EIAssigned)
+                                                        {
+                                                            <td>Yes</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No</td>
+                                                        }
+                                                        <td>@item.MeetingStatusStatusDesc</td>
+                                                        @if (item.TotalCount >= 2 && item.IsMeetingNotificationSent == 1 && item.Joinedon != null && item.PerformedOn != null && item.IsRescheduleNotificationSent == 0)
+                                                        {
+                                                            if (item.EIAssigned)
+                                                            {
+                                                                <td>Resolved(Emergency Interview)</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>Resolved(Interviewer Late Join)</td>
+                                                            }
+                                                        }
+                                                        else if ((item.TotalCount == 1 && item.IsMeetingNotificationSent == 1) || (item.TotalCount >= 2 && item.IsMeetingNotificationSent == 1 && item.IsRescheduleNotificationSent == 1) || (item.IsMeetingNotificationSent == 1 && (item.Joinedon == null || item.PerformedOn == null)))
+                                                        {
+                                                            if (item.Joinedon != null && item.PerformedOn == null)
+                                                            {
+                                                                <td>Not Resolved(Candidate No Show)</td>
+                                                            }
+                                                            else if (item.Joinedon == null && item.PerformedOn != null)
+                                                            {
+                                                                <td>Not Resolved(Interviewer No Show)</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>Not Resolved</td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function searchResult() {
+        $('#meeting').DataTable();
+    }
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+</script>

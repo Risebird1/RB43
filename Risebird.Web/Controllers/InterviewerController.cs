@@ -3557,11 +3557,11 @@ namespace Risebird.Web.Controllers
                     var redactedResumeLink = await RedactResume(resumeLink, userid);
                     if(!string.IsNullOrEmpty(redactedResumeLink))
                     {
-                        return Json(true);
+                        return Json(redactedResumeLink);
                     }
                     else
                     {
-                        return Json(false);
+                        return Json("failed");
                     }
                 }
             }
@@ -3618,7 +3618,7 @@ namespace Risebird.Web.Controllers
                     var result = await _interviewerService.SaveInterviewerCodedResume(model);
                     if (result)
                     {
-                        return redactedResumeLink;
+                        return uploadedCodedResumeLink;
 
                     }
                     else
