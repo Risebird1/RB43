@@ -1478,8 +1478,8 @@ namespace Risebird.Repository
                     var date = DateTime.Now.AddDays(1);
                     var startdate = date.AddDays(-7);
                     var parameters = new DynamicParameters();
-                    parameters.Add("@startdate", startdate);
-                    parameters.Add("@enddate", date);
+                    parameters.Add("@startdate", interviewstartdate);
+                    parameters.Add("@enddate", interviewenddate);
                     parameters.Add("@Emailid", Emailid);
                     var result = await SqlMapper.QueryAsync<InterviewManagementVM>(con, "usp_GetInterviewManagementDetails", parameters,
                         commandType: CommandType.StoredProcedure);

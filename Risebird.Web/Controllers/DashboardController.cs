@@ -111,6 +111,7 @@ namespace Risebird.Web.Controllers
                         foreach (var item in interviewmanagement)
                         {
                             item.interviewDate = item.interviewDate.Date;
+                            item.orginaldate = item.interviewDate.Date;
                         }
                         model.InterviewManagement = interviewmanagement;
                         return View(model);
@@ -2549,6 +2550,92 @@ namespace Risebird.Web.Controllers
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> EmergencyInterviewDetails(string interviewdate)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+                DateTime startdate;
+                DateTime enddate;
+                if (string.IsNullOrEmpty(interviewdate))
+                {
+                    startdate = DateTime.Now.Date;
+                }
+                else
+                {
+                    startdate = Convert.ToDateTime(interviewdate);
+                }
+                enddate = startdate.AddDays(1);
+                if (HttpContext.Session.GetString("EmergencyInterviewDetailsfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("EmergencyInterviewDetailsfilters"));
+                    startdate = Convert.ToDateTime(filter.StartDate);
+                    enddate = Convert.ToDateTime(filter.EndDate);
+                }
+                var interviewmanagement = await _dashboardService.GetInterviewManagementDetails(startdate, enddate, Emailid);
+                interviewmanagement = interviewmanagement.Where(x => x.IsNotificationSentToEI == 1).ToList();
+                interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                return View(interviewmanagement);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EmergencyInterviewDetails(MyInterviewFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("EmergencyInterviewDetailsfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString() });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ResetEmergencyInterviewDetailsfilters()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("EmergencyInterviewDetailsfilters");
+                    return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString() });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString() });
             }
         }
     }
