@@ -893,7 +893,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName)
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName, UnassignedInterviewsFilter filters)
         {
             try
             {
@@ -902,6 +902,8 @@ namespace Risebird.Repository
                 parameters.Add("@actiontype", actiontype);
                 parameters.Add("@emailid", emailid);
                 parameters.Add("@currentdate", DateTime.Now);
+                parameters.Add("@StartDate", filters.StartDate);
+                parameters.Add("@EndDate", filters.EndDate);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchRibbonDetailsValuesbydate", parameters,
@@ -1400,14 +1402,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> UpdateInterviewerVideoKYC(int id,string type)
+        public async Task<bool> UpdateInterviewerVideoKYC(int id, string type)
         {
             try
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@id", id);
                 dynamicParam.Add("@type", type);
-                
+
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_UpdateStatusInterviewerVideoKYC", dynamicParam,
@@ -1453,7 +1455,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@id",id);
+                    parameters.Add("@id", id);
                     var result = await SqlMapper.QueryFirstOrDefaultAsync<ProctoringReport>(con, "usp_GetProxyCountDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -1464,6 +1466,29 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate,string Emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var date = DateTime.Now.AddDays(1);
+                    var startdate = date.AddDays(-7);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", interviewstartdate);
+                    parameters.Add("@enddate", interviewenddate);
+                    parameters.Add("@Emailid", Emailid);
+                    var result = await SqlMapper.QueryAsync<InterviewManagementVM>(con, "usp_GetInterviewManagementDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
