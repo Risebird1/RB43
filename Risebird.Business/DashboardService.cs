@@ -472,11 +472,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName)
+        public async Task<List<MeetingVM>> FetchRibbonDetailsValuesbydate(string actionstatus, string emailid, int actiontype, string profileName, UnassignedInterviewsFilter filters)
         {
             try
             {
-                return await _dashboardRespository.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName);
+                return await _dashboardRespository.FetchRibbonDetailsValuesbydate(actionstatus, emailid, actiontype, profileName, filters);
             }
             catch (Exception ex)
             {
