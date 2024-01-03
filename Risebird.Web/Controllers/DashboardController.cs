@@ -2543,7 +2543,7 @@ namespace Risebird.Web.Controllers
                 var Emailid = HttpContext.Session.GetString("email")?.Trim();
                 Emailid = Emailid.Replace("\"", "");
                 var interviewmanagement = await _dashboardService.GetInterviewManagementDetails(interviewdate, interviewdate.AddDays(1), Emailid);
-                interviewmanagement = interviewmanagement.Where(x => x.IsNotificationSentToEI == 1).ToList();
+                interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 1).ToList();
                 interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                 return View(interviewmanagement);
             }
