@@ -94,8 +94,12 @@ namespace Risebird.MicroService
                             }
                             if (documentData.data.phoneNumberDetails != null && documentData.data.phoneNumberDetails.Count() > 0)
                             {
-                                candidate.Phone = !string.IsNullOrEmpty(documentData.data.phoneNumberDetails[0].internationalCountryCode) ? documentData.data.phoneNumberDetails[0].rawText : null;
-
+                                //candidate.Phone = !string.IsNullOrEmpty(documentData.data.phoneNumberDetails[0].internationalCountryCode) ? documentData.data.phoneNumberDetails[0].rawText : null;
+                                candidate.Phone = documentData.data.phoneNumberDetails[0].rawText;
+                                if(candidate.Phone == "911" || candidate.Phone == "+911")
+                                {
+                                    candidate.Phone = null;
+                                }
                             }
                             candidate.ResumeLink = resume.ResumeLink;
                             candidate.CandidateResumeId = resume.id;
