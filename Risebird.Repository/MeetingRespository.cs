@@ -4523,7 +4523,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select Count(*) from UserList where Emailid=@Emailid";
+                var query = "Select Count(*) from UserList where Emailid=@Emailid and idProfile=3";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", Emailid.Trim());
                 using (SqlConnection con = new SqlConnection(connectionString))
