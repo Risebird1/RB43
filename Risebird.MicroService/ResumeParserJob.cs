@@ -80,7 +80,7 @@ namespace Risebird.MicroService
                             if (documentData.data.emails != null && documentData.data.emails.Count() > 0)
                             {
                                 candidate.EmailId = documentData.data.emails[0].Trim();
-                                candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "");
+                                candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "").Replace(":%20", "").Replace("-%20", "");
 
                                 if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
                                 {
@@ -89,18 +89,19 @@ namespace Risebird.MicroService
                                 if (candidate.EmailId.StartsWith("%20"))
                                 {
                                     candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
-                                    candidate.EmailId.Replace("%20", "").Replace("-", "");
+                                    //candidate.EmailId.Replace("%20", "");
 
                                 }
                                 if (candidate.EmailId.StartsWith("?:"))
                                 {
                                     candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
-                                    candidate.EmailId.Replace("?:", "").Replace("-", "");
+                                    //candidate.EmailId.Replace("?:", "");
 
                                 }
                                 if (candidate.EmailId.StartsWith(":%20") || candidate.EmailId.StartsWith("-%20"))
                                 {
-                                    candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first three characters 
+                                    candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
+                                    //candidate.EmailId.Replace(":%20", "").Replace("-%20", "");
                                 }
 
                             }
