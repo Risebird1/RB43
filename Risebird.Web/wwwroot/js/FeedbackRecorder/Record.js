@@ -386,7 +386,7 @@ function cancelClientRecording() {
 //recording code for smes
 
 function startSMERecording() {
-    debugger;
+   
     document.getElementById("startSMERecButton").disabled = true;
     document.getElementById("stopSMERecButton").disabled = false;
     document.getElementById("cancelSMERecButton").disabled = false;
@@ -432,7 +432,7 @@ function startSMERecording() {
 }
 
 function stopSMERecording(_irfId, _smeProfileId) {
-    debugger;
+   
     console.log(_irfId, _smeProfileId);
     document.getElementById("stopSMERecButton").disabled = true;
     document.getElementById("startSMERecButton").disabled = false;
