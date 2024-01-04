@@ -5399,7 +5399,7 @@ namespace Risebird.Web.Controllers
         {
             HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
             var meetings = _meetingService.ReassignMeeting(id, meetingid, Emailid);
-            var codedname = (await _meetingService.FetchInterviewerCodedName(Emailid)).NickName;
+            var codedname = (await _meetingService.FetchInterviewerCodedName(Emailid))?.NickName;
             return Json(new { meetings = meetings, codedname = codedname });
         }
 
