@@ -84,6 +84,10 @@ namespace Risebird.MicroService
                                 {
                                     candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
                                 }
+                                if (candidate.EmailId.StartsWith("%20"))
+                                {
+                                    candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                                }
 
                             }
                             else
