@@ -13,7 +13,7 @@ CREATE Procedure usp_GetClientReScheduledMeetings
 @Clientid int,                          
 @Emailid varchar(150)                          
 AS                              
-Begin                    
+Begin  
 if(@Clientid>0)                      
 Begin                    
             
@@ -23,7 +23,7 @@ set @clientRole =(select top 1 cu.RoleId from UserList ul join ClientUser cu on 
 if(@clientRole=4)--staffing Agency            
 begin            
  Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName from 
- (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId     
+ (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner     
   
                
       
@@ -32,30 +32,32 @@ begin
  ul.MobileNumber,im.resumeLink,        
  --im.ClientHrContact as ClientHrContact,        
   c.ClientHRAttemptContact as ClientHrContact,        
- (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+ (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId,ulir.EmailId as ChannelOwner                     
  from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
  join IRF on im.IRFId=IRF.IRFId                     
  left join UserList ul on ul.EmailId=im.candidateEmail            
  join CandidatesMaster cm on cm.UserId=ul.id            
  join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id             
  join TransClientUser tcu on tcu.IRFId=IRF.id                          
- left join Userlist tcul on tcul.id=tcu.ClientUserId                          
+ left join Userlist tcul on tcul.id=tcu.ClientUserId
+ left join Userlist ulir on ulir.id=irf.RisebirdHr
  where tcul.EmailId=@Emailid and irf.ClientId=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0 and c.ProfileSource=@Emailid             
  union                  
  Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
  ul.MobileNumber,im.resumeLink,        
   --im.ClientHrContact as ClientHrContact,        
   c.ClientHRAttemptContact as ClientHrContact,        
- (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                                     
+ (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId ,ulir.EmailId as ChannelOwner                                    
  from InterviewMeetings im left join InterviewComments ic on ic.InterviewId=im.id                     
  join IRF on im.IRFId=IRF.IRFId                     
  left join UserList ul on ul.EmailId=im.candidateEmail            
  join CandidatesMaster cm on cm.UserId=ul.id            
  join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id            
  join TransClientUser tcu on tcu.IRFId=IRF.id                          
- left join Userlist tcul on tcul.id=tcu.ClientUserId                          
+ left join Userlist tcul on tcul.id=tcu.ClientUserId
+ left join Userlist ulir on ulir.id=irf.RisebirdHr
  where tcul.EmailId=@Emailid and irf.ClientId=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0 and c.ProfileSource=@Emailid) as cd                   
- group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId)as xy                     
+ group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId,ChannelOwner)as xy                     
  join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail and im.IRFId=xy.IRFId                  
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
@@ -66,36 +68,38 @@ end
 else if(@clientRole=1)        
 begin            
   Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName from 
-  (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId    
+  (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner    
       
  from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
  IRF.JDTiltle,                    
  ul.MobileNumber,im.resumeLink,        
   --im.ClientHrContact as ClientHrContact,        
   c.ClientHRAttemptContact as ClientHrContact,        
- (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+ (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId,ulir.EmailId as ChannelOwner                     
  from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
  join IRF on im.IRFId=IRF.IRFId               
  left join UserList ul on ul.EmailId=im.candidateEmail            
  join CandidatesMaster cm on cm.UserId=ul.id            
  join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id join TransClientUser tcu on tcu.IRFId=IRF.id                          
- left join Userlist tcul on tcul.id=tcu.ClientUserId                          
+ left join Userlist tcul on tcul.id=tcu.ClientUserId  
+ left join Userlist ulir on ulir.id=irf.RisebirdHr
  where tcul.EmailId=@Emailid and irf.ClientId=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0 and im.ClientHrContact=@Emailid                   
  union                  
  Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
  ul.MobileNumber,im.resumeLink,        
  --im.ClientHrContact as ClientHrContact,        
  c.ClientHRAttemptContact as ClientHrContact,        
- (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                   
+ (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId,ulir.EmailId as ChannelOwner                   
  from InterviewMeetings im left join InterviewComments ic on ic.InterviewId=im.id                     
  join IRF on im.IRFId=IRF.IRFId                     
  left join UserList ul on ul.EmailId=im.candidateEmail            
  join CandidatesMaster cm on cm.UserId=ul.id            
  join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                    
  join TransClientUser tcu on tcu.IRFId=IRF.id                          
- left join Userlist tcul on tcul.id=tcu.ClientUserId                          
+ left join Userlist tcul on tcul.id=tcu.ClientUserId 
+ left join Userlist ulir on ulir.id=irf.RisebirdHr
  where tcul.EmailId=@Emailid and irf.ClientId=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0 and im.ClientHrContact=@Emailid) as cd                   
- group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId)as xy                     
+ group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId,ChannelOwner)as xy                     
  join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail and im.IRFId=xy.IRFId                  
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
@@ -106,31 +110,33 @@ end
 else if(@clientRole=9)        
 begin            
   Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName from 
-  (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId    
+  (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId ,cd.ChannelOwner   
 from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
  ul.MobileNumber,im.resumeLink,c.ClientHRAttemptContact as ClientHrContact,        
- (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+ (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId ,ulir.EmailId as ChannelOwner                    
  from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
  join IRF on im.IRFId=IRF.IRFId               
  left join UserList ul on ul.EmailId=im.candidateEmail            
  join CandidatesMaster cm on cm.UserId=ul.id            
  join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id join ClientUser tcu on tcu.ClientId=IRF.ClientId                          
- left join Userlist tcul on tcul.id=tcu.UserId                          
+ left join Userlist tcul on tcul.id=tcu.UserId
+ left join Userlist ulir on ulir.id=irf.RisebirdHr
  where tcul.EmailId=@Emailid and irf.ClientId=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0
  union                  
  Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
  ul.MobileNumber,im.resumeLink,        
  c.ClientHRAttemptContact as ClientHrContact,        
- (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+ (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId ,ulir.EmailId as ChannelOwner                    
  from InterviewMeetings im left join InterviewComments ic on ic.InterviewId=im.id                     
  join IRF on im.IRFId=IRF.IRFId                     
  left join UserList ul on ul.EmailId=im.candidateEmail            
  join CandidatesMaster cm on cm.UserId=ul.id            
  join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                    
  join ClientUser tcu on tcu.ClientId=IRF.ClientId                          
- left join Userlist tcul on tcul.id=tcu.UserId                          
+ left join Userlist tcul on tcul.id=tcu.UserId 
+ left join Userlist ulir on ulir.id=irf.RisebirdHr
  where tcul.EmailId=@Emailid and irf.ClientId=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0 and im.ClientHrContact=@Emailid) as cd                   
- group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId)as xy                     
+ group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId,ChannelOwner)as xy                     
  join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail and im.IRFId=xy.IRFId                  
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
@@ -141,7 +147,7 @@ end
 else            
 begin            
  Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName 
- from (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId     
+ from (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner     
   
                
      
@@ -150,30 +156,32 @@ begin
  ul.MobileNumber,im.resumeLink,        
  --im.ClientHrContact as ClientHrContact,        
  c.ClientHRAttemptContact as ClientHrContact,        
- (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+ (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId,ulir.EmailId as ChannelOwner                    
  from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
  join IRF on im.IRFId=IRF.IRFId                     
  left join UserList ul on ul.EmailId=im.candidateEmail            
  join CandidatesMaster cm on cm.UserId=ul.id            
  join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                    
  join TransClientUser tcu on tcu.IRFId=IRF.id                          
- left join Userlist tcul on tcul.id=tcu.ClientUserId                          
+ left join Userlist tcul on tcul.id=tcu.ClientUserId  
+ left join Userlist ulir on ulir.id=irf.RisebirdHr
  where tcul.EmailId=@Emailid and irf.ClientId=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0                   
  union                  
  Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
  ul.MobileNumber,im.resumeLink,        
  --im.ClientHrContact as ClientHrContact,        
  c.ClientHRAttemptContact as ClientHrContact,        
- (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+ (im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId,ulir.EmailId as ChannelOwner                    
  from InterviewMeetings im left join InterviewComments ic on ic.InterviewId=im.id                     
  join IRF on im.IRFId=IRF.IRFId                     
  left join UserList ul on ul.EmailId=im.candidateEmail            
  join CandidatesMaster cm on cm.UserId=ul.id            
  join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                    
  join TransClientUser tcu on tcu.IRFId=IRF.id                          
- left join Userlist tcul on tcul.id=tcu.ClientUserId                          
+ left join Userlist tcul on tcul.id=tcu.ClientUserId
+ left join Userlist ulir on ulir.id=irf.RisebirdHr
  where tcul.EmailId=@Emailid and irf.ClientId=@Clientid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0)  as cd                   
- group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId)as xy                     
+ group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId,ChannelOwner)as xy                     
  join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail and im.IRFId=xy.IRFId                  
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
@@ -193,7 +201,7 @@ if(@Role=1)
 Begin                    
                   
 Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName 
-from (Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId               
+from (Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId ,cd.ChannelOwner               
   
        
 from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
@@ -201,12 +209,13 @@ IRF.JDTiltle,
 ul.MobileNumber,        
 --im.ClientHrContact as ClientHrContact,        
 c.ClientHRAttemptContact as ClientHrContact,        
-(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId ,ulir.EmailId as ChannelOwner                    
 from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
 join IRF on im.IRFId=IRF.IRFId                     
 left join UserList ul on ul.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ul.id            
-join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                    
+join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id     
+left join Userlist ulir on ulir.id=irf.RisebirdHr
 where IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0                   
 union                  
 Select distinct IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
@@ -214,14 +223,15 @@ IRF.JDTiltle,
 ul.MobileNumber,        
 --im.ClientHrContact as ClientHrContact,        
 c.ClientHRAttemptContact as ClientHrContact,        
-(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                   
+(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId ,ulir.EmailId as ChannelOwner                  
 from InterviewMeetings im left join InterviewComments ic on ic.InterviewId=im.id                     
 join IRF on im.IRFId=IRF.IRFId                     
 left join UserList ul on ul.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ul.id            
-join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                    
+join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id 
+left join Userlist ulir on ulir.id=irf.RisebirdHr
 where IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0) as cd        
-group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId)as xy                     
+group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId,ChannelOwner)as xy                     
 join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail                  
 join InterviewComments ic on im.id=ic.interviewid                
 join IRF on im.IRFId=IRF.IRFId              
@@ -234,37 +244,39 @@ Else if(@Role=31 or @Role=32)
 Begin                    
                   
 Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName 
-from (Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId              
+from (Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner              
   
         
 from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
 ul.MobileNumber,        
 --im.ClientHrContact as ClientHrContact,        
 c.ClientHRAttemptContact as ClientHrContact,        
-(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId
+(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId,ulir.EmailId as ChannelOwner
 from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
 join IRF on im.IRFId=IRF.IRFId                     
 join SeniorHr sh on sh.Clientid=IRF.ClientId          
 left join UserList ul on ul.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ul.id            
 join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id          
-left join UserList ulsh on ulsh.id=sh.Userid          
+left join UserList ulsh on ulsh.id=sh.Userid   
+left join Userlist ulir on ulir.id=irf.RisebirdHr
 where ulsh.Emailid=@Emailid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0                   
 union                  
 Select distinct IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
 ul.MobileNumber,        
 --im.ClientHrContact as ClientHrContact,        
 c.ClientHRAttemptContact as ClientHrContact,        
-(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId ,ulir.EmailId as ChannelOwner                    
 from InterviewMeetings im left join InterviewComments ic on ic.InterviewId=im.id                     
 join IRF on im.IRFId=IRF.IRFId                     
 join SeniorHr sh on sh.Clientid=IRF.ClientId          
 left join UserList ul on ul.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ul.id            
 join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id             
-left join UserList ulsh on ulsh.id=sh.Userid          
+left join UserList ulsh on ulsh.id=sh.Userid
+left join Userlist ulir on ulir.id=irf.RisebirdHr
 where ulsh.Emailid=@Emailid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0) as cd                   
-group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId)as xy                     
+group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId,ChannelOwner)as xy                     
 join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail                  
 join InterviewComments ic on im.id=ic.interviewid                
 join IRF on im.IRFId=IRF.IRFId              
@@ -279,27 +291,28 @@ declare @hrId int
 set @hrId = (select HR.id from UserList ul join HR on HR.UserId=ul.id where EmailId=@Emailid and idProfile=2)                        
                   
 Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName from 
-(Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry , CandidateMasterId              
+(Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry , CandidateMasterId,cd.ChannelOwner             
   
        
 from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
 ul.MobileNumber,im.resumeLink,        
 --im.ClientHrContact as ClientHrContact,        
 c.ClientHRAttemptContact as ClientHrContact,        
-(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId,ulir.EmailId as ChannelOwner                     
 from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
 join IRF on im.IRFId=IRF.IRFId                     
 left join UserList ul on ul.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ul.id            
 join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                    
-join TransHR th on th.IRFId=irf.id                     
+join TransHR th on th.IRFId=irf.id
+left join Userlist ulir on ulir.id=irf.RisebirdHr
 where th.HRId=@hrId and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0                   
 union                    
 Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
 ul.MobileNumber,im.resumeLink,        
 --im.ClientHrContact as ClientHrContact,        
 c.ClientHRAttemptContact as ClientHrContact,        
-(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId ,ulir.EmailId as ChannelOwner                    
 from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
 join IRF on im.IRFId=IRF.IRFId                     
 left join UserList ul on ul.EmailId=im.candidateEmail            
@@ -312,20 +325,21 @@ Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName
 ul.MobileNumber,im.resumeLink,        
 --im.ClientHrContact as ClientHrContact,        
 c.ClientHRAttemptContact as ClientHrContact,        
-(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                    
+(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId ,ulir.EmailId as ChannelOwner                   
 from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
 join IRF on im.IRFId=IRF.IRFId                     
 left join UserList ul on ul.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ul.id            
 join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                    
-join TransHR th on th.IRFId=irf.id                     
+join TransHR th on th.IRFId=irf.id 
+left join Userlist ulir on ulir.id=irf.RisebirdHr 
 where th.HRId=@hrId and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0  and IsNull(IsDeleted,0)=0                  
 union                    
 Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
 ul.MobileNumber,im.resumeLink,        
 --im.ClientHrContact as ClientHrContact,        
 c.ClientHRAttemptContact as ClientHrContact,        
-(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId                     
+(im.interviewDate) as dtCreatedOn,ic.MeetingStatus,im.confirmationStatus,IRF.JobCountry, cm.id as CandidateMasterId,ulir.EmailId as ChannelOwner                     
 from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id                     
 join IRF on im.IRFId=IRF.IRFId                     
 left join UserList ul on ul.EmailId=im.candidateEmail            
@@ -333,7 +347,7 @@ join CandidatesMaster cm on cm.UserId=ul.id
 join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                    
 left join Userlist ulir on ulir.id=irf.RisebirdHr                    
 where ulir.EmailId=@Emailid and IRF.EndDate>=GetDate() and IsNull(IsPaused,0)=0 and IsNull(IsDeleted,0)=0) as cd                   
-group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId)as xy                     
+group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountry, CandidateMasterId,ChannelOwner)as xy                     
 join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail and im.IRFId=xy.IRFId                  
 join InterviewComments ic on im.id=ic.interviewid               
 join IRF on im.IRFId=IRF.IRFId              
@@ -343,6 +357,5 @@ order by dtCreatedOn desc
                   
 End                    
 End                    
-End                    
-
+End  
 GO

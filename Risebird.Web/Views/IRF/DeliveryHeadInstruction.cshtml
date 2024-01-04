@@ -265,13 +265,13 @@
                                                                                             if (!Model.InterviewerCollection[i].IsResumeRedactAttempted && string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                                             {
                                                                                                 <td>
-                                                                                                    <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(@Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Upload Resume</a>
+                                                                                                    <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(this.id, @Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Upload Resume</a>
                                                                                                 </td>
                                                                                             }
                                                                                             else if (!Model.InterviewerCollection[i].IsResumeRedactAttempted && !string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                                             {
                                                                                                 <td>
-                                                                                                    <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(@Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId', '@Model.InterviewerCollection[i].ResumeLink')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Upload Resume</a>
+                                                                                                    <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(this.id, @Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId', '@Model.InterviewerCollection[i].ResumeLink')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Convert Resume(Into Coded)</a>
                                                                                                 </td>
                                                                                             }
                                                                                             
@@ -1217,11 +1217,28 @@ else
             }
         })
     }
-    function UploadOrConvertIntoCodedInterviewerResume(userid, irfid, interviewer, resumeLink = null) {
-        if(resumeLink != null)
-        {
-            ShowProgress();
-        }
+    function replaceButtonWithResumeLink(buttonElementId, redactedResumeLink) {
+        // Create a new anchor element
+        var anchor = document.createElement('a');
+
+        // Get the button element
+        var button = document.getElementById(buttonElementId);
+
+        // Copy attributes from the button to the anchor
+        anchor.href = redactedResumeLink; // Set the desired href attribute for the anchor
+        anchor.innerHTML = 'Resume Link'; // Copy the button content to the anchor
+        anchor.id = buttonElementId;
+        anchor.target = '_blank';
+        // Replace the button with the anchor
+        button.parentNode.replaceChild(anchor, button);
+    }
+    function UploadOrConvertIntoCodedInterviewerResume(elementId, userid, irfid, interviewer, resumeLink = null) {
+        // if(resumeLink != null)
+        // {
+        //     document.getElementById(elementId).innerHTML = 'Redacting...';
+        // }
+        document.getElementById(elementId).innerHTML = 'Redacting...';
+
         $.ajax({
             url: '/Interviewer/InterviewerResumeupdate',
             data: { userid: userid, irfid: irfid, resumeLink : resumeLink },
@@ -1229,10 +1246,7 @@ else
             success: function (data) {
                 if(resumeLink != null)
                 {
-                    loader.style.display = "none";
-                    $(".dataloading").show();
-
-                    if(data ==true)
+                    if(data !=null && data != '' && data != 'failed')
                     {
                         swal.fire({
                             title: 'Redacted!',
@@ -1243,7 +1257,8 @@ else
                             confirmButtonText: 'Close!',
                             allowOutsideClick: false
                         }).then(function () {
-                            location.reload(true);
+
+                            replaceButtonWithResumeLink(elementId, data);
                         })
 
                     }
@@ -1258,7 +1273,8 @@ else
                             confirmButtonText: 'Close!',
                             allowOutsideClick: false
                         }).then(function () {
-                            
+                            document.getElementById(elementId).innerHTML = 'Redaction Failed!';
+
                         })
 
                     }
