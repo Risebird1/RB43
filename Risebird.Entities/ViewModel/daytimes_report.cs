@@ -146,5 +146,6 @@ namespace Risebird.Entities.ViewModel
         public int? TimeZoneoffset { get; set; }
         public string TimeZonesValue { get; set; }
         public int IRFId { get; set; }
+        public string ZoomMeetingId { get; set; }
     }
 }
