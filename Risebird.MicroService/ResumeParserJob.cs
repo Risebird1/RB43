@@ -80,6 +80,8 @@ namespace Risebird.MicroService
                             if (documentData.data.emails != null && documentData.data.emails.Count() > 0)
                             {
                                 candidate.EmailId = documentData.data.emails[0].Trim();
+                                candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "");
+
                                 if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
                                 {
                                     candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
@@ -87,6 +89,18 @@ namespace Risebird.MicroService
                                 if (candidate.EmailId.StartsWith("%20"))
                                 {
                                     candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                                    candidate.EmailId.Replace("%20", "").Replace("-", "");
+
+                                }
+                                if (candidate.EmailId.StartsWith("?:"))
+                                {
+                                    candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                                    candidate.EmailId.Replace("?:", "").Replace("-", "");
+
+                                }
+                                if (candidate.EmailId.StartsWith(":%20") || candidate.EmailId.StartsWith("-%20"))
+                                {
+                                    candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first three characters 
                                 }
 
                             }
