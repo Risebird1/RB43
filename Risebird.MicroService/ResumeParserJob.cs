@@ -1,18 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -78,9 +80,28 @@ namespace Risebird.MicroService
                             if (documentData.data.emails != null && documentData.data.emails.Count() > 0)
                             {
                                 candidate.EmailId = documentData.data.emails[0].Trim();
+                                candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "").Replace(":%20", "").Replace("-%20", "");
+
                                 if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
                                 {
                                     candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
+                                }
+                                if (candidate.EmailId.StartsWith("%20"))
+                                {
+                                    candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                                    //candidate.EmailId.Replace("%20", "");
+
+                                }
+                                if (candidate.EmailId.StartsWith("?:"))
+                                {
+                                    candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
+                                    //candidate.EmailId.Replace("?:", "");
+
+                                }
+                                if (candidate.EmailId.StartsWith(":%20") || candidate.EmailId.StartsWith("-%20"))
+                                {
+                                    candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
+                                    //candidate.EmailId.Replace(":%20", "").Replace("-%20", "");
                                 }
 
                             }
@@ -94,7 +115,7 @@ namespace Risebird.MicroService
                             {
                                 //candidate.Phone = !string.IsNullOrEmpty(documentData.data.phoneNumberDetails[0].internationalCountryCode) ? documentData.data.phoneNumberDetails[0].rawText : null;
                                 candidate.Phone = documentData.data.phoneNumberDetails[0].rawText;
-                                if(candidate.Phone == "911" || candidate.Phone == "+911")
+                                if (candidate.Phone == "911" || candidate.Phone == "+911")
                                 {
                                     candidate.Phone = null;
                                 }
