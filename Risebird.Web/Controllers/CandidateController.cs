@@ -3953,6 +3953,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 10].Value = "Client Hr";
                 Sheet.Cells[1, 11].Value = "Executive URL";
                 Sheet.Cells[1, 12].Value = "Interviewer Comment";
+                Sheet.Cells[1, 13].Value = "Video Link";
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -4015,6 +4016,24 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 11].Value = "No Report";
                         }
                         Sheet.Cells[i, 12].Value = item.InterviewerComment;
+                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 13].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 13].Value = "Video Link";
+                                Sheet.Cells[i, 13].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 13].Value = "No Video";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 13].Value = "No Video";
+                        }
 
                         i++;
                     }
