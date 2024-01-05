@@ -4,7 +4,20 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
     <link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
     <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />*@
+<script>
+    $(window).click(function () {
+        //Hide the menus if visible
+        $('.dropdown-content').hide('fast');
+    });
 
+    $("#btn_more ").click(function (e) {
+        e.stopPropagation();
+        var relatedDiv = $(this).closest('.dropdown').find('.dropdown-content');
+        relatedDiv.toggle("fast");
+        $('.dropdown-content').not(relatedDiv).hide('fast');
+
+    });
+</script>
 @if (Model.IRFList != null && Model.IRFList.Count() > 0)
 {
     @foreach (var item in Model.IRFList)
