@@ -761,6 +761,7 @@ namespace Risebird.Web.Controllers
             SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
             mobiledata.mobile = mobile;
             mobiledata.CandidateEmail = candidateEmail;
+            mobiledata.panNumber = "";
             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SignzyEmploymentVerification";
             var functionKey = "sjFBxP74_xSYOUDkT1IMl8roje5mvSeKDhux42HSFmunAzFuQ8_P3g==";
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, mobiledata, functionKey, "", _cancellationToken);
@@ -780,7 +781,7 @@ namespace Risebird.Web.Controllers
                     if (string.IsNullOrWhiteSpace(model.message))
                     {
                         var companyname = model.employmentSummary?.recent_employer_data.establishment_name;
-;                        var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
+                        ; var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
                         if (companystatus != null)
                         {
                             //var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
@@ -805,7 +806,7 @@ namespace Risebird.Web.Controllers
                             {
                                 employementdetails.Isemployed = model.employmentSummary.is_employed;
                             }
-                           // employementdetails.message = "For this employment Company is in black list in our system.";
+                            // employementdetails.message = "For this employment Company is in black list in our system.";
                         }
                     }
                     else
@@ -848,6 +849,7 @@ namespace Risebird.Web.Controllers
             SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
             mobiledata.mobile = mobilenumber;
             mobiledata.CandidateEmail = candidateemail;
+            mobiledata.panNumber = "";
             Dictionary<string, string> headers = new Dictionary<string, string>
                 {
                     { "Content-Type", "application/json" },
@@ -998,14 +1000,15 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> GetInterviwerExists(string interviewer)
         {
-           // var result = await _interviewerService.GetInterviwerExistsService(interviewer);
+            // var result = await _interviewerService.GetInterviwerExistsService(interviewer);
             var role = _interviewerService.GetUserRolebyEmailid(interviewer);
 
             if (!string.IsNullOrWhiteSpace(role))
             {
                 return Json("This mail id already exists in our system as " + role + "  Please check add accordingly.");
             }
-            else {
+            else
+            {
                 return Json(null);
             }
         }
