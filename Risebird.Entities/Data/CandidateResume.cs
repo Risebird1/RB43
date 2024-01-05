@@ -13,5 +13,6 @@ namespace Risebird.Entities.Data
         public bool IsProcessed { get; set; }
         public bool IsResumeParsed { get; set; }
         public bool IsResumeParsingFailed { get; set; }
+        public string SkillChannelName { get; set; }
     }
 }
