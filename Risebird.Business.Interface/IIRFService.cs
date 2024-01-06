@@ -151,5 +151,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddIRFSampleQuestions(TechSkillComments skillComments);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<bool> DeleteSkillChannelSampleQuestions(int id);
+        Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
     }
 }

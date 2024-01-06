@@ -6959,6 +6959,11 @@ input[type="date"].form-control {
     border-color: #db362a;
     color:#fff;
 }
+.btn-newreport, .btn-newreport:hover {
+    background: #4499b5 !important;
+    border-color: #4499b5!important;
+    color: #fff;
+}
 .btn-comment, .btn-comment:hover {
     background: #f3d374;
     border-color: #f3d374;
