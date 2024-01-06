@@ -61,11 +61,13 @@ namespace Risebird.Web.Controllers
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
+        private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
+
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
-            HttpClientHelper factory)
+            HttpClientHelper factory, IAffIndaResumeParserHelper affIndaResumeParserHelper)
         {
             _userService = userService;
             _irfRepository = iRFRepository;
@@ -91,6 +93,7 @@ namespace Risebird.Web.Controllers
             _whatsAppHelper = whatsAppHelper;
             codeapiendpoint = _configuration["CodeApiEndPoint"];
             _httpClient = factory.GetHttpClient();
+            _affIndaResumeParserHelper = affIndaResumeParserHelper;
         }
 
 
@@ -872,6 +875,10 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
+                            //create an index with the same name as that of this skill channel in affinda for using the search and match tool
+
+                            await _affIndaResumeParserHelper.CreateIndex(irfDetails.IRFId);
+
                             //call fire and forget method here to send emails and whatsapp for availability
                             FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId, irfDetails.JDTiltle);
                             TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!";
@@ -8431,6 +8438,26 @@ namespace Risebird.Web.Controllers
         {
             var textInstruction = await _irfService.GetTextInstructionService(irfid);
             return Json(textInstruction);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GenerateEmbeddableResumeSearchUrl(string irfId)
+        {
+            try
+            {
+                string[] indices = new string[] { irfId };
+                var result = await _affIndaResumeParserHelper.GenerateEmbeddableResumeSearchUrl(indices);
+                if(!string.IsNullOrEmpty(result))
+                {
+                    await _irfService.UpdateSkillChannelEmbeddableUrl(irfId, result);
+                }
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
 
         [HttpGet]

@@ -5365,6 +5365,7 @@ namespace Risebird.Repository
                             parameters.Add("@ClientHREmail", obj.ClientHREmail);
                             parameters.Add("@ProfileSource", obj.ProfileSource);
                             parameters.Add("@WhatsappNumber", obj.WhatsappNumber);
+                            parameters.Add("@AffindaResumeIdentifier", obj.AffindaResumeIdentifier);
                             parameters.Add("@operationStatus", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
 
 
@@ -7670,6 +7671,38 @@ namespace Risebird.Repository
                 }
             }
             catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl)//embed url by Affinda
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfId ", irfId);
+                        parameters.Add("@embedUrl", embedUrl);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_UpdateSkillChannelEmbeddableUrl", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
