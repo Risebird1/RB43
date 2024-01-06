@@ -641,7 +641,7 @@ begin
  left join UserList ulh on ulh.id = irf.RisebirdHr        
      
 End          
-End    
+End   
 GO
 
 
