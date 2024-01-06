@@ -456,7 +456,7 @@
                                                                            <td style="    background: #009688;color: #fff; padding: 4px;">Jitter Value</td>
                                                                            <td style="    background: #009688;color: #fff; padding: 4px;">Type</td>
                                                                        </tr>
-                                                                        @foreach (var item in Model.QOSData.Where(x=>x.qosType == "audio_output"))
+                                                                        @foreach (var item in Model.QOSData)//.Where(x=>x.qosType == "audio_output")
                                                                         {
                                                                             if (!string.IsNullOrEmpty(item.max_jitter) && !string.IsNullOrEmpty(item.user_name))
                                                                             {
@@ -481,7 +481,7 @@
                                                                             }
                                                 
                                                                         }
-                                                                        @foreach (var item in Model.QOSData.Where(x => x.qosType == "video_output"))
+                                                                        @* @foreach (var item in Model.QOSData.Where(x => x.qosType == "video_output"))
                                                                         {
                                                                             if (!string.IsNullOrEmpty(item.max_jitter) && !string.IsNullOrEmpty(item.user_name))
                                                                             {
@@ -505,7 +505,7 @@
                                                                                 }
                                                                             }
 
-                                                                        }
+                                                                        } *@
 
                                          
                                                                     </table>

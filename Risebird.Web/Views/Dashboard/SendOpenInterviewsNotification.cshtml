@@ -224,7 +224,6 @@
 
 <script>
     function SendOpenInterview(irfId = null, irfName = null) {
-        debugger;
         swal.fire({
             title: 'Are you sure you want to send open interview notification for skill channel ' + irfName+'?',
             type: 'warning',
@@ -274,14 +273,13 @@
 <script>
 
     $(document).ready(function () {
-        debugger;
 
         //applyDataTable();
         //$('#meetingsTable').DataTable();
     });
 
     function applyDataTable() {
-        debugger;
+   
         $('#meetingsTable').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [

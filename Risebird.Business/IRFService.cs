@@ -3651,5 +3651,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl)
+        {
+            try
+            {
+                var result = await _irfRepository.UpdateSkillChannelEmbeddableUrl(irfId, embedUrl);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
