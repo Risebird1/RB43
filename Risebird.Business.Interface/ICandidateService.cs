@@ -32,5 +32,6 @@ namespace Risebird.Business.Interface
         Task<int> GetuniqueCandidateByEmailId(string emailId, string id);
         Task<string> GetCandidateUniqueId(string emailId);
         Task<Candidate> GetCandidateIRFMailDetails(string emailId, int irfId);
+        Task<IEnumerable<IRFCandidateReport>> FetchSkillChannelCandidateReprots(int irfId);
     }
 }
