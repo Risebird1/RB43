@@ -4808,7 +4808,7 @@ namespace Risebird.Web.Controllers
                 {
                     model = new List<IRFCandidateReport>();
                 }
-                model = model.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatus = x.MeetingStatus != null ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = x.InterviewStatus != null ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; return x; }).ToList();
+                model = model.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; return x; }).ToList();
                 var skillslist = model?.FirstOrDefault().TechSkillReportCollection.Select(x => x.SkillName).Distinct();
                 Sheet.Cells["A1:S1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:S1"].Style.Font.Size = 12;
@@ -4835,6 +4835,8 @@ namespace Risebird.Web.Controllers
                     j++;
                     Sheet.Cells[1, j].Value = item;
                 }
+                j++;
+                Sheet.Cells[1, j].Value = "Total Score";
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -4845,16 +4847,8 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 3].Value = item.JDTiltle;
                         Sheet.Cells[i, 4].Value = item.interviewDate;
                         Sheet.Cells[i, 5].Value = item.MobileNumber ?? string.Empty;
-                        if (item.confirmationStatus == "Cancelled")
-                        {
-                            Sheet.Cells[i, 6].Value = item.confirmationStatus;
-                            Sheet.Cells[i, 7].Value = "";
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 6].Value = item.MeetingStatus ?? string.Empty;
-                            Sheet.Cells[i, 7].Value = item.InterviewStatus ?? string.Empty;
-                        }
+                        Sheet.Cells[i, 6].Value = item.MeetingStatus ?? string.Empty;
+                        Sheet.Cells[i, 7].Value = item.InterviewStatus ?? string.Empty;
                         Sheet.Cells[i, 8].Value = item.ClientHrContact;
                         Sheet.Cells[i, 9].Value = item.IRFId;
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
@@ -4877,12 +4871,21 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 11].Value = "No Video";
                         }
                         j = 11;
+                        var totalskillscore = 0.0;
+                        var totalskillscount = 0;
                         foreach (var skillvalue in skillslist)
                         {
                             j++;
                             var skilldata = item.TechSkillReportCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
-                            Sheet.Cells[i, j].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
+                            if (skilldata != null)
+                            {
+                                totalskillscount++;
+                                totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                Sheet.Cells[i, j].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
+                            }
                         }
+                        j++;
+                        Sheet.Cells[i, j].Value = totalskillscore / totalskillscount;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
