@@ -4794,5 +4794,116 @@ namespace Risebird.Web.Controllers
             return Json("Fail");
         }
         #endregion
+        #region Candidate Reports
+        [HttpGet]
+        public async Task<FileContentResult> IRFCandidateReportsExporttoExcel(int id, string IRFId)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Report");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Reports_" + IRFId + ".xlsx";
+            try
+            {
+                var model = await _candidateService.FetchSkillChannelCandidateReprots(id);
+                if (model == null)
+                {
+                    model = new List<IRFCandidateReport>();
+                }
+                model = model.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; return x; }).ToList();
+                var skillslist = model?.FirstOrDefault().TechSkillReportCollection.Select(x => x.SkillName).Distinct();
+                Sheet.Cells["A1:S1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:S1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:S1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 12;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "Candidate name";
+                Sheet.Cells[1, 2].Value = "Candidate EmailId";
+                Sheet.Cells[1, 3].Value = "JD Title";
+                Sheet.Cells[1, 4].Value = "Interview Date";
+                Sheet.Cells[1, 5].Value = "Phone";
+                Sheet.Cells[1, 6].Value = "Meeting Status";
+                Sheet.Cells[1, 7].Value = "Interview Status";
+                Sheet.Cells[1, 8].Value = "Client Hr";
+                Sheet.Cells[1, 9].Value = "Skill Channel ID";
+                Sheet.Cells[1, 10].Value = "Interviewer Comment";
+                Sheet.Cells[1, 11].Value = "Video Link";
+                int j = 11;
+                foreach (var item in skillslist)
+                {
+                    j++;
+                    Sheet.Cells[1, j].Value = item;
+                }
+                j++;
+                Sheet.Cells[1, j].Value = "Total Score";
+                int i = 2;
+                if (model.Count() > 0)
+                {
+                    foreach (var item in model)
+                    {
+                        Sheet.Cells[i, 1].Value = item.candidateName;
+                        Sheet.Cells[i, 2].Value = item.candidateEmail;
+                        Sheet.Cells[i, 3].Value = item.JDTiltle;
+                        Sheet.Cells[i, 4].Value = item.interviewDate;
+                        Sheet.Cells[i, 5].Value = item.MobileNumber ?? string.Empty;
+                        Sheet.Cells[i, 6].Value = item.MeetingStatus ?? string.Empty;
+                        Sheet.Cells[i, 7].Value = item.InterviewStatus ?? string.Empty;
+                        Sheet.Cells[i, 8].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 9].Value = item.IRFId;
+                        Sheet.Cells[i, 10].Value = item.InterviewerComment;
+                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 11].Value = "Video Link";
+                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 11].Value = "No Video";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 11].Value = "No Video";
+                        }
+                        j = 11;
+                        var totalskillscore = 0.0;
+                        var totalskillscount = 0;
+                        foreach (var skillvalue in skillslist)
+                        {
+                            j++;
+                            var skilldata = item.TechSkillReportCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
+                            if (skilldata != null)
+                            {
+                                totalskillscount++;
+                                totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                Sheet.Cells[i, j].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
+                            }
+                        }
+                        j++;
+                        Sheet.Cells[i, j].Value = totalskillscore / totalskillscount;
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+        #endregion
     }
 }
