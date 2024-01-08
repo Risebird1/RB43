@@ -23,7 +23,7 @@
 
             <div class="modal-body">
                 <div style="padding:10px" id="divEmbedUrlBody">
-                    <a href="" id="embed_Anchor_Id" target="_blank">Click here</a>
+                    <a id="embed_Anchor_Id" target="_blank">Click here</a>
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
@@ -43,12 +43,12 @@
 <script>
 
     function openEmbedUrlPopUp(id, skillChannelName, existingEmbedUrl = null) {
-        document.getElementById('embed_Anchor_Id').href = "";
+        //document.getElementById('embed_Anchor_Id').href = "";
         document.getElementById('embed_Anchor_Id').innerHTML = "";
         document.getElementById('embed_id_title').innerHTML = 'Search And Match Link for ' + skillChannelName;
         var alreadyProgrammaticallyGeneratedUrl = document.getElementById('hidden_EmbedUrl_Id').value;
         var alreadyGeneratedForIRFId = document.getElementById('hidden_SkillChannel_Id').value;
-        var embedUrl;
+        var embedUrl='';
         if (existingEmbedUrl != null && existingEmbedUrl != '' ) {
             embedUrl = existingEmbedUrl;
         }
@@ -58,6 +58,7 @@
         else {
             $.ajax({
                 type: "POST",
+                async:true,
                 url: "/IRF/GenerateEmbeddableResumeSearchUrl",
                 data: { irfId: skillChannelName },
                 success: function (data) {
@@ -66,6 +67,7 @@
                         embedUrl = data;
                         document.getElementById('hidden_EmbedUrl_Id').value = embedUrl;
                         document.getElementById('hidden_SkillChannel_Id').value = id;
+                        document.getElementById('embed_Anchor_Id').href = embedUrl;
 
                     }
                     else
