@@ -4804,6 +4804,11 @@ namespace Risebird.Web.Controllers
             try
             {
                 var model = await _candidateService.FetchSkillChannelCandidateReprots(id);
+                if (model == null)
+                {
+                    model = new List<IRFCandidateReport>();
+                }
+                model = model.Select(x => { x.MeetingStatus = x.MeetingStatus != null ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = x.InterviewStatus != null ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; return x; }).ToList();
                 var skillslist = model?.FirstOrDefault().TechSkillReportCollection.Select(x => x.SkillName).Distinct();
                 Sheet.Cells["A1:S1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:S1"].Style.Font.Size = 12;
