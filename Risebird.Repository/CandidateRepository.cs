@@ -12,6 +12,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Repository
 {
@@ -853,6 +854,94 @@ namespace Risebird.Repository
                 {
                     return await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetCandidateResumeForParsing", null,
                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<IRFCandidateReport>> FetchSkillChannelCandidateReprots(int irfId)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var _resultVM = new List<IRFCandidateReport>();
+                    var skillLists = new List<string>();
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_FetchSkillChannelCandidateReprots", con);
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.Parameters.AddWithValue("@irfId", irfId);
+                    adapter.Fill(dataset);
+                    DataTable dt = new DataTable();
+                    if (dataset.Tables.Count > 0)
+                    {
+                        dt = dataset.Tables[0];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            //_resultVM.Meetings = new List<MeetingVM>();
+                            var listMeetings = new List<IRFCandidateReport>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listMeetings.Add(new IRFCandidateReport
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
+                                    candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
+                                    interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
+                                    IRFId = dt.Rows[i]["IRFId"] != null ? dt.Rows[i]["IRFId"].ToString() : null,
+                                    JDTiltle = dt.Rows[i]["JDTiltle"] != null ? dt.Rows[i]["JDTiltle"].ToString() : null,
+                                    InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
+                                    MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
+                                    InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
+                                    MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
+                                    ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
+                                    VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
+                                    confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null
+                                });
+                            }
+                            _resultVM = listMeetings;
+                        }
+                    }
+                    if (dataset.Tables.Count > 1)
+                    {
+                        dt = dataset.Tables[1];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            var interviewid = 0;
+                            string skill = string.Empty;
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                interviewid = !string.IsNullOrEmpty(dt.Rows[i]["InterviewId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewId"]) : 0;
+                                skill = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : null;
+                                if (_resultVM.Where(x => x.id == interviewid).Count() > 0)
+                                {
+                                    _resultVM.Where(x => x.id == interviewid).FirstOrDefault().TechSkillReportCollection.Add(new TechSkillReport
+                                    {
+                                        WeightageActual = (float)(!string.IsNullOrEmpty(dt.Rows[i]["WeightageActual"].ToString()) ? Convert.ToDecimal(dt.Rows[i]["WeightageActual"]) : 0),
+                                        WeightageRequired = (float)(!string.IsNullOrEmpty(dt.Rows[i]["WeightageRequired"].ToString()) ? Convert.ToDecimal(dt.Rows[i]["WeightageRequired"]) : 0),
+                                        SkillName = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : null,
+                                        InterviewId = !string.IsNullOrEmpty(dt.Rows[i]["InterviewId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewId"]) : 0
+                                    });
+                                    if (!skillLists.Contains(skill))
+                                    {
+                                        skillLists.Add(skill);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (_resultVM.Count() > 0)
+                        _resultVM.FirstOrDefault().SkillList = skillLists;
+                    return _resultVM;
                 }
             }
             catch (SqlException ex)
