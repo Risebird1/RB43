@@ -22,6 +22,7 @@ namespace Risebird.Entities.Data
         public string JDTiltle { get; set; }
         public string MeetingStatus { get; set; }
         public string InterviewStatus { get; set; }
+        public string confirmationStatus { get; set; }
         public string InterviewerComment { get; set; }
         public string ClientHrContact { get; set; }
         public string VideoLink { get; set; }
