@@ -25,6 +25,7 @@ namespace Risebird.Entities.ViewModel
         public string WhatsappNumber { get; set; }
         public int CandidateResumeId { get; set; }// id from CandidateResume table
         public int AddedByUserEmail { get; set; }
+        public string AffindaResumeIdentifier { get; set; }
 
 
 

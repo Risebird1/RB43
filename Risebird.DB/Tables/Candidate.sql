@@ -43,6 +43,7 @@ CREATE TABLE [dbo].[Candidate](
 	[PriorityStatus] [int] NULL,
 	[CompletionStatus] [int] NULL,
 	[IsProctor] [bit] NULL,
+	[AffindaResumeIdentifier] [varchar](75) NULL,
 
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
@@ -397,6 +398,17 @@ BEGIN
     ALTER TABLE Candidate
     Add IsProctor Bit
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AffindaResumeIdentifier')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add [AffindaResumeIdentifier] VARCHAR(75)
+END
+
 End
 
 GO
