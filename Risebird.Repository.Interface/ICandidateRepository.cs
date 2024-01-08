@@ -35,5 +35,6 @@ namespace Risebird.Repository.Interface
         Task<string> GetCandidateUniqueId(string emailId);
         Task<Candidate> GetCandidateIRFMailDetails(string EmailId, int IRFid);
         Task<IEnumerable<CandidateResume>> GetCandidateResumesForParsing();
+        Task<IEnumerable<IRFCandidateReport>> FetchSkillChannelCandidateReprots(int irfId);
     }
 }
