@@ -12,10 +12,10 @@ Create Procedure usp_FetchSkillChannelCandidateReprots
 @irfId int
 AS
 BEGIN
-Select im.id,im.IRFId,im.interviewDate,im.candidateEmail,im.candidateName,im.MobileNumber,IRF.JDTiltle,ic.MeetingStatus,ic.InterviewStatus,ic.InterviewerComment,im.ClientHrContact,ic.VideoLink 
+Select im.id,im.IRFId,im.interviewDate,im.candidateEmail,im.candidateName,im.MobileNumber,IRF.JDTiltle,ic.MeetingStatus,ic.InterviewStatus,ic.InterviewerComment,im.ClientHrContact,ic.VideoLink,im.confirmationStatus 
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId 
 join InterviewComments ic on ic.InterviewId=im.id
-where IRF.id=@irfId and im.confirmationStatus=1 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)
+where IRF.id=@irfId 
 
 select a.*, Skill.[Name] as SkillName from 
 (select ts.*, [LevelTech].[Name] as RequiredLevel from TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id 

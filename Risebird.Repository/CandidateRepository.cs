@@ -904,7 +904,8 @@ namespace Risebird.Repository
                                     InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
                                     MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
                                     ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
-                                    VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null
+                                    VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
+                                    confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null
                                 });
                             }
                             _resultVM = listMeetings;
