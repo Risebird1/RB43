@@ -27,7 +27,7 @@
                 <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section interviewer">
-                        <div id="divEVverification">
+                        <div id="divEVverification" style="display:none">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group">
@@ -54,7 +54,7 @@
                             </div>
                         </div>
                         @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId1" })
-                        <div id="divEVverified" style="display:none">
+                        <div id="divEVverified" style="display:block">
                             @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();", @id = "InterviewerProfileform" }))
                             {
                                 @Html.AntiForgeryToken()
@@ -162,7 +162,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line",@readonly="readonly" } })
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
                                             @Html.ValidationMessageFor(model => model.EmailId, "", new { @id = "err_txt_EmailId", @class = "text-danger" })
                                         </div>
                                         <div class="form-group">
