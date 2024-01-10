@@ -1185,7 +1185,7 @@ namespace Risebird.Business
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                     //var staffingAgency = await _candidateRepository.GetCandidateStaffingAgency(candidate.id);
                     string primarySkill = string.Empty;
-                    primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+                    primarySkill = irf.JDTiltle.Split("|")[0];
                     string oneTimeSchedulingLink = string.Empty;
                     string oneTimeSchedulingLink1 = string.Empty;
                     if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
@@ -2036,7 +2036,7 @@ namespace Risebird.Business
                 var client = await _clientService.GetClient(irf.ClientId);
                 var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                 string primarySkill = string.Empty;
-                primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+                primarySkill = irf.JDTiltle.Split("|")[0];
 
                 if (data != null)
                 {
@@ -2250,7 +2250,7 @@ namespace Risebird.Business
                 var client = await _clientService.GetClient(irf.ClientId);
                 var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
                 string primarySkill = string.Empty;
-                primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
+                primarySkill = irf.JDTiltle.Split("|")[0];
 
                 if (data != null)
                 {
