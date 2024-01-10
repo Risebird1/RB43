@@ -176,6 +176,12 @@
                                                             }
                                                             <th id="getstatus_3">Resume</th>
 
+                                                            @if(ViewBag.profile == "Client")
+                                                            {
+                                                                <th>Redacted Resume</th>
+
+                                                            }
+
                                                             <th id="getstatus_4">Invite Sent</th>
                                                             <th id="getstatus_5">Confirmation</th>
                                                             @*<th>Fitment Score</th>*@
@@ -203,7 +209,11 @@
                                                                 <th>RB Attempts</th>
                                                             }
                                                             <th>Resume</th>
+                                                            @if (ViewBag.profile == "Client")
+                                                            {
+                                                                <th>Redacted Resume</th>
 
+                                                            }
                                                             <th>Invite Sent</th>
                                                             <th>Confirmation</th>
                                                             @*<th>Fitment Score</th>*@
@@ -227,6 +237,7 @@
 
                                                         @foreach (var item in Model)
                                                         {
+                                                            int i = 0;
                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
                                                             string joinabilityColor;
                                                             string selectabilityColor;
@@ -303,7 +314,33 @@
                                                                 {
                                                                     <td></td>
                                                                 }
-
+                                                                @if(ViewBag.profile == "Client")
+                                                                {
+                                                                    @if (!string.IsNullOrEmpty(item.CodedResumeLink)) //CodedResumeLink
+                                                                    {
+                                                                        <td class="cadName">
+                                                                            <a href="@item.CodedResumeLink" id="" target="_blank" data-tooltip="@item.CodedResumeLink">Resume</a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @* if (!item.IsResumeRedactAttempted && string.IsNullOrEmpty(item.ResumeLink))
+                                                                        {
+                                                                        <td>
+                                                                        <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedResume(this.id, @item.id, '@item.EmailId')" id=@(i + "__CodedResumeLink")>Upload Resume</a>
+                                                                        </td>
+                                                                        }
+                                                                        else *@ 
+                                                                        if (!item.IsResumeRedactAttempted && !string.IsNullOrEmpty(item.ResumeLink))
+                                                                        {
+                                                                            <td>
+                                                                                <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedResume(this.id, @item.id, '@item.EmailId', '@item.ResumeLink')" id=@(i + "__CodedResumeLink")>Convert Resume(Into Coded)</a>
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                    
+                                                                }
+                                                                
 
 
 
@@ -732,8 +769,7 @@
 
 
 
-
-
+                                                            i++;
 
                                                         }
                                                     </tbody>
@@ -1540,7 +1576,76 @@
     }
 </script>
 <script src="~/js/TwilioCallMaker.js"></script>
+<script>
+    function replaceButtonWithResumeLink(buttonElementId, redactedResumeLink) {
+        var anchor = document.createElement('a');
 
+        // Get the button element
+        var button = document.getElementById(buttonElementId);
+
+        // Copy attributes from the button to the anchor
+        anchor.href = redactedResumeLink; // Set the desired href attribute for the anchor
+        anchor.innerHTML = 'Resume Link'; // Copy the button content to the anchor
+        anchor.id = buttonElementId;
+        anchor.target = '_blank';
+        // Replace the button with the anchor
+        button.parentNode.replaceChild(anchor, button);
+    }
+    function UploadOrConvertIntoCodedResume(elementId, candidateId, candidateEmail, resumeLink = null) {
+        document.getElementById(elementId).innerHTML = 'Redacting...';
+
+        $.ajax({
+            url: '/Candidate/CandidateResumeUpdate',
+            data: { id: candidateId, resumeLink: resumeLink },
+            async: true,
+            success: function (data) {
+                if (resumeLink != null) {
+                    if (data != null && data != '' && data != 'failed') {
+                        swal.fire({
+                            title: 'Redacted!',
+                            type: 'success',
+                            html: '<p>The Resume for ' + candidateEmail + ' has been redacted.</p>',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Close!',
+                            allowOutsideClick: false
+                        }).then(function () {
+
+                            replaceButtonWithResumeLink(elementId, data);
+                        })
+
+                    }
+                    else {
+                        swal.fire({
+                            title: 'Failed!',
+                            type: 'error',
+                            html: '<p>The Resume for ' + interviewer + ' could not be redacted.</p>',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Close!',
+                            allowOutsideClick: false
+                        }).then(function () {
+                            document.getElementById(elementId).innerHTML = 'Redaction Failed!';
+
+                        })
+
+                    }
+
+
+                }
+                else {
+                    var modal = document.getElementById("Resumepopup");
+                    modal.style.display = "block";
+                    $('#divresumepopup').html('');
+                    $('#divresumepopup').html(data);
+                    $('#txtheaderinterviewer').text(interviewer);
+                }
+
+            }
+        });
+    }
+
+</script>
 <script>
     //var irfStatusId;//since the property irfId already exists above, hence this name
     //var candidateStatusId;

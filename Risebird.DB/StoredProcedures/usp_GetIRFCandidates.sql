@@ -41,7 +41,9 @@ case
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
 end as [Name],
 IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,    
-tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor,si.Uniqueid as SchedulerUniqueid  
+tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor, ca.CodedResumeLink, ca.IsResumeRedactAttempted,
+ca.IsResumeRedactFailed,
+si.Uniqueid as SchedulerUniqueid  
 ,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
@@ -69,7 +71,9 @@ case
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
 end as [Name],
 IRF.EndDate, IRF.IRFId as IRFName,cm.id as CandidateMasterId ,Isnull(ca.EncodedResumeLink,'') as EncodedResumeLink, ca.AvailableFullTime, ca.AvailableFreeLancing,    
-tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor,si.Uniqueid as SchedulerUniqueid
+tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumber,ca.IsProctor, ca.CodedResumeLink, ca.IsResumeRedactAttempted,
+ca.IsResumeRedactFailed,
+si.Uniqueid as SchedulerUniqueid
 ,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
