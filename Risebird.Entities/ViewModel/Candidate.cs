@@ -149,5 +149,8 @@ namespace Risebird.Entities.ViewModel
         public int MailCount { get; set; }
         public int CallsCount { get; set; }
         public int WhatsappCount { get; set; }
+        public bool IsResumeRedactAttempted { get; set; }
+        public bool IsResumeRedactFailed { get; set; }
+        public string CodedResumeLink { get; set; }
     }
 }

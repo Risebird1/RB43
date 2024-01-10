@@ -44,7 +44,7 @@ CREATE TABLE [dbo].[Candidate](
 	[CompletionStatus] [int] NULL,
 	[IsProctor] [bit] NULL,
 	[AffindaResumeIdentifier] [varchar](75) NULL,
-
+    [CodedResumeLink] [varchar](2000) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -407,6 +407,30 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add [AffindaResumeIdentifier] VARCHAR(75)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CodedResumeLink')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add [CodedResumeLink] VARCHAR(2000)
+END
+
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'IsResumeRedactAttempted')
+AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+	alter table Candidate
+	Add IsResumeRedactAttempted bit null
+END
+
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'IsResumeRedactFailed')
+AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+	alter table Candidate
+	Add IsResumeRedactFailed bit null
 END
 
 End
