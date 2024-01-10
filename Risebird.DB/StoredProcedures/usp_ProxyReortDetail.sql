@@ -21,6 +21,6 @@ join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
 join UserList ul on ul.EmailId=im.candidateEmail
 join UserList uli on uli.id= irf.RisebirdHr
 left join PaymentSLADetails tqc on tqc.Interviewid=im.id  and ISNULL(tqc.isQcDone,0)=1
-where isProxyCandidate=0 or ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7
+where isQcDone=1 or ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7
 End
 GO
