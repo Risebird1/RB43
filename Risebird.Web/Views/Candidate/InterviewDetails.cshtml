@@ -153,7 +153,7 @@
                                                 <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'No',@item.Interviewid)">
                                                     <div class="interviewresponsebtn redbtn" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">No! I am not Available</div>
                                                 </div>
-                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes',@item.Interviewid)">
+                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Need Clarity',@item.Interviewid)">
                                                     <div class="interviewresponsebtn redbtn" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId')">Need More Clarity</div>
                                                 </div>
                                             </div>

@@ -98,7 +98,7 @@ declare @PaymentSlacomplianceCount int=(Select count(ps.id) From PaymentSLADetai
 declare @RedoRequestCount int=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id where ISNULL(Approved,0)=0 and ISNULL(Rejected,0)=0)  
 declare @HighRiskInterviewers int=(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)  
 declare @InterviewerVideoKYC int=(Select COUNT(ip.id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where isnull(ip.IsVideoApproved,0)=0 and ul.IsActive=1 and ip.VideoLink is not null)
-declare @ProxyCount int=(Select COUNT(pr.id) from ProxyReport pr Join InterviewMeetings im on pr.interviewid=im.id join IRF on IRF.IRFId=im.IRFId join [dbo].[InterviewComments] ic on im.id = ic.InterviewId where isProxyCandidate=0)
+declare @ProxyCount int=(Select COUNT(pr.id) from ProxyReport pr Join InterviewMeetings im on pr.interviewid=im.id join IRF on IRF.IRFId=im.IRFId join [dbo].[InterviewComments] ic on im.id = ic.InterviewId where IsQCdone=1)
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,  
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink,   
@@ -181,7 +181,7 @@ set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps l
  set @RedoRequestCount=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id where ISNULL(Approved,0)=0 and ISNULL(Rejected,0)=0)  
  set @HighRiskInterviewers =(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)  
  set @InterviewerVideoKYC=(Select COUNT(ip.id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where isnull(ip.IsVideoApproved,0)=0 and ul.IsActive=1 and ip.VideoLink is not null) 
- set @ProxyCount=(Select COUNT(pr.id) from ProxyReport pr Join InterviewMeetings im on pr.interviewid=im.id join IRF on IRF.IRFId=im.IRFId join [dbo].[InterviewComments] ic on im.id = ic.InterviewId where isProxyCandidate=0)
+ set @ProxyCount=(Select COUNT(pr.id) from ProxyReport pr Join InterviewMeetings im on pr.interviewid=im.id join IRF on IRF.IRFId=im.IRFId join [dbo].[InterviewComments] ic on im.id = ic.InterviewId where IsQCdone=1)
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,  
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink,   
 @MissingVideoLink as MissingVideoLink, @NotProcessedCandidateResume as NotProcessedCandidateResume,  

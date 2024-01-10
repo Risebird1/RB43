@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -49,13 +50,15 @@ namespace Risebird.Web.Controllers
         private readonly ITrackPublicUrlAccessor _trackPublicUrlAccessor;
         private readonly IAadhaarService _aadhaarService;
         private readonly IZoomHelper _zoomHelper;
+        private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
+
 
         //private static string Searchvalue;
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor,
-            IAadhaarService aadhaarService, IZoomHelper zoomHelper)
+            IAadhaarService aadhaarService, IZoomHelper zoomHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -78,6 +81,7 @@ namespace Risebird.Web.Controllers
             _trackPublicUrlAccessor = trackPublicUrlAccessor;
             _aadhaarService = aadhaarService;
             _zoomHelper = zoomHelper;
+            _affIndaResumeParserHelper = affIndaResumeParserHelper;
         }
 
         [HttpGet]
@@ -4901,5 +4905,120 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+
+        public async Task<IActionResult> CandidateResumeUpdate(int id, string resumeLink = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (!string.IsNullOrEmpty(resumeLink) && id != 0)
+                    {
+                        //call method to redact resume and save the redacted resume
+                        var redactedResumeLink = await RedactResume(resumeLink, id);
+                        if (!string.IsNullOrEmpty(redactedResumeLink))
+                        {
+                            return Json(redactedResumeLink);
+                        }
+                        else
+                        {
+                            return Json("failed");
+                        }
+                    }
+                    else
+                        return Json(null);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        private async Task<string> RedactResume(string resumeLink, int id)
+        {
+            try
+            {
+                var redactedResumeLink = await _affIndaResumeParserHelper.UploadResumeForRedaction(resumeLink);
+                var resumeFileName = resumeLink?.Split('/')?.Last();
+                if (!string.IsNullOrEmpty(redactedResumeLink))
+                {
+                    var model = new Candidate();
+
+                    HttpClient myWebClient = new HttpClient();
+                    string uploadedCodedResumeLink = string.Empty;
+                    using (Stream myStream = myWebClient.GetStreamAsync(redactedResumeLink).Result)
+                    {
+                        long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+                        var fileName = "Redacted_" + unixTime.ToString() + "_" + GenerateRandomString(10);
+                        //var fileName = resumeFileName + "_redacted" + "_" + unixTime.ToString();
+                        try
+                        {
+                            uploadedCodedResumeLink = _azureStorageHelper.InsertBlobCloudCompare(fileName, "resumes", null, myStream, contentType: "application/pdf").Result;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                        }
+
+
+
+                        //generate SAS URL from the uploaded video url
+                        var sas = _sasUrlHelper.CreateSasUrl("resumes");
+
+                        if (!string.IsNullOrEmpty(uploadedCodedResumeLink) && !string.IsNullOrEmpty(sas))
+                        {
+                            uploadedCodedResumeLink = uploadedCodedResumeLink + "?" + sas;
+                        }
+                    }
+
+                    model.id = id;
+                    model.CodedResumeLink = uploadedCodedResumeLink;
+                    model.IsResumeRedactAttempted = true;
+                    model.IsResumeRedactFailed = false;
+
+                    //save the codedResumeLink and the resume link to database;
+
+                    var result = await _candidateService.SaveCandidateCodedResume(model);
+                    if (result)
+                    {
+                        return uploadedCodedResumeLink;
+
+                    }
+                    else
+                        return null;
+
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        static string GenerateRandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            Random random = new Random();
+            char[] randomArray = new char[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                randomArray[i] = chars[random.Next(chars.Length)];
+            }
+
+            return new string(randomArray);
+        }
     }
 }
