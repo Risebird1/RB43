@@ -101,12 +101,12 @@ body {
 }
 
 .w60 {
-    width: 60%;
+    width: 50%;
     float: left;
 }
 
 .w40 {
-    width: 40%;
+    width: 50%;
     float: left;
 }
 
@@ -8445,6 +8445,23 @@ option {
     background: #fff;
     padding: 0px 3px;
 }
+#surcharge-info + #surcharge {
+    display: none;
+    position: relative;
+}
+#surcharge-info {
+    position: relative;
+    top: -6px;
+}
+#surcharge-info:hover + #surcharge {
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    font-size:12px;
+    color:firebrick;
+    /* position the divs under the navigation links */
+}
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
