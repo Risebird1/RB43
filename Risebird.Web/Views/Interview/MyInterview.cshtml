@@ -528,7 +528,11 @@
                                                                         <td>No Instructions</td>
                                                                     }
                                                                 }*@
-                                                                @if ( item.interviewDate<= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.resumeLink != null && item.resumeLink != "")
+                                                                @if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.CandidateCodedResumeLink != null && item.CandidateCodedResumeLink != "")
+                                                                {
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.CandidateCodedResumeLink>Resume</a> </td>
+                                                                }
+                                                                else if ( item.interviewDate<= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.resumeLink != null && item.resumeLink != "")
                                                                 {
                                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                                 }
