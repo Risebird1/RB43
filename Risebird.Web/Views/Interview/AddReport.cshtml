@@ -281,14 +281,17 @@
 
                                             <div class="col-md-6 col-sm-6 border-rv">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @if (ViewBag.profile != "Interviewer")
+                                                    {
+                                                        @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                    @{
                                                         if (Model.resumeLink != null && Model.resumeLink != "")
                                                         {
-                                                                                <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
                                                         }
+                                                    
                                                     }
+                                                    
 
                                                 </div>
                                             </div>

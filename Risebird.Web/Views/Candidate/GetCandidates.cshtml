@@ -237,7 +237,6 @@
 
                                                         @foreach (var item in Model)
                                                         {
-                                                            int i = 0;
                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
                                                             string joinabilityColor;
                                                             string selectabilityColor;
@@ -319,7 +318,7 @@
                                                                     @if (!string.IsNullOrEmpty(item.CodedResumeLink)) //CodedResumeLink
                                                                     {
                                                                         <td class="cadName">
-                                                                            <a href="@item.CodedResumeLink" id="" target="_blank" data-tooltip="@item.CodedResumeLink">Resume</a>
+                                                                            <a href="@item.CodedResumeLink" target="_blank" data-tooltip="@item.CodedResumeLink">Resume</a>
                                                                         </td>
                                                                     }
                                                                     else
@@ -334,8 +333,12 @@
                                                                         if (!item.IsResumeRedactAttempted && !string.IsNullOrEmpty(item.ResumeLink))
                                                                         {
                                                                             <td>
-                                                                                <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedResume(this.id, @item.id, '@item.EmailId', '@item.ResumeLink')" id=@(i + "__CodedResumeLink")>Convert Resume(Into Coded)</a>
+                                                                                <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedResume(this.id, @item.id, '@item.EmailId', '@item.ResumeLink')" id=@(item.id + "__CodedResumeLink")>Convert Resume(Into Coded)</a>
                                                                             </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td></td>
                                                                         }
                                                                     }
                                                                     
@@ -767,9 +770,6 @@
                                                             </tr>
 
 
-
-
-                                                            i++;
 
                                                         }
                                                     </tbody>

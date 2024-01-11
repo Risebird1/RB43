@@ -20,6 +20,11 @@
                             <th id="getstatus_2">RB Attempts</th>
                         }
                         <th id="getstatus_3">Resume</th>
+                        @if (ViewBag.profile == "Client")
+                        {
+                            <th>Redacted Resume</th>
+
+                        }
 
                         <th id="getstatus_4">Invite Sent</th>
                         <th id="getstatus_5">Confirmation</th>
@@ -46,7 +51,11 @@
                             <th>RB Attempts</th>
                         }
                         <th>Resume</th>
+                        @if (ViewBag.profile == "Client")
+                        {
+                            <th>Redacted Resume</th>
 
+                        }
                         <th>Invite Sent</th>
                         <th>Confirmation</th>
                         @*<th>Fitment Score</th>*@
@@ -143,7 +152,30 @@
                             {
                                 <td></td>
                             }
+                            @if (ViewBag.profile == "Client")
+                            {
+                                @if (!string.IsNullOrEmpty(item.CodedResumeLink)) //CodedResumeLink
+                                {
+                                    <td class="cadName">
+                                        <a href="@item.CodedResumeLink"  target="_blank" data-tooltip="@item.CodedResumeLink">Resume</a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    
+                                    if (!item.IsResumeRedactAttempted && !string.IsNullOrEmpty(item.ResumeLink))
+                                    {
+                                        <td>
+                                            <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedResume(this.id, @item.id, '@item.EmailId', '@item.ResumeLink')" id=@(item.id + "__CodedResumeLink")>Convert Resume(Into Coded)</a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                }
 
+                            }
 
 
 
@@ -514,7 +546,6 @@
 
                             </td>
                         </tr>
-
 
 
 
