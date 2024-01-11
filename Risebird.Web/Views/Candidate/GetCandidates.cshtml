@@ -169,7 +169,7 @@
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
 
-                                                            <th>Candidate Email</th>
+                                                            <th>Candidate Details</th>
                                                             @if (ViewBag.profile != "Client")
                                                             {
                                                                 <th id="getstatus_2">RB Attempts</th>
@@ -195,7 +195,7 @@
                                                             @if (ViewBag.profile != "Client")
 																	{
                                                             <th style="text-align:center">Schedule Call</th>
-                                                            <th style="text-align:center">Call</th>
+                                                            @*<th style="text-align:center">Call</th>*@
                                                                     }
 
                                                         </tr>
@@ -203,7 +203,7 @@
                                                     <tfoot>
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
-                                                            <th>Candidate Email</th>
+                                                            <th>Candidate Details</th>
                                                             @if (ViewBag.profile != "Client")
                                                             {
                                                                 <th>RB Attempts</th>
@@ -228,7 +228,7 @@
 																	{
                                                             <th style="text-align:center">Schedule Call</th>
 
-                                                            <th style="text-align:center">Call</th>
+                                                            @*<th style="text-align:center">Call</th>*@
                                                           
                                                                     }
                                                         </tr>
@@ -267,7 +267,34 @@
                                                             }
                                                             <tr id="@item.id" data-changes="1">
                                                                 <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                                <td valign="top">
 
+
+                                                                             @if (item.Name != null && item.Name != "")
+                                                                            {
+                                                                                @if (item.Name.Length > 20)
+                                                                                {
+
+
+                                                                                    <div class="cadName">
+                                                                                        <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
+                                                                                    </div>
+                                                                                }
+
+
+                                                                                else
+                                                                                {
+                                                                                    <div class="cadName">
+                                                                                        <a onclick=""><span class="name-field"> @item.Name</span> </a>
+                                                                                    </div>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span></span>
+                                                                            }
+
+                                                                          
 
                                                                 @if (item.EmailId != null && item.EmailId != "")
                                                                 {
@@ -275,25 +302,40 @@
                                                                     {
 
 
-                                                                        <td class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.EmailId"><span>@item.EmailId.Substring(0,20)... </span> </a>
+                                                                        <div class="cadEmail">
+                                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="email-field">Emaild: @item.EmailId.Substring(0,20)... </span> </a>
 
-                                                                        </td>
+                                                                        </div>
                                                                     }
 
 
                                                                     else
                                                                     {
-                                                                        <td class="cadEmail">
+                                                                        <div class="cadEmail">
                                                                             <a onclick=""><span class="cname">@item.EmailId</span> </a>
-                                                                        </td>
+                                                                        </div>
                                                                     }
                                                                 }
                                                                 else
                                                                 {
-                                                                    <td></td>
+                                                                    <span></span>
                                                                 }
 
+                                                                    @if (ViewBag.profile != "Client")
+                                                                    {
+                                                                        <span style="margin: 5px 0px;    display: inline-block;">
+                                                                            @if (item.Phone != null && item.Phone != string.Empty)
+                                                                            {
+                                                                                <span  data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject,1)" >
+                                                                                    <img src="~/img/calling.png" width="20" />
+                                                                                </span>
+
+                                                                            }
+                                                                            @item.Phone
+                                                                            </span>
+                                                                    }
+
+                                                                </td>
                                                                 @if (ViewBag.profile != "Client")
                                                                 {
                                                                     <td class="text-center">@item.AttemptsCount</td>
@@ -538,13 +580,13 @@
 
                                                                     </td>
 
-                                                                    <td>
+                                                                    @*<td>
                                                                         @if (item.Phone != null && item.Phone != string.Empty)
                                                                         {
                                                                             <span id="getstatus_12" class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClick(@jsonObject,1)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-alt"></span></span></span>
                                                                         }
 
-                                                                    </td>
+                                                                    </td>*@
                                                                 }
 
                                                               @* <td>
@@ -594,7 +636,7 @@
                                                                 <td colspan="999" class="child-section table-responsive">
                                                                     <table class="table table-striped" cellpadding="0" cellspacing="0">
                                                                         <tr>
-                                                                            <th style="border-left: 0px !important;">Candidate Name</th>
+                                                                           @* <th style="border-left: 0px !important;">Candidate Name</th>*@
                                                                             <th>Client HR</th>
                                                                             <th>Staffing Agency EmailId</th>
                                                                             <th>Coded Resume</th>
@@ -619,29 +661,7 @@
                                                                             <th>Available for Freelancing</th>
                                                                         </tr>
                                                                         <tr>
-                                                                            @if (item.Name != null && item.Name != "")
-                                                                            {
-                                                                                @if (item.Name.Length > 20)
-                                                                                {
-
-
-                                                                                    <td class="cadName">
-                                                                                        <a onclick="" data-tooltip="@item.Name"> @item.Name.Substring(0, 20)... </a>
-                                                                                    </td>
-                                                                                }
-
-
-                                                                                else
-                                                                                {
-                                                                                    <td class="cadName">
-                                                                                        <a onclick=""> @item.Name </a>
-                                                                                    </td>
-                                                                                }
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
+                                                                           
                                                                             @if (item.ClientHRAttemptContact != null && item.ClientHRAttemptContact.Length > 13)
                                                                             {
                                                                                 <td data-tooltip="@item.ClientHRAttemptContact" class="text-center"><span class="cname">@item.ClientHRAttemptContact</span> </td>
