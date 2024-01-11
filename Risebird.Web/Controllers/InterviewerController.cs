@@ -3587,7 +3587,7 @@ namespace Risebird.Web.Controllers
                     {
                         long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-                        var fileName = "Redacted_" + unixTime.ToString() + "_" + resumeFileName;
+                        var fileName = "Redacted_" + unixTime.ToString() + "_" + GenerateRandomString(10);
                         //var fileName = resumeFileName + "_redacted" + "_" + unixTime.ToString();
                         try
                         {
@@ -3635,6 +3635,19 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        static string GenerateRandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            Random random = new Random();
+            char[] randomArray = new char[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                randomArray[i] = chars[random.Next(chars.Length)];
+            }
+
+            return new string(randomArray);
         }
         public async Task<IActionResult> FetchInterviewerFlagDetails(string InterviewerEmailid)
         {
