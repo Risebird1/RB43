@@ -143,7 +143,7 @@
                                                                 </td>
                                                                 @if (item.JDLink != null && item.JDLink != "")
                                                                 {
-                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink.Replace(" ", "%20")>@item.JDTiltle</a></td>
                                                                 }
                                                                 else
                                                                 {

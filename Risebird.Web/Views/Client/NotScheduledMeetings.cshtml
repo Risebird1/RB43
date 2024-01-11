@@ -73,7 +73,7 @@
 
 }
 <div class="main-panel" id="main-panel">
-    <div class="jumbotron">
+    <div>
         <div class="pt30">
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
@@ -253,6 +253,7 @@
                                                                             <th>Candidate Detail</th>
                                                                             <th>Resume</th>
                                                                             <th>Client HR</th>
+                                                                             <th>Channel Owner</th>
                                                                             @if (ViewBag.profile != "Client")
                                                                             {
                                                                                 <th>Client</th>
@@ -267,6 +268,7 @@
                                                                             <th>Candidate Detail</th>
                                                                             <th>Resume</th>
                                                                             <th class="candidate-hr">Client HR</th>
+                                                                            <th>Channel Owner</th>
                                                                             @if (ViewBag.profile != "Client")
                                                                             {
                                                                                 <th>Client</th>
@@ -304,6 +306,16 @@
                                                                                     else
                                                                                     {
                                                                                     }
+                                                                                    <span style="margin: 5px 0px;    display: inline-block;">
+                                                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                        {
+                                                                                            <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')">
+                                                                                                <img src="~/img/calling.png" width="20" />
+                                                                                            </span>
+
+                                                                                        }
+                                                                                        @item.MobileNumber
+                                                                                    </span>
                                                                                     <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
                                                                                 </td>
 
@@ -336,6 +348,7 @@
 
                                                                                     }
                                                                                 </td>
+                                                                                <td>@item.ChannelOwner</td>
                                                                                 @if (ViewBag.profile != "Client")
                                                                                 {
                                                                                     <td>@item.ClientName</td>
@@ -395,6 +408,9 @@
                                                                             <th>Candidate Detail</th>
                                                                             <th>Resume</th>
                                                                             <th>Client HR</th>
+                                                                              <th>Channel Owner</th>
+
+                                                                               <th>Status Date</th>
                                                                             @if (ViewBag.profile != "Client")
                                                                             {
                                                                                 <th>Client</th>
@@ -409,6 +425,8 @@
                                                                             <th>Candidate Detail</th>
                                                                             <th>Resume</th>
                                                                             <th class="candidate-hr">Client HR</th>
+                                                                              <th>Channel Owner</th>
+                                                                              <th>Status Date</th>
                                                                             @if (ViewBag.profile != "Client")
                                                                             {
                                                                                 <th>Client</th>
@@ -456,6 +474,16 @@
                                                                                     else
                                                                                     {
                                                                                     }
+                                                                                      <span style="margin: 5px 0px;    display: inline-block;">
+                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span  data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" >
+                                                                                                <img src="~/img/calling.png" width="20" />
+                                                                                            </span>
+
+                                                                                    }
+                                                                                    @item.MobileNumber</span>
+                                                                                   
                                                                                     <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
                                                                                 </td>
 
@@ -488,6 +516,8 @@
 
                                                                                     }
                                                                                 </td>
+                                                                                <td>@item.ChannelOwner</td>
+                                                                              
                                                                                 @if (ViewBag.profile != "Client")
                                                                                 {
                                                                                     <td>@item.ClientName</td>
@@ -507,15 +537,7 @@
                                                                                     <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -10px; position: relative;cursor:pointer;" title="Send Invite"><span class="far fa-paper-plane"></span></span></span>
 
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
-                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                                    {
-                                                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top">
-                                                                                            <span class="btn-call" style="        top: -10px;
-        position: relative;
-        cursor: pointer;
-" ><span class="fa fa-phone-alt"></span></span>
-                                                                                        </span>
-                                                                                    }
+                                                                                   
                                                                                     <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
                                                                                         <span onclick="OpenStatusModal('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Add Candidate Status" class="mdc-fab__icon material-icons"> <img style="height:16px!important;max-height:16px!important;" src="~/Newassets/img/addlist.png" /></span>
                                                                                     </button>
