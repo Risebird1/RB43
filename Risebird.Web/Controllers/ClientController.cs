@@ -4059,10 +4059,12 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 3].Value = "JD Title";
                 Sheet.Cells[1, 4].Value = "Candidate Name";
                 Sheet.Cells[1, 5].Value = "Candidate Email";
-                Sheet.Cells[1, 6].Value = "IRF ID";
-                Sheet.Cells[1, 7].Value = "Resume";
-                Sheet.Cells[1, 8].Value = "Client HR";
-                Sheet.Cells[1, 9].Value = "Job Country";
+                Sheet.Cells[1, 6].Value = "Candidate Mobile Number";
+                Sheet.Cells[1, 7].Value = "IRF ID";
+                Sheet.Cells[1, 8].Value = "Resume";
+                Sheet.Cells[1, 9].Value = "Client HR";
+                Sheet.Cells[1, 10].Value = "Channel Owner";
+                
                 int i = 2;
                 if (meetings.Count() > 0)
                 {
@@ -4073,27 +4075,28 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 3].Value = item.JDTiltle;
                         Sheet.Cells[i, 4].Value = item.candidateName;
                         Sheet.Cells[i, 5].Value = item.candidateEmail;
-                        Sheet.Cells[i, 6].Value = item.IRFId;
+                        Sheet.Cells[i, 6].Value = item.MobileNumber;
+                        Sheet.Cells[i, 7].Value = item.IRFId;
                         if (!string.IsNullOrEmpty(item.resumeLink))
                         {
                             try
                             {
-                                Sheet.Cells[i, 7].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
-                                Sheet.Cells[i, 7].Value = "Resume";
-                                Sheet.Cells[i, 7].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 7].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 8].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
+                                Sheet.Cells[i, 8].Value = "Resume";
+                                Sheet.Cells[i, 8].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, 7].Value = "No Resume";
+                                Sheet.Cells[i, 8].Value = "No Resume";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 7].Value = "No Resume";
+                            Sheet.Cells[i, 8].Value = "No Resume";
                         }
-                        Sheet.Cells[i, 8].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 9].Value = item.JobCountry;
+                        Sheet.Cells[i, 9].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 10].Value = item.ChannelOwner;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
