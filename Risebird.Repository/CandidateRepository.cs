@@ -954,5 +954,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<bool> SaveCandidateCodedResume(Candidate model)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", model.id);
+                    parameters.Add("@CodedResumeLink", model.CodedResumeLink);
+                    parameters.Add("@IsResumeRedactAttempted", model.IsResumeRedactAttempted);
+                    parameters.Add("@IsResumeRedactFailed", model.IsResumeRedactFailed);
+                    var results = await SqlMapper.QueryAsync(con, "usp_SaveCandidateCodedResume", parameters,
+                           commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
