@@ -31,8 +31,8 @@
     }
 
     /*.mob_h {
-            display: none !important
-        }*/
+                                display: none !important
+                            }*/
 
     .tox-notifications-container {
         display: none
@@ -130,7 +130,7 @@
                                                                 <td>
                                                                     <a href="@item.CalendlyLink" target="_blank">Scheduling Link</a>
                                                                     <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Scheduling Link" title="Scheduling Link">
-                                                                        <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');" ><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                        <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
                                                                     </button>
 
                                                                 </td>
@@ -143,7 +143,7 @@
                                                                 </td>
                                                                 @if (item.JDLink != null && item.JDLink != "")
                                                                 {
-                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>@item.JDTiltle</a></td>
+                                                                    <td>  <a data-tooltip="@item.JDLink" id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink.Replace(" ", "%20")>@item.JDTiltle</a></td>
                                                                 }
                                                                 else
                                                                 {
@@ -164,46 +164,46 @@
                                                                     }
 
                                                                     @* <button id="skill_10" class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidates List">
-                                                                        <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List">  <span class="fas fa-list"></span></span>
-                                                                    </button> *@
+                                                                <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List">  <span class="fas fa-list"></span></span>
+                                                                </button> *@
                                                                     @if (!(bool)(ViewBag.IsClientLogin ?? false))
                                                                     {
                                                                         <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("GetPublicCandidates", "Candidate" , new { id = item.id, irfName = item.IRFId, profileName = "Client", emailid = ViewBag.emailid})" title="Candidate List">
-                                                                            <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List" >
+                                                                            <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Candidate List">
                                                                                 <span title="Candidate List"><span class="fas fa-list" style="color:#fff"></span></span>
                                                                             </div>
-                                                                        </a>                                                                        
+                                                                        </a>
                                                                     }
 
 
                                                                 </td>
                                                                 <td class="text-center">
                                                                     @*<button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Broadcast Email to the Interviewers of this channel">
-                                                                        <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
-                                                                        </span>
-                                                                    </button>
-                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Audio Recording">
-                                                                        <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
-                                                                        </span>
-                                                                    </button>*@
-                                                                   @* <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
-                                                                        <span onclick="javascript:openHMInstruction('@item.id', '@item.IRFId');" title="HM Instruction">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
-                                                                        </span>
-                                                                    </button> *@
+                                                                <span onclick="javascript:OpenBroadcastModal('@item.id', '@item.IRFId');" title="Broadcast Email to the Interviewers of this channel">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
+                                                                </span>
+                                                                </button>
+                                                                <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Audio Recording">
+                                                                <span onclick="javascript:OpenVoiceRecordingModal('@item.id', '@item.IRFId');" title="Audio Recording">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
+                                                                </span>
+                                                                </button>*@
+                                                                    @* <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
+                                                                <span onclick="javascript:openHMInstruction('@item.id', '@item.IRFId');" title="HM Instruction">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
+                                                                </span>
+                                                                </button> *@
 
                                                                     @* @if(item.ShowInterviewInstructions)
-                                                                    {
-                                                                        
-                                                                    } *@
+                                                                {
+
+                                                                } *@
                                                                     <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
-                                                                            <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="HM Instruction">
+                                                                        <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="HM Instruction">
                                                                             <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" /></svg>
-                                                                            </span>
-                                                                        </button>
+                                                                        </span>
+                                                                    </button>
 
                                                                     @if (item.IsPaused)
                                                                     {
@@ -218,12 +218,17 @@
                                                                         </button>
                                                                     }
                                                                     <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Interviewer Stats">
-
                                                                         <a href="@Url.Action("InterviewerStatsAndRatingsForClientByIRF", "Interviewer", new {irfId = item.id, irfName = item.IRFId, clientEmailId = ViewBag.emailid,usepl=true})" target="_blank">
                                                                             <span title="Interviewer Stats"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
                                                                         </a>
-
                                                                     </button>
+                                                                    @if (item.IsDrive)
+                                                                    {
+                                                                        <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Download Candidate Reports" style="background: #008000ba;">
+                                                                            <span onclick="location.href='@Url.Action("IRFCandidateReportsExporttoExcel", "Candidate",new { id=item.id,IRFId=item.IRFId})'" title="Download Candidate Reports"><svg style="color: white;position: relative;right:1px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
+                                                                        </button>
+                                                                    }
+
                                                                 </td>
                                                             </tr>
                                                         }
@@ -554,7 +559,7 @@
             }
 
         }
-        
+
     </script>
 } *@
 <script>
@@ -602,8 +607,7 @@
         modalBct.style.display = "none";
         cancelRecording();
     }
-    function OpenVoiceRecordingModal(irfid, Irfname) 
-    {
+    function OpenVoiceRecordingModal(irfid, Irfname) {
         $.ajax({
             type: "POST",
             url: "/IRF/FetchIRFAudioLink",
@@ -650,7 +654,7 @@
     //    //$("#txtIRFName").val(Irfname);
     //}
     function UploadCandidateResume() {
-      
+
         if (irfId != 0 && irfName.trim() != "" && document.getElementById("ResumeFiles").files.length > 0) {
             $(".loader").show();
             var files = $("#ResumeFiles").prop("files");
@@ -678,9 +682,9 @@
             alert("Please fill all the fields.");
         }
     }
-    function openHMInstruction(irfid, Irfname){
-        var url="/IRF/DeliveryHeadInstruction?irfid="+irfid;
-        window.open(url,'_blank');
+    function openHMInstruction(irfid, Irfname) {
+        var url = "/IRF/DeliveryHeadInstruction?irfid=" + irfid;
+        window.open(url, '_blank');
     }
 </script>
 <script>
@@ -695,7 +699,7 @@
     }
 
     $(document).ready(function () {
-        
+
         applyDataTable();
     });
 

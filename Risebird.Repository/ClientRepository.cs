@@ -34,7 +34,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    if (profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    if (profileName == "SeniorHR")//|| profileName == "SupportAdmin"
                     {
                         DynamicParameters dp = new DynamicParameters();
                         dp.Add("@Emailid", emailid);

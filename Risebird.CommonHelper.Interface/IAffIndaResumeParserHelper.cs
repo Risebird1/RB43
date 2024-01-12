@@ -1,10 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper.Interface
 {
     public interface IAffIndaResumeParserHelper
     {
-        Task<string> UploadAndParseResume(string fileUrl = null);
+        Task<Tuple<string, string>> UploadAndParseResume(string fileUrl = null, string skillChannelName = null);
         Task<string> UploadResumeForRedaction(string fileUrl = null);
+        Task<bool> CreateIndex(string indexName);
+        Task<bool> IndexADocument(string documentIdentifier, string indexName);
+        Task<string> GenerateEmbeddableResumeSearchUrl(string[] indicesArray);
     }
 }

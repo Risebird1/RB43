@@ -8,6 +8,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -493,8 +494,29 @@ namespace Risebird.Business
                 return null;
             }
         }
-
-
-
+        public async Task<IEnumerable<IRFCandidateReport>> FetchSkillChannelCandidateReprots(int irfId)
+        {
+            try
+            {
+                return await _candidateRepository.FetchSkillChannelCandidateReprots(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> SaveCandidateCodedResume(Candidate model)
+        {
+            try
+            {
+                return await _candidateRepository.SaveCandidateCodedResume(model);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

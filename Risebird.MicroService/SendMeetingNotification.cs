@@ -172,7 +172,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.candidateEmail,
                             CC = CCEmails,
-                            Subject = $"Risebird: Due to unforeseen circumstances, the interviewer is unable to join the interview. We apologise for the inconvenience. Kindly reschedule."
+                            Subject = $"Risebird: Due to unforeseen circumstances, If the interviewer was unable to join the interview. We apologize for the inconvenience. Kindly reschedule."
                         };
                         var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink, item.interviewMeetingId);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
