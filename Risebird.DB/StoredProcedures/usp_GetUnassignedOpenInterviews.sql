@@ -12,8 +12,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-
-
 CREATE PROCEDURE [dbo].[usp_GetUnassignedOpenInterviews]  
 @timeNow datetime
 AS  
