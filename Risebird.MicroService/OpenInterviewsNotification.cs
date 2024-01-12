@@ -4,6 +4,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace Risebird.MicroService
             _notificationHelper = notificationHelper;
         }
         [FunctionName("OpenInterviewsNotification")]
-        public async Task Run([TimerTrigger("0 0 */30 * * *")] TimerInfo myTimer, ILogger log) //after every 30 minutes
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log) //after every 30 minutes
         {
             try
             {
@@ -33,19 +34,32 @@ namespace Risebird.MicroService
 
                 var unassignedInterviewMeetings = await _meetingRespository.GetUnassignedOpenInterviews();
 
-                foreach (var meeting in unassignedInterviewMeetings)
+                if(unassignedInterviewMeetings != null)
                 {
-                    //get all the active interviewers for the IRF
-                    var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(meeting.IRFId);
-
-
-                    if (irfInterviewers != null && irfInterviewers.Count() > 0)
+                    var distinctIRF = unassignedInterviewMeetings.Select(x => x.irfIntId).Distinct();
+                    foreach (var irf in distinctIRF)
                     {
-                        //send mails to the active irf interviewers
-                        await _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString(), meeting.irfIntId, meeting.imid);
-                    }
+                        var irfName = unassignedInterviewMeetings.Where(x => x.irfIntId == irf)?.FirstOrDefault().IRFId;
+                        var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(irfName);
+                        var unassignedMeetingsByIRF = unassignedInterviewMeetings?.Where(x => x.irfIntId == irf);
 
+                        foreach (var meeting in unassignedMeetingsByIRF)
+                        {
+                            //get all the active interviewers for the IRF
+                            //var irfInterviewers = await _meetingRespository.GetIRFActiveInterviewers(meeting.IRFId);
+
+
+                            if (irfInterviewers != null && irfInterviewers.Count() > 0)
+                            {
+                                //send mails to the active irf interviewers
+                                await _notificationHelper.SendIRFBasedInterviewerMail(irfInterviewers.ToList(), meeting.interviewDate.ToString(), meeting.irfIntId, meeting.imid);
+                            }
+
+                        }
+
+                    }
                 }
+                
                 log.LogInformation($"C# OpenInterviewsNotification executed at: {DateTime.Now}");
             }
             catch (Exception ex)
