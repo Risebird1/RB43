@@ -53,7 +53,7 @@ namespace Risebird.MicroService
 
         }
         [FunctionName("ResumeParserJob")]
-        public async Task Run([TimerTrigger("0 * * * * *")]TimerInfo myTimer, ILogger log)//0 */5 * * * *
+        public async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, ILogger log)//0 */5 * * * *
         {
             try
             {
