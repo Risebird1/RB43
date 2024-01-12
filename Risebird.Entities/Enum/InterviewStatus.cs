@@ -304,4 +304,17 @@ namespace Risebird.Entities.Enum
         [Description("Confirmed")]
         Confirmed = 1
     }
+    public enum TechSkillLevels
+    {
+        [Description("1-3 Years")]
+        Level1 = 1,
+        [Description("3-6 Years")]
+        Level2 = 2,
+        [Description("6-9 Years")]
+        Level3 = 3,
+        [Description("9-12 Years")]
+        Level4 = 4,
+        [Description("12+ Years")]
+        Level5 = 5
+    }
 }
