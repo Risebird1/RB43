@@ -48,7 +48,6 @@
             <div class="row bl-bg">
                 <div class="col-md-12">
                     <div class="mdc-card card bl-bg">
-
                         <div style="margin-top:30px;">
                             <div class="loader text-center">
                                 <img src="~/Newassets/img/lazyload.gif" />
@@ -59,20 +58,15 @@
                                         Instructions for Interviewer Guidance
                                     </div>
                                     <div class="card">
-
                                         <label class="question" for="checkbox_two">
                                             <label for="checkbox_two">
                                                 <i class="fa fa-cogs" aria-hidden="true"></i>
-
-
                                                 Tech Skills
                                             </label>
                                             <span class="round">
                                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
                                                 <span id="hidden_fields_two_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-
                                                 <span id="hidden_fields_two_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-
                                                 @*<label class="edit-wrap"><i class='fa fa-edit' style='color: white'></i></label>*@
                                             </span>
                                         </label>
@@ -90,7 +84,7 @@
                                                                     <table class="table table-bordered mbn" id="SkillTable">
                                                                         <thead>
                                                                             <tr>
-                                                                                <th width="15%" class="table_heading">Level<span class="red">*</span></th>
+                                                                                <th width="15%" class="table_heading">Exprience<span class="red">*</span></th>
                                                                                 <th width="35%" class="table_heading">Skill Name<span class="red">*</span></th>
                                                                                 <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>
                                                                                 <th width="10%" class="table_heading">Elimination Skill</th>
@@ -122,9 +116,9 @@
                                                                         <td>
                                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Timelimit" name="SkillCollection[0].Timelimit" type="number" max="30" min="0">
                                                                         </td>*@
-                                                                        <td class="text-center">
-                                                                                @Html.CheckBox("SkillCollection[0].isEliminationskill") @*, new { @checked = "checked" }*@
-                                                                            </td>
+                                                                                    <td class="text-center">
+                                                                                        @Html.CheckBox("SkillCollection[0].isEliminationskill") @*, new { @checked = "checked" }*@
+                                                                                    </td>
                                                                                     <td class="action text-center">
                                                                                         <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage', 'Concepts', 'Natureofquestion', 'Timelimit')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
@@ -226,14 +220,14 @@
                                                                         @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                         {
                                                                             <tr>
-                                                                            @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
-                                                                            {
-                                                                                <td colspan="6">No Interviewer</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td colspan="5">No Interviewer</td>
-                                                                            }
+                                                                                @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                                {
+                                                                                    <td colspan="6">No Interviewer</td>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <td colspan="5">No Interviewer</td>
+                                                                                }
                                                                             </tr>
                                                                         }
                                                                         else
@@ -248,9 +242,9 @@
                                                                                     </td>
                                                                                     @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
                                                                                     {
-                                                                                    <td>
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
-                                                                                    </td>
+                                                                                        <td>
+                                                                                            @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
+                                                                                        </td>
                                                                                     }
                                                                                     @if (!string.IsNullOrEmpty(Model.InterviewerCollection[i].CodedResumeLink)) //CodedResumeLink
                                                                                     {
@@ -274,12 +268,12 @@
                                                                                                     <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(this.id, @Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId', '@Model.InterviewerCollection[i].ResumeLink')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Convert Resume(Into Coded)</a>
                                                                                                 </td>
                                                                                             }
-                                                                                            
+
                                                                                         }
                                                                                         else
                                                                                         {
                                                                                             <td class="cadName">
-                                                                                                <a  id=@("InterviewerCollection_" + i + "__ResumeLink")>No Resume</a>
+                                                                                                <a id=@("InterviewerCollection_" + i + "__ResumeLink")>No Resume</a>
                                                                                             </td>
                                                                                         }
                                                                                     }
@@ -345,8 +339,8 @@
                                                     <div class="row">
                                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                             <div class="table-responsive-sm">
-                                                                 <div id="divquestionslist"></div>
-                                                                
+                                                                <div id="divquestionslist"></div>
+
                                                             </div>
                                                         </div>
 
@@ -659,14 +653,14 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="filheader">
-                <h5 class="modal-title pull-left">Upload Resume</h5><span style="float: right;color:green;padding: 10px;font-size: 15px;" id="txtheaderinterviewer"></span>                
+                <h5 class="modal-title pull-left">Upload Resume</h5><span style="float: right;color:green;padding: 10px;font-size: 15px;" id="txtheaderinterviewer"></span>
             </div>
 
-           
-                <button type="button" class="close" onclick="closeResumewModel()" data-dismiss="modal" aria-label="Close" style="cursor:pointer;position:absolute;top:20px;right:20px;">
+
+            <button type="button" class="close" onclick="closeResumewModel()" data-dismiss="modal" aria-label="Close" style="cursor:pointer;position:absolute;top:20px;right:20px;">
                 <span aria-hidden="true">×</span>
-                </button>
-           
+            </button>
+
             <div class="modal-body" id="divresumepopup">
             </div>
         </div>
@@ -707,7 +701,7 @@
             var msg = '@ViewBag.Message';
             swal.fire("Failed", '@ViewBag.Message', "error");
         }
-        
+
     </script>
 }
 <script>
@@ -1019,7 +1013,7 @@
                 }
             });
         });
-        function GetquestionList(){
+        function GetquestionList() {
             $.ajax({
                 type: "POST",
                 url: "/IRF/GetSkillChannelSampleQuestions",
@@ -1044,57 +1038,57 @@
                 html += '   <tr>';
                 html += '  <td>' + data[i].skillName + '</td>';
                 html += '  <td>' + data[i].comment + '</td>';
-                html += '  <td><div class="sample-btn"><span style="float:right;" onclick="DeleteSampleQuestion('+data[i].id+')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
+                html += '  <td><div class="sample-btn"><span style="float:right;" onclick="DeleteSampleQuestion(' + data[i].id + ')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
                 html += '  </tr>';
             }
             html += '</tbody>';
             html += ' </table></div>';
             $("#divquestionslist").empty().html(html);
         }
-        function DeleteSampleQuestion(questionid){
+        function DeleteSampleQuestion(questionid) {
             swal.fire({
-            title: 'Are you sure?',
-            text: 'Want to remove question from the Skill channel',
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Remove it!',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/IRF/DeleteSkillChannelSampleQuestions",
-                        data: { questionid: questionid },
-                        success: function (result) {
-                            resolve(result);
-                        }
+                title: 'Are you sure?',
+                text: 'Want to remove question from the Skill channel',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Remove it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/IRF/DeleteSkillChannelSampleQuestions",
+                            data: { questionid: questionid },
+                            success: function (result) {
+                                resolve(result);
+                            }
+                        })
                     })
-                })
-            },
-            allowOutsideClick: false
-        }).then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Removed!',
-                    type: 'success',
-                    html: '<p>Question has been removed.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    location.reload(true);
-                })
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Cancelled',
-                    'remove cancelled! :)',
-                    'error'
-                )
-            }
-        })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Removed!',
+                        type: 'success',
+                        html: '<p>Question has been removed.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        location.reload(true);
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'remove cancelled! :)',
+                        'error'
+                    )
+                }
+            })
         }
     </script>
 }
@@ -1233,18 +1227,16 @@ else
         button.parentNode.replaceChild(anchor, button);
     }
     function UploadOrConvertIntoCodedInterviewerResume(elementId, userid, irfid, interviewer, resumeLink = null) {
-        
+
         document.getElementById(elementId).innerHTML = 'Redacting...';
 
         $.ajax({
             url: '/Interviewer/InterviewerResumeupdate',
-            data: { userid: userid, irfid: irfid, resumeLink : resumeLink },
+            data: { userid: userid, irfid: irfid, resumeLink: resumeLink },
             async: true,
             success: function (data) {
-                if(resumeLink != null)
-                {
-                    if(data !=null && data != '' && data != 'failed')
-                    {
+                if (resumeLink != null) {
+                    if (data != null && data != '' && data != 'failed') {
                         swal.fire({
                             title: 'Redacted!',
                             type: 'success',
@@ -1259,8 +1251,7 @@ else
                         })
 
                     }
-                    else
-                    {
+                    else {
                         swal.fire({
                             title: 'Failed!',
                             type: 'error',
@@ -1275,37 +1266,36 @@ else
                         })
 
                     }
-                    
+
 
                 }
-                else
-                {
+                else {
                     var modal = document.getElementById("Resumepopup");
                     modal.style.display = "block";
                     $('#divresumepopup').html('');
                     $('#divresumepopup').html(data);
                     $('#txtheaderinterviewer').text(interviewer);
                 }
-                
+
             }
         });
     }
 </script>
 <script>
-    function closePopupDetailsModal(){
+    function closePopupDetailsModal() {
         var modal = document.getElementById("PopupDetailsModal");
         modal.style.display = "none";
     }
 
-      function closeResumewModel(){
+    function closeResumewModel() {
         var modal = document.getElementById("Resumepopup");
         modal.style.display = "none";
     }
-     function openPopupDetailsModal(){
+    function openPopupDetailsModal() {
         var modal = document.getElementById("PopupDetailsModal");
         modal.style.display = "block";
     }
-    function OpenQuestionModal(irfid){
+    function OpenQuestionModal(irfid) {
         $("#changememberHeading").text('Questions');
         $.ajax({
             url: '/IRF/SkillChannelSampleQuestions',
