@@ -385,8 +385,15 @@
                                                     <div class="form-group">
                                                         @Html.HiddenFor(m => m.PreviousMeetingStatus)
                                                         @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                         @if (ViewBag.profile!= "Interviewer")
+                                                       {
+                                                       <span> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })</span>
+                                                        }
 
-                                                        @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                    else{
+                                                       <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })</span>
+
+                                                        }
                                                         @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
 
                                                     </div>
@@ -2471,5 +2478,9 @@
         }
 
     });
+</script>
+<script>
+    $('.interviewer select option[value=2]').hide();
+
 </script>
 @await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")

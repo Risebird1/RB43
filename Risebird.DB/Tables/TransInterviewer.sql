@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[TransInterviewer](
             [Surcharge] [int] NULL,
             [Source] [varchar](75) null,
             [ModifiedBy][varchar](75) null,
+            [ActivatedAt][datetime] null,
 			CONSTRAINT [FK_TIIRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 			CONSTRAINT [FK_TI_InterviewerId] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),			
  CONSTRAINT [PK_TransInterviewer] PRIMARY KEY CLUSTERED 					
@@ -94,6 +95,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE TransInterviewer
     Add ModifiedBy varchar(75) null
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ActivatedAt')
+      AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewer
+    Add ActivatedAt datetime null
 END
 
 END
