@@ -227,17 +227,21 @@
                                                         }
                                                     </div>
                                                 }
-                                                @if (Model.resumeLink != null && Model.resumeLink != "")
+                                                @if (ViewBag.profile != "Interviewer")
+                                                {
+                                                    @if (Model.resumeLink != null && Model.resumeLink != "")
 
-                                                {
-                                                    <div class="report-heading">Candidate Name</div>
-                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
+                                                    {
+                                                        <div class="report-heading">Candidate Name</div>
+                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20")><h2>@Model.CandidateName</h2></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="report-heading">Candidate Name</div>
+                                                        <h2>@Model.CandidateName</h2>
+                                                    }
                                                 }
-                                                else
-                                                {
-                                                    <div class="report-heading">Candidate Name</div>
-                                                    <h2>@Model.CandidateName</h2>
-                                                }
+                                                
 
                                                 <div class="report-heading">
                                                     Position

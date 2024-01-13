@@ -8298,7 +8298,10 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profileName = profileName;
                 var model = new IRFVm();
-                ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                //ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
                 var Skillset = await _irfRepository.GetSkills();
                 ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
@@ -8447,7 +8450,7 @@ namespace Risebird.Web.Controllers
             {
                 string[] indices = new string[] { irfId };
                 var result = await _affIndaResumeParserHelper.GenerateEmbeddableResumeSearchUrl(indices);
-                if(!string.IsNullOrEmpty(result))
+                if (!string.IsNullOrEmpty(result))
                 {
                     await _irfService.UpdateSkillChannelEmbeddableUrl(irfId, result);
                 }
@@ -8540,6 +8543,25 @@ namespace Risebird.Web.Controllers
         {
             var result = await _irfService.DeleteSkillChannelSampleQuestions(questionid);
             return Json("success");
+        }
+        [HttpPost]
+        public async Task<JsonResult> DeliveryHeadSkillDetails(int id)
+        {
+            var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
+            //var level = await _irfRepository.GetLevelTech();
+            var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
+                        select new { ID = (int)s, Name = s.GetDescription() };
+            var Skillset = await _irfRepository.GetSkills();
+            if (Skillset != null)
+            {
+                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+            }
+            foreach (var item in transTechSkills)
+            {
+                item.LevelName = level.Where(x => x.ID == item.LevelId).Select(x => x.Name).FirstOrDefault();
+                item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
+            }
+            return Json(transTechSkills);
         }
         #endregion
     }
