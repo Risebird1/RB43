@@ -170,7 +170,7 @@ namespace Risebird.Business.Interface
         Task<List<RBInterviewerPayoutDetails>> FetchAllPayoutDetails();
         Task<bool> UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid);
 
-        Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid, string rsc = null);
+        Task<Tuple<bool, string>> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid, string rsc = null);
 
         Task<bool> UpdateInterviewerAvailbilityStatusForAssessmentGroup(bool status, string uniqueid, int agId, string rsc = null);
         string SetInterviewerAvailability(int transid, int isavailable);
@@ -233,5 +233,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateInterviewReport(int interviewid,string comment,string emailid);
         Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
         Task<ProctoringReport> GetProctoringReport(int interviewid);
+        Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews(int irfId);
     }
 }

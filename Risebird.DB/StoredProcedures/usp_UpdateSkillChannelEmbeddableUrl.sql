@@ -10,11 +10,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE usp_UpdateSkillChannelEmbeddableUrl
 @irfId varchar(200),
-@embedUrl varchar(2500)
+@embedUrl varchar(2500),
+@timeNow datetime = null
 AS
 BEGIN
 
-Update IRF set AffindaEmbedUrl=@embedUrl where IRFId=@irfId
+Update IRF set AffindaEmbedUrl=@embedUrl, AffindaEmbedUrlCreatedAt = @timeNow where IRFId=@irfId
 
 END
 Go
