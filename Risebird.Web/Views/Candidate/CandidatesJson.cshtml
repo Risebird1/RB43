@@ -14,7 +14,8 @@
                     <tr>
                         <th style="border-right: 0px !important;"></th>
 
-                        <th>Candidate Email</th>
+                         <th>Candidate Details</th>
+
                         @if (ViewBag.profile != "Client")
                         {
                             <th id="getstatus_2">RB Attempts</th>
@@ -45,7 +46,8 @@
                 <tfoot>
                     <tr>
                         <th style="border-right: 0px !important;"></th>
-                        <th>Candidate Email</th>
+                          <th>Candidate Details</th>
+
                         @if (ViewBag.profile != "Client")
                         {
                             <th>RB Attempts</th>
@@ -105,9 +107,77 @@
                         }
                         <tr id="@item.id" data-changes="1">
                             <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                             <td valign="top">
+                            @if (item.Name != null && item.Name != "")
+                                                                            {
+                                                                                @if (item.Name.Length > 20)
+                                                                                {
 
 
-                            @if (item.EmailId != null && item.EmailId != "")
+                                                                                    <div class="cadName">
+                                                                                        <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
+                                                                                    </div>
+                                                                                }
+
+
+                                                                                else
+                                                                                {
+                                                                                    <div class="cadName">
+                                                                                        <a onclick=""><span class="name-field"> @item.Name</span> </a>
+                                                                                    </div>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span></span>
+                                                                            }
+
+                                                                          
+
+                                                                @if (item.EmailId != null && item.EmailId != "")
+                                                                {
+                                                                    @if (item.EmailId.Length > 20)
+                                                                    {
+
+
+                                                                        <div class="cadEmail">
+                                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="email-field">Emaild: @item.EmailId.Substring(0,20)... </span> </a>
+
+                                                                        </div>
+                                                                    }
+
+
+                                                                    else
+                                                                    {
+                                                                        <div class="cadEmail">
+                                                                            <a onclick=""><span class="cname">@item.EmailId</span> </a>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span></span>
+                                                                }
+
+                                                                    @if (ViewBag.profile != "Client")
+                                                                    {
+                                                                        <span style="margin: 5px 0px;    display: inline-block;">
+                                                                            @if (item.Phone != null && item.Phone != string.Empty)
+                                                                            {
+                                                                                <span  data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject,1)" >
+                                                                                    <img src="~/img/calling.png" width="20" />
+                                                                                </span>
+
+                                                                            }
+                                                                            @item.Phone
+                                                                            </span>
+                                                                    }
+
+                                                                    </td>
+
+
+
+                          @*  @if (item.EmailId != null && item.EmailId != "")
                             {
                                 @if (item.EmailId.Length > 18)
                                 {
@@ -130,7 +200,7 @@
                             else
                             {
                                 <td></td>
-                            }
+                            }*@
 
                             @if (ViewBag.profile != "Client")
                             {
