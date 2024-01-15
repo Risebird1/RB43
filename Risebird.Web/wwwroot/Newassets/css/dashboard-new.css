@@ -7662,10 +7662,13 @@ ul.ks-cboxtags {
 #cloneTemplateTable.table-striped tbody tr:nth-of-type(even) {
     background: rgb(151 139 139 / 2.5%);
 }
-
+.rate-wrap{
+    text-align:right;
+}
 .rate-interview {
     position: relative;
     top: 8px;
+    padding: 0px 0px 10px 0px;
 }
 
     .rate-interview h1 {
@@ -7674,6 +7677,7 @@ ul.ks-cboxtags {
         line-height: 30px;
         color: green;
         padding-right: 10px;
+        width: 80%;
     }
 
     .rate-interview button, .rate-interview button:hover {
@@ -9772,7 +9776,12 @@ option {
             width: 100%;
             float: left;
         }
-
+        .interviewWrapper .heading-txt {
+            line-height: 25px;
+            position: relative;
+            top: -10px;
+        }
+        
         .calling-area {
             font-size: 13.5px !important;
             padding: 20px 10px !important;

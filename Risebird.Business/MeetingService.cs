@@ -3311,7 +3311,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid, string rsc = null)
+        public async Task<Tuple<bool, string>> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueid, int Irfid, string rsc = null)
         {
             try
             {
@@ -3320,7 +3320,7 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                return new Tuple<bool, string>(false, null);
             }
         }
 
@@ -4096,6 +4096,20 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews(int irfId)
+        {
+            try
+            {
+                return await _meetingRespository.GetUnassignedOpenInterviews(irfId);
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }

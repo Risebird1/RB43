@@ -114,95 +114,102 @@ namespace Risebird.MicroService
                             int? videoDuration = null;
                             if (string.IsNullOrEmpty(meeting.VideoLink) && (videoRecordingFiles != null || videoRecordingFiles.Count() == 1))
                             {
-                                var recordingFile = videoRecordingFiles.FirstOrDefault();
-                                var downloadUrl = recordingFile.download_url;
+                                var recordingFile = videoRecordingFiles?.FirstOrDefault();
+                                var downloadUrl = recordingFile?.download_url;
 
                                 //upload the video to azure blob using the download_Url
 
                                 //WebClient myWebClient = new WebClient();
-                                HttpClient myWebClient = new HttpClient();
-                                string uploadedVideoUrl = string.Empty;
-                                using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                if (downloadUrl != null)
                                 {
-                                    var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
-                                    var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic;
-                                    long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                                    fileName = fileName + "_" + unixTime.ToString();
-                                    try
+                                    HttpClient myWebClient = new HttpClient();
+                                    string uploadedVideoUrl = string.Empty;
+                                    using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                                     {
-                                        uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
+                                        var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
+                                        var fileName = string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic;
+                                        long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                        fileName = fileName + "_" + unixTime.ToString();
+                                        try
+                                        {
+                                            uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
 
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                            log.LogError($"Zoom : Error while inserting blob for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                            return;
+                                        }
+
+                                        log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+
+
+                                        //generate SAS URL from the uploaded video url
+                                        var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
+
+                                        if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                                        {
+                                            videoSasUrl = uploadedVideoUrl + "?" + sas;
+                                        }
                                     }
-                                    catch (Exception ex)
+                                    if (!string.IsNullOrEmpty(videoSasUrl))
                                     {
-                                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                        log.LogError($"Zoom : Error while inserting blob for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                        return;
-                                    }
+                                        //get the video duration
+                                        var startTime = Convert.ToDateTime(recordingFile.recording_start);
+                                        var endTime = Convert.ToDateTime(recordingFile.recording_end);
 
-                                    log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                        TimeSpan ts = endTime - startTime;
+                                        videoDuration = Convert.ToInt32(Math.Round(ts.TotalMinutes));
 
-
-                                    //generate SAS URL from the uploaded video url
-                                    var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
-
-                                    if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
-                                    {
-                                        videoSasUrl = uploadedVideoUrl + "?" + sas;
                                     }
                                 }
-                                if (!string.IsNullOrEmpty(videoSasUrl))
-                                {
-                                    //get the video duration
-                                    var startTime = Convert.ToDateTime(recordingFile.recording_start);
-                                    var endTime = Convert.ToDateTime(recordingFile.recording_end);
 
-                                    TimeSpan ts = endTime - startTime;
-                                    videoDuration = Convert.ToInt32(Math.Round(ts.TotalMinutes));
-
-                                }
                             }
 
                             var audioTranscriptFiles = convertedResponse.recording_files.Where(x => x.file_type == "TRANSCRIPT" && x.status.ToLower() == "completed");
                             string transcriptSasUrl = string.Empty;
                             if (string.IsNullOrEmpty(meeting.AudioTranscriptFileLink) && (audioTranscriptFiles != null || audioTranscriptFiles.Count() == 1))
                             {
-                                var transcriptFile = audioTranscriptFiles.FirstOrDefault();
-                                var downloadUrl = transcriptFile.download_url;
+                                var transcriptFile = audioTranscriptFiles?.FirstOrDefault();
+                                var downloadUrl = transcriptFile?.download_url;
 
                                 //upload the video to azure blob using the download_Url
-
-                                HttpClient myWebClient = new HttpClient();
-                                string uploadedTranscriptUrl = string.Empty;
-                                using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
+                                if (downloadUrl != null)
                                 {
-                                    var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
-                                    var fileName = (string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic) + "_Transcript";
-                                    long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                                    fileName = fileName + "_" + unixTime.ToString();
-                                    try
+                                    HttpClient myWebClient = new HttpClient();
+                                    string uploadedTranscriptUrl = string.Empty;
+                                    using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                                     {
-                                        uploadedTranscriptUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, TranscriptsContainer, null, null, myStream).Result;
+                                        var topic = convertedResponse.topic?.Replace(" ", "_").Replace("/", "-").Replace("\t", "").Replace("\n", "").Replace("\r", "");
+                                        var fileName = (string.IsNullOrEmpty(topic) ? meeting.interviewDate.ToString("yyyy-MM-ddTHH:mm:ss") : topic) + "_Transcript";
+                                        long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                        fileName = fileName + "_" + unixTime.ToString();
+                                        try
+                                        {
+                                            uploadedTranscriptUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, TranscriptsContainer, null, null, myStream).Result;
 
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                                        log.LogError($"Zoom : Error while inserting blob for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
-                                        return;
-                                    }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                            log.LogError($"Zoom : Error while inserting blob for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message: {ex.Message}");
+                                            return;
+                                        }
 
-                                    log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
+                                        log.LogInformation($"Zoom : Video uploaded in blob for meeting with ZoomMeetingId {meeting.ZoomMeetingId} function executed at: {DateTime.Now}");
 
 
-                                    //generate SAS URL from the uploaded video url
-                                    var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
+                                        //generate SAS URL from the uploaded video url
+                                        var transcriptSasToken = _sasUrlHelper.CreateSasUrl(TranscriptsContainer);
 
-                                    if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
-                                    {
-                                        transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
+                                        if (!string.IsNullOrEmpty(uploadedTranscriptUrl) && !string.IsNullOrEmpty(transcriptSasToken))
+                                        {
+                                            transcriptSasUrl = uploadedTranscriptUrl + "?" + transcriptSasToken;
+                                        }
                                     }
                                 }
+
                             }
 
                             if (!string.IsNullOrEmpty(videoSasUrl) || !string.IsNullOrEmpty(transcriptSasUrl))

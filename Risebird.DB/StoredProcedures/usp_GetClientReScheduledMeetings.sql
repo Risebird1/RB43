@@ -62,7 +62,7 @@ begin
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
  join Client cl on cl.id=IRF.ClientId            
- where MeetingStatus=1 or MeetingStatus=3 or confirmationStatus=2    
+ where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2    
  order by dtCreatedOn desc             
 end            
 else if(@clientRole=1)        
@@ -104,7 +104,7 @@ begin
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
  join Client cl on cl.id=IRF.ClientId    
- where MeetingStatus=1 or MeetingStatus=3 or confirmationStatus=2     
+ where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
  order by dtCreatedOn desc             
 end          
 else if(@clientRole=9)        
@@ -141,7 +141,7 @@ from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.Fir
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
  join Client cl on cl.id=IRF.ClientId    
- where MeetingStatus=1 or MeetingStatus=3 or confirmationStatus=2     
+ where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
  order by dtCreatedOn desc             
 end          
 else            
@@ -186,7 +186,7 @@ begin
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
  join Client cl on cl.id=IRF.ClientId   
- where MeetingStatus=1 or MeetingStatus=3 or confirmationStatus=2       
+ where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2       
  order by dtCreatedOn desc             
 end            
                   
@@ -236,7 +236,7 @@ join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEma
 join InterviewComments ic on im.id=ic.interviewid                
 join IRF on im.IRFId=IRF.IRFId              
 join Client cl on cl.id=IRF.ClientId      
-where MeetingStatus=1 or MeetingStatus=3 or confirmationStatus=2     
+where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
 order by dtCreatedOn desc                   
                   
 End                    
@@ -281,7 +281,7 @@ join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEma
 join InterviewComments ic on im.id=ic.interviewid                
 join IRF on im.IRFId=IRF.IRFId              
 join Client cl on cl.id=IRF.ClientId    
-where MeetingStatus=1 or MeetingStatus=3 or confirmationStatus=2     
+where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
 order by dtCreatedOn desc                   
                   
 End                    
@@ -352,7 +352,7 @@ join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEma
 join InterviewComments ic on im.id=ic.interviewid               
 join IRF on im.IRFId=IRF.IRFId              
 join Client cl on cl.id=IRF.ClientId   
-where MeetingStatus=1 or MeetingStatus=3 or confirmationStatus=2     
+where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
 order by dtCreatedOn desc                       
                   
 End                    
