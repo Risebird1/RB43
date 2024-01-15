@@ -533,21 +533,21 @@ namespace Risebird.Business
                 if (model == null)
                     return null;
                 //var IRFConfiguration = _irfRepository.EditIRFConfiguration(id);
-                if (!model.EditIRFConfiguration)
-                {
-                    //var _clientdetails = await _clientRepository.GetClient(id);
-                    //if (_clientdetails != null)
-                    //{
-                    //    model.IsCandidateavailability = _clientdetails.IsCandidateavailability;
-                    //    model.IsMeetingAutoCancelled = _clientdetails.IsMeetingAutoCancelled;
-                    //    model.IsMeetingNotificationSend = _clientdetails.IsMeetingNotificationSend;
-                    //    model.InterviewDuration = _clientdetails.InterviewDuration;
-                    //}
-                    model.IsCandidateavailability = model.IsClientCandidateAvailablily;
-                    model.IsMeetingAutoCancelled = model.IsClientMeetingAutoCancelled;
-                    model.IsMeetingNotificationSend = model.IsClientMeetingNotificationSend;
-                    model.InterviewDuration = model.ClientInterviewDuration;
-                }
+                //if (!model.EditIRFConfiguration)
+                //{
+                //    //var _clientdetails = await _clientRepository.GetClient(id);
+                //    //if (_clientdetails != null)
+                //    //{
+                //    //    model.IsCandidateavailability = _clientdetails.IsCandidateavailability;
+                //    //    model.IsMeetingAutoCancelled = _clientdetails.IsMeetingAutoCancelled;
+                //    //    model.IsMeetingNotificationSend = _clientdetails.IsMeetingNotificationSend;
+                //    //    model.InterviewDuration = _clientdetails.InterviewDuration;
+                //    //}
+                //    model.IsCandidateavailability = model.IsClientCandidateAvailablily;
+                //    model.IsMeetingAutoCancelled = model.IsClientMeetingAutoCancelled;
+                //    model.IsMeetingNotificationSend = model.IsClientMeetingNotificationSend;
+                //    model.InterviewDuration = model.ClientInterviewDuration;
+                //}
                 //var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
                 //var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
                 //var transJoinability = _irfRepository.GetTransJoinability(id);
