@@ -18,7 +18,8 @@ Create Procedure usp_AddscheduleInterviewEvent
 @Uniqueid varchar(50),
 @Concurrency int,
 @BufferTime int,
-@TimeSlotDays int
+@TimeSlotDays int,
+@sourcevalue varchar(50)
 AS    
 BEGIN    
 if(@id>0)    
@@ -28,11 +29,11 @@ Select @id
 END    
 ELSE    
 BEGIN    
-Insert into ScheduleInterviewEvent(EventName,SkillChannel,StartDate,EndDate,duration,Uniqueid,IsActive,Concurrency,BufferTime,TimeSlotDays)    
-values(@EventName,@SkillChannel,@StartDate,@EndDate,@duration,@Uniqueid,1,@Concurrency,@BufferTime,@TimeSlotDays)    
+Insert into ScheduleInterviewEvent(EventName,SkillChannel,StartDate,EndDate,duration,Uniqueid,IsActive,Concurrency,BufferTime,TimeSlotDays,sourcevalue)    
+values(@EventName,@SkillChannel,@StartDate,@EndDate,@duration,@Uniqueid,1,@Concurrency,@BufferTime,@TimeSlotDays,@sourcevalue)    
     
 Select SCOPE_IDENTITY()    
 END    
-END  
+END 
 
 GO

@@ -58,6 +58,7 @@ namespace Risebird.Entities.ViewModel
         public string MeetingPlatform { get; set; }
         [Display(Name = "Number of days Slot open at a time")]
         public int TimeSlotDays { get; set; }
+        public string sourcevalue { get; set; }
     }
     public class ScheculeInterview
     {

@@ -13,7 +13,8 @@ Create PROCEDURE usp_UpdateInterviewerAvailbilityStatusForIRF
 @uniqueid varchar(50),  
 @Status int,  
 @timeNow datetime,
-@rsc varchar(75) = null
+@rsc varchar(75) = null,
+@interviewerEmailId varchar(150) output
 AS  
 BEGIN  
 Declare @Count int  
@@ -24,6 +25,8 @@ Declare @UserId int
 declare @timeDifference int  
 
 declare @sentAvailabilityMailOn datetime =  (select SendIntervieweravailbilityOn from IRF where id = @IRFId)
+Select @interviewerEmailId=EmailId from UserList where uniqueid=@uniqueid  
+
 if(@sentAvailabilityMailOn is not null)
 Begin
 	set @timeDifference  = (select DATEDIFF(MINUTE, @sentAvailabilityMailOn, @timeNow))
@@ -43,7 +46,8 @@ Begin
   if(@Status=1)  
    begin  
     Select @UserId=id from UserList where uniqueid=@uniqueid  
-    Select @InterviewerId=id From InterviewerProfile where UserId=@UserId  
+    Select @InterviewerId=id From InterviewerProfile where UserId=@UserId
+	
   
 	if not exists(select top 1 id from TransInterviewer where IRFId =@IRFId and UserId = @UserId)
 	Begin
