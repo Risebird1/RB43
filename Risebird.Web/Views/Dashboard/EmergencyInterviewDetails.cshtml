@@ -32,6 +32,16 @@
                     <div class="mobile-view"> <h4 class="card-title"> Emergency Interview Management</h4></div>
                 </div>
                 <div class="pull-left">
+                    @if (ViewBag.Type == "EmergencyIM")
+                    {
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('EmergencyIM')"><strong>Emergency Management</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM')"><strong>Interview Management</strong></div>
+                    }
+                    else
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('EmergencyIM')"><strong>Emergency Management</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('InterviewM')"><strong>Interview Management</strong></div>
+                    }
                 </div>
                 <div class="pull-right">
                     <div>
@@ -73,7 +83,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("EmergencyInterviewDetails","Dashboard")" method="post" id="form" class="myinterview_modal" onsubmit="return checkfilterDate();">
+                                        <form action="@Url.Action("EmergencyInterviewDetails","Dashboard",new{type=ViewBag.Type})" method="post" id="form" class="myinterview_modal" onsubmit="return checkfilterDate();">
                                             <div class="modal-body ">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -296,5 +306,8 @@
         $('input[name=StartDate]').val(strtDte);
         $('input[name=EndDate]').val(endDte);
         var form = $("#form").serialize();
+    }
+    function Changeurldetails(type){
+        window.location.href = "/Dashboard/EmergencyInterviewDetails?type=" + type;
     }
 </script>
