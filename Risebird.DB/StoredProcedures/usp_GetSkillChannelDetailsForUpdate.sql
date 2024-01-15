@@ -17,7 +17,7 @@ set @isJoinabilitySelectabilityRequired = (select IsJoinabilitySelectabilityRequ
 set @isGeneralSkillRequired = (select IsGeneralSkillRequired from IRF where id =@irfId)
         
 Select IRF.*, cl.[Name] as ClientCompName,
-Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then 0 Else 1 END as EditIRFConfiguration
+IRF.IsMeetingNotificationSend  as EditIRFConfiguration
 , cl.IsCandidateavailability as IsClientCandidateAvailablily, cl.IsMeetingNotificationSend as IsClientMeetingNotificationSend,
 cl.IsMeetingAutoCancelled as IsClientMeetingAutoCancelled, cl.InterviewDuration as ClientInterviewDuration
 from IRF inner join Client cl on IRF.ClientId = cl.id where IRF.id = @irfId

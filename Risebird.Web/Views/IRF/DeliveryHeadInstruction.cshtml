@@ -56,10 +56,12 @@
                                 <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
                                     <div class="heading-txt">
                                         Instructions for Interviewer Guidance
-                                        @* <button type="button" class="approve">
-                                            <span class="fa fa-check approve-icon"></span><span class="approve-txt"> APPROVE</span>
-                                        </button> *@
-
+                                        @if (!Model.DMApproved && (ViewBag.profileName == "Client" || ViewBag.profileName == "Public"))
+                                        {
+                                            <button type="button" class="approve" onclick="ApproveDH(@Model.id)">
+                                                <span class="fa fa-check approve-icon"></span><span class="approve-txt"> APPROVE</span>
+                                            </button>
+                                        }
                                     </div>
                                     <div class="card">
                                         <label class="question" for="checkbox_two">
@@ -1267,12 +1269,8 @@ else
                             allowOutsideClick: false
                         }).then(function () {
                             document.getElementById(elementId).innerHTML = 'Redaction Failed!';
-
                         })
-
                     }
-
-
                 }
                 else {
                     var modal = document.getElementById("Resumepopup");
@@ -1309,6 +1307,17 @@ else
                 openPopupDetailsModal();
                 $('#divpopupModel').html('');
                 $('#divpopupModel').html(data);
+            }
+        });
+    }
+    function ApproveDH(irfid) {
+        $.ajax({
+            type: 'POST',
+            url: '/IRF/ApproveDM',
+            data: { id: irfid },
+            success: function (data) {
+                swal.fire(data);
+                location.reload(true);
             }
         });
     }
