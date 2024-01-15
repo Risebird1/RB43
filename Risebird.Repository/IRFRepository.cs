@@ -7689,6 +7689,7 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("@irfId ", irfId);
                         parameters.Add("@embedUrl", embedUrl);
+                        parameters.Add("@timeNow", DateTime.Now);
                         var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_UpdateSkillChannelEmbeddableUrl", parameters, null,
                             commandType: CommandType.StoredProcedure);
                         return true;

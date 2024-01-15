@@ -55,6 +55,7 @@ CREATE TABLE [dbo].[IRF](
             [IsAffindaIndexCreated] [bit] null,
             [AffindaEmbedUrl] [varchar](2500) null,
             [IsDrive] [bit] null,
+            [AffindaEmbedUrlCreatedAt] [datetime] null,
             [DMApproved] [bit] null,
             [DMApprovedBy] [varchar](150)Null
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
@@ -503,6 +504,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add DMApprovedBy varchar(150)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AffindaEmbedUrlCreatedAt')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add AffindaEmbedUrlCreatedAt datetime
 END
 
 END

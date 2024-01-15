@@ -192,7 +192,7 @@ namespace Risebird.Repository.Interface
         Task<Meeting> GetMeetingDetails(int meetingId);
         Task<List<RBInterviewDetails>> FNFetchToalQCAmountStatus(DateTime st, DateTime se);
         Task<List<SchedulingLinkVM>> FetchSchedulingLinks(string emailid);
-        Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews();
+        Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews(int? irfId = null);
         Task<IEnumerable<string>> GetIRFActiveInterviewers(string irfId);
         Task<int> GetUniqueInterviewerByEmailId(string emailId, string id);
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
@@ -206,7 +206,7 @@ namespace Risebird.Repository.Interface
         Task<IRFVm> GetIRFNameAndJoinability(int id);
         Task<bool> SaveProctorReport(int id, string reporturl);
         Task<bool> UpdateCheckIntervieweravailbilityStatus(int status, string uniqueid, int Irfid);
-        Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueId, int irfId, string rsc = null);
+        Task<Tuple<bool, string>> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueId, int irfId, string rsc = null);
         Task<bool> UpdateInterviewerAvailbilityStatusForAssessmentGroup(bool status, string uniqueId, int agId, string rsc = null);
         string SetInterviewerAvailability(int transid, int isavailable);
         Task<List<InterviewerRating>> FetchFeedbackDetails();

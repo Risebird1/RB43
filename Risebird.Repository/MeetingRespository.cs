@@ -5023,7 +5023,7 @@ namespace Risebird.Repository
         /// Gets all the interviews which are yet unassigned with 3 hours to go
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews()
+        public async Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews(int? irfId = null)
         {
             try
             {
@@ -5031,6 +5031,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@irfId", irfId);
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetUnassignedOpenInterviews", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -5383,7 +5384,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueId, int irfId, string rsc = null)
+        public async Task<Tuple<bool, string>> UpdateInterviewerAvailbilityStatusForIRF(int status, string uniqueId, int irfId, string rsc = null)
         {
             try
             {
@@ -5393,17 +5394,19 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Status", status);
                 dynamicParameters.Add("@rsc", rsc);
                 dynamicParameters.Add("@timeNow", DateTime.Now);
+                dynamicParameters.Add("@idIrf", dbType: DbType.String, direction: ParameterDirection.Output);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerAvailbilityStatusForIRF", dynamicParameters,
                                             commandType: CommandType.StoredProcedure);
-                    return true;
+                    string interviewerEmailId = dynamicParameters.Get<string>("@interviewerEmailId");
+                    return new Tuple<bool, string>(true, interviewerEmailId);
                 }
             }
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                return new Tuple<bool, string>(false, null);
             }
         }
 
