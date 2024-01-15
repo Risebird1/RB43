@@ -55,6 +55,8 @@ CREATE TABLE [dbo].[IRF](
             [IsAffindaIndexCreated] [bit] null,
             [AffindaEmbedUrl] [varchar](2500) null,
             [IsDrive] [bit] null,
+            [DMApproved] [bit] null,
+            [DMApprovedBy] [varchar](150)Null
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -483,6 +485,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add IsDrive bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'DMApproved')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add DMApproved bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'DMApprovedBy')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add DMApprovedBy varchar(150)
 END
 
 END

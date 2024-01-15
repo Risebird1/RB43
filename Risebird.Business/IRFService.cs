@@ -3667,5 +3667,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> ApproveDM(int id, string emailid)
+        {
+            try
+            {
+                var result = await _irfRepository.ApproveDM(id, emailid);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

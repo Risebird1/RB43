@@ -635,6 +635,7 @@ namespace Risebird.Repository
                             _resultVM.IsClientMeetingNotificationSend = !string.IsNullOrEmpty(dt.Rows[0]["IsClientMeetingNotificationSend"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsClientMeetingNotificationSend"]) : false;
                             _resultVM.IsClientMeetingAutoCancelled = !string.IsNullOrEmpty(dt.Rows[0]["IsClientMeetingAutoCancelled"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsClientMeetingAutoCancelled"]) : false;
                             _resultVM.ClientInterviewDuration = !string.IsNullOrEmpty(dt.Rows[0]["ClientInterviewDuration"].ToString()) ? Convert.ToInt32(dt.Rows[0]["ClientInterviewDuration"]) : 0;
+                            _resultVM.DMApproved = !string.IsNullOrEmpty(dt.Rows[0]["DMApproved"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["DMApproved"]) : false;
 
                         }
                     }
@@ -7689,6 +7690,37 @@ namespace Risebird.Repository
                         parameters.Add("@irfId ", irfId);
                         parameters.Add("@embedUrl", embedUrl);
                         var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_UpdateSkillChannelEmbeddableUrl", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<bool> ApproveDM(int id, string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfId ", id);
+                        parameters.Add("@emailid", emailid);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_ApproveDMByClient", parameters, null,
                             commandType: CommandType.StoredProcedure);
                         return true;
                     }

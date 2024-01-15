@@ -8563,6 +8563,30 @@ namespace Risebird.Web.Controllers
             }
             return Json(transTechSkills);
         }
+        [HttpPost]
+        public async Task<JsonResult> ApproveDM(int id)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var result = await _irfService.ApproveDM(id, emailid);
+                if (result)
+                {
+                    return Json("Success");
+                }
+                else
+                {
+                    return Json("Fail to approve, Please try after some time.");
+                }
+            }
+            else
+            {
+                return Json("Fail to approve, Please try after some time.");
+            }
+        }
         #endregion
     }
 }
