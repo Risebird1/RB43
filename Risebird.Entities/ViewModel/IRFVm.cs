@@ -241,6 +241,8 @@ namespace Risebird.Entities.ViewModel
         public string UniqueId { get; set; } // user's unique id set when the Accesstype above is Public
         public bool IsMarketPlaceChannel { get; set; }
         public string AffindaEmbedUrl { get; set; }
+        public DateTime? AffindaEmbedUrlCreatedAt { get; set; }
+        public int? urlCreationTimeElapsed { get; set; }
 
     }
     public class InterviewerIds
@@ -368,6 +370,8 @@ namespace Risebird.Entities.ViewModel
         public int Interviewduration { get; set; }
         public int FlatRate { get; set; }
         public string AffindaEmbedUrl { get; set; }
+        public DateTime? AffindaEmbedUrlCreatedAt { get; set; }
+        public int? urlCreationTimeElapsed { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {
