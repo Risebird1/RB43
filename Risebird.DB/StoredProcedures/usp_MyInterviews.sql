@@ -33,7 +33,7 @@ ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingS
 cm.id as CandidateMasterId, irf.Heuristicsscore as HeuristicProfileType, ic.VideoDuration, irf.JDTiltle,ca.IsProctor,  
 IRF.AudioComment,Cl.Name as ClientName,IRF.JobCountry,tqc.id as QCPresent,ISNULL(IRF.MeetingPlatform,'Zoom') MeetingPlatform,  
 im.BackUpLink,im.BackUpLinkId, irf.IsFixedInterviewduration, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as MaxInterviewDuration,tirf.PerSuccessRate as ExpectedPerHourRate,
-Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge,irf.IsNewSkillChannel
+Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge,irf.IsNewSkillChannel, ca.CodedResumeLink as CandidateCodedResumeLink
 from InterviewMeetings im                   
 inner join IRF  irf on im.IRFId=irf.IRFId left join InterviewComments ic on im.id = ic.InterviewId     
 left join Client cl on cl.id=IRF.ClientId    
