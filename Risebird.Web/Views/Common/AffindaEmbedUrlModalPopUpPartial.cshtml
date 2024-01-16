@@ -32,8 +32,8 @@
                         </div>
                     </div>
                 </div>
-                <input type="hidden" id="hidden_EmbedUrl_Id"/>
-                <input type="hidden" id="hidden_SkillChannel_Id"/>
+                <input type="hidden" id="hidden_EmbedUrl_Id" />
+                <input type="hidden" id="hidden_SkillChannel_Id" />
             </div>
 
         </div>
@@ -48,9 +48,9 @@
         document.getElementById('embed_id_title').innerHTML = 'Search And Match Link for ' + skillChannelName;
         var alreadyProgrammaticallyGeneratedUrl = document.getElementById('hidden_EmbedUrl_Id').value;
         var alreadyGeneratedForIRFId = document.getElementById('hidden_SkillChannel_Id').value;
-        var embedUrl='';
-        if (existingEmbedUrl != null && existingEmbedUrl != '') { 
-            if ((alreadyProgrammaticallyGeneratedUrl != null && alreadyProgrammaticallyGeneratedUrl != '') && (alreadyGeneratedForIRFId != id) && urlCreationTimeElapsed > 50) { 
+        var embedUrl = '';
+        if (existingEmbedUrl != null && existingEmbedUrl != '') {
+            if ((alreadyProgrammaticallyGeneratedUrl != null && alreadyProgrammaticallyGeneratedUrl != '') && (alreadyGeneratedForIRFId != id) && urlCreationTimeElapsed > 50) {
                 //generate for this
                 $.ajax({
                     type: "POST",
@@ -73,9 +73,9 @@
                         }
                     }
                 });
-            
+
             }
-            if ((alreadyProgrammaticallyGeneratedUrl == null || alreadyProgrammaticallyGeneratedUrl == '') && urlCreationTimeElapsed > 50) {
+            else if ((alreadyProgrammaticallyGeneratedUrl == null || alreadyProgrammaticallyGeneratedUrl == '') && urlCreationTimeElapsed > 50) {
                 //generate for this
                 $.ajax({
                     type: "POST",
@@ -99,9 +99,17 @@
                     }
                 });
 
+            }
+            else if ((alreadyProgrammaticallyGeneratedUrl != null && alreadyProgrammaticallyGeneratedUrl != '') && (alreadyGeneratedForIRFId == id) && urlCreationTimeElapsed == null) {
+                //generate for this
+                embedUrl = document.getElementById('hidden_EmbedUrl_Id').value
+
+            }
+            else {
+                embedUrl = existingEmbedUrl;
             }
         }
-        else if (existingEmbedUrl != null && existingEmbedUrl != '' ) {
+        else if (existingEmbedUrl != null && existingEmbedUrl != '') {
             embedUrl = existingEmbedUrl;
         }
         else if (alreadyProgrammaticallyGeneratedUrl != null && alreadyProgrammaticallyGeneratedUrl != '' && (alreadyGeneratedForIRFId == id) && (urlCreationTimeElapsed)) {
@@ -110,22 +118,20 @@
         else {
             $.ajax({
                 type: "POST",
-                async:true,
+                async: true,
                 url: "/IRF/GenerateEmbeddableResumeSearchUrl",
                 data: { irfId: skillChannelName },
                 success: function (data) {
-                    if(data != null)
-                    {
+                    if (data != null) {
                         embedUrl = data;
                         document.getElementById('hidden_EmbedUrl_Id').value = embedUrl;
                         document.getElementById('hidden_SkillChannel_Id').value = id;
                         document.getElementById('embed_Anchor_Id').href = embedUrl;
 
-                        
+
 
                     }
-                    else
-                    {
+                    else {
                         document.getElementById('embed_Anchor_Id').innerHTML = "Link not available for this Skill Channel!";
                         return;
                     }
@@ -138,10 +144,10 @@
         modal.style.display = "block";
         document.getElementById('embed_Anchor_Id').innerHTML = "Click here";
         document.getElementById('embed_Anchor_Id').href = embedUrl;
-        
-        
 
-        
+
+
+
     }
     function closeAffindaEmbedUrlModel() {
         var model = document.getElementById("AffindaEmbedUrlModel");
