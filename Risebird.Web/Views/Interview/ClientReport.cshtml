@@ -122,11 +122,23 @@
                         {
                             <div class="pull-right">
                                 <div class="reportdropdown">
-                                    <button class="reportdropbtn">Report Quality Issue</button>
-                                    <div class="reportdropdown-content">
-                                        @*<button class="dropdown-btn" type="button" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport","Client", new { interviewId = Model.InterviewId, allowClientAction = true})">
+
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="padding:0px 4px;margin-right:5px;" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
                                             <text>Rate Interviewer</text>
-                                        </button>*@
+                                        </button>
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" type="button" style="padding:0px 5px;">
+                                        <span data-toggle="tooltip" data-placement="top" onclick="javascript:openHMLink('@Model.IRFId');" data-original-title="Tooltip on top"><text><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg> HM Instruction</text></span>
+                                        </button>
+                                        @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                                        {
+                                            <button class="dropdown-btn">
+                                                <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
+                                            </button>
+                                        }
+
+                                  @*  <button class="reportdropbtn">Report Quality Issue</button>
+                                    <div class="reportdropdown-content">
+                                      
                                         <button class="dropdown-btn" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
                                             <text>Rate Interviewer</text>
                                         </button>
@@ -139,24 +151,24 @@
                                                 <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
                                             </button>
                                         }
-                                    </div>
+                                    </div>*@
                                 </div>
                             </div>
                             @if (Model.IRFInterviewerActive)
                             {
-                                <div class="pull-right"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right"  value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
+                                <div class="pull-right"> <input style="background:green!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right"  value="ShortList Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Shortlisted')"></div>
 
-                                <div class="pull-right"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
+                                <div class="pull-right"> <input style="background:#e03030!important;margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Remove Interviewer" onclick="removeOrShortlistInterviewer('@Model.InterviewId', 'Rejected')"></div>
                             }
                         }
 
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External"))
                         {
-                            <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Generate PDF" onclick="getPDF()"></div>
+                            <div class="pull-right"> <input type="button" class="generate-pdf mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px" value="Generate PDF" onclick="getPDF()"></div>
                         }
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client")
                         {
-                            <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
+                            <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
                         }
                     </div>
                 </div>
@@ -176,16 +188,16 @@
                 <div class="row bl-bg" id="pdfdownload">
                     <div class="col-md-12">
                         <div class="mdc-card card bl-bg">
-                            <div class="mdc-card-wrapper__text-section">
+                            <div>
                               <div>  @if (!string.IsNullOrEmpty(Model.ClientAction))
                                 {
                                     if (Model.ClientAction == "Shortlisted")
                                     {
-                                            <span style="color:green; width: 100%;font-size:16px;background: #c9f6c9;padding: 2px;display: block; position: relative;top: -15px;text-align: center;font-weight:bold;">This interview has been shortlisted by the Client</span>
+                                            <span style="color:green; width: 100%;font-size:15px;background: #c9f6c9;padding: 2px;display: block; position: relative;top: 0px;text-align: center;font-weight:bold;    margin-bottom: 20px;">This interview is completed by the Interviewer shortlisted by you</span>
                                     }
                                     else if (Model.ClientAction == "Rejected")
                                     {
-                                            <span style="color: #e21c1c;width: 100%;font-size:16px;background: #f4433633;padding: 2px;display: block; position: relative;top: -15px;text-align: center;font-weight:bold;">This interview has been rejected by the Client</span>
+                                            <span style="color: #e21c1c;width: 100%;font-size:15px;background: #f4433633;padding: 2px;display: block; position: relative;top: 0px;text-align: center;font-weight:bold;    margin-bottom: 20px;">This interview is completed by the Interviewer shortlisted by you</span>
 
                                     }
 
