@@ -100,7 +100,7 @@
                 });
 
             }
-            else if ((alreadyProgrammaticallyGeneratedUrl != null && alreadyProgrammaticallyGeneratedUrl != '') && (alreadyGeneratedForIRFId == id) && urlCreationTimeElapsed == null) {
+            else if ((alreadyProgrammaticallyGeneratedUrl != null && alreadyProgrammaticallyGeneratedUrl != '') && (alreadyGeneratedForIRFId == id) && (urlCreationTimeElapsed == null || urlCreationTimeElapsed == '')) {
                 //generate for this
                 embedUrl = document.getElementById('hidden_EmbedUrl_Id').value
 
@@ -112,7 +112,7 @@
         else if (existingEmbedUrl != null && existingEmbedUrl != '') {
             embedUrl = existingEmbedUrl;
         }
-        else if (alreadyProgrammaticallyGeneratedUrl != null && alreadyProgrammaticallyGeneratedUrl != '' && (alreadyGeneratedForIRFId == id) && (urlCreationTimeElapsed)) {
+        else if (alreadyProgrammaticallyGeneratedUrl != null && alreadyProgrammaticallyGeneratedUrl != '' && (alreadyGeneratedForIRFId == id)) {
             embedUrl = document.getElementById('hidden_EmbedUrl_Id').value;
         }
         else {
