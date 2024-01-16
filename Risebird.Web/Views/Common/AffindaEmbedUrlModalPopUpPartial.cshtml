@@ -75,7 +75,7 @@
                 });
             
             }
-            if ((alreadyProgrammaticallyGeneratedUrl == null || alreadyProgrammaticallyGeneratedUrl == '') && urlCreationTimeElapsed > 50) {
+            else if ((alreadyProgrammaticallyGeneratedUrl == null || alreadyProgrammaticallyGeneratedUrl == '') && urlCreationTimeElapsed > 50) {
                 //generate for this
                 $.ajax({
                     type: "POST",
@@ -99,6 +99,14 @@
                     }
                 });
 
+            }
+            else if ((alreadyProgrammaticallyGeneratedUrl != null && alreadyProgrammaticallyGeneratedUrl != '') && (alreadyGeneratedForIRFId == id) && urlCreationTimeElapsed == null) {
+                //generate for this
+                embedUrl = document.getElementById('hidden_EmbedUrl_Id').value
+
+            }
+            else { 
+                embedUrl = existingEmbedUrl;
             }
         }
         else if (existingEmbedUrl != null && existingEmbedUrl != '' ) {
