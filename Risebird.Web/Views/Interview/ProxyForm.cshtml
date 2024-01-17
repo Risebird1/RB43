@@ -667,11 +667,7 @@
     }
     function SaveReportvalues() {
         closeProxyModel();
-        if (document.getElementById("isProxyCandidate").checked) {
-            $("#Proctoring_isProxyCandidate").val(true);
-        } else {
-            $("#Proctoring_isProxyCandidate").val(false);
-        }
+        $("#Proctoring_isProxyCandidate").val(true);
         $("#Proctoring_EyeMovement").val($("#EyeMovement").val());
         $("#Proctoring_LipsMovement").val($("#LipsMovement").val());
         $("#Proctoring_CandidateDesktop").val($("#CandidateDesktop").val());
