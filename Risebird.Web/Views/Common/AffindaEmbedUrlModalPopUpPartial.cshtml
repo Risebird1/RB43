@@ -15,7 +15,7 @@
 
                 </div>
 
-                <h5 class="modal-title pull-left"><span class="popup-text" id="embed_id_title"></span></h5>
+                <h5 class="modal-title pull-left" style="tetx-transform:none;">Search And Match Link for <span style="color:#159241" id="embed_id_title"></span></h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeAffindaEmbedUrlModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
@@ -45,7 +45,7 @@
     function openEmbedUrlPopUp(id, skillChannelName, existingEmbedUrl = null, urlCreationTimeElapsed = null) {
         //document.getElementById('embed_Anchor_Id').href = "";
         document.getElementById('embed_Anchor_Id').innerHTML = "";
-        document.getElementById('embed_id_title').innerHTML = 'Search And Match Link for ' + skillChannelName;
+        document.getElementById('embed_id_title').innerHTML = ': ' + skillChannelName;
         var alreadyProgrammaticallyGeneratedUrl = document.getElementById('hidden_EmbedUrl_Id').value;
         var alreadyGeneratedForIRFId = document.getElementById('hidden_SkillChannel_Id').value;
         var embedUrl='';

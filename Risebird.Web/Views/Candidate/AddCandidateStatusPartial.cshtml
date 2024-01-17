@@ -66,8 +66,8 @@
 
                 </div>
 
-                <div class="form-group">
-                    <div>
+                <div class="modal-footer" >
+                    <div class="w-full text-right">
                         <div class="col-md-12 col-sm-12">
                             <input type="button" onclick="SaveCandidateStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
                         </div>
@@ -143,7 +143,7 @@
     function SaveCandidateStatus() {
 
         var comment = document.getElementById("idComments").value;
-        var audio_file = $("#idAudioFile")[0].files[0];
+       // var audio_file = $("#idAudioFile")[0].files[0];
         var statusValue = document.getElementById("statusDrpDwn").value;
 
 
@@ -151,7 +151,7 @@
         formdata.append('irfId', irfStatusId);
         formdata.append('candidateId', candidateStatusId);
         formdata.append('comment', comment);
-        formdata.append('audio_file', audio_file);
+      // formdata.append('audio_file', audio_file);
         formdata.append('status', statusValue);
         formdata.append('candidateName', candidateStatusName);
         formdata.append('irfName', irfStatusName);
