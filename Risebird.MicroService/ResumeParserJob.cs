@@ -112,7 +112,7 @@ namespace Risebird.MicroService
                             else
                             {
                                 //mark it as cant be parsed in the database
-                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false });
+                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = true, IsResumeParsingFailed = false });
                                 continue;
                             }
                             if (documentData.data.phoneNumberDetails != null && documentData.data.phoneNumberDetails.Count() > 0)
