@@ -7741,6 +7741,37 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<bool> UpdateAffindaIndexFlag(string irfId, bool isIndexCreated)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@irfId ", irfId);
+                        parameters.Add("@isIndexCreated ", isIndexCreated);
+                        var result = await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_UpdateAffindaIndexFlag", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
 

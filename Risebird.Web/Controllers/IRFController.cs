@@ -877,7 +877,10 @@ namespace Risebird.Web.Controllers
                         {
                             //create an index with the same name as that of this skill channel in affinda for using the search and match tool
 
-                            await _affIndaResumeParserHelper.CreateIndex(irfDetails.IRFId);
+                            var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(irfDetails.IRFId);
+                            
+                            await _irfService.UpdateAffindaIndexFlag(irfDetails.IRFId, isIndexCreated);
+
 
                             //call fire and forget method here to send emails and whatsapp for availability
                             FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId, irfDetails.JDTiltle);
@@ -2090,6 +2093,10 @@ namespace Risebird.Web.Controllers
                             model.id = 0;
                             if (_irfService.AddIRFDetails(model, emailId, domain).Result)
                             {
+                                var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(model.IRFId);
+
+                                await _irfService.UpdateAffindaIndexFlag(model.IRFId, isIndexCreated);
+
                                 TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
