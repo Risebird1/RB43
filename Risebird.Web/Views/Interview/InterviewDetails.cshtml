@@ -16,24 +16,14 @@
 </script>
 
 <input type="hidden" value="@ViewBag.id" id="id" />
-<div class="calling-area">
-    <span><img src="/img/note.png" width="20"> Talking anything <b>personal</b> or <b>suspicious</b> with the candidate shall result in strict legal action</span>
-</div>
-<div class="interviewWrapper">
-    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-        <div class="calling">
-            <h1> Call the candidate</h1> <span class="calling-icon" aria-label="Click here to call the candidate">
-                <span onclick="CommonCallButtonClick('@Model.candidateName','@Model.MobileNumber', 'Candidate','@Model.id', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="16"></span>
-            </span>
-        </div>
 
-    </div>
+<div class="interviewWrapper">
+
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="heading-txt">
             Review the below client instructions to get the meeting link<br />
-            <span>Below zoom meeting link will be activated after you have clicked on all instructions</span><br />
 
-            <span style="font-weight:bold; color: #8b8bcd;font-size: 15px;">Always Use Virtual Background while keeping your Video On</span>
+            <span style="font-weight:normal; color: #8b8bcd;font-size: 18px; line-height: 36px;">Always Use Virtual Background while keeping your Video On</span>
         </div>
         <div class="card" style="margin-bottom:10px;">
 
@@ -69,8 +59,8 @@
         <div class="card" style="margin-bottom:10px;">
             <label class="question" for="checkbox_nine">
                 <label for="checkbox_nine">
-                    <i class="fa fa-cogs" aria-hidden="true"></i>
-                      Sample Questions: <label style="font-size:14px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Treat below questions as sample to understand client expectations, actual questions should be asked as per the difficulty level set</label>
+                    <i class="fa fa-question-circle-o" aria-hidden="true" style="font-size:24px;position:relative;top:1px;"></i>
+                      Sample Questions: <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Treat below questions as sample to understand client expectations, actual questions should be asked as per the difficulty level set</label>
                 </label>
                 <span class="round">
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
@@ -343,7 +333,7 @@
             <label class="question" for="checkbox_seven">
                 <label for="checkbox_seven">
                     <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                    Text Instruction - <span style="font-size:14px; text-transform:capitalize; font-weight:normal;color: #a29c9c;">Critical Question &amp; Concepts, Candidate Feedback</span>
+                    Text Instruction - <span style="font-size:12.2px; text-transform:capitalize; font-weight:normal;color: #a29c9c;">Critical Question &amp; Concepts, Candidate Feedback</span>
                 </label>
                 <span class="round">
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />

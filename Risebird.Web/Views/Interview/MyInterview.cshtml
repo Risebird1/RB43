@@ -449,38 +449,59 @@
                                                                
                                                                
                                                                 <td>
-                                                                    <div class="myInterview" style="display:flex">
+                                                                    <div class="myInterview">
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
                                                                     @if (item.candidateName.Length > 15)
-                                                                    {
+                                                                    {<div style="width:100%;float:left">
                                                                         <span class="cadName pull-left">
                                                                             <a  data-tooltip="@item.candidateName"><span class="name-field"> @item.candidateName.Substring(0,15)...</span> </a>
-                                                                        </span><span class="pull-left">
+                                                                        </span>
+                                                                        <span class="pull-left">
 
 
                                                                                 <p class="text-left">
                                                                                     <a class="pskill">(@item.JDTiltle)</a>
                                                                                 </p>
                                                                         </span>
+                                                                                </div>
+
+                                                                                <div style="width:100%;float:left;margin:10px 0px;">
+                                                                                <span class="call-area">
+                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.id')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
+                                                                                    }
+                                                                                </span>
+                                                                                @item.MobileNumber</div>
                                                                     }
                                                                     else
-                                                                    {
+                                                                            {
+                                                                                <div style="width:100%;float:left">
                                                                         <span class="cadName pull-left">
                                                                             <a data-tooltip="@item.candidateName"><span class="name-field"> @item.candidateName</span> </a>
-                                                                        </span><span class="pull-left">
+                                                                        </span>
+                                                                        <span class="pull-left">
 
 
                                                                                 <p class="text-left">
                                                                                     <a class="pskill">(@item.JDTiltle)</a>
                                                                                 </p>
-                                                                        </span>
+                                                                        </span></div> <div style="width:100%;float:left;margin:10px 0px;">
+                                                                                <span class="call-area">
+                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.id')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
+                                                                                    }
+                                                                                </span>
+                                                                                @item.MobileNumber</div>
                                                                     }
                                                                 }
                                                                 else
                                                                 {
                                                                     <span></span>
                                                                 }
+                                                                    
                                                                 </div>
                                                                     <div style="padding:10px 0px;color:#078706;font-weight:bold;"><span style="font-weight:normal">Client Name : </span>@item.ClientName</div>
                                                                     <div class="myInterview">

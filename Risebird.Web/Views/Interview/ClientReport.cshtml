@@ -168,7 +168,7 @@
                         }
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client")
                         {
-                            <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" value="Generate Secure Public URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
+                            <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 5px;padding:0px 5px;" value="Generate Secure URL" onclick="GenerateSecureUrl('@Model.InterviewId','@Model.IRFId')"></div>
                         }
                     </div>
                 </div>
