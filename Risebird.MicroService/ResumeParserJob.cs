@@ -66,7 +66,7 @@ namespace Risebird.MicroService
                 foreach (var resume in resumeList)
                 {
                     // call the api for each of those resumes, return a candidate
-                    var candidateData = await _affIndaResumeParserHelper.UploadAndParseResume(resume.ResumeLink, resume.SkillChannelName);
+                    var candidateData = await _affIndaResumeParserHelper.UploadAndParseResume(resume.ResumeLink, resume.SkillChannelName, resume.IsAffindaIndexCreated);
 
                     try
                     {

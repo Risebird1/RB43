@@ -509,9 +509,9 @@
                                                             <td onclick="openInterviewManagement('@item')" style="cursor:pointer">
                                                                 <strong>
                                                                     @* @Model.InterviewManagement.Where(x => x.interviewDate == item).Count() / *@
-                                                                    @Model.InterviewManagement.Where(x => x.interviewDate == item && x.IsMeetingNotificationSent == 1).Count() /
+                                                                    @Model.InterviewManagement.Where(x => x.interviewDate == item && x.IsMeetingNotificationSent == 1 && x.PerformedOn != null).Count() /
                                                                     <span style="color:green"> @Model.InterviewManagement.Where(x => x.interviewDate == item && x.TotalCount >= 2 && x.IsMeetingNotificationSent == 1 && x.Joinedon != null && x.PerformedOn != null && x.IsRescheduleNotificationSent == 0).Count()</span> /
-                                                                    <span style="color:red">@Model.InterviewManagement.Where(x => x.interviewDate == item && ((x.TotalCount == 1 && x.IsMeetingNotificationSent == 1) || (x.TotalCount >= 2 && x.IsMeetingNotificationSent == 1 && x.IsRescheduleNotificationSent == 1) || (x.IsMeetingNotificationSent == 1 && x.Joinedon != null && x.PerformedOn == null))).Count()</span>
+                                                                    <span style="color:red">@Model.InterviewManagement.Where(x => x.interviewDate == item && x.PerformedOn != null && ((x.TotalCount == 1 && x.IsMeetingNotificationSent == 1) || (x.TotalCount >= 2 && x.IsMeetingNotificationSent == 1 && x.IsRescheduleNotificationSent == 1) || (x.IsMeetingNotificationSent == 1 && x.Joinedon == null))).Count()</span>
                                                                 </strong>
                                                             </td>
                                                         </tr>
@@ -1180,11 +1180,11 @@
     @*//var meetingsData = '@Model.MeetingsData';*@
             //meetingsData= JSON.parse(meetingsData.replace(/&quot;/g, '"'));
     @*//var meetingsDataLabels = '@Model.MeetingsDataLabels';*@
-                                                                                                                    //meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
-                                                                                                                    //UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
+                                                                                                                        //meetingsDataLabels = JSON.parse(meetingsDataLabels.replace(/&quot;/g, '"'));
+                                                                                                                        //UpdateInterviewTrackingGraph(meetingsData, meetingsDataLabels);
 
 
-                                                                                                                    var interviewerCountObj = [{ y: @Model.InterviewerCountObj.ApprovedCount, label: "Approved" },
+                                                                                                                        var interviewerCountObj = [{ y: @Model.InterviewerCountObj.ApprovedCount, label: "Approved" },
         { y: @Model.InterviewerCountObj.UnapprovedCount, label: "Unapproved" }]
 
         var chart = new CanvasJS.Chart("interviewers", {
@@ -1249,26 +1249,26 @@
             { y: @Model.CandidatesCountObj.Pending, label: "Pending" }]*@
 
 
-                                                                                                                    //var chart = new CanvasJS.Chart("candidatesPieId", {
-                                                                                                                    //   theme: "light2",
-                                                                                                                    //    width: 350,//in pixels
-                                                                                                                    //    height: 200,//in pixels
-                                                                                                                    //    animationEnabled: true,
-                                                                                                                    //    title: null,
-                                                                                                                    //    data: [{
-                                                                                                                    //        type: "pie",
-                                                                                                                    //        startAngle: 60,
-                                                                                                                    //        innerRadius: 55,
-                                                                                                                    //        indexLabelFontSize: 15,
-                                                                                                                    //        indexLabelFontColor: "#9a9a9a",
-                                                                                                                    //        indexLabel: "{label}  {y}",
-                                                                                                                    //        toolTipContent: "<b>{label} </b>({y})",
+                                                                                                                        //var chart = new CanvasJS.Chart("candidatesPieId", {
+                                                                                                                        //   theme: "light2",
+                                                                                                                        //    width: 350,//in pixels
+                                                                                                                        //    height: 200,//in pixels
+                                                                                                                        //    animationEnabled: true,
+                                                                                                                        //    title: null,
+                                                                                                                        //    data: [{
+                                                                                                                        //        type: "pie",
+                                                                                                                        //        startAngle: 60,
+                                                                                                                        //        innerRadius: 55,
+                                                                                                                        //        indexLabelFontSize: 15,
+                                                                                                                        //        indexLabelFontColor: "#9a9a9a",
+                                                                                                                        //        indexLabel: "{label}  {y}",
+                                                                                                                        //        toolTipContent: "<b>{label} </b>({y})",
 
-                                                                                                                    //        dataPoints: candidateCountObj
-                                                                                                                    //    }]
-                                                                                                                    //});
-                                                                                                                   // chart.render();
-                                                                                                                });
+                                                                                                                        //        dataPoints: candidateCountObj
+                                                                                                                        //    }]
+                                                                                                                        //});
+                                                                                                                       // chart.render();
+                                                                                                                    });
 
 </script>
 <script>
