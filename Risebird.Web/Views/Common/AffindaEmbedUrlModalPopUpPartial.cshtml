@@ -8,27 +8,29 @@
             <div class="filheader">
                 <div class="filavatar">
                     <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
-                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z" />
-                        </svg>
+                    <i class="fa fa-user" style="color: white;font-size: 20px;position: relative;left: -5px;"></i> <i class="fa fa-search" style="color: white;font-size: 13px;position: relative;top: -30px;left: 11px;"></i>
                     </span>
 
                 </div>
 
-                <h5 class="modal-title pull-left"><span class="popup-text" id="embed_id_title"></span></h5>
+                <h5 class="modal-title pull-left" style="text-transform:none;">Search And Match Link for <span style="color:#159241" id="embed_id_title"></span></h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeAffindaEmbedUrlModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
 
             <div class="modal-body">
-                <div style="padding:10px" id="divEmbedUrlBody">
-                    <a id="embed_Anchor_Id" target="_blank">Click here</a>
+                <div style="padding: 0px 0px 10px 0px;text-align: center;margin-top: 10px;" id="divEmbedUrlBody">
+                 @*   <a id="embed_Anchor_Id" target="_blank" class="approve">
+               <span class="fa fa-check approve-icon"></span><span class="approve-txt">CLICK HERE</span>
+            </a>*@
+
+                 <a id="embed_Anchor_Id" target="_blank" style="background: #a69187eb; padding: 8px 20px;display: inline-block; width: auto;  margin: 0px auto; border-radius: 3px;text-decoration: none;font-size: 14px;color:#fff!important"> <span class="fa fa-check approve-icon"></span><span class="approve-txt"> <i class="fa fa-user" style="color: white;font-size: 20px;position: relative;left: -5px;"></i>CLICK TO FIND CANDIDATE MATCH</span></a>
                 </div>
                 <div>
                     <div class="col-md-12 text-right">
-                        <div>
-                            <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeAffindaEmbedUrlModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                        <div style=" border-top: 1px #cccccc91 solid;padding: 10px 0px; margin: 10px 0px 0px 0px;">
+                            <div style="display: inline-block !important;margin-bottom: 0px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeAffindaEmbedUrlModel()" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
                         </div>
                     </div>
                 </div>
@@ -45,7 +47,7 @@
     function openEmbedUrlPopUp(id, skillChannelName, existingEmbedUrl = null, urlCreationTimeElapsed = null) {
         //document.getElementById('embed_Anchor_Id').href = "";
         document.getElementById('embed_Anchor_Id').innerHTML = "";
-        document.getElementById('embed_id_title').innerHTML = 'Search And Match Link for ' + skillChannelName;
+        document.getElementById('embed_id_title').innerHTML = ': ' + skillChannelName;
         var alreadyProgrammaticallyGeneratedUrl = document.getElementById('hidden_EmbedUrl_Id').value;
         var alreadyGeneratedForIRFId = document.getElementById('hidden_SkillChannel_Id').value;
         var embedUrl = '';
@@ -142,7 +144,7 @@
         var modal = document.getElementById("AffindaEmbedUrlModel");
         //$("#embed_id_title").text('Search And Match Link for ' + skillChannelName);
         modal.style.display = "block";
-        document.getElementById('embed_Anchor_Id').innerHTML = "Click here";
+        document.getElementById('embed_Anchor_Id').innerHTML = "Click to find Candidate Match";
         document.getElementById('embed_Anchor_Id').href = embedUrl;
 
 

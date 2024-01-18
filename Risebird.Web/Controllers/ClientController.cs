@@ -3926,8 +3926,8 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 7].Value = "IRF ID";
                 Sheet.Cells[1, 8].Value = "Resume";
                 Sheet.Cells[1, 9].Value = "Client HR";
-                Sheet.Cells[1, 10].Value = "Job Country";
-                Sheet.Cells[1, 11].Value = "Channel Owner";
+                Sheet.Cells[1, 10].Value = "Channel Owner";
+              
                 int i = 2;
                 if (meetings.Count() > 0)
                 {
@@ -3966,7 +3966,6 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 8].Value = "No Resume";
                         }
                         Sheet.Cells[i, 9].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 10].Value = item.JobCountry;
                         Sheet.Cells[i, 10].Value = item.ChannelOwner;
                         i++;
                     }

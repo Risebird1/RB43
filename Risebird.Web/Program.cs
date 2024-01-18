@@ -222,6 +222,9 @@ app.UseCsp(builder =>
            .Allow("https://widget.freshworks.com/")
            .Allow("https://clientcdn.pushengage.com/")
            .Allow("https://web-sdk.pushengage.com/")
+           .Allow("https://clients-api.pushengage.com/")
+           .Allow("https://notify.pushengage.com/")
+           .Allow("https://portal.risebird.io/")
            .Allow("'unsafe-inline'");
 
     builder.Scripts
@@ -262,6 +265,9 @@ app.UseCsp(builder =>
            .Allow("https://cdn.canvasjs.com/")
            .Allow("https://clientcdn.pushengage.com/")
            .Allow("https://web-sdk.pushengage.com/")
+           .Allow("https://clients-api.pushengage.com/")
+           .Allow("https://notify.pushengage.com/")
+           .Allow("https://portal.risebird.io/")
            .Allow("blob:")
            .Allow("'unsafe-eval'")
            .Allow("'unsafe-inline'");
@@ -287,6 +293,8 @@ app.UseCsp(builder =>
            .Allow("https://fw-cdn.com/")
            .Allow("https://clientcdn.pushengage.com/")
            .Allow("https://web-sdk.pushengage.com/")
+           .Allow("https://clients-api.pushengage.com/")
+           .Allow("https://notify.pushengage.com/")
            //.Allow("https://widget.freshworks.com/widgetBase/static/media/frame.d7ae132c.css")
            .Allow("'unsafe-inline'");
 
@@ -307,6 +315,8 @@ app.UseCsp(builder =>
            .Allow("https://widget.freshworks.com/")
            .Allow("https://clientcdn.pushengage.com/")
            .Allow("https://web-sdk.pushengage.com/")
+           .Allow("https://clients-api.pushengage.com/")
+           .Allow("https://notify.pushengage.com/")
            .Allow("'unsafe-inline'");
 
     builder.Images
@@ -327,6 +337,8 @@ app.UseCsp(builder =>
            .Allow("https://widget.freshworks.com/")
            .Allow("https://clientcdn.pushengage.com/")
            .Allow("https://web-sdk.pushengage.com/")
+           .Allow("https://clients-api.pushengage.com/")
+           .Allow("https://notify.pushengage.com/")
            .Allow("data:")
            .Allow("'unsafe-inline'");
 
@@ -345,6 +357,8 @@ app.UseCsp(builder =>
            .Allow("https://qa.portal.risebird.io/")
            .Allow("https://clientcdn.pushengage.com/")
            .Allow("https://web-sdk.pushengage.com/")
+           .Allow("https://clients-api.pushengage.com/")
+           .Allow("https://notify.pushengage.com/")
            .Allow("blob:");
 
     builder.Frame
@@ -360,6 +374,9 @@ app.UseCsp(builder =>
            .Allow("https://clientcdn.pushengage.com/")
            .Allow("https://web-sdk.pushengage.com/")
            //.Allow("https://portal.risebird.io/")
+           .Allow("https://clients-api.pushengage.com/")
+           .Allow("https://notify.pushengage.com/")
+           .Allow("https://portal.risebird.io/")
            .Allow("*.webpush.freshchat.com/")
            .Allow("data:");
     //builder.Object

@@ -13,6 +13,7 @@
     meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
     var interviewStatusList = new List<SelectListItem>();
     var hasDistinctParticipants = Model.HasDistinctParticipants;
+
     bool? isClient = ViewBag.IsClient as bool?;
     bool? isClientSelected = ViewBag.IsClientSelected as bool?;
 }

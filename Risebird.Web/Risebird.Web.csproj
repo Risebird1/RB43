@@ -61,6 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\js\pushengage-files\service-worker.js" />
     <None Include="wwwroot\Newassets\css\bootstrap.min.css.map" />
     <None Include="wwwroot\Newassets\css\now-ui-dashboard.css.map" />
     <None Include="wwwroot\Newassets\demo\demo.js" />

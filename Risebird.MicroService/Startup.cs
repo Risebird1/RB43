@@ -134,6 +134,8 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IGoogleEventHelper, GoogleEventHelper>();
             builder.Services.AddScoped<IAffIndaResumeParserHelper, AffIndaResumeParserHelper>();
             builder.Services.AddScoped<IEncryptionHelper, EncryptionHelper>();
+            builder.Services.AddScoped<IAzureStorageRepository, AzureStorageRepository>();
+            builder.Services.AddScoped<IAzureStorageService, AzureStorageService>();
         }
 
 

@@ -8498,9 +8498,16 @@ option {
     color: #FFF !important;
     font-size: 17px !important;
 }
-    /***** Media queries *****/
-    @media only screen and (min-width: 1920px) {
-        .rbpay .sb-scrollbar {
+.clicks {
+    background: red;
+    padding: 10px 40px;
+    display: inline-block;
+    width: auto;
+    margin: 0px auto;
+}
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
             position: absolute;
             right: -6px !important;
         }

@@ -22,7 +22,7 @@ namespace Risebird.CommonHelper
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public async Task<Tuple<string, string>> UploadAndParseResume(string fileUrl = null, string skillChannelName = null)
+        public async Task<Tuple<string, string>> UploadAndParseResume(string fileUrl = null, string skillChannelName = null, bool? isAffindaIndexCreated = null)
         {
             try
             {
@@ -92,7 +92,11 @@ namespace Risebird.CommonHelper
 
                     identifier = responseObj.meta.identifier;
 
-                    await IndexADocument(responseObj.meta.identifier, skillChannelName);
+                    if(isAffindaIndexCreated.HasValue && isAffindaIndexCreated.Value == true)
+                    {
+                        await IndexADocument(responseObj.meta.identifier, skillChannelName);
+
+                    }
 
                     result = body;
                 }
