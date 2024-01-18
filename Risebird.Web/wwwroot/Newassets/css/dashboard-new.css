@@ -6433,6 +6433,9 @@ input[type="date"].form-control {
 .clarity {
     background: #25bd6a8a;
 }
+.mail {
+    background: #4fae53;
+}
 
 .report-pending {
     background: #3bb5a0;
