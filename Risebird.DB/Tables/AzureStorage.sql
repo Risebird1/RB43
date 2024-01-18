@@ -1,0 +1,18 @@
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'AzureStorage')
+BEGIN 
+CREATE TABLE [dbo].[AzureStorage](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Container] [varchar](200) NULL,
+	[MemorySpace] [int] NULL,
+	[Price] [int] NULL,
+	[CreatedAt] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+

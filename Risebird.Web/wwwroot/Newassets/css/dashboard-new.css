@@ -7987,7 +7987,7 @@ ul.ks-cboxtags {
     width: 1000px;
     left: 40px;
     display: block;
-    margin: 30px auto;
+    margin: 10px auto 30px auto;
     padding: 0px;
 }
 
@@ -8229,7 +8229,10 @@ option {
     .interviewWrapper .heading-txt span {
         color: #c2b5b5;
         font-weight: 300;
-        font-size: 18px;
+        font-size: 17px;
+        line-height: 23px;
+        padding: 10px 0px 0px 0px;
+        display: inline-block;
     }
 
 .expand-panel .fas {
@@ -8425,7 +8428,7 @@ option {
 .calling-area {
     background: #eee4e4;
     font-size: 15px;
-    padding: 10px 100px;
+    padding: 8px 100px;
     color: #cb2c2c;
     text-align:center;
 }
@@ -8434,7 +8437,7 @@ option {
     }
     .calling {
         position: absolute;
-        top: -65px;
+        top: -43px;
         right: 30px;
     }
 .calling h1 {
@@ -8495,9 +8498,16 @@ option {
     color: #FFF !important;
     font-size: 17px !important;
 }
-    /***** Media queries *****/
-    @media only screen and (min-width: 1920px) {
-        .rbpay .sb-scrollbar {
+.clicks {
+    background: red;
+    padding: 10px 40px;
+    display: inline-block;
+    width: auto;
+    margin: 0px auto;
+}
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
             position: absolute;
             right: -6px !important;
         }

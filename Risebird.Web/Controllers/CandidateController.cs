@@ -5029,5 +5029,10 @@ namespace Risebird.Web.Controllers
             var model = new CandidateIRFDetailsVM();
             return View(model);
         }
+        public async Task<IActionResult> Test1(string id, int IRFId)
+        {
+            var model = new CandidateIRFDetailsVM();
+            return View(model);
+        }
     }
 }
