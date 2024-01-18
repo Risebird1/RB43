@@ -111,7 +111,6 @@ namespace Risebird.Web.Controllers
                         foreach (var item in interviewmanagement)
                         {
                             item.interviewDate = item.interviewDate.Date;
-                            item.orginaldate = item.interviewDate.Date;
                         }
                         model.InterviewManagement = interviewmanagement;
                         return View(model);
@@ -2573,6 +2572,7 @@ namespace Risebird.Web.Controllers
                     startdate = Convert.ToDateTime(interviewdate);
                 }
                 enddate = startdate.AddDays(1);
+                ViewBag.interviewdate = interviewdate;
                 if (HttpContext.Session.GetString("EmergencyInterviewDetailsfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("EmergencyInterviewDetailsfilters"));
@@ -2583,7 +2583,7 @@ namespace Risebird.Web.Controllers
                 if (type == "InterviewM")
                 {
                     ViewBag.Type = "InterviewM";
-                    interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 1).ToList();
+                    interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 1 && x.PerformedOn != null).ToList();
                 }
                 else
                 {
