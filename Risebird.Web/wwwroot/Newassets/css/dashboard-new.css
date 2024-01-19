@@ -8035,7 +8035,7 @@ ul.ks-cboxtags {
 .round {
     position: relative;
     float: right;
-    right: 30px;
+    right: 25px;
 }
 
     .round label {
@@ -8219,7 +8219,7 @@ option {
 
 .interviewWrapper .heading-txt {
     text-align: center;
-    margin: 0px 0px 20px 0px;
+    margin: 15px 0px 20px 0px;
     font-size: 20px;
     color: grey;
     line-height: 15px;
@@ -8239,7 +8239,7 @@ option {
     font-size: 16px;
     position: relative;
     top: 12px;
-    right: -18px;
+    right: -10px;
 }
 
 .collapsible-panel {

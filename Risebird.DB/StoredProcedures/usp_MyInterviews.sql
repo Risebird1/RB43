@@ -14,7 +14,7 @@ Create PROCEDURE [dbo].[usp_MyInterviews]
 @type varchar(30) = null,  
 @timeNow datetime  
 AS                  
-BEGIN            
+BEGIN  
         
 declare @emailIDParam varchar(200)        
 set @emailIDParam=@emailID        
@@ -47,8 +47,8 @@ left join UserList uli on uli.Emailid=im.interviewer
 left join [dbo].[TransInterviewer] tirf on IRF.id =tirf.IRFId and tirf.UserId=uli.id      
 left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType
 where interviewer = @emailIDParam and ((@type is null and im.confirmationStatus = 1) or  
-(@type = 'Pending' and ir.id is null and dateadd(MINUTE, 60, im.interviewDate) < @timeNow and im.confirmationStatus = 1) or   --(dateadd(MINUTE, im.interviewDuration, im.interviewDate) < @timeNow  or (@timeNow >= im.interviewDate  and  @timeNow <= dateadd(MINUTE, im.interviewDuration, im.interviewDate)))
-(@type = 'Completed' and @timeNow >= im.interviewDate  and ir.id is not null and im.confirmationStatus = 1) or   
+(@type = 'Pending' and ir.id is null and dateadd(day, -7, im.interviewDate) <= @timeNow and im.confirmationStatus = 1) or   --(dateadd(MINUTE, im.interviewDuration, im.interviewDate) < @timeNow  or (@timeNow >= im.interviewDate  and  @timeNow <= dateadd(MINUTE, im.interviewDuration, im.interviewDate)))
+(@type = 'Completed' and dateadd(day, -7, im.interviewDate) <= @timeNow  and ir.id is not null and im.confirmationStatus = 1) or   
 (@type = 'Upcoming' and dateadd(MINUTE, 60, im.interviewDate) >= @timeNow and im.confirmationStatus = 1 and ir.id is null) or  --im.interviewDate > @timeNow 
 (@type = 'Cancelled' and cast(im.interviewDate as date) = cast( @timeNow as date) and im.confirmationStatus = 2))                    
                       

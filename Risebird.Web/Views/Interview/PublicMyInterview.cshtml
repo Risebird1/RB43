@@ -1,0 +1,531 @@
+﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+
+@{
+    ViewData["Title"] = "My Interviews";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+<script>
+    var Header = "<div id='myinterview_1'>My Interviews</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+
+<input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
+<input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
+<input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
+
+<link href="~/css/SidePanel/reset.css" rel="stylesheet" /><!-- CSS reset -->
+<link href="~/css/SidePanel/panelMain.css" rel="stylesheet" /><!-- Panel style -->
+<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
+<div id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                </div>
+                <div class="col-md-4 pull-left">
+                    <div class="pull-left myinterview">
+                        <div class="mobile-view"> <h4 class="card-title"> My Interviews</h4></div>
+                    </div>
+                </div>
+                <div class="col-md-12 pull-right">
+                    <div>
+                        <div>
+                            <div class="myInterview">
+                                <div class="pull-left" style="margin-left:10px">
+                                    <div class="filtercon">
+                                        <div id="myinterview_3">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content client ">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                        </div>
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div>
+                                <div class="note-meeting text-left"> <b style="color:green">Note: To join the meeting click on Meeting Link and always use your Coded Name </b><b style="color:red">(@ViewBag.CodedName)</b></div>
+                                <div id="tableID" class="second">
+                                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                        <div class="col-sm-12 col-md-6">
+                                        </div>
+                                        <div class="pull-right client-ms" style="margin:0px 10px 10px 10px;">
+                                        </div>
+
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12 nopad">
+                                            <div id="id_interviewListData" style="overflow-x:auto;overflow-y:hidden">
+                                                <table id="MyInterviewList" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th id="myinterview_4">Candidate Details</th>
+                                                            <th style="border-left: 0px !important;">Interview Date </th>
+                                                            <th id="myinterview_6">Resume</th>
+                                                            <th>Interview Price</th>
+                                                            <th>Minimum Duration</th>
+                                                            <th class="disabled-sorting text-left">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Candidate Details</th>
+                                                            <th style="border-left: 0px !important;width:12%">Interview Date</th>
+                                                            <th>Resume</th>
+                                                            <th>Interview Price</th>
+                                                            <th>Minimum Duration</th>
+                                                            <th class="disabled-sorting text-left">Actions</th>
+                                                        </tr>
+
+                                                    </tfoot>
+                                                    <tbody id="tblbodyMyInterview">
+                                                        @if (Model.Count() == 0)
+                                                        {
+                                                            <tr>
+                                                                <td colspan="12" class="text-center">No data available in table</td>
+                                                            </tr>
+                                                        }
+
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                                            <tr id=@item.id>
+                                                                <td>
+                                                                    <div class="myInterview" style="display:flex">
+                                                                        @if (item.candidateName != null && item.candidateName != "")
+                                                                        {
+                                                                            @if (item.candidateName.Length > 15)
+                                                                            {
+                                                                                <span class="cadName pull-left">
+                                                                                    <a data-tooltip="@item.candidateName"><span class="name-field"> @item.candidateName.Substring(0, 15)...</span> </a>
+                                                                                </span>
+                                                                                <span class="pull-left">
+                                                                                    <p class="text-left">
+                                                                                        <a class="pskill">(@item.JDTiltle)</a>
+                                                                                    </p>
+                                                                                </span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="cadName pull-left">
+                                                                                    <a data-tooltip="@item.candidateName"><span class="name-field"> @item.candidateName</span> </a>
+                                                                                </span>
+
+                                                                                <span class="pull-left">
+
+
+                                                                                    <p class="text-left">
+                                                                                        <a class="pskill">(@item.JDTiltle)</a>
+                                                                                    </p>
+                                                                                </span>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span></span>
+                                                                        }
+                                                                    </div>
+                                                                    <div style="padding:10px 0px;color:#078706;font-weight:bold;"><span style="font-weight:normal">Client Name : </span>@item.ClientName</div>
+                                                                    <div class="myInterview">
+                                                                        <button type="button" class="clickhere_btn pull-left" style="margin:0px 0px 0px 5px;padding: 5px 8px;">
+                                                                            <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">JD-Skills</font></span>
+                                                                        </button>
+                                                                        <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="int-datetime"> @item.interviewDate</div>
+                                                                </td>
+
+                                                                @if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.CandidateCodedResumeLink != null && item.CandidateCodedResumeLink != "")
+                                                                {
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.CandidateCodedResumeLink>Resume</a> </td>
+                                                                }
+                                                                else if (item.interviewDate <= DateTime.Now && item.interviewDate.AddMinutes(Convert.ToInt16(item.interviewDuration ?? "60")) >= DateTime.Now && item.resumeLink != null && item.resumeLink != "")
+                                                                {
+                                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No Resume</td>
+                                                                }
+                                                                <td style="font-size:16px;color: chocolate;font-weight: 600">₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
+
+                                                                <td><strong>@item.MaxInterviewDuration Min.</strong></td>
+                                                                <td class="text-left">
+                                                                    @if (item.interviewDate.Date >= DateTime.Now.Date)
+                                                                    {
+                                                                        <div class="btn btn-unassign shadow btn-xs sharp me-1">
+                                                                            <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="Unassign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                                        </div>
+                                                                    }
+
+                                                                    <div class="btn btn-comment shadow btn-xs sharp me-1">
+                                                                        <span onclick="ConfirmAvailable('@item.id','Yes')" title="Available Confirm" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="modal_clientComment_placeholder"></div>
+
+                @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+                <!-- end row -->
+            </div>
+
+        </div>
+    </div>
+
+    <div id="PublicShareVideo" class="modal modal-bg">
+        @if (ViewBag.PageType == "Public")
+        {
+            <div class="blk-bg"></div>
+        }
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span><svg class="publicsharing-icon" width="25" height="25" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="rgb(255, 255, 255)" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z" /></svg></span>
+                    </div>
+                    <h5 class="modal-title pull-left">Your Email Id</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <label class="label-field desp-label col-md-12" for="Please Enter Your Email"> Please Enter Email</label>
+                        <div class="text-areadiv">
+                            <input type="text" id="txtvideoemailid" class="form-control" />
+                        </div>
+                        <div class="mt-10 text-right">
+                            <input type="button" onclick="SubmitEmail()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="IRFSkillModel" class="modal modal-bg" style="z-index:3">
+
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 18 18"><path fill="rgb(255, 255, 255)" d="M17 3c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1v11c0 .55.45 1 1 1h11.5l3.5 3V3z"></path></svg>
+                        </span>
+                    </div>
+                    <h5 class="modal-title pull-left">Tech Skills <span class="popup-text" id="skill_id_pop"></span></h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span onclick="closeIRFSkillModel()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+                </button>
+
+                <input type="text" hidden id="txtinterviewid" />
+                <div class="modal-body">
+                    <div style="padding:10px" id="divcandidateskills">
+                    </div>
+                    <div>
+                        <div class="col-md-12 text-right">
+                            <div>
+                                <div style="display: inline-block !important;margin-bottom: 10px;"><input style="color: #fff;line-height: 13px;" type="button" onclick="closeIRFSkillModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="~/js/ModalFormServerValidation.js"></script>
+
+    <script src="~/js/SidePanelJS/sidePanelMain.js"></script><!-- Side Panel Resource JavaScript -->
+    <script>
+        var interviewUnassignedMinutes;
+        function openSkillpopup(id, item) {
+            $.ajax({
+                type: "POST",
+                url: "/IRF/FetchSkillDetails",
+                data: { id: id },
+                success: function (data) {
+                    var modal = document.getElementById("IRFSkillModel");
+                    var skill_id_pop = $("#skill_id_" + id).val();
+                    $("#skill_id_pop").text(skill_id_pop);
+
+                    modal.style.display = "block";
+                    bindSkillData(data);
+                }
+            });
+        }
+        function closeIRFSkillModel() {
+            var model = document.getElementById("IRFSkillModel");
+            model.style.display = "none";
+        }
+        function bindSkillData(data) {
+            var html = '';
+            html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+            html += '  <thead>';
+            html += '  <tr>';
+            html += '  <th width="20%" class="table_heading">Level<span class="red">*</span></th>';
+            html += '  <th width="40%" class="table_heading">Skill Name<span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Concepts <span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Natureofquestion <span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Timelimit <span class="red">*</span></th>';
+            html += '  </tr>';
+            html += '  </thead>';
+            html += '  <tbody>';
+            for (i = 0; i < data.length; i++) {
+                html += '   <tr>';
+                html += '  <td>' + data[i].levelName + '</td>';
+                html += '  <td>' + data[i].skillName + '</td>';
+                html += '  <td>' + data[i].weightage + '</td>';
+                html += '  <td>' + data[i].concepts + '</td>';
+                html += '  <td>' + data[i].natureofquestion + '</td>';
+                if (parseInt(data[i].timelimit) > 0) {
+                    html += '  <td>' + data[i].timelimit + '</td>';
+                } else {
+                    html += '<td></td>';
+                }
+                html += '  </tr>';
+            }
+            html += '</tbody>';
+            html += ' </table></div>';
+            $("#divcandidateskills").empty().html(html);
+        }
+
+    </script>
+    <script>
+        function searchResult() {
+            $('#MyInterviewList').DataTable();
+        }
+        function RefreshSearch() {
+            $('#MyInterviewList').DataTable().destroy();
+            setTimeout(function () {
+                applyDataTable();
+            }, 2000);
+        }
+
+        $(document).ready(function () {
+            applyDataTable();
+
+        });
+
+        function applyDataTable() {
+            $('#MyInterviewList').DataTable({
+                "pagingType": "full_numbers",
+                "lengthMenu": [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                order: [],
+                responsive: true,
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search records",
+                },
+                "fnInitComplete": function () {
+                    $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                    $(".dataTables_filter").keyup(function (e) {
+                        if ($(this).val() != "") {
+                            $("#x").show();
+                        }
+                        else { $("#x").show(); }
+                    });
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#x").click(function (e) {
+                $(".dataTables_filter input").val('');
+                $(this).hide();
+            });
+
+        });
+    </script>
+    <script type="text/javascript">
+        $(".dataloading").hide();
+        $("#MyInterviewList").hide();
+        var loader;
+        function ShowProgress() {
+            $(".dataloading").hide();
+            $("#MyInterviewList").hide();
+            loader = document.getElementsByClassName("loader")[0];
+            loader.style.display = "block";
+            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+            loader.style.top = top + "px";
+            loader.style.left = left + "px";
+        };
+        ShowProgress();
+        window.onload = function () {
+            setTimeout(function () {
+                loader.style.display = "none";
+                $(".dataloading").show();
+                $("#MyInterviewList").show();
+            }, 2000);
+        };
+        //// script for loader ends here
+    </script>
+
+    <script src="~/js/twiliocallmaker.js"></script>
+
+    <script type="text/javascript">
+
+
+        function CheckTimeDifference(meetingId, interviewDate) {
+            $.ajax({
+                type: "GET",
+                url: "/Interview/GetTimeDifference",
+                data: { 'interviewDate': interviewDate, 'interviewUnassignedMinutes': interviewUnassignedMinutes },
+                success: function (response) {
+                    UnAssignInterviewer(meetingId, response)
+                }
+            });
+        }
+        function UnAssignInterviewer(meetingId, isPenalty) {
+            var textMsg;
+            if (isPenalty) {
+                textMsg = "Unassigning at this hour will lead to a penalty. Note: Update Risebird HR, before unassigning interview."
+            }
+            else {
+                textMsg = "As per Client SLA unassigning the interview 4 hours before scheduled time may result deduction of Rs 250 to Rs 1000 from your payment.";
+            }
+
+
+            //var IdIRF = dataID;
+            swal.fire({
+                title: 'Are you sure?',
+                text: textMsg,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Unassign Me!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        //var IdIRF = dataID;
+                        $.ajax({
+                            url: '/Interview/UnassignYourself?id=' + meetingId + '&isPenalty=' + isPenalty,
+                            success: function (result) {
+                                resolve(result)
+                                ConfirmAvailable(meetingId, 'No');
+                            },
+                            error: function () {
+                                //reject("error message")
+                                swal.fire("Error unassigning!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Unassigned!',
+                        type: 'success',
+                        html: '<p>You have been unassigned.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        window.location = "/Interview/MyInterview";
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'Your were not unassigned.',
+                        'error'
+                    )
+                }
+            })
+        }
+
+    </script>
+    @if (ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                my_code();
+            });
+            function my_code() {
+                var msg = '@ViewBag.Message';
+                if (msg.includes("Success")) {
+                    swal.fire("Successful", '@ViewBag.Message', "success");
+                }
+                else {
+                    swal.fire("Failed", '@ViewBag.Message', "error");
+                }
+            }
+        </script>
+    }
+
+
+    <script>
+        $(document).ready(function () {
+            if ($("#txtVideostatus").val() == "Public") {
+                var modal = document.getElementById("PublicShareVideo");
+                modal.style.display = "block";
+            }
+        });
+        function SubmitEmail() {
+            if ($("#txtvideoemailid").val().trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/Interview/PublicMyInterviewInvite",
+                    data: { id: $("#hidtxtid").val(), Emailid: $("#txtvideoemailid").val().trim() },
+                    success: function (data) {
+                        if (data == "success") {
+                            window.location = "/Interview/PublicMyInterview?emailid=" + $("#txtvideoemailid").val() + "&id=" + $("#hidtxtid").val();
+                        } else {
+                            swal.fire(data);
+                        }
+                    }
+                });
+            }
+        }
+        function ConfirmAvailable(meetingId, type) {
+            $.ajax({
+                type: "POST",
+                url: '/Interview/ConfirmInterviewavailability?id=' + meetingId + '&type=' + type,
+                success: function (result) {
+                    if (type != 'No') {
+                        swal.fire(result);
+                    }
+                }
+            });
+        }
+    </script>
+    <script src="~/js/filtervalidation.js"></script>
+    <script src="~/js/feedbackrecorder/record.js"></script>
