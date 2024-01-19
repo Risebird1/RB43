@@ -154,12 +154,12 @@
                                 @{
                                     bool isSME = ViewBag.IsSME;
                                 }
-                                @if (isSME)
+                               @* @if (isSME)
                                 {
                                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                        <span @*class="fa-sharp fa-solid fa-comment-medical"*@ data-toggle="tooltip" data-placement="top" title="Assigned Skill Channels as SMEs(Subject Matter Expert)" onclick="location.href='@Url.Action("AssignedSkillChannelsAsSME", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update Skill Channels(As SME)</font></span>
+                                        <span data-toggle="tooltip" data-placement="top" title="Assigned Skill Channels as SMEs(Subject Matter Expert)" onclick="location.href='@Url.Action("AssignedSkillChannelsAsSME", "Interviewer")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Update Skill Channels(As SME)</font></span>
                                     </button>
-                                }
+                                }*@
                                 @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space js-cd-panel-trigger" data-panel="main" data-url="@Url.Action("GetClientFeedForInterviewer","Interviewer")">
                                     <span data-toggle="tooltip" data-placement="top" title="Client Feedback" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Client Feedback</font></span>
                                 </button>*@
@@ -356,7 +356,11 @@
 
                             </div>
                             <div>
+                                <div class="calling-area" style="top: -18px;position:relative;    padding: 3px 0px 7px 0px">
+                                    <span><img src="/img/note.png" width="20" style="    position: relative;top:4px;"> Talking anything <b>personal</b> or <b>suspicious</b> with the candidate shall result in strict legal action</span>
+                                </div>
                                 <div class="note-meeting text-left"> <b style="color:green">Note: To join the meeting click on Meeting Link and always use your Coded Name </b><b style="color:red">(@ViewBag.CodedName)</b></div>
+
                                 <div id="tableID" class="second">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
@@ -400,7 +404,7 @@
                                                             {
                                                                 <th id="myinterview_7">Meeting Link</th>
                                                                 <th>Interview Price</th>
-                                                                <th>Variable Pay</th>
+                                                               @* <th>Variable Pay</th>*@
                                                                 <th>Minimum Duration</th>
                                                                 <th class="disabled-sorting text-left">Actions</th>
                                                             }
@@ -424,7 +428,7 @@
                                                             {
                                                                 <th>Meeting Link</th>
                                                                 <th>Interview Price</th>
-                                                                <th>Variable Pay</th>
+                                                               @* <th>Variable Pay</th>*@
                                                                 <th>Minimum Duration</th>
                                                                 <th class="disabled-sorting text-left">Actions</th>
                                                             }
@@ -452,28 +456,46 @@
                                                                     <div class="myInterview">
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
-                                                                    @if (item.candidateName.Length > 15)
-                                                                    {<div style="width:100%;float:left">
+                                                                    @if (item.candidateName.Length > 18)
+                                                                    {
+                                                                        <div style="width:100%;float:left">
                                                                         <span class="cadName pull-left">
-                                                                            <a  data-tooltip="@item.candidateName"><span class="name-field"> @item.candidateName.Substring(0,15)...</span> </a>
+                                                                            <a  data-tooltip="@item.candidateName"><span class="name-field"> @item.candidateName.Substring(0,18)...</span> </a>
                                                                         </span>
                                                                         <span class="pull-left">
 
 
-                                                                                <p class="text-left">
-                                                                                    <a class="pskill">(@item.JDTiltle)</a>
-                                                                                </p>
-                                                                        </span>
-                                                                                </div>
+                                                                                        @if (item.JDTiltle != null && item.JDTiltle != "")
+                                                                                        {
+                                                                                            @if (@item.JDTiltle.Length > 20)
+                                                                                            {
+                                                                                                <a class="pull-left pskill" href="#" data-tooltip="@item.JDTiltle"> <span class="pull-left">@item.JDTiltle.Substring(0, 20)...</span></a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span class="pskill">@item.JDTiltle</span>
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
 
-                                                                                <div style="width:100%;float:left;margin:10px 0px;">
-                                                                                <span class="call-area">
-                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                                    {
-                                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.id')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
-                                                                                    }
-                                                                                </span>
-                                                                                @item.MobileNumber</div>
+                                                                                        }
+
+
+                                                                                    </span>
+                                                                                </div>
+                                                                                @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                                {
+                                                                                    <div class="call-sec" style="width:100%;float:left;margin:10px 0px;">
+                                                                                        <span class="call-area">
+                                                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                            {
+                                                                                                <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.id')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" style="position:relative;top:4px;" /></span>
+                                                                                            }
+                                                                                        </span>
+                                                                                        @item.MobileNumber</div>
+                                                                                }
+
                                                                     }
                                                                     else
                                                                             {
@@ -482,19 +504,37 @@
                                                                             <a data-tooltip="@item.candidateName"><span class="name-field"> @item.candidateName</span> </a>
                                                                         </span>
                                                                         <span class="pull-left">
+                                                                                        @if (item.JDTiltle != null && item.JDTiltle != "")
+                                                                                        {
+                                                                                            @if (@item.JDTiltle.Length > 20)
+                                                                                            {
+                                                                                                <a class="pull-left pskill" href="#" data-tooltip="@item.JDTiltle"> <span class="pull-left">@item.JDTiltle.Substring(0, 20)...</span></a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <span class="pskill">@item.JDTiltle</span>
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+
+                                                                                        }
 
 
-                                                                                <p class="text-left">
-                                                                                    <a class="pskill">(@item.JDTiltle)</a>
-                                                                                </p>
-                                                                        </span></div> <div style="width:100%;float:left;margin:10px 0px;">
-                                                                                <span class="call-area">
-                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                                    {
-                                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.id')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
-                                                                                    }
-                                                                                </span>
-                                                                                @item.MobileNumber</div>
+                                                                                    </span></div>
+                                                                                @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                                {
+                                                                                    <div class="call-sec" style="width:100%;float:left;margin:5px 0px;">
+                                                                                        <span class="call-area">
+                                                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                            {
+                                                                                                <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.id')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" style="position:relative;top:4px;"/></span>
+                                                                                            }
+                                                                                        </span>
+                                                                                        @item.MobileNumber
+                                                                                    </div>
+                                                                                }
+
                                                                     }
                                                                 }
                                                                 else
@@ -503,9 +543,9 @@
                                                                 }
                                                                     
                                                                 </div>
-                                                                    <div style="padding:10px 0px;color:#078706;font-weight:bold;"><span style="font-weight:normal">Client Name : </span>@item.ClientName</div>
+                                                                    @* <div style="padding:10px 0px;color:#078706;font-weight:bold;width:100%;float:left"><span style="font-weight:normal">Client Name : </span>@item.ClientName</div>*@
                                                                     <div class="myInterview">
-                                                                    <button type="button" class="clickhere_btn pull-left" style="margin:0px 0px 0px 5px;padding: 5px 8px;">
+                                                                    <button type="button" class="clickhere_btn pull-left" style="margin:10px 0px 0px 5px;padding: 5px 8px;">
                                                                         <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">JD-Skills</font></span>
                                                                     </button>
                                                                     <input id="skill_id_@item.irfIntId" type="hidden" value="@item.IRFID" />
@@ -513,9 +553,12 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="int-datetime"> @item.interviewDate</div>
+                                                                     @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
+                                                                {
                                                                     @if (item.Timer > 0)
                                                                     {
-                                                                        <div class="time_tab"> <span class="time-left-txt" style="font-size:13px;top:17px;position:relative;">Time left to fill the feedback:</span><div class="time-clock pull-left" style="padding:0px;"><span class="timer" style="left:0px;top:7px;">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 4 hours of the Interview Time then this interview will not be billable </span></a></div>
+                                                                        <div class="time_tab" style="padding:0px;"> <span class="time-left-txt" style="font-size:13px;top:17px;position:relative;">Time left to fill the feedback:</span><div class="time-clock pull-left" style="padding:0px;"><span class="timer" style="left:0px;top:7px;">@item.Timer</span> <span class="time-min">(In Mins)</span></div> <a class="infos" href="#"><span>If feedback is not updated within 4 hours of the Interview Time then this interview will not be billable </span></a></div>
+                                                                    }
                                                                     }
                                                                 </td>
 
@@ -599,7 +642,7 @@
                                                                         <td></td>
                                                                     }*@
                                                                     <td style="font-size:16px;color: chocolate;font-weight: 600">₹ @(Convert.ToInt32(item.ExpectedPerHourRate) + item.Surcharge)</td>
-                                                                    @if (item.IsNewSkillChannel)
+                                                                  @*  @if (item.IsNewSkillChannel)
                                                                     {
                                                                         <td>
                                                                             <div class="myInterview">
@@ -617,7 +660,7 @@
                                                                     else
                                                                     {
                                                                         <td>₹ 0 </td>
-                                                                    }
+                                                                    }*@
                                                                     @*<td><strong>@item.interviewDuration Min.</strong></td>*@
                                                                     <td><strong>@item.MaxInterviewDuration Min.</strong></td>
                                                                     <td class="text-left">
@@ -663,10 +706,10 @@
 
 
                                                                 
-                                                                        <div class="btn btn-report shadow btn-xs sharp me-1">
+                                                                        @*<div class="btn btn-report shadow btn-xs sharp me-1">
                                                                             <span onclick="CandidateFeedback(@item.id)" title="Interview Survey" class="mdc-fab__icon material-icons"><i style="font-size:13px;top:1px;position:relative" class="fas fa-poll"></i></span>
                                                                                     </div>
-
+*@
 
 
 
@@ -935,38 +978,50 @@
             </button>
 
             <input type="text" hidden id="txtinterviewid" />
-            <div class="modal-body" style="color:black">
-                Dear Partner,<br />
+            <div class="modal-body" style="color:black;margin-bottom:0px;">
+                <h3 style="font-size:1rem;font-weight:bold">
+                    <strong>
+                        Dear Partner,
+                    </strong>
+                </h3>
 
-                Risebird is committed to provide safe and secure interviewing experience for all interviewees. Our interviews are designed to assess the skills of candidates irrespective of gender, attire, appearance, race, religion, caste etc. As our esteemed partners, we expect you to follow the guidelines in a way that represents our values. It is required that you conduct an interview in a professional manner.
-                <br />
-                <strong>Few guidelines -</strong><br />
-                <div>
-                    1.During the interview, please do not make any comments of personal nature including gender, attire, appearance, race, religion, caste etc.<br />
-                    2.It is prohibited to take an interview under the influence of any substance (alcohol, drugs etc.)<br />
-                    3.Conduct unbiased assessment of the skills of the candidate irrespective of gender, attire, appearance, race, religion, caste etc.<br />
-                    4.Do not collect or attempt to collect any information that is personal in nature including phone number, salary etc. Do not connect or attempt to connect with the candidate for networking (professional or otherwise)<br />
-                    5.Keep the discussion limited to skills and avoid giving feedback during the interview process<br />
-                    6.Do not comment on the performance of the candidate during the interview. In case the candidate asks, guide them to connect with HR.<br />
-                    7.In case you have to switch on your webcam, be in professional attire.<br />
+                <p> Risebird is committed to provide safe and secure interviewing experience for all interviewees. Our interviews are designed to assess the skills of candidates irrespective of gender, attire, appearance, race, religion, caste etc. As our esteemed partners, we expect you to follow the guidelines in a way that represents our values. It is required that you conduct an interview in a professional manner.</p>
+               
+                <h2 style="font-size: 0.88rem;font-weight:bold;color: #e25d14;"><strong>Few guidelines:</strong></h2>
+                <div class="instruction">
+                    <ul>
+                        <li>During the interview, please do not make any comments of personal nature including gender, attire, appearance, race, religion, caste etc.</li>
+                      <li>It is prohibited to take an interview under the influence of any substance (alcohol, drugs etc.)</li>
+                      <li>Conduct unbiased assessment of the skills of the candidate irrespective of gender, attire, appearance, race, religion, caste etc.</li>
+                      <li>Do not collect or attempt to collect any information that is personal in nature including phone number, salary etc. Do not connect or attempt to connect with the candidate for networking (professional or otherwise)</li>
+                      <li>Keep the discussion limited to skills and avoid giving feedback during the interview process</li>
+                      <li>Do not comment on the performance of the candidate during the interview. In case the candidate asks, guide them to connect with HR.</li>
+                        <li>In case you have to switch on your webcam, be in professional attire.</li>
+              </ul>
+                
                 </div>
                 These guidelines are not compressive and are only a few pointers. We expect our interviewers to display exemplary professional behavior.
                 <br />
-                <strong>Identifying Non Compliance</strong><br />
+                <h2 style="font-size:0.88rem;font-weight:bold;color: #e25d14;"><strong>Identifying Non Compliance:</strong></h2>
+                <div class="instruction">
                 <ul>
                     <li>We review interviews for any compliance issues manually as well as by script analysis. Any non-compliance will result in immediate actions.</li>
                     <li>We collect candidate feedback in a regular manner. Any complaints by the candidates will trigger our review in detail.</li>
                     <li>We are continuously in touch with our clients and act on their feedback.</li>
                 </ul>
-                <strong>Action, in case of non compliance</strong><br />
+                </div>
+                <h2 style="font-size: 0.88rem;font-weight:bold;color: #e25d14;"> <strong>Action, in case of non compliance:</strong></h2>
+                <div class="instruction">
                 <ul>
                     <li>Immediate deactivation from Risebird platform pending our review. In case, our review finds non compliance, we will remove you from the platform permanently.</li>
                     <li>Any legal action initiated would be your individual responsibility. Risebird will cooperate with competent authority in all such cases.</li>
                     <li>We reserve the right to recover damages including but not limited to reputation, contractual fines, legal charges etc.</li>
                 </ul>
-                <input type="checkbox" id="chk_interviewernotifcation" onchange="changeinterviewnotificationstatus()" />I have acknowledged
+                </div>
             </div>
-
+             <div class="model-footer text-center" style="padding: 10px;font-weight: bold;background: #d2dfe9;">
+                <input style="margin-right:10px;" type="checkbox" id="chk_interviewernotifcation" onchange="changeinterviewnotificationstatus()" />I have acknowledged
+            </div>
         </div>
     </div>
 </div>
@@ -1340,7 +1395,7 @@
             textMsg = "Unassigning at this hour will lead to a penalty. Note: Update Risebird HR, before unassigning interview."
         }
         else {
-            textMsg = "As per Client SLA unassigning the interview 4 hours before scheduled time may result deduction of Rs 250 to Rs 1000 from your payment.";
+            textMsg = "As per Client SLA unassigning the interview 4 hours before scheduled time or not joining the assigned interview may result in deduction of Rs 200 to Rs 500 from your payment.";
         }
 
 
