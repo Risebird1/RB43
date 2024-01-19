@@ -34,14 +34,13 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("EmailtoInterviewer")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 8,16 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"EmailtoInterviewer : C# Timer trigger function started executing  at: {DateTime.Now}");
 
 
             try
             {
-                var msg = "Greetings from RiseBird. This is a gentle reminder for your upcoming video based interview meeting scheduled today. Kindly be available on time.";
                 var mails = new List<Meeting>();
                 var query = "select distinct im.interviewer,ul.uniqueid from InterviewMeetings im join UserList ul on ul.Emailid=im.interviewer where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
