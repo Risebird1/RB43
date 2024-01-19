@@ -228,7 +228,6 @@ set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps l
   and ( ul.idProfile=23) and (DATEDIFF (DAY,sge.CreatedAt, GETDATE())<=1)
   --order by smd.CreatedAt desc
   drop table #latestActivityRowIdCandidateSet;
-  set @CandidateMailCount=@CandidateMailCount
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,  
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink,   

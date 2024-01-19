@@ -2650,7 +2650,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetEmailRecipients(string recipientType)
+        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(string recipientType)
         {
             try
             {
@@ -2717,7 +2717,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> GetEmailRecipients(MailActivityFilter filter, string recipientType)
+        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(MailActivityFilter filter, string recipientType)
         {
             try
             {
@@ -2737,7 +2737,7 @@ namespace Risebird.Web.Controllers
                             HttpContext.Session.SetString("MailActivityFilters", JsonConvert.SerializeObject(filter));
                         }
 
-                        return RedirectToAction("GetEmailRecipients"/*, new { recipientType = filter.RecipientType }*/);
+                        return RedirectToAction("GetEmailRecipientsBounceAndDropped"/*, new { recipientType = filter.RecipientType }*/);
 
                     }
                     else
@@ -2765,7 +2765,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("MailActivityFilters");
-                    return RedirectToAction("GetEmailRecipients");
+                    return RedirectToAction("GetEmailRecipientsBounceAndDropped");
                 }
                 else
                 {

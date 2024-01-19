@@ -5,7 +5,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Mail Recipients";
+    ViewData["Title"] = "Get Email Recipients";
     ViewBag.PageHeader = "Mail Recipients";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
@@ -94,7 +94,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("GetEmailRecipients","Dashboard", new { recipientType = ViewBag.recipientType})" method="post" id="form">
+                                        <form action="@Url.Action("GetEmailRecipientsBounceAndDropped","Dashboard", new { recipientType = ViewBag.recipientType})" method="post" id="form">
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -387,7 +387,7 @@
 <script>
 
     function Changeurldetails(recipientType) {
-        window.location.href = "/Dashboard/GetEmailRecipients?recipientType=" + recipientType;
+        window.location.href = "/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType;
     }
 </script>
 <script src="~/js/common.js"></script>
