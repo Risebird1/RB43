@@ -4,21 +4,21 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <form action="/Interview/ProxyForm" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
-    @Html.HiddenFor(m => m.InterviewId,new{@id="hidInterviewid"})
+    @Html.HiddenFor(m => m.InterviewId, new { @id = "hidInterviewid" })
     @Html.HiddenFor(m => m.IsQCdone)
     @Html.HiddenFor(m => m.type)
     @Html.HiddenFor(m => m.ProxyvotingCount)
     <div class="canvas_div_pdf">
         <div class="report-full-wrap">
             <div class="card-wrap" style="margin:0px 0px">
-                 @if (Model.type != "Report")
+                @if (Model.type != "Report")
                 {
                     <div class="checkbox-selectproxy">
                         <h2>Please select proxy candidate reporting:</h2>
-                        @Html.RadioButtonFor(m=>m.isProxyCandidate,true, new{@onclick="checkProxy()",@checked="checked"})
+                        @Html.RadioButtonFor(m => m.isProxyCandidate, true, new { @onclick = "checkProxy()", @checked = "checked" })
                         <label style="padding-top:15px;" for="isProxyCandidate">Yes</label>
 
-                        @Html.RadioButtonFor(m=>m.isProxyCandidate,false, new{@onclick="checkProxy()"})
+                        @Html.RadioButtonFor(m => m.isProxyCandidate, false, new { @onclick = "checkProxy()" })
                         <label for="isProxyCandidate">No</label>
                     </div>
                 }
@@ -35,7 +35,7 @@
                                     <div class="accordion-body">
                                         <div class="accordion-inner">
                                             <ul class="ks-cboxtags">
-                                                @Html.HiddenFor(m=> m.EyeMovement)
+                                                @Html.HiddenFor(m => m.EyeMovement)
                                                 <li>
                                                     @if (Model.EyeMovement.Split(";").Contains("Candidate looking somewhere else continuously at the time of coding or answering theoretical questions."))
                                                     {
@@ -73,7 +73,7 @@
                                     <div class="accordion-body">
                                         <div class="accordion-inner">
                                             <ul class="ks-cboxtags">
-                                                @Html.HiddenFor(m=> m.LipsMovement)
+                                                @Html.HiddenFor(m => m.LipsMovement)
                                                 <li>
                                                     @if (Model.LipsMovement.Split(";").Contains("Mismatch of the lips and the voice of candidate while speaking"))
                                                     {
@@ -102,7 +102,7 @@
                                                         <label for="checkboxFour">Heavy beard that covers most of the lip movement</label>
                                                     }
                                                 </li>
-                                               
+
                                             </ul>
                                         </div>
                                     </div>
@@ -658,7 +658,7 @@
     function checkProxy() {
         var checkBox = document.getElementById("isProxyCandidate");
         var text = document.getElementById("proxy-content");
-       
+
         if (checkBox.checked == true) {
             text.style.display = "block";
         } else {
@@ -667,6 +667,7 @@
     }
     function SaveReportvalues() {
         closeProxyModel();
+        $("#isProxy").val('yes');
         $("#Proctoring_isProxyCandidate").val(true);
         $("#Proctoring_EyeMovement").val($("#EyeMovement").val());
         $("#Proctoring_LipsMovement").val($("#LipsMovement").val());
