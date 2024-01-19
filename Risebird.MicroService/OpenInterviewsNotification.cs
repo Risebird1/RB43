@@ -24,7 +24,7 @@ namespace Risebird.MicroService
             _notificationHelper = notificationHelper;
         }
         [FunctionName("OpenInterviewsNotification")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log) //after every 30 minutes
+        public async Task Run([TimerTrigger("0 0 */2 * * *")] TimerInfo myTimer, ILogger log) //after every 30 minutes
         {
             try
             {
