@@ -230,9 +230,11 @@ namespace Risebird.Business.Interface
         Task<bool> AddTransReliabilityScoresSelectAndRejectService(int InterviewMeetingId);
         Task<Meeting> GetAudioCommentDetailsService(int interviewId);
         Task<bool> RemoveOrShortlistInterviewer(int interviewid, string action = null);
-        Task<bool> UpdateInterviewReport(int interviewid,string comment,string emailid);
+        Task<bool> UpdateInterviewReport(int interviewid, string comment, string emailid);
         Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
         Task<ProctoringReport> GetProctoringReport(int interviewid);
         Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews(int irfId);
+        Task<int> GetUniqueUserByEmailId(string emailId, string id);
+        Task<bool> ConfirmInterviewavailability(string emailId, int id,string type);
     }
 }

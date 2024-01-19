@@ -8282,5 +8282,82 @@ namespace Risebird.Web.Controllers
             var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfid, interviewerEmail);
             return Json("success");
         }
+        public async Task<IActionResult> PublicMyInterview(string id, string emailid)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.id = id;
+            var Emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+            }
+            var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, MeetingLineUpType.Upcoming);
+            var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
+            ViewBag.CodedName = codedname.NickName;
+            myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
+            foreach (var item in myInterview)
+            {
+                if (!string.IsNullOrEmpty(item.resumeLink))
+                {
+                    try
+                    {
+                        item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+                    }
+                    catch (Exception)
+                    {
+                        item.resumeLink = "";
+                    }
+                }
+                else
+                {
+                    item.resumeLink = "";
+                }
+            }
+            return View(myInterview);
+        }
+        [HttpGet]
+        public async Task<IActionResult> PublicMyInterviewInvite(string id)
+        {
+            var model = new List<Meeting>();
+            ViewBag.Id = id;
+            ViewBag.PageType = "Public";
+            return View("PublicMyInterview", model);
+        }
+        [HttpPost]
+        public async Task<JsonResult> PublicMyInterviewInvite(string id, string Emailid)
+        {
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+            HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
+            var role = await _meetingService.GetUniqueUserByEmailId(Emailid, id);
+            if (role > 0)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Emailid don't have access.");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> ConfirmInterviewavailability(int id,string type)
+        {
+            var Emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+            }
+            var role = await _meetingService.ConfirmInterviewavailability(Emailid, id,type);
+            if (role)
+            {
+                return Json("success");
+            }
+            else
+            {
+                return Json("Interview Availability Confirmation Failed, Please try again.");
+            }
+        }
+
     }
 }

@@ -7079,7 +7079,7 @@ namespace Risebird.Repository
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewId", interviewId);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<ZoomVideoQOSVM>(con, "usp_GetZoomQOSDataByMeetingId", dynamicParameters,
@@ -7091,6 +7091,48 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<int> GetUniqueUserByEmailId(string emailId, string id)
+        {
+            try
+            {
+                var query = "Select id From UserList where EmailId = @emailId and uniqueid=@uniqueid ";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailId", emailId);
+                dynamicParameters.Add("@uniqueid", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryFirstOrDefaultAsync<int>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+        public async Task<bool> ConfirmInterviewavailability(string emailId, int id,string type)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailId", emailId);
+                dynamicParameters.Add("@Meetingid", id);
+                dynamicParameters.Add("@CreatedOn", DateTime.Now);
+                dynamicParameters.Add("@Action", type);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_ConfirmInterviewavailability", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }
