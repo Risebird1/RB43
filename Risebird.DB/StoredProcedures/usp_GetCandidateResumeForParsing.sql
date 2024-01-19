@@ -13,7 +13,7 @@ CREATE PROCEDURE usp_GetCandidateResumeForParsing
 AS
 BEGIN
 
-select top 10 cr.id, cr.IRFId, ResumeLink, AddedBy, irf.IRFId as SkillChannelName 
+select top 10 cr.id, cr.IRFId, ResumeLink, AddedBy, irf.IRFId as SkillChannelName, irf.IsAffindaIndexCreated
 from CandidateResume cr
 join IRF on irf.id= cr.IRFId
 where IsResumeParsed = 0 and IsProcessed = 0 and (IsResumeParsingFailed=0 or IsResumeParsingFailed is null) and cast(AddedOn as date) > cast('2023-08-21 03:25:23.050' as date) order by id desc

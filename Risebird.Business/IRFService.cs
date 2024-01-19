@@ -3680,5 +3680,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> UpdateAffindaIndexFlag(string irfId, bool isIndexCreated)
+        {
+            try
+            {
+                return await _irfRepository.UpdateAffindaIndexFlag(irfId, isIndexCreated);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
