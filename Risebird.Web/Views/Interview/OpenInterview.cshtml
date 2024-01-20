@@ -302,9 +302,9 @@
         });
         function my_code() {
             var msg = '@ViewBag.Message';
-            if (msg.includes("Success")) {
+            if (msg.includes("recommend")) {
                 var codedname = $("#hidcodedname").val();
-                swal.fire("Successful", '@ViewBag.Message', "success");
+                swal.fire("Assigned Successfully", '@ViewBag.Message', "success");
                 //swal.fire("For your privacy concerns \n Please join meeting using browser in private or incognito mode only with your coded name : "+ codedname,'@ViewBag.Message', "success"); 
                 //swal.fire("For your privacy concerns", "Please join meeting using browser in private or incognito mode only with your coded name : " + codedname, "success");
             }
