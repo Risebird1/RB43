@@ -889,7 +889,7 @@ namespace Risebird.Repository
                     var results = await con.QueryAsync<int>(query, dynamicParameters);
                     //if (results.FirstOrDefault() == 1)
                     //{
-                    return "We recommend to the interviewer to keep their video on throughout the interview duration. INR 100 will be paid additional for US interviews and INR 50 will be paid additional for India interview. Failing to on the video may result in 100% payment deduction by client. Kindly use a Virtual Background, if keeping your Video ON. Rest assured your data is 100% private and you will never be mapped to your current company.";
+                    return "We recommend to the interviewer to keep their video on throughout the interview. INR 100 wil be paid additional for US and INR 50 for India interviews.Kindly use a Virtual Background, if keeping your Video ON. Rest assured your data is 100% private and you will never be mapped to your current company.";
                     //}
                     //else
                     //{
