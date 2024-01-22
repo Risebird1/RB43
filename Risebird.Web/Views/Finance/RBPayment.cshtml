@@ -161,11 +161,12 @@
                                                     <td>@item.Penaltyamount</td>
                                                     <td>@(item.CandidateRatingAmount+item.ClientRatingAmount)</td>
                                                     @*<td>@item.QCPoints</td>*@
-                                                    <td>
+                                                    <td class="text-center">
                                                         @if (item.PaymentSLA > 0)
                                                         {
 
-                                                            <span>  <a onClick="PaymentComplianceDetails('@item.InterviewId')" style="color:blue;font-weight:bold;cursor:pointer">@item.PaymentSLA</a></span>
+                                                            <span>  <a onClick="PaymentComplianceDetails('@item.InterviewId')" style="color:blue;font-weight:bold;cursor:pointer; cursor: pointer;background: #dddddd82; border-radius: 20px;
+    padding: 6px;">@item.PaymentSLA</a></span>
                                                         }
                                                         else
                                                         {
