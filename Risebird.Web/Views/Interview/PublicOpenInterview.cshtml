@@ -181,7 +181,7 @@
                                                             <td class="text-right">
                                                                 @if (item.IsInterviewerActive)
                                                                 {
-                                                                    <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("PublicAssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,emailid=ViewBag.emailid,uniqueid=ViewBag.Id})'" title="Assign Yourself"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg></span></button>
+                                                                    <button id="openinterview_7" class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification"><span onclick="location.href = '@Url.Action("PublicAssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,emailid=ViewBag.emailid,uniqueid=ViewBag.Id})'" title="Assign Yourself"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <circle cx="9" cy="7" r="3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11 13H7C4.79086 13 3 14.7909 3 17C3 18.6569 4.34315 20 6 20H12C13.6569 20 15 18.6569 15 17C15 14.7909 13.2091 13 11 13Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <path d="M21 8L18 11L16.5 9.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> </svg></span></button>
                                                                 }
                                                             </td>
                                                         </tr>
@@ -301,8 +301,8 @@
         });
         function my_code() {
             var msg = '@ViewBag.Message';
-            if (msg.includes("Success")) {
-                swal.fire("Successful", '@ViewBag.Message', "success");
+            if (msg.includes("recommend")) {
+                swal.fire("Assigned Successfully", '@ViewBag.Message', "success");
             }
             else {
                 swal.fire("Failed", '@ViewBag.Message', "error");
