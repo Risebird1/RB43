@@ -8298,7 +8298,9 @@ namespace Risebird.Web.Controllers
                 Emailid = HttpContext.Session.GetString("email")?.Trim();
                 Emailid = Emailid.Replace("\"", "");
             }
+            var currentdate = DateTime.Now.Date.AddDays(1);
             var myInterview = await _meetingService.GetInterviewerAssignedInterviews(emailid, MeetingLineUpType.Upcoming);
+            myInterview = myInterview.Where(x => x.interviewDate <= currentdate).ToList();
             var codedname = await _meetingService.FetchInterviewerCodedName(emailid);
             ViewBag.CodedName = codedname.NickName;
             myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
@@ -8346,7 +8348,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> ConfirmInterviewavailability(int id,string type)
+        public async Task<JsonResult> ConfirmInterviewavailability(int id, string type)
         {
             var Emailid = string.Empty;
             if (HttpContext.Session.GetString("email") != null)
@@ -8354,7 +8356,7 @@ namespace Risebird.Web.Controllers
                 Emailid = HttpContext.Session.GetString("email")?.Trim();
                 Emailid = Emailid.Replace("\"", "");
             }
-            var role = await _meetingService.ConfirmInterviewavailability(Emailid, id,type);
+            var role = await _meetingService.ConfirmInterviewavailability(Emailid, id, type);
             if (role)
             {
                 return Json("success");

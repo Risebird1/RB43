@@ -2585,6 +2585,11 @@ namespace Risebird.Web.Controllers
                     ViewBag.Type = "InterviewM";
                     interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 1 && x.PerformedOn != null).ToList();
                 }
+                else if (type == "RescheduleIM")
+                {
+                    ViewBag.Type = "RescheduleIM";
+                    interviewmanagement = interviewmanagement.Where(x => x.IsRescheduleNotificationSent == 1).ToList();
+                }
                 else
                 {
                     ViewBag.Type = "EmergencyIM";
