@@ -51,7 +51,7 @@ join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1       
 where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ulsh.Emailid= @Emailid)  
     
-declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid where  confirmationStatus=1 and CandidateResponse=4
+declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where  confirmationStatus=1 and CandidateResponse=4
  and interviewdate>=@currentdate and ulsh.Emailid= @Emailid)  
   
 declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Open')  
@@ -100,19 +100,19 @@ declare @HighRiskInterviewers int=(Select Count(ip.Id) from InterviewerProfile i
 declare @InterviewerVideoKYC int=(Select COUNT(ip.id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where isnull(ip.IsVideoApproved,0)=0 and ul.IsActive=1 and ip.VideoLink is not null)
 declare @ProxyCount int=(Select COUNT(pr.id) from ProxyReport pr Join InterviewMeetings im on pr.interviewid=im.id join IRF on IRF.IRFId=im.IRFId join [dbo].[InterviewComments] ic on im.id = ic.InterviewId where isProxyCandidate=1)
 
-declare @CandidateMailCount int;
+declare @BounceDroppedCandidateMailCount int;
 ;WITH CTE AS
 	(SELECT sge.id,
 		ROW_NUMBER() OVER (PARTITION BY email, Split_Message_Id ORDER BY [timestamp] desc) as rn FROM SendgridEventData sge
 		join UserList ul on ul.EmailId = sge.email
 		where ([event] = 'bounce' or [event] = 'dropped')
-		and (ul.idProfile=23) and (DATEDIFF (DAY,sge.CreatedAt, GETDATE())<=130)
+		and (ul.idProfile=23) and (DATEDIFF (DAY,sge.CreatedAt, GETDATE())<=1)
 
 	)
 	SELECT id into #latestActivityRowIdCandidate FROM CTE WHERE rn=1
 
   
-  select @CandidateMailCount= COUNT(smd.id)
+  select @BounceDroppedCandidateMailCount= COUNT(smd.id)
   from SentMailDetails smd
   join SendgridEventData sge on sge.Split_Message_Id = smd.sg_message_id
   join UserList ul on ul.EmailId = sge.email
@@ -120,7 +120,7 @@ declare @CandidateMailCount int;
   left join InterviewMeetings im on im.id = smd.InterviewId
   where sge.id in (select id from #latestActivityRowIdCandidate) 
   and sge.email != 'hire@risebird.io'
-  and ( ul.idProfile=23) and (DATEDIFF (DAY,sge.CreatedAt, GETDATE())<=130)
+  and ( ul.idProfile=23) and (DATEDIFF (DAY,sge.CreatedAt, GETDATE())<=1)
   --order by smd.CreatedAt desc
   drop table #latestActivityRowIdCandidate;
 
@@ -142,7 +142,7 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @HighRiskInterviewers as HighRiskInterviewers ,
 @InterviewerVideoKYC as InterviewerVideoKYC,
 @ProxyCount as ProxyCount,
-@CandidateMailCount as CandidateMailCount
+@BounceDroppedCandidateMailCount as BounceDroppedCandidateMailCount
 END          
 ELSE          
 BEGIN    
@@ -168,7 +168,7 @@ set @QCPendingReportCount = (Select Count(distinct im.id)  from InterviewMeeting
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) 
 and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0)  
   
-set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid where  confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate)  
+set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where  confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate)  
   
 set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open')  
   
@@ -217,7 +217,7 @@ set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps l
 
 	)
 	SELECT id into #latestActivityRowIdCandidateSet FROM CTE WHERE rn=1
-  select @CandidateMailCount= COUNT(smd.id)
+  select @BounceDroppedCandidateMailCount= COUNT(smd.id)
   from SentMailDetails smd
   join SendgridEventData sge on sge.Split_Message_Id = smd.sg_message_id
   join UserList ul on ul.EmailId = sge.email
@@ -228,6 +228,7 @@ set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps l
   and ( ul.idProfile=23) and (DATEDIFF (DAY,sge.CreatedAt, GETDATE())<=1)
   --order by smd.CreatedAt desc
   drop table #latestActivityRowIdCandidateSet;
+  --set @CandidateMailCount=@CandidateMailCount
 
 select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeetingStatusCount as UnfilledMeetingStatusCount,  
 @UnfilledCommentsCount as UnfilledCommentsCount, @MissingZoomLink as MissingZoomLink, @UnAttendedZoomLink as UnAttendedZoomLink,   
@@ -247,7 +248,7 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @HighRiskInterviewers as HighRiskInterviewers,
 @InterviewerVideoKYC as InterviewerVideoKYC,
 @ProxyCount as ProxyCount,
-@CandidateMailCount as CandidateMailCount
+@BounceDroppedCandidateMailCount as BounceDroppedCandidateMailCount
 END          
 End
 GO

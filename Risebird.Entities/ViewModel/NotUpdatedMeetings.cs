@@ -32,7 +32,7 @@ namespace Risebird.Entities.ViewModel
         public int CandidatewaitingCount { get; set; }
         public int InterviewerVideoKYC { get; set; }
         public int ProxyCount { get; set; }
-        public int CandidateMailCount { get; set; }
+        public int BounceDroppedCandidateMailCount { get; set; }
 
     }
     public class MeetingDetailsForParticipant
