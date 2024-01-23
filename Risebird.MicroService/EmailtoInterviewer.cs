@@ -66,6 +66,7 @@ namespace Risebird.MicroService
                                 };
                                 var InterviewerUrl = "https://portal.risebird.io/Interview/PublicMyInterviewInvite?id=" + mail.uniqueid;
                                 var emailsend = await _notificationHelper.SendInerviewerMeetingReminder(_mail, InterviewerUrl);
+                                log.LogInformation(emailsend);
                             }
                             catch (Exception ex)
                             {
