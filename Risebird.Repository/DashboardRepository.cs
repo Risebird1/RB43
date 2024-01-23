@@ -714,7 +714,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCount", dp,
-                        commandType: CommandType.StoredProcedure,commandTimeout:600);
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
             }
