@@ -121,7 +121,9 @@
                                 {
                                     @* <b>Scheduled Interview</b>
                             <br />*@
-                                    @if (item.interviewDate.AddMinutes(-5) >= DateTime.Now)
+
+                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                  
                                     {
                                         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;position:relative">
                                             <div class="calling" style="top:-18px;right:0px;">
