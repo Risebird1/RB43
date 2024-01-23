@@ -44,7 +44,7 @@ namespace Risebird.MicroService
                 var mails = new List<Meeting>();
                 var query = "select distinct im.interviewer,ul.uniqueid from InterviewMeetings im join UserList ul on ul.Emailid=im.interviewer where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@timeL", DateTime.Now.Date);
+                dynamicParameters.Add("@timeL", DateTime.Now);
                 dynamicParameters.Add("@timeH", DateTime.Now.Date.AddDays(1));
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
