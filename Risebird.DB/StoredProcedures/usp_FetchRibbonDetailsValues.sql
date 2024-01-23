@@ -250,18 +250,18 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				Select distinct im.*,im.id as InterviewId,cl.Name from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ulsh.Emailid= @Emailid
+				Select distinct im.*,im.id as InterviewId,cl.Name,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ulsh.Emailid= @Emailid
 			end
 			else
 			begin
-				Select distinct im.*,im.id as InterviewId,cl.Name from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate
+				Select distinct im.*,im.id as InterviewId,cl.Name,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join UserList ul on ul.id=  irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate
 			end
 		end
 		else
 		begin
-			select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate  and ul.EmailId=@emailID 
+			select distinct im.*,irf.*,cl.*,ic.*,uli.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId left join UserList uli on uli.id=  irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate  and ul.EmailId=@emailID 
 			union 
-			select distinct im.*,irf.*,cl.*,ic.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ul.EmailId=@emailID 
+			select distinct im.*,irf.*,cl.*,ic.*,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ul.EmailId=@emailID 
 		end
 	end
 	else If(@actionstatus ='ReScheduleCount')
