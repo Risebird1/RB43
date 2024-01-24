@@ -1022,11 +1022,11 @@
 
                                                             <td>@item.CreatedBy</td>
 
-                                                            @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                            @if (item.resumeLink != null && item.resumeLink != "")
                                                             {
                                                                 <td>
 
-                                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink.Replace(" ","%20")>Resume</a>
+                                                                    <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink.Replace(" ","%20")>Resume</a>
                                                                 </td>
                                                             }
                                                             else
