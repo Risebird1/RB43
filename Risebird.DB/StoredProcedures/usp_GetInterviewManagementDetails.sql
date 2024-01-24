@@ -31,7 +31,7 @@ left join UserList ulsh on ulsh.id=sh.Userid
 Left join InterviewComments ic on ic.InterviewId=im.id      
 left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid    
 outer apply(Select max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where Interviewid=im.id) imj
-outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id) imc
+outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imc
 where ulsh.Emailid= @Emailid and InterviewDate>@startDateParam and InterviewDate<@endDateParam and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)        
 END
 ELSE
@@ -40,9 +40,10 @@ Select Distinct im.id,im.interviewDate,imj.Joinedon, ic.MeetingStatus,tzme.Joine
 Left join InterviewComments ic on ic.InterviewId=im.id      
 left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid   
 outer apply(Select max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where Interviewid=im.id) imj
-outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id) imc
+outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imc
 where InterviewDate>@startDateParam and InterviewDate<@endDateParam and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)  
 END            
             
 End    
+
 Go
