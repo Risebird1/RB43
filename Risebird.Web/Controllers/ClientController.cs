@@ -897,7 +897,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                                meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-130)).ToList();
                             }
                         }
 
@@ -990,7 +990,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-30)).ToList();
+                            meetings = meetings.Where(t => t.interviewDate.Date >= DateTime.Now.AddDays(-130)).ToList();
                         }
                     }
                     SetMeetingsProperties(meetings);
@@ -1308,8 +1308,9 @@ namespace Risebird.Web.Controllers
                 {
                     Pagestart = 0;
                     Pageend = 0;
-                }
-                return Json(new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count });
+                } 
+                var result = new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count };
+                return Json(result);
             }
             catch (Exception ex)
             {
