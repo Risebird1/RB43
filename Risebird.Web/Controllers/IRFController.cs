@@ -8586,7 +8586,7 @@ namespace Risebird.Web.Controllers
             }
             foreach (var item in transTechSkills)
             {
-                item.LevelName = level.Where(x => x.ID == item.LevelId).Select(x => x.Name).FirstOrDefault();
+                item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
                 item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
             }
             return Json(transTechSkills);
