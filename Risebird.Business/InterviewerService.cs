@@ -558,7 +558,7 @@ namespace Risebird.Business
                 var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
                 if (checkDateMeeting.Any())
                 {
-                    return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+                    return "Failed! Wrong Mail id, Please enter the Email id which has been added with Risebird";
                 }
                 return _interviewerRepository.AssignYourself(meetingid, interviewerMail);
 
