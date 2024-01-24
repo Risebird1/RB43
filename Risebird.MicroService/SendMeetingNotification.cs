@@ -120,7 +120,7 @@ namespace Risebird.MicroService
                         {
                             TO = item.emergencyinterviewer,
                             CC = CCEmails,
-                            Subject = "Risebird Emergency Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
+                            Subject = "Risebird Urgent Interview-Candidate(" + item.candidateName + ") is waiting for the interviewer."
                         };
                         var resultset = await _notificationHelper.CandidateWaitingEINotification(_mail, linkurl, item.zoomlink, item.interviewMeetingId, item.JDLink);
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
