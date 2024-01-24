@@ -8326,10 +8326,10 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profileName = profileName;
                 var model = new IRFVm();
-                //ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
-                var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-                ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
+                ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                //var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
+                //                 select new { ID = (int)s, Name = s.GetDescription() };
+                //ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
                 var Skillset = await _irfRepository.GetSkills();
                 ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
@@ -8576,9 +8576,9 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> DeliveryHeadSkillDetails(int id)
         {
             var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
-            //var level = await _irfRepository.GetLevelTech();
-            var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
-                        select new { ID = (int)s, Name = s.GetDescription() };
+            var level = await _irfRepository.GetLevelTech();
+            //var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
+            //            select new { ID = (int)s, Name = s.GetDescription() };
             var Skillset = await _irfRepository.GetSkills();
             if (Skillset != null)
             {
