@@ -8361,5 +8361,11 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> TermsAndService()
+        {
+            return View();
+        }
+
+
     }
 }

@@ -61,6 +61,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Resume Link")]
         //[Required]
         public string resumeLink { get; set; }
+
         [Display(Name = "Encoded Resume Link")]
         //[Required]
         public string encodedresumeLink { get; set; }

@@ -7074,11 +7074,17 @@ input[type="date"].form-control {
         background-size: 2.5%;
         color: #2a2222;
     }
-
-.del-inst ul {
-    list-style: none;
-    padding: 0px;
+.tab-box p {
+    font-size:14.5px;
 }
+.tab-box .instruction ul li {
+    background-size: 1.5%;
+    font-size:14.5px;
+}
+        .del-inst ul {
+            list-style: none;
+            padding: 0px;
+        }
 
     .del-inst ul li {
         padding: 0px 4px 10px 20px;
@@ -8508,9 +8514,58 @@ option {
     width: auto;
     margin: 0px auto;
 }
-/***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
+
+
+.static-menu ul {
+    margin: 0px 0px 10px 0px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+}
+.static-menu ul li {
+
+    text-align: center;
+    margin: 0px 0px 0px 5px;
+}
+
+    .static-menu ul li:first-child {
+        margin: 0px 0px 0px 0px;
+    }
+
+    .static-menu ul li a {
+        float: left;
+        width: auto;
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px !important;
+        line-height: 6px;
+        padding: 14px 25px;
+        background: #fff;
+        color: #8e7f7f;
+        font-weight: bold;
+        border-radius: 22px;
+        text-decoration: none;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+.static-menu li a.active {
+    float: left;
+    width: auto;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    font-size: 14px !important;
+    line-height: 6px;
+    padding: 14px 25px;
+    font-weight: bold;
+    background: #dbecff;
+    color: #54a5f5;
+    border-radius: 22px;
+    text-decoration: none;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
             position: absolute;
             right: -6px !important;
         }
