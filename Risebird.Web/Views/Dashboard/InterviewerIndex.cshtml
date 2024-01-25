@@ -93,14 +93,59 @@
                 </div>
                 <div class="page-content-wrap dashboard">
                     <div class="row">
-                        <div class="row col-md-6 col-sm-12">
-                            <div class="col-md-4">
-                                <div class="panel panel-default">
+                        <div class="row col-md-8 col-sm-12">
+                            <div class="col-md-6 col-lg-4">
+
+                                <div class="panel card flipper9">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon open-issue"><img src="~/img/open-issue.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title" style="line-height:44px;font-size:16px;"><span><strong>Open Interviews</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>
+                                                                    <span style="cursor:pointer;font-size:25px;"  class="card-title"><strong>@Model.OpenInterviewCount</strong></span>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="location.href='@Url.Action("OpenInterview", "Interview")'" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+
+
+                                                               
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                               @* <div class="panel panel-default">
                                     <div id="survey-feedback">
                                         <div class="panel-heading" data-position="bottom">
                                             <div class="panel-title-box">
                                                 <h3><span><strong>Open Interviews</strong></span></h3>
                                             </div>
+
+
                                             <div id="slotsId">
                                                 <div class="panel-body panel-body-table">
                                                     <div>
@@ -119,10 +164,53 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>*@
                             </div>
-                            <div class="col-md-4">
-                                <div class="panel panel-default">
+                            <div class="col-md-6 col-lg-4">
+
+                                <div class="panel card flipper9">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#fbc02d"><img src="~/img/myinterview.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title" style="line-height:44px;font-size:16px;"><span><strong>My Interviews</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>
+                                                                    <span style="cursor:pointer;font-size:25px;" class="card-title"> <strong> @Model.MyInterviewCount</strong></span>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="location.href='@Url.Action("MyInterview", "Interview")'" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+
+
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                              @*  <div class="panel panel-default">
                                     <div id="survey-feedback">
                                         <div class="panel-heading" data-position="bottom">
                                             <div class="panel-title-box">
@@ -146,10 +234,52 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>*@
                             </div>
-                            <div class="col-md-4">
-                                <div class="panel panel-default">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="panel card flipper9">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#226f92b5"><img src="~/img/report.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title" style="line-height:44px;font-size:16px;"><span><strong>Pending Report</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>
+                                                                    <span style="cursor:pointer;font-size:25px;" class="card-title"> <strong> @Model.PendingReportCount</strong></span>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                             
+                                                                <button onclick="location.href='@Url.Action("MyInterview", "Interview", new {meetingLineUpType = "Pending"})'" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                             @*   <div class="panel panel-default">
                                     <div id="survey-feedback">
                                         <div class="panel-heading" data-position="bottom">
                                             <div class="panel-title-box">
@@ -173,10 +303,55 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>*@
                             </div>
-                            <div class="col-md-4">
-                                <div class="panel panel-default">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="panel card flipper9">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-2 pull-left"><span class="dashboard-icon" style="background:#97ba6d"><img src="~/img/payment-sla.png" /></span></div>
+                                                        <div class="col-md-10 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title" style="font-size: 16px;padding: 8px 0px 8px 25px;line-height: 25px;"><span><strong>Payment <span style="display:block;font-size:13px;">Pending / Received</span></strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="padding:0px;left:0px;">
+                                                                <div class="header-front"></div>
+                                                                <div class="table-responsive">
+                                                                    <div id="divPendingPayment" style="font-size: 20px;font-weight: 600">
+                                                                        0
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+
+                                                                <button onclick="location.href='@Url.Action("RBPayment", "Finance")'" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+
+                                                               
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                               @* <div class="panel panel-default">
                                     <div id="survey-feedback">
                                         <div class="panel-heading" data-position="bottom">
                                             <div class="panel-title-box">
@@ -202,10 +377,55 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>*@
                             </div>
-                            <div class="col-md-4">
-                                <div class="panel panel-default">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="panel card flipper9">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-2 pull-left"><span class="dashboard-icon pending"><img src="~/img/coded.png" /></span></div>
+                                                        <div class="col-md-10 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title" style="font-size: 16px;padding: 8px 0px 8px 25px;line-height:37px;"><span><strong>Coded Name </strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="padding: 5px 10px 13px 10px;left:0px;">
+                                                                <div class="header-front"></div>
+                                                                <strong>
+                                                                    <span style="cursor:default;font-size: 20px; font-weight: 600;" class="card-title"> <strong> @Model.CodedName</strong></span>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+
+                                                                <button class="click-arrow">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+
+                                                                
+
+
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                              @*  <div class="panel panel-default">
                                     <div id="survey-feedback">
                                         <div class="panel-heading" data-position="bottom">
                                             <div class="panel-title-box">
@@ -229,10 +449,54 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>*@
                             </div>
-                            <div class="col-md-4">
-                                <div class="panel panel-default">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="panel card flipper9">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-2 pull-left"><span class="dashboard-icon report-pending"><img src="~/img/report-pending.png" /></span></div>
+                                                        <div class="col-md-10 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title" style="font-size: 16px;padding: 8px 0px 8px 25px;line-height:37px;"><span><strong>QC Report Pending</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>
+                                                                    <span style="cursor:pointer;font-size:25px;" class="card-title"> <strong> @Model.QCReportCount</strong></span>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+
+                                                               
+                                                                <button class="click-arrow" onclick="location.href='@Url.Action("QCReportDetails", "Interview")'"  title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+
+
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                               @* <div class="panel panel-default">
                                     <div id="survey-feedback">
                                         <div class="panel-heading" data-position="bottom">
                                             <div class="panel-title-box">
@@ -256,12 +520,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>*@
                             </div>
                             <div class="col-md-6">
                                 <div class="panel panel-default">
                                     <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+                                        <div class="panel-heading" data-position="bottom" style="padding-bottom:15px;">
                                             <div class="panel-title-box">
                                                 <h3>
                                                     <span>
@@ -271,14 +535,14 @@
                                                 </h3>
                                             </div>
                                             <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
+                                                <div class="panel-body panel-body-table" style="padding-bottom: 30px;">
                                                     <div>
                                                         <div class="">
                                                             <div id="clientrating" class="PieId" style="height:62px !important"></div>
                                                         </div>
                                                     </div>
                                                     <div style="text-align-last:end">
-                                                        <button onclick="location.href='@Url.Action("FeedbackDetails", "Interviewer",new {type="Client" })'" style="border:none;background:none" title="Detail View">
+                                                        <button class="click-arrow" onclick="location.href='@Url.Action("FeedbackDetails", "Interviewer",new {type="Client" })'"  title="Detail View">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
                                                         </button>
                                                     </div>
@@ -291,7 +555,7 @@
                             <div class="col-md-6">
                                 <div class="panel panel-default">
                                     <div id="survey-feedback">
-                                        <div class="panel-heading" data-position="bottom">
+                                        <div class="panel-heading" data-position="bottom" style="padding-bottom:15px;">
                                             <div class="panel-title-box">
                                                 <h3>
                                                     <span>
@@ -301,14 +565,14 @@
                                                 </h3>
                                             </div>
                                             <div id="slotsId">
-                                                <div class="panel-body panel-body-table">
+                                                <div class="panel-body panel-body-table" style="padding-bottom:30px;">
                                                     <div>
                                                         <div class="">
                                                             <div id="candidaterating" class="PieId" style="height:62px !important"></div>
                                                         </div>
                                                     </div>
                                                     <div style="text-align-last:end">
-                                                        <button onclick="location.href='@Url.Action("FeedbackDetails", "Interviewer",new {type="Candidate" })'" style="border:none;background:none" title="Detail View">
+                                                        <button onclick="location.href='@Url.Action("FeedbackDetails", "Interviewer",new {type="Candidate" })'" class="click-arrow" title="Detail View">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
                                                         </button>
                                                     </div>
@@ -319,17 +583,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-12">
+                        <div class="col-md-4 col-sm-12">
                             <div class="panel panel-default">
                                 <div id="survey-feedback">
                                     <div class="panel-heading" data-intro="<span style='font-size:16px;'>Candidate Feedback Survey </span><hr class='btop' />1. Overall Interview Rating<br/> 2. Overall Interviewer Rating<br/> 3. Scheduling Rating<br/><a href='/IRF/Index' class='btn btn-primary next-btn'>NEXT</a>" data-position="bottom">
-                                        <div class="panel-title-box">
-                                            <h3><span><strong>Important Announcement:</strong></span></h3>
+                                        <div class="panel-title-box" style="padding: 0px 10px 10px 10px;">
+                                            <h3><span style="color:#ca1414;font-size:16px;"><strong><svg style="color: #e12f2f;width: 33px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-5 0h-2v-2h2v2zm0-4h-2V8h2v4zm-1 10c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2z" fill="#e12f2f"></path></svg> Important Announcement:</strong></span></h3>
                                         </div>
                                         <div id="slotsId">
-                                            <div class="panel-body panel-body-table" id="divalertmessage">
-                                                <ul>
-                                                    <li>
+                                            <div class="panel-body panel-body-table " id="divalertmessage">
+                                                <div class="instruction"><ul>
+                                                   @* <li>
                                                         <strong><span style="color:red">New Fixed Interview Pricing Policy- </span></strong> <a id="documentid" target="_blank" title="New Interview Policy" href="https://risebirdportal.blob.core.windows.net/template/NewInterviewPricingPolicy.pdf">Click here</a>
                                                         <br />
                                                         <strong>Note:</strong> Flat pricing will be applicable on new JDs, ongoing JDs and interviews will have ongoing pricing" and " For transparency,  base pay and variable pay will be visible in the open interviews section and you are advised to assign the interview after careful consideration.
@@ -342,13 +606,14 @@
                                                     </li>
                                                     <li>
                                                         <strong>For Late Feedback Report- </strong> Customers demand the feedback report of candidates immediately after the completion of interviews. While other IAAS platforms have been penalizing interviewers for submitting reports after 3 hrs, Risebird has been avoiding any penalties but now our customers are demanding the reporting time to be at par or before the other IAAS platform. In order to achieve the same, we have to penalize for any submission made after 3 hrs (50% deduction on payment) after 24 hrs (100% deduction on payment terms ).
-                                                    </li>
-                                                    <li>All the interviews will be assessed for <strong>Quality by our QC Team</strong>. Kindly ensure you adhere to standard practices to avoid attracting penalty. <a target="_blank" href="https://risebirdportal.blob.core.windows.net/regulatorycompliancedocuments/Risebird_QC_Guidelines.docx">Click Here</a> to know all standard points.</li>
-                                                    <li>
+                                                    </li>*@
+                                                        <li style="margin:20px 0px; background-size: 17px;">All the interviews will be assessed for <strong>Quality by our QC Team</strong>. Kindly ensure you adhere to standard practices to avoid attracting penalty. <a target="_blank" href="https://risebirdportal.blob.core.windows.net/regulatorycompliancedocuments/Risebird_QC_Guidelines.docx">Click Here</a> to know all standard points.</li>
+                                                        <li style="margin:20px 0px; background-size: 17px;">
                                                         <strong>Kindly Upload your latest Resume.</strong> To upload resume please follow the navigation.<br />
                                                         <strong>Menu --> My Profile </strong> or <strong>Click on Right top account menu -->My Profile</strong>
                                                     </li>
                                                 </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -693,15 +958,15 @@
         var interviewerCountObj = [{ y: client, label: "Client" }, { y: (5 - parseFloat(client)) }]
         var chart = new CanvasJS.Chart("clientrating", {
             theme: "light2",
-            width: 175,
-            height: 100,
+            width: 250,
+            height: 120,
             animationEnabled: true,
             title: null,
             data: [{
                 type: "pie",
                 startAngle: 60,
                 innerRadius: 55,
-                indexLabelFontSize: 8,
+                indexLabelFontSize: 14,
                 indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
@@ -714,15 +979,15 @@
         var interviewerCountObj = [{ y: candidate, label: "Candidate" }, { y: (5 - parseFloat(candidate)) }]
         var chart = new CanvasJS.Chart("candidaterating", {
             theme: "light2",
-            width: 175,
-            height: 100,
+            width: 250,
+            height: 120,
             animationEnabled: true,
             title: null,
             data: [{
                 type: "pie",
                 startAngle: 60,
                 innerRadius: 55,
-                indexLabelFontSize: 8,
+                indexLabelFontSize: 14,
                 indexLabelFontColor: "#9a9a9a",
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
