@@ -1687,7 +1687,14 @@ namespace Risebird.Web.Controllers
                         }
                         if (HttpContext.Session.GetString("MyInterviewfilters") == null)
                         {
-                            myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date || (x.MeetingStatus == null && x.interviewDate.Date < DateTime.Now.Date)).ToList();
+                            if (meetingLineUpType == "Completed" || meetingLineUpType == "Pending")
+                            {
+                                myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-7) || (x.MeetingStatus == null && x.interviewDate.Date < DateTime.Now.Date)).ToList();
+                            }
+                            else
+                            {
+                                myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date || (x.MeetingStatus == null && x.interviewDate.Date < DateTime.Now.Date)).ToList();
+                            }
                         }
                         if (TempData["SuccessErrorMessage"] != null)
                         {
