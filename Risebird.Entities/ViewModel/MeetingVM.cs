@@ -344,6 +344,7 @@ namespace Risebird.Entities.ViewModel
 
         public DateTime? PerformedOn { get; set; }
         public bool IRFInterviewerActive { get; set; }
+        public bool DMApproved { get; set; }
 
     }
 
