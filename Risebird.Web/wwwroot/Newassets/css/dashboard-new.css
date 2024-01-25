@@ -7680,14 +7680,14 @@ ul.ks-cboxtags {
     .rate-interview h1 {
         font-size: 15px;
         float: left;
-        line-height: 30px;
+        line-height: 23px;
         color: green;
         padding-right: 10px;
         width: 80%;
     }
 
     .rate-interview button, .rate-interview button:hover {
-        padding: 7px 17px;
+        padding: 7px 7px;
         position: relative;
         border: none;
         font-weight: bold;
@@ -8456,7 +8456,9 @@ option {
     border-radius: 100%;
     border: 2px green solid;
     background: #fff;
-    padding: 0px 3px;
+    padding: 0px 2px 2px 2px;
+    width: 25px;
+    height: 25px;
 }
 #surcharge-info + #surcharge {
     display: none;
@@ -8477,7 +8479,7 @@ option {
 .approve {
     color: #FFF;
     background: #6ed46e;
-    padding: 0PX;
+    padding: 0px 10px 0px 10px;
     font-size: 16px;
     /* box-shadow: 0 3px 0 0 #2EA62E; */
     text-decoration: none;
@@ -8485,19 +8487,22 @@ option {
     position: relative;
     top: -14px;
     right: 3px;
-    cursor:pointer!important;
-    border:0px;
+    cursor: pointer !important;
+    border: 0px;
+    border-radius: 2px;
 }
 .approve-icon {
     display: block;
     float: left;
-    padding: 10px;
-    background: #16ab16;
-    color: #FFF!important;
+    padding: 6px 8px!important;
+    position: relative!important;
+    left: -10px!important;
+    background: #16ab16 !important;
+    color: #FFF !important;
 }
 .approve-txt {
     float: right;
-    padding: 10px 20px 0px 20px;
+    padding: 6px 10px 0px 10px !important;
     line-height: 20px;
     font-weight: 500 !important;
     line-height: 20px;
@@ -8559,6 +8564,26 @@ option {
     border-radius: 22px;
     text-decoration: none;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@-webkit-keyframes blinker {
+    from {
+        opacity: 1;
+        
+    }
+
+    to {
+        opacity: 0.5;
+    }
+}
+
+.blink {
+    text-decoration: blink;
+    -webkit-animation-name: blinker;
+    -webkit-animation-duration: 0.6s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: ease-in-out;
+    -webkit-animation-direction: alternate;
 }
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
