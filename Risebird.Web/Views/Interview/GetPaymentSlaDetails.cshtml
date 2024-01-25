@@ -381,7 +381,7 @@
                                             @Html.HiddenFor(m=>m.LimitedHandoncoding)
                                             <ul class="ks-cboxtags">
                                                 <li>
-                                                    @if (Model.LimitedHandoncoding.Split(",").Contains("wasting"))
+                                                    @if (Model.LimitedHandoncoding.Split(",").Contains("Not Check candidate competency"))
                                                     {
                                                         <input type="checkbox" id="checkboxTwentyNine" name="LimitedHandoncoding" checked onclick="ChangeCheckBox('LimitedHandoncoding')" value="Not Check candidate competency" />
 

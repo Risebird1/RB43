@@ -273,8 +273,10 @@ namespace Risebird.Repository.Interface
         //Task<bool> RemoveInterviewer(int interviewid);
         Task<bool> SavePoorQOSDetails(PoorQOSZoomData data);
         Task<bool> RemoveOrShortlistInterviewer(int interviewid, string action = null);
-        Task<bool> UpdateInterviewReport(int interviewid, string comment,string emailid);
+        Task<bool> UpdateInterviewReport(int interviewid, string comment, string emailid);
         Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
         Task<IEnumerable<ZoomVideoQOSVM>> GetZoomQOSDataByMeetingId(int interviewId);
+        Task<int> GetUniqueUserByEmailId(string emailId, string id);
+        Task<bool> ConfirmInterviewavailability(string emailId, int id,string type);
     }
 }

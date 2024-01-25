@@ -36,11 +36,19 @@
                     {
                         <div class="feedback-tab-ac" onclick="Changeurldetails('EmergencyIM','@ViewBag.interviewdate')"><strong>Emergency Management</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Interview Management</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Reschedule Management</strong></div>
+                    }
+                    else if (ViewBag.Type == "InterviewM")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('EmergencyIM','@ViewBag.interviewdate')"><strong>Emergency Management</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Interview Management</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Reschedule Management</strong></div>
                     }
                     else
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('EmergencyIM','@ViewBag.interviewdate')"><strong>Emergency Management</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Interview Management</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Interview Management</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Reschedule Management</strong></div>
                     }
                 </div>
                 <div class="pull-right">
@@ -197,6 +205,10 @@
                                                             {
                                                                 <td>Not Resolved</td>
                                                             }
+                                                        }
+                                                        else if (item.PerformedOn != null && item.IsRescheduleNotificationSent == 1)
+                                                        {
+                                                            <td>Not Resolved</td>
                                                         }
                                                         else
                                                         {

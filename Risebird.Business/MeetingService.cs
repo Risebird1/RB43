@@ -4105,12 +4105,36 @@ namespace Risebird.Business
             try
             {
                 return await _meetingRespository.GetUnassignedOpenInterviews(irfId);
-                
+
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<int> GetUniqueUserByEmailId(string emailId, string id)
+        {
+            try
+            {
+                return await _meetingRespository.GetUniqueUserByEmailId(emailId, id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+        public async Task<bool> ConfirmInterviewavailability(string emailId, int id,string type)
+        {
+            try
+            {
+                return await _meetingRespository.ConfirmInterviewavailability(emailId, id, type);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

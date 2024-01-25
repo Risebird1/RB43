@@ -3120,5 +3120,37 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public async Task<string> SendInerviewerMeetingReminder(Mail model, string url)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Alert");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
+
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                if (!string.IsNullOrWhiteSpace(model.CC))
+                {
+                    var ccMails = model.CC.Split(";");
+                    foreach (var mail in ccMails)
+                    {
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    }
+                }
+                object[] parameters = new object[] { url };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewerReminder.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
     }
 }
