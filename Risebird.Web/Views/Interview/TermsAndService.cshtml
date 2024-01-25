@@ -1,0 +1,218 @@
+﻿
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Terms And Service";
+    ViewBag.PageHeader = "Terms And Service";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script>
+    var Header = "<div>Terms & Service</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<div class="main-panel" id="main-panel">
+    <div class="mt50">
+    </div>
+    <div class="content client">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+
+                     
+
+
+                            <div class="tab-teaser wizard-card">
+                                <div class="static-menu">
+                                    <ul>
+                                    <li style="list-style:none;"><a href="#" class="active" data-rel="tab-1">Payment Policy</a></li>
+
+
+
+                                    <li style="list-style:none;"><a href="#" data-rel="tab-2">Candidate Privacy Policy</a></li>
+                                               
+                                         
+                                    </ul>
+                                </div>
+
+                                <div class="tab-main-box">
+                                    <div class="tab-box" id="tab-1" style="display:block;">
+                                        <div class="clearfix">
+                                        <div class="panel-body panel-body-table" id="divalertmessage">
+                                            <ul>
+                                                <li>
+                                                    <strong><span style="color:#eb7022; line-height: 32px; font-size: 16px;">New Fixed Interview Pricing Policy: </span></strong>
+                                                    
+                                                   <p> We are launching plans and flat payment model for IT services
+                                                    companies. Plans allow us to cater to different needs of customers and to offer competitive
+                                                    pricing which eventually brings more interviews demand for all our interviewers. Depending
+                                                    on the plan chosen by customer, you will get below mentioned flat payment irrespective of
+                                                        select or reject candidate.
+                                                    </p>
+                                                   <p> For transparency, we will be showing base pay and variable pay in open interviews section
+                                                        and you are advised to assign the interview after careful consideration
+                                                    </p>
+                                                    <p>
+                                                    <strong style="font-size:15px">Base Pay</strong><p>
+                                                   <strong> 1. Standard (S)- Minimum Interview duration = minimum 40 mins for
+                                                    select/reject <br/>
+                                                        • INR 350 per completed interview for offshore <br />
+                                                            • INR 500 per completed interview for onsite <br />
+                                                        </strong>
+                                                       </p>
+                                                   <p><strong>
+                                                        2. Pro (P)- Minimum Interview duration = minimum 50 mins for select/reject<br />
+                                                            • INR 420 per completed interview for offshore<br />
+                                                    • INR 840 per completed interview for onsite</strong></p>
+                                                    <p>
+                                                        <strong> 3. Advanced (A)- Minimum Interview duration = minimum 60 mins for
+                                                    select/reject<br/>
+                                                            • INR 500 per completed interview for offshore<br />
+                                                    • INR 1000 per completed interview for onsite
+                                                        </strong>
+                                                    </p>
+                                                    <p><br/>
+                                                        <strong>
+                                                            Variable Pay - up to INR 120 per interview
+                                                        </strong>
+                                                    <br/></p>
+                                                      <p> <strong>
+                                                            1. Client rating => 5 = INR 50 per completed interview<br/>
+                                                            2. Candidate rating => 5 = INR 50 per completed interview<br />
+                                                    3. Video Reward - 50 for India, 100 for US</strong><br/>
+                                                        <strong><span style="color:#e46748; line-height: 32px; font-size: 15px;">Penalties: </span></strong>
+                                                       <br/> <strong>1. For completing interviews of lesser duration than mentioned above. 5
+                                                            minutes grace is allowed.
+                                                        </strong><br/> For example, if in standard interview your net duration
+                                                    is 30 mins, 5 min grace period will not result in any deduction but additional 5 mins
+                                                    will result in penalty (INR 50) will be deducted on pro rata basis<br/>
+                                                        <strong>
+                                                            2. Late reports - for delay, which is more than 3 hours, 12 hrs, 24hrs</strong><br/>
+                                                        <strong>
+                                                            3. Unassignment of interviews- INR 250 for unassigning interviews
+                                                        </strong><br />
+                                                        <strong>
+                                                            4. QC reports - red flag = INR 50 per red flag
+                                                        </strong><br />
+                                                            <strong>
+                                                            5. Poor client rating (less than 4) = 50% of interview amount after RB QC review
+                                                        </strong><br />
+                                                                <strong>
+                                                                    6. Poor candidate rating (less than 4) = = 50% of interview amount after RB QC
+                                                            review
+                                                        </strong><br />
+                                                                    <strong>
+                                                            7. Redo request from client = = 100% of interview amount after RB QC review
+                                                        </strong><br />
+                                                  <br/> <strong> Surcharge - will be provided to handle exceptions. Our team will update if any
+                                                            surcharge is provided to you.
+                                                        </strong>
+                                                    For Product companies and Startups different pricing will be applicable which will be
+                                                    informed to you separately
+                                                    1. Client rating => 5 = INR 50 per completed interview
+                                                    2. Candidate rating => 5 = INR 50 per completed interview
+                                                    3. Video Reward - 50 for India, 100 for US
+                                                    
+                                                    
+                                                    <a id="documentid" target="_blank" title="New Interview Policy" href="https://risebirdportal.blob.core.windows.net/template/NewInterviewPricingPolicy.pdf">Click here</a>
+                                                    <br />
+                                                    <strong>Note:</strong> Flat pricing will be applicable on new JDs, ongoing JDs and interviews will have ongoing pricing" and " For transparency,  base pay and variable pay will be visible in the open interviews section and you are advised to assign the interview after careful consideration.
+                                                </li>
+                                                <li>
+                                                    <strong><span style="color:#eb7022;line-height: 32px; font-size: 16px;">Net time of interview: </span></strong>All IAAS platform manually start the recording after the candidate arrival and settlement but Risebird starts the recording  by default automatically, which results in counting unproductive minutes . Our customers have stopped paying for unproductive minutes time in the start and are counting net time which is 5 minutes less than total recorded time. Given the ongoing recession in tech hiring we don't have much say in customer decisions and request your cooperation. From May onwards , net interview time will be applicable for your payments.
+                                                </li>
+                                                <li>
+                                                    <strong><span style="color:#eb7022;line-height: 32px; font-size: 16px;">No Payment for Dropped & No Show Candidates:</span> </strong> Customers have never paid Risebird for candidate no-shows while other IAAS platforms also don't pay for candidate noshows, and Risebird is the only platform which paid for candidate no-shows from its inception and has been constantly incurring the losses from last 4 years by paying for candidate noshows. But in the current poor macro environment, it's not possible to continue to pay any amount for candidate no show..
+                                                </li>
+                                                <li>
+                                                    <strong><span style="color:#eb7022;line-height: 32px; font-size: 16px;">For Late Feedback Report:</span> </strong> Customers demand the feedback report of candidates immediately after the completion of interviews. While other IAAS platforms have been penalizing interviewers for submitting reports after 3 hrs, Risebird has been avoiding any penalties but now our customers are demanding the reporting time to be at par or before the other IAAS platform. In order to achieve the same, we have to penalize for any submission made after 3 hrs (50% deduction on payment) after 24 hrs (100% deduction on payment terms ).
+                                                </li>
+                                               
+                                            </ul>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-box" id="tab-2">
+
+                                        <div class="row">
+
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="modal-body" style="color:black;margin-bottom:0px;">
+                                               
+
+                                                <p> Risebird is committed to provide safe and secure interviewing experience for all interviewees. Our interviews are designed to assess the skills of candidates irrespective of gender, attire, appearance, race, religion, caste etc. As our esteemed partners, we expect you to follow the guidelines in a way that represents our values. It is required that you conduct an interview in a professional manner.</p>
+
+                                                <h2 style="font-size: 16px;font-weight:normal;color: #e25d14;"><strong>Few guidelines:</strong></h2>
+                                                <div class="instruction">
+                                                    <ul>
+                                                        <li>During the interview, please do not make any comments of personal nature including gender, attire, appearance, race, religion, caste etc.</li>
+                                                        <li>It is prohibited to take an interview under the influence of any substance (alcohol, drugs etc.)</li>
+                                                        <li>Conduct unbiased assessment of the skills of the candidate irrespective of gender, attire, appearance, race, religion, caste etc.</li>
+                                                        <li>Do not collect or attempt to collect any information that is personal in nature including phone number, salary etc. Do not connect or attempt to connect with the candidate for networking (professional or otherwise)</li>
+                                                        <li>Keep the discussion limited to skills and avoid giving feedback during the interview process</li>
+                                                        <li>Do not comment on the performance of the candidate during the interview. In case the candidate asks, guide them to connect with HR.</li>
+                                                        <li>In case you have to switch on your webcam, be in professional attire.</li>
+                                                    </ul>
+
+                                                </div>
+                                                <p style="font-size:15px;line-height:45px;"> These guidelines are not compressive and are only a few pointers. We expect our interviewers to display exemplary professional behavior.</p>
+                                                <br />
+                                                <h2 style="font-size: 16px;font-weight:normal;color: #e25d14;"><strong>Identifying Non Compliance:</strong></h2>
+                                                <div class="instruction">
+                                                    <ul>
+                                                        <li>We review interviews for any compliance issues manually as well as by script analysis. Any non-compliance will result in immediate actions.</li>
+                                                        <li>We collect candidate feedback in a regular manner. Any complaints by the candidates will trigger our review in detail.</li>
+                                                        <li>We are continuously in touch with our clients and act on their feedback.</li>
+                                                    </ul>
+                                                </div>
+                                                <h2 style="font-size: 16px;font-weight:normal;color: #e25d14;"> <strong>Action, in case of non compliance:</strong></h2>
+                                                <div class="instruction">
+                                                    <ul>
+                                                        <li>Immediate deactivation from Risebird platform pending our review. In case, our review finds non compliance, we will remove you from the platform permanently.</li>
+                                                        <li>Any legal action initiated would be your individual responsibility. Risebird will cooperate with competent authority in all such cases.</li>
+                                                        <li>We reserve the right to recover damages including but not limited to reputation, contractual fines, legal charges etc.</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                          
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                 
+                                </div>
+                            </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $('.static-menu li a').on('click', function () {
+        var target = $(this).attr('data-rel');
+        $('.static-menu li a').removeClass('active');
+        $(this).addClass('active');
+        $("#" + target).fadeIn('slow').siblings(".tab-box").hide();
+        return false;
+    });
+</script>
+
+
+
+
+
+
