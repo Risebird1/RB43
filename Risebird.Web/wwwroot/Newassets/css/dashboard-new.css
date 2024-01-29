@@ -8505,6 +8505,92 @@ option {
     width: auto;
     margin: 0px auto;
 }
+.campaignForm {
+    display: flex;
+    max-width: 800px;
+    min-height: 400px;
+    margin-bottom: 125px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.1);
+    margin:30px auto;
+    padding:40px 40px 20px 40px;
+}
+.campaignForm h1{
+    font-size:25px;
+
+}
+    .campaignForm h1 span {
+        font-weight: bold;
+        color: #2a77b5;
+    }
+    .campaignForm .count {
+        display: inline-block;
+        color: white;
+        background: #d6d5d5;
+        border: 5px solid #d6d5d5;
+        padding: 1px 8px;
+        margin-right: 16px;
+        border-radius: 50%;
+        float: left;
+    }
+    .campaignForm .assessment-name {
+        font-size: 16px;
+        font-weight: 400;
+        position: relative;
+        top: 1px;
+        color: #9b9c9d;
+    }
+
+    .campaignForm .mdc-checkbox__checkmark {
+        left: 2px !important;
+        top: 1px;
+        width: 70%;
+    }
+    .campaignForm .mdc-checkbox__background {
+        border: 1.5px solid #abb2a4 !important;
+    }
+
+    .campaignForm .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .campaignForm .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+        border-color: #8BC34A !important;
+        background-color: #8BC34A !important;
+    }
+
+    .campaignForm button {
+        height: 40px;
+        margin: 20px auto;
+        padding: 0px 10px 0px 10px;
+        background: #e6e6e6;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 19px;
+        color: #444;
+        text-align: center;
+        display: block;
+        font-size:19px;
+        color: #444;
+    }
+.buttonArea {
+    width: 340px;
+    margin: 0px auto;
+}
+.buttonArea .previous{
+    float:left;
+}
+
+    .buttonArea .next {
+        float: right;
+    }
+.campaignName {
+    width: 500px;
+    margin: 30px auto;
+}
+
+
+.campaignName label{
+    font-size:18px;
+    font-weight:500;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

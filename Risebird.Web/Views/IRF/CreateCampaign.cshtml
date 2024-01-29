@@ -5,18 +5,26 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<style>
+    body{
+        background: #f0f0f0!important;
+    }
+</style>
+<div class="campaignForm">
 <form asp-action="CreateCampaignS1" method="post" id="form_1" class="form-container" style="display:none">
-    <label asp-for="AssessmentGroupId">Campaign For @Model.AssessmentGroupName</label>
-
-    <label for="LastName">Campaign Name:</label>
-    <input type="text" id="CampaignName" name="CampaignName" required>
-
+   <span class="count">1</span> <h1 asp-for="AssessmentGroupId">Campaign For <span> @Model.AssessmentGroupName</span></h1>
+    <div class="campaignName">
+    <label for="LastName">What's Your Campaign Name:</label>
+    <input style="height:35px; border: 2px #918a8a85 solid;" type="text" id="CampaignName" name="CampaignName" required>
+        </div>
+    <div>
+        <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select related assesment group </h2>
     @if(Model.AssessmentGroups != null && Model.AssessmentGroups.Count()>0)
     {
         for (int i=0; i< Model.AssessmentGroups.Count(); i++)
         {
             <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
+                
                 <div class="mdc-checkbox">
                     @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
                     <div class="mdc-checkbox__background">
@@ -26,17 +34,17 @@
                         </svg>
                         <div class="mdc-checkbox__mixedmark"></div>
                     </div>
-                    <div class="mdc-checkbox__ripple"></div>
+                    
                 </div>
-                <p>@Model.AssessmentGroups[i].AssessmentGroup</p>
+                <label class="assessment-name">@Model.AssessmentGroups[i].AssessmentGroup</label>
                 @Html.HiddenFor(x => x.AssessmentGroups[i].id)
                 @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
             </div>
         }
     }
-    
+    </div>
 
-    <button type="submit">Save and Next</button>
+    <button type="submit">Save and Next »</button>
 
 @*     <button type="button" onclick="Navigate('form_2')">Next</button>
  *@    
@@ -46,19 +54,24 @@
 </form>
 
 <form asp-action="CreateCampaignS2" method="post" id="form_2" class="form-container" style="display:none">
-    <label asp-for="AssessmentGroupId">Campaign For @Model.AssessmentGroupName</label>
+    <span class="count">2</span>  <h1 asp-for="AssessmentGroupId">Campaign For<span> @Model.AssessmentGroupName</span></h1>
 
-    <label for="LastName">Campaign Name:</label> 
-    <p>
-        @Model.CampaignName
-    </p>
+    
+    <div style="margin:30px auto;">
+   
+    <label for="LastName" style="font-size:20px;font-weight:normal">Campaign Name: <span style="color: #16b149;
+    font-weight: 600;">  @Model.CampaignName</span></label>  
+    
+    </div>
+    <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select Skill Channel </h2>
+
 
     @if(Model.SkillChannels != null && Model.SkillChannels.Count()>0)
     {
         for (int i=0; i< Model.SkillChannels.Count(); i++)
         {
             <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
-                <p>@Model.SkillChannels[i].AssessmentGroupName</p>
+                <label class="assessment-name" style="color:#2a77b5">@Model.SkillChannels[i].AssessmentGroupName:</label>
                 <div class="mdc-checkbox">
                     @Html.CheckBoxFor(m => m.SkillChannels[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
                     <div class="mdc-checkbox__background">
@@ -68,9 +81,9 @@
                         </svg>
                         <div class="mdc-checkbox__mixedmark"></div>
                     </div>
-                    <div class="mdc-checkbox__ripple"></div>
+                   
                 </div>
-                <p>@Model.SkillChannels[i].IRFId</p>
+                 <label class="assessment-name">@Model.SkillChannels[i].IRFId</label>
                 @Html.HiddenFor(x => x.SkillChannels[i].IRFId)
                 @Html.HiddenFor(x => x.SkillChannels[i].id)
 
@@ -91,11 +104,11 @@
         @Html.HiddenFor(x => x.AssessmentGroups[i].id)
         @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
     }
+    <div class="buttonArea">
+    <button class="previous" type="button" onclick="Navigate('form_1')">Previous</button>
 
-    <button type="button" onclick="Navigate('form_1')">Previous</button>
-
-    <button type="submit">Save and Send Mails</button>
-
+    <button  class="next" type="submit">Save and Send Mails »</button>
+    </div>
 </form>
 
 <div id="id_Summary" class="form-container" style="display:none">
@@ -137,7 +150,7 @@
     <a asp-action="Campaigns">Campaign List</a>
 
 </div>
-
+</div>
 
 <script>
     function showForm(formId) {
