@@ -8328,7 +8328,9 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profileName = profileName;
                 var model = new IRFVm();
-                ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                var level = await _irfRepository.GetLevelTech();
+                level = level.Where(x => x.id != 6).ToList();
+                ViewBag.LevelTech = new SelectList(level, "id", "Name");
                 //var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
                 //                 select new { ID = (int)s, Name = s.GetDescription() };
                 //ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
@@ -8372,7 +8374,9 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
                     }
-                    ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                    var level = await _irfRepository.GetLevelTech();
+                    level = level.Where(x => x.id != 6).ToList();
+                    ViewBag.LevelTech = new SelectList(level, "id", "Name");
                     var Skillset = await _irfRepository.GetSkills();
                     ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
@@ -8579,7 +8583,6 @@ namespace Risebird.Web.Controllers
         {
             var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
             var level = await _irfRepository.GetLevelTech();
-            level = level.Where(x => x.id != 6).ToList();
             //var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
             //            select new { ID = (int)s, Name = s.GetDescription() };
             var Skillset = await _irfRepository.GetSkills();
