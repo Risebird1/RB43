@@ -878,7 +878,7 @@ namespace Risebird.Web.Controllers
                             //create an index with the same name as that of this skill channel in affinda for using the search and match tool
 
                             var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(irfDetails.IRFId);
-                            
+
                             await _irfService.UpdateAffindaIndexFlag(irfDetails.IRFId, isIndexCreated);
 
 
@@ -956,8 +956,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
             }
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
-
+            var level = await _irfRepository.GetLevelTech();
+            ViewBag.LevelTech = new SelectList(level.Where(x => x.id != 6).ToList(), "id", "Name");
             var Skillset = await _irfRepository.GetSkills();
             //if (Skillset != null)
             //{
@@ -2086,7 +2086,7 @@ namespace Risebird.Web.Controllers
                             //Start: Auto Generate Scheduling Link 
                             if (string.IsNullOrEmpty(model.CalendlyLink))
                             {
-                                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling","EditIRF");
+                                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "EditIRF");
                                 model.CalendlyLink = _schedulinglink;
                             }
                             //End: Auto Generate Scheduling Link
@@ -6696,14 +6696,14 @@ namespace Risebird.Web.Controllers
                 if (result.Item1)
                 {
                     //if status = 1, send open interviews notification to the interviewer
-                    if(status == 1)
+                    if (status == 1)
                     {
                         var unassignedInterviewMeetings = await _meetingService.GetUnassignedOpenInterviews(Irfid);
                         List<string> interviewers = new List<string>
                         {
                             result.Item2
                         };
-                        if (unassignedInterviewMeetings!=null && unassignedInterviewMeetings.Count()>0)
+                        if (unassignedInterviewMeetings != null && unassignedInterviewMeetings.Count() > 0)
                         {
                             foreach (var meeting in unassignedInterviewMeetings)
                             {
@@ -6713,7 +6713,7 @@ namespace Risebird.Web.Controllers
 
                         }
                     }
-                    
+
 
                     return Json("Status updated successfully.");
                 }
@@ -8577,6 +8577,7 @@ namespace Risebird.Web.Controllers
         {
             var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
             var level = await _irfRepository.GetLevelTech();
+            level = level.Where(x => x.id != 6).ToList();
             //var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
             //            select new { ID = (int)s, Name = s.GetDescription() };
             var Skillset = await _irfRepository.GetSkills();
