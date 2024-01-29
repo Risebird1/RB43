@@ -98,16 +98,17 @@
     }
     @Html.HiddenFor(x => x.CampaignName)
     @Html.HiddenFor(x => x.AssessmentGroupName)
+      @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
+        {
+            @for (int i = 0; i < Model.AssessmentGroups?.Where(x => x.IsSelectedForCampaign)?.Count(); i++)
+            {
+                @Html.HiddenFor(x => x.AssessmentGroups[i].id)
+                @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
+            }
+        }
+        <div class="buttonArea">
+        <button class="previous" type="button" onclick="Navigate('form_1')">Previous</button>
 
-    @for (int i=0; i< Model.AssessmentGroups?.Where(x=>x.IsSelectedForCampaign)?.Count(); i++)
-    {
-        @Html.HiddenFor(x => x.AssessmentGroups[i].id)
-        @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
-    }
-
-    <button type="button" onclick="Navigate('form_1')">Previous</button>
-
-    <button type="submit">Save and Send Mails</button>
 
     <button  class="next" type="submit">Save and Send Mails »</button>
     </div>
