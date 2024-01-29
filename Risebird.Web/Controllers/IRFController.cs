@@ -2186,7 +2186,8 @@ namespace Risebird.Web.Controllers
 
             ViewBag.Clients = new SelectList(await _irfRepository.GetClients(), "id", "Name");
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+            var level = await _irfRepository.GetLevelTech();
+            ViewBag.LevelTech = new SelectList(level.Where(x => x.id != 6).ToList(), "id", "Name");
 
             var skillset = await _irfRepository.GetSkills();
             if (skillset != null)
@@ -2455,6 +2456,7 @@ namespace Risebird.Web.Controllers
 
             model.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
             model.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
