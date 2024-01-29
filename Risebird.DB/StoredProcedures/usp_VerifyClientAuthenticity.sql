@@ -20,18 +20,22 @@ select @userClientId = ClientId from ClientUser cu join UserList ul on ul.id = c
 where ul.EmailId = @emailId 
 select @irfClientId = ClientId from IRF where id =@irfId
 
-Declare @emaildomain varchar(100),@clientdomain varchar(100)
+Declare @emaildomain varchar(100)
+Declare @domintable as Table(Domin varchar(30))
 SELECT @emaildomain=SUBSTRING(@emailId , LEN(@emailId) -  CHARINDEX('@',REVERSE(@emailId)) + 2  , LEN(@emailId)) 
-set @clientdomain=(select top(1) SUBSTRING(ul.EmailId , LEN(ul.EmailId) -  CHARINDEX('@',REVERSE(ul.EmailId)) + 2  , LEN(ul.EmailId)) from ClientUser cu join UserList ul on ul.id = cu.UserId
-where cu.ClientId=@irfClientId)
 
-if(@clientdomain = @emaildomain)
+Insert into @domintable 
+select distinct SUBSTRING(ul.EmailId , LEN(ul.EmailId) -  CHARINDEX('@',REVERSE(ul.EmailId)) + 2  , LEN(ul.EmailId)) as Domin from ClientUser cu join UserList ul on ul.id = cu.UserId where cu.ClientId=29
+
+IF EXISTS (Select top(1) * from @domintable where Domin=@emaildomain)
 Begin
 	set @result = 1
 End
 select @result
-
 End  
+
+
+
   
 GO
 
