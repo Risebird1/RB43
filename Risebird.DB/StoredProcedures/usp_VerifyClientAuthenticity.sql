@@ -25,7 +25,7 @@ Declare @domintable as Table(Domin varchar(30))
 SELECT @emaildomain=SUBSTRING(@emailId , LEN(@emailId) -  CHARINDEX('@',REVERSE(@emailId)) + 2  , LEN(@emailId))   
   
 Insert into @domintable   
-select distinct SUBSTRING(ul.EmailId , LEN(ul.EmailId) -  CHARINDEX('@',REVERSE(ul.EmailId)) + 2  , LEN(ul.EmailId)) as Domin from ClientUser cu join UserList ul on ul.id = cu.UserId where cu.ClientId=@irfId  
+select distinct SUBSTRING(ul.EmailId , LEN(ul.EmailId) -  CHARINDEX('@',REVERSE(ul.EmailId)) + 2  , LEN(ul.EmailId)) as Domin from ClientUser cu join UserList ul on ul.id = cu.UserId where cu.ClientId=@irfClientId  
   
 IF EXISTS (Select top(1) * from @domintable where Domin=@emaildomain)  
 Begin  
@@ -33,6 +33,8 @@ Begin
 End  
 select @result  
 End    
+  
+  
   
   
   
