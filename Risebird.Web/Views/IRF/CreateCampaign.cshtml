@@ -104,8 +104,10 @@
         @Html.HiddenFor(x => x.AssessmentGroups[i].id)
         @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
     }
-    <div class="buttonArea">
-    <button class="previous" type="button" onclick="Navigate('form_1')">Previous</button>
+
+    <button type="button" onclick="Navigate('form_1')">Previous</button>
+
+    <button type="submit">Save and Send Mails</button>
 
     <button  class="next" type="submit">Save and Send Mails »</button>
     </div>
