@@ -878,7 +878,7 @@ namespace Risebird.Web.Controllers
                             //create an index with the same name as that of this skill channel in affinda for using the search and match tool
 
                             var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(irfDetails.IRFId);
-                            
+
                             await _irfService.UpdateAffindaIndexFlag(irfDetails.IRFId, isIndexCreated);
 
 
@@ -956,8 +956,9 @@ namespace Risebird.Web.Controllers
                     ViewBag.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
             }
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
-
+            var level = await _irfRepository.GetLevelTech();
+            level = level.Where(x => x.id != 1).ToList();
+            ViewBag.LevelTech = new SelectList(level, "id", "Name");
             var Skillset = await _irfRepository.GetSkills();
             //if (Skillset != null)
             //{
@@ -2086,7 +2087,7 @@ namespace Risebird.Web.Controllers
                             //Start: Auto Generate Scheduling Link 
                             if (string.IsNullOrEmpty(model.CalendlyLink))
                             {
-                                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling","EditIRF");
+                                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "EditIRF");
                                 model.CalendlyLink = _schedulinglink;
                             }
                             //End: Auto Generate Scheduling Link
@@ -2186,7 +2187,9 @@ namespace Risebird.Web.Controllers
 
             ViewBag.Clients = new SelectList(await _irfRepository.GetClients(), "id", "Name");
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+            var level = await _irfRepository.GetLevelTech();
+            level = level.Where(x => x.id != 1).ToList();
+            ViewBag.LevelTech = new SelectList(level, "id", "Name");
 
             var skillset = await _irfRepository.GetSkills();
             if (skillset != null)
@@ -2455,6 +2458,7 @@ namespace Risebird.Web.Controllers
 
             model.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
             model.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
@@ -6696,14 +6700,14 @@ namespace Risebird.Web.Controllers
                 if (result.Item1)
                 {
                     //if status = 1, send open interviews notification to the interviewer
-                    if(status == 1)
+                    if (status == 1)
                     {
                         var unassignedInterviewMeetings = await _meetingService.GetUnassignedOpenInterviews(Irfid);
                         List<string> interviewers = new List<string>
                         {
                             result.Item2
                         };
-                        if (unassignedInterviewMeetings!=null && unassignedInterviewMeetings.Count()>0)
+                        if (unassignedInterviewMeetings != null && unassignedInterviewMeetings.Count() > 0)
                         {
                             foreach (var meeting in unassignedInterviewMeetings)
                             {
@@ -6713,7 +6717,7 @@ namespace Risebird.Web.Controllers
 
                         }
                     }
-                    
+
 
                     return Json("Status updated successfully.");
                 }
@@ -8326,10 +8330,12 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profileName = profileName;
                 var model = new IRFVm();
-                //ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
-                var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-                ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
+                var level = await _irfRepository.GetLevelTech();
+                level = level.Where(x => x.id != 1).ToList();
+                ViewBag.LevelTech = new SelectList(level, "id", "Name");
+                //var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
+                //                 select new { ID = (int)s, Name = s.GetDescription() };
+                //ViewBag.LevelTech = new SelectList(techlevels, "ID", "Name");
                 var Skillset = await _irfRepository.GetSkills();
                 ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
@@ -8370,7 +8376,9 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
                     }
-                    ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                    var level = await _irfRepository.GetLevelTech();
+                    level = level.Where(x => x.id != 1).ToList();
+                    ViewBag.LevelTech = new SelectList(level, "id", "Name");
                     var Skillset = await _irfRepository.GetSkills();
                     ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
@@ -8576,9 +8584,9 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> DeliveryHeadSkillDetails(int id)
         {
             var transTechSkills = await _irfRepository.GetSkillsbyIRFid(id);
-            //var level = await _irfRepository.GetLevelTech();
-            var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
-                        select new { ID = (int)s, Name = s.GetDescription() };
+            var level = await _irfRepository.GetLevelTech();
+            //var level = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
+            //            select new { ID = (int)s, Name = s.GetDescription() };
             var Skillset = await _irfRepository.GetSkills();
             if (Skillset != null)
             {
@@ -8586,7 +8594,7 @@ namespace Risebird.Web.Controllers
             }
             foreach (var item in transTechSkills)
             {
-                item.LevelName = level.Where(x => x.ID == item.LevelId).Select(x => x.Name).FirstOrDefault();
+                item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
                 item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
             }
             return Json(transTechSkills);

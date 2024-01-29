@@ -56,12 +56,14 @@
                                 <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
                                     <div class="heading-txt">
                                         Instructions for Interviewer Guidance
-                                        @if (!Model.DMApproved && (ViewBag.profileName == "Client" || ViewBag.profileName == "Public"))
+                                       
+ @if (!Model.DMApproved && (ViewBag.profileName == "Client" || ViewBag.profileName == "Public"))
                                         {
                                             <button type="button" class="approve" onclick="ApproveDH(@Model.id)">
                                                 <span class="fa fa-check approve-icon"></span><span class="approve-txt"> APPROVE</span>
                                             </button>
                                         }
+                                        
                                     </div>
                                     <div class="card">
                                         <label class="question" for="checkbox_two">
@@ -608,7 +610,7 @@
                 <div class="filavatar">
                     <span class="fa fa-file-text-o" style="font-size:25px;"></span>
                 </div>
-                <h5 class="modal-title pull-left" id="memberHeading">Text Instruction</h5>
+                <h5 class="modal-title pull-left" id="memberHeading">L2 Feedback</h5>
             </div>
             <button onclick="closeTextInstructionTypeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true" style="cursor:pointer;">&times;</span>

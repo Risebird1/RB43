@@ -980,9 +980,11 @@ function formatLabel(str, maxwidth) {
 function CalculateOverAllScore(requiredLevel, actualLevel, requiredWeightage) {
     var actualWeightage = 0;
     if (actualLevel != null && actualLevel != '') {
-        if (requiredLevel <= actualLevel) {
+        if (actualLevel == 1 && requiredLevel > 1) {
+            actualWeightage = 0;
+        }
+        else if (requiredLevel <= actualLevel) {
             actualWeightage = requiredWeightage;
-
         }
         else {
             actualWeightage = ((5 - (requiredLevel - actualLevel)) / 5) * (requiredWeightage);
