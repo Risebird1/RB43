@@ -8506,7 +8506,7 @@ option {
     margin: 0px auto;
 }
 .campaignForm {
-    max-width: 800px;
+   width: 800px;
     min-height: 400px;
     margin-bottom: 125px;
     background-color: #ffffff;
@@ -8514,6 +8514,7 @@ option {
     box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.1);
     margin:30px auto;
     padding:40px 40px 20px 40px;
+   
 }
 .campaignForm h1{
     font-size:25px;

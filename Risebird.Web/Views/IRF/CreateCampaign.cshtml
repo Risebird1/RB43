@@ -118,27 +118,27 @@
     <span class="count">3</span> <h1>Campaign Summary:</h1>
         <div style="margin:30px auto;">
 
-        <p>
-            <label  style="font-size:17px;font-weight:normal"> Campaign Name: <span style="color: #16b149; font-weight: 600;">  @Model.CampaignName</span>
+        <div style="margin-bottom:20px;">
+            <label  style="font-size:17px;font-weight:normal"> Campaign Name: <span style="color: #16b149; font-weight: 600;font-size:18px;">  @Model.CampaignName</span>
             </label>
-            </p>
+            </div>
 
-        <p>
+            <div style="margin-bottom:20px;">
        <label style="font-size:17px;font-weight:normal">
-                    Primary Assessment Group: <span style="color: #7a9683;font-weight: 600;padding-left:10px;"> @Model.AssessmentGroupName</span>
+                    <span style="padding-right:10px;">Primary Assessment Group:</span> <span style="color: #2a77b5;font-weight: 600;font-size:18px;"> @Model.AssessmentGroupName</span>
        </label>
-       </p>
+       </div>
 
 
       
-            <div>
+            <div style="margin-bottom:20px;">
                 <label style="font-size:17px;font-weight:normal;">
-                    <span style="float:left">  Secondary Assessment Group(s):</span>
+                    <span style="float:left;padding-right:10px">  Secondary Assessment Group(s):</span>
                     @if (Model.AssessmentGroups != null)
                     {
                         @foreach (var item in Model.AssessmentGroups?.Where(x => x.IsSelectedForCampaign))
                         {
-                            <span style="color: #7a9683;font-weight: 600;float:left;padding-left:10px;">@item.AssessmentGroup</span>
+                            <span style="color: #26C6DA;font-weight: 600;float:left;font-size:18px;margin-right:">@item.AssessmentGroup</span>
 
                         }
                     }
@@ -146,14 +146,14 @@
             </div>
 
 
-            <div>
+            <div style="margin-bottom:20px;">
                 <label style="font-size:17px;font-weight:normal;">
-                    <span style="float:left">Skill Channel(s) Selected:</span>
+                    <span style="float:left;padding-right:10px;">Skill Channel(s) Selected:</span>
                     @if (Model.SkillChannels != null)
                     {
                         @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
                         {
-                            <span style="color: #7a9683;font-weight: 600;float:left;padding-left:10px;">@item.IRFId</span>
+                            <span style="color: #8e918f;font-weight: 500;float: left; margin-right: 10px;background:#e4dede80; padding: 2px 3px;font-size:18px;">@item.IRFId</span>
 
                         }
                     }
@@ -163,14 +163,14 @@
 
 
 
-            <div>
+            <div style="margin-bottom:20px;">
                 <label style="font-size:17px;font-weight:normal;">
-                    <span style="float:left">Interviewers communicated to:</span>
+                    <span style="float:left;padding-right:10px;">Interviewers communicated to:</span>
     @if(Model.Interviewers!=null)
     {
         @foreach (var item in Model.Interviewers?.Distinct())
         {
-                            <span style="color: #7a9683;font-weight: 600;float:left;padding-left:10px;">@item.EmailId</span>
+                            <span style="color: #7a9683;font-weight: 600;float:left;">@item.EmailId</span>
            
         }
     }
