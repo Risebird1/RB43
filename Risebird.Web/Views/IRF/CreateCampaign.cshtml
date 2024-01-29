@@ -63,7 +63,7 @@
     font-weight: 600;">  @Model.CampaignName</span></label>  
     
     </div>
-    <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select Skill Channel </h2>
+        <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select related Skill Channel </h2>
 
 
     @if(Model.SkillChannels != null && Model.SkillChannels.Count()>0)
@@ -115,43 +115,73 @@
 </form>
 
 <div id="id_Summary" class="form-container" style="display:none">
-    <p>Campaign Summary:</p><br />
-    <p>Campaign Name: @Model.CampaignName</p><br />
-    <p>Primary Assessment Group: @Model.AssessmentGroupName</p><br />
+    <span class="count">3</span> <h1>Campaign Summary:</h1>
+        <div style="margin:30px auto;">
 
-    <p>Secondary Assessment Group(s):</p>
-    @if (Model.AssessmentGroups != null)
-    {
-        @foreach (var item in Model.AssessmentGroups?.Where(x => x.IsSelectedForCampaign))
-        {
-            <p>@item.AssessmentGroup</p>
-            <br />
-        }
-    }
-        
-    <p>Skill Channel(s) Selected:</p>
-    @if(Model.SkillChannels!=null)
-    {
-        @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
-        {
-            <p>@item.IRFId</p>
-            <br />
-        }
-    }
-    
-    <p>Interviewers communicated to:</p>
+        <p>
+            <label  style="font-size:17px;font-weight:normal"> Campaign Name: <span style="color: #16b149; font-weight: 600;">  @Model.CampaignName</span>
+            </label>
+            </p>
+
+        <p>
+       <label style="font-size:17px;font-weight:normal">
+                    Primary Assessment Group: <span style="color: #7a9683;font-weight: 600;padding-left:10px;"> @Model.AssessmentGroupName</span>
+       </label>
+       </p>
+
+
+      
+            <div>
+                <label style="font-size:17px;font-weight:normal;">
+                    <span style="float:left">  Secondary Assessment Group(s):</span>
+                    @if (Model.AssessmentGroups != null)
+                    {
+                        @foreach (var item in Model.AssessmentGroups?.Where(x => x.IsSelectedForCampaign))
+                        {
+                            <span style="color: #7a9683;font-weight: 600;float:left;padding-left:10px;">@item.AssessmentGroup</span>
+
+                        }
+                    }
+                </label>
+            </div>
+
+
+            <div>
+                <label style="font-size:17px;font-weight:normal;">
+                    <span style="float:left">Skill Channel(s) Selected:</span>
+                    @if (Model.SkillChannels != null)
+                    {
+                        @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
+                        {
+                            <span style="color: #7a9683;font-weight: 600;float:left;padding-left:10px;">@item.IRFId</span>
+
+                        }
+                    }
+                </label>
+            </div>
+
+
+
+
+            <div>
+                <label style="font-size:17px;font-weight:normal;">
+                    <span style="float:left">Interviewers communicated to:</span>
     @if(Model.Interviewers!=null)
     {
         @foreach (var item in Model.Interviewers?.Distinct())
         {
-            <p>@item.EmailId</p>
-            <br />
+                            <span style="color: #7a9683;font-weight: 600;float:left;padding-left:10px;">@item.EmailId</span>
+           
         }
     }
-    
-    
-    <a asp-action="Campaigns">Campaign List</a>
+    </label></div>
 
+            <a asp-action="Campaigns" class="button" style="width: 200px;
+    text-decoration: none;
+    line-height: 36px;
+   background:grey;
+    color: #fff;">Campaign List</a>
+        </div>
 </div>
 </div>
 

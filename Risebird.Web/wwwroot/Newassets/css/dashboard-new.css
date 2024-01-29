@@ -8506,7 +8506,6 @@ option {
     margin: 0px auto;
 }
 .campaignForm {
-    display: flex;
     max-width: 800px;
     min-height: 400px;
     margin-bottom: 125px;
@@ -8556,7 +8555,7 @@ option {
         background-color: #8BC34A !important;
     }
 
-    .campaignForm button {
+    .campaignForm button[type=submit], .campaignForm button, .campaignForm .button {
         height: 40px;
         margin: 20px auto;
         padding: 0px 10px 0px 10px;
@@ -8567,13 +8566,18 @@ option {
         color: #444;
         text-align: center;
         display: block;
-        font-size:19px;
+        font-size: 19px;
         color: #444;
     }
-.buttonArea {
-    width: 340px;
-    margin: 0px auto;
-}
+        .campaignForm button[type=submit]:hover, .campaignForm button:hover, .campaignForm .button:hover{
+            background: #4491cf !important;
+            color: #fff !important;
+        }
+        
+        .buttonArea {
+            width: 340px;
+            margin: 0px auto;
+        }
 .buttonArea .previous{
     float:left;
 }
