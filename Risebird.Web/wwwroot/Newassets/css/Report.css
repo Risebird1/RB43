@@ -95,7 +95,8 @@
 
 .skillBackground {
     color: #000 !important;
-    background-color: #f1f1f1 !important
+    background-color: #e6e5e5d4 !important;
+    text-shadow: 2px 0px #b2aeae;
 }
 
 .skill-round-xlarge {
