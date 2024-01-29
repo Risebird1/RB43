@@ -1,0 +1,177 @@
+﻿@model Risebird.Entities.ViewModel.AGCampaignModel
+
+@{
+    ViewData["Title"] = "Create Campaign";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form asp-action="CreateCampaignS1" method="post" id="form_1" class="form-container" style="display:none">
+    <label asp-for="AssessmentGroupId">Campaign For @Model.AssessmentGroupName</label>
+
+    <label for="LastName">Campaign Name:</label>
+    <input type="text" id="CampaignName" name="CampaignName" required>
+
+    @if(Model.AssessmentGroups != null && Model.AssessmentGroups.Count()>0)
+    {
+        for (int i=0; i< Model.AssessmentGroups.Count(); i++)
+        {
+            <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
+                <div class="mdc-checkbox">
+                    @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
+                    <div class="mdc-checkbox__background">
+                        <svg class="mdc-checkbox__checkmark"
+                             viewBox="0 0 24 24">
+                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                        </svg>
+                        <div class="mdc-checkbox__mixedmark"></div>
+                    </div>
+                    <div class="mdc-checkbox__ripple"></div>
+                </div>
+                <p>@Model.AssessmentGroups[i].AssessmentGroup</p>
+                @Html.HiddenFor(x => x.AssessmentGroups[i].id)
+                @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
+            </div>
+        }
+    }
+    
+
+    <button type="submit">Save and Next</button>
+
+@*     <button type="button" onclick="Navigate('form_2')">Next</button>
+ *@    
+    @Html.HiddenFor(x => x.AssessmentGroupId)
+    @Html.HiddenFor(x => x.AssessmentGroupName)
+    @Html.HiddenFor(x => x.id)
+</form>
+
+<form asp-action="CreateCampaignS2" method="post" id="form_2" class="form-container" style="display:none">
+    <label asp-for="AssessmentGroupId">Campaign For @Model.AssessmentGroupName</label>
+
+    <label for="LastName">Campaign Name:</label> 
+    <p>
+        @Model.CampaignName
+    </p>
+
+    @if(Model.SkillChannels != null && Model.SkillChannels.Count()>0)
+    {
+        for (int i=0; i< Model.SkillChannels.Count(); i++)
+        {
+            <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
+                <p>@Model.SkillChannels[i].AssessmentGroupName</p>
+                <div class="mdc-checkbox">
+                    @Html.CheckBoxFor(m => m.SkillChannels[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
+                    <div class="mdc-checkbox__background">
+                        <svg class="mdc-checkbox__checkmark"
+                             viewBox="0 0 24 24">
+                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                        </svg>
+                        <div class="mdc-checkbox__mixedmark"></div>
+                    </div>
+                    <div class="mdc-checkbox__ripple"></div>
+                </div>
+                <p>@Model.SkillChannels[i].IRFId</p>
+                @Html.HiddenFor(x => x.SkillChannels[i].IRFId)
+                @Html.HiddenFor(x => x.SkillChannels[i].id)
+
+            </div>
+        }
+    }
+
+    @if(Model.id.HasValue)
+    {
+        <input type="hidden" asp-for="id" id="id" value="@Model.id.Value" />
+
+    }
+    @Html.HiddenFor(x => x.CampaignName)
+    @Html.HiddenFor(x => x.AssessmentGroupName)
+
+    @for (int i=0; i< Model.AssessmentGroups?.Where(x=>x.IsSelectedForCampaign)?.Count(); i++)
+    {
+        @Html.HiddenFor(x => x.AssessmentGroups[i].id)
+        @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
+    }
+
+    <button type="button" onclick="Navigate('form_1')">Previous</button>
+
+    <button type="submit">Save and Send Mails</button>
+
+</form>
+
+<div id="id_Summary" class="form-container" style="display:none">
+    <p>Campaign Summary:</p><br />
+    <p>Campaign Name: @Model.CampaignName</p><br />
+    <p>Primary Assessment Group: @Model.AssessmentGroupName</p><br />
+
+    <p>Secondary Assessment Group(s):</p>
+    @if (Model.AssessmentGroups != null)
+    {
+        @foreach (var item in Model.AssessmentGroups?.Where(x => x.IsSelectedForCampaign))
+        {
+            <p>@item.AssessmentGroup</p>
+            <br />
+        }
+    }
+        
+    <p>Skill Channel(s) Selected:</p>
+    @if(Model.SkillChannels!=null)
+    {
+        @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
+        {
+            <p>@item.IRFId</p>
+            <br />
+        }
+    }
+    
+    <p>Interviewers communicated to:</p>
+    @if(Model.Interviewers!=null)
+    {
+        @foreach (var item in Model.Interviewers?.Distinct())
+        {
+            <p>@item.EmailId</p>
+            <br />
+        }
+    }
+    
+    
+    <a asp-action="Campaigns">Campaign List</a>
+
+</div>
+
+
+<script>
+    function showForm(formId) {
+        debugger;
+        $('.form-container').hide();
+        $('#' + formId).show();
+    }
+
+    $(document).ready(function () {
+        debugger;
+        showForm('@Model.CurrentForm');
+    });
+
+    function Navigate(formId) {
+        debugger;
+        $('.form-container').hide();
+        $('#' + formId).show();
+    }
+</script>
+
+@if (!string.IsNullOrEmpty(Model.OutcomeMessage))
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.OutcomeMessage';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful", '@Model.OutcomeMessage', "success");
+            }
+            else {
+                swal.fire("Failed", '@Model.OutcomeMessage', "error");
+            }
+        }
+    </script>
+}

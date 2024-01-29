@@ -99,7 +99,7 @@ namespace Risebird.CommonHelper.Interface
         //Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, int? irfId = null, int? interviewId = null);
         Task<string> SendInterviewNoReminder(Mail model, string CandidateName, DateTime interviewdate, string ClientName, string PrimarySkillInvite, string timezone, string meetingLink, int? irfId = null, int? interviewId = null, string clientLogoLink = null);
         Task<string> SharedBotTestLink(Mail model, string title, string timeduration, string Url, string ClientName);
-        Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null);
+        Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null, int? campaignId = null);
         Task<string> SendClientRisebirdReview(Mail model, string Name, string reviewurl, string clientlogo);
         Task<string> SharedReminderTestLink(Mail model, string title, string timeduration, string Url, string ClientName, DateTime Expiretime);
         Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl);
@@ -112,5 +112,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendReScheduleInterviewInfo(Mail model, DateTime interviewdatetime, string timezonevalue, DateTime newinterviewdatetime, string newtimezonevalue, string CandidateName, string ClientName, string JDTiltle, int? interviewId);
         Task<string> SendInterviewerRedMarkersNotification(Mail model, string _template, string acklink);
         Task<string> SendInerviewerMeetingReminder(Mail model, string url);
+        Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewers, string yesbutton, string nobutton, string agName, int campaignId);
     }
 }

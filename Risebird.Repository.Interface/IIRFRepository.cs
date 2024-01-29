@@ -225,5 +225,10 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
         Task<bool> ApproveDM(int id, string emailid);
         Task<bool> UpdateAffindaIndexFlag(string irfId, bool isIndexCreated);
+        Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue);
+        Task<IEnumerable<IRFVm>> GetSkillChannelsForAssessmentGroups(List<int> assessmentGroups);
+        bool CreateCampaign(AGCampaignModel model, string loggedInUser, out int campaignId);
+        bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser);
+        Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetCampaignInterviewingMembers(int campaignId);
     }
 }

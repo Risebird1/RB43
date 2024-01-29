@@ -236,5 +236,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<MeetingVM>> GetUnassignedOpenInterviews(int irfId);
         Task<int> GetUniqueUserByEmailId(string emailId, string id);
         Task<bool> ConfirmInterviewavailability(string emailId, int id,string type);
+        Task<bool> UpdateInterviewerAvailbilityStatusCampaignLevel(bool status, string uniqueid, int campaignId, string rsc = null);
     }
 }

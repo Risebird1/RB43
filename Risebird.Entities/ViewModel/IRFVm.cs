@@ -245,7 +245,7 @@ namespace Risebird.Entities.ViewModel
         public string DMApprovedBy { get; set; }
         public DateTime? AffindaEmbedUrlCreatedAt { get; set; }
         public int? urlCreationTimeElapsed { get; set; }
-
+        public bool IsSelectedForCampaign { get; set; }
     }
     public class InterviewerIds
     {

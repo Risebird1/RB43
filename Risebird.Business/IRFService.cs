@@ -3693,5 +3693,73 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue)
+        {
+            try
+            {
+                var result = await _irfRepository.GetSimilarAssessmentGroups(searchValue);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<IRFVm>> GetSkillChannelsForAssessmentGroups(List<int> assessmentGroups)
+        {
+            try
+            {
+                var result = await _irfRepository.GetSkillChannelsForAssessmentGroups(assessmentGroups);
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public AGCampaignModel CreateCampaign(AGCampaignModel model, string loggedInUser)
+        {
+            try
+            {
+                int campaignId = 0;
+                var result = _irfRepository.CreateCampaign(model, loggedInUser, out campaignId);
+                model.id = campaignId;
+                return model;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser)
+        {
+            try
+            {
+                return _irfRepository.AddSkillChannelsForCampaign(model, loggedInUser);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetCampaignInterviewingMembers(int campaignId)
+        {
+            try
+            {
+                return await _irfRepository.GetCampaignInterviewingMembers(campaignId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
