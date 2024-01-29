@@ -119,9 +119,9 @@
                                                         <span onclick="javascript:GetAllActiveAssessmentGroupInterviewersForSME('@item.id', '@item.AssessmentGroup')" title="Click here to appoint SME" class="mdc-fab__icon material-icons"><i style="font-size:13px;" class="fas fa-user-check"></i></span>
                                                 </button>
 
-                                                <a target="_blank" href="@Url.Action("CreateCampaign", "IRF" , new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup})" title="Create Email Campaign">
+                                                <a  style="text-decoration:none;" target="_blank" href="@Url.Action("CreateCampaign", "IRF" , new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup})" title="Create Email Campaign">
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Create Email Campaign" style="position:relative;top:3px;">
-                                                            <span title="Create Email Campaign" class="mdc-fab__icon material-icons"><img src="~/img/email-campaign.png"/></span>
+                                                            <span title="Create Email Campaign" class="mdc-fab__icon material-icons"><img style="width:18px;" src="~/img/email-campaign.png"/></span>
                                                     </button>
                                                 </a>
 
