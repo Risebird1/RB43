@@ -956,7 +956,9 @@ namespace Risebird.Web.Controllers
                     ViewBag.Clients = new SelectList(await _clientService.GetClients(emailid, profileName), "id", "Name");
             }
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+            var level = await _irfRepository.GetLevelTech();
+            level = level.Where(x => x.id != 1).ToList();
+            ViewBag.LevelTech = new SelectList(level, "id", "Name");
             var Skillset = await _irfRepository.GetSkills();
             //if (Skillset != null)
             //{
@@ -2185,7 +2187,9 @@ namespace Risebird.Web.Controllers
 
             ViewBag.Clients = new SelectList(await _irfRepository.GetClients(), "id", "Name");
             ViewBag.Level = new SelectList(await _irfRepository.GetLevels(), "id", "Name");
-            ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+            var level = await _irfRepository.GetLevelTech();
+            level = level.Where(x => x.id != 1).ToList();
+            ViewBag.LevelTech = new SelectList(level, "id", "Name");
 
             var skillset = await _irfRepository.GetSkills();
             if (skillset != null)
@@ -8327,6 +8331,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.profileName = profileName;
                 var model = new IRFVm();
                 var level = await _irfRepository.GetLevelTech();
+                level = level.Where(x => x.id != 1).ToList();
                 ViewBag.LevelTech = new SelectList(level, "id", "Name");
                 //var techlevels = from TechSkillLevels s in Enum.GetValues(typeof(TechSkillLevels))
                 //                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -8371,7 +8376,9 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.id });
                     }
-                    ViewBag.LevelTech = new SelectList(await _irfRepository.GetLevelTech(), "id", "Name");
+                    var level = await _irfRepository.GetLevelTech();
+                    level = level.Where(x => x.id != 1).ToList();
+                    ViewBag.LevelTech = new SelectList(level, "id", "Name");
                     var Skillset = await _irfRepository.GetSkills();
                     ViewBag.Skill = new SelectList(Skillset.ToList(), "id", "Name");
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
