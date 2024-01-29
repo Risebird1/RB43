@@ -5,145 +5,190 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    body {
+        background: #f0f0f0 !important;
+    }
+</style>
+<div class="campaignForm">
+    <form asp-action="CreateCampaignS1" method="post" id="form_1" class="form-container" style="display:none">
+        <span class="count">1</span> <h1 asp-for="AssessmentGroupId">Campaign For <span> @Model.AssessmentGroupName</span></h1>
+        <div class="campaignName">
+            <label for="LastName">What's Your Campaign Name:</label>
+            <input style="height:35px; border: 2px #918a8a85 solid;" type="text" id="CampaignName" name="CampaignName" required>
+        </div>
+        <div>
+            <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select related assesment group </h2>
+            @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Count() > 0)
+            {
+                for (int i = 0; i < Model.AssessmentGroups.Count(); i++)
+                {
+                    <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
 
-<form asp-action="CreateCampaignS1" method="post" id="form_1" class="form-container" style="display:none">
-    <label asp-for="AssessmentGroupId">Campaign For @Model.AssessmentGroupName</label>
+                        <div class="mdc-checkbox">
+                            @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark"
+                                     viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
 
-    <label for="LastName">Campaign Name:</label>
-    <input type="text" id="CampaignName" name="CampaignName" required>
-
-    @if(Model.AssessmentGroups != null && Model.AssessmentGroups.Count()>0)
-    {
-        for (int i=0; i< Model.AssessmentGroups.Count(); i++)
-        {
-            <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
-                <div class="mdc-checkbox">
-                    @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
-                    <div class="mdc-checkbox__background">
-                        <svg class="mdc-checkbox__checkmark"
-                             viewBox="0 0 24 24">
-                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                        </svg>
-                        <div class="mdc-checkbox__mixedmark"></div>
+                        </div>
+                        <label class="assessment-name">@Model.AssessmentGroups[i].AssessmentGroup</label>
+                        @Html.HiddenFor(x => x.AssessmentGroups[i].id)
+                        @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
                     </div>
-                    <div class="mdc-checkbox__ripple"></div>
+                }
+            }
+        </div>
+
+        <button type="submit">Save and Next »</button>
+
+        @*     <button type="button" onclick="Navigate('form_2')">Next</button>
+        *@
+        @Html.HiddenFor(x => x.AssessmentGroupId)
+        @Html.HiddenFor(x => x.AssessmentGroupName)
+        @Html.HiddenFor(x => x.id)
+    </form>
+
+    <form asp-action="CreateCampaignS2" method="post" id="form_2" class="form-container" style="display:none">
+        <span class="count">2</span>  <h1 asp-for="AssessmentGroupId">Campaign For<span> @Model.AssessmentGroupName</span></h1>
+
+
+        <div style="margin:30px auto;">
+
+            <label for="LastName" style="font-size:20px;font-weight:normal">
+                Campaign Name: <span style="color: #16b149;
+    font-weight: 600;">  @Model.CampaignName</span>
+            </label>
+
+        </div>
+        <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select related Skill Channel </h2>
+
+
+        @if (Model.SkillChannels != null && Model.SkillChannels.Count() > 0)
+        {
+            for (int i = 0; i < Model.SkillChannels.Count(); i++)
+            {
+                <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
+                    <label class="assessment-name" style="color:#2a77b5">@Model.SkillChannels[i].AssessmentGroupName:</label>
+                    <div class="mdc-checkbox">
+                        @Html.CheckBoxFor(m => m.SkillChannels[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
+                        <div class="mdc-checkbox__background">
+                            <svg class="mdc-checkbox__checkmark"
+                                 viewBox="0 0 24 24">
+                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                            </svg>
+                            <div class="mdc-checkbox__mixedmark"></div>
+                        </div>
+
+                    </div>
+                    <label class="assessment-name">@Model.SkillChannels[i].IRFId</label>
+                    @Html.HiddenFor(x => x.SkillChannels[i].IRFId)
+                    @Html.HiddenFor(x => x.SkillChannels[i].id)
+
                 </div>
-                <p>@Model.AssessmentGroups[i].AssessmentGroup</p>
+            }
+        }
+
+        @if (Model.id.HasValue)
+        {
+            <input type="hidden" asp-for="id" id="id" value="@Model.id.Value" />
+
+        }
+        @Html.HiddenFor(x => x.CampaignName)
+        @Html.HiddenFor(x => x.AssessmentGroupName)
+        @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
+        {
+            @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
+            {
                 @Html.HiddenFor(x => x.AssessmentGroups[i].id)
                 @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
+                @Html.HiddenFor(x => x.AssessmentGroups[i].IsSelectedForCampaign)
+            }
+        }
+        <div class="buttonArea">
+            <button class="previous" type="button" onclick="Navigate('form_1')">Previous</button>
+
+
+            <button class="next" type="submit">Save and Send Mails »</button>
+        </div>
+    </form>
+
+    <div id="id_Summary" class="form-container" style="display:none">
+        <span class="count">3</span> <h1>Campaign Summary:</h1>
+        <div style="margin:30px auto;">
+
+            <div style="margin-bottom:20px;">
+                <label style="font-size:17px;font-weight:normal">
+                    Campaign Name: <span style="color: #16b149; font-weight: 600;font-size:18px;">  @Model.CampaignName</span>
+                </label>
             </div>
-        }
-    }
-    
 
-    <button type="submit">Save and Next</button>
-
-@*     <button type="button" onclick="Navigate('form_2')">Next</button>
- *@    
-    @Html.HiddenFor(x => x.AssessmentGroupId)
-    @Html.HiddenFor(x => x.AssessmentGroupName)
-    @Html.HiddenFor(x => x.id)
-</form>
-
-<form asp-action="CreateCampaignS2" method="post" id="form_2" class="form-container" style="display:none">
-    <label asp-for="AssessmentGroupId">Campaign For @Model.AssessmentGroupName</label>
-
-    <label for="LastName">Campaign Name:</label> 
-    <p>
-        @Model.CampaignName
-    </p>
-
-    @if(Model.SkillChannels != null && Model.SkillChannels.Count()>0)
-    {
-        for (int i=0; i< Model.SkillChannels.Count(); i++)
-        {
-            <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
-                <p>@Model.SkillChannels[i].AssessmentGroupName</p>
-                <div class="mdc-checkbox">
-                    @Html.CheckBoxFor(m => m.SkillChannels[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
-                    <div class="mdc-checkbox__background">
-                        <svg class="mdc-checkbox__checkmark"
-                             viewBox="0 0 24 24">
-                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                        </svg>
-                        <div class="mdc-checkbox__mixedmark"></div>
-                    </div>
-                    <div class="mdc-checkbox__ripple"></div>
-                </div>
-                <p>@Model.SkillChannels[i].IRFId</p>
-                @Html.HiddenFor(x => x.SkillChannels[i].IRFId)
-                @Html.HiddenFor(x => x.SkillChannels[i].id)
-
+            <div style="margin-bottom:20px;">
+                <label style="font-size:17px;font-weight:normal">
+                    <span style="padding-right:10px;">Primary Assessment Group:</span> <span style="color: #2a77b5;font-weight: 600;font-size:18px;"> @Model.AssessmentGroupName</span>
+                </label>
             </div>
-        }
-    }
-
-    @if(Model.id.HasValue)
-    {
-        <input type="hidden" asp-for="id" id="id" value="@Model.id.Value" />
-
-    }
-    @Html.HiddenFor(x => x.CampaignName)
-    @Html.HiddenFor(x => x.AssessmentGroupName)
-
-    @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
-    {
-
-        @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
-        {
-            @Html.HiddenFor(x => x.AssessmentGroups[i].id)
-            @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
-            @Html.HiddenFor(x => x.AssessmentGroups[i].IsSelectedForCampaign)
-        }
-    }
 
 
-    <button type="button" onclick="Navigate('form_1')">Previous</button>
 
-    <button type="submit">Save and Send Mails</button>
+            <div style="margin-bottom:20px;">
+                <label style="font-size:17px;font-weight:normal;">
+                    <span style="float:left;padding-right:10px">  Secondary Assessment Group(s):</span>
+                    @if (Model.AssessmentGroups != null)
+                    {
+                        @foreach (var item in Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
+                        {
+                            <span style="color: #26C6DA;font-weight: 600;float:left;font-size:18px;margin-right:">@item.AssessmentGroup</span>
 
-</form>
+                        }
+                    }
+                </label>
+            </div>
 
-<div id="id_Summary" class="form-container" style="display:none">
-    <p>Campaign Summary:</p><br />
-    <p>Campaign Name: @Model.CampaignName</p><br />
-    <p>Primary Assessment Group: @Model.AssessmentGroupName</p><br />
 
-    <p>Secondary Assessment Group(s):</p>
-    @if (Model.AssessmentGroups != null)
-    {
-        @foreach (var item in Model.AssessmentGroups?.Where(x => x.IsSelectedForCampaign))
-        {
-            <p>@item.AssessmentGroup</p>
-            <br />
-        }
-    }
-        
-    <p>Skill Channel(s) Selected:</p>
-    @if(Model.SkillChannels!=null)
-    {
-        @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
-        {
-            <p>@item.IRFId</p>
-            <br />
-        }
-    }
-    
-    <p>Interviewers communicated to:</p>
-    @if(Model.Interviewers!=null)
-    {
-        @foreach (var item in Model.Interviewers?.Distinct())
-        {
-            <p>@item.EmailId</p>
-            <br />
-        }
-    }
-    
-    
-    <a asp-action="Campaigns">Campaign List</a>
+            <div style="margin-bottom:20px;">
+                <label style="font-size:17px;font-weight:normal;">
+                    <span style="float:left;padding-right:10px;">Skill Channel(s) Selected:</span>
+                    @if (Model.SkillChannels != null)
+                    {
+                        @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
+                        {
+                            <span style="color: #8e918f;font-weight: 500;float: left; margin-right: 10px;background:#e4dede80; padding: 2px 3px;font-size:18px;">@item.IRFId</span>
 
+                        }
+                    }
+                </label>
+            </div>
+
+
+
+
+            <div style="margin-bottom:20px;">
+                <label style="font-size:17px;font-weight:normal;">
+                    <span style="float:left;padding-right:10px;">Interviewers communicated to:</span>
+                    @if (Model.Interviewers != null)
+                    {
+                        @foreach (var item in Model.Interviewers?.Distinct())
+                        {
+                            <span style="color: #7a9683;font-weight: 600;float:left;">@item.EmailId</span>
+
+                        }
+                    }
+                </label>
+            </div>
+
+            <a asp-action="Campaigns" class="button" style="width: 200px;
+    text-decoration: none;
+    line-height: 36px;
+   background:grey;
+    color: #fff;">Campaign List</a>
+        </div>
+    </div>
 </div>
-
 
 <script>
     function showForm(formId) {
