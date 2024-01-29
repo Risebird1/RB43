@@ -179,7 +179,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<LevelTech>(
-                        con, "select * from LevelTech order by Name", null, commandType: Text);
+                        con, "select * from LevelTech", null, commandType: Text);
                 }
             }
             catch (SqlException ex)
