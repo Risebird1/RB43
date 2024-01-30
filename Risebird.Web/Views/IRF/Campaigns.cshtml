@@ -81,6 +81,7 @@
                                                     <th>Primary Assessment Group</th>
                                                     <th>Created By</th>
                                                     <th>Created At</th>
+                                                    <th>Actions</th>
                                                     
 
                                                 </tr>
@@ -91,6 +92,7 @@
                                                     <th>Primary Assessment Group</th>
                                                     <th>Created By</th>
                                                     <th>Created At</th>
+                                                    <th>Actions</th>
 
                                                 </tr>
                                             </tfoot>
@@ -103,6 +105,13 @@
                                                         <td> @item.AssessmentGroupName </td>
                                                         <td> @item.CreatedBy </td>
                                                         <td> @item.CreatedAt </td>
+                                                        <td>
+                                                            <a style="text-decoration:none;" target="_blank" href="@Url.Action("CampaignDetails", "IRF" , new { campaignId = item.id})" title="Campaign Details">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Campaign Details" style="position:relative;top:3px;">
+                                                                    <span title="Campaign Details" class="mdc-fab__icon material-icons"><img style="width:18px;" src="~/img/email-campaign.png" /></span>
+                                                                </button>
+                                                            </a>
+                                                        </td>
 
                                                     </tr>
 

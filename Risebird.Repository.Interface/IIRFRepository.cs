@@ -231,5 +231,6 @@ namespace Risebird.Repository.Interface
         bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser);
         Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetCampaignInterviewingMembers(int campaignId);
         Task<IEnumerable<AGCampaignModel>> GetCampaignList();
+        Task<AGCampaignModel> GetCampaignDetailsById(int campaignId);
     }
 }

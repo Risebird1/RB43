@@ -3774,5 +3774,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<AGCampaignModel> GetCampaignDetailsById(int campaignId)
+        {
+            try
+            {
+                return await _irfRepository.GetCampaignDetailsById(campaignId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

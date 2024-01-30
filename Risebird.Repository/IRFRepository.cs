@@ -8014,6 +8014,106 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<AGCampaignModel> GetCampaignDetailsById(int campaignId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    AGCampaignModel _resultVM = new AGCampaignModel();
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_GetCampaignDetailsById", con);
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.Parameters.AddWithValue("@campaignId", campaignId);
+                    adapter.Fill(dataset);
+                    DataTable dt = new DataTable();
+                    if (dataset.Tables.Count > 0)
+                    {
+                        dt = dataset.Tables[0];
+                        if (dt.Rows != null)
+                        {
+
+                            _resultVM.id = !string.IsNullOrEmpty(dt.Rows[0]["id"].ToString()) ? Convert.ToInt32(dt.Rows[0]["id"]) : 0;
+                            _resultVM.CampaignName = !string.IsNullOrEmpty(dt.Rows[0]["CampaignName"].ToString()) ? dt.Rows[0]["CampaignName"].ToString() : null;
+                            _resultVM.AssessmentGroupName = !string.IsNullOrEmpty(dt.Rows[0]["AssessmentGroupName"].ToString()) ? dt.Rows[0]["AssessmentGroupName"].ToString() : null;
+                            _resultVM.CreatedBy = !string.IsNullOrEmpty(dt.Rows[0]["CreatedBy"].ToString()) ? dt.Rows[0]["CreatedBy"].ToString() : null;
+                            _resultVM.CreatedAt = !string.IsNullOrEmpty(dt.Rows[0]["CreatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["CreatedAt"]) : new DateTime();
+                            _resultVM.ModifiedBy = !string.IsNullOrEmpty(dt.Rows[0]["ModifiedBy"].ToString()) ? dt.Rows[0]["ModifiedBy"].ToString() : null;
+                            _resultVM.ModifiedAt = !string.IsNullOrEmpty(dt.Rows[0]["ModifiedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["ModifiedAt"]) : new DateTime();
+
+
+                        }
+                    }
+                    if (dataset.Tables.Count > 1)
+                    {
+                        dt = dataset.Tables[1];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<AssignmentVM> assessmentGroups = new List<AssignmentVM>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                assessmentGroups.Add(new AssignmentVM
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    AssessmentGroup = !string.IsNullOrEmpty(dt.Rows[i]["AssessmentGroup"].ToString()) ? dt.Rows[i]["AssessmentGroup"].ToString() : null
+                                    
+                                });
+                            }
+                            _resultVM.AssessmentGroups = (IList<AssignmentVM>)(assessmentGroups);
+                        }
+                    }
+                    if (dataset.Tables.Count > 2)
+                    {
+                        dt = dataset.Tables[2];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<IRFVm> irfList = new List<IRFVm>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                irfList.Add(new IRFVm
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? dt.Rows[i]["IRFId"].ToString() : null,
+                                    AssessmentGroupName = !string.IsNullOrEmpty(dt.Rows[i]["AssessmentGroupName"].ToString()) ? dt.Rows[i]["AssessmentGroupName"].ToString() : null
+                                    
+                                });
+                            }
+                            _resultVM.SkillChannels = (IList<IRFVm>)(irfList);
+                        }
+                    }
+                    if (dataset.Tables.Count > 3)
+                    {
+                        dt = dataset.Tables[3];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<AssessmentGroupInterviewerDetails> interviewers = new List<AssessmentGroupInterviewerDetails>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                interviewers.Add(new AssessmentGroupInterviewerDetails
+                                {
+                                    EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,
+                                    uniqueid = !string.IsNullOrEmpty(dt.Rows[i]["uniqueid"].ToString()) ? dt.Rows[i]["uniqueid"].ToString() : null
+
+                                });
+                            }
+                            _resultVM.Interviewers = interviewers;
+                        }
+                    }
+                    
+                    return _resultVM;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 
