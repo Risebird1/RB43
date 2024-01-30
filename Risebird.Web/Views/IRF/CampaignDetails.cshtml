@@ -81,12 +81,12 @@
      <td valign="top">
          <div class="cell">
         @if (Model.SkillChannels != null)
-                    {
+                    {<div id="skill" style="height:50px;">
                         @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
                         {
                             <span style="color:#1dbe52;font-weight: 600;float: left; margin-right:10px;font-size:16px; font-weight: 500; float: left; margin:2px 10px;font-size: 14px; padding: 3px;">@item.IRFId</span>
 
-                        }
+                        }</div> <button id="expandbtn" class="moreless-button">Read more</button>
                     }
       </div>
       </td>
@@ -109,9 +109,20 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
       $(document).ready(function(){
+    $('#skill').removeClass("readmore");
+      $('#expandbtn').click(function(){
+     
+    if($('#skill').hasClass("readmore")) {
+      $('#expandbtn').html('Read more');
+      $('#skill').removeClass("readmore");
+    } else {
+      $('#expandbtn').html('Read less');
+      $('#skill').addClass("readmore");
+    }
+  });
 
      $('#assessment').removeClass("readmore1");
-  $('button').click(function(){
+  $('#expandbtn1').click(function(){
      
     if($('#assessment').hasClass("readmore1")) {
       $('#expandbtn1').html('Read more');
