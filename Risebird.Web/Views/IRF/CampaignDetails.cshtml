@@ -31,7 +31,7 @@
 
 
      <div class="wrapper">
- <div class="scrollbar int-table" id="style-2" style="overflow:auto;">
+ <div>
   <table class="table">
     <thead>
     <tr id=@Model.id class="row header" style="background:#9ba9c9 !important">
@@ -107,32 +107,32 @@
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script>
-      $(document).ready(function(){
-    $('#skill').removeClass("readmore");
-      $('#expandbtn').click(function(){
-     
-    if($('#skill').hasClass("readmore")) {
-      $('#expandbtn').html('Read more');
-      $('#skill').removeClass("readmore");
-    } else {
-      $('#expandbtn').html('Read less');
-      $('#skill').addClass("readmore");
-    }
-  });
+<script>
+          $(document).ready(function(){
+        $('#skill').removeClass("readmore");
+          $('#expandbtn').click(function(){
 
-     $('#assessment').removeClass("readmore1");
-  $('#expandbtn1').click(function(){
-     
-    if($('#assessment').hasClass("readmore1")) {
-      $('#expandbtn1').html('Read more');
-      $('#assessment').removeClass("readmore1");
-    } else {
-      $('#expandbtn1').html('Read less');
-      $('#assessment').addClass("readmore1");
-    }
-  });
+        if($('#skill').hasClass("readmore")) {
+          $('#expandbtn').html('Read more');
+          $('#skill').removeClass("readmore");
+        } else {
+          $('#expandbtn').html('Read less');
+          $('#skill').addClass("readmore");
+        }
+      });
+
+         $('#assessment').removeClass("readmore1");
+      $('#expandbtn1').click(function(){
+
+        if($('#assessment').hasClass("readmore1")) {
+          $('#expandbtn1').html('Read more');
+          $('#assessment').removeClass("readmore1");
+        } else {
+          $('#expandbtn1').html('Read less');
+          $('#assessment').addClass("readmore1");
+        }
+      });
 
 
-});
-                </script>
+    });
+</script>
