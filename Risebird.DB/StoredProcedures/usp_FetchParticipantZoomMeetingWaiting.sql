@@ -141,9 +141,9 @@ Outer Apply(Select Max(PerformedOn) as PerformedOn From PageClickDetails pct whe
 left join UserList ulc on ulc.EmailId = im.candidateEmail    
 where im.Confirmationstatus=1 and ISNULL(Case When IRF.IsCandidateavailability is null and     
 IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1      
-and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1 and IsNull(im.IsMeetingNotificationSent,0)!=1 and    
-dateadd(minute,5,im.Interviewdate)<=dateadd(minute,330,getdate()) and     
-dateadd(minute,10,im.Interviewdate)>=dateadd(minute,330,getdate()) and
+and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))>=1 and IsNull(im.IsMeetingNotificationSent,0)!=1 and    
+dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and     
+dateadd(minute,20,im.Interviewdate)>=dateadd(minute,330,getdate()) and
 ((CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=1 or (CASE WHEN (pct.PerformedOn is null) THEN 0 ELSE 1 END)=1))                              
 
 Insert Into @MeetingNotificationDetails Select * from CTE                              
@@ -172,7 +172,9 @@ Outer Apply(Select Max(Joinedon) as Joinedon From InterviewMeetingsJoinTime imjt
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt                  
 left join UserList ulc on ulc.EmailId  = im.candidateEmail    
 --left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                       
-where ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,4,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0      
+where ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  
+--and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  
+and getdate() > dateadd(minute,4,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0      
             
                             
 Update InterviewMeetings set IsNotificationSentToEI=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationEI)                              
@@ -199,7 +201,9 @@ Outer Apply(Select Max(Joinedon) as Joinedon From InterviewMeetingsJoinTime imjt
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt                                
 left join UserList ulc on ulc.EmailId  = im.candidateEmail    
 --left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                              
-where ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,7,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(im.IsNotificationSentToCandidate,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0      
+where ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  
+--and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  
+and getdate() > dateadd(minute,7,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(im.IsNotificationSentToCandidate,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0      
                             
 Update InterviewMeetings set IsNotificationSentToCandidate=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationCandidate)                      
                             
@@ -225,7 +229,9 @@ Outer Apply(Select Max(Joinedon) as Joinedon From InterviewMeetingsJoinTime imjt
 --EXCEPT Select ParticipantName,Meetingid from ZoomMeetingTransmission where ParticipantName not like '%risebird.io' and Meetingid=im.ZoomMeetingId and Event='PARTICIPANT_LEFT')zmt                  
 left join UserList ulc on ulc.EmailId  = im.candidateEmail    
 --left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                              
-where ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  and getdate() > dateadd(minute,14,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and ISNULL(im.IsMeetingNotificationSent,0)=1 and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(IsRescheduleNotificationSent,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0      
+where ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1  
+--and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1  
+and getdate() > dateadd(minute,14,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and ISNULL(im.IsMeetingNotificationSent,0)=1 and ISNULL(im.IsNotificationSentToEI,0)=1 and ISNULL(IsRescheduleNotificationSent,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0      
                             
 Update InterviewMeetings set IsRescheduleNotificationSent=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationReschedule)                              
                       
