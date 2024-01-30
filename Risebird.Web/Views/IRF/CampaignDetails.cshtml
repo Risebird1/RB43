@@ -68,7 +68,6 @@
 
                 <span style="color: #4aaba5;font-weight: 500;font-size:16px;float:left">@Model.AssessmentGroups[i].AssessmentGroup</span>
 
-
             }
             </div>
             <button id="expandbtn1" class="moreless-button">Read more</button>
@@ -78,13 +77,16 @@
      <td valign="top">
          <div class="cell">
         @if (Model.SkillChannels != null)
-                    {<div id="skill" style="height:50px;">
-                        @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
-                        {
-                            <span style="color:#1dbe52;font-weight: 600;float: left; margin-right:10px;font-size:16px; font-weight: 500; float: left; margin:2px 10px;font-size: 14px; padding: 3px;">@item.IRFId</span>
+        {
+            <div id="skill" style="height:50px;">
+            @foreach (var item in Model.SkillChannels)
+            {
+                <span style="color:#1dbe52;font-weight: 600;float: left; margin-right:10px;font-size:16px; font-weight: 500; float: left; margin:2px 10px;font-size: 14px; padding: 3px;">@item.IRFId</span>
 
-                        }</div> <button id="expandbtn" class="moreless-button">Read more</button>
-                    }
+            }
+            </div> 
+            <button id="expandbtn" class="moreless-button">Read more</button>
+        }
       </div>
       </td>
 
