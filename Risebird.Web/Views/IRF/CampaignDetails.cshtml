@@ -61,21 +61,18 @@
           <div class="cell">
 
        @if (Model.AssessmentGroups != null)
-                    {
-                        @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
-                        {
-                            <div id="assessment" style="height:50px;">
-                            @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
-                            {
+        {
+            <div id="assessment" style="height:50px;">
+            @for (int i = 0; i < Model.AssessmentGroups.Count(); i++)
+            {
 
-                          <span style="color: #4aaba5;font-weight: 500;font-size:16px;float:left">@Model.AssessmentGroups[i].AssessmentGroup</span>
+                <span style="color: #4aaba5;font-weight: 500;font-size:16px;float:left">@Model.AssessmentGroups[i].AssessmentGroup</span>
 
 
-                            }
-                            </div>
-                            <button id="expandbtn1" class="moreless-button">Read more</button>
-                        }
-                  }
+            }
+            </div>
+            <button id="expandbtn1" class="moreless-button">Read more</button>
+        }
       </div>
       </td>
      <td valign="top">
