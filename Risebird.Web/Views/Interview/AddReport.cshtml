@@ -160,8 +160,11 @@
     </div>
     <div class="mt50 col-md-12">
         <div class="pull-left mt-20">
+            @if (ViewBag.profile != "Interviewer")
+            {
+
             <div class="reportdropdown">
-                @if (ViewBag.PageReport != "Insta")
+                @if (ViewBag.PageReport != "Insta" )
                 {
                     <button class="reportdropbtn">Connect with the Interviewer</button>
                 }
@@ -185,11 +188,13 @@
                     }
                 </div>
             </div>
+            
+        }
             @*<button style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-audio" data-target="#audioInstructions" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
             <text style="color:white"> Audio Feedback </text>
             </button>*@
         </div>
-        @if (ViewBag.PageStatus == "Mainurl" || ViewBag.PageReport == "External")
+        @if (@*ViewBag.PageStatus == "Mainurl" ||*@ ViewBag.PageReport == "External" ||  ViewBag.profile != "Interviewer")
         {
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public URL for Instant Report" onclick="GeneratePublicUrl(3)"></div>
@@ -741,7 +746,7 @@
                                                             <th width="50%">Questions</th>
                                                             <th width="20%">SkillName</th>
                                                             <th width="10%">Rating</th>
-                                                            <th width="10%">Time(In Seconds)</th>
+                                                           @* <th width="10%">Time(In Seconds)</th>*@
                                                             <th width="10%" class="action text-center">Action</th>
                                                         </tr>
                                                     </thead>
@@ -868,6 +873,10 @@
                                             is mandatory in all Technical interviews.
                                             . otherwise, Customer may apply penalty from 10-100%.
                                         </div>
+                                         @if (ViewBag.profile == "Interviewer")  {
+
+                                            <p>  Note: If the candidate is on the range of values, then take the lower experience category only, for example if the candidate has 3 years of experience, then take 1 - 3 years only.</p>
+                                            }
                                         <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="SkillTable">
                                                 <thead>
@@ -918,9 +927,9 @@
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
                                                             </tr>
-                                                            <tr>
+                                                           @* <tr>
                                                                 <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Characters limit 25 to 250.", maxlength = "250", @style = "font-weight: bold !important;" })</td>
-                                                            </tr>
+                                                            </tr>*@
                                                         }
                                                     }
                                                 </tbody>
@@ -2265,19 +2274,19 @@
             var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
             for (i = 0; i < questionItems.length; i++) {
                 var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
-                var techcomment = $("#TechSkillReportCollection_" + i + "__TechComments").val();
+              //  var techcomment = $("#TechSkillReportCollection_" + i + "__TechComments").val();
                 if (temp == null || temp == '') {
                     document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
                     document.getElementById('TechSkills_CommentError').focus();
                     return false;
                 }
-                if (techcomment != null && techcomment != '') {
+                @*if (techcomment != null && techcomment != '') {
                     if (techcomment.length < 25) {
                         document.getElementById("TechSkillReportCollection_" + i + "__TechComments").focus();
                         document.getElementById("TechSkills_CommentError").innerHTML = "Kindly enter a minimum of 25 characters.";
                         return false;
                     }
-                }
+                }*@
             }
         }
         document.getElementById('TechSkills_CommentError').innerHTML = "";

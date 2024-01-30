@@ -8,6 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 Create Procedure usp_AddscheduleInterviewEvent    
 @id int,    
 @EventName varchar(150),    
@@ -22,9 +23,11 @@ Create Procedure usp_AddscheduleInterviewEvent
 @sourcevalue varchar(50)
 AS    
 BEGIN    
-if(@id>0)    
+Declare @Count int=0
+Select @Count=Count(id) From ScheduleInterviewEvent where SkillChannel=@SkillChannel
+if(@Count>0)    
 BEGIN    
-Update ScheduleInterviewEvent set SkillChannel=@SkillChannel,StartDate=@StartDate,EndDate=@EndDate,Concurrency=@Concurrency,BufferTime=@BufferTime,TimeSlotDays=@TimeSlotDays where id=@id    
+Update ScheduleInterviewEvent set SkillChannel=@SkillChannel,StartDate=@StartDate,EndDate=@EndDate,Concurrency=@Concurrency,BufferTime=@BufferTime,TimeSlotDays=@TimeSlotDays where SkillChannel=@SkillChannel
 Select @id    
 END    
 ELSE    
