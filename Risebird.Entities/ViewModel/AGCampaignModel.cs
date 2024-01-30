@@ -17,6 +17,11 @@ namespace Risebird.Entities.ViewModel
         public IList<IRFVm> SkillChannels { get; set; }
         public string CurrentForm { get; set; }
         public string OutcomeMessage { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public string CreatedBy { get; set; }
+
+        public DateTime? ModifiedAt { get; set; }
+        public string ModifiedBy { get; set; }
         public IEnumerable<AssessmentGroupInterviewerDetails> Interviewers { get; set; }
     }
 }

@@ -7991,6 +7991,29 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<AGCampaignModel>> GetCampaignList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //var parameters = new DynamicParameters();
+                    //parameters.Add("@campaignId", campaignId);
+                    return await SqlMapper.QueryAsync<AGCampaignModel>(con, "usp_GetCampaignList", null,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 

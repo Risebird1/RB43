@@ -3761,5 +3761,18 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IEnumerable<AGCampaignModel>> GetCampaignList()
+        {
+            try
+            {
+                return await _irfRepository.GetCampaignList();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

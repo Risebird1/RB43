@@ -18,7 +18,7 @@
             <input style="height:35px; border: 2px #918a8a85 solid;" type="text" id="CampaignName" name="CampaignName" required>
         </div>
         <div>
-            <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select related assesment group </h2>
+            <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select target assesment groups </h2>
             @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Count() > 0)
             {
                 for (int i = 0; i < Model.AssessmentGroups.Count(); i++)
@@ -65,7 +65,7 @@
             </label>
 
         </div>
-        <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select related Skill Channel </h2>
+        <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select target Skill Channel(s) </h2>
 
 
         @if (Model.SkillChannels != null && Model.SkillChannels.Count() > 0)
@@ -106,7 +106,8 @@
             {
                 @Html.HiddenFor(x => x.AssessmentGroups[i].id)
                 @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
-                @Html.HiddenFor(x => x.AssessmentGroups[i].IsSelectedForCampaign)
+                <input type="hidden" asp-for="@Model.AssessmentGroups[i].IsSelectedForCampaign"  value="true" />
+                @* @Html.HiddenFor(x => x.AssessmentGroups[i].IsSelectedForCampaign) *@
             }
         }
         <div class="buttonArea">
@@ -140,10 +141,19 @@
                     <span style="float:left;padding-right:10px">  Secondary Assessment Group(s):</span>
                     @if (Model.AssessmentGroups != null)
                     {
-                        @foreach (var item in Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
+                        @* @foreach (var item in Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
                         {
                             <span style="color: #26C6DA;font-weight: 600;float:left;font-size:18px;margin-right:">@item.AssessmentGroup</span>
 
+                        } *@
+                        @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
+                        {
+                            @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
+                            {
+
+                                <span style="color: #26C6DA;font-weight: 600;float:left;font-size:18px;margin-right:">@Model.AssessmentGroups[i].AssessmentGroup</span>
+
+                            }
                         }
                     }
                 </label>

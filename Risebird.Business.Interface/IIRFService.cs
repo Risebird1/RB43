@@ -159,5 +159,6 @@ namespace Risebird.Business.Interface
         AGCampaignModel CreateCampaign(AGCampaignModel model, string loggedInUser);
         bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser);
         Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetCampaignInterviewingMembers(int campaignId);
+        Task<IEnumerable<AGCampaignModel>> GetCampaignList();
     }
 }
