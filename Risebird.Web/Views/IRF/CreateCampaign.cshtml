@@ -9,13 +9,23 @@
     body {
         background: #f0f0f0 !important;
     }
+
+    #intervieweremail, #assessment {
+       
+        width: auto;
+        overflow: hidden;
+    }
+.readmore, .readmore1{height: auto !important;}
+    
 </style>
+
+
 <div class="campaignForm">
     <form asp-action="CreateCampaignS1" method="post" id="form_1" class="form-container" style="display:none">
         <span class="count">1</span> <h1 asp-for="AssessmentGroupId">Campaign For <span> @Model.AssessmentGroupName</span></h1>
         <div class="campaignName">
             <label for="LastName">What's Your Campaign Name:</label>
-            <input style="height:35px; border: 2px #918a8a85 solid;" type="text" id="CampaignName" name="CampaignName" required>
+            <input style="height:35px; border: 2px #918a8a85 solid; color: #979292; font-weight: 500;" type="text" id="CampaignName" name="CampaignName" required>
         </div>
         <div>
             <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select target assesment groups </h2>
@@ -25,7 +35,7 @@
                 {
                     <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
 
-                        <div class="mdc-checkbox">
+                        <div class="mdc-checkbox" style="top:5px;">
                             @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
                             <div class="mdc-checkbox__background">
                                 <svg class="mdc-checkbox__checkmark"
@@ -57,24 +67,40 @@
         <span class="count">2</span>  <h1 asp-for="AssessmentGroupId">Campaign For<span> @Model.AssessmentGroupName</span></h1>
 
 
-        <div style="margin:30px auto;">
+        <div style="margin:20px auto 10px auto;">
 
             <label for="LastName" style="font-size:20px;font-weight:normal">
-                Campaign Name: <span style="color: #16b149;
+                Campaign Name: <span style="color: #66bb64;
     font-weight: 600;">  @Model.CampaignName</span>
             </label>
 
         </div>
-        <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select target Skill Channel(s) </h2>
-
+       <div class="wrapper">
+ 
+  <div class="table">
+    
+    <div class="row header">
+      <div style="width:5%" class="cell">
+       
+      </div>
+      <div  style="width:40%;padding:4px;" class="cell">
+        Skill Channel 
+      </div>
+      <div style="width:55%;padding:4px;" class="cell">
+       Assessment Group Name
+      </div>
+     
+    </div>
+    
 
         @if (Model.SkillChannels != null && Model.SkillChannels.Count() > 0)
         {
             for (int i = 0; i < Model.SkillChannels.Count(); i++)
             {
-                <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
-                    <label class="assessment-name" style="color:#2a77b5">@Model.SkillChannels[i].AssessmentGroupName:</label>
-                    <div class="mdc-checkbox">
+
+                <div class="row mdc-form-field">
+      <div class="cell" style="width:5%">
+        <div class="mdc-checkbox">
                         @Html.CheckBoxFor(m => m.SkillChannels[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
                         <div class="mdc-checkbox__background">
                             <svg class="mdc-checkbox__checkmark"
@@ -85,11 +111,20 @@
                         </div>
 
                     </div>
-                    <label class="assessment-name">@Model.SkillChannels[i].IRFId</label>
+      </div>
+      <div class="cell"  style="width:40%">
+          <label class="assessment-name">@Model.SkillChannels[i].IRFId</label>
                     @Html.HiddenFor(x => x.SkillChannels[i].IRFId)
                     @Html.HiddenFor(x => x.SkillChannels[i].id)
 
-                </div>
+      </div>
+      <div class="cell"  style="width:55%">
+       <label class="assessment-name" style="color:#2a77b5;font-weight:500">@Model.SkillChannels[i].AssessmentGroupName</label>
+      </div>
+     
+    </div>
+
+
             }
         }
 
@@ -110,86 +145,117 @@
                 @* @Html.HiddenFor(x => x.AssessmentGroups[i].IsSelectedForCampaign) *@
             }
         }
-        <div class="buttonArea">
-            <button class="previous" type="button" onclick="Navigate('form_1')">Previous</button>
+        
+        
+          </div>
 
 
-            <button class="next" type="submit">Save and Send Mails »</button>
-        </div>
+
+            <div class="buttonArea">
+                <button class="previous" type="button" onclick="Navigate('form_1')">Previous</button>
+
+
+                <button class="next" type="submit">Save and Send Mails »</button>
+            </div>
+  
+</div>
+        
     </form>
 
     <div id="id_Summary" class="form-container" style="display:none">
-        <span class="count">3</span> <h1>Campaign Summary:</h1>
+        <span class="count">3</span> <h1>Campaign Summary For  <span style="color: #66bb64; font-weight: 600;font-size:28px;">  @Model.CampaignName</span></h1>
         <div style="margin:30px auto;">
 
-            <div style="margin-bottom:20px;">
-                <label style="font-size:17px;font-weight:normal">
-                    Campaign Name: <span style="color: #16b149; font-weight: 600;font-size:18px;">  @Model.CampaignName</span>
-                </label>
-            </div>
-
-            <div style="margin-bottom:20px;">
-                <label style="font-size:17px;font-weight:normal">
-                    <span style="padding-right:10px;">Primary Assessment Group:</span> <span style="color: #2a77b5;font-weight: 600;font-size:18px;"> @Model.AssessmentGroupName</span>
-                </label>
-            </div>
 
 
+     <div class="wrapper">
+ <div class="scrollbar int-table" id="style-2" style="overflow:auto;">
+  <table class="table">
+    <thead>
+    <tr id=@Model.id class="row header" style="background:#9ba9c9 !important">
+    
+    <th>  <div class="cell" style="padding-bottom:0px;">
+      Primary Assessment Group 
+      </div></th>
+    <th>  <div class="cell" style="padding-bottom:0px;">
+       Secondary Assessment Group(s)
+      </div></th>
+    <th>  <div class="cell" style="padding-bottom:0px;">
+      Skill Channel(s) Selected
+      </div></th>
+    @* <th> <div class="cell" style="padding-bottom:0px;">
+      Interviewers communicated to
+      </div></th>*@
+    </tr>
+    </thead>
 
-            <div style="margin-bottom:20px;">
-                <label style="font-size:17px;font-weight:normal;">
-                    <span style="float:left;padding-right:10px">  Secondary Assessment Group(s):</span>
-                    @if (Model.AssessmentGroups != null)
+    <tbody> 
+        <tr class="row" style="background:#e9e9e957">
+     
+       <td valign="top">
+           <div class="cell">
+          <span style="color: #2a77b5;font-weight: 600;font-size:16px;"> @Model.AssessmentGroupName</span>
+      </div>
+      </td>
+      <td valign="top">
+          <div class="cell">
+
+       @if (Model.AssessmentGroups != null)
                     {
-                        @* @foreach (var item in Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
-                        {
-                            <span style="color: #26C6DA;font-weight: 600;float:left;font-size:18px;margin-right:">@item.AssessmentGroup</span>
-
-                        } *@
                         @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
                         {
+                            <div id="assessment" style="height:50px;">
                             @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
                             {
 
-                                <span style="color: #26C6DA;font-weight: 600;float:left;font-size:18px;margin-right:">@Model.AssessmentGroups[i].AssessmentGroup</span>
+                          <span style="color: #4aaba5;font-weight: 500;font-size:16px;float:left">@Model.AssessmentGroups[i].AssessmentGroup</span>
+
 
                             }
+                            </div>
+                            <button id="expandbtn1" class="moreless-button">Read more</button>
                         }
-                    }
-                </label>
-            </div>
-
-
-            <div style="margin-bottom:20px;">
-                <label style="font-size:17px;font-weight:normal;">
-                    <span style="float:left;padding-right:10px;">Skill Channel(s) Selected:</span>
-                    @if (Model.SkillChannels != null)
+                  }
+      </div>
+      </td>
+     <td valign="top">
+         <div class="cell">
+        @if (Model.SkillChannels != null)
                     {
                         @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
                         {
-                            <span style="color: #8e918f;font-weight: 500;float: left; margin-right: 10px;background:#e4dede80; padding: 2px 3px;font-size:18px;">@item.IRFId</span>
+                            <span style="color:#1dbe52;font-weight: 600;float: left; margin-right:10px;font-size:16px; font-weight: 500; float: left; margin:2px 10px;font-size: 14px; padding: 3px;">@item.IRFId</span>
 
                         }
                     }
-                </label>
-            </div>
-
-
-
-
-            <div style="margin-bottom:20px;">
-                <label style="font-size:17px;font-weight:normal;">
-                    <span style="float:left;padding-right:10px;">Interviewers communicated to:</span>
+      </div>
+      </td>
+@*
+     <td valign="top">
+         <div class="cell">
+        <div style="font-size:17px;font-weight:normal;">
+                   
                     @if (Model.Interviewers != null)
-                    {
+                    { <div id="intervieweremail" style="height:50px;">
                         @foreach (var item in Model.Interviewers?.Distinct())
                         {
-                            <span style="color: #7a9683;font-weight: 600;float:left;">@item.EmailId</span>
 
-                        }
-                    }
-                </label>
-            </div>
+
+                          <span style="color: #7a9683;font-weight: 500;float:left;font-size:16px;">@item.EmailId</span>
+                           
+
+
+                        }</div>
+                       <button id="expandbtn" class="moreless-button">Read more</button>
+                       }
+                </div>
+      </div>
+      </td>*@
+    </tr>
+    
+  </tbody>
+  </table>
+  </div>
 
             <a asp-action="Campaigns" class="button" style="width: 200px;
     text-decoration: none;
@@ -199,7 +265,7 @@
         </div>
     </div>
 </div>
-
+</div>
 <script>
     function showForm(formId) {
         debugger;
@@ -236,3 +302,34 @@
         }
     </script>
 }
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function(){
+    $('#intervieweremail').removeClass("readmore");
+  $('button').click(function(){
+     
+    if($('#intervieweremail').hasClass("readmore")) {
+      $('#expandbtn').html('Read more');
+      $('#intervieweremail').removeClass("readmore");
+    } else {
+      $('#expandbtn').html('Read less');
+      $('#intervieweremail').addClass("readmore");
+    }
+  });
+
+     $('#assessment').removeClass("readmore1");
+  $('button').click(function(){
+     
+    if($('#assessment').hasClass("readmore1")) {
+      $('#expandbtn1').html('Read more');
+      $('#assessment').removeClass("readmore1");
+    } else {
+      $('#expandbtn1').html('Read less');
+      $('#assessment').addClass("readmore1");
+    }
+  });
+
+
+});
+                </script>
