@@ -16,6 +16,7 @@ CREATE TABLE [dbo].[SentMailDetails](
 	[CreatedAt] datetime Null,
 	[SentBy] [varchar](100) NULL,
 	[AssessmentGroupId] [int] NULL,
+	[CampaignId] [int] NULL,
  CONSTRAINT [PK_SentMailDetails] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -42,6 +43,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE SentMailDetails
     Add AssessmentGroupId int NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CampaignId')
+      AND Object_ID = Object_ID(N'SentMailDetails'))
+BEGIN
+    ALTER TABLE SentMailDetails
+    Add CampaignId int NULL
 END
 
 End

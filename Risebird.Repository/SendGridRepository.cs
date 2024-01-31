@@ -123,6 +123,7 @@ namespace Risebird.Repository
                         parameters.Add("@SentBy", model.SentBy);
                         parameters.Add("@IRFName", model.IRFName);
                         parameters.Add("@AssessmentGroupId", model.AssessmentGroupId);
+                        parameters.Add("@CampaignId", model.CampaignId);
 
                         await SqlMapper.QueryAsync(con, "usp_SaveSentMailDetails", parameters,
                              commandType: CommandType.StoredProcedure);

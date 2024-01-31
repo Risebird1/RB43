@@ -278,5 +278,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ZoomVideoQOSVM>> GetZoomQOSDataByMeetingId(int interviewId);
         Task<int> GetUniqueUserByEmailId(string emailId, string id);
         Task<bool> ConfirmInterviewavailability(string emailId, int id,string type);
+        Task<bool> UpdateInterviewerAvailbilityStatusCampaignLevel(bool status, string uniqueId, int campaignId, string rsc = null);
     }
 }
