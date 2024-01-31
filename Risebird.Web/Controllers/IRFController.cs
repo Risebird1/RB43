@@ -8731,7 +8731,7 @@ namespace Risebird.Web.Controllers
                             model.Interviewers = interviewers;
 
                             //send mails to all concerned interviewers
-                            //SendCampaignLevelMailsToInterviewers(interviewers, model.AssessmentGroupName, model.id.Value);//fire and forget method, keeps sending emails to the interviewers in the background
+                            SendCampaignLevelMailsToInterviewers(interviewers, model.AssessmentGroupName, model.id.Value);//fire and forget method, keeps sending emails to the interviewers in the background
 
                             model.OutcomeMessage = $"Successfully created campaign named {model.CampaignName} for assessment Group : {model.AssessmentGroupName}";
                         }
