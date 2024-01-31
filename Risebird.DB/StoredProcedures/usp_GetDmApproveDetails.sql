@@ -11,7 +11,7 @@ GO
 Create Procedure usp_GetDmApproveDetails
 AS
 begin
-select irf.id,irf.IRFId,irf.JDTiltle,ul.EmailId as ChannelOwner,irf.DMApproved,c.Name as ClientName from IRF
+select irf.id,irf.IRFId,irf.JDTiltle,ul.EmailId as ChannelOwner,irf.DMApproved,c.Name as ClientName,irf.DMApprovedBy from IRF
 join Client c on c.id=irf.ClientId
 join UserList ul on ul.id= irf.RisebirdHr where DMApproved=1
 End
