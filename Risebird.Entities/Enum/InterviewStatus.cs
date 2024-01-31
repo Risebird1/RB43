@@ -7,13 +7,24 @@ namespace Risebird.Entities.Enum
     {
         [Description("Proxy")]
         Proxy = 1,
-        [Description("Selected")]
+        //[Description("Selected")]
+        //Selected = 2,
+        //[Description("Rejected")]
+        //Rejected = 3,
+        //[Description("Border Line")]
+        //BorderLine = 4
+        [Display(Name = "Strongly Selected")]
+        [Description("Strongly Selected")]
         Selected = 2,
-        [Description("Rejected")]
+        [Display(Name = "Strongly Rejected")]
+        [Description("Strongly Rejected")]
         Rejected = 3,
-        [Description("Border Line")]
-        BorderLine = 4
-
+        [Display(Name = "Marginally Selected")]
+        [Description("Marginally Selected")]
+        BorderLine = 4,
+        [Display(Name = "Marginally Rejected")]
+        [Description("Marginally Rejected")]
+        MarginallyRejected = 5
     }
 
     public enum ReceiveMeetingStatus
