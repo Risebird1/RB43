@@ -8728,8 +8728,9 @@ namespace Risebird.Web.Controllers
                             var interviewers = await _irfService.GetCampaignInterviewingMembers(model.id.HasValue ? model.id.Value : 0);
                             model.CurrentForm = "id_Summary";
                             model.Interviewers = interviewers;
+
                             //send mails to all concerned interviewers
-                            //SendCampaignLevelMailsToInterviewers(interviewers, model.AssessmentGroupName, model.id.Value);//fire and forget method, keeps sending emails to the interviewers in the background
+                            SendCampaignLevelMailsToInterviewers(interviewers, model.AssessmentGroupName, model.id.Value);//fire and forget method, keeps sending emails to the interviewers in the background
 
                             model.OutcomeMessage = $"Successfully created campaign named {model.CampaignName} for assessment Group : {model.AssessmentGroupName}";
                         }
