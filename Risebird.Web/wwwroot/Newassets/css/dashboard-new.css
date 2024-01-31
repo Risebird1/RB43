@@ -30,7 +30,7 @@ body {
     color: #fff;
 }
 .mdc-button.mdc-ripple-upgraded {
-    line-height: 1.5;
+    line-height: 33px;
     position: relative;
     display: inline-block;
     font-weight: 400;
@@ -8573,15 +8573,20 @@ option {
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         display: table;
     }
-    .campaignForm .moreless-button {
+    .campaignForm .moreless-btn, .moreless-btn {
         padding: 1px 6px 5px 6px !important;
         text-decoration: none;
         font-size: 13px;
-        margin: 5px 0px;
+        margin: 10px  0px;
         height: 23px;
         border-radius: 0px;
         background: #b7b3b3;
-        color: #fff;
+        color: #fff!important;
+        display:inline-block;
+    }
+    .moreless-btn:hover {
+        background: #4491cf !important;
+        color: #fff !important;
     }
     .campaignForm .row.header {
         font-weight: 900;
@@ -8652,6 +8657,7 @@ option {
         display: block;
         font-size: 19px;
         color: #444;
+        float:none;
     }
         .campaignForm button[type=submit]:hover, .campaignForm button:hover, .campaignForm .button:hover{
             background: #4491cf !important;
