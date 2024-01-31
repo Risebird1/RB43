@@ -96,11 +96,18 @@
 .skillBackground {
     color: #000 !important;
     background-color: #e6e5e5d4 !important;
-    text-shadow: 2px 0px #b2aeae;
+  margin-top:10px;
 }
-
+.ratecount {
+    position: relative;
+    top: -20px;
+    color: #000;
+    right: -240px;
+    font-weight: bold;
+}
 .skill-round-xlarge {
     border-radius: 3px;
+    height:13px;
 }
 
 .skill-small {
