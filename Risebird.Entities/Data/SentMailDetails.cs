@@ -19,5 +19,6 @@ namespace Risebird.Entities.Data
         public string IRFName { get; set; }
         public List<int> InterviewIdList { get; set; }
         public int? AssessmentGroupId { get; set; }
+        public int? CampaignId { get; set; }
     }
 }

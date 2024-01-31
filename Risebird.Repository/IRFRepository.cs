@@ -7770,6 +7770,348 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@searchValue", searchValue);
+                        var result = await SqlMapper.QueryAsync<AssignmentVM>(con, "dbo.usp_GetSimilarAssessmentGroups", parameters, null,
+                            commandType: CommandType.StoredProcedure);
+                        return result;
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<IRFVm>> GetSkillChannelsForAssessmentGroups(List<int> assessmentGroups)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AssessmentGroupsList", assessmentGroups != null  ? string.Join(",", assessmentGroups) : null);
+                    return await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetSkillChannelsForAssessmentGroups", parameters, commandType: CommandType.StoredProcedure, commandTimeout: 300);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public bool CreateCampaign(AGCampaignModel model, string loggedInUser, out int campaignId)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable agrpsDt = new DataTable();
+                    if (model.AssessmentGroups != null && model.AssessmentGroups.Count() > 0 && model.AssessmentGroups.Any(x=>x.IsSelectedForCampaign))
+                    {
+                        agrpsDt.Columns.Add("AssessmentGroupId", typeof(int));
+                        
+                        foreach (var item in model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
+                        {
+                            agrpsDt.Rows.Add(item.id);
+                        }
+
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_CreateOrUpdateCampaign", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+
+                    cmd.Parameters.Add(new SqlParameter("@campaignId", SqlDbType.Int));
+                    cmd.Parameters["@campaignId"].Value = model.id;
+
+                    cmd.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.Int));
+                    cmd.Parameters["@AssessmentGroupId"].Value = model.AssessmentGroupId;
+
+                    cmd.Parameters.Add(new SqlParameter("@CampaignName", SqlDbType.VarChar));
+                    cmd.Parameters["@CampaignName"].Value = model.CampaignName;
+
+                    cmd.Parameters.Add(new SqlParameter("@PerformedBy", SqlDbType.VarChar));
+                    cmd.Parameters["@PerformedBy"].Value = loggedInUser;
+
+                    cmd.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
+                    cmd.Parameters["@timeNow"].Value = DateTime.Now;
+
+                    SqlParameter resultCampaignId = new SqlParameter();
+                    resultCampaignId.ParameterName = "@resultCampaignId";
+                    resultCampaignId.DbType = DbType.Int32;
+                    resultCampaignId.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(resultCampaignId);
+
+
+                    if (agrpsDt != null && agrpsDt.Rows.Count > 0)
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@CampaignAssessmentGroupsBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@CampaignAssessmentGroupsBulkData"].Value = agrpsDt;
+                    }
+                    
+                    con.Open();
+
+                    if (cmd.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    campaignId = Convert.ToInt32(cmd?.Parameters["@resultCampaignId"]?.Value);
+                    model.id = campaignId;
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                campaignId = 0;
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                campaignId = 0;
+                return false;
+            }
+        }
+
+        public bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable skillChannelsDt = new DataTable();
+                    if (model.SkillChannels != null && model.SkillChannels.Count() > 0 && model.SkillChannels.Any(x => x.IsSelectedForCampaign))
+                    {
+                        skillChannelsDt.Columns.Add("IRFId", typeof(int));
+
+                        foreach (var item in model.SkillChannels.Where(x => x.IsSelectedForCampaign))
+                        {
+                            skillChannelsDt.Rows.Add(item.id);
+                        }
+
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_AddUpdateCampaignSkillChanels", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add(new SqlParameter("@campaignId", SqlDbType.Int));
+                    cmd.Parameters["@campaignId"].Value = model.id;
+
+                    cmd.Parameters.Add(new SqlParameter("@PerformedBy", SqlDbType.VarChar));
+                    cmd.Parameters["@PerformedBy"].Value = loggedInUser;
+
+                    cmd.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
+                    cmd.Parameters["@timeNow"].Value = DateTime.Now;
+
+                    if (skillChannelsDt != null && skillChannelsDt.Rows.Count > 0)
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@CampaignSkillChannelsBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@CampaignSkillChannelsBulkData"].Value = skillChannelsDt;
+                    }
+
+                    con.Open();
+
+                    if (cmd.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetCampaignInterviewingMembers(int campaignId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@campaignId", campaignId);
+                    return await SqlMapper.QueryAsync<AssessmentGroupInterviewerDetails>(con, "usp_GetCampaignInterviewingMembers", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<AGCampaignModel>> GetCampaignList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //var parameters = new DynamicParameters();
+                    //parameters.Add("@campaignId", campaignId);
+                    return await SqlMapper.QueryAsync<AGCampaignModel>(con, "usp_GetCampaignList", null,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<AGCampaignModel> GetCampaignDetailsById(int campaignId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    AGCampaignModel _resultVM = new AGCampaignModel();
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_GetCampaignDetailsById", con);
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.Parameters.AddWithValue("@campaignId", campaignId);
+                    adapter.Fill(dataset);
+                    DataTable dt = new DataTable();
+                    if (dataset.Tables.Count > 0)
+                    {
+                        dt = dataset.Tables[0];
+                        if (dt.Rows != null)
+                        {
+
+                            _resultVM.id = !string.IsNullOrEmpty(dt.Rows[0]["id"].ToString()) ? Convert.ToInt32(dt.Rows[0]["id"]) : 0;
+                            _resultVM.CampaignName = !string.IsNullOrEmpty(dt.Rows[0]["CampaignName"].ToString()) ? dt.Rows[0]["CampaignName"].ToString() : null;
+                            _resultVM.AssessmentGroupName = !string.IsNullOrEmpty(dt.Rows[0]["AssessmentGroupName"].ToString()) ? dt.Rows[0]["AssessmentGroupName"].ToString() : null;
+                            _resultVM.CreatedBy = !string.IsNullOrEmpty(dt.Rows[0]["CreatedBy"].ToString()) ? dt.Rows[0]["CreatedBy"].ToString() : null;
+                            _resultVM.CreatedAt = !string.IsNullOrEmpty(dt.Rows[0]["CreatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["CreatedAt"]) : new DateTime();
+                            _resultVM.ModifiedBy = !string.IsNullOrEmpty(dt.Rows[0]["ModifiedBy"].ToString()) ? dt.Rows[0]["ModifiedBy"].ToString() : null;
+                            _resultVM.ModifiedAt = !string.IsNullOrEmpty(dt.Rows[0]["ModifiedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["ModifiedAt"]) : new DateTime();
+
+
+                        }
+                    }
+                    if (dataset.Tables.Count > 1)
+                    {
+                        dt = dataset.Tables[1];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<AssignmentVM> assessmentGroups = new List<AssignmentVM>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                assessmentGroups.Add(new AssignmentVM
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    AssessmentGroup = !string.IsNullOrEmpty(dt.Rows[i]["AssessmentGroup"].ToString()) ? dt.Rows[i]["AssessmentGroup"].ToString() : null
+                                    
+                                });
+                            }
+                            _resultVM.AssessmentGroups = (IList<AssignmentVM>)(assessmentGroups);
+                        }
+                    }
+                    if (dataset.Tables.Count > 2)
+                    {
+                        dt = dataset.Tables[2];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<IRFVm> irfList = new List<IRFVm>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                irfList.Add(new IRFVm
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? dt.Rows[i]["IRFId"].ToString() : null,
+                                    AssessmentGroupName = !string.IsNullOrEmpty(dt.Rows[i]["AssessmentGroupName"].ToString()) ? dt.Rows[i]["AssessmentGroupName"].ToString() : null
+                                    
+                                });
+                            }
+                            _resultVM.SkillChannels = (IList<IRFVm>)(irfList);
+                        }
+                    }
+                    if (dataset.Tables.Count > 3)
+                    {
+                        dt = dataset.Tables[3];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            List<AssessmentGroupInterviewerDetails> interviewers = new List<AssessmentGroupInterviewerDetails>();
+                            //var listStaffingAgencyMeetings = new List<TransSkill>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                interviewers.Add(new AssessmentGroupInterviewerDetails
+                                {
+                                    EmailId = !string.IsNullOrEmpty(dt.Rows[i]["EmailId"].ToString()) ? dt.Rows[i]["EmailId"].ToString() : null,
+                                    uniqueid = !string.IsNullOrEmpty(dt.Rows[i]["uniqueid"].ToString()) ? dt.Rows[i]["uniqueid"].ToString() : null
+
+                                });
+                            }
+                            _resultVM.Interviewers = interviewers;
+                        }
+                    }
+                    
+                    return _resultVM;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 
