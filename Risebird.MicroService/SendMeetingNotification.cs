@@ -185,7 +185,7 @@ namespace Risebird.MicroService
                         //{
                         //    _whatsapp.Event = "Interview Reschedule";
                         //}
-                        _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
+                        _whatsapp.buttonlink = oneTimeSchedulingLink.Split("=").LastOrDefault().ToString();
                         _whatsapp.irfId = item.irfId;
                         _ = await _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
                     }
