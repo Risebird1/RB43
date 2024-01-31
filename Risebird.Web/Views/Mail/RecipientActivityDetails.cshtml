@@ -102,7 +102,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("RecipientActivityDetails","Mail", new { recipientType = ViewBag.recipientType})" method="post" id="form">
+                                        <form action="@Url.Action("RecipientActivityDetails","Mail", new { recipientType = ViewBag.recipientType, campaignName = ViewBag.campaignName})" method="post" id="form">
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
