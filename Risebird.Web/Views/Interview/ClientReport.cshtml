@@ -134,7 +134,7 @@
                                         </button>
                                         @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                                         {
-                                            <button class="dropdown-btn">
+                                        <button class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                                                 <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
                                             </button>
                                         }
