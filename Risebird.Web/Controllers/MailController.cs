@@ -179,7 +179,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> RecipientActivityDetails(string recipientType)
+        public async Task<IActionResult> RecipientActivityDetails(string recipientType, string campaignName = null)
         {
             try
             {
@@ -199,7 +199,8 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<MailActivityFilter>(HttpContext.Session.GetString("MailActivityFilters"));
 
                             recipientType = filter.RecipientType;
-                            recipients = await _mailService.GetEmailRecipientsLatestActivity(recipientType, filter.StartDate, filter.EndDate);
+                            campaignName = filter.CampaignName;
+                            recipients = await _mailService.GetEmailRecipientsLatestActivity(recipientType, filter.StartDate, filter.EndDate, campaignName);
 
                             filter.SkillChannel = filter.SkillChannel == null ? filter.SkillChannel = recipients.Select(x => x.SkillChannelName).ToArray() : filter.SkillChannel = filter.SkillChannel;
                             filter.SentBy = filter.SentBy == null ? filter.SentBy = recipients.Select(x => x.SentBy).ToArray() : filter.SentBy = filter.SentBy;
@@ -219,10 +220,11 @@ namespace Risebird.Web.Controllers
                                 recipientType = "Candidate";
                             }
 
-                            recipients = await _mailService.GetEmailRecipientsLatestActivity(recipientType);
+                            recipients = await _mailService.GetEmailRecipientsLatestActivity(recipientType, campaignName: campaignName);
                         }
 
                         ViewBag.recipientType = recipientType;
+                        ViewBag.campaignName = campaignName;
 
                         ViewBag.UserProfile = profileName;
 
@@ -247,7 +249,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> RecipientActivityDetails(MailActivityFilter filter, string recipientType)
+        public async Task<IActionResult> RecipientActivityDetails(MailActivityFilter filter, string recipientType, string campaignName = null)
         {
             try
             {
@@ -264,6 +266,7 @@ namespace Risebird.Web.Controllers
                         if (filter != null)
                         {
                             filter.RecipientType = recipientType;
+                            filter.CampaignName = campaignName;
                             HttpContext.Session.SetString("MailActivityFilters", JsonConvert.SerializeObject(filter));
                         }
 

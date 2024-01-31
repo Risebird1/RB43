@@ -73,6 +73,8 @@ namespace Risebird.Entities.ViewModel
         public string AssessmentVerificationType { get; set; }
         public string MCQSetsValue { get; set; }
         public string CodeLanguage { get; set; }
+        public bool IsSelectedForCampaign { get; set; }
+
     }
     public class Assessment
     {

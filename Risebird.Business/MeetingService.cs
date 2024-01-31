@@ -4139,6 +4139,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UpdateInterviewerAvailbilityStatusCampaignLevel(bool status, string uniqueid, int campaignId, string rsc = null)
+        {
+            try
+            {
+                return await _meetingRespository.UpdateInterviewerAvailbilityStatusCampaignLevel(status, uniqueid, campaignId, rsc);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 

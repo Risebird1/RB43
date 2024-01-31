@@ -16,6 +16,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.CommonHelper
 {
@@ -1258,7 +1259,7 @@ namespace Risebird.CommonHelper
         //    }
         //    return msg;
         //}
-        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null)
+        public async Task<string> SendMail(SendGridMessage msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null, int? campaignId = null)
         {
             try
             {
@@ -1351,6 +1352,7 @@ namespace Risebird.CommonHelper
                     obj.InterviewIdList = interviewIds;
                 }
                 obj.AssessmentGroupId = assessmentGroupId;
+                obj.CampaignId = campaignId;
                 _ = await _sendGridRepository.SaveSentMailDetails(obj);
                 return "Mail sent successfully.";
             }
@@ -3147,6 +3149,29 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+        public async Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewer, string yesbutton, string nobutton, string agName, int campaignId)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Current Availability (2 days) check for skills based on: " + agName + " Risebird Interviews";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewer, null));
+
+                object[] parameters = new object[] { yesbutton, nobutton, agName };
+                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CheckIntervieweravailbility.html");//CheckAGLevelInterviewerAvailability
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CampaignLevelInterviewerAvailability.html");
+
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg, null, null, null, null, null, campaignId);
             }
             catch (Exception)
             {
