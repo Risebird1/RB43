@@ -82,7 +82,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsLatestActivity(string recipientType, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsLatestActivity(string recipientType, DateTime? startDate = null, DateTime? endDate = null, string campaignName = null)
         {
             try
             {
@@ -91,6 +91,7 @@ namespace Risebird.Repository
                 parameters.Add("@startDate", startDate);
                 parameters.Add("@endDate", endDate);
                 parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@campaignName", campaignName);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetEmailRecipientsLatestActivity", parameters, commandTimeout: 600,

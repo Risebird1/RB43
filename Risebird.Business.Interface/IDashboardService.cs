@@ -67,5 +67,6 @@ namespace Risebird.Business.Interface
         Task<ProctoringReport> GetProxyReportCountDetails(int id);
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate,string Emailid);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null);
+        Task<List<MeetingVM>> GetDMApproveDetails();
     }
 }

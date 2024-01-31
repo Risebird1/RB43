@@ -679,7 +679,9 @@ namespace Risebird.Web.Controllers
                                             {
                                                 newmin = -newmin;
                                             }
-                                            DateTime value1 = new DateTime(year, month, (day - 1), newslot, newmin, 0);
+                                            DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                            value1 = value.AddDays(-1);
+
                                             if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
                                                 model.Add(((int)(slots / 60) + 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
                                         }
@@ -764,7 +766,8 @@ namespace Risebird.Web.Controllers
                                                     {
                                                         newmin = -newmin;
                                                     }
-                                                    DateTime value1 = new DateTime(year, month, (day - 1), newslot, newmin, 0);
+                                                    DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
+                                                    value1 = value.AddDays(-1);
                                                     if (result.FirstOrDefault().StartDate <= value1)
                                                     {
                                                         if (slots > offsetbuffer)

@@ -29,6 +29,15 @@
     .tox-notifications-container {
         display: none
     }
+
+    .interviewercomment {
+        width: auto;
+        overflow: hidden;
+    }
+
+    .readmore {
+        height: auto !important;
+    }
 </style>
 
 @if (ViewBag.PageStatus == "Public")
@@ -126,7 +135,7 @@
                             <div class="pull-right">
                                 <div class="reportdropdown">
 
-                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="padding:0px 4px;margin-right:5px;" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="padding:0px 4px;" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
                                             <text>Rate Interviewer</text>
                                         </button>
                                     <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" type="button" style="padding:0px 5px;">
@@ -236,11 +245,16 @@
                                                             {
                                                                 meetingcolor = "red";
                                                             }
-                                                            <h2 class="interview-status">Interview Status : <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h2>
+
+                                                            else if (Model.InterviewStatus == 1)
+                                                            {
+                                                                meetingcolor = "#fbc02d";
+                                                            }
+                                                            <h2 class="interview-status"><span>Interview Status :</span> <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h2>
                                                         }
                                                         else
                                                         {
-                                                            <h2 class="interview-status">Interview Status : <strong>@meestingstatusvalue</strong></h2>
+                                                            <h2 class="interview-status"><span>Interview Status :</span> <strong>@meestingstatusvalue</strong></h2>
                                                         }
                                                     </div>
                                                 }
@@ -273,10 +287,10 @@
                                                 <hr />
                                                 <div>
                                                     <h3>
-                                                        <svg width="32" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>Tech Skill Score:
+                                                       @* <svg width="32" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>*@<img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Tech Skill Score:
                                                         <span class="totScore">
                                                             @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
-                                                            {
+                                                            {  
                                                                 <strong id="totTechScore"></strong>
                                                             }
                                                             else
@@ -292,7 +306,7 @@
                                                         @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                         {
                                                             <div class="tech-skill-wrapper">
-                                                                <div>@Model.TechSkillReportCollection[i].SkillName</div>
+                                                                <div style="font-weight:500;">@Model.TechSkillReportCollection[i].SkillName</div>
                                                                 @{
                                                                     var TechSkill_Score = 0.0;
                                                                     if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
@@ -308,11 +322,11 @@
                                                                 <div class="skillBackground skill-round-xlarge skill-small">
                                                                     @if (TechSkill_Score == 0)
                                                                     {
-                                                                        <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%">@TechSkill_Score %</div>
+                                                                        <div class="skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount">@TechSkill_Score %</span></div>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</div>
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
 
                                                                     }
                                                                 </div>
@@ -321,9 +335,7 @@
                                                     }
                                                 </div>
                                                 <p class="note-skill">
-                                                    <b> Note:</b> % score for every skill represents difference between candidate actual and required competency. For example 80% in any skill would mean 4/5
-                                                    of required competency threshold.
-                                                    <b> Note:</b>To understand competency thresholds more, please check Dreyfus model details <a href="https://en.wikipedia.org/wiki/Dreyfus_model_of_skill_acquisition">Click here</a>
+                                                    <b> Note:</b> % score for every skill represents difference between candidate actual and required competency. 
                                                 </p>
 
                                             </div>
@@ -338,7 +350,7 @@
                                                 else
                                                 {
                                                     <div class="row">
-                                                        <h3><svg width="38" height="38" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#969191" d="M15,16H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2ZM9,10h1a1,1,0,0,0,0-2H9a1,1,0,0,0,0,2Zm6,2H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2Zm4.71,3.29a1,1,0,0,0-.33-.21.92.92,0,0,0-.76,0,1,1,0,0,0-.33.21,1.15,1.15,0,0,0-.21.33,1,1,0,0,0,.21,1.09A1,1,0,0,0,19,17a1,1,0,0,0,.38-.08,1.15,1.15,0,0,0,.33-.21,1,1,0,0,0,.21-1.09A1.15,1.15,0,0,0,19.71,15.29ZM20,8.94a1.31,1.31,0,0,0-.06-.27l0-.09a1.07,1.07,0,0,0-.19-.28h0l-6-6h0a1.07,1.07,0,0,0-.28-.19.32.32,0,0,0-.09,0A.88.88,0,0,0,13.05,2H7A3,3,0,0,0,4,5V19a3,3,0,0,0,3,3h8a1,1,0,0,0,0-2H7a1,1,0,0,1-1-1V5A1,1,0,0,1,7,4h5V7a3,3,0,0,0,3,3h3v2a1,1,0,0,0,2,0V9S20,9,20,8.94ZM15,8a1,1,0,0,1-1-1V5.41L16.59,8Zm4,10a1,1,0,0,0-1,1v2a1,1,0,0,0,2,0V19A1,1,0,0,0,19,18Z" /></svg>Interview Details</h3>
+                                                        <h3><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Watch Interview Video</h3>
 
                                                         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
 
@@ -401,21 +413,47 @@
                                                         {
                                                             <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
                                                                 <h3>
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="33" height="40" viewBox="0 0 512 512"><title>ionicons-v5-j</title><path fill="#969191" d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z"></path><path fill="#969191" d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z"></path></svg>Interviewer Comment
+                                                                    <img style="width:34px;left:-11px; top:-1px; position:relative;background: #f5f5f5;padding: 3px;" src="/img/interviewer-comment.png">Interviewer Comment
                                                                     @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" && ViewBag.SecurelyShared != "True")
                                                                     {
-                                                                        <span class="fa fa-pencil" style="padding-left:10px;font-size:12px;cursor:pointer" onclick="EditReport()"></span>
+                                                                        <span class="fa fa-edit" style="padding-left:0px;font-size:19px;color:blue;cursor:pointer" onclick="EditReport()"></span>
                                                                     }
                                                                 </h3>
                                                                 <div>
                                                                     @if (Model.FeedbackAudioLink != null)
                                                                     {
-                                                                        <audio style="margin-bottom:10px;" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                                        <audio style="margin-bottom:10px;height:30px" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
                                                                     }
                                                                     @if (Model.InterviewerComment != null)
                                                                     {
                                                                         @Html.HiddenFor(m=>m.InterviewerComment,new{@id="hidinterviewerComment"})
-                                                                        <p>@Model.InterviewerComment</p>
+                                                                       
+                                                                          @if (Model.InterviewerComment.Length > 440)
+                                                        {
+                                                            <div class="article">
+                                                                <p style="margin-bottom:0px;">
+                                                                    @Model.InterviewerComment.Substring(0, 440)
+                                                                </p>
+                                                                <p class="moretext_@Model.id moretext">
+                                                                     @Model.InterviewerComment.Substring(440, @Model.InterviewerComment.Length - 440)
+                                                                </p>
+                                                            </div> <a onclick="moreless(@Model.id)" class="moreless-btn" value="Readmore" id="read_@Model.id" href="#">Read more</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="article">
+
+                                                                <p>
+                                                                    @Model.InterviewerComment.Substring(0,   @Model.InterviewerComment.Length)
+                                                                </p>
+                                                            </div>
+                                                        }
+
+
+
+
+
+
                                                                     }
                                                                     else
                                                                     {
@@ -428,7 +466,7 @@
 
 
                                                     <div class="row">
-                                                        <h3><svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>Questions Discussed</h3>
+                                                        <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Questions Discussed</h3>
 
                                                         <div class="question">
                                                             @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
@@ -1134,4 +1172,40 @@
             swal.fire('Comment is required.');
         }
     }
+</script>
+
+ @*       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+          $(document).ready(function(){
+        $('.interviewercomment').removeClass("readmore");
+          $('#expandbtn').click(function(){
+
+        if($('.interviewercomment').hasClass("readmore")) {
+          $('#expandbtn').html('Read more');
+          $('.interviewercomment').removeClass("readmore");
+        } else {
+          $('#expandbtn').html('Read less');
+          $('.interviewercomment').addClass("readmore");
+        }
+      });
+
+     
+
+    });
+</script>*@
+
+
+<script>
+    function moreless(id) {
+
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+
 </script>
