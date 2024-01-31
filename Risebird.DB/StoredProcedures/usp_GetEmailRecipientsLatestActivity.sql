@@ -15,11 +15,16 @@ CREATE PROCEDURE [dbo].[usp_GetEmailRecipientsLatestActivity]
 @recipientType varchar(30),
 @startDate datetime = null,
 @endDate datetime = null,
-@timeNow datetime
+@timeNow datetime,
+@campaignName varchar(50)  = null
 AS    
 Begin   
   
-  
+  declare @campaignId int
+  if(@campaignName is not null)
+  Begin
+	set @campaignId = (select id from AGCampaigns where CampaignName = @campaignName)
+  End
 
 	;WITH CTE AS
 	(SELECT sge.id,
@@ -36,17 +41,18 @@ Begin
   
   select smd.MailBody, smd.MailSubject, smd.InterviewId, smd.IRFId, smd.CreatedAt as SentOn, smd.SentBy, smd.sg_message_id,
   sge.email, sge.[event] as latestEvent, sge.CreatedAt as ActivityDate, sge.[timestamp], sge.[url],
-  irf.IRFId as SkillChannelName, im.interviewDate
+  irf.IRFId as SkillChannelName, im.interviewDate, agc.CampaignName
   from SentMailDetails smd
   join SendgridEventData sge on sge.Split_Message_Id = smd.sg_message_id
   join UserList ul on ul.EmailId = sge.email
   left join IRF on smd.IRFId = irf.id 
   left join InterviewMeetings im on im.id = smd.InterviewId
+  left join AGCampaigns agc on agc.id = smd.CampaignId
   where sge.id in (select id from #latestActivityRowId) 
   and sge.email != 'hire@risebird.io'
   and ((@startDate is null and @endDate is null and cast(smd.CreatedAt as date) >= cast(DATEADD(DAY, -1, @timeNow) as date)) or
   (@startDate is not null and cast(smd.CreatedAt as date) >= cast(@startDate as date) and @endDate is not null and cast(smd.CreatedAt as date) <= cast(@endDate as date)))
-  and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3) or (@recipientType = 'Client' and ul.idProfile=4))
+  and ((@recipientType = 'Candidate' and ul.idProfile=23) or (@recipientType = 'Interviewer' and ul.idProfile=3 and (@campaignId is null or @campaignId = smd.CampaignId)) or (@recipientType = 'Client' and ul.idProfile=4))
   order by smd.CreatedAt desc
   drop table #latestActivityRowId
  

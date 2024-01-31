@@ -8519,8 +8519,150 @@ option {
     width: auto;
     margin: 0px auto;
 }
+.campaignForm {
+    width: 800px;
+    min-height: 400px;
+    margin-bottom: 125px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.1);
+    margin: 30px auto;
+    display: table;
+    padding: 40px 40px 20px 40px;
+}
+.campaignForm h1{
+    font-size:24px;
+
+}
+    .campaignForm h1 span {
+        font-weight: bold;
+        color: #2a77b5;
+    }
+    .campaignForm .count {
+        display: inline-block;
+        color: white;
+        background: #d6d5d5;
+        border: 5px solid #d6d5d5;
+        padding: 1px 8px;
+        margin-right: 16px;
+        border-radius: 50%;
+        float: left;
+    }
+
+    .campaignForm .table {
+        margin: 0 0 15px 0;
+        width: 100%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        display: table;
+    }
+    .campaignForm .moreless-button {
+        padding: 1px 6px 5px 6px !important;
+        text-decoration: none;
+        font-size: 13px;
+        margin: 5px 0px;
+        height: 23px;
+        border-radius: 0px;
+        background: #b7b3b3;
+        color: #fff;
+    }
+    .campaignForm .row.header {
+        font-weight: 900;
+        color: #ffffff;
+        background: #9ba9c9 !important; /*background: #ea6153 !important;*/
+    }
+
+    .campaignForm .row {
+        display: table-row;
+        background: #f6f6f6b0;
+    }
+
+    .campaignForm .cell {
+        padding: 0px 12px 8px 12px;
+        display: table-cell;
+        vertical-align: top;
+    }
+    .campaignForm .mdc-checkbox{
+        top:-3px;
+    }
+    .campaignForm .table > tbody > tr > td {
+        vertical-align: top;
+    }
+        .campaignForm .table > thead > tr > th{
+            color:#fff!important;
+            font-weight:bold!important;
+        }
+        .campaignForm .row:nth-of-type(odd) {
+            background: #e9e9e9;
+        }
+
+    .campaignForm .wrapper {
+        margin: 0 auto;
+        max-width: 800px;
+    }
+    .campaignForm .assessment-name {
+        font-size: 16px;
+        font-weight:500;
+        position: relative;
+        top: 8px;
+        color: #9b9c9d;
+    }
+
+    .campaignForm .mdc-checkbox__checkmark {
+        left: 2px !important;
+        top: 1px;
+        width: 70%;
+    }
+    .campaignForm .mdc-checkbox__background {
+        border: 1.5px solid #abb2a4 !important;
+    }
+
+    .campaignForm .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .campaignForm .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+        border-color: #8BC34A !important;
+        background-color: #8BC34A !important;
+    }
+
+    .campaignForm button[type=submit], .campaignForm button, .campaignForm .button {
+        height: 40px;
+        margin: 20px auto 10px auto;
+        padding: 0px 10px 0px 10px;
+        background: #e6e6e6;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 19px;
+        color: #444;
+        text-align: center;
+        display: block;
+        font-size: 19px;
+        color: #444;
+    }
+        .campaignForm button[type=submit]:hover, .campaignForm button:hover, .campaignForm .button:hover{
+            background: #4491cf !important;
+            color: #fff !important;
+        }
+        
+        .buttonArea {
+            width: 340px;
+            margin: 0px auto;
+        }
+.buttonArea .previous{
+    float:left;
+}
+
+    .buttonArea .next {
+        float: right;
+    }
+.campaignName {
+    width: 500px;
+    margin: 30px auto;
+}
 
 
+.campaignName label{
+    font-size:18px;
+    font-weight:500;
+}
+
+  
 .static-menu ul {
     margin: 0px 0px 10px 0px;
     padding: 0;

@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -6769,13 +6770,9 @@ namespace Risebird.Web.Controllers
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = item.EmailId;
                                 _whatsAppVM.PrimarySkill = item.AGName;
-                                //_whatsAppVM.MessageValue = "";
-                                //_whatsAppVM.PerSuccessRate = item.FlatRate.ToString();//interviewer.PerSuccessRate.ToString();
-                                //_whatsAppVM.Interviewduration = "";
-                                //_whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/UpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=true&uniqueid=", "");
+                                
                                 _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
                                 _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
-                                //await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
                             }
                         }
                         return Json("Emails sent successfully.");
@@ -8623,6 +8620,273 @@ namespace Risebird.Web.Controllers
                 return Json("Fail to approve, Please try after some time.");
             }
         }
+        #endregion
+
+        #region Assessment Group Campaigns
+
+        [Authorize]
+        public async Task<IActionResult> CreateCampaign(int assessmentGroupId, string assessmentGroupName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    {
+                        //get all assessment groups related to this assessment group and pass it to the form.
+                        var model = new AGCampaignModel();
+                        model.AssessmentGroupId = assessmentGroupId;
+                        model.AssessmentGroupName = assessmentGroupName;
+                        model.CurrentForm = "form_1";
+                        var searchValue = assessmentGroupName.Split(" ")[0];
+                        model.AssessmentGroups = (IList<AssignmentVM>)(await _irfService.GetSimilarAssessmentGroups(searchValue));//call db and search for assessmentGroups that carry a similar name
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> CreateCampaignS1(AGCampaignModel model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    {
+                        //create a campaign and save all the selected assessment groups
+                        model = _irfService.CreateCampaign(model, emailid);
+                        
+                        model.CurrentForm = "form_2";
+                        model.SkillChannels = (IList<IRFVm>)(await _irfService.GetSkillChannelsForAssessmentGroups(model.AssessmentGroups.Where(x=>x.IsSelectedForCampaign).Select(x=>x.id).ToList()));//call db and search for assessmentGroups that carry a similar name
+                        return View("CreateCampaign", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> CreateCampaignS2(AGCampaignModel model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    {
+                        //create a campaign and save all the selected assessment groups
+                        var result = _irfService.AddSkillChannelsForCampaign(model, emailid);
+                        if(result)
+                        {
+                            //get all concerned interviewers
+                            var interviewers = await _irfService.GetCampaignInterviewingMembers(model.id.HasValue ? model.id.Value : 0);
+                            model.CurrentForm = "id_Summary";
+                            model.Interviewers = interviewers;
+
+                            //send mails to all concerned interviewers
+                            SendCampaignLevelMailsToInterviewers(interviewers, model.AssessmentGroupName, model.id.Value);//fire and forget method, keeps sending emails to the interviewers in the background
+
+                            model.OutcomeMessage = $"Successfully created campaign named {model.CampaignName} for assessment Group : {model.AssessmentGroupName}";
+                        }
+                        else
+                        {
+                            model.CurrentForm = "form_2";
+                            model.OutcomeMessage = $"Failed to create campaign for assessment Group : {model.AssessmentGroupName}";
+
+                        }
+                        //model.SkillChannels = (IList<IRFVm>)(await _irfService.GetSkillChannelsForAssessmentGroups(model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Select(x => x.id).ToList()));//call db and search for assessmentGroups that carry a similar name
+                        return View("CreateCampaign", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        private async Task SendCampaignLevelMailsToInterviewers(IEnumerable<AssessmentGroupInterviewerDetails> interviewers, string assessmentGroupName, int campaignId)
+        {
+            string source = "ml";
+
+            var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
+            foreach (var item in interviewers)
+            {
+                string yesbutton = "https://portal.risebird.io/IRF/CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=true&uniqueid=" + item.uniqueid + "&cmpId=" + campaignId + "&dec=" + encryptedDate;
+                string nobutton = "https://portal.risebird.io/IRF/CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=false&uniqueid=" + item.uniqueid + "&cmpId=" + campaignId + "&dec=" + encryptedDate;
+                //string dropMyProfileButton = "https://portal.risebird.io/IRF/CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=4&uniqueid=" + item.uniqueid + "&agId=" + irfId + "&dec=" + encryptedDate;
+                Mail _mail = new Mail
+                {
+                    TO = item.EmailId,
+                    Subject = "Current Availability (2 days) check for skills based on: " + assessmentGroupName + " Risebird Interviews"
+                };
+
+                var emailresult = await _notificationHelper.SendCampaignLevelInterviewerAvailabilityMails(item.EmailId, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, assessmentGroupName, campaignId);
+
+            }
+
+            //source = "wp";
+
+            //yesbutton = yesbutton + "&rsc=" + source;
+            //WhatsAppVM _whatsAppVM = new WhatsAppVM();
+            //_whatsAppVM.Emailid = item.EmailId;
+            //_whatsAppVM.PrimarySkill = item.AGName;
+
+            //_whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
+            //_whatsAppVM.Event = "SkillChannel Interviewer Availbility";
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup(bool isAv, string uniqueid, int cmpId, string dec, string rsc = null)
+        {
+            //check link expiry befire hitting db
+
+            try
+            {
+                if (await _meetingService.UpdateInterviewerAvailbilityStatusCampaignLevel(isAv, uniqueid, cmpId, rsc))
+                {
+                    return Json("Status updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update status, Please try again");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed to update status, Please try again");
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Campaigns()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var model = await _irfService.GetCampaignList();
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CampaignDetails(int campaignId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var model = await _irfService.GetCampaignDetailsById(campaignId);
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
         #endregion
     }
 }
