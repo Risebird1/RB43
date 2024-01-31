@@ -25,7 +25,7 @@
         <span class="count">1</span> <h1 asp-for="AssessmentGroupId">Campaign For <span> @Model.AssessmentGroupName</span></h1>
         <div class="campaignName">
             <label for="LastName">What's Your Campaign Name:</label>
-            <input style="height:35px; border: 2px #918a8a85 solid; color: #979292; font-weight: 500;" type="text" id="CampaignName" name="CampaignName" required>
+            <input style="height:35px; border: 2px #918a8a85 solid; color: #979292; font-weight: 500;" type="text" id="CampaignName" name="CampaignName" value="@Model.CampaignName" required>
         </div>
         <div>
             <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select target assesment groups </h2>
@@ -54,7 +54,9 @@
             }
         </div>
 
-        <button type="submit">Save and Next »</button>
+        <button type="submit" id="id_Submit_Form1">Save and Next »</button>
+
+        <button type="button" id="id_Next_Form1" onclick="Navigate('form_2')" style="display:none">Next</button>
 
         @*     <button type="button" onclick="Navigate('form_2')">Next</button>
         *@
@@ -69,9 +71,9 @@
 
         <div style="margin:20px auto 10px auto;">
 
-            <label for="LastName" style="font-size:20px;font-weight:normal">
+            <label for="LastName" style="font-size:18px;font-weight:normal">
                 Campaign Name: <span style="color: #66bb64;
-    font-weight: 600;">  @Model.CampaignName</span>
+    font-weight: 600;font-size:20px;">  @Model.CampaignName</span>
             </label>
 
         </div>
@@ -151,10 +153,11 @@
 
 
             <div class="buttonArea">
-@*                 <button class="previous" type="button" onclick="Navigate('form_1')">Previous</button>
- *@
+
+                <button class="previous" type="button" onclick="Previous('form_1')">Previous</button>
 
                 <button class="next" type="submit">Save and Send Mails »</button>
+
             </div>
   
 </div>
@@ -212,7 +215,7 @@
 
                             }
                             </div>
-                            <button id="expandbtn1" class="moreless-button">Read more</button>
+                            <button id="expandbtn1" class="moreless-btn">Read more</button>
                         }
                   }
       </div>
@@ -226,7 +229,7 @@
                             <span style="color:#1dbe52;font-weight: 600;float: left; margin-right:10px;font-size:16px; font-weight: 500; float: left;font-size: 14px; padding: 3px;">@item.IRFId</span>
 
                         }
-                        </div> <button id="expandbtn" class="moreless-button">Read more</button>
+                        </div> <button id="expandbtn" class="moreless-btn">Read more</button>
                     }
       </div>
       </td>
@@ -266,22 +269,27 @@
     </div>
 </div>
 </div>
+
 <script>
     function showForm(formId) {
-        debugger;
         $('.form-container').hide();
         $('#' + formId).show();
     }
 
     $(document).ready(function () {
-        debugger;
         showForm('@Model.CurrentForm');
     });
 
     function Navigate(formId) {
-        debugger;
         $('.form-container').hide();
         $('#' + formId).show();
+    }
+
+    function Previous(formId) {
+        $('.form-container').hide();
+        $('#' + formId).show();
+        $('#id_Submit_Form1').hide();
+        $('#id_Next_Form1').show();
     }
 </script>
 

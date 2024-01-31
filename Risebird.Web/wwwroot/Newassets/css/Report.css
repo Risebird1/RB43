@@ -96,11 +96,18 @@
 .skillBackground {
     color: #000 !important;
     background-color: #e6e5e5d4 !important;
-    text-shadow: 2px 0px #b2aeae;
+  margin-top:10px;
 }
-
+.ratecount {
+    position: relative;
+    top: -20px;
+    color: #000;
+    right: -240px;
+    font-weight: bold;
+}
 .skill-round-xlarge {
     border-radius: 3px;
+    height:13px;
 }
 
 .skill-small {
@@ -117,7 +124,7 @@
 }
 
 #reportForm .report-heading {
-    color: #a39d9d;
+    color: #868080;
     padding: 5px 0px 5px 0px;
 }
 
@@ -129,7 +136,7 @@
 #reportForm h3 {
     font-size: 1.3rem;
     border-bottom: 1px #ccccccad dotted;
-    padding: 0px 10px 5px 10px;
+    padding: 10px 10px 5px 10px;
 }
 
 #reportForm h4 {
@@ -172,15 +179,19 @@
 .interview-status {
     position: absolute;
     top: -38px;
-    font-size: 1.4rem;
+    font-size: 1.2rem!important;
 }
+    .interview-status span {
+        font-size: 15px;
+        color: #868080;
+    }
 
-#reportForm video {
-    padding: 10px;
-    width: 100%;
-    height: 300px;
-    background: #000;
-}
+    #reportForm video {
+        padding: 10px;
+        width: 100%;
+        height: 300px;
+        background: #000;
+    }
 
 #reportForm .rqlevel {
     color: #a2a0a0;
