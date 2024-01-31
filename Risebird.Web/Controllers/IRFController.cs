@@ -8641,8 +8641,9 @@ namespace Risebird.Web.Controllers
                         model.AssessmentGroupId = assessmentGroupId;
                         model.AssessmentGroupName = assessmentGroupName;
                         model.CurrentForm = "form_1";
-                        var searchValue = assessmentGroupName.Split(" ")[0];
+                        var searchValue = assessmentGroupName.Trim()?.Split(" ")[0];
                         model.AssessmentGroups = (IList<AssignmentVM>)(await _irfService.GetSimilarAssessmentGroups(searchValue));//call db and search for assessmentGroups that carry a similar name
+                        model.AssessmentGroups.Where(x => x.AssessmentGroup == assessmentGroupName).FirstOrDefault().IsSelectedForCampaign = true;
                         return View(model);
                     }
                     else
