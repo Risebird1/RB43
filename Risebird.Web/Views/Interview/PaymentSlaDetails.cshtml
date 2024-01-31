@@ -70,6 +70,7 @@
                                                     <td>Interviewer Call</td>
                                                     <td>Red Marker</td>
                                                     <td>Payment Deduction</td>
+                                                      <td>Video Reward</td>
                                                     <td>Payment Compliance</td>
                                                     <td>Channel Owner</td>
                                                     <td>Created By</td>
@@ -102,6 +103,7 @@
                                                     <td>Interviewer Call</td>
                                                     <td>Red Marker</td>
                                                     <td>Payment Deduction</td>
+                                                    <td>Video Reward</td>
                                                     <td>Payment Compliance</td>
                                                     <td>Channel Owner</td>
                                                     <td>Created By</td>
@@ -179,6 +181,8 @@
                                                             <td style="color:red;text-align:center">@item.RedMarker</td>
                                                         }
                                                         <td>@item.PaymentDeduction %</td>
+
+                                                         <td>@item.VideoReward %</td>
                                                         @*   @if (item.PaymentComplianceCount > 0)
                                                     { *@
                                                         <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
