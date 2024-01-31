@@ -124,7 +124,7 @@
 }
 
 #reportForm .report-heading {
-    color: #a39d9d;
+    color: #868080;
     padding: 5px 0px 5px 0px;
 }
 
@@ -179,15 +179,19 @@
 .interview-status {
     position: absolute;
     top: -38px;
-    font-size: 1.4rem;
+    font-size: 1.2rem!important;
 }
+    .interview-status span {
+        font-size: 15px;
+        color: #868080;
+    }
 
-#reportForm video {
-    padding: 10px;
-    width: 100%;
-    height: 300px;
-    background: #000;
-}
+    #reportForm video {
+        padding: 10px;
+        width: 100%;
+        height: 300px;
+        background: #000;
+    }
 
 #reportForm .rqlevel {
     color: #a2a0a0;

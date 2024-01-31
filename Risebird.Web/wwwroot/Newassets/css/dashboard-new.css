@@ -9707,14 +9707,17 @@ option {
             position: absolute !important;
             top: -56px !important;
         }
-
-        .calling-area {
-            background: #eee4e4;
-            font-size: 15px;
-            padding: 10px 10px !important;
-            color: #cb2c2c;
-            text-align: left !important;
-        }
+            .interview-status span {
+                font-size: 15px;
+                color: #938f8f;
+            }
+            .calling-area {
+                background: #eee4e4;
+                font-size: 15px;
+                padding: 10px 10px !important;
+                color: #cb2c2c;
+                text-align: left !important;
+            }
 
         .event .calendar-con {
             min-width: 90% !important;
