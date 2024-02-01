@@ -16,10 +16,7 @@
         overflow: hidden;
     }
 .readmore, .readmore1{height: auto !important;}
-.minheight{
-    height:50px;
-}
-    
+ 
 </style>
 
 
@@ -322,12 +319,7 @@
       $(document).ready(function(){
     $('#skill').removeClass("readmore");
       $('#expandbtn').click(function(){
-            if (($('#skill').height()) < $(".minheight").height()) {
-                $(this).removeClass("readmore");
-            } else {
-
-            }
-     
+           
     if($('#skill').hasClass("readmore")) {
       $('#expandbtn').html('Read more');
       $('#skill').removeClass("readmore");
