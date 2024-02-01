@@ -16,6 +16,9 @@
         overflow: hidden;
     }
 .readmore, .readmore1{height: auto !important;}
+.minheight{
+    height:50px;
+}
     
 </style>
 
@@ -154,7 +157,7 @@
 
             <div class="buttonArea">
 
-                <button class="previous" type="button" onclick="Previous('form_1')">Previous</button>
+                <button class="previous" type="button" onclick="Previous('form_1')" style="margin-top:0px">Previous</button>
 
                 <button class="next" type="submit">Save and Send Mails »</button>
 
@@ -215,6 +218,7 @@
 
                             }
                             </div>
+                            <div style="clear:both"></div>
                             <button id="expandbtn1" class="moreless-btn">Read more</button>
                         }
                   }
@@ -229,7 +233,9 @@
                             <span style="color:#1dbe52;font-weight: 600;float: left; margin-right:10px;font-size:16px; font-weight: 500; float: left;font-size: 14px; padding: 3px;">@item.IRFId</span>
 
                         }
-                        </div> <button id="expandbtn" class="moreless-btn">Read more</button>
+                        </div> 
+                        <div style="clear:both"></div>
+                        <button id="expandbtn" class="moreless-btn">Read more</button>
                     }
       </div>
       </td>
@@ -316,6 +322,11 @@
       $(document).ready(function(){
     $('#skill').removeClass("readmore");
       $('#expandbtn').click(function(){
+            if (($('#skill').height()) < $(".minheight").height()) {
+                $(this).removeClass("readmore");
+            } else {
+
+            }
      
     if($('#skill').hasClass("readmore")) {
       $('#expandbtn').html('Read more');
