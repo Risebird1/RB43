@@ -34,10 +34,10 @@
                 <div class="filavatar">
                     <span class="fas fa-info-circle" style="font-size:23px;line-height:46px; color:#fff"></span>
                 </div>
-                <h5 class="modal-title" id="modalRecipientLabel" style="text-align:left;position:relative;left:11px;">Activity Details for '@ViewBag.RecipientEmail'</h5>
+                <h5 class="modal-title" id="modalRecipientLabel" style="text-align:left;position:relative;left:11px;">Activity Details for <span style="color:green"> '@ViewBag.RecipientEmail' </span></h5>
                 @if (!isNestedPopUp)
                 {
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: 5px; margin-right: -17px;">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="margin-top: -30px; margin-right: -17px;">
                         <span aria-hidden="true">×</span>
                     </button>
                 }
@@ -141,4 +141,24 @@
         child.document.close();
     }
 </script>*@
+<script>
+    $(document).ready(function () {
+
+        var recipientActivity_placeholderElement = $('#modal_recipientActivity_placeholder');
+
+
+        $('button[data-eventfire="ajax-modal-recipientActivity"]').click(function (event) {//data-toggle
+            if ($('#modalRecipientActivity').length > 0) {
+                $('#modalRecipientActivity').empty();
+            }
+            OpenPopUp(event, recipientActivity_placeholderElement);
+
+
+
+        });
+
+
+
+    });
+</script>
 <script src="~/js/modalformservervalidation.js"></script>
