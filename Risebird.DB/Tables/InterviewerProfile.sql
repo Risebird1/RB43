@@ -46,6 +46,7 @@ CREATE TABLE [dbo].[InterviewerProfile](
     [LinkAddedOn][datetime] Null,
     [IsResumeRedactAttempted][bit] Null,
     [IsResumeRedactFailed][bit] Null,
+    [AssessmentGroupId] [varchar](500) null,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -210,15 +211,6 @@ BEGIN
     ALTER TABLE InterviewerProfile
     Add Blog nvarchar(max) NULL
 END
-IF EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'AssessmentGroupId')
-      AND Object_ID = Object_ID(N'InterviewerProfile'))
-BEGIN
-    ALTER TABLE InterviewerProfile
-    Alter Column AssessmentGroupId varchar(100) 
-END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
@@ -226,7 +218,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'InterviewerProfile'))
 BEGIN
     ALTER TABLE InterviewerProfile
-    Add AssessmentGroupId varchar(100) 
+    Add AssessmentGroupId varchar(500) 
 END
 IF NOT EXISTS(
     SELECT *
