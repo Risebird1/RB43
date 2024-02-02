@@ -12,11 +12,10 @@ CREATE PROCEDURE usp_GetCampaignInterviewingMembers
 AS      
 BEGIN      
 
-
 Select distinct ul.EmailId, ul.uniqueid from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',') 
-join AGCampaigns agc on agc.AssessmentGroupId = value 
+join CampaignAssessmentGroups cag on cag.AssessmentGroupId = value
 join UserList ul on ul.id = ipr.UserId
-where agc.id = @campaignId and ul.IsActive = 1
+where cag.CampaignId = @campaignId and ul.IsActive = 1
   
 END
 GO
