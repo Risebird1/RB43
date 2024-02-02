@@ -320,15 +320,7 @@
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
                                                                 <div class="skillBackground skill-round-xlarge skill-small">
-                                                                    @if (TechSkill_Score == 0)
-                                                                    {
-                                                                        <div class="skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount">@TechSkill_Score %</span></div>
-                                                                    }
-                                                                    else
-                                                                    {
                                                                         <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
-
-                                                                    }
                                                                 </div>
                                                             </div>
                                                         }

@@ -56,14 +56,14 @@
             meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShowInterviewer).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
         }
 
-        if (currentInterviewStatus != (int)InterviewStatus.BorderLine)
-        {
-            interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
-        }
-        else
-        {
-            interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
-        }
+        // if (currentInterviewStatus != (int)InterviewStatus.BorderLine)
+        // {
+        //     interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
+        // }
+        // else
+        // {
+             interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
+        // }
 
         if (Model.HasDistinctParticipants == false)
         {
