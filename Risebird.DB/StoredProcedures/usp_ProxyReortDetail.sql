@@ -12,7 +12,7 @@ Create Procedure usp_ProxyReortDetail
 As
 Begin
 Select pr.id,pr.interviewid as InterviewId,pr.isProxyCandidate,pr.CreatedBy,pr.CreatedOn,IRF.id as irfIntId,im.interviewDate,IRF.IRFId,
-im.candidateName,im.candidateEmail,im.interviewer,ul.MobileNumber as InterviewerMobileNumber,ul.EmailId as ChannelOwner,ic.InterviewStatus,
+im.candidateName,im.candidateEmail,im.interviewer,ul.MobileNumber as InterviewerMobileNumber,uli.EmailId as ChannelOwner,ic.InterviewStatus,
 im.confirmationStatus,ic.MeetingStatus,tqc.id as QCPresent,ISNULL(pr.ProxyvotingCount,0) as ProxyvotingCount
 from ProxyReport pr
 Join InterviewMeetings im on pr.interviewid=im.id

@@ -16,7 +16,7 @@
         overflow: hidden;
     }
 .readmore, .readmore1{height: auto !important;}
-    
+ 
 </style>
 
 
@@ -154,7 +154,7 @@
 
             <div class="buttonArea">
 
-                <button class="previous" type="button" onclick="Previous('form_1')">Previous</button>
+                <button class="previous" type="button" onclick="Previous('form_1')" style="margin-top:0px">Previous</button>
 
                 <button class="next" type="submit">Save and Send Mails »</button>
 
@@ -210,11 +210,12 @@
                             @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
                             {
 
-                          <span style="color: #4aaba5;font-weight: 500;font-size:16px;float:left">@Model.AssessmentGroups[i].AssessmentGroup</span>
+                          <span  style="color: #4aaba5;font-weight: 500;font-size:16px;float:left;margin-right:10px;">@Model.AssessmentGroups[i].AssessmentGroup</span>
 
 
                             }
                             </div>
+                            <div style="clear:both"></div>
                             <button id="expandbtn1" class="moreless-btn">Read more</button>
                         }
                   }
@@ -229,7 +230,9 @@
                             <span style="color:#1dbe52;font-weight: 600;float: left; margin-right:10px;font-size:16px; font-weight: 500; float: left;font-size: 14px; padding: 3px;">@item.IRFId</span>
 
                         }
-                        </div> <button id="expandbtn" class="moreless-btn">Read more</button>
+                        </div> 
+                        <div style="clear:both"></div>
+                        <button id="expandbtn" class="moreless-btn">Read more</button>
                     }
       </div>
       </td>
@@ -316,7 +319,7 @@
       $(document).ready(function(){
     $('#skill').removeClass("readmore");
       $('#expandbtn').click(function(){
-     
+           
     if($('#skill').hasClass("readmore")) {
       $('#expandbtn').html('Read more');
       $('#skill').removeClass("readmore");
@@ -340,4 +343,6 @@
 
 
 });
-                </script>
+  </script>
+
+
