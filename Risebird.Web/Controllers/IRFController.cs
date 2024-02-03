@@ -867,6 +867,12 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
+
+                        if (string.IsNullOrEmpty(irfDetails.MeetingPlatform))
+                        {
+                            irfDetails.MeetingPlatform = MeetingPlatforms.Zoom;
+                        }
+
                         var domain = Request.Scheme + "://" + Request.Host.Value;
                         //Start: Auto Generate Scheduling Link 
 
@@ -884,7 +890,7 @@ namespace Risebird.Web.Controllers
 
 
                             //call fire and forget method here to send emails and whatsapp for availability
-                            FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId, irfDetails.JDTiltle);
+                            await FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId, irfDetails.JDTiltle);
                             TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!";
                             return RedirectToAction("Index");
                         }
