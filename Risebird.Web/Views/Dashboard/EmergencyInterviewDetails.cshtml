@@ -186,9 +186,17 @@
                                                             {
                                                                 <td>Resolved(Emergency Interview)</td>
                                                             }
-                                                            else
+                                                            else if(item.Joinedon>item.PerformedOn)
                                                             {
                                                                 <td>Resolved(Interviewer Late Join)</td>
+                                                            }
+                                                            else if(item.Joinedon<item.PerformedOn)
+                                                            {
+                                                                <td>Resolved(Candidate Late Join)</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>Resolved</td>
                                                             }
                                                         }
                                                         else if ((item.TotalCount == 1 && item.IsMeetingNotificationSent == 1) || (item.TotalCount >= 2 && item.IsMeetingNotificationSent == 1 && item.IsRescheduleNotificationSent == 1) || (item.IsMeetingNotificationSent == 1 && (item.Joinedon == null || item.PerformedOn == null)))
