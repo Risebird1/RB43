@@ -263,27 +263,27 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(employmentconnectionString))
                 {
                     //Save employment details
-                    var _joiningdate = model.employmentSummary?.recent_employer_data.date_of_joining;
+                    var _joiningdate = model.summary?.recentEmployerData.dateOfJoining;
                     DateTime? joiningdate = !string.IsNullOrWhiteSpace(_joiningdate) ? Convert.ToDateTime(_joiningdate) : null;
-                    var _exitdate = model.employmentSummary?.recent_employer_data.date_of_exit;
+                    var _exitdate = model.summary?.recentEmployerData.dateOfExit;
                     DateTime? exitdate = !string.IsNullOrWhiteSpace(_exitdate) ? Convert.ToDateTime(_exitdate) : null;
                     var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;
                     DateTime? dob = !string.IsNullOrWhiteSpace(_dob) ? Convert.ToDateTime(_dob) : null;
                     var Uannumbers = string.Empty;
-                    if (model.uanNumbers != null)
+                    if (model.uan != null)
                     {
-                        Uannumbers = string.Join(",", model.uanNumbers);
+                        Uannumbers = string.Join(",", model.uan);
                     }
                     var parameters = new DynamicParameters();
                     parameters.Add("@CandidateEmail", model.CandidateEmail);
                     parameters.Add("@MobileNumber", model.MobileNumber);
                     parameters.Add("@Name", model.uanDetails1.FirstOrDefault()?.name);
-                    parameters.Add("@CompanyName", model.employmentSummary?.recent_employer_data.establishment_name);
-                    parameters.Add("@UAN", model.employmentSummary?.recent_employer_data.matching_uan);
+                    parameters.Add("@CompanyName", model.summary?.recentEmployerData.establishmentName);
+                    parameters.Add("@UAN", model.summary?.recentEmployerData.matchingUan);
                     parameters.Add("@JoiningDate", joiningdate);
                     parameters.Add("@ExitDate", exitdate);
-                    parameters.Add("@TotalUAN", model.employmentSummary?.uan_count);
-                    parameters.Add("@Isemployed", model.employmentSummary?.is_employed);
+                    parameters.Add("@TotalUAN", model.summary?.uanCount);
+                    parameters.Add("@Isemployed", model.summary?.isEmployed);
                     parameters.Add("@UANNumbers", Uannumbers);
                     parameters.Add("@DOB", dob);
                     parameters.Add("@message", model.message);

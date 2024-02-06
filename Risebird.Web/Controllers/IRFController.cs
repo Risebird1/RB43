@@ -8281,7 +8281,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement")
 
                     {
                         var interviewingSMEMembers = (IList<SkillChannelSME>)(await _irfService.GetEligibleSMEForSkillChannel(agId, irfId));

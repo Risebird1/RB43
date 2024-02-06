@@ -757,7 +757,7 @@ namespace Risebird.Web.Controllers
         public async Task EmployementVerification(string mobile, string candidateEmail)
         {
             SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
-            mobiledata.mobile = mobile;
+            mobiledata.mobileNumber = mobile;
             mobiledata.CandidateEmail = candidateEmail;
             mobiledata.panNumber = "";
             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SignzyEmploymentVerification";
@@ -778,7 +778,7 @@ namespace Risebird.Web.Controllers
                     var model = await EmployementVerificationDetails(candidateemail, mobilenumber);
                     if (string.IsNullOrWhiteSpace(model.message))
                     {
-                        var companyname = model.employmentSummary?.recent_employer_data.establishment_name;
+                        var companyname = model.summary?.recentEmployerData.establishmentName;
                         ; var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
                         if (companystatus != null)
                         {
@@ -800,9 +800,9 @@ namespace Risebird.Web.Controllers
                             employementdetails.CandidateEmail = model.CandidateEmail;
                             employementdetails.MobileNumber = model.MobileNumber;
                             employementdetails.isVerified = true;
-                            if (model.employmentSummary != null)
+                            if (model.summary != null)
                             {
-                                employementdetails.Isemployed = model.employmentSummary.is_employed;
+                                employementdetails.Isemployed = model.summary.isEmployed;
                             }
                             // employementdetails.message = "For this employment Company is in black list in our system.";
                         }
@@ -842,92 +842,92 @@ namespace Risebird.Web.Controllers
             return Json(employementdetails);
         }
 
-        public async Task<SignzyEmployeeResponse> EmployementVerificationDetails(string candidateemail, string mobilenumber)
-        {
-            SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
-            mobiledata.mobile = mobilenumber;
-            mobiledata.CandidateEmail = candidateemail;
-            mobiledata.panNumber = "";
-            Dictionary<string, string> headers = new Dictionary<string, string>
-                {
-                    { "Content-Type", "application/json" },
-                    { "Authorization", employementapikey }
-                };
-            var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
-            var convertedResponse = JsonConvert.DeserializeObject<SignzyEmployeeResponse>(response.Content);
-            convertedResponse.MobileNumber = mobiledata.mobile;
-            convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
-            if (convertedResponse.error != null)
-            {
-                if (string.IsNullOrWhiteSpace(convertedResponse.message))
-                {
-                    convertedResponse.message = convertedResponse.error.message;
-                }
-            }
-            dynamic datavalue = JObject.Parse(response.Content);
-            List<string>? namesList = convertedResponse.uanNumbers?.ToList();
-            foreach (var data in datavalue.Children())
-            {
-                if (((JToken)data).Path == "uanDetails")
-                {
-                    foreach (var dataset in data.Children())
-                    {
-                        foreach (var item in namesList)
-                        {
-                            if (((JContainer)dataset).First.Path == "uanDetails." + item)
-                            {
-                                var datanew = ((JContainer)dataset).First;
-                                var internalNodes = datanew.Children().GetEnumerator();
-                                while (internalNodes.MoveNext())
-                                {
-                                    UanDetails _uandeails = new UanDetails();
-                                    var mainFamilies = internalNodes.Current;
-                                    var nodedetails = mainFamilies.Children().GetEnumerator();
-                                    while (nodedetails.MoveNext())
-                                    {
-                                        _uandeails.uanNumber = item;
-                                        var mainFamilies1 = nodedetails.Current;
-                                        if (((JProperty)mainFamilies1).Name == "basic_details")
-                                        {
-                                            _uandeails.date_of_birth = ((JProperty)mainFamilies1).Value["date_of_birth"].ToString();
-                                            _uandeails.gender = ((JProperty)mainFamilies1).Value["gender"].ToString();
-                                            _uandeails.name = ((JProperty)mainFamilies1).Value["name"].ToString();
-                                        }
-                                        else if (((JProperty)mainFamilies1).Name == "employment_details")
-                                        {
-                                            _uandeails.establishment_name = ((JProperty)mainFamilies1).Value["establishment_name"].ToString();
-                                            _uandeails.date_of_joining = ((JProperty)mainFamilies1).Value["date_of_joining"].ToString();
-                                        }
-                                    }
-                                    convertedResponse.uanDetails1.Add(_uandeails);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            //Save response data
-            if (!string.IsNullOrEmpty(convertedResponse.employmentSummary?.recent_employer_data.matching_uan) || convertedResponse.message == "No record(s found")
-            {
-                await _aadhaarService.SaveEmploymentDetails(convertedResponse);
-                var _interviewer = new InterviewerProfileVM();
-                _interviewer.EmailId = convertedResponse.CandidateEmail;
-                _interviewer.isVerified = true;
-                if (convertedResponse.employmentSummary != null)
-                {
-                    _interviewer.IsEmployed = convertedResponse.employmentSummary.is_employed;
-                    _interviewer.CompanyName = convertedResponse.employmentSummary.recent_employer_data.establishment_name;
-                }
-                else
-                {
-                    _interviewer.IsEmployed = false;
-                    _interviewer.CompanyName = string.Empty;
-                }
-                _interviewer.EmploymentComment = convertedResponse.message;
-                await _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
-            }
-            return convertedResponse;
-        }
+        //public async Task<SignzyEmployeeResponse> EmployementVerificationDetails(string candidateemail, string mobilenumber)
+        //{
+        //    SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
+        //    mobiledata.mobile = mobilenumber;
+        //    mobiledata.CandidateEmail = candidateemail;
+        //    mobiledata.panNumber = "";
+        //    Dictionary<string, string> headers = new Dictionary<string, string>
+        //        {
+        //            { "Content-Type", "application/json" },
+        //            { "Authorization", employementapikey }
+        //        };
+        //    var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
+        //    var convertedResponse = JsonConvert.DeserializeObject<SignzyEmployeeResponse>(response.Content);
+        //    convertedResponse.MobileNumber = mobiledata.mobile;
+        //    convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
+        //    if (convertedResponse.error != null)
+        //    {
+        //        if (string.IsNullOrWhiteSpace(convertedResponse.message))
+        //        {
+        //            convertedResponse.message = convertedResponse.error.message;
+        //        }
+        //    }
+        //    dynamic datavalue = JObject.Parse(response.Content);
+        //    List<string>? namesList = convertedResponse.uanNumbers?.ToList();
+        //    foreach (var data in datavalue.Children())
+        //    {
+        //        if (((JToken)data).Path == "uanDetails")
+        //        {
+        //            foreach (var dataset in data.Children())
+        //            {
+        //                foreach (var item in namesList)
+        //                {
+        //                    if (((JContainer)dataset).First.Path == "uanDetails." + item)
+        //                    {
+        //                        var datanew = ((JContainer)dataset).First;
+        //                        var internalNodes = datanew.Children().GetEnumerator();
+        //                        while (internalNodes.MoveNext())
+        //                        {
+        //                            UanDetails _uandeails = new UanDetails();
+        //                            var mainFamilies = internalNodes.Current;
+        //                            var nodedetails = mainFamilies.Children().GetEnumerator();
+        //                            while (nodedetails.MoveNext())
+        //                            {
+        //                                _uandeails.uanNumber = item;
+        //                                var mainFamilies1 = nodedetails.Current;
+        //                                if (((JProperty)mainFamilies1).Name == "basic_details")
+        //                                {
+        //                                    _uandeails.date_of_birth = ((JProperty)mainFamilies1).Value["date_of_birth"].ToString();
+        //                                    _uandeails.gender = ((JProperty)mainFamilies1).Value["gender"].ToString();
+        //                                    _uandeails.name = ((JProperty)mainFamilies1).Value["name"].ToString();
+        //                                }
+        //                                else if (((JProperty)mainFamilies1).Name == "employment_details")
+        //                                {
+        //                                    _uandeails.establishment_name = ((JProperty)mainFamilies1).Value["establishment_name"].ToString();
+        //                                    _uandeails.date_of_joining = ((JProperty)mainFamilies1).Value["date_of_joining"].ToString();
+        //                                }
+        //                            }
+        //                            convertedResponse.uanDetails1.Add(_uandeails);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    //Save response data
+        //    if (!string.IsNullOrEmpty(convertedResponse.employmentSummary?.recent_employer_data.matching_uan) || convertedResponse.message == "No record(s found")
+        //    {
+        //        await _aadhaarService.SaveEmploymentDetails(convertedResponse);
+        //        var _interviewer = new InterviewerProfileVM();
+        //        _interviewer.EmailId = convertedResponse.CandidateEmail;
+        //        _interviewer.isVerified = true;
+        //        if (convertedResponse.employmentSummary != null)
+        //        {
+        //            _interviewer.IsEmployed = convertedResponse.employmentSummary.is_employed;
+        //            _interviewer.CompanyName = convertedResponse.employmentSummary.recent_employer_data.establishment_name;
+        //        }
+        //        else
+        //        {
+        //            _interviewer.IsEmployed = false;
+        //            _interviewer.CompanyName = string.Empty;
+        //        }
+        //        _interviewer.EmploymentComment = convertedResponse.message;
+        //        await _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
+        //    }
+        //    return convertedResponse;
+        //}
         #endregion
         public async Task EVInterviewer()
         {
@@ -1009,6 +1009,109 @@ namespace Risebird.Web.Controllers
             {
                 return Json(null);
             }
+        }
+        public async Task<SignzyEmployeeResponse> EmployementVerificationDetails(string candidateemail, string mobilenumber)
+        {
+            SignzyEmployeeRequest mobiledata = new SignzyEmployeeRequest();
+            mobiledata.mobileNumber = mobilenumber;
+            mobiledata.CandidateEmail = candidateemail;
+            mobiledata.panNumber = "";
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" },
+                { "Authorization", employementapikey }
+            };
+            var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
+            var resultset = JsonConvert.DeserializeObject<SignzyEVResponseResult>(response.Content);
+            var convertedResponse = resultset.result.result;
+            List<string>? namesList = convertedResponse.uan?.ToList();
+            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(response.Content);
+            var children = stuff.Children().GetEnumerator();
+            while (children.MoveNext())
+            {
+                var mainDetails = children.Current;
+                if (((JProperty)mainDetails).Name == "result")
+                {
+                    foreach (var data in mainDetails.Children())
+                    {
+                        var internalNodes = data.Children().GetEnumerator();
+                        while (internalNodes.MoveNext())
+                        {
+                            var mainFamilies1 = internalNodes.Current;
+                            if (((Newtonsoft.Json.Linq.JProperty)((JToken)mainFamilies1)).Name == "result")
+                            {
+                                var currentmainDetails = internalNodes.Current;
+                                foreach (var internernodeParticipent in currentmainDetails.Children())
+                                {
+                                    var internalNodes1 = internernodeParticipent.Children().GetEnumerator();
+                                    while (internalNodes1.MoveNext())
+                                    {
+                                        var mainFamilies2 = internalNodes1.Current;
+                                        if (((Newtonsoft.Json.Linq.JProperty)mainFamilies2).Name == "uanDetails")
+                                        {
+                                            foreach (var dataset in mainFamilies2.Children())
+                                            {
+                                                foreach (var item in namesList)
+                                                {
+                                                    if (((JContainer)dataset).First.Path.Contains("uanDetails." + item))
+                                                    {
+                                                        var datanew = ((JContainer)dataset).First;
+                                                        var internalNodes5 = datanew.Children().GetEnumerator();
+                                                        while (internalNodes5.MoveNext())
+                                                        {
+                                                            UanDetails _uandeails = new UanDetails();
+                                                            var mainFamilies = internalNodes5.Current;
+                                                            var nodedetails = mainFamilies.Children().GetEnumerator();
+                                                            while (nodedetails.MoveNext())
+                                                            {
+                                                                _uandeails.uanNumber = item;
+                                                                var mainFamilies5 = nodedetails.Current;
+                                                                if (((JProperty)mainFamilies5).Name == "basicDetails")
+                                                                {
+                                                                    _uandeails.date_of_birth = ((JProperty)mainFamilies5).Value["dateOfBirth"].ToString();
+                                                                    _uandeails.gender = ((JProperty)mainFamilies5).Value["gender"].ToString();
+                                                                    _uandeails.name = ((JProperty)mainFamilies5).Value["name"].ToString();
+                                                                }
+                                                                else if (((JProperty)mainFamilies5).Name == "employmentDetails")
+                                                                {
+                                                                    _uandeails.establishment_name = ((JProperty)mainFamilies5).Value["establishmentName"].ToString();
+                                                                    _uandeails.date_of_joining = ((JProperty)mainFamilies5).Value["dateOfJoining"].ToString();
+                                                                }
+                                                            }
+                                                            convertedResponse.uanDetails1.Add(_uandeails);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //Save response data
+            if (!string.IsNullOrEmpty(convertedResponse.summary?.recentEmployerData.matchingUan) || convertedResponse.message == "No record(s found")
+            {
+                await _aadhaarService.SaveEmploymentDetails(convertedResponse);
+                var _interviewer = new InterviewerProfileVM();
+                _interviewer.EmailId = convertedResponse.CandidateEmail;
+                _interviewer.isVerified = true;
+                if (convertedResponse.summary != null)
+                {
+                    _interviewer.IsEmployed = convertedResponse.summary.isEmployed;
+                    _interviewer.CompanyName = convertedResponse.summary.recentEmployerData.establishmentName;
+                }
+                else
+                {
+                    _interviewer.IsEmployed = false;
+                    _interviewer.CompanyName = string.Empty;
+                }
+                _interviewer.EmploymentComment = convertedResponse.message;
+                await _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
+            }
+            return null;
         }
     }
 }

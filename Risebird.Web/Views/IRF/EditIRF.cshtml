@@ -71,7 +71,7 @@
                                                 @*<li><a href="#" id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a><span id="count_Em" class="skillcount">@Model.EmergencyInterviewerCollection.Count()</span></li>*@
                                                 <li><a href="#" id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a><span id="count_Hr" class="skillcount">@(Model.HRCollection != null ? Model.HRCollection.Count() : 0 )</span></li>
                                             }
-                                            @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR")
+                                            @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR" || Model.Profile=="SeniorInterviewerManagement")
                                             {
                                                 <li><a href="#" id="rtab-13" class="" onclick="headerClickchange('tab-13')">Subject Matter Expert</a></li>
                                                 <li><a href="#" id="rtab-12" class="" onclick="headerClickchange('tab-12')">Manage Channel</a></li>

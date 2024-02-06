@@ -27,7 +27,7 @@
                 <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section interviewer">
-                        <div id="divEVverification" style="display:none">
+                        <div id="divEVverification">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group">
@@ -54,7 +54,7 @@
                             </div>
                         </div>
                         @Html.Hidden("UserId", Model.UserId, htmlAttributes: new { id = "hdn_UserId1" })
-                        <div id="divEVverified" style="display:block">
+                        <div id="divEVverified" style="display:none">
                             @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return Checkvalidation();", @id = "InterviewerProfileform" }))
                             {
                                 @Html.AntiForgeryToken()

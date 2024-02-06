@@ -9,8 +9,8 @@
     body {
         background: #f0f0f0 !important;
     }
-
-    #intervieweremail, #assessment {
+    
+    #skill, #assessment {
        
         width: auto;
         overflow: hidden;
@@ -206,17 +206,17 @@
                     {
                         @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
                         {
-                            <div id="assessment" style="height:50px;">
+                            <div id="assessment" style="color: #4aaba5;font-weight: 500;font-size:16px;margin-right:10px;">
                             @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
                             {
 
-                          <span  style="color: #4aaba5;font-weight: 500;font-size:16px;float:left;margin-right:10px;">@Model.AssessmentGroups[i].AssessmentGroup</span>
+                         @Model.AssessmentGroups[i].AssessmentGroup<br/>
 
 
                             }
                             </div>
                             <div style="clear:both"></div>
-                            <button id="expandbtn1" class="moreless-btn">Read more</button>
+                            <button id="expandbtn1" class="moreless-btn" style="display:none">Read more</button>
                         }
                   }
       </div>
@@ -224,15 +224,17 @@
      <td valign="top">
          <div class="cell">
         @if (Model.SkillChannels != null)
-                    {<div id="skill" style="height:50px;">
+                    {
+                         <div id="skill"  style="color:#1dbe52;font-weight: 600; margin-right:10px;font-size:16px; font-weight: 500; font-size: 14px; padding: 3px;">
                         @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
                         {
-                            <span style="color:#1dbe52;font-weight: 600;float: left; margin-right:10px;font-size:16px; font-weight: 500; float: left;font-size: 14px; padding: 3px;">@item.IRFId</span>
+                           @item.IRFId<br/>
 
                         }
-                        </div> 
+                        </div>
+                        
                         <div style="clear:both"></div>
-                        <button id="expandbtn" class="moreless-btn">Read more</button>
+                       <button id='expandbtn' class='moreless-btn' style="display:none">Read more</button>
                     }
       </div>
       </td>
@@ -314,9 +316,23 @@
     </script>
 }
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
+        $(function(){
+     $("#skill").each(function(){ 
+  if ($(this).height() > 50) {
+      $('#expandbtn').css('display','block')
+  }
+  });  
+
+  $("#assessment").each(function(){ 
+  if ($(this).height() > 50) {
+      $('#expandbtn1').css('display','block')
+  }
+  });  
+});
       $(document).ready(function(){
+          
     $('#skill').removeClass("readmore");
       $('#expandbtn').click(function(){
            

@@ -6,6 +6,7 @@ namespace Risebird.Entities.Data
     public class SignzyEmployeeRequest
     {
         public string mobile { get; set; }
+        public string mobileNumber { get; set; }
         public string panNumber { get; set; }
         public string CandidateEmail { get; set; }
     }
@@ -15,9 +16,11 @@ namespace Risebird.Entities.Data
         {
             uanDetails1 = new List<UanDetails>();
         }
-        public EmploymentSummary employmentSummary { get; set; }
+        public EmploymentSummary summary { get; set; }
+        //public EmploymentSummary employmentSummary { get; set; }
         public List<UanDetails> uanDetails1 { get; set; }
         public string[] uanNumbers { get; set; }
+        public string[] uan { get; set; }
         public string CandidateEmail { get; set; }
         public string MobileNumber { get; set; }
         public string message { get; set; }
@@ -25,16 +28,17 @@ namespace Risebird.Entities.Data
     }
     public class EmploymentSummary
     {
-        public Recent_employer_data recent_employer_data { get; set; }
-        public bool is_employed { get; set; }
-        public int uan_count { get; set; }
+        //public Recent_employer_data recent_employer_data { get; set; }
+        public Recent_employer_data recentEmployerData { get; set; }
+        public bool isEmployed { get; set; }
+        public int uanCount { get; set; }
     }
     public class Recent_employer_data
     {
-        public string establishment_name { get; set; }
-        public string matching_uan { get; set; }
-        public string date_of_joining { get; set; }
-        public string date_of_exit { get; set; }
+        public string establishmentName { get; set; }
+        public string matchingUan { get; set; }
+        public string dateOfJoining { get; set; }
+        public string dateOfExit { get; set; }
     }
     public class UanDetails
     {
@@ -76,5 +80,13 @@ namespace Risebird.Entities.Data
     public class SignzyEmployeeResponseerror
     {
         public string message { get; set; }
+    }
+    public class SignzyEVResponseResult
+    {
+        public SignzyEVResponse_Result result { get; set; }
+    }
+    public class SignzyEVResponse_Result
+    {
+        public SignzyEmployeeResponse result { get; set; }
     }
 }

@@ -126,8 +126,8 @@
                         {  <div class="rate-wrap">
                             <div class="rate-interview">
                                 <h1>Please rate this interview to Generate PDF and Shareable link: </h1>
-                                <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate the Interview</button>
-                            </div>
+@*                                <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate the Interview</button>
+*@                            </div>
                             </div>
                         }
                         @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" || ViewBag.SecurelyShared == "True")
@@ -135,12 +135,13 @@
                             <div class="pull-right">
                                 <div class="reportdropdown">
 
-                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="padding:0px 4px;" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
-                                            <text>Rate Interviewer</text>
-                                        </button>
+                                    
                                     <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" type="button" style="padding:0px 5px;">
                                         <span data-toggle="tooltip" data-placement="top" onclick="javascript:openHMLink('@Model.IRFId');" data-original-title="Tooltip on top"><text><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg> HM Instruction</text></span>
                                         </button>
+                                    <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="padding:0px 4px;" type="button" onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)">
+                                        <text>Rate Interviewer</text>
+                                    </button>
                                         @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
                                         {
                                         <button class="mdc-button mdc-button--raised mdc-ripple-upgraded">
@@ -342,7 +343,7 @@
                                                 else
                                                 {
                                                     <div class="row">
-                                                        <h3><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Watch Interview Video</h3>
+                                                        <h3><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Interview Video</h3>
 
                                                         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
 
