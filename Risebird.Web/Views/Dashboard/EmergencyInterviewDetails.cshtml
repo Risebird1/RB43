@@ -32,23 +32,24 @@
                     <div class="mobile-view"> <h4 class="card-title"> Emergency Interview Management</h4></div>
                 </div>
                 <div class="pull-left">
-                    @if (ViewBag.Type == "EmergencyIM")
+                    @if (ViewBag.Type == "OnTimeIM")
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('EmergencyIM','@ViewBag.interviewdate')"><strong>Emergency Management</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Interview Management</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Reschedule Management</strong></div>
+                        @* <div class="feedback-tab-ac" onclick="Changeurldetails('EmergencyIM','@ViewBag.interviewdate')"><strong>Emergency Management</strong></div> *@
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate')"><strong>On-Time Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delay Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Missed Management</strong></div>
                     }
                     else if (ViewBag.Type == "InterviewM")
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('EmergencyIM','@ViewBag.interviewdate')"><strong>Emergency Management</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate')"><strong>On-Time Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Interview Management</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Reschedule Management</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Missed Management</strong></div>
                     }
                     else
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('EmergencyIM','@ViewBag.interviewdate')"><strong>Emergency Management</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate')"><strong>On-Time Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Interview Management</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Reschedule Management</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Missed Management</strong></div>
                     }
                 </div>
                 <div class="pull-right">
@@ -145,7 +146,10 @@
                                                     <td>Candidate Joinedon</td>
                                                     <td>Interviewer</td>
                                                     <td>Candidate Email</td>
-                                                    <td>Emergency Interview</td>
+                                                    @if (ViewBag.Type != "OnTimeIM")
+                                                    {
+                                                        <td>Emergency Interview</td>
+                                                    }
                                                     <td>Meeting Status</td>
                                                     <td>Status</td>
                                                 </tr>
@@ -157,7 +161,10 @@
                                                     <td>Candidate Joinedon</td>
                                                     <td>Interviewer</td>
                                                     <td>Candidate Email</td>
-                                                    <td>Emergency Interview</td>
+                                                    @if (ViewBag.Type != "OnTimeIM")
+                                                    {
+                                                        <td>Emergency Interview</td>
+                                                    }
                                                     <td>Meeting Status</td>
                                                     <td>Status</td>
                                                 </tr>
@@ -171,13 +178,16 @@
                                                         <td>@item.PerformedOn</td>
                                                         <td>@item.interviewer</td>
                                                         <td>@item.candidateEmail</td>
-                                                        @if (item.EIAssigned)
+                                                        @if (ViewBag.Type != "OnTimeIM")
                                                         {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
+                                                            @if (item.EIAssigned)
+                                                            {
+                                                                <td>Yes</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>No</td>
+                                                            }
                                                         }
                                                         <td>@item.MeetingStatusStatusDesc</td>
                                                         @if (item.TotalCount >= 2 && item.IsMeetingNotificationSent == 1 && item.Joinedon != null && item.PerformedOn != null && item.IsRescheduleNotificationSent == 0)
@@ -186,11 +196,11 @@
                                                             {
                                                                 <td>Resolved(Emergency Interview)</td>
                                                             }
-                                                            else if(item.Joinedon>item.PerformedOn)
+                                                            else if (item.Joinedon > item.PerformedOn)
                                                             {
                                                                 <td>Resolved(Interviewer Late Join)</td>
                                                             }
-                                                            else if(item.Joinedon<item.PerformedOn)
+                                                            else if (item.Joinedon < item.PerformedOn)
                                                             {
                                                                 <td>Resolved(Candidate Late Join)</td>
                                                             }

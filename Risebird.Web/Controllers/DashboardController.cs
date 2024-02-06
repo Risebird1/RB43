@@ -2593,8 +2593,9 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.Type = "EmergencyIM";
-                    interviewmanagement = interviewmanagement.Where(x => x.IsNotificationSentToEI == 1).ToList();
+                    //ViewBag.Type = "EmergencyIM";
+                    ViewBag.Type = "OnTimeIM";
+                    interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 0 && x.PerformedOn != null && x.Joinedon != null).ToList();
                 }
                 interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                 return View(interviewmanagement);
@@ -2800,7 +2801,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _dashboardService.GetDMApproveDetails();
-                       
+
 
                         return View(model);
                     }
