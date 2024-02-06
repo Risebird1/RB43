@@ -104,6 +104,8 @@
     color: #000;
     right: -240px;
     font-weight: bold;
+    width:50px;
+    display:block;
 }
 .skill-round-xlarge {
     border-radius: 3px;

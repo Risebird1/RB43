@@ -22,5 +22,7 @@ namespace Risebird.Entities.ViewModel
         public int Heuristicsscore { get; set; }
         public string HeuristicsscoreDesc { get; set; }
         public int PerInterviewRate { get; set; }
+        public int Interviewid { get; set; }
+        public int PaymentComplianceCount { get; set; }
     }
 }

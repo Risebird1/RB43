@@ -6870,6 +6870,28 @@ input[type="date"].form-control {
     background: #90ee9094;
     color: forestgreen;
 }
+.marginalselected {
+    background: #30a930d9;
+    color: #fff;
+    padding: 0px 2px;
+    font-size: 13px;
+}
+.strongselected {
+    background: #1a6b20;
+    color: #fff;
+    padding: 0px 2px;
+    font-size: 13px;
+}
+.marginalrejected {
+    background: #da6c6a;
+    color: #fff;
+    padding: 0px 2px;
+}
+.strongrejected {
+    background: #c93835;
+    color: #fff;
+    padding: 0px 2px;
+}
 
 .rejected {
     background: #fdebf3;
@@ -6964,7 +6986,11 @@ input[type="date"].form-control {
     color: #fff;
     border-color: #1ba51be0 !important;
 }
-
+.btn-available, .btn-available:hover {
+    background: #3bc141;
+    border-color: #3bc141;
+    color: #fff;
+}
 .btn-rating, .btn-rating:hover {
     background: #f6b445c7;
     border-color: #f6b445c7;
