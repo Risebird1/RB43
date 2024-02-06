@@ -62,6 +62,12 @@
                         </div>
                         <div class="dataloading">
                             <div>
+                                <div class="calling-area" style="top: -18px;position:relative;padding: 3px 0px 7px 0px;color: #000;">
+                                    <span>
+                                        "Click on <span style="  display: inline-block; color: red; font-weight: bold;">Red Cross</span> button to Unassign and Click on <span style="display: inline-block; color: #2cae2c; font-weight: bold;
+">Green button</span> to confirm your presence for the interview."
+                                    </span>
+                                </div>
                                 <div class="note-meeting text-left"> <b style="color:green">Note: To join the meeting click on Meeting Link and always use your Coded Name </b><b style="color:red">(@ViewBag.CodedName)</b></div>
                                 <div id="tableID" class="second">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -178,8 +184,8 @@
                                                                         </div>
                                                                     }
 
-                                                                    <div class="btn btn-comment shadow btn-xs sharp me-1">
-                                                                        <span onclick="ConfirmAvailable('@item.id','Yes')" title="Available Confirm" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
+                                                                    <div class="btn btn-available shadow btn-xs sharp me-1">
+                                                                        <span onclick="ConfirmAvailable('@item.id','Yes')" title="Available Confirm" class="mdc-fab__icon material-icons"><img src="../img/availability.png" style="position:relative;top:3px;width:23px;" /></span>
                                                                     </div>
                                                                 </td>
                                                             </tr>

@@ -8366,7 +8366,7 @@ namespace Risebird.Web.Controllers
             var role = await _meetingService.ConfirmInterviewavailability(Emailid, id, type);
             if (role)
             {
-                return Json("success");
+                return Json("Presence Confirmed, Not attending the interview will result in penalty");
             }
             else
             {

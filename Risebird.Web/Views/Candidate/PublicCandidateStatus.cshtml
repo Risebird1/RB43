@@ -523,6 +523,24 @@
                                                                                     {
                                                                                         <p class="current noshowcandidate">@item.CurrentStatus</p>
                                                                                     }
+
+                                                                                     else if (item.CurrentStatus == "Strongly Selected")
+                                                                                    {
+                                                                                        <p class="current strongselected">@item.CurrentStatus</p>
+                                                                                    }
+                                                                                     else if (item.CurrentStatus == "Marginally Selected")
+                                                                                    {
+                                                                                        <p class="current marginalselected">@item.CurrentStatus</p>
+                                                                                    }
+
+                                                                                      else if (item.CurrentStatus == "Strongly Rejected")
+                                                                                    {
+                                                                                        <p class="current strongrejected">@item.CurrentStatus</p>
+                                                                                    }
+                                                                                     else if (item.CurrentStatus == "Marginally Rejected")
+                                                                                    {
+                                                                                        <p class="current marginalrejected">@item.CurrentStatus</p>
+                                                                                    }
                                                                                     else
                                                                                     {
                                                                                         <p>@item.CurrentStatus</p>
