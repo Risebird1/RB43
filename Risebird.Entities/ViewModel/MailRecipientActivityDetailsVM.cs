@@ -26,6 +26,12 @@ namespace Risebird.Entities.ViewModel
         public int RedMarker { get; set; }
 		public string interviewer { get; set; }
         public int TotalInterviews { get; set; }
-        public string CampaignName { get; set; }
+        public string ChannelOwner { get; set; }
+        public string SkillChannel { get; set; }
+        public string candidateEmail { get; set; }
+        public string candidateName { get; set; }
+        public string CalendlyLink { get; set; }
+        public string CandidateClientHR { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

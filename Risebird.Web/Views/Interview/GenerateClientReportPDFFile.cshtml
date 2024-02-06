@@ -214,8 +214,8 @@
                                                 {
                         <div style="font-size:16px; font-weight:bold;color:#fff;">Candidate </div>
                                                               <div>   <a style="color:#fff;float:left" id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5 style="font-size:17px; font-weight:normal;color:#e6e3e3">@Model.CandidateName</h5></a>
+                                                               <span style="float:left;color:#fff;height:20px;margin:0px 10px 0px 20px;"> | </span><span style="float:left">
 
-                    <span style="float:left;color:#fff;height:20px;margin:0px 10px 0px 20px;"> | </span><span style="float:left">
                                                             @{
                                                                 var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
                                                                 var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
@@ -231,12 +231,16 @@
                                                                 {
                                                                     meetingcolor = "red";
                                                                 }
-                                                                                         <div style="font-size:16px;float:right text-align:left;float:left font-weight:bold; padding:0px 10px; font-weight:bold;"><span style="color:@meetingcolor">@interviewtatusvalue</span></div>
+                                                                                        
+
+                                                                <div style="font-size:16px;float:right text-align:left;float:left font-weight:bold; padding:0px 10px; font-weight:bold;"><span style="color:@meetingcolor">@interviewtatusvalue</span></div>
                                                             }
                                                             else
 
                                                             {
-                                                                                                <div style="font-size:16px; text-align:right; font-weight:bold;color:#e6e3e3;padding:0px 10px;font-weight:bold;">@meestingstatusvalue</div>
+                     
+                                                                
+                                                                <div style="font-size:16px; text-align:right; font-weight:bold;color:#e6e3e3;padding:0px 10px;font-weight:bold;">@meestingstatusvalue</div>
 
 
 
