@@ -36,19 +36,19 @@
                     {
                         @* <div class="feedback-tab-ac" onclick="Changeurldetails('EmergencyIM','@ViewBag.interviewdate')"><strong>Emergency Management</strong></div> *@
                         <div class="feedback-tab-ac" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate')"><strong>On-Time Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delay Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delayed Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Missed Interviews </strong></div>
                     }
                     else if (ViewBag.Type == "InterviewM")
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate')"><strong>On-Time Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delay Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delayed Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Missed Interviews </strong></div>
                     }
                     else
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate')"><strong>On-Time Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delay Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delayed Interviews</strong></div>
                         <div class="feedback-tab-ac" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Missed Interviews </strong></div>
                     }
                 </div>
@@ -252,9 +252,19 @@
                                                                 <span class="status mnoshow-int">@item.MeetingStatusStatusDesc</span>
                                                             </td>
                                                         }
+                                                            else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+
+
+
                                                         else
                                                         {
-                                                            <td> <span class="status mdropped">@item.MeetingStatusStatusDesc</span></td>
+                                                            <td> <span class="status">@item.MeetingStatusStatusDesc</span></td>
 
                                                         }
                                                         @if (item.TotalCount >= 2 && item.IsMeetingNotificationSent == 1 && item.Joinedon != null && item.PerformedOn != null && item.IsRescheduleNotificationSent == 0)

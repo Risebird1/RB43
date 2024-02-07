@@ -207,7 +207,7 @@
                                                 <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                                     <div class="clearfix"></div>
                                                     <div class="col-sm-12 nopad">
-                                                        <div class="table-responsive">
+                                                        <div class="table-responsive int-table">
                                                             <div class="notschedulemeeting">
                                                                 <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                                     <thead>
@@ -248,16 +248,65 @@
                                                                         {
                                                                             <tr data-changes="1">
                                                                                 <td>@item.dtCreatedOn</td>
-                                                                                <td>
-                                                                                    @if (item.confirmationStatus == "2")
+                                                                                
+                                                                                    @*@if (item.confirmationStatus == "2")
                                                                                     {
                                                                                         <span style="color:red">Cancelled</span>
                                                                                     }
                                                                                     else
                                                                                     {
                                                                                         @item.MeetingStatusStatusDesc
-                                                                                    }
-                                                                                </td>
+                                                                                    }*@
+
+                                                                                      @if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                        {
+                                                            <td>
+                                                                <span class="status mpending">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "Completed")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.confirmationStatus == "2")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mcancel">Cancelled</span>
+                                                            </td>
+                                                        }
+
+                                                        else if (item.MeetingStatusStatusDesc == "Dropped")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+
+                                                        else if (item.MeetingStatusStatusDesc == "No Show(Interviewer)")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mnoshow-int">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td> <span class="status mdropped">@item.MeetingStatusStatusDesc</span></td>
+
+                                                        }
+                                                                              
                                                                                 <td class="candidate-details">
                                                                                     @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                     {
@@ -267,13 +316,13 @@
                                                                                 <td class="candidate-details">
                                                                                     @if (item.candidateName != null && item.candidateName != "")
                                                                                     {
-                                                                                        <div class="mtop-5">@item.candidateName</div>
+                                                                                        <div class="mtop-5 name-field">@item.candidateName</div>
                                                                                     }
                                                                                     <div>
                                                                                         <span class="call-area">
                                                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                             {
-                                                                                                <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="17" height="17" /></span>
+                                                                                                <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="15" height="15" /></span>
                                                                                             }
                                                                                         </span>
                                                                                         @item.MobileNumber
@@ -283,7 +332,7 @@
                                                                                     {
                                                                                         @if (item.candidateEmail.Length > 10)
                                                                                         {
-                                                                                            <a onclick="" data-tooltip="@item.candidateEmail"><span class="hrname hremail"><strong>Email:</strong> @item.candidateEmail</span></a>
+                                                                                            <a onclick="" data-tooltip="@item.candidateEmail"><span class="hrname hremail"><i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail</span></a>
                                                                                         }
                                                                                         else
                                                                                         {
@@ -296,7 +345,7 @@
                                                                                 </td>
                                                                                 @if (!string.IsNullOrEmpty(item.resumeLink))
                                                                                 {
-                                                                                    <td><a target="_blank" href=@item.resumeLink>Resume</a></td>
+                                                                                    <td><a target="_blank" href=@item.resumeLink><img style="position:relative;left:-1px;" src="/img/resume-icon.png" width="21"> Resume</a></td>
                                                                                 }
                                                                                 else
                                                                                 {
@@ -359,7 +408,7 @@
                                                 <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
                                                     <div class="clearfix"></div>
                                                     <div class="col-sm-12 nopad">
-                                                        <div class="table-responsive">
+                                                        <div class="table-responsive int-table">
                                                             <div class="notschedulemeeting">
                                                                 <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
                                                                     <thead>
@@ -401,7 +450,7 @@
                                                                         {
                                                                             <tr data-changes="1">
                                                                                 <td>@item.dtCreatedOn</td>
-                                                                                <td>
+                                                                               @* <td>
                                                                                     @if (item.confirmationStatus == "2")
                                                                                     {
                                                                                         <span style="color:red">Cancelled</span>
@@ -410,7 +459,65 @@
                                                                                     {
                                                                                         @item.MeetingStatusStatusDesc
                                                                                     }
-                                                                                </td>
+                                                                                </td>*@
+                                                                                
+                                                                                      @if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                        {
+                                                            <td>
+                                                                <span class="status mpending">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "Completed")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.confirmationStatus == "2")
+                                                        {
+
+                                                            <td>
+                                                                  <span class="status mcancel">Cancelled</span>
+                                                            </td>
+                                                        }
+
+                                                        else if (item.MeetingStatusStatusDesc == "Dropped")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+
+                                                        else if (item.MeetingStatusStatusDesc == "No Show(Interviewer)")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mnoshow-int">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                            else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+
+                                                        else
+                                                        {
+                                                            <td> <span class="status">@item.MeetingStatusStatusDesc</span></td>
+
+                                                        }
+                                                               
                                                                                 <td class="candidate-details">
                                                                                     @if (item.JDTiltle != null && item.JDTiltle != "")
                                                                                     {
@@ -420,7 +527,7 @@
                                                                                 <td class="candidate-details">
                                                                                     @if (item.candidateName != null && item.candidateName != "")
                                                                                     {
-                                                                                        <div class="mtop-5">@item.candidateName</div>
+                                                                                        <div class="mtop-5 name-field">@item.candidateName</div>
                                                                                     }
                                                                                     <div>
                                                                                         <span class="call-area">
@@ -436,7 +543,7 @@
                                                                                     {
                                                                                         @if (item.candidateEmail.Length > 10)
                                                                                         {
-                                                                                            <a onclick="" data-tooltip="@item.candidateEmail"><span class="hrname hremail"> <strong>Email:</strong> @item.candidateEmail</span> </a>
+                                                                                            <a onclick="" data-tooltip="@item.candidateEmail"><span class="hrname hremail"><i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail</span> </a>
                                                                                         }
                                                                                         else
                                                                                         {
@@ -449,7 +556,7 @@
                                                                                 </td>
                                                                                 @if (!string.IsNullOrEmpty(item.resumeLink))
                                                                                 {
-                                                                                    <td><a target="_blank" href=@item.resumeLink>Resume</a></td>
+                                                                                    <td><a target="_blank" href=@item.resumeLink> <img style="position:relative;left:-1px;" src="/img/resume-icon.png" width="21"> Resume</a></td>
                                                                                 }
                                                                                 else
                                                                                 {
@@ -482,24 +589,37 @@
                                                                             </button>*@
 
 
-                                                                                        <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
-                                                                                            <span title="ReSchedule Meeting" class="mdc-fab__icon material-icons"><i class="fas fa-calendar-alt" aria-hidden="true" style="font-size:16px;"></i></span>
-                                                                                        </a>
+                                                                                <a  target="_blank" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top:1px;position: relative;cursor: pointer;text-decoration:none">
+                                                                                <div class="btn btn-reschedule shadow btn-xs sharp-btn me-1">
+                                                                                   <span title="ReSchedule Meeting" ><i class="fas fa-calendar-alt" style="color:#fff;font-size:11px;position:relative;top:-2px;" aria-hidden="true"></i></span>
+                                                                                    </div>
+                                                                                    </a>
+
                                                                                     }
-                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -7px; position: relative;cursor:pointer" title="Send Invite"><span class="far fa-paper-plane"></span></span></span>
+
+                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top">
+                                                                                        <span class="btn btn-primary shadow btn-xs sharp-btn me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send" style="color:#fff;font-size:11px;position:relative;top:-2px;"></span></span>
+                                                                                    </span>
+
+
 
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
                                                                                     @if (ViewBag.profile != "Client")
                                                                                     {
-                                                                                        <button style="position:relative;top:3px;" class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
-                                                                                            <span onclick="OpenStatusModal('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Add Candidate Status" class="mdc-fab__icon material-icons">
-                                                                                                <img style="height:16px!important;max-height:16px!important;" src="~/Newassets/img/addlist.png" />
-                                                                                            </span>
-                                                                                        </button>
 
-                                                                                        <button style="position:relative;top:3px;" class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Candidate Status List">
+                                                                                    <div class="btn btn-adstatus shadow btn-xs sharp-btn me-1" aria-label="Add Candidate Status">
+                                                                                   <span onclick="OpenStatusModal('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Add Candidate Status"><i class="fa fa-list" style="font-size: 10px!important;color:#fff!important"></i><i class="fa fa-plus" style="font-size: 9px!important;"></i></span>
+                                                                                    </div>
+
+
+                                                                                     <div class="btn btn-adstatus shadow btn-xs sharp-btn me-1" aria-label="Candidate Status List" style="background:#c6b396">
+                                                                                            <span onclick="GetCandidateStatusList('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Candidate Status List"><i class="fa fa-list" style="color:#fff!important"></i></span>
+                                                                                    </div>
+                                                                                  
+
+                                                                                      @*  <button style="position:relative;top:3px;" class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Candidate Status List">
                                                                                             <span onclick="GetCandidateStatusList('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16" id="IconChangeColor"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" id="mainIconPathAttribute" fill="#ffffff"></path> </svg></span>
-                                                                                    </button>
+                                                                                    </button>*@
                                                                                     }
                                                                                 </td>
                                                                             </tr>
