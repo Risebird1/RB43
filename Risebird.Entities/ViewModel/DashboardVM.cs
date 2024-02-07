@@ -45,5 +45,7 @@ namespace Risebird.Entities.ViewModel
         public string MeetingStatusStatusDesc { get; set; }
         public string interviewer { get; set; }
         public string candidateEmail { get; set; }
+        public string ClientName { get; set; }
+        public int irfIntId { get; set; }
     }
 }
