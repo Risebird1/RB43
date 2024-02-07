@@ -84,6 +84,7 @@ namespace Risebird.Entities.Data
     public class SignzyEVResponseResult
     {
         public SignzyEVResponse_Result result { get; set; }
+        public string message { get; set; }
     }
     public class SignzyEVResponse_Result
     {

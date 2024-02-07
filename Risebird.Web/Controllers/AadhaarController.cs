@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -1023,7 +1024,14 @@ namespace Risebird.Web.Controllers
             };
             var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
             var resultset = JsonConvert.DeserializeObject<SignzyEVResponseResult>(response.Content);
-            var convertedResponse = resultset.result.result;
+            var convertedResponse = resultset.result?.result;
+            if (convertedResponse == null)
+            {
+                convertedResponse = new SignzyEmployeeResponse();
+                convertedResponse.message = resultset.message;
+            }
+            convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
+            convertedResponse.MobileNumber = mobiledata.mobileNumber;
             List<string>? namesList = convertedResponse.uan?.ToList();
             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(response.Content);
             var children = stuff.Children().GetEnumerator();
@@ -1111,7 +1119,7 @@ namespace Risebird.Web.Controllers
                 _interviewer.EmploymentComment = convertedResponse.message;
                 await _interviewerService.SaveInterviewerEmploymentVerification(_interviewer);
             }
-            return null;
+            return convertedResponse;
         }
     }
 }
