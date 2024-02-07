@@ -60,7 +60,12 @@ namespace Risebird.MicroService
                 };
             var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
             var resultset = JsonConvert.DeserializeObject<SignzyEVResponseResult>(response.Content);
-            var convertedResponse = resultset.result.result;
+            var convertedResponse = resultset.result?.result;
+            if (convertedResponse == null)
+            {
+                convertedResponse = new SignzyEmployeeResponse();
+                convertedResponse.message = resultset.message;
+            }
             convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
             convertedResponse.MobileNumber = mobiledata.mobileNumber;
             List<string>? namesList = convertedResponse.uan?.ToList();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -1025,7 +1026,12 @@ namespace Risebird.Web.Controllers
             };
             var response = await _httpRequestHelper.MakeHttpRequest(employementendpoint, Method.Post, mobiledata, headers);
             var resultset = JsonConvert.DeserializeObject<SignzyEVResponseResult>(response.Content);
-            var convertedResponse = resultset.result.result;
+            var convertedResponse = resultset.result?.result;
+            if (convertedResponse == null)
+            {
+                convertedResponse = new SignzyEmployeeResponse();
+                convertedResponse.message = resultset.message;
+            }
             convertedResponse.CandidateEmail = mobiledata.CandidateEmail;
             convertedResponse.MobileNumber = mobiledata.mobileNumber;
             List<string>? namesList = convertedResponse.uan?.ToList();
