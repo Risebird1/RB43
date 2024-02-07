@@ -2589,7 +2589,7 @@ namespace Risebird.Web.Controllers
                 else if (type == "RescheduleIM")
                 {
                     ViewBag.Type = "RescheduleIM";
-                    interviewmanagement = interviewmanagement.Where(x => x.IsRescheduleNotificationSent == 1 && (x.MeetingStatus != 4 || x.MeetingStatus != 6 || x.MeetingStatus != 7 || x.MeetingStatus != 8)).ToList();
+                    interviewmanagement = interviewmanagement.Where(x => x.IsRescheduleNotificationSent == 1 && (x.MeetingStatus != 4 && x.MeetingStatus != 6 && x.MeetingStatus != 7 && x.MeetingStatus != 8)).ToList();
                 }
                 else
                 {
