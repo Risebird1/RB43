@@ -146,8 +146,6 @@
                                                     <th>Interviewer Joinedon</th>
                                                      <th>Candidate Joinedon</th>
                                                     <th>Interviewer</th>
-                                                   
-                                                    
                                                     <th>Candidate Email</th>
                                                     @if (ViewBag.Type != "OnTimeIM")
                                                     {
@@ -163,7 +161,6 @@
                                                     <th>Interviewer Joinedon</th>
                                                      <th>Candidate Joinedon</th>
                                                     <th>Interviewer</th>
-                                                   
                                                     <th>Candidate Email</th>
                                                     @if (ViewBag.Type != "OnTimeIM")
                                                     {
@@ -179,17 +176,13 @@
                                                     <tr>
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.Joinedon</td>
-                                                          <td>@item.PerformedOn</td>
-                                                          <td>
+                                                        <td>@item.PerformedOn</td>
+                                                        <td>
                                                             @if (item.interviewer != null)
                                                             {
-
                                                               <i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.interviewer
-                                                               }
-                                                               </td>
-                                                        
-                                                        
-                                                      
+                                                            }
+                                                        </td>
                                                         <td>
                                                             @if (item.candidateEmail != null)
                                                             {
