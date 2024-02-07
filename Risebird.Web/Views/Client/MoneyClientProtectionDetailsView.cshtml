@@ -8,7 +8,9 @@
         <tr>
             <th>Skill Channel</th>
             <th>Interview</th>
+              <th>Recruiter</th>
             <th>Candidate Email</th>
+             <th>Compliance</th>
                 @if (ViewBag.action == "All" || ViewBag.action == "CREDIT")
                 {
                 <th>Credit</th>
@@ -24,7 +26,9 @@
         <tr>
             <th>Skill Channel</th>
             <th>Interview</th>
+            <th>Recruiter</th>
             <th>Candidate Email</th>
+            <th>Compliance</th>
                 @if (ViewBag.action == "All" || ViewBag.action == "CREDIT")
                 {
                 <th>Credit</th>
@@ -42,7 +46,10 @@
             <tr>
                 <td>@item.IRFId</td>
                 <td>@item.interviewDate</td>
+                <td>@item.ClientHrContact</td>
                 <td style="text-transform:lowercase;">@item.candidateEmail</td>
+                <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.id')">@item.PaymentComplianceCount</a></td>
+
                 @if (ViewBag.action == "All" || ViewBag.action == "CREDIT")
                 {
                     <td>@item.Point</td>
@@ -100,3 +107,4 @@
         });
     });
 </script>
+@await Html.PartialAsync("~/Views/Common/_PaymentCompliance.cshtml")

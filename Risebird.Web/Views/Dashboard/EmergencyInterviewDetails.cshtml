@@ -57,7 +57,8 @@
                         <div class="pull-left" style="margin-left:10px">
                             <div class="filtercon">
                                 <div id="myinterview_3">
-                                    <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="right">
+                                    <a href='/Dashboard/Index' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
+                                       <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="right">
                                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="right" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                             <div class="mdc-button__ripple"></div>
@@ -175,6 +176,13 @@
                                                     <tr>
                                                         <td>@item.interviewDate</td>
                                                         <td>@item.Joinedon</td>
+                                                          <td>
+                                                            @if (item.interviewer != null)
+                                                            {
+
+                                                              <i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.interviewer
+                                                               }
+                                                               </td>
                                                         <td>@item.PerformedOn</td>
                                                         <td>@item.interviewer</td>
                                                         <td>@item.candidateEmail</td>
@@ -194,34 +202,34 @@
                                                         {
                                                             if (item.EIAssigned)
                                                             {
-                                                                <td>Resolved(Emergency Interview)</td>
+                                                                <td><span style="color:forestgreen; background: #d0edd0;padding: 0px 5px 2px 5px;font-size:13px;">Resolved</span> <span style="color:#e4983c;font-weight:500;">(Emergency Interview)</span></td>
                                                             }
                                                             else if (item.Joinedon > item.PerformedOn)
                                                             {
-                                                                <td>Resolved(Interviewer Late Join)</td>
+                                                                <td><span style="color:forestgreen; background: #d0edd0;padding: 0px 5px 2px 5px;font-size:13px;">Resolved</span> <span style="color:#b550a3;font-weight:500;"> (Interviewer Late Join)</span></td>
                                                             }
                                                             else if (item.Joinedon < item.PerformedOn)
                                                             {
-                                                                <td>Resolved(Candidate Late Join)</td>
+                                                                <td><span style="color:forestgreen; background: #d0edd0;padding: 0px 5px 2px 5px;font-size:13px;">Resolved</span> <span style="color:#d64a2f;font-weight:500;"> (Candidate Late Join)</span></td>
                                                             }
                                                             else
                                                             {
-                                                                <td>Resolved</td>
+                                                                <td style="color:forestgreen; background: #d0edd0;padding: 0px 5px 2px 5px;font-size:13px;">Resolved</td>
                                                             }
                                                         }
                                                         else if ((item.TotalCount == 1 && item.IsMeetingNotificationSent == 1) || (item.TotalCount >= 2 && item.IsMeetingNotificationSent == 1 && item.IsRescheduleNotificationSent == 1) || (item.IsMeetingNotificationSent == 1 && (item.Joinedon == null || item.PerformedOn == null)))
                                                         {
                                                             if (item.Joinedon != null && item.PerformedOn == null)
                                                             {
-                                                                <td>Not Resolved(Candidate No Show)</td>
+                                                                <td><span style="color: #fff;background: #e57373cc;padding: 0px 5px 2px 5px;font-size:12px;">Not Resolved</span> <span style="font-weight:500;color: #68221dc7;">(Candidate No Show)</span></td>
                                                             }
                                                             else if (item.Joinedon == null && item.PerformedOn != null)
                                                             {
-                                                                <td>Not Resolved(Interviewer No Show)</td>
+                                                                <td><span style="color: #fff;background:#e57373cc;padding: 0px 5px 2px 5px;font-size:12px;">Not Resolved</span> <span style="color: #56798b;font-weight:500">(Interviewer No Show)</span></td>
                                                             }
                                                             else
                                                             {
-                                                                <td>Not Resolved</td>
+                                                                <td style="color: #fff;background:#e57373cc;padding: 0px 5px 2px 5px;font-size:12px;">Not Resolved</td>
                                                             }
                                                         }
                                                         else if (item.PerformedOn != null && item.IsRescheduleNotificationSent == 1)

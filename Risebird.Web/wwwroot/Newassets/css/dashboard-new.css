@@ -47,14 +47,24 @@ body {
     border-radius: 0px !important;
 }
 .sharp.btn-xs {
-    padding: 0.1175rem;
-    width: 1.625rem;
-    height: 1.625rem;
-    min-width: 1.625rem;
-    min-height: 1.625rem;
-    border-radius: 0.375rem;
+    padding: 0.1165rem;
+    width: 1.55rem;
+    height: 1.55rem;
+    min-width: 1.55rem;
+    min-height: 1.55rem;
+    border-radius:4px;
 }
-
+.sharp-btn {
+    border-radius: 4px !important;
+    width: 2.5rem;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+}
+ .sharp-btn .fa {
+        font-size: 12px!important;
+        margin-right: 0px!important;
+    }
 .table td, .table th {
     padding: 0.75rem;
     vertical-align: top;
@@ -466,7 +476,7 @@ a.infos {
 }
 
 table tr td:hover, .table-striped tbody tr:hover {
-    box-shadow: 0 0 25px #868b903b;
+    box-shadow: 0 0 5px #868b903b;
 }
 
 table tr td.relatedvideo:hover {
@@ -5441,7 +5451,7 @@ textarea {
     padding-top: 4px;
     position: absolute;
     right: 13%;
-    top: 20px;
+    top: 10px;
 }
 
 
@@ -7000,36 +7010,64 @@ input[type="date"].form-control {
     background: #76b39c;
     border-color: #76b39c;
 }
+.btn-edit {
+    background: #e9c34f;
+    border-color: #e5ac4c;
+    color: #fff!important;
+ 
+}
+.btn-reset {
+    background: #9aa6ea;
+    border-color: #9aa6ea;
+    color: #fff !important;
+}
+.btn-copy {
+    background: #1d919f96;
+    border-color: #1d919f96;
+    color: #fff !important;
+}
 
-.btn-unassign, .btn-unassign:hover {
+.btn-share {
+    background: #7ba260;
+    border-color: #7ba260;
+    color: #fff !important;
+}
+.btn-unassign {
     background: #db362a;
     border-color: #db362a;
-    color:#fff;
+    color: #fff !important;
 }
-.btn-newreport, .btn-newreport:hover {
+.btn-qc {
+    background: #aaabbb;
+    border-color: #bdbeca;
+    color: #fff !important;
+}
+.btn-newreport {
     background: #4499b5 !important;
-    border-color: #4499b5!important;
-    color: #fff;
+    border-color: #4499b5 !important;
+    color: #fff !important;
 }
-.btn-comment, .btn-comment:hover {
+.btn-comment {
     background: #f3d374;
     border-color: #f3d374;
-    color: #fff;
+    color: #fff !important;
 }
 
-.btn-report, .btn-report:hover {
+.btn-report {
     background: #8caf8e;
     border-color: #8caf8e;
-    color: #fff;
+    color: #fff !important;
 }
-.btn-upload, .btn-upload:hover {
+.btn-upload {
     background: #b1ba4e;
     border-color: #b1ba4e;
+    color: #fff !important;
 }
 
-.btn-candlist, .btn-candlist:hover {
+.btn-candlist {
     background: #eea4349e;
     border-color: #f0cc96;
+    color: #fff !important;
 }
 
 .fixed-header {
@@ -11204,32 +11242,41 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
     background: #f2eefc;
     color: #845adf;
     max-width: 83px;
+    font-weight: 500;
 }
 
 .mpending {
     background: #fcc25052;
     color: #bd871d;
     width: 92px;
+    font-weight: 500;
 }
 
 .mcomplete {
-    background: #e9f8f4;
-    color: #40b888dd;
+    background: #b6f4e38a;
+    color: #288761dd;
     width: 83px;
+    font-weight: 500;
 }
 
 .mdropped {
     background: #e454301f;
     color: #e6540fdb;
-    width: 111px;
-    width: 113px;
+    width: 100px;
+    font-weight: 500;
 }
-
+.mnoshow-int {
+    background: #6b8ee51f;
+    color: #56798b;
+    width: 126px;
+    font-weight: 500;
+}
 .mnoshow {
     background: #f89cbf24;
     color: #c545a9db;
     color: #94207bbd;
     max-width: 126px;
+    font-weight:500;
 }
 
 .overlay {
