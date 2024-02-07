@@ -14,6 +14,6 @@ CREATE PROCEDURE usp_UpdatevideoDetailsById
 @videoduration int
 AS
 BEGIN
-Update InterviewComments set VideoLink=@VideoURL,VideoDuration=@videoduration where InterviewId=@interviewid
+Update InterviewComments set VideoLink=@VideoURL,VideoDuration=@videoduration,ModifiedOn=Getdate() where InterviewId=@interviewid
 END
 Go

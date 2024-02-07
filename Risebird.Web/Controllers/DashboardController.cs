@@ -2579,6 +2579,8 @@ namespace Risebird.Web.Controllers
                     var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("EmergencyInterviewDetailsfilters"));
                     startdate = Convert.ToDateTime(filter.StartDate);
                     enddate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                    //filter.ClientName = filter.ClientName == null ? filter.ClientName = modelList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                    //interviewmanagement = interviewmanagement.Where(c => filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null).ToList();
                 }
                 var interviewmanagement = await _dashboardService.GetInterviewManagementDetails(startdate, enddate, Emailid);
                 if (type == "InterviewM")
@@ -2589,7 +2591,7 @@ namespace Risebird.Web.Controllers
                 else if (type == "RescheduleIM")
                 {
                     ViewBag.Type = "RescheduleIM";
-                    interviewmanagement = interviewmanagement.Where(x => x.IsRescheduleNotificationSent == 1).ToList();
+                    interviewmanagement = interviewmanagement.Where(x => x.IsRescheduleNotificationSent == 1 && x.MeetingStatus != 3 && x.MeetingStatus != 4 && x.MeetingStatus != 6 && x.MeetingStatus != 7 && x.MeetingStatus != 8).ToList();
                 }
                 else
                 {
