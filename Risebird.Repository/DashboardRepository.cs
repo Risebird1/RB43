@@ -1477,8 +1477,6 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var date = DateTime.Now.AddDays(1);
-                    var startdate = date.AddDays(-7);
                     var parameters = new DynamicParameters();
                     parameters.Add("@startdate", interviewstartdate);
                     parameters.Add("@enddate", interviewenddate);

@@ -245,10 +245,14 @@
                                                             {
                                                                 meetingcolor = "red";
                                                             }
+                                                            else if (Model.InterviewStatus == 5)
+                                                            {
+                                                                meetingcolor = "red";
+                                                            }
 
                                                             else if (Model.InterviewStatus == 1)
                                                             {
-                                                                meetingcolor = "#fbc02d";
+                                                                meetingcolor = "darkorange";
                                                             }
                                                             <h2 class="interview-status"><span>Interview Status :</span> <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h2>
                                                         }

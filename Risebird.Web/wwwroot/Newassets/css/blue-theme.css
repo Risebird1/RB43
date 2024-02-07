@@ -220,7 +220,7 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
     background: #32b2e830;
 }
 
-#resumeId, #zoomlinkId {
+#resumeId{
     background: #e2f0ff;
 }
 
