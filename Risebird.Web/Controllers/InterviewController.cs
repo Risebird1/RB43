@@ -1697,6 +1697,10 @@ namespace Risebird.Web.Controllers
                                 myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date || (x.MeetingStatus == null && x.interviewDate.Date < DateTime.Now.Date)).ToList();
                             }
                         }
+                        if (meetingLineUpType == "Completed")
+                        {
+                            myInterview = myInterview.OrderByDescending(x => x.interviewDate).ToList();
+                        }
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();

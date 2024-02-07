@@ -940,7 +940,7 @@ table.journey {
     border-color: #ea6e24 !important;
 }
 
-#resumeId, #zoomlinkId, .callatag {
+#resumeId,.callatag {
     background: #ffeade8c;
     color: #ea6e24;
 }
