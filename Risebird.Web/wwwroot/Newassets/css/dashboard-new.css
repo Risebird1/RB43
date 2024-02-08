@@ -278,6 +278,7 @@ a.infos {
     height: 43px;
     background: url(../../Newassets/img/info.png) 8px 24px no-repeat;
     float: right;
+    background-size: 47%;
 }
 .time-on a.infos {
     width: 31px;
