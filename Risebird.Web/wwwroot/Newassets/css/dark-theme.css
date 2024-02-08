@@ -651,7 +651,7 @@ select * {
     border-right: 1px #77737359 solid !important
 }
 
-#resumeId, #zoomlinkId, .callatag {
+ #zoomlinkId, .callatag {
     background: #000000 !important;
     color: #47484a;
     border: 1px #77737359 solid;

@@ -830,8 +830,7 @@ table.journey {
 .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
     border-color: #929292 !important;
 }
-
-#resumeId, .callatag {
+ .callatag {
     background: #ecececb5;
     color: #47484a;
 }

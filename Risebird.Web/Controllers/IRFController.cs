@@ -8608,7 +8608,7 @@ namespace Risebird.Web.Controllers
                 var result = await _irfService.ApproveDM(id, emailid);
                 if (result)
                 {
-                    return Json("Success");
+                    return Json("Approved Successfully");
                 }
                 else
                 {
