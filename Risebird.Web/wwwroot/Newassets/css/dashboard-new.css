@@ -7070,6 +7070,11 @@ input[type="date"].form-control {
     border-color: #f6b445c7;
 }
 
+
+.btn-adstatus, .btn-adstatus:hover {
+    background: #aed580;
+    border-color: #aed580;
+}
 .btn-reschedule, .btn-reschedule:hover {
     background: #76b39c;
     border-color: #76b39c;
@@ -11293,8 +11298,8 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
 }
 
 .status {
-    padding: 3px 5px;
-    font-size: 12px;
+    padding: 2px 5px;
+    font-size: 11px;
     text-transform: capitalize;
     display: block;
     border-radius: 3px;
@@ -11305,7 +11310,7 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
 .mscheduled {
     background: #f2eefc;
     color: #845adf;
-    max-width: 83px;
+    max-width: 70px;
     font-weight: 500;
 }
 
@@ -11319,27 +11324,33 @@ div.hopscotch-bubble .hopscotch-bubble-arrow-container.up {
 .mcomplete {
     background: #b6f4e38a;
     color: #288761dd;
-    width: 83px;
+    width:70px;
     font-weight: 500;
 }
 
 .mdropped {
     background: #e454301f;
     color: #e6540fdb;
-    width: 100px;
+    width: 70px;
+    font-weight: 500;
+}
+.mcancel {
+    background: #ee7f63e0;
+    color: #fff;
+    width: 70px;
     font-weight: 500;
 }
 .mnoshow-int {
     background: #6b8ee51f;
     color: #56798b;
-    width: 126px;
+    width: 115px;
     font-weight: 500;
 }
 .mnoshow {
     background: #f89cbf24;
     color: #c545a9db;
     color: #94207bbd;
-    max-width: 126px;
+    max-width: 115px;
     font-weight:500;
 }
 
