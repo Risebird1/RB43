@@ -283,7 +283,7 @@ a.infos {
 .intime-on a.infos {
     width: 31px;
     height: 43px;
-    background: url(../../Newassets/img/info.png) 1px 14px no-repeat;
+    background: url(../../Newassets/img/info.png) 1px 6px no-repeat;
     float: right;
     background-size: 47%;
 
@@ -292,7 +292,7 @@ a.infos {
 .ctime-on a.infos {
     width: 31px;
     height: 43px;
-    background: url(../../Newassets/img/info.png) 12px 3px no-repeat;
+    background: url(../../Newassets/img/info.png) 12px 5px no-repeat;
     float: right;
     background-size: 47%;
 }
