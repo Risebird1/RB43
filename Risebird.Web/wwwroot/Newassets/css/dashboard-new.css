@@ -6802,7 +6802,7 @@ input[type="date"].form-control {
     font-weight: bold;
     position: relative;
     top: -6px;
-    color: #5e3787;
+    color: #5c2d8d;
     font-family: "Raleway", sans-serif;
     line-height: 14px;
 }
@@ -6818,8 +6818,9 @@ input[type="date"].form-control {
 }
 
 .name-field {
-    font-size: 16px;
-    color: #260944;
+    font-size: 14px;
+    font-weight: normal;
+    color: #4a1c7a;
     font-family: "Raleway", sans-serif;
 }
 
@@ -7028,7 +7029,7 @@ input[type="date"].form-control {
 }
 .btn-copy {
     background: #1d919f96;
-    border-color: #1d919f96;
+    border-color: #7abec7 !important;
     color: #fff !important;
 }
 
