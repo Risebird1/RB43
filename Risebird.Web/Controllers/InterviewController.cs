@@ -1625,6 +1625,10 @@ namespace Risebird.Web.Controllers
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
+                            if (string.IsNullOrWhiteSpace(item.ExpectedPerHourRate))
+                            {
+                                item.ExpectedPerHourRate = "0";
+                            }
                             if (item.HeuristicProfileTypeDesc == "0")
                             {
                                 item.HeuristicProfileTypeDesc = "";
