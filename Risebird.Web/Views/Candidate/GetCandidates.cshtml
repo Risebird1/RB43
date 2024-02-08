@@ -23,12 +23,14 @@
     var Header = "Candidates for <strong>@ViewBag.IRFName</strong>";
     $('#txtpageHeader').empty().html(Header);
 </script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
 <input type="hidden" value="@ViewBag.profile" id="hidprofile" />
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
+<input type="hidden" value="@ViewBag.emailid" id="hidemail" />
 <div class="main-panel" id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -344,7 +346,7 @@
                                                                 {
                                                                     @if (item.ResumeLink != null && item.ResumeLink != "")
                                                                     {
-                                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink><img style="position:relative;left: -1px;" src="/img/resume-icon.png" width="21">Resume</a> </td>
                                                                     }
                                                                     else
                                                                     {
@@ -407,7 +409,7 @@
                                                                     @if (item.MailCount != 0)
                                                                     {
                                                                         <div class="row">
-                                                                            <span class="icon-field"> <img class="icon ml" src="~/img/email.png" />    Emails :</span>    <span class="icon-field">
+                                                                            <span class="icon-field"><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;padding: 0px 5px 0px 10px;"></i>  Emails :</span>    <span class="icon-field">
                                                                                 <a class="icon-link" href="#!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email})">
                                                                                     @item.MailCount
                                                                                 </a>
@@ -495,9 +497,15 @@
                                                                         }
                                                                         @if (ViewBag.profile != "Client" || ViewBag.AccessType != null && ViewBag.AccessType == "Public")
                                                                         {
-                                                                            <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Candidate Status">
-                                                                                <span onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"></path></svg></span>
-                                                                            </button>
+
+                                                                             <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Candidate Status List" style="width:25px!important;height:25px!important;">
+                                                                                   <span onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List">
+                                                                                        <svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+
+
+
                                                                         }
 
                                                                 }
@@ -528,9 +536,12 @@
 
                                                                     }
                                                                     
-                                                                        <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer;">
-                                                                            <span title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path fill="rgb(255,255,255)" d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                        <a target="_blank" class="btn shadow btn-copy btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important">
+                                                                            <span title="Schedule Meeting"><i class="fa fa-calendar" style="left: 1px; position: relative;"></i></span>
                                                                         </a>
+
+
+
                                                                     
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
                                                                     {
@@ -561,7 +572,7 @@
 
 
 
-                                                                    @*                                                   @if (ViewBag.AccessType != null && ViewBag.AccessType == "Public")
+                                                                    @* @if (ViewBag.AccessType != null && ViewBag.AccessType == "Public")
                                                                 {
 
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Candidate Status">
@@ -580,7 +591,7 @@
                                                                         {
                                                                             <span id="getstatus_11" class="call" data-toggle="tooltip" data-placement="top" onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>
                                                                         }
-
+                                                                        f
                                                                     </td>
 
                                                                     @*<td>
@@ -803,10 +814,16 @@
                                         <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
                                             Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                         </div>
-
+                                          @if (ViewBag.AccessType != null && ViewBag.AccessType != "Public"){
                                         <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
                                             @Html.PagedListPager(Model, Page => Url.Action("GetCandidates", new { id = ViewBag.IRFId, irfName = ViewBag.IRFName, Page = Page, searchValue = ViewBag.Searchvalue }))
                                         </div>
+                                          }
+                                          else{
+                                               <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
+                                            @Html.PagedListPager(Model, Page => Url.Action("GetPublicCandidates", new { id = ViewBag.IRFId, irfName = ViewBag.IRFName,profileName=ViewBag.profile,emailid=ViewBag.emailid, Page = Page, searchValue = ViewBag.Searchvalue }))
+                                        </div>
+                                          }
 
                                     </div>
                                 </div>

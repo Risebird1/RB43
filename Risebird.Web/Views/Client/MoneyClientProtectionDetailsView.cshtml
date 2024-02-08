@@ -48,7 +48,7 @@
                 <td>@item.interviewDate</td>
                 <td>@item.ClientHrContact</td>
                 <td style="text-transform:lowercase;">@item.candidateEmail</td>
-                <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.id')">@item.PaymentComplianceCount</a></td>
+                    <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; line-height: 29px;background:#6cb0f2;color:#fff!important;display: inline-block;border-radius: 100%;line-height:29px;" onClick="PaymentComplianceDetails('@item.id')">@item.PaymentComplianceCount</a></td>
 
                 @if (ViewBag.action == "All" || ViewBag.action == "CREDIT")
                 {

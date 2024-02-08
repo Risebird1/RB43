@@ -879,7 +879,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.IRFName = irfName;
                 ViewBag.IRFId = id;
                 ViewBag.profile = profileName;
-
+                ViewBag.emailid = emailid;
                 var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
                 var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
 

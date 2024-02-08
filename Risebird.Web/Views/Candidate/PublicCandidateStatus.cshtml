@@ -47,7 +47,7 @@
 @*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />*@
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
-
+<script defer src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
@@ -663,7 +663,7 @@
                                                                                 @if (item.CurrentStatus == "Scheduled" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "No Show(Candidate)" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Dropped")
                                                                                 {
                                                                                     <div class="btn btn-reschedule shadow btn-xs sharp me-1">
-                                                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" style="color:#fff;font-size:11px;position:relative;top:-2px;" aria-hidden="true"></i></span>
+                                                                                        <span onclick="ReschuduleMeeting(@item.imid,'@item.CalendlyLink.Split("=").LastOrDefault()',@item.IRFId,'@item.CandidateEmailId')"><i class="fas fa-calendar-alt" style="color:#fff;font-size:13px;position:relative;top:-1px;" aria-hidden="true"></i></span>
                                                                                     </div>
                                                                                 }
                                                                                 @if (item.CurrentStatus == "Cancelled" || item.CurrentStatus == "No Show(Candidate)" || item.CurrentStatus == "Cancelled" || item.CurrentStatus == "Dropped")
@@ -742,7 +742,7 @@
                                                                             @if (item.MailCount != 0)
                                                                             {
                                                                                 <div class="row">
-                                                                                    <span class="icon-field"> <img class="icon ml" src="~/img/email.png" />    Emails :</span>    <span class="icon-field">
+                                                                                    <span class="icon-field"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;padding: 0px 10px;"></i> Emails :</span>    <span class="icon-field">
                                                                                         <a class="icon-link" href="#!_@item.InterviewId" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.InterviewId, communicationMedium = (int)CommunicationMedium.Email })">
                                                                                             @item.MailCount
                                                                                         </a>

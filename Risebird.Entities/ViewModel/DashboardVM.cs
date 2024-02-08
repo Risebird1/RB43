@@ -47,5 +47,7 @@ namespace Risebird.Entities.ViewModel
         public string candidateEmail { get; set; }
         public string ClientName { get; set; }
         public int irfIntId { get; set; }
+        public DateTime? FirstJoinedon { get; set; }
+        public DateTime? FirstPerformedOn { get; set; }
     }
 }
