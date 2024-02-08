@@ -281,20 +281,25 @@ a.infos {
     background-size: 47%;
 }
 .intime-on a.infos {
-    width: 31px;
-    height: 43px;
-    background: url(../../Newassets/img/info.png) 1px 6px no-repeat;
+    width: 20px;
+    height: 21px;
+    background: url(../../Newassets/img/info.png) 1px 4px no-repeat;
     float: right;
-    background-size: 47%;
-
+    background-size: 70%;
+    position: absolute;
+    right: 10px;
+    z-index: 1000;
 }
 
 .ctime-on a.infos {
-    width: 31px;
-    height: 43px;
-    background: url(../../Newassets/img/info.png) 12px 5px no-repeat;
+    width: 20px;
+    height: 21px;
+    background: url(../../Newassets/img/info.png) 5px 4px no-repeat;
     float: right;
-    background-size: 47%;
+    background-size: 70%;
+    position: absolute;
+    right: 10px;
+    z-index: 1000;
 }
     a.infos span {
         position: absolute;
@@ -323,7 +328,7 @@ a.infos {
             white-space: normal;
             font-family: sans-serif;
             bottom: 0;
-            left: 15% !important;
+            left: -91px !important;
             line-height: 11px !important;
             text-align: left !important;
             padding: 8px 7px 2px 7px !important;
@@ -344,7 +349,7 @@ a.infos {
             position: absolute;
             white-space: normal;
             font-family: sans-serif;
-            left: 29% !important;
+            left:-91px !important;
             line-height: 11px !important;
             text-align: left !important;
             padding: 8px 7px 2px 7px !important;
@@ -360,8 +365,12 @@ a.infos {
             box-sizing: border-box;
         }
 .intime-on a.infos:hover span, .ctime-on a.infos:hover span {
-    bottom: 55px;
+    bottom:23px;
 }
+.intime-on, .ctime-on{
+    position:relative;
+}
+
 a.infos span.time:before {
     content: '';
     border-top: 5px solid #91a9bb !important;
