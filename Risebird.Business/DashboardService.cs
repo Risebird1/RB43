@@ -890,5 +890,18 @@ namespace Risebird.Business
             return null;
         }
 
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailDetails(int campaignId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetOpenClickCampaignMailRepository(campaignId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

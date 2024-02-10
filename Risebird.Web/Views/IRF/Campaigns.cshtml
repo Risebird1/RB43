@@ -113,7 +113,14 @@
                                                                     </span>
                                                                 </button>
                                                             </a>
-                                                            <a style="text-decoration:none;" target="_blank" href="@Url.Action("RecipientActivityDetails", "Mail" , new { recipientType = "Interviewer", campaignName = item.CampaignName})" title="Campaign Mail Activity">
+                                                         @*    <a style="text-decoration:none;" target="_blank" href="@Url.Action("RecipientActivityDetails", "Mail" , new { recipientType = "Interviewer", campaignName = item.CampaignName})" title="Campaign Mail Activity">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Campaign Mail Activity" style="position:relative;top:3px;">
+                                                                    <span title="Campaign Mail Activity" class="mdc-fab__icon material-icons">
+                                                                        <i style="font-size:14px;" class='fa fa-envelope' style='color: white'></i>
+                                                                    </span>
+                                                                </button>
+                                                            </a> *@
+                                                            <a style="text-decoration:none;" target="_blank" href="@Url.Action("GetOpenClickCampaignMailDetails", "Dashboard" , new {campaignId = item.id})" title="Campaign Mail Activity">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Campaign Mail Activity" style="position:relative;top:3px;">
                                                                     <span title="Campaign Mail Activity" class="mdc-fab__icon material-icons">
                                                                         <i style="font-size:14px;" class='fa fa-envelope' style='color: white'></i>
