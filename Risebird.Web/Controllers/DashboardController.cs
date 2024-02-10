@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
-using OfficeOpenXml.Style;
 using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -2591,7 +2590,7 @@ namespace Risebird.Web.Controllers
                 else if (type == "RescheduleIM")
                 {
                     ViewBag.Type = "RescheduleIM";
-                    interviewmanagement = interviewmanagement.Where(x => x.IsRescheduleNotificationSent == 1 && x.MeetingStatus != 3 && x.MeetingStatus != 4 && x.MeetingStatus != 6 && x.MeetingStatus != 7 && x.MeetingStatus != 8).ToList();
+                    interviewmanagement = interviewmanagement.Where(x => (x.IsRescheduleNotificationSent == 1 && x.MeetingStatus != 3 && x.MeetingStatus != 4 && x.MeetingStatus != 6 && x.MeetingStatus != 7 && x.MeetingStatus != 8) || (x.MeetingStatus == 1 || x.MeetingStatus == 5 || x.MeetingStatus == 9)).ToList();
                 }
                 else
                 {
@@ -2823,5 +2822,49 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetOpenClickCampaignMailDetails(int campaignId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    {
+                        IEnumerable<MailRecipientActivityDetailsVM> recipients = null;
+                        
+
+                        recipients = await _dashboardService.GetOpenClickCampaignMailDetails(campaignId: campaignId);
+
+                        // ViewBag.campaignName = campaignName;
+
+                        ViewBag.UserProfile = profileName;
+
+                        return View(recipients);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
     }
 }

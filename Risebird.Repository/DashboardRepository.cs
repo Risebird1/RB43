@@ -1540,5 +1540,27 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailRepository( int campaignId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@campaignId",campaignId);
+                parameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_OpenClickCampaignMailDetails", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
