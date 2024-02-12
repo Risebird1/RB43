@@ -3787,5 +3787,19 @@ namespace Risebird.Business
             }
         }
 
+        public bool CheckCampaignUniqueness(string value)
+        {
+            try
+            {
+                return _irfRepository.CheckCampaignUniqueness(value).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

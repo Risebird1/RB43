@@ -741,6 +741,8 @@ namespace Risebird.Repository
                                     CompanyName = !string.IsNullOrEmpty(dt.Rows[i]["CompanyName"].ToString()) ? dt.Rows[i]["CompanyName"].ToString() : null,
                                     ClientAction = !string.IsNullOrEmpty(dt.Rows[i]["ClientAction"].ToString()) ? dt.Rows[i]["ClientAction"].ToString() : null,
                                     IsResumeRedactAttempted = !string.IsNullOrEmpty(dt.Rows[i]["IsResumeRedactAttempted"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsResumeRedactAttempted"]) : false,
+                                    IsCampaignActivity = !string.IsNullOrEmpty(dt.Rows[i]["IsCampaignActivity"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsCampaignActivity"]) : false,
+                                    CampaignName = !string.IsNullOrEmpty(dt.Rows[i]["CampaignName"].ToString()) ? dt.Rows[i]["CampaignName"].ToString() : null
 
                                 });
                             }
@@ -7782,7 +7784,7 @@ namespace Risebird.Repository
                     try
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@searchValue", searchValue);
+                        parameters.Add("@searchValue", searchValue.Trim());
                         var result = await SqlMapper.QueryAsync<AssignmentVM>(con, "dbo.usp_GetSimilarAssessmentGroups", parameters, null,
                             commandType: CommandType.StoredProcedure);
                         return result;
@@ -8113,6 +8115,33 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<bool> CheckCampaignUniqueness(string value)
+        {
+            try
+            {
+                //var query = "Select * from IRF where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@value", value);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_CheckCampaignNameUniqueness", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    if (result.Count() > 0)
+                        return false;
+                    else
+                        return true;
+
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
         }
     }
 }

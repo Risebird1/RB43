@@ -91,14 +91,22 @@ end
   select top 1 @irfId = id from @Enumerator  
   
   if not exists(select top 1 id from TransInterviewer where IRFId =@irfId and UserId = @UserId)  
-  Begin  
-   Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsActive,IsAvailable, PerSuccessRate, [Source], IsCampaignActivity, CampaignId)     
-   values(@IRFId,@InterviewerId,@UserId,1,1, (select FlatRate from IRF where id=@IRFId), @rsc, 1, @campaignId)   
+  Begin 
+  
+  declare @fltRate int
+  set @fltRate = (select FlatRate from IRF where id=@IRFId)
+  if(@fltRate is null or @fltRate = 0)
+  begin
+	set @fltRate = 420
+  end
+
+   Insert into TransInterviewer(IRFId,InterviewerId,UserId, IsAvailable, PerSuccessRate, [Source], IsCampaignActivity, CampaignId)     
+   values(@IRFId,@InterviewerId,@UserId,1, @fltRate, @rsc, 1, @campaignId)   
     
   End  
   Else  
   Begin  
-   update TransInterviewer set IsActive = 1, IsAvailable=1, [Source] = @rsc, IsCampaignActivity = 1, CampaignId =@campaignId  where IRFId =@irfId and UserId = @UserId  
+   update TransInterviewer set IsAvailable=1, [Source] = @rsc, IsCampaignActivity = 1, CampaignId =@campaignId  where IRFId =@irfId and UserId = @UserId  --IsActive = 1, 
   End  
   
   delete from @Enumerator where id = @irfId  
