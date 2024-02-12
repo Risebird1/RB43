@@ -198,9 +198,19 @@
                                                 {
                                                     <tr>
                                                         <td>@item.interviewDate</td>
-                                                        <td class="intime-on"><div style="float:left">@item.Joinedon </div><a class="infos" href="#"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.Joinedon</p></span></a></td>
+                                                        <td class="intime-on"><div style="float:left">@item.Joinedon </div>
+                                                            @if (item.Joinedon != null)
+                                                            {
+                                                                <a class="infos" href="#"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.Joinedon</p></span></a>
+                                                            }
+                                                        </td>
                                                         
-                                                         <td class="ctime-on"><div style="float:left">@item.PerformedOn </div><a class="infos" href="#"><span class="candtime"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstPerformedOn</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.PerformedOn</p></span></a></td>
+                                                         <td class="ctime-on"><div style="float:left">@item.PerformedOn </div>
+                                                            @if (item.PerformedOn != null)
+                                                            {
+                                                                <a class="infos" href="#"><span class="candtime"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstPerformedOn</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.PerformedOn</p></span></a>
+                                                            }
+                                                        </td>
 
                                                         <td>
                                                             @if (item.interviewer != null)
@@ -330,8 +340,8 @@
                                                         }
                                                         <td>
                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
-                                                                  <div class="btn btn-primary shadow btn-xs sharp-btn me-1" aria-label="Client Interview Report">
-                                                                          <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                  <div class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="width:25px!important;height:25px!important;">
+                                                                              <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;margin: 10px 0px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                   </div>
 
 
