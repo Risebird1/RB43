@@ -1343,7 +1343,7 @@
                                                                                     @if(!string.IsNullOrEmpty(Model.InterviewerCollection[i].CampaignName))
                                                                                     {
                                                                                         
-                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].CampaignName, new { @class = "form-control", @readonly = "readonly" })
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].CampaignName, new { @class = "form-control", @readonly = "readonly", @title = Model.InterviewerCollection[i].CampaignName })
 
                                                                                     }
                                                                                     else

@@ -261,8 +261,8 @@
                                                                         <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">@subModel[i].TotalInterviews</span>
                                                                     </td>
                                                                     <td>
-                                                                    @if (subModel[i].eventType == "Click")
-                                                                    {
+                                                                        @if (subModel[i].eventType == "click")
+                                                                        {
                                                                             @if(!string.IsNullOrEmpty(subModel[i].url) && (subModel[i].url.Contains("isAv=true")))
                                                                             {
                                                                                 <span>Yes</span>
