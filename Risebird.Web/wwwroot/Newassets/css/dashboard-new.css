@@ -7089,11 +7089,15 @@ input[type="date"].form-control {
     background: #76b39c;
     border-color: #76b39c;
 }
+.btn-invite, .btn-invite:hover {
+    background: #5ad3a6;
+    border-color: #5ad3a6;
+    color: #fff !important;
+}
 .btn-edit {
-    background: #e9c34f;
-    border-color: #e5ac4c;
-    color: #fff!important;
- 
+    background: #aecf79;
+    border-color: #aecf79;
+    color: #fff !important;
 }
 .btn-reset {
     background: #9aa6ea;
@@ -7112,8 +7116,13 @@ input[type="date"].form-control {
     color: #fff !important;
 }
 .btn-unassign {
-    background: #db362a;
-    border-color: #db362a;
+    background: #f27c74;
+    border-color: #f27c74;
+    color: #fff !important;
+}
+.btn-record {
+    background: #b30c0cb0;
+    border-color: #b30c0cb0;
     color: #fff !important;
 }
 .btn-qc {
