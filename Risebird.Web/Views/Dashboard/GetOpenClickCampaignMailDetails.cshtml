@@ -1,0 +1,434 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MailRecipientActivityDetailsVM>
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "GetOpenClickCampaignMailDetails";
+}
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
+<script>
+    var Header = "<div>Open and Click Activity Details</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<div class="main-panel" id="main-panel">
+
+    <div class="content  client">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+
+                        <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"> <h4 class="card-title">BlackList Company</h4></div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+
+                                <div>
+
+                                    <div id="tableID" class="second" style="overflow-x:scroll">
+                                        <table id="mailsTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:20%">Mail Subject</th>
+                                                    <th>Mail Body</th>
+                                                    <th>Sent On</th>
+                                                    <th>Sent By</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Activity</th>
+                                                    <th>Call</th>
+                                                    <th>Mobile Number</th>
+                                                    <th>Company Name</th>
+                                                    <th>Resume</th>
+                                                    <th>Video Confirmation</th>
+                                                    <th>Red Marker</th>
+                                                    <th>Total Interviews</th>
+                                                    <th>Interest(Click)</th>
+                                                    <th>Action</th>
+
+
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th style="width:20%">Mail Subject</th>
+                                                    <th>Mail Body</th>
+                                                    <th>Sent On</th>
+                                                    <th>Sent By</th>
+                                                    <th>Interviewer</th>
+                                                    <th>Activity</th>
+                                                    <th>Call</th>
+                                                    <th>Mobile Number</th>
+                                                    <th>Company Name</th>
+                                                    <th>Resume</th>
+                                                    <th>Video Confirmation</th>
+                                                    <th>Red Marker</th>
+                                                    <th>Total Interviews</th>
+                                                    <th>Interest(Click)</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+
+                                                @if (Model != null && Model.Count() > 0)
+                                                {
+                                                    //var finalList = new List<MailRecipientActivityDetailsVM>();
+                                                    var workingModel = Model.ToList();
+                                                    foreach (var entry in workingModel)
+                                                    {
+                                                        var firstValue = workingModel?.FirstOrDefault()?.CreatedAt;
+                                                        if (firstValue != null && workingModel != null && workingModel.Count() > 0)
+                                                        {
+                                                            var first = firstValue.Value;
+                                                            var sameGroupOfMails = workingModel.Where(x => Convert.ToInt32((x.CreatedAt - first).TotalMinutes) <= 2 && Convert.ToInt32((x.CreatedAt - first).TotalMinutes) >= -1).ToList();
+                                                            var subModel = sameGroupOfMails.Select(x => new { MailSubject = x.MailSubject, MailBody = x.MailBody, SentBy = x.SentBy, email = x.email, MobileNumber = x.MobileNumber, RecipientName = x.RecipientName, ResumeLink = x.ResumeLink, CompanyName = x.CompanyName, x.RedMarker, x.TotalInterviews, x.interviewer, VideoConfirmation = x.VideoConfirmation, eventType = x.eventType, x.IsAvailable, url = x.url }).Distinct().ToList();
+                                                            int rowSpan = subModel.Count();
+                                                            int maxCount = rowSpan - 1;
+                                                            for (int i = 0; i <= maxCount; i++)
+                                                            {
+                                                                var jsonObj = JsonConvert.SerializeObject(subModel[i].MailBody);
+                                                                <tr>
+                                                                    @if (i == 0)
+                                                                    {
+                                                                        <td rowspan="@rowSpan">
+                                                                            @if (subModel[i].MailSubject != null && subModel[i].MailSubject != "")
+                                                                            {
+                                                                                @if (subModel[i].MailSubject.Length > 30)
+                                                                                {
+                                                                                    <div class="article">
+                                                                                        <p style="margin-bottom:0px;">
+                                                                                            @subModel[i].MailSubject.Substring(0, 30)
+                                                                                        </p>
+                                                                                        <p class="moretext_@i moretext">
+                                                                                            @subModel[i].MailSubject.Substring(30, @subModel[i].MailSubject.Length - 30)
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <a onclick="moreless('@i')" class="moreless-button" value="Readmore" id="read_@i" href="#">Read more</a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <div class="article">
+                                                                                        <p>
+                                                                                            @subModel[i].MailSubject.Substring(0, @subModel[i].MailSubject.Length)
+                                                                                        </p>
+                                                                                    </div>
+                                                                                }
+                                                                            }
+                                                                        </td>
+                                                                        <td rowspan="@rowSpan">
+                                                                            <a onclick="OpenHtmlDocument(@jsonObj)" style="color:blue; cursor:pointer"><u>Content</u></a>
+                                                                        </td>
+
+                                                                        <td rowspan="@rowSpan">@first</td>
+
+                                                                        <td rowspan="@rowSpan" title="@subModel[i].SentBy">@subModel[i].SentBy</td>
+
+                                                                    }
+                                                                    @*  <td title="@subModel[i].email">@subModel[i].email</td>*@
+
+                                                                    @if (!string.IsNullOrWhiteSpace(@subModel[i].email))
+                                                                    {
+
+                                                                        @if (@subModel[i].email.Length > 20)
+                                                                        {
+                                                                            <td title="@subModel[i].email">@subModel[i].email.Substring(0, 18) ....</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td>@subModel[i].email</td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+                                                                    }
+                                                                    <td>
+                                                                        @subModel[i].eventType
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @if (subModel[i].MobileNumber != null && subModel[i].MobileNumber != string.Empty)
+                                                                        {
+                                                                            <span class="interviewer_14"><span class="call" data-toggle="tooltip" data-placement="top" onclick="CallButtonClickInterviewer('@subModel[i].RecipientName', '@subModel[i].MobileNumber','@subModel[i].email')" data-original-title="Tooltip on top"><span title="Click here to call the interviewer" class="mdc-fab app-fab--absolute" style="top: -3px;left:1px;"><span class="fa fa-phone-alt"></span></span></span></span>
+
+                                                                        }
+
+                                                                    </td>
+                                                                    @if (subModel[i].MobileNumber != null && subModel[i].MobileNumber != string.Empty)
+                                                                    {
+                                                                        <td> @subModel[i].MobileNumber</td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td></td>
+
+                                                                    }
+                                                                    @if (subModel[i].CompanyName != null && subModel[i].CompanyName != string.Empty)
+                                                                    {
+                                                                        <td>
+
+                                                                            @if (subModel[i].CompanyName.Length > 17)
+                                                                            {
+                                                                                <div class="article">
+                                                                                    <p style="margin-bottom:0px;">
+                                                                                        @subModel[i].CompanyName.Substring(0, 17)
+                                                                                    </p>
+                                                                                    <p class="moretext_@i moretext">
+                                                                                        @subModel[i].CompanyName.Substring(17, @subModel[i].CompanyName.Length - 17)
+                                                                                    </p>
+                                                                                </div>
+                                                                                <a onclick="moreless('@i')" class="moreless-button" value="Readmore" id="read_@i" href="#">Read more</a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <div class="article">
+                                                                                    <p>
+                                                                                        @subModel[i].CompanyName.Substring(0, @subModel[i].CompanyName.Length)
+                                                                                    </p>
+                                                                                </div>
+                                                                            }
+
+                                                                        </td>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>
+                                                                        </td>
+                                                                    }
+
+                                                                    @if (subModel[i].ResumeLink != null && subModel[i].ResumeLink != "")
+                                                                    {
+                                                                        <td>
+
+                                                                            <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;padding:0px;" id="resumeId" target="_blank" title="Resume" href=@subModel[i].ResumeLink><img style="position:relative;left:-5px;width:17px" src="/img/resume-icon.png" width="21"><span style="font-size:13px;">Resume</span></a>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>No Resume</td>
+                                                                    }
+                                                                    @if (subModel[i].VideoConfirmation.HasValue)
+                                                                    {
+                                                                        @if (subModel[i].VideoConfirmation == 1)
+                                                                        {
+                                                                            <td class="text-center">Yes</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="text-center">No</td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td class="text-center">No Response</td>
+                                                                    }
+
+
+
+                                                                    @if (subModel[i].interviewer != null && subModel[i].interviewer != "")
+                                                                    {
+                                                                        <td style="color:red;text-align:center"><d onclick="InsightsDetails('@subModel[i].interviewer')" style="cursor:pointer">@subModel[i].RedMarker</d></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="color:red;text-align:center">@subModel[i].RedMarker</td>
+                                                                    }
+                                                                    <td class="text-center">
+                                                                        <span style="width: 30px !important;height: 30px !important;background:#d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;">@subModel[i].TotalInterviews</span>
+                                                                    </td>
+                                                                    <td>
+                                                                    @if (subModel[i].eventType == "Click")
+                                                                    {
+                                                                            @if(!string.IsNullOrEmpty(subModel[i].url) && (subModel[i].url.Contains("isAv=true")))
+                                                                            {
+                                                                                <span>Yes</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span>No</span>
+                                                                            }
+                                                                            
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (!string.IsNullOrWhiteSpace(@subModel[i].interviewer))
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="Suspicious Interviwer">
+                                                                                    <span onclick="javascript:SuspiciousTypeDetails('@subModel[i].interviewer');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img width="17" src="/img/suspicious.png" /></span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+
+                                                            }
+                                                            workingModel = workingModel.Except(sameGroupOfMails).ToList();
+                                                        }
+
+                                                    }
+
+
+
+                                                }
+
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+                                </div>
+
+                                <!-- end content-->
+                            </div>
+
+                            <!-- end col-md-12 -->
+                        </div>
+
+
+
+
+                        <!-- end row -->
+                    </div>
+
+                    @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+                    @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+                    @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+
+
+
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="interviewerFlagDetailsModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="memberHeading">Interviewer Details</h5>
+            </div>
+            <button onclick="closeinterviewerFlagDetailsModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="FlagDetailsTablebody" style="overflow:auto;max-height:30vw">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/common.js"></script>
+<script src="~/js/TwilioCallMaker.js"></script>
+
+
+<script>
+
+    $(document).ready(function () {
+        //debugger;
+
+        //applyDataTable();
+        //$('#mailsTable').DataTable();
+    });
+
+    function applyDataTable() {
+        $('#mailsTable').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+            
+        });
+    }
+   
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#mailsTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#mailsTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#mailsTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+
+
+<script>
+    function closeinterviewerFlagDetailsModal() {
+        var modal = document.getElementById("interviewerFlagDetailsModal");
+        modal.style.display = "none";
+    }
+    function OpenInterviewerFlagDetails(Emailid) {
+        $.ajax({
+            url: '/Interviewer/FetchInterviewerFlagDetails',
+            data: { 'InterviewerEmailid': Emailid },
+            success: function (data) {
+                var modal = document.getElementById("interviewerFlagDetailsModal");
+                modal.style.display = "block";
+                $('#FlagDetailsTablebody').html('');
+                $('#FlagDetailsTablebody').html(data);
+            }
+        });
+    }
+
+</script>
+
+

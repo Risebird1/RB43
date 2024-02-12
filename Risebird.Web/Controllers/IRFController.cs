@@ -1166,6 +1166,13 @@ namespace Risebird.Web.Controllers
             return _irfService.CheckUniqueness(value, isCloneTemplate);
         }
 
+        [Authorize]
+        [HttpGet]
+        public bool CheckCampaignUniqueness(string value)
+        {
+            return _irfService.CheckCampaignUniqueness(value);
+        }
+
         //[Authorize]
         //public IActionResult SampleQuestions(int id)
         //{
@@ -8641,8 +8648,8 @@ namespace Risebird.Web.Controllers
                         model.AssessmentGroupId = assessmentGroupId;
                         model.AssessmentGroupName = assessmentGroupName;
                         model.CurrentForm = "form_1";
-                        var searchValue = assessmentGroupName.Trim()?.Split(" ")[0];
-                        model.AssessmentGroups = (IList<AssignmentVM>)(await _irfService.GetSimilarAssessmentGroups(searchValue));//call db and search for assessmentGroups that carry a similar name
+                        //var searchValue = assessmentGroupName.Trim()?.Split(" ")[0];
+                        model.AssessmentGroups = (IList<AssignmentVM>)(await _irfService.GetSimilarAssessmentGroups(assessmentGroupName.Trim()));//call db and search for assessmentGroups that carry a similar name
                         model.AssessmentGroups.Where(x => x.AssessmentGroup == assessmentGroupName).FirstOrDefault().IsSelectedForCampaign = true;
                         return View(model);
                     }
@@ -8887,7 +8894,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
-        #endregion
+        #endregion 
     }
 }

@@ -232,5 +232,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetCampaignInterviewingMembers(int campaignId);
         Task<IEnumerable<AGCampaignModel>> GetCampaignList();
         Task<AGCampaignModel> GetCampaignDetailsById(int campaignId);
+        Task<bool> CheckCampaignUniqueness(string value);
     }
 }
