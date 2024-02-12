@@ -85,7 +85,7 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
 
     table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > tfoot > tr > th {
         padding: 7px;
-        font-weight: 600 !important;
+        font-weight: 500 !important;
         color: #676767;
         font-weight: normal;
     }

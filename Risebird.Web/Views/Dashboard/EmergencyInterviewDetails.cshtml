@@ -8,7 +8,14 @@
 
     ViewData["Title"] = "Interview Management";
     ViewBag.PageHeader = "";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (ViewBag.Pagetype == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
     dynamic filter = null;
     string strtDte = string.Empty;
     string endDte = string.Empty;
@@ -25,6 +32,7 @@
 </script>
 <div class="main-panel" id="main-panel">
     <div class="pt30">
+        <input type="hidden" id="hidpagetype" value="@ViewBag.Pagetype" />
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
@@ -35,21 +43,21 @@
                     @if (ViewBag.Type == "OnTimeIM")
                     {
                         @* <div class="feedback-tab-ac" onclick="Changeurldetails('EmergencyIM','@ViewBag.interviewdate')"><strong>Emergency Management</strong></div> *@
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate')"><strong>On-Time Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delayed Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Missed Interviews </strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>On-Time Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>Delayed Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>Missed Interviews </strong></div>
                     }
                     else if (ViewBag.Type == "InterviewM")
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate')"><strong>On-Time Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delayed Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Missed Interviews </strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>On-Time Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>Delayed Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>Missed Interviews </strong></div>
                     }
                     else
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate')"><strong>On-Time Interviews</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate')"><strong>Delayed Interviews</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate')"><strong>Missed Interviews </strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>On-Time Interviews</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>Delayed Interviews</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>Missed Interviews </strong></div>
                     }
                 </div>
                 <div class="pull-right">
@@ -57,13 +65,24 @@
                         <div class="pull-left" style="margin-left:10px">
                             <div class="filtercon">
                                 <div id="myinterview_3">
-                                    <a href='/Dashboard/Index' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
-                                       <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="right">
-                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="right" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                            <div class="mdc-button__ripple"></div>
-                                        </button>
-                                    </a>
+                                    @if (ViewBag.Pagetype != "Public")
+                                    {
+                                        if (ViewBag.Pagetype == "ClientDash")
+                                        {
+                                            <a href='/Dashboard/ClientIndex' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
+                                        }
+                                        else
+                                        {
+                                            <a href='/Dashboard/Index' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
+                                        }
+                                    }
+                                        <a onclick="" data-tooltip="To visualize the previous date data please apply filter" data-placement="right">
+                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="right" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                <div class="mdc-button__ripple"></div>
+                                            </button>
+                                        </a>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -93,7 +112,7 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("EmergencyInterviewDetails","Dashboard",new{type=ViewBag.Type})" method="post" id="form" class="myinterview_modal" onsubmit="return checkfilterDate();">
+                                        <form action="@Url.Action("EmergencyInterviewDetails","Dashboard",new{type=ViewBag.Type,pagetype=ViewBag.Pagetype})" method="post" id="form" class="myinterview_modal" onsubmit="return checkfilterDate();">
                                             <div class="modal-body ">
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv">
@@ -179,9 +198,19 @@
                                                 {
                                                     <tr>
                                                         <td>@item.interviewDate</td>
-                                                        <td class="intime-on"><div style="float:left">@item.Joinedon </div><a class="infos" href="#"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.Joinedon</p></span></a></td>
+                                                        <td class="intime-on"><div style="float:left">@item.Joinedon </div>
+                                                            @if (item.Joinedon != null)
+                                                            {
+                                                                <a class="infos" href="#"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.Joinedon</p></span></a>
+                                                            }
+                                                        </td>
                                                         
-                                                         <td class="ctime-on"><div style="float:left">@item.PerformedOn </div><a class="infos" href="#"><span class="candtime"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstPerformedOn</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.PerformedOn</p></span></a></td>
+                                                         <td class="ctime-on"><div style="float:left">@item.PerformedOn </div>
+                                                            @if (item.PerformedOn != null)
+                                                            {
+                                                                <a class="infos" href="#"><span class="candtime"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstPerformedOn</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.PerformedOn</p></span></a>
+                                                            }
+                                                        </td>
 
                                                         <td>
                                                             @if (item.interviewer != null)
@@ -311,8 +340,8 @@
                                                         }
                                                         <td>
                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
-                                                                  <div class="btn btn-primary shadow btn-xs sharp-btn me-1" aria-label="Client Interview Report">
-                                                                          <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                  <div class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="width:25px!important;height:25px!important;">
+                                                                              <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;margin: 10px 0px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                   </div>
 
 
@@ -407,6 +436,14 @@
         }, 2000);
     };
 </script>
+@if (ViewBag.Pagetype == "Public")
+{
+    <script>
+        $(document).ready(function () {
+            $("#main-panel").removeClass("main-panel");
+        });
+    </script>
+}
 <script>
     $(document).ready(function () {
         $("#ResetFilter").click(function () {
@@ -417,7 +454,8 @@
         }
     });
     function ResetFilter() {
-        window.location.href = "/DashBoard/ResetEmergencyInterviewDetailsfilters";
+        var pagetype=$("#hidpagetype").val();
+        window.location.href = "/DashBoard/ResetEmergencyInterviewDetailsfilters?pagetype="+pagetype;
     }
     function ApplySessionFilter() {
         var strtDte = '@strtDte';
@@ -427,7 +465,7 @@
         $('input[name=EndDate]').val(endDte);
         var form = $("#form").serialize();
     }
-    function Changeurldetails(type, interviewdate) {
-        window.location.href = "/Dashboard/EmergencyInterviewDetails?type=" + type + "&interviewdate=" + interviewdate;
+    function Changeurldetails(type, interviewdate,pagetype) {
+        window.location.href = "/Dashboard/EmergencyInterviewDetails?type=" + type + "&interviewdate=" + interviewdate+"&pagetype="+pagetype;
     }
 </script>
