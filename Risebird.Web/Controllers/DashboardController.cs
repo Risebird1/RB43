@@ -2551,12 +2551,13 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> EmergencyInterviewDetails(string interviewdate, string type)
+        public async Task<IActionResult> EmergencyInterviewDetails(string interviewdate, string type, string pagetype)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
+                ViewBag.Pagetype = pagetype;
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var Emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -2606,9 +2607,9 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> EmergencyInterviewDetails(MyInterviewFilter filter, string type)
+        public async Task<IActionResult> EmergencyInterviewDetails(MyInterviewFilter filter, string type, string pagetype)
         {
             try
             {
@@ -2620,7 +2621,7 @@ namespace Risebird.Web.Controllers
                     }
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString(), type = type });
+                    return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString(), type = type, pagetype = pagetype });
                 }
                 else
                 {
@@ -2633,16 +2634,16 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> ResetEmergencyInterviewDetailsfilters()
+        public async Task<IActionResult> ResetEmergencyInterviewDetailsfilters(string pagetype)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("EmergencyInterviewDetailsfilters");
-                    return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString() });
+                    return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString(), pagetype = pagetype });
                 }
                 else
                 {
@@ -2839,7 +2840,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         IEnumerable<MailRecipientActivityDetailsVM> recipients = null;
-                        
+
 
                         recipients = await _dashboardService.GetOpenClickCampaignMailDetails(campaignId: campaignId);
 
