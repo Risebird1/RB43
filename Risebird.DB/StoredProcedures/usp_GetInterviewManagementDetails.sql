@@ -26,10 +26,12 @@ if(@Role='Client')
 begin
 Declare @Clientid int
 Select @Clientid=cu.ClientId From UserList ul join ClientUser cu on cu.UserId=ul.id where ul.Emailid=@Emailid
-Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.FirstJoinedon, ic.MeetingStatus,tzme.Joinedcount as TotalCount,im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,im.confirmationStatus,im.interviewer,im.candidateEmail,cl.Name as ClientName from InterviewMeetings im        
+Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.FirstJoinedon, ic.MeetingStatus,tzme.Joinedcount as TotalCount,im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,im.confirmationStatus,ip.NickName as interviewer,im.candidateEmail,cl.Name as ClientName from InterviewMeetings im        
 join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId
 Left join InterviewComments ic on ic.InterviewId=im.id      
 left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid   
+left join UserList ul on ul.EmailId=im.interviewer
+left join Interviewerprofile ip on ip.UserId=ul.id
 outer apply(Select max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where Interviewid=im.id) imj
 outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imc
 outer apply(Select min(Joinedon) FirstJoinedon from  InterviewMeetingsJoinTime where Interviewid=im.id) imjf
