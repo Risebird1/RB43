@@ -1826,7 +1826,7 @@
 
 
                         <div class="col-lg-3 col-md-4 col-sm-6">
-                            <div class="panel card flipper26">
+                            <div class="panel card flipper27">
                                 <div id="survey-feedback">
                                    
                                     <div class="front-card countdown__timer" style="cursor:pointer" onclick="Campaign()">
@@ -2093,6 +2093,7 @@
                 }
                 if (parseInt(data.interviewerChurnCount) != parseInt($("#ribbonInterviewerChurnCount").text())) {
                     $(".flipper19").addClass("flipper");
+                    debugger;
                 }
                 else {
                     $(".flipper19").removeClass("flipper");
@@ -2125,23 +2126,29 @@
 
                 if (parseInt(data.proxyCount) != parseInt($("#ribbonProxyCount").text())) {
                     $(".flipper24").addClass("flipper");
+ 
                 }
                 else {
                     $(".flipper24").removeClass("flipper");
+                  
                 }
 
-                if (parseInt(data.candidateMailCount) != parseInt($("#ribbonMailCount").text())) {
+                if (parseInt(data.bounceDroppedCandidateMailCount) != parseInt($("#ribbonMailCount").text())) {
                     $(".flipper25").addClass("flipper");
+                   
                 }
                 else {
                     $(".flipper25").removeClass("flipper");
+            
                 }
 
-                if (parseInt(data.dMApproveCount) != parseInt($("#ribbonDMApproveCount").text())) {
+                if (parseInt(data.dmApproveCount) != parseInt($("#ribbonDMApproveCount").text())) {
+                   
                     $(".flipper26").addClass("flipper");
                 }
                 else {
                     $(".flipper26").removeClass("flipper");
+                  
                 }
 
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
@@ -2168,8 +2175,8 @@
                 $("#ribbonCandidatewaitingCount").text(data.candidatewaitingCount);
                 $("#ribbonInterviewerVideoKYCCount").text(data.interviewerVideoKYC);
                 $("#ribbonProxyCount").text(data.proxyCount);
-                $("#ribbonMailCount").text(data.candidateMailCount);
-                $("#ribbonDMApproveCount").text(data.dMApproveCount);
+                $("#ribbonMailCount").text(data.bounceDroppedCandidateMailCount);
+                $("#ribbonDMApproveCount").text(data.dmApproveCount);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -2195,8 +2202,8 @@
                 $("#ribbonCandidatewaitingCount_1").text(data.interviewerVideoKYC);
                 $("#ribbonInterviewerVideoKYCCount_1").text(data.candidatewaitingCount);
                 $("#ribbonProxyCount_1").text(data.proxyCount);
-                $("#ribbonMailCount_1").text(data.candidateMailCount);
-                $("#ribbonDMApproveCount_1").text(data.dMApproveCount);
+                $("#ribbonMailCount_1").text(data.bounceDroppedCandidateMailCount);
+                $("#ribbonDMApproveCount_1").text(data.dmApproveCount);
 
                 $(".flipper").toggleClass("flip");
             }

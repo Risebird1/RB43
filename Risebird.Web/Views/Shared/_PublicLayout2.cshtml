@@ -137,6 +137,8 @@
         .form-control[disabled], .form-control[readonly], select, option {
             font-weight: bold !important;
         }
+
+
     </style>
 </head>
 <body class="sidebar-mini" style="padding-right:0px!important;">
@@ -149,7 +151,7 @@
         @Html.AntiForgeryToken()
 
 
-        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-h" style="margin-bottom:0px;padding:0px;position:fixed;top:0px;z-index:100">
+        <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-h" style="margin-bottom:0px;padding:0px;top:0px;z-index:100">
          @if (string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("Logo")))
          
             {
