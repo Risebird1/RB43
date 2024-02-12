@@ -161,5 +161,6 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<AssessmentGroupInterviewerDetails>> GetCampaignInterviewingMembers(int campaignId);
         Task<IEnumerable<AGCampaignModel>> GetCampaignList();
         Task<AGCampaignModel> GetCampaignDetailsById(int campaignId);
+        bool CheckCampaignUniqueness(string value);
     }
 }

@@ -28,7 +28,9 @@
         <span class="count">1</span> <h1 asp-for="AssessmentGroupId">Campaign For <span> @Model.AssessmentGroupName</span></h1>
         <div class="campaignName">
             <label for="LastName">What's Your Campaign Name:</label>
-            <input style="height:35px; border: 2px #918a8a85 solid; color: #979292; font-weight: 500;" type="text" id="CampaignName" name="CampaignName" value="@Model.CampaignName" required>
+            <input style="height:35px; border: 2px #918a8a85 solid; color: #979292; font-weight: 500;" type="text" id="CampaignName" name="CampaignName" onblur = "checkUniqueness(this.value)" value="@Model.CampaignName" required>
+            @Html.ValidationMessageFor(model => model.CampaignName, "", new { @id = "uniqueMsg", @class = "text-danger" })
+
         </div>
         <div>
             <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select target assesment groups </h2>
@@ -372,5 +374,52 @@
 
 });
   </script>
+  <script>
+      function checkUniqueness() {
+        debugger;
+        var letterNumber = /^[0-9a-zA-Z]+$/;
+        var val = document.getElementById("CampaignName").value;
+        if (val !=null && !(val.match(letterNumber))) {
+            document.getElementById("CampaignName").focus();
+            document.getElementById("uniqueMsg").innerHTML = "Only Letters and Numbers are allowed.";
+            return false;
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: "/IRF/CheckCampaignUniqueness",
+                data: { 'value': val },
+                success: function (response) {
+                    if (response == false) {
+                        //document.getElementById("btnUpload").disabled = true;
+                        document.getElementById("uniqueMsg").innerHTML = "This Campaign already exists. Kindly enter a different Name.";
+                        document.getElementById("CampaignName").focus();
+                        return false;
+                    }
+                    else {
+                        document.getElementById("uniqueMsg").innerHTML = "";
+                        //document.getElementById("btnUpload").disabled = false;
+                        disableSubmitButton(); // for 5 seconds
+                        return true;
+                    }
 
+                }
+            });
+                disableSubmitButton(); // for 5 seconds
+            return true;
+        }
+    }
+
+    function disableSubmitButton() {
+        var button = document.getElementById("id_Submit_Form1");
+
+        // Disable the button
+        button.disabled = true;
+
+        // Enable the button after 5 seconds
+        setTimeout(function() {
+            button.disabled = false;
+        }, 5000);
+    }
+  </script>
 

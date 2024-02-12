@@ -22,5 +22,7 @@
         public string CompanyName { get; set; }
         public string ClientAction { get; set; }
         public bool IsResumeRedactAttempted { get; set; }
+        public bool IsCampaignActivity { get; set; }
+        public string CampaignName { get; set; }
     }
 }

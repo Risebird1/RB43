@@ -38,7 +38,7 @@ set @Assessmentid=(select AssessmentGroupid From IRF where id=@irfId)
 Declare @temptable Table(Userid int)
 Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid
 
-select ti.*, c.PrimarySkill, ul.EmailId, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted
+select ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted
 from  (SELECT  UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResumeRedactAttempted, PrimarySkill = 
 STUFF((SELECT ', ' + SkillName
 FROM (select ipr.*,sk.[Name] as SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id = tis.SkillId) b 
@@ -49,6 +49,7 @@ GROUP BY Id, UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResume
 join  TransInterviewer ti on ti.UserId=c.UserId
 join UserList ul on ul.id = ti.UserId
 join @temptable tt on tt.userid=ti.Userid
+left join AGCampaigns agc on agc.id = ti.CampaignId
 where IRFId=@irfId and ul.IsActive=1
 
 --selectability details

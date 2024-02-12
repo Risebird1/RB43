@@ -104,7 +104,7 @@
                                                         {
                                                             var first = firstValue.Value;
                                                             var sameGroupOfMails = workingModel.Where(x => Convert.ToInt32((x.CreatedAt - first).TotalMinutes) <= 2 && Convert.ToInt32((x.CreatedAt - first).TotalMinutes) >= -1).ToList();
-                                                            var subModel = sameGroupOfMails.Select(x => new { MailSubject = x.MailSubject, MailBody = x.MailBody, SentBy = x.SentBy, email = x.email, MobileNumber = x.MobileNumber, RecipientName = x.RecipientName, ResumeLink = x.ResumeLink, CompanyName = x.CompanyName, x.RedMarker, x.TotalInterviews, x.interviewer, VideoConfirmation = x.VideoConfirmation, eventType = x.eventType, x.IsAvailable }).Distinct().ToList();
+                                                            var subModel = sameGroupOfMails.Select(x => new { MailSubject = x.MailSubject, MailBody = x.MailBody, SentBy = x.SentBy, email = x.email, MobileNumber = x.MobileNumber, RecipientName = x.RecipientName, ResumeLink = x.ResumeLink, CompanyName = x.CompanyName, x.RedMarker, x.TotalInterviews, x.interviewer, VideoConfirmation = x.VideoConfirmation, eventType = x.eventType, x.IsAvailable, url = x.url }).Distinct().ToList();
                                                             int rowSpan = subModel.Count();
                                                             int maxCount = rowSpan - 1;
                                                             for (int i = 0; i <= maxCount; i++)
@@ -263,18 +263,15 @@
                                                                     <td>
                                                                     @if (subModel[i].eventType == "Click")
                                                                     {
-                                                                            @*    if (subModel[i].IsAvailable == true)
-                                                                        {
-                                                                                <span> Yes</span>
-                                                                            }
-                                                                            else if (subModel[i].IsAvailable == false)
-                                                                        {
-                                                                                <span> No</span>
-                                                                            } *@
-                                                                            if (subModel[i].IsAvailable!=null)
+                                                                            @if(!string.IsNullOrEmpty(subModel[i].url) && (subModel[i].url.Contains("isAv=true")))
                                                                             {
-                                                                                <span>@subModel[i].IsAvailable</span>
+                                                                                <span>Yes</span>
                                                                             }
+                                                                            else
+                                                                            {
+                                                                                <span>No</span>
+                                                                            }
+                                                                            
                                                                         }
                                                                     </td>
                                                                     <td>
