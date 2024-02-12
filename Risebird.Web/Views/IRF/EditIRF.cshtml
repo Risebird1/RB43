@@ -1203,6 +1203,7 @@
                                                                         <th width="10%" class="table_heading" title="'Rejected' indicates client is not happy with this interviewer and has removed him/her.">Client Action</th>
                                                                         <th width="10%" class="table_heading" title="No indicates deleted from Skill Channel">Active</th>
                                                                         <th width="10%" class="table_heading">Availability</th>
+                                                                        <th width="10%" class="table_heading">Campaign</th>
                                                                         <th width="10%" class="table_heading text-center">Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -1258,6 +1259,9 @@
                                                                             </td>
                                                                             <td class="text-center">
                                                                                 @Html.CheckBox("InterviewerCollection[0].IsAvailable")  @*, new { @checked = "checked" }*@
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.TextBox("InterviewerCollection[0].CampaignName", null, new { @class = "form-control", @readonly = "readonly" })
                                                                             </td>
 
 
@@ -1334,6 +1338,18 @@
                                                                                 </td>
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
+                                                                                </td>
+                                                                                <td>
+                                                                                    @if(!string.IsNullOrEmpty(Model.InterviewerCollection[i].CampaignName))
+                                                                                    {
+                                                                                        
+                                                                                        @Html.TextBoxFor(m => m.InterviewerCollection[i].CampaignName, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <span>NA</span>
+                                                                                    }
                                                                                 </td>
 
                                                                                 <td class="action text-center">

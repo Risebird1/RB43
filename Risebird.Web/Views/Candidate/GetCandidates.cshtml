@@ -23,10 +23,32 @@
     var Header = "Candidates for <strong>@ViewBag.IRFName</strong>";
     $('#txtpageHeader').empty().html(Header);
 </script>
+
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
+
+  @if (ViewBag.AccessType == "Public"){
+  <style>
+
+.sidebar-mini .main-panel {
+    width: calc(100% - 0px);
+  
+}
+
+
+  </style>
+     }
+
+@if (ViewBag.AccessType != "Public")
+{
+    <style>
+
+
+  </style>
+}
+
 <input type="hidden" value="@ViewBag.profile" id="hidprofile" />
 <input type="hidden" value="@ViewBag.IRFName" id="hidirfname" />
 <input type="hidden" value="@ViewBag.IRFId" id="hidirfid" />
@@ -52,7 +74,7 @@
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
                         </button>*@
-                        @if (ViewBag.ButtonAccess)
+                        @if (ViewBag.ButtonAccess && ViewBag.AccessType != "Public")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                 <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick(true)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates (Invite)</font></span>
@@ -66,23 +88,30 @@
                             </button>
                         }
 
-
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
-                        </button>
+                        @if (ViewBag.AccessType != "Public")
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
+                            </button>
+                        }
                         @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                         {
                             @if (ViewBag.ClientRole != "HRs")
                             {
-                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                    <span class="fa fa-file-alt" style="font-size:14px;" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Candidates Resume</font></span>
-                                </button>
+                                @if (ViewBag.AccessType != "Public")
+                                {
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                        <span class="fa fa-file-alt" style="font-size:14px;" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Candidates Resume</font></span>
+                                    </button>
+                                }
                             }
                         }
-
+                         @if (ViewBag.AccessType != "Public")
+                                {
                         <button id="getstatus_13" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                             <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                         </button>
+                                }
 
 
 
@@ -454,11 +483,19 @@
                                                                         {
                                                                             if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
                                                                             {
-                                                                                <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
+
+
+                                                                   <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })" title="Send Invite" style="top: 0px;position: relative;margin-bottom:5px;cursor: pointer; width:25px!important;height:25px!important">
+                                                                            <span title="Send Invite"><i class="fa fa-send" style="left:1px; top:1px;font-size:12px; position: relative;"></i></span>
+                                                                        </a>
+
+
+
+                                                                               @* <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Send Invite">
                                                                                     <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
                                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                                     </span>
-                                                                                </button>
+                                                                                </button>*@
                                                                             }
 
                                                                             else
@@ -475,9 +512,14 @@
                                                                       @*  @if ((ViewBag.profile == "Client" && ViewBag.IsClientCancelInterview) || ViewBag.profile != "Client")
                                                                         {*@
                                                                          @if (ViewBag.AccessType != "Public")  {
-                                                                            <span id="getstatus_9" onclick="location.href = '@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })'" title="Cancel Invite" class="mdc-fab app-fab--absolute trash-btn">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
-                                                                            </span>
+                                                                           
+                                                                         <a target="_blank" class="btn shadow btn-unassign btn-xs sharp me-1 item4" href="@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })" title="Cancel Invite" style="top: 0px;position: relative;cursor: pointer;margin-bottom:5px; width:25px!important;height:25px!important">
+                                                                            <span title="Cancel Invite"><i class="fa fa-remove" style="left:3px; top:1px;font-size:14px; position: relative;"></i></span>
+                                                                        </a>
+
+
+
+
                                                                         }
 
                                                                         @if (ViewBag.profile != "Client")
@@ -489,16 +531,18 @@
                                                                 </span>
                                                                 </button>*@
 
-                                                                            <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
-                                                                                <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
-                                                                            </button>
-                                                                          
+
+                                                                  <div class="btn btn-primary shadow btn-xs sharp-btn me-1" aria-label="Add Candidate Status" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;margin-bottom:5px;">
+                                                                         <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status"><i class='fa fa-plus-square'></i></span>
+                                                                         </div>
+
+
 
                                                                         }
                                                                         @if (ViewBag.profile != "Client" || ViewBag.AccessType != null && ViewBag.AccessType == "Public")
                                                                         {
 
-                                                                             <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Candidate Status List" style="width:25px!important;height:25px!important;">
+                                                                             <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Candidate Status List" style="width:25px!important;height:25px!important;margin-bottom:5px;">
                                                                                    <span onclick="GetCandidateStatusList('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Candidate Status List">
                                                                                         <svg style="position:relative;top:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
                                                                                     </span>
@@ -511,33 +555,52 @@
                                                                 }
                                                                     @if (ViewBag.profile == "Admin")
                                                                     {
-                                                                        <button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">
+                                                                       @* <button class="mdc-fab app-fab--absolute record-btn" aria-label="Call Record">
                                                                             <span onclick="FetchRecording('@item.EmailId')" title="Call Record" class="mdc-fab__icon material-icons">
                                                                                 <i class="fa fa-dot-circle"></i>
 
                                                                             </span>
-                                                                        </button>
+                                                                        </button>*@
+
+
+
+                                                                         <div class="btn btn-record shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important">
+                                                                         <span onclick="FetchRecording('@item.EmailId')" title="Call Record"><i class='fa fa-dot-circle'></i></span>
+                                                                         </div>
+                                                                     
+
+
+
+
                                                                     }
 
                                                                     @if (ViewBag.AccessType != "Public")
                                                                     {
 
-                                                                        <button id="getstatus_10" class="mdc-fab app-fab--absolute" aria-label="Edit" style="top:-2px">
-                                                                            <span onclick="location.href = '@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="mdc-fab__icon material-icons">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
-                                                                            </span>
-                                                                        </button>
+                                                                         <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important">
+                                                                            <span title="Edit"><i class="fa fa-edit" style="left:2px; top:-1px;font-size:12px; position: relative;"></i></span>
+                                                                        </a>
+
+
+
                                                                     }
                                                                     @if (ViewBag.profile != "Client")
                                                                     {
-                                                                        <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
-                                                                            <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
-                                                                        </button>
+                                                                      @*  <button class="mdc-fab app-fab--absolute " aria-label="Copy Public URL">
+                                                                            <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>                                                    
+                                                                        </button>*@
 
+
+                                                                         
+
+                                                                        <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important">
+                                                                       <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL"><i class='fa fa-clone'></i></span>
+                                                                         </div>
+                                                                     
                                                                     }
                                                                     
                                                                         <a target="_blank" class="btn shadow btn-copy btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important">
-                                                                            <span title="Schedule Meeting"><i class="fa fa-calendar" style="left: 1px; position: relative;"></i></span>
+                                                                            <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:2px; top:-1px;font-size:12px; position: relative;"></i></span>
                                                                         </a>
 
 
@@ -591,7 +654,7 @@
                                                                         {
                                                                             <span id="getstatus_11" class="call" data-toggle="tooltip" data-placement="top" onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone-square"></span></span></span>
                                                                         }
-                                                                        f
+                                                                       
                                                                     </td>
 
                                                                     @*<td>
@@ -1007,90 +1070,90 @@
             @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
 
             @*<div id="candidateStatusModal" class="modal modal-bg">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
 
 
-            <div class="filheader">
-            <div class="filavatar">
-            <span class="publicsharing-icon fas fa-user-friends" style="font-size:20px;color:#fff;"></span>
-            </div>
-            <h5 class="modal-title pull-left" id="candidateStatusHeading"> </h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true" id="candidateStatusPopUp" style="cursor:pointer;">&times;</span>
-            </button>
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon fas fa-user-friends" style="font-size:20px;color:#fff;"></span>
+                            </div>
+                            <h5 class="modal-title pull-left" id="candidateStatusHeading"> </h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="candidateStatusPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
 
 
-            <div class="modal-body">
+                        <div class="modal-body">
 
-            <div class="col-md-12 col-sm-12 ">
-            <div class="form-group">
+                            <div class="col-md-12 col-sm-12 ">
+                                <div class="form-group">
 
-            <label class="control-labeled">
-            Status
-            </label>
+                                    <label class="control-labeled">
+                                        Status
+                                    </label>
 
-            <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<CandidateStatusOptionsDrpdwn>()"></select>
-            </div>
+                                    <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<CandidateStatusOptionsDrpdwn>()"></select>
+                                </div>
 
-            <div class="form-group">
-            <form>
-            <div class="file-upload-wrapper" data-text="Select your file">
-            <input name="file-upload-field" id="idAudioFile" type="file" class="file-upload-field" accept=".mp3, .wav, .m4a">
-            </div>
-            </form>
+                                <div class="form-group">
+                                    <form>
+                                        <div class="file-upload-wrapper" data-text="Select your file">
+                                            <input name="file-upload-field" id="idAudioFile" type="file" class="file-upload-field" accept=".mp3, .wav, .m4a">
+                                        </div>
+                                    </form>
 
-            </div>
-            <div class="form-group">
+                                </div>
+                                <div class="form-group">
 
-            <label class="control-labeled w-full">
-            Comments
-            </label>
-            <input type="text" id="idComments" class="w-full" style="height:60px">
+                                    <label class="control-labeled w-full">
+                                        Comments
+                                    </label>
+                                    <input type="text" id="idComments" class="w-full" style="height:60px">
 
-            </div>
+                                </div>
 
-            </div>
+                            </div>
 
-            <div class="form-group">
-            <div>
-            <div class="col-md-12 col-sm-12">
-            <input type="button" onclick="SaveCandidateStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
-            </div>
-            </div>
+                            <div class="form-group">
+                                <div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input type="button" onclick="SaveCandidateStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                                    </div>
+                                </div>
 
 
 
-            </div>
-            </div>
-            </div>
+                            </div>
+                        </div>
+                    </div>
 
-            </div>
+                </div>
             </div>*@
 
             @*<div id="statusListModal" class="modal modal-bg">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
 
 
-            <div class="filheader">
-            <div class="filavatar">
-            <span class="publicsharing-icon  fas fa-list" style="font-size:24px;"></span>
-            </div>
-            <h5 class="modal-title pull-left" id="statusListHeading"></h5>
-            </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true" id="statusListPopUp" style="cursor:pointer;">&times;</span>
-            </button>
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon  fas fa-list" style="font-size:24px;"></span>
+                            </div>
+                            <h5 class="modal-title pull-left" id="statusListHeading"></h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="statusListPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
 
-            <div class="modal-body" id="statusListTableBody">
-            </div>
-            </div>
+                        <div class="modal-body" id="statusListTableBody">
+                        </div>
+                    </div>
 
-            </div>
+                </div>
             </div>*@
 
 
