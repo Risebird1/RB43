@@ -1057,6 +1057,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.emailid= emailid;
                     ViewBag.PageFrom = "Completed";
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
@@ -2596,6 +2597,7 @@ namespace Risebird.Web.Controllers
                     //ViewBag.Type = "EmergencyIM";
                     ViewBag.Type = "OnTimeIM";
                     interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 0 && x.PerformedOn != null && x.Joinedon != null).ToList();
+                    //interviewmanagement = interviewmanagement.Where(x => x.interviewDate.AddMinutes(29) < x.FirstPerformedOn || x.interviewDate.AddMinutes(29) < x.FirstJoinedon).ToList();
                 }
                 interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                 return View(interviewmanagement);

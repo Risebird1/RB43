@@ -3671,11 +3671,10 @@
 
         // reset fields in the new row
         $tr.find("select").val("");
-
         $tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
         $tr.find("input[type=number]").val("");
-        $tr.find("input[type=checkbox]").prop("checked", true);
+        $tr.find("input[type=checkbox]").prop("checked", false);
 
         $tr.find("a").attr("href", "");
         $tr.find("a").attr("data-tooltip", "");

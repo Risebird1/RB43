@@ -27,7 +27,6 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-                                                                                                                                                    color: #9b9393;*/
         font-size: 17px;
         /* background: #e5e5e5 !important*/
     }
@@ -113,7 +112,10 @@
             <h3>This Schedule Interview Link is expired or no longer in use.</h3>
         </div>
         <div id="divconfirm" style="display:none">
-            <h3>Your Interview is scheduled successfully for @ViewBag.interviewDate</h3>
+            <div class="card schedule-txt" style="border: 1px solid rgb(184 236 213)!important;  box-shadow: 0 1px 15px 1px rgb(159 195 179 / 25%)!important;"><img src="~/img/scheduled.png" />
+                <h3>Your Interview is scheduled successfully!! </h3>
+                <h2>Interview Time has been alloted for @ViewBag.interviewDate</h2>
+            </div>
         </div>
 
         <div id="divcalenderdetails">
@@ -371,7 +373,7 @@
                                         <div class="col-md-6 pull-left">
                                             @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @class = "required" })
                                             @Html.ValidationMessageFor(model => model.ResumeFile,"",new {@class="text-danger"})
-                                            <span id="file-chosen"></span>
+                                            <span id="file-chosen" style="left:0px;font-size:14px;"></span>
                                         </div>
                                     </div>
                                 }

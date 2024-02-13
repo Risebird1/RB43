@@ -301,7 +301,7 @@
                                             </button>
 
 
-                                                   <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement('ClientDash')" style="cursor:pointer" style="left:160px;">
+                                                   <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagementDetails('ClientDash')" style="cursor:pointer" style="left:160px;">
                                     <span class="topheader-link" style="position:relative;top:7px;"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                     <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;position:relative;top:10px;">
                                         Live Interview Co-ordination
@@ -845,7 +845,11 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
-
+<script>
+     function openInterviewManagementDetails(Pagetype) {
+        window.location.href ="/Dashboard/EmergencyInterviewDetails?pagetype="+Pagetype;
+    }
+</script>
 <script>
 
     $(document).ready(function () {

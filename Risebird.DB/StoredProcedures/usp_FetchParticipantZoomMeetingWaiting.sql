@@ -143,7 +143,7 @@ where im.Confirmationstatus=1 and ISNULL(Case When IRF.IsCandidateavailability i
 IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1        
 and IsNull(im.IsMeetingNotificationSent,0)!=1 and      
 dateadd(minute,2,im.Interviewdate)<=dateadd(minute,330,getdate()) and       
-dateadd(minute,20,im.Interviewdate)>=dateadd(minute,330,getdate()) and  
+dateadd(minute,30,im.Interviewdate)>=dateadd(minute,330,getdate()) and  
 ((Case When (imj.Joinedon is null and pct.PerformedOn is null) then 0 When (imj.Joinedon is not null and pct.PerformedOn is not null) then 0 else 1 end)=1))                                
   
 Insert Into @MeetingNotificationDetails Select * from CTE                                
@@ -174,7 +174,7 @@ left join UserList ulc on ulc.EmailId  = im.candidateEmail
 --left join InterviewerProfile ip on ip.NickName = zmt.ParticipantName                         
 where ISNULL(Case When IRF.IsCandidateavailability is null and IRF.IsMeetingNotificationSend is null then null Else IRF.IsMeetingNotificationSend end,cl.IsMeetingNotificationSend)=1    
 --and (Isnull(t1.meetingMember,0)-ISNULL(t2.meetingMember,0))=1    
-and getdate() > dateadd(minute,4,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0        
+and getdate() > dateadd(minute,3,im.NotificationSentDate) and getdate() < dateadd(minute,19,im.NotificationSentDate) and IsNull(im.IsMeetingNotificationSent,0)=1  and ISNULL(im.IsNotificationSentToEI,0)!=1 and (CASE WHEN (imj.Joinedon is null) THEN 0 ELSE 1 END)=0        
               
                               
 Update InterviewMeetings set IsNotificationSentToEI=1 where ZoomMeetingId in (Select Meetingid from @MeetingNotificationEI)                                
