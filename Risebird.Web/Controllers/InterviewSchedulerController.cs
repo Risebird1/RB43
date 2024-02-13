@@ -1229,7 +1229,8 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
+                           // return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
+                            return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.inIRFid });
                         }
                     }
                     else

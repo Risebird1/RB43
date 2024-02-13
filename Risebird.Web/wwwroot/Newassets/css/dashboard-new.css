@@ -8925,6 +8925,26 @@ option {
     -webkit-animation-timing-function: ease-in-out;
     -webkit-animation-direction: alternate;
 }
+.schedule-txt {
+    width: 600px;
+    margin: 15% auto;
+    padding: 30px;
+}
+.schedule-txt h3 {
+    line-height: 48px;
+    color: green;
+    font-size: 20px !important;
+    font-family: math;
+    font-weight: 800;
+    text-align: center;
+}
+.schedule-txt h2 {
+    font-size: 17px!important;
+    text-align: center;
+    color: #5a2f83;
+    font-family: math;
+    font-weight: 600;
+}
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
         .rbpay .sb-scrollbar {
