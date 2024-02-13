@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Business
 {
@@ -583,7 +584,9 @@ namespace Risebird.Business
         {
             try
             {
-                return await _clientRepository.GetMoneyProtectionDetails(type, Clientid);
+
+                var moneyDetails = (await _clientRepository.GetMoneyProtectionDetails(type, Clientid)).OrderByDescending(x => x.interviewDate).ToList();
+                return moneyDetails;
             }
             catch (Exception ex)
             {
