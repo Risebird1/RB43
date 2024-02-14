@@ -6114,13 +6114,20 @@ border: 1px #ccc solid!important;
     cursor: pointer;
     margin: 10px 5px 0px 5px;
 }
+.click_herebtn2 span:after {
+    display:none!important;
+}
+.click_herebtn2:hover span{
+    padding-right:0px!important;
+    color:#fff!important;
+}
 
-    .click_herebtn span {
-        cursor: pointer;
-        display: inline-block;
-        position: relative;
-        transition: 0.5s;
-    }
+.click_herebtn span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
 
         .click_herebtn span:after {
             content: '\00bb';
@@ -8944,6 +8951,16 @@ option {
     color: #5a2f83;
     font-family: math;
     font-weight: 600;
+}
+.time-txt {
+    font-size: 13px;
+    color: green;
+    font-weight: 600;
+    position: absolute;
+    top: -30px;
+    left: -5px;
+    padding: 0px;
+    margin: 0px;
 }
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
