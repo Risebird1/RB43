@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE [dbo].[usp_GetInterviewDetailsCount]              
+CREATE PROCEDURE [dbo].[usp_GetInterviewDetailsCount]              
 @emailID varchar(200),  
 @timeNow datetime    
 AS                
@@ -50,7 +50,8 @@ left join UserList ul on ul.EmailId = im.candidateEmail
 join  CandidatesMaster cm on ul.id=cm.UserId              
 join Candidate ca on irf.id=ca.IRFId and cm.id = ca.CandidateMasterId              
 left join UserList ulh on ulh.EmailId = im.HRCoordinatorEmailId              
-where interviewer =@emailID and confirmationStatus = 1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and im.interviewDate<=@timeNow 
+left join InterviewReport ir on ir.InterviewId = im.id
+where ir.id is null and interviewer =@emailID and im.confirmationStatus = 1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and im.interviewDate<=@timeNow 
 
 Select Count(*) as QCReportCount from Trans_QCFormReport tq join InterviewMeetings im on tq.Interviewid=im.id 
 where im.interviewer=@emailID
