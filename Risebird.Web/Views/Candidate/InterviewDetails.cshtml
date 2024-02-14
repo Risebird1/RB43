@@ -137,8 +137,14 @@
 
                                     <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
                                     <p style="line-height:32px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
-                                    <p style="margin-bottom:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
-
+                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                    {
+                                        <p style="margin-bottom:30px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
+                                    }
+                                    else
+                                    {
+                                        <p style="margin-bottom:30px;" class="meeting-link text-uppercase"> Click here to join the meeting (join 10 min before the interview time)<a class="click_herebtn"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
+                                    }
                                     <p style="padding-top:10px;"><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b><span style="color:green; font-weight:600"> @item.interviewDate</span></p>
                                     @if (item.interviewDate >= DateTime.Now)
                                     {
