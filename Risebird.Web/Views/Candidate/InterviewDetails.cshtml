@@ -67,16 +67,16 @@
     </div>
     <div>
         <div class="content-wrappers">
-          @*  <div class="row">
+            @*  <div class="row">
 
-                <div class="col-md-12 col-xl-12 col-sm-12">
-                    @if (Model.Timer > 0)
-                    {
-                        <div class="time_tab"> <span style="top:0px" class="time-left-txt">Time left to start the interview(In Mins):</span><div class="time-clock"><span class="timer">@Model.Timer</span></div></div>
-                    }
+            <div class="col-md-12 col-xl-12 col-sm-12">
+            @if (Model.Timer > 0)
+            {
+            <div class="time_tab"> <span style="top:0px" class="time-left-txt">Time left to start the interview(In Mins):</span><div class="time-clock"><span class="timer">@Model.Timer</span></div></div>
+            }
 
 
-                </div>
+            </div>
 
             </div>*@
             <div class="row">
@@ -122,7 +122,7 @@
                                     @* <b>Scheduled Interview</b>
                             <br />*@
 
-                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now) 
+                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                     {
                                         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;position:relative">
                                             <div class="calling" style="top:-8px;right:55px;text-transform:uppercase">
@@ -145,7 +145,8 @@
                                     {
                                         <p style="margin-bottom:25px;" class="meeting-link text-uppercase">
                                             Click here to join the meeting <a class="click_herebtn click_herebtn2" style="margin-left:15px;cursor: not-allowed;background: #42a5f57a;">
-                                                <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" /> Zoom Meeting Link</span></a>
+                                                <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" /> Zoom Meeting Link</span>
+                                            </a>
                                         </p>
                                         <p style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></p>
                                     }
@@ -180,11 +181,11 @@
 
                                 @if (item.interviewDate < DateTime.Now || item.confirmationStatus != "Confirmed")
                                 {
-                                 
-                                    
+
+
 
                                     <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Time:</b> <span style="color:green; font-weight:600"> @item.interviewDate</span></p>
-                                   
+
                                     @if (Model.IsReschedule)
                                     {
                                         <p class="meeting-link">Reschedule Interview Link : <a class="click_herebtn" href="@Model.SchedulingLink" target="_blank"><span>Click Here</span></a></p>
@@ -200,9 +201,9 @@
                                         @*<p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current added" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>*@
                                         <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span>@item.MeetingStatusStatusDesc</span></p>
                                         <p><hr style="border-color: #8080803d;border-width:1px;margin-top:20px;" /></p>
-                                    
+
                                     }
-                                    
+
                                 }
                             }
 
@@ -214,7 +215,7 @@
 
 
                                     <p style="line-height:32px;"><b>Company Website :</b> <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></p>
-                                   
+
                                     <p style="line-height:32px;"><b>HR Contact :&nbsp;</b><span style="color:green;font-weight:bold;">EmailId:&nbsp;</span>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<span style="color:green;font-weight:bold;padding-left:10px;">Click here to Call</span><c style="position:relative;top:-4px;left:10px;" onclick="captureclick('Call','Hr Contact')"><span onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')"><svg style="color: rgb(44, 139, 24);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone-plus-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM12.5 1a.5.5 0 0 1 .5.5V3h1.5a.5.5 0 0 1 0 1H13v1.5a.5.5 0 0 1-1 0V4h-1.5a.5.5 0 0 1 0-1H12V1.5a.5.5 0 0 1 .5-.5z" fill="#2c8b18"></path> </svg></span></c></p>
                                     <p style="line-height:32px;"><b>Risebird Contact :&nbsp;</b><span style="color:green;font-weight:bold;">EmailId:&nbsp;</span>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<span style="color:green;font-weight:bold;padding-left:10px;">Click here to Call</span><c style="position:relative;top:-4px;left:10px;" onclick="captureclick('Call','Risebird Contact')"><span onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')"><svg style="color: rgb(44, 139, 24);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone-plus-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM12.5 1a.5.5 0 0 1 .5.5V3h1.5a.5.5 0 0 1 0 1H13v1.5a.5.5 0 0 1-1 0V4h-1.5a.5.5 0 0 1 0-1H12V1.5a.5.5 0 0 1 .5-.5z" fill="#2c8b18"></path> </svg></span></c></p>
 
@@ -479,5 +480,5 @@
     }
 </script>
 
-            @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 <script src="~/js/TwilioCallMaker.js"></script>
