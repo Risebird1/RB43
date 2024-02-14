@@ -1940,11 +1940,10 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
                     }
                 }
-                object[] parameters = new object[] { CandidateName, interviewDate };
+                object[] parameters = new object[] { CandidateName, interviewDate,"" };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotificationV2.html");
-                string msgBody = string.Format(rawEmail, parameters);
-
+               string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, irfId, interviewId);
             }

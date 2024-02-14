@@ -45,6 +45,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? AGAvailabilityCreatedAt { get; set; }
         public DateTime? AGAvailabilityModifiedAt { get; set; }
         public string ClientAction { get; set; }
+        public string CampaignName { get; set; }
     }
     public class AssessmentIRFListVM
     {

@@ -46,21 +46,25 @@ body {
     color: #fff;
     border-radius: 0px !important;
 }
-.sharp.btn-xs {
+.sharp.btn-xs{
     padding: 0.1165rem;
     width: 1.55rem;
     height: 1.55rem;
     min-width: 1.55rem;
     min-height: 1.55rem;
-    border-radius:4px;
+    border-radius: 4px;
+
 }
-.sharp-btn {
-    border-radius: 4px !important;
-    width: 2.5rem;
-    height: 2.5rem;
-    min-width: 2.5rem;
-    min-height: 2.5rem;
+.sharp.btn-xs, .sharp-btn.btn-xs {
+    margin: 3px 0px 0px 0px;
 }
+    .sharp-btn {
+        border-radius: 4px !important;
+        width: 2.5rem;
+        height: 2.5rem;
+        min-width: 2.5rem;
+        min-height: 2.5rem;
+    }
  .sharp-btn .fa {
         font-size: 12px!important;
         margin-right: 0px!important;
@@ -5850,11 +5854,14 @@ input[type="date"].form-control {
     background: #FFF;
     border: 1px #ccc solid !important;
     width: 256px !important;
-    height: 39px !important;
+    height: 35px!important;
     padding: 9px 10px 9px 10px;
+    border-radius:7px;
 }
-
-.indexemp #search, #skillLevel_filter #search, #risebirduser_filter #search, #clientduser_filter #search, #skill_filter #search, #questionsTable_filter #search, #entitleTable_filter #search {
+input[type=search]:focus{
+border: 1px #ccc solid!important;
+    }
+        .indexemp #search, #skillLevel_filter #search, #risebirduser_filter #search, #clientduser_filter #search, #skill_filter #search, #questionsTable_filter #search, #entitleTable_filter #search {
     right: 45px;
     z-index: 0;
 }
@@ -5865,6 +5872,7 @@ input[type="date"].form-control {
 
 .indexemp #trigger-update, #interviewersTbl_filter #trigger-update, #skillLevel_filter #trigger-update, #risebirduser_filter #trigger-update, #clientduser_filter #trigger-update, #skill_filter #trigger-update, #questionsTable_filter #trigger-update, #irfTable_filter #trigger-update, #MyInterviewList_filter #trigger-update, #OpeninterviewList_filter #trigger-update, #activityTable_filter #trigger-update {
     right: 20px;
+    top: 8px;
 }
 
 #statusTable_filter #trigger-update, #entitleTable_filter #trigger-update, .notschedulemeeting #meeting_filter #trigger-update, #meeting_filter #trigger-update {
@@ -7109,11 +7117,17 @@ input[type="date"].form-control {
     border-color: #9aa6ea;
     color: #fff !important;
 }
-.btn-copy {
+.btn-schedule {
     background: #1d919f96;
     border-color: #7abec7 !important;
     color: #fff !important;
 }
+.btn-copy {
+    background: #0d563c96;
+    border-color: #7aa19396 !important;
+    color: #fff !important;
+}
+
 
 .btn-share {
     background: #7ba260;
@@ -8910,6 +8924,26 @@ option {
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-timing-function: ease-in-out;
     -webkit-animation-direction: alternate;
+}
+.schedule-txt {
+    width: 600px;
+    margin: 15% auto;
+    padding: 30px;
+}
+.schedule-txt h3 {
+    line-height: 48px;
+    color: green;
+    font-size: 20px !important;
+    font-family: math;
+    font-weight: 800;
+    text-align: center;
+}
+.schedule-txt h2 {
+    font-size: 17px!important;
+    text-align: center;
+    color: #5a2f83;
+    font-family: math;
+    font-weight: 600;
 }
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
@@ -10729,6 +10763,7 @@ option {
         }
 
         .sharp.btn-xs {
+   
             width: 2.1rem;
             height: 2.1rem;
             min-width: 2.1rem;
@@ -14412,7 +14447,8 @@ button.close {
 }
 
 .dataTables_length select.form-control {
-    padding: 8px 8px;
+    padding: 7px 8px;
+    border-radius: 7px !important;
 }
 
 .dataTables_length select:focus {
@@ -14459,7 +14495,7 @@ button.close {
 
 .ref-btn {
     position: absolute;
-    top: 11px;
+    top:7px;
     right: 10px;
 }
 
@@ -14932,8 +14968,8 @@ h4.card-title {
     right: 40px;
     position: absolute;
     width: 35px;
-    height: 35px;
-    top: 3px;
+    height: 32px;
+    top: 4px;
     position: absolute;
     border: 0px;
     background: url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat center;
@@ -14947,6 +14983,7 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
 .client-ms #meeting_filter input[type=search] {
     background: #fff;
     border: 0px !important;
+    height:32px!important;
 }
 
 .dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
@@ -14963,6 +15000,10 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
     transition: all .5s;
     position: relative;
     background: #fff;
+    border-radius:7px;
+}
+div.dataTables_wrapper div.dataTables_filter input:focus {
+    border: 1px solid #E3E3E3 !important;
 }
 
 #InterviewerCommunicatorList_filter input[type=search] {
@@ -15507,9 +15548,24 @@ body .top-panel {
 .searchCon {
     position: relative;
     border: solid 1px #ccc !important;
-    border-radius: 20px;
+    border-radius: 7px;
+    height: 37px;
 }
+    .searchCon::-webkit-input-placeholder{
+   line-height:22px!important;
+    }
 
+    .searchCon::-moz-placeholder {
+        line-height: 22px !important;
+    }
+
+    .searchCon::-ms-input-placeholder {
+        line-height: 22px !important;
+    }
+/* MODERN BROWSER */
+    .searchCon ::placeholder {
+        line-height: 22px !important;
+    }
 .searchbox .searchCon {
     z-index: 0 !important
 }
