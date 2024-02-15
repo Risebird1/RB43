@@ -88,6 +88,7 @@ $(document).ready(function () {
 
 
     $('a[data-toggle="ajax-modal-CommunicationDetails"]').click(function (event) {
+
         OpenPopUp(event, candidateCommunicationDetails_placeholderElement);
    
     });
