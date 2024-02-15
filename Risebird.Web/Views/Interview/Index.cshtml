@@ -840,13 +840,13 @@
 
                                                             <td> @item.JDTiltle.Split("|")[0] </td>
                                                             <td class="cadName" onclick="captureclick('Meeting','MeetingInternal','@item.imid')">
-                                                                <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:115px!important;height:25px!important">
-                                                                    <span onclick="javascript:InterviewerPortalUrl('@item.irfIntId','@item.imid');" title="Interviewer Portal URL">Interviewer Portal</span>
+                                                                <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:120px!important;height:25px!important">
+                                                                    <span onclick="javascript:InterviewerPortalUrl('@item.irfIntId','@item.imid');" title="Interviewer Portal URL">Interviewer meeting link</span>
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:115px!important;height:25px!important">
-                                                                    <span onclick="javascript:CopyPublicUrl('@item.candidateEmail','@item.irfIntId',1);" title="Copy Public URL">Candidate Portal</span>
+                                                                <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:120px!important;height:25px!important">
+                                                                    <span onclick="javascript:CopyPublicUrl('@item.candidateEmail','@item.irfIntId',1);" title="Copy Public URL">Candidate meeting link</span>
                                                                 </div>
                                                             </td>
                                                             @if (item.zoomLink != null && item.zoomLink != "")
