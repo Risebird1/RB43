@@ -209,7 +209,34 @@
 
         });
 
-        
+            $('#modalCommunicationDetails').on('hidden.bs.modal', function () {
+
+  $('.modal-backdrop.show').css('opacity','0');
+  $('.modal-backdrop.show').css('width','0');
+})
 
     });
 </script>
+
+@*
+  <script>
+    $(document).ready(function () {
+
+        var candidateCommunicationDetails_placeholderElement = $('#modal_candidateCommunicationDetails_placeholder');
+
+
+        $('button[data-toggle="ajax-modal-CommunicationDetails"]').click(function (event) {//data-toggle
+            if ($('#modalCommunicationDetails').length > 0) {
+                $('#modalCommunicationDetails').empty();
+            }
+            OpenPopUp(event, candidateCommunicationDetails_placeholderElement);
+
+
+
+        });
+
+
+
+    });
+</script>
+*@
