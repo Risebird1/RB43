@@ -35,5 +35,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime EndDate { get; set; }
        // public bool IsActive { get; set; }
         public string IsAvailable { get; set; }
+        public string CampaignName { get; set; }
     }
 }
