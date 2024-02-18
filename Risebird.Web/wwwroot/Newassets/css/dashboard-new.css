@@ -8962,6 +8962,20 @@ option {
     padding: 0px;
     margin: 0px;
 }
+.badge-no {
+    width: 16px;
+    height: 15px;
+    text-align: center;
+    position: relative;
+    right: -9px;
+    color: #fff;
+    top: -10px;
+    background: #f00;
+    border-radius: 15px;
+    border: 0px;
+    line-height: 16px;
+    display: inline-block;
+}
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
         .rbpay .sb-scrollbar {

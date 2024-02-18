@@ -402,25 +402,35 @@
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-broadcast" viewBox="0 0 16 16"><path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" /></svg>
                                                         </span>
                                                         </button>*@
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit HM Instruction" style="    position: relative;    top: -10px;">
+                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Edit HM Instruction" style="width:25px!important;height:25px!important">
                                                                         <span onclick="javascript:openHMLink('@item.id');" title="Edit HM Instruction">
-<svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="
-    position: relative;
-    top: 9px;"><rect x="4" y="8" width="40" height="32" rx="2" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></rect><path d="M4 10C4 8.89543 4.89543 8 6 8H42C43.1046 8 44 8.89543 44 10V16H4V10Z" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path><path d="M25 23L23 34" stroke="#fff" stroke-width="1" stroke-linecap="round"></path><path d="M31 23L37 28L31 34" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path><path d="M17 23L11 28L17 34" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path></svg>                                                                            <svg style="position:relative;top:-7px;right:-6px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg>
+                                                                            <svg style="color: white;position: relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
+                                                                             <svg fill="#fff" style="position:relative;top: -21px;right:-6px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>  
                                                                         </span>
                                                                     </button>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Share HM Instruction URL" style="position:relative;top:-10px;">
+
+                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Share HM Instruction" style="width:25px!important;height:25px!important; background:#b1ba4e!important; border-color:#b1ba4e!important">
                                                                         <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="Share HM Instruction URL">
-                                                                            <svg width="18" height="18" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: relative;top: 7px;"><rect x="4" y="8" width="40" height="32" rx="2" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></rect><path d="M4 10C4 8.89543 4.89543 8 6 8H42C43.1046 8 44 8.89543 44 10V16H4V10Z" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path><path d="M25 23L23 34" stroke="#fff" stroke-width="1" stroke-linecap="round"></path><path d="M31 23L37 28L31 34" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path><path d="M17 23L11 28L17 34" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path></svg> 
-<svg style="color: white;position: relative;top: -5px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 16 16"> <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" fill="white"></path> </svg>                                                                        </span>
+                                                                            <svg style="color: white;position: relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
+                                                                             <i class='fa fa-share' style="font-size:11px;top:-21px;left:5px;position:relative"></i>
+
+                                                                        </span>
                                                                     </button>
 
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Search And Match Link" style="position:relative;top:0px;">
+                                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Search And Match Link" style="width:25px!important;height:25px!important;background:#cfc02fad!important; border-color:#cfc02fad!important">
                                                                         <span onclick="javascript:openEmbedUrlPopUp('@item.id','@item.IRFId', '@item.AffindaEmbedUrl', '@item.urlCreationTimeElapsed');" title="Search And Match Link">
-                                                                            <i class="fa fa-search" style="color: white;position: relative;top:6px;transform: translateX(-50%) translateY(-50%) rotate(42deg);    right: -7px;    font-size: 12px;"></i>
+                                                                        <i class="fa fa-user" style="color: white;font-size: 12px;position: relative;left: -3px;"></i><i class="fa fa-search" style="color: white;font-size: 9px;position: relative;top: -27px;left: 7px;"></i>
+                                                                        </span>
+                                                                    </button>
+
+
+
+                                                                  @*  <button class="mdc-fab app-fab--absolute" aria-label="Search And Match Link" style="position:relative;top:0px;">
+                                                                        <span onclick="javascript:openEmbedUrlPopUp('@item.id','@item.IRFId', '@item.AffindaEmbedUrl', '@item.urlCreationTimeElapsed');" title="Search And Match Link">
+                                                                            <i class="fa fa-search" style="color: white;position: relative;top:6px;transform: translateX(-50%) translateY(-50%) rotate(42deg);  right: -7px; font-size: 12px;"></i>
                                                                          <i class="fa fa-user" style="color: white;position: relative;top:2px;right:4px;font-size:13px;"></i>
                                                                       </span>
-                                                                    </button>
+                                                                    </button>*@
                                                                 }
                                                                 @if (Model.Profile == "Client")
                                                                 {
@@ -436,28 +446,36 @@
                                                         <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16"> <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" fill="white"></path> <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" fill="white"></path> </svg>
                                                         </span>
                                                         </button> *@
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Upload Resume">
-                                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId');" title="Upload Resume" class="mdc-fab__icon material-icons">
-                                                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16"> <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" fill="white"></path> <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" fill="white"></path> </svg>
+                                                                    
+
+                                                                    <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes" style="width:25px!important;height:25px!important;background:darkseagreen!important;border-color:darkseagreen!important">
+                                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId');" title="Upload Resumes">
+                                                                            <span class="fas fa-upload"></span>
                                                                         </span>
                                                                     </button>
+
 
                                                                 }
                                                                 @if ((!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser") || (Model.Profile == "Client" && item.CreatedFromTemplateId != null && item.CreatedFromTemplateId.Value > 0))
                                                                 {
                                                                     @if (Model.Profile != "Client")
                                                                     {
-                                                                        <button class="mdc-fab app-fab--absolute notification" aria-label="StatsFlag" style="position:relative;top:2px;">
-                                                                            @if (item.flagcount > 0)
+
+                                                                        <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="StatsFlag" style="width:25px!important;height:25px!important;background:#55aef5!important; border: 1px #55aef5 solid!important;position:relative">
+                                                                       @if (item.flagcount > 0)
                                                                             {
-                                                                                <span class="badge">@item.flagcount</span>
+                                                                                <span class="badge-no">@item.flagcount</span>
                                                                             }
-                                                                            <span onclick="javascript:StatsFlag('@item.id');" title="StatsFlag" class="mdc-fab__icon material-icons">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                                                                            <span onclick="javascript:StatsFlag('@item.id');" title="StatsFlag" style="position:absolute;top:0px;left:4px;">
+ <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
                                                                                     <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
-                                                                                </svg>
-                                                                            </span>
-                                                                        </button>
+                                                                                </svg>                                                                   
+
+                                                                                </span>
+                                                                 </button>
+
+
+
                                                                     }
                                                                 }
                                                                 <div class="dropdown">
@@ -467,9 +485,12 @@
                                                                     <div class="dropdown-content" style="top:20px !important">
                                                                         @if ((!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile != "CuratedUser") || (Model.Profile == "Client" && item.CreatedFromTemplateId != null && item.CreatedFromTemplateId.Value > 0))
                                                                         {
-                                                                            <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                                <span onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                                            <button id="skill_17" class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Edit" style="width:25px!important;height:25px!important;position:relative; background: #cac6c9!important; border: 1px #cac6c9!important;">
+                                                                                <span onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');" title="Edit"><span class="fas fa-edit" style="left:2px;top:1px;position: relative;font-size:13px;"></span></span>
                                                                             </button>
+
+                                                                            
+
                                                                             @if (Model.Profile != "SeniorInterviewerManagement")
                                                                             {
                                                                                 @*<button id="skill_18" class="mdc-fab app-fab--absolute" aria-label="Candidate Curated Score">
@@ -485,35 +506,40 @@
                                                                                 //getIRFMembers
                                                                                 @if (Model.Profile != "Client")
                                                                                 {
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback">
-                                                                                        <span onclick="javascript:getClientFeedback('@item.id', '@item.IRFId');" title="Client Feedback" class="mdc-fab__icon material-icons"><svg width="18" fill="#ffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 478.248 478.248" xml:space="preserve" stroke="#ffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <g> <path d="M456.02,44.821H264.83c-12.26,0-22.232,9.972-22.232,22.229v98.652c0,12.258,9.974,22.23,22.232,22.23h16.787v39.161 c0,2.707,1.58,5.165,4.043,6.292c0.92,0.42,1.901,0.627,2.875,0.627c1.631,0,3.244-0.576,4.523-1.685l51.383-44.396h111.576 c12.26,0,22.23-9.973,22.23-22.23V67.05C478.25,54.792,468.277,44.821,456.02,44.821z M319.922,112.252l-10.209,9.953 l2.41,14.054c0.174,1.015-0.242,2.038-1.076,2.643c-0.469,0.342-1.027,0.516-1.588,0.516c-0.428,0-0.861-0.103-1.256-0.31 l-12.621-6.635l-12.619,6.635c-0.912,0.478-2.016,0.398-2.848-0.206s-1.248-1.628-1.074-2.643l2.41-14.054l-10.211-9.953 c-0.734-0.718-1.002-1.792-0.685-2.769c0.317-0.978,1.164-1.691,2.183-1.839l14.11-2.05l6.31-12.786 c0.457-0.923,1.396-1.507,2.424-1.507s1.969,0.584,2.422,1.507l6.312,12.786l14.107,2.05c1.02,0.148,1.863,0.861,2.184,1.839 C320.924,110.46,320.658,111.535,319.922,112.252z M384.766,112.252l-10.211,9.953l2.412,14.054 c0.172,1.015-0.244,2.038-1.076,2.643c-0.469,0.342-1.025,0.516-1.588,0.516c-0.43,0-0.859-0.103-1.26-0.31l-12.619-6.635 l-12.619,6.635c-0.912,0.478-2.014,0.398-2.846-0.206c-0.834-0.604-1.25-1.628-1.076-2.643l2.41-14.054l-10.209-9.953 c-0.734-0.718-1.002-1.792-0.684-2.769c0.316-0.978,1.16-1.691,2.182-1.839l14.109-2.05l6.311-12.786 c0.455-0.923,1.396-1.507,2.422-1.507c1.029,0,1.967,0.584,2.422,1.507l6.312,12.786l14.109,2.05 c1.021,0.148,1.863,0.861,2.182,1.839C385.768,110.46,385.5,111.535,384.766,112.252z M449.607,112.252l-10.211,9.953 l2.408,14.054c0.176,1.015-0.238,2.038-1.072,2.643c-0.471,0.342-1.027,0.516-1.59,0.516c-0.43,0-0.859-0.103-1.258-0.31 l-12.621-6.635l-12.621,6.635c-0.908,0.478-2.012,0.398-2.844-0.206c-0.834-0.604-1.248-1.628-1.076-2.643l2.412-14.054 l-10.211-9.953c-0.734-0.718-1-1.792-0.684-2.769c0.316-0.978,1.164-1.691,2.182-1.839l14.111-2.05l6.311-12.786 c0.453-0.923,1.395-1.507,2.42-1.507c1.027,0,1.971,0.584,2.426,1.507L434,105.594l14.109,2.05 c1.018,0.148,1.861,0.861,2.182,1.839C450.609,110.46,450.344,111.535,449.607,112.252z"></path> <path d="M152.844,112.924c-46.76,0-72.639,24.231-72.166,70.921c0.686,63.947,27.859,102.74,72.166,102.063 c0,0,72.131,2.924,72.131-102.063C224.975,137.155,200.605,112.924,152.844,112.924z"></path> <path d="M280.428,334.444l-72.074-28.736l-16.877-14.223c-4.457-3.766-11.041-3.488-15.178,0.621l-23.463,23.336l-23.533-23.342 c-4.137-4.104-10.713-4.369-15.164-0.615l-16.881,14.223l-72.074,28.739C1.975,343.69,1.995,425.884,0,433.427h305.646 C303.656,425.9,303.646,343.679,280.428,334.444z"></path> </g> </g> </g> </g></svg></span>
-                                                                                    </button>
 
-                                                                                    <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
+
+                                                                           <button id="skill_17" class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Client Feedback" style="width:25px!important;height:25px!important;position:relative; background:#7dd1d9!important; border: 1px #7dd1d9 solid!important;">
+                                                                                <span onclick="javascript:getClientFeedback('@item.id', '@item.IRFId');" title="Client Feedback"><svg width="16" height="16" fill="#ffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 478.248 478.248" xml:space="preserve" stroke="#ffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <g> <path d="M456.02,44.821H264.83c-12.26,0-22.232,9.972-22.232,22.229v98.652c0,12.258,9.974,22.23,22.232,22.23h16.787v39.161 c0,2.707,1.58,5.165,4.043,6.292c0.92,0.42,1.901,0.627,2.875,0.627c1.631,0,3.244-0.576,4.523-1.685l51.383-44.396h111.576 c12.26,0,22.23-9.973,22.23-22.23V67.05C478.25,54.792,468.277,44.821,456.02,44.821z M319.922,112.252l-10.209,9.953 l2.41,14.054c0.174,1.015-0.242,2.038-1.076,2.643c-0.469,0.342-1.027,0.516-1.588,0.516c-0.428,0-0.861-0.103-1.256-0.31 l-12.621-6.635l-12.619,6.635c-0.912,0.478-2.016,0.398-2.848-0.206s-1.248-1.628-1.074-2.643l2.41-14.054l-10.211-9.953 c-0.734-0.718-1.002-1.792-0.685-2.769c0.317-0.978,1.164-1.691,2.183-1.839l14.11-2.05l6.31-12.786 c0.457-0.923,1.396-1.507,2.424-1.507s1.969,0.584,2.422,1.507l6.312,12.786l14.107,2.05c1.02,0.148,1.863,0.861,2.184,1.839 C320.924,110.46,320.658,111.535,319.922,112.252z M384.766,112.252l-10.211,9.953l2.412,14.054 c0.172,1.015-0.244,2.038-1.076,2.643c-0.469,0.342-1.025,0.516-1.588,0.516c-0.43,0-0.859-0.103-1.26-0.31l-12.619-6.635 l-12.619,6.635c-0.912,0.478-2.014,0.398-2.846-0.206c-0.834-0.604-1.25-1.628-1.076-2.643l2.41-14.054l-10.209-9.953 c-0.734-0.718-1.002-1.792-0.684-2.769c0.316-0.978,1.16-1.691,2.182-1.839l14.109-2.05l6.311-12.786 c0.455-0.923,1.396-1.507,2.422-1.507c1.029,0,1.967,0.584,2.422,1.507l6.312,12.786l14.109,2.05 c1.021,0.148,1.863,0.861,2.182,1.839C385.768,110.46,385.5,111.535,384.766,112.252z M449.607,112.252l-10.211,9.953 l2.408,14.054c0.176,1.015-0.238,2.038-1.072,2.643c-0.471,0.342-1.027,0.516-1.59,0.516c-0.43,0-0.859-0.103-1.258-0.31 l-12.621-6.635l-12.621,6.635c-0.908,0.478-2.012,0.398-2.844-0.206c-0.834-0.604-1.248-1.628-1.076-2.643l2.412-14.054 l-10.211-9.953c-0.734-0.718-1-1.792-0.684-2.769c0.316-0.978,1.164-1.691,2.182-1.839l14.111-2.05l6.311-12.786 c0.453-0.923,1.395-1.507,2.42-1.507c1.027,0,1.971,0.584,2.426,1.507L434,105.594l14.109,2.05 c1.018,0.148,1.861,0.861,2.182,1.839C450.609,110.46,450.344,111.535,449.607,112.252z"></path> <path d="M152.844,112.924c-46.76,0-72.639,24.231-72.166,70.921c0.686,63.947,27.859,102.74,72.166,102.063 c0,0,72.131,2.924,72.131-102.063C224.975,137.155,200.605,112.924,152.844,112.924z"></path> <path d="M280.428,334.444l-72.074-28.736l-16.877-14.223c-4.457-3.766-11.041-3.488-15.178,0.621l-23.463,23.336l-23.533-23.342 c-4.137-4.104-10.713-4.369-15.164-0.615l-16.881,14.223l-72.074,28.739C1.975,343.69,1.995,425.884,0,433.427h305.646 C303.656,425.9,303.646,343.679,280.428,334.444z"></path> </g> </g> </g> </g></svg></span>
+                                                                            </button>
+                                                                                  @*  <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback">
+                                                                                        <span onclick="javascript:getClientFeedback('@item.id', '@item.IRFId');" title="Client Feedback" class="mdc-fab__icon material-icons"><svg width="18" fill="#ffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 478.248 478.248" xml:space="preserve" stroke="#ffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <g> <path d="M456.02,44.821H264.83c-12.26,0-22.232,9.972-22.232,22.229v98.652c0,12.258,9.974,22.23,22.232,22.23h16.787v39.161 c0,2.707,1.58,5.165,4.043,6.292c0.92,0.42,1.901,0.627,2.875,0.627c1.631,0,3.244-0.576,4.523-1.685l51.383-44.396h111.576 c12.26,0,22.23-9.973,22.23-22.23V67.05C478.25,54.792,468.277,44.821,456.02,44.821z M319.922,112.252l-10.209,9.953 l2.41,14.054c0.174,1.015-0.242,2.038-1.076,2.643c-0.469,0.342-1.027,0.516-1.588,0.516c-0.428,0-0.861-0.103-1.256-0.31 l-12.621-6.635l-12.619,6.635c-0.912,0.478-2.016,0.398-2.848-0.206s-1.248-1.628-1.074-2.643l2.41-14.054l-10.211-9.953 c-0.734-0.718-1.002-1.792-0.685-2.769c0.317-0.978,1.164-1.691,2.183-1.839l14.11-2.05l6.31-12.786 c0.457-0.923,1.396-1.507,2.424-1.507s1.969,0.584,2.422,1.507l6.312,12.786l14.107,2.05c1.02,0.148,1.863,0.861,2.184,1.839 C320.924,110.46,320.658,111.535,319.922,112.252z M384.766,112.252l-10.211,9.953l2.412,14.054 c0.172,1.015-0.244,2.038-1.076,2.643c-0.469,0.342-1.025,0.516-1.588,0.516c-0.43,0-0.859-0.103-1.26-0.31l-12.619-6.635 l-12.619,6.635c-0.912,0.478-2.014,0.398-2.846-0.206c-0.834-0.604-1.25-1.628-1.076-2.643l2.41-14.054l-10.209-9.953 c-0.734-0.718-1.002-1.792-0.684-2.769c0.316-0.978,1.16-1.691,2.182-1.839l14.109-2.05l6.311-12.786 c0.455-0.923,1.396-1.507,2.422-1.507c1.029,0,1.967,0.584,2.422,1.507l6.312,12.786l14.109,2.05 c1.021,0.148,1.863,0.861,2.182,1.839C385.768,110.46,385.5,111.535,384.766,112.252z M449.607,112.252l-10.211,9.953 l2.408,14.054c0.176,1.015-0.238,2.038-1.072,2.643c-0.471,0.342-1.027,0.516-1.59,0.516c-0.43,0-0.859-0.103-1.258-0.31 l-12.621-6.635l-12.621,6.635c-0.908,0.478-2.012,0.398-2.844-0.206c-0.834-0.604-1.248-1.628-1.076-2.643l2.412-14.054 l-10.211-9.953c-0.734-0.718-1-1.792-0.684-2.769c0.316-0.978,1.164-1.691,2.182-1.839l14.111-2.05l6.311-12.786 c0.453-0.923,1.395-1.507,2.42-1.507c1.027,0,1.971,0.584,2.426,1.507L434,105.594l14.109,2.05 c1.018,0.148,1.861,0.861,2.182,1.839C450.609,110.46,450.344,111.535,449.607,112.252z"></path> <path d="M152.844,112.924c-46.76,0-72.639,24.231-72.166,70.921c0.686,63.947,27.859,102.74,72.166,102.063 c0,0,72.131,2.924,72.131-102.063C224.975,137.155,200.605,112.924,152.844,112.924z"></path> <path d="M280.428,334.444l-72.074-28.736l-16.877-14.223c-4.457-3.766-11.041-3.488-15.178,0.621l-23.463,23.336l-23.533-23.342 c-4.137-4.104-10.713-4.369-15.164-0.615l-16.881,14.223l-72.074,28.739C1.975,343.69,1.995,425.884,0,433.427h305.646 C303.656,425.9,303.646,343.679,280.428,334.444z"></path> </g> </g> </g> </g></svg></span>
+                                                                                    </button>*@
+
+                                                                                                        <button id="skill_21" class="btn shadow btn-xs sharp me-1" aria-label="Interviewing Members" style="width:25px!important;height:25px!important;position:relative; background:#f0bd26a8!important; border: 1px #f0bd26a8 solid!important;color:#fff!important">
                                                                                         <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
                                                                                     </button>
 
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
+                                                                                                        <button class="btn shadow btn-xs sharp-btn me-1" aria-label="Interviewer Stats" style="background:#bfd1ed;posiiton:relative">
                                                                                         @*<span onclick="javascript:getInterviewerStats('@item.id', '@item.IRFId');" title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>*@
 
                                                                                         <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
-                                                                                            <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="'@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>
+                                                                                            <span title="Interviewer Stats"><svg fill="#fff" style="position:relative;top: -11px;left: -17px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="'@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>
                                                                                         </a>
                                                                                     </button>
 
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Share Email to check Interviewer availability">
-                                                                                        <span onclick="javascript:CheckIntervieweravailbility('@item.id', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability" class="mdc-fab__icon material-icons">
-                                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                                                                                                        <button class="btn shadow btn-xs sharp-btn me-1" aria-label="Share Email to check Interviewer availability" style="position:relative;background:#95bed3">
+                                                                                        <span onclick="javascript:CheckIntervieweravailbility('@item.id', '@item.IRFId', '@item.AssessmentGroupId');" title="Share Email to check Interviewer availability">
+                                                                                            <svg style="fill:#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
                                                                                                 <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
                                                                                                 <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
                                                                                             </svg>
                                                                                         </span>
                                                                                     </button>
 
-                                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity(open)">
+                                                                                    <button class="btn shadow btn-xs sharp-btn me-1" aria-label="Interviewer Mail Activity(open)" style="position:relative;background:#818dab">
 
                                                                                         <a href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
-                                                                                            <span title="Interviewer Mail Activity(open)" class="mdc-fab__icon material-icons"><svg width="18" height="18" style="color: white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 8V7l-3 2-3-2v1l3 2 3-2zm1-5H2C.9 3 0 3.9 0 5v14c0 1.1.9 2 2 2h20c1.1 0 1.99-.9 1.99-2L24 5c0-1.1-.9-2-2-2zM8 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H2v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1zm8-6h-8V6h8v6z" fill="white"></path><a target="_blank" href="'@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>
+                                                                                                                <span title="Interviewer Mail Activity(open)" class="mdc-fab__icon material-icons"><svg style="top:-11px;left:-17px;position: relative;" width="16" height="16" style="color: white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 8V7l-3 2-3-2v1l3 2 3-2zm1-5H2C.9 3 0 3.9 0 5v14c0 1.1.9 2 2 2h20c1.1 0 1.99-.9 1.99-2L24 5c0-1.1-.9-2-2-2zM8 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H2v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1zm8-6h-8V6h8v6z" fill="white"></path><a target="_blank" href="'@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>
                                                                                         </a>
                                                                                     </button>
                                                                                 }
@@ -528,25 +554,29 @@
                                                                             {
                                                                                 if (!item.IsDeleted)
                                                                                 {
-                                                                                    <button id="btnArchive_@item.id" @*id="skill_22"*@ class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
+                                                                                    <button id="btnArchive_@item.id" @*id="skill_22"*@ class="btn shadow btn-xs sharp-btn me-1 trash-btn" aria-label="Archive" style="position:relative;background:#c92727;">
                                                                                         <span onclick="javascript:ArchiveIRF('@item.id', '@item.IRFId');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
                                                                                     </button>
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <button id="btnUnArchive_@item.id" class="mdc-fab app-fab--absolute unarchive-btn" aria-label="UnArchive">
+                                                                                    <button id="btnUnArchive_@item.id" class="btn shadow btn-xs sharp-btn me-1 unarchive-btn" aria-label="UnArchive" style="position:relative;background:#848080eb;">
                                                                                         <span onclick="javascript:UnArchiveIRF('@item.id', '@item.IRFId');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
                                                                                     </button>
                                                                                 }
                                                                             }
                                                                             @if (Model.Profile == "Admin" || Model.Profile == "HR" || Model.Profile == "SeniorHR" || Model.Profile == "SupportAdmin")
                                                                             {
-                                                                                <button class="mdc-fab app-fab--absolute" aria-label="Clone the Skills Channel" style="top:-2px;">
+                                                                                <button class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Clone the Skills Channel" style="top:-2px; position:relative;background: #0d563c96;border-color: #7aa19396 !important">
                                                                                     <span onclick="location.href='@Url.Action("EditIRF", "IRF", new { id = item.id, isClone = true })'" title="Clone the Skills Channel" class="mdc-fab__icon material-icons">
                                                                                         <i style="font-size:14px;" class="fa fa-clone"></i>
 
                                                                                     </span>
                                                                                 </button>
+
+                                                                               
+                                                
+
                                                                             }
                                                                         }
                                                                     </div>
@@ -644,18 +674,36 @@
                                                             <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10 pull-left">
                                                                 @if (Model.Profile != "SeniorInterviewerManagement")
                                                                 {
-                                                                <button id="skill_10" class="mdc-fab app-fab--absolute item1" aria-label="Candidates List">
-                                                                    <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
-                                                                </button>
 
-                                                                <button id="skill_8" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Status">
+                                                                                             <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Candidates List" style="width:25px!important;height:25px!important;background:#eea4349e;border-color:#f1c681">
+                                                                     <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List">
+                                                                      <span class="fas fa-list" style="color:#fff"></span>
+                                                                     </span>
+                                                                    </button>
+
+
+                                                                
+
+                                                              @*  <button id="skill_8" class="mdc-fab app-fab--absolute item1" aria-label="Candidate Status">
                                                                     <span onclick="javascript:CandidatesStatus('@item.id', '@item.IRFId');" title="Candidates Status" class="mdc-fab__icon material-icons"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path fill="rgb( 255,255,255)" d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg></span>
-                                                                </button>
+                                                                </button>*@
+
+                                                                            <button id="skill_8" class="btn shadow btn-xs sharp me-1 item1" aria-label="Candidate Status" style="width:25px!important;height:25px!important;background:#bb64279e;border-color:#f0b1869e">
+                                                                     <span onclick="javascript:CandidatesStatus('@item.id', '@item.IRFId');" title="Candidate Status">
+                                                                                 <svg style="position:relative;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="rgb( 255,255,255)" d="M23 8c0 1.1-.9 2-2 2-.18 0-.35-.02-.51-.07l-3.56 3.55c.05.16.07.34.07.52 0 1.1-.9 2-2 2s-2-.9-2-2c0-.18.02-.36.07-.52l-2.55-2.55c-.16.05-.34.07-.52.07s-.36-.02-.52-.07l-4.55 4.56c.05.16.07.33.07.51 0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2c.18 0 .35.02.51.07l4.56-4.55C8.02 9.36 8 9.18 8 9c0-1.1.9-2 2-2s2 .9 2 2c0 .18-.02.36-.07.52l2.55 2.55c.16-.05.34-.07.52-.07s.36.02.52.07l3.55-3.56C19.02 8.35 19 8.18 19 8c0-1.1.9-2 2-2s2 .9 2 2z" /></svg>
+                                                                     </span>
+                                                                    </button>
+
+
+
                                                                 @if (Model.Profile != "Recruiter")
                                                                 {
-                                                                    <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
-                                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
+                                                                                    <button id="skill_14" class="btn shadow btn-xs sharp me-1 item4" aria-label="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background: #1d919f96!important;border-color: #7abec7 !important;">
+                                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink })'" title="Schedule Meeting"><i class="fa fa-calendar" style="left:2px; top:-1px;font-size:12px; position: relative;color:#fff"></i></span>
                                                                     </button>
+
+                                                                   
+
                                                                 }
                                                                 }
                                                                 @if(Model.Profile!="SeniorInterviewerManagement")
