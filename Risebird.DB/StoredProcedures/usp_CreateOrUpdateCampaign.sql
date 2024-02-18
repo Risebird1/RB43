@@ -28,28 +28,30 @@ BEGIN
    
    if(@campaignId is null or @campaignId = 0)
    Begin
+	   if not exists(select top 1 id from AGCampaigns where CampaignName =@CampaignName)
+	   Begin
 
-	   insert into AGCampaigns (AssessmentGroupId, CampaignName, CreatedAt, CreatedBy)
-	   values (@AssessmentGroupId, @CampaignName, @timeNow, @PerformedBy)
+		   insert into AGCampaigns (AssessmentGroupId, CampaignName, CreatedAt, CreatedBy)
+		   values (@AssessmentGroupId, @CampaignName, @timeNow, @PerformedBy)
 
 
-	   select  @resultCampaignId = SCOPE_IDENTITY()
+		   select  @resultCampaignId = SCOPE_IDENTITY()
 	   
 
-	   insert into CampaignAssessmentGroups 
-		([CampaignId],
-		[AssessmentGroupId],
-		[CreatedAt],
-		[CreatedBy])
+		   insert into CampaignAssessmentGroups 
+			([CampaignId],
+			[AssessmentGroupId],
+			[CreatedAt],
+			[CreatedBy])
 			
 
-		SELECT @resultCampaignId, cbd.AssessmentGroupId, @timeNow, @PerformedBy FROM @CampaignAssessmentGroupsBulkData cbd   
+			SELECT @resultCampaignId, cbd.AssessmentGroupId, @timeNow, @PerformedBy FROM @CampaignAssessmentGroupsBulkData cbd   
 			
 
-	   --if(@CampaignAssessmentGroupsBulkData is not null)
-	   --Begin
-			
-	   --End
+
+	   End
+	   
+	   
    End
 
    else

@@ -7739,13 +7739,21 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GenerateRescheuleLink(string CandidateEmailid, string uniqueid, int interviewid)
+        public async Task<JsonResult> GenerateRescheuleLink(string CandidateEmailid, string uniqueid, int interviewid,int pageReturnType)
         {
             if (!string.IsNullOrEmpty(uniqueid))
             {
                 var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, CandidateEmailid);
-                var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&returnvaluetype=" + 2 + "&interviewid=" + interviewid + "&type=" + 314915;
-                return Json(SchedulingLink);
+                if (pageReturnType == 1)
+                {
+                    var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&interviewid=" + interviewid + "&type=" + 314999;
+                    return Json(SchedulingLink);
+                }
+                else
+                {
+                    var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&returnvaluetype=" + 2 + "&interviewid=" + interviewid + "&type=" + 314915;
+                    return Json(SchedulingLink);
+                }
             }
             return Json("");
         }
@@ -8386,7 +8394,21 @@ namespace Risebird.Web.Controllers
         {
             return View();
         }
-
+        [HttpPost]
+        public async Task<JsonResult> GetInterviewerPortalUrl(int irfid, int interviewid)
+        {
+            try
+            {
+                string sendMailURL = string.Empty;
+                sendMailURL = "https://" + Request.Host.ToString() + "/Interview/InterviewDetails?id=" + irfid + "&interviewId=" + interviewid;
+                return Json(sendMailURL);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
 
     }
 }

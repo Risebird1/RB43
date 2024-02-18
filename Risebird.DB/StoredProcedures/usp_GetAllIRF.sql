@@ -53,7 +53,7 @@ from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId
 --join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
 inner join UserList ul on ul.EmailId = im.candidateEmail           
 inner join CandidatesMaster cm on ul.id =cm.UserId          
-inner join Candidate ca on cm.id=ca.CandidateMasterId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
 where im.confirmationStatus=1 group by IRF.id          
           
 DECLARE @tbl_TotalMeetings TABLE (          
@@ -137,7 +137,7 @@ IF (@Profile = 'Client')
   from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId           
   inner join UserList ul on ul.EmailId = im.candidateEmail     
   inner join CandidatesMaster cm on ul.id =cm.UserId          
-  inner join Candidate ca on cm.id=ca.CandidateMasterId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
   where im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId group by IRF.id          
           
   delete from @tbl_TotalMeetings    
@@ -231,7 +231,7 @@ IF (@Profile = 'Client')
   from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId           
   inner join UserList ul on ul.EmailId = im.candidateEmail     
   inner join CandidatesMaster cm on ul.id =cm.UserId          
-  inner join Candidate ca on cm.id=ca.CandidateMasterId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)          
   where im.confirmationStatus=1 group by IRF.id          
           
   delete from @tbl_TotalMeetings    

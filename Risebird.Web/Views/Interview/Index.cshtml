@@ -484,8 +484,9 @@
                                                         <th>Type</th>
 
                                                         <th>JD Title</th>
-
                                                         <th>Meeting Link</th>
+                                                        <th>Interviewer Portal</th>
+                                                        <th>Candidate Portal</th>
                                                         <th>Company Name</th>
                                                         <th>Red Markers</th>
                                                         <th>Interveiwer</th>
@@ -545,8 +546,9 @@
                                                     {
                                                         <th>Type</th>
                                                         <th>JD Title</th>
-
                                                         <th>Meeting Link</th>
+                                                        <th>Interviewer Portal</th>
+                                                        <th>Candidate Portal</th>
                                                         <th>Company Name</th>
                                                         <th>Red Markers</th>
                                                         <th>Interviewer</th>
@@ -660,7 +662,7 @@
                                                                         <!--<span class="interview_6">
                                                                         <button class="mdc-fab app-fab--absolute" aria-label="Upload Videoes">-->
                                                                         @*<span onclick="OpenVideoUploadPopup(@item.imid)" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>*@
-                                                                        <!--<span onclick="location.href = '@Url.Action("UploadInterviewVideoes", "Interview", new { id = item.imid})'" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" /></svg></span>
+                                                                        <!--<span onclick="location.href = '@Url.Action("UploadInterviewVideoes", "Interview", new { id = item.imid })'" title="Upload Videoes" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" /></svg></span>
                                                                         </button>
                                                                         </span>-->
                                                                         @if (item.interviewDate.AddHours(1) >= DateTime.Now || ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Quality Controller")
@@ -749,9 +751,9 @@
 
                                                                     <span class="interview_9">
                                                                         <a style="text-decoration:none" target="_blank" href='@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'>
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
-                                                                            <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
-                                                                        </button>
+                                                                            <button class="mdc-fab app-fab--absolute" aria-label="Report" style="position:relative;top:-3px;">
+                                                                                <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                                            </button>
                                                                         </a>
                                                                     </span>
                                                                     @if (item.confirmationStatus.Trim() != "Cancelled" && item.MeetingStatusStatusDesc != "Status Pending" && item.MeetingStatusStatusDesc != "No Show(Candidate)" && item.MeetingStatusStatusDesc != "No Show(Interviewer)" && item.MeetingStatusStatusDesc != "No Show")
@@ -838,7 +840,6 @@
 
                                                             <td> @item.JDTiltle.Split("|")[0] </td>
 
-
                                                             @if (item.zoomLink != null && item.zoomLink != "")
                                                             {
                                                                 <td> <a class="interview_10" id="zoomlinkId" target="_blank" title="@item.MeetingPlatform" href=@item.zoomLink>Meeting Link</a> </td>
@@ -847,11 +848,21 @@
                                                             {
                                                                 <td><span style="color:red">No Meeting Link</span></td>
                                                             }
+                                                            <td class="cadName" onclick="captureclick('Meeting','MeetingInternal','@item.imid')">
+                                                                <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
+                                                                    <span onclick="javascript:InterviewerPortalUrl('@item.irfIntId','@item.imid');" title="Interviewer Portal URL">Interviewer meeting link</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="btn btn-copy shadow btn-xs sharp-btn me-1" aria-label="Copy Public URL" style="top: 0px;position: relative;cursor: pointer; width:145px!important;height:25px!important">
+                                                                    <span onclick="javascript:CopyPublicUrl('@item.candidateEmail','@item.irfIntId',1);" title="Copy Public URL">Candidate meeting link</span>
+                                                                </div>
+                                                            </td>
                                                             @if (!string.IsNullOrWhiteSpace(item.CompanyName))
                                                             {
                                                                 @if (item.CompanyName.Length > 30)
                                                                 {
-                                                                    <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
+                                                                    <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0, 29) ....</td>
                                                                 }
                                                                 else
                                                                 {
@@ -983,13 +994,13 @@
                                                                     <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
                                                                 </td>
                                                             }
-                                                                else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
-                                                        {
+                                                            else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
+                                                            {
 
-                                                            <td>
-                                                                <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
-                                                            </td>
-                                                        }
+                                                                <td>
+                                                                    <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
 
                                                             else
                                                             {
@@ -1010,7 +1021,7 @@
                                                                 </td>
                                                             }
 
-                                                             else if (item.InterviewStatus == 5)
+                                                            else if (item.InterviewStatus == 5)
                                                             {
                                                                 <td class="text-center">
                                                                     <a style="color:red;font-weight: bold"> @item.intervieweStatusStatDesc</a>
@@ -1023,7 +1034,7 @@
                                                                 </td>
                                                             }
 
-                                                              else if (item.InterviewStatus == 1)
+                                                            else if (item.InterviewStatus == 1)
                                                             {
                                                                 <td class="text-center">
                                                                     <a style="color:darkorange; font-weight: bold"> @item.intervieweStatusStatDesc</a>
@@ -1637,6 +1648,41 @@
 
                 <button class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="SaveBlckListCompanyModal()" id="btnBlackListCompanySave">Save</button>
 
+            </div>
+        </div>
+    </div>
+</div>
+<div id="PublicUrlShareModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span><img class="publicsharing-icon" src="~/Newassets/img/share-1w.png"></span>
+                </div>
+                <h5 class="modal-title pull-left">Secure Share Url</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closePublicUrlShareModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="video-url">
+                        <label class="label-field desp-label"> Candidate Details for Skill Channel Url:  <b id="txtUrl"> </b></label><button class="copy-btn" onclick="copyToClipboard('#txtUrl')">
+                            <p class="special-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
+                                <span id="special_text" class="special-text__tooltip">
+                                    Copy Link
+                                </span>
+                            </p>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="text-right">
+                        <input style="background: #53a5f5!important;line-height: 13px;" type="button" onclick="closePublicUrlShareModel()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -2447,8 +2493,48 @@
     }
 
 </script>
-@*
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
+<script>
+    function InterviewerPortalUrl(irfid,interviewid) {
+         $.ajax({
+            url: '/Interview/GetInterviewerPortalUrl',
+            data: { 'irfid': irfid,'interviewid' :interviewid},
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "block";
+                $("#txtUrl").text(result);
+            }
+        });
+    }
+    function CopyPublicUrl(EmailId,IRFId,type) {
+        $.ajax({
+            url: '/Candidate/GetPublicURLCandidate',
+            data: { 'Emailid': EmailId,'IRFId' :IRFId,'type':type},
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "block";
+                $("#txtUrl").text(result);
+            }
+        });
+    }
+
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+
+</script>
+@*<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
 <script>
     $('input:radio[name="receivers"]').click(function () {
 
