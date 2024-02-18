@@ -100,8 +100,8 @@ end
 	set @fltRate = 420
   end
 
-   Insert into TransInterviewer(IRFId,InterviewerId,UserId, IsAvailable, PerSuccessRate, [Source], IsCampaignActivity, CampaignId)     
-   values(@IRFId,@InterviewerId,@UserId,1, @fltRate, @rsc, 1, @campaignId)   
+   Insert into TransInterviewer(IRFId,InterviewerId,UserId, IsActive, IsAvailable, PerSuccessRate, [Source], IsCampaignActivity, CampaignId)     
+   values(@IRFId,@InterviewerId,@UserId,0,1, @fltRate, @rsc, 1, @campaignId)   
     
   End  
   Else  

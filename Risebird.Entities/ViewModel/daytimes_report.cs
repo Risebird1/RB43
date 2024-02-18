@@ -110,6 +110,7 @@ namespace Risebird.Entities.ViewModel
         public int returnvaluetype { get; set; }
         public int TimeSlotDays { get; set; }
         public bool isCandidateportal { get; set; }
+        public int Pagereturnvalue { get; set; }
     }
     public class TimeslotsVM
     {

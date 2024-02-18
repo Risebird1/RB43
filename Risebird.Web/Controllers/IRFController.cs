@@ -8778,23 +8778,23 @@ namespace Risebird.Web.Controllers
 
         private async Task SendCampaignLevelMailsToInterviewers(IEnumerable<AssessmentGroupInterviewerDetails> interviewers, string assessmentGroupName, int campaignId)
         {
-            string source = "ml";
+            //string source = "ml";
 
-            var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
-            foreach (var item in interviewers)
-            {
-                string yesbutton = "https://portal.risebird.io/IRF/CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=true&uniqueid=" + item.uniqueid + "&cmpId=" + campaignId + "&dec=" + encryptedDate;
-                string nobutton = "https://portal.risebird.io/IRF/CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=false&uniqueid=" + item.uniqueid + "&cmpId=" + campaignId + "&dec=" + encryptedDate;
-                //string dropMyProfileButton = "https://portal.risebird.io/IRF/CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=4&uniqueid=" + item.uniqueid + "&agId=" + irfId + "&dec=" + encryptedDate;
-                Mail _mail = new Mail
-                {
-                    TO = item.EmailId,
-                    Subject = "Current Availability (2 days) check for skills based on: " + assessmentGroupName + " Risebird Interviews"
-                };
+            //var encryptedDate = await _encryptionHelper.EncryptDateTime(DateTime.Now);
+            //foreach (var item in interviewers)
+            //{
+            //    string yesbutton = "https://portal.risebird.io/IRF/CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=true&uniqueid=" + item.uniqueid + "&cmpId=" + campaignId + "&dec=" + encryptedDate;
+            //    string nobutton = "https://portal.risebird.io/IRF/CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=false&uniqueid=" + item.uniqueid + "&cmpId=" + campaignId + "&dec=" + encryptedDate;
+            //    //string dropMyProfileButton = "https://portal.risebird.io/IRF/CampaignUpdateInterviewerAvailbilityStatusForAssessmentGroup?isAv=4&uniqueid=" + item.uniqueid + "&agId=" + irfId + "&dec=" + encryptedDate;
+            //    Mail _mail = new Mail
+            //    {
+            //        TO = item.EmailId,
+            //        Subject = "Current Availability (2 days) check for skills based on: " + assessmentGroupName + " Risebird Interviews"
+            //    };
 
-                var emailresult = await _notificationHelper.SendCampaignLevelInterviewerAvailabilityMails(item.EmailId, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, assessmentGroupName, campaignId);
+            //    var emailresult = await _notificationHelper.SendCampaignLevelInterviewerAvailabilityMails(item.EmailId, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, assessmentGroupName, campaignId);
 
-            }
+            //}
 
             //source = "wp";
 
@@ -8805,6 +8805,12 @@ namespace Risebird.Web.Controllers
 
             //_whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
             //_whatsAppVM.Event = "SkillChannel Interviewer Availbility";
+
+            var dto = new CampaignMailDTO { interviewers = interviewers, assessentGroupName = assessmentGroupName, campagignId = campaignId};
+            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SendCampaignMails";
+            //var path = $"http://localhost:7071/api/SendCampaignMails";
+            var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
+            await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
         }
 
         [HttpGet]
