@@ -8380,7 +8380,21 @@ namespace Risebird.Web.Controllers
         {
             return View();
         }
-
+        [HttpPost]
+        public async Task<JsonResult> GetInterviewerPortalUrl(int irfid, int interviewid)
+        {
+            try
+            {
+                string sendMailURL = string.Empty;
+                sendMailURL = "https://" + Request.Host.ToString() + "/Interview/InterviewDetails?id=" + irfid + "&interviewId=" + interviewid;
+                return Json(sendMailURL);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Failed");
+            }
+        }
 
     }
 }
