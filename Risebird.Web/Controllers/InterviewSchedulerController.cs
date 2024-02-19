@@ -356,6 +356,10 @@ namespace Risebird.Web.Controllers
                 model.returnvaluetype = returnvaluetype;
                 return View("ReScheduleEvent", model);
             }
+            if (type == "314999")
+            {
+                model.Pagereturnvalue = 314999;
+            }
             return View(model);
         }
         [HttpPost]
@@ -592,7 +596,14 @@ namespace Risebird.Web.Controllers
                         }
                         ViewBag.Start = 4;
                         ViewBag.interviewDate = interviewdatetime;
-                        return View(model);
+                        if (model.Pagereturnvalue == 314999)
+                        {
+                            return RedirectToAction("UnassignedInterviews", "Dashboard", new { actionstatus="interviewCount"});
+                        }
+                        else
+                        {
+                            return View(model);
+                        }
                     }
                     else
                     {
