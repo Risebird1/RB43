@@ -24,6 +24,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Skill Channel ID")]
         [Required(ErrorMessage = "Please enter existing IRF Name.")]
+        public string StatusValue { get; set; }
         public string IRFId { get; set; }
 
         public int irfIntId { get; set; }
