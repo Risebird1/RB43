@@ -74,6 +74,9 @@ namespace Risebird.Entities.ViewModel
         public string MCQSetsValue { get; set; }
         public string CodeLanguage { get; set; }
         public bool IsSelectedForCampaign { get; set; }
+        public bool isDirectlyTargeted { get; set; }
+        public bool? IsMasterAG { get; set; }
+        public string ParentAG { get; set; }
 
     }
     public class Assessment

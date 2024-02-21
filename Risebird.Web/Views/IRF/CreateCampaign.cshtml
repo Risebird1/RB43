@@ -5,6 +5,7 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <style>
     body {
         background: #f0f0f0 !important;
@@ -19,28 +20,286 @@
        
     }
 .readmore, .readmore1{height: auto!important;}
- 
-</style>
 
+.input {
+    position: relative;
+    width:100%;
+        border: 2px green solid;
+        font-family: Sora, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    }
+
+.input__field {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    border: 3px solid currentColor;
+    padding: calc(var(--size-bezel) * 1.5) var(--size-bezel);
+    color: currentColor;
+    background: transparent;
+    border-radius: var(--size-radius);
+}
+
+.input__label {
+    position: absolute;
+    left: 0;
+       top: -35px;
+    padding: 10px;
+    margin: 10px;
+
+    white-space: nowrap;
+    transform: translate(0, 0);
+    transform-origin: 0 0;
+    background: #FFF;
+    transition: transform 120ms ease-in;
+       font-weight: bold;
+    line-height: 1.2;
+    font-size: 15px;
+    color: green;
+}
+ input:-webkit-autofill,
+  input:-webkit-autofill:focus {
+    transition: background-color 0s 600000s, color 0s 600000s !important;
+  }
+
+.input__field:not(:placeholder-shown) + .input__label {
+    transform: translate(0.25rem, -65%) scale(0.8);
+    color: #fab700
+}
+ .campaignForm .msgroup .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .campaignForm .msgroup .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+    border-color: #000 !important;
+    background-color: #fff !important;
+}
+
+
+.msgroup .mdc-checkbox .mdc-checkbox__native-control:enabled ~ .mdc-checkbox__background .mdc-checkbox__checkmark {
+    color: #fff;
+    width: 20px;
+    top: -6px;
+    color: var(--mdc-checkbox-ink-color, #000);
+}
+.msgroup{
+        width: 500px;
+    margin: 0px auto;
+}
+.campaignForm .msgroup .mdc-checkbox__background {
+    border: 1.5px solid #000 !important;
+}
+.campaignForm .msgroup .assessment-name{
+        font-size: 16px;
+    top: -19px;
+    color: #000;
+}
+.campaignForm .msgroup .mdc-checkbox {
+    top: -10px;
+}
+
+.toggled-on .toggle-content {
+    display: block;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 10px; 
+}
+
+.toggle-content {
+    box-shadow: inset 0px 0px 10px #d8e8c8;
+}
+
+.toggle-content p {
+    margin: 15px 0 15px 0; 
+}
+
+.toggled-on .fa-angle-down {
+    display: none; 
+}
+
+.toggle-title {
+    cursor: pointer;
+    position: relative;
+    padding-left: 55px;
+    background-color: #e0f4cbbf;
+    padding: 10px;
+    border-radius: 11px;
+    text-align: center;
+    width: 460px;
+    margin: 0px auto;
+}
+
+.toggle-title i {
+    position: absolute;
+    right: 7px;
+    font-size: 2em;
+    top: 8px;
+}
+.toggled-off .toggle-content {
+    display: none; 
+}
+
+.toggled-off .fa-angle-up {
+    display: none; 
+}
+
+ .select2-container {
+  min-width: 400px;
+}
+
+.select2-results__option {
+  padding-right: 20px;
+  vertical-align: middle;
+}
+.select2-results__option:before {
+  content: "";
+  display: inline-block;
+  position: relative;
+  height: 20px;
+  width: 20px;
+  border: 2px solid #e9e9e9;
+  border-radius: 4px;
+  background-color: #fff;
+  margin-right: 20px;
+  vertical-align: middle;
+}
+.select2-results__option[aria-selected=true]:before {
+  font-family:fontAwesome;
+  content: "\f00c";
+  color: #fff;
+  background-color: #f77750;
+  border: 0;
+  display: inline-block;
+  padding-left: 3px;
+}
+.select2-container--default .select2-results__option[aria-selected=true] {
+  background-color: #fff;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+  background-color: #eaeaeb;
+  color: #272727;
+}
+.select2-container--default .select2-selection--multiple {
+  margin-bottom: 7px;
+}
+.select2-container--default.select2-container--open.select2-container--below .select2-selection--multiple {
+  border-radius: 4px;
+}
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+  border-color: #f77750;
+  border-width: 2px;
+}
+.select2-container--default .select2-selection--multiple {
+  border-width: 2px;
+}
+.select2-container--open .select2-dropdown--below {
+  
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+}
+.select2-selection .select2-selection--multiple:after {
+  content: 'hhghgh';
+}
+/* select with icons badges single*/
+.select-icon .select2-selection__placeholder .badge {
+  display: none;
+}
+.select-icon .placeholder {
+/*  display: none; */
+}
+.select-icon .select2-results__option:before,
+.select-icon .select2-results__option[aria-selected=true]:before {
+  display: none !important;
+  /* content: "" !important; */
+}
+.select-icon  .select2-search--dropdown {
+  display: none;
+}
+  .campaignForm .select2-container--default .select2-selection--multiple {
+        background-color: white !important;
+        border:none!important;
+        border-radius: 4px;
+        cursor: text;
+    
+    }
+
+    .campaignForm .select2-container--default .select2-search--inline .select2-search__field {
+        border:none!important;
+    }
+    .campaignForm  .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #b6c3cb61;
+    border: 0px solid #aaa;
+    border-radius: 4px;
+    cursor: default;
+    float: left;
+    margin-right: 5px;
+    margin-top: 12px;
+    padding: 4px 5px;
+}
+
+    .campaignForm .select2-container {
+        min-width: 100%;
+        background: #fff;
+    }
+
+  .sub-assmntgrp input::-ms-input-placeholder { /* Edge 12-18 */
+ color: #888;
+ position:relative;top:5px;left:8px;font-weight:normal;
+}
+
+   .sub-assmntgrp input::placeholder {
+  color: #888;
+        position: relative;
+        top: 5px;
+        left: 8px;
+        font-weight: normal;
+}
+</style>
 
 <div class="campaignForm">
     <form asp-action="CreateCampaignS1" method="post" id="form_1" class="form-container" style="display:none">
-        <span class="count">1</span> <h1 asp-for="AssessmentGroupId">Campaign For <span> @Model.AssessmentGroupName</span></h1>
+    <h1 asp-for="AssessmentGroupId">Campaign For <span> @Model.AssessmentGroupName</span></h1>
         <div class="campaignName">
-            <label for="LastName">What's Your Campaign Name:</label>
-            <input style="height:35px; border: 2px #918a8a85 solid; color: #979292; font-weight: 500;" type="text" id="CampaignName" name="CampaignName" onblur = "checkUniqueness(this.value)" value="@Model.CampaignName" required>
-            @Html.ValidationMessageFor(model => model.CampaignName, "", new { @id = "uniqueMsg", @class = "text-danger" })
+          
+       <label class="input">
+      <input class="input__field" type="text" placeholder=" "  id="CampaignName" name="CampaignName" onblur = "checkUniqueness(this.value)" value="@Model.CampaignName" required>
+      <span class="input__label" style="top:-24px!important;color:green!important;font-size: 18px;margin:7px;padding:5px;">Your Campaign Name</span>
+    </label>
+            
+     @Html.ValidationMessageFor(model => model.CampaignName, "", new { @id = "uniqueMsg", @class = "text-danger" })
 
         </div>
-        <div>
-            <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select target assesment groups </h2>
-            @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Count() > 0)
+        @if(!Model.CreateMasterAG)
+        {
+        <div class="msgroup">
+        <div class="mdc-checkbox">
+            @Html.CheckBoxFor(m => m.CreateMasterAG, new { @class = "mdc-checkbox__native-control" })
+             <div class="mdc-checkbox__background">
+                <svg class="mdc-checkbox__checkmark"
+                     viewBox="0 0 24 24">
+                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                </svg>
+                <div class="mdc-checkbox__mixedmark"></div>
+            </div>
+
+        </div>
+        <label class="assessment-name">Please tick the checkbox to create Master Assessment Group</label>
+        </div>
+        <div class="col-md-12">
+
+
+            <div class="toggled-off">
+  <div class="toggle-title">
+  
+    <h3>Click here to select Target assessment groups</h3>
+                    <i class="fa fa-angle-down fa-fw"></i>
+                    <i class="fa fa-angle-up fa-fw"></i>
+                </div>
+  <!-- end toggle-title --->
+  <div class="toggle-content"> 
+   @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Count() > 0)
             {
                 for (int i = 0; i < Model.AssessmentGroups.Count(); i++)
                 {
                     <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
 
-                        <div class="mdc-checkbox" style="top:5px;">
+                        <div class="mdc-checkbox" @* style="top:5px;" *@>
                             @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
                             <div class="mdc-checkbox__background">
                                 <svg class="mdc-checkbox__checkmark"
@@ -57,7 +316,84 @@
                     </div>
                 }
             }
+  </div>
+  <!-- end section-toggle--> 
+</div>
+
+
+
+
+
+
+          @*  <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select target assessment groups </h2>*@
+         @*   @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Count() > 0)
+            {
+                for (int i = 0; i < Model.AssessmentGroups.Count(); i++)
+                {
+                    <div class="mdc-form-field">
+
+                        <div class="mdc-checkbox">
+                            @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark"
+                                     viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
+
+                        </div>
+                        <label class="assessment-name">@Model.AssessmentGroups[i].AssessmentGroup</label>
+                        @Html.HiddenFor(x => x.AssessmentGroups[i].id)
+                        @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
+                    </div>
+                }
+            }*@
         </div>
+        }
+        <div class="form-group">
+@*            <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectedRemainingAssessmentGroups">Choose from the following remaining Assessment Groups</label>
+*@            <div class="sub-assmntgrp">
+                <label class="input">
+     
+      
+                      <select id="SelectedRemainingAssessmentGroups" data-placeholder="None Selected" name="SelectedRemainingAssessmentGroups" class="js-select2 input__field" multiple="multiple">
+
+                    @* @for (int i = 0; i < Model.RemainingAssessmentGroups.Count(); i++)
+                    {
+                        <option value="@Model.RemainingAssessmentGroups[i].id">@Model.RemainingAssessmentGroups[i].AssessmentGroup</option>
+
+                        @Html.HiddenFor(x => x.RemainingAssessmentGroups[i].id)
+                        @Html.HiddenFor(x => x.RemainingAssessmentGroups[i].AssessmentGroup)
+                    } *@
+                    @if(Model.RemainingAssessmentGroups != null && Model.RemainingAssessmentGroups.Count()> 0)
+                    {
+                        foreach (var item in Model.RemainingAssessmentGroups)
+                        {
+                            @if (item != null)
+                            {
+                                <option value="@item.id">@item.AssessmentGroup</option>
+                            }
+
+                        }
+                    }
+                    
+                </select>
+
+      
+      
+      
+      <span class="input__label">Choose from remaining Assessment Groups</span>
+    </label>
+
+
+
+
+            </div>
+        </div>
+
+        <input type="hidden" name="SerializedRemainingAGList" id="SerializedRemainingAGList" value="@Model.SerializedRemainingAGList" />
+
 
         <button type="submit" id="id_Submit_Form1">Save and Next »</button>
 
@@ -71,14 +407,14 @@
     </form>
 
     <form asp-action="CreateCampaignS2" method="post" id="form_2" class="form-container" style="display:none">
-        <span class="count">2</span>  <h1 asp-for="AssessmentGroupId">Campaign For<span> @Model.AssessmentGroupName</span></h1>
+        <h1 asp-for="AssessmentGroupId">Campaign For<span> @Model.AssessmentGroupName</span></h1>
 
 
-        <div style="margin:20px auto 10px auto;">
+        <div style="margin:0px auto 20px auto;">
 
-            <label for="LastName" style="font-size:18px;font-weight:normal">
+            <label for="LastName" style="font-size:18px;font-weight:normal;text-align:center;line-height:12px; display:block;">
                 Campaign Name: <span style="color: #66bb64;
-    font-weight: 600;font-size:20px;">  @Model.CampaignName</span>
+    font-weight: 600;font-size:28px;">  @Model.CampaignName</span>
             </label>
 
         </div>
@@ -90,10 +426,10 @@
       <div style="width:5%" class="cell">
        
       </div>
-      <div  style="width:40%;padding:4px;" class="cell">
+      <div  style="width:40%;padding:4px;font-weight:500;" class="cell">
         Skill Channel 
       </div>
-      <div style="width:55%;padding:4px;" class="cell">
+                    <div style="width:55%;padding:4px;font-weight:500;" class="cell">
        Assessment Group Name
       </div>
      
@@ -120,13 +456,13 @@
                     </div>
       </div>
       <div class="cell"  style="width:40%">
-          <label class="assessment-name">@Model.SkillChannels[i].IRFId</label>
+          <label class="assessment-name" style="top:8px!important;position:relative;">@Model.SkillChannels[i].IRFId</label>
                     @Html.HiddenFor(x => x.SkillChannels[i].IRFId)
                     @Html.HiddenFor(x => x.SkillChannels[i].id)
 
       </div>
       <div class="cell"  style="width:55%">
-       <label class="assessment-name" style="color:#2a77b5;font-weight:500">@Model.SkillChannels[i].AssessmentGroupName</label>
+       <label class="assessment-name" style="color:#2a77b5;font-weight:500;top:8px!important;position:relative;">@Model.SkillChannels[i].AssessmentGroupName</label>
       </div>
      
     </div>
@@ -166,120 +502,142 @@
             </div>
   
 </div>
-        
+        <input type="hidden" name="SerializedRemainingAssessmentGroupsForSummary" id="SerializedRemainingAssessmentGroupsForSummary" value="@Model.SerializedRemainingAssessmentGroupsForSummary" />
+
     </form>
+    @if (Model.CurrentForm == "id_Summary")
+    {
+        <div id="id_Summary" class="form-container" style="display:none">
+            <h1 style="color:#09395e">Campaign Summary: <span style="font-size:28px;font-weight: bold;color: #09395e;">  @Model.CampaignName</span></h1>
+            <div style="margin:30px auto;">
+                <div>
+                    <div>
+                        <table class="table">
+                            <thead>
+                                <tr id=@Model.id class="row header" style="background:#9ba9c9 !important">
 
-    <div id="id_Summary" class="form-container" style="display:none">
-        <span class="count">3</span> <h1>Campaign Summary For  <span style="color: #66bb64; font-weight: 600;font-size:28px;">  @Model.CampaignName</span></h1>
-        <div style="margin:30px auto;">
+                                    <th style="padding: 0px 20px;width:40%">
+                                        <div style="padding-bottom:0px;font-weight:500;">
+                                            Primary Assessment Group
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div style="padding-bottom:0px;font-weight:500;width:35%">
+                                            Secondary Assessment Group(s)
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div style="padding-bottom:0px;font-weight:500;">
+                                            Skill Channel(s) Selected
+                                        </div>
+                                    </th>
+                                    @* <th> <div class="cell" style="padding-bottom:0px;">
+                                Interviewers communicated to
+                                </div></th>*@
+                                </tr>
+                            </thead>
 
+                            <tbody>
+                                <tr class="row" style="background:#e9e9e957">
 
+                                    <td valign="top" style="background: #ece9e9;padding: 10px 20px;line-height: 50px;width:40%">
+                                        <div>
+                                            <span style="color: #2a77b5;font-weight: 600;font-size:16px;"> @Model.AssessmentGroupName</span>
+                                        </div>
+                                    </td>
+                                    <td valign="top" style="padding: 10px 10px;">
+                                        <div>
 
-     <div class="wrapper">
- <div >
-  <table class="table">
-    <thead>
-    <tr id=@Model.id class="row header" style="background:#9ba9c9 !important">
-    
-    <th>  <div class="cell" style="padding-bottom:0px;">
-      Primary Assessment Group 
-      </div></th>
-    <th>  <div class="cell" style="padding-bottom:0px;">
-       Secondary Assessment Group(s)
-      </div></th>
-    <th>  <div class="cell" style="padding-bottom:0px;">
-      Skill Channel(s) Selected
-      </div></th>
-    @* <th> <div class="cell" style="padding-bottom:0px;">
-      Interviewers communicated to
-      </div></th>*@
-    </tr>
-    </thead>
+                                            @if (Model.AssessmentGroups != null)
+                                            {
+                                                @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
+                                                {
+                                                    <div id="assessment" style="color: #4aaba5;font-weight: 500;font-size:16px;margin-right:10px;">
+                                                        <div class="more-assessment">
+                                                            @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
+                                                            {
 
-    <tbody> 
-        <tr class="row" style="background:#e9e9e957">
-     
-       <td valign="top">
-           <div class="cell">
-          <span style="color: #2a77b5;font-weight: 600;font-size:16px;"> @Model.AssessmentGroupName</span>
-      </div>
-      </td>
-      <td valign="top">
-          <div class="cell">
+                                                                @Model.AssessmentGroups[i].AssessmentGroup
 
-       @if (Model.AssessmentGroups != null)
-                    {
-                        @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign) != null)
-                        {
-                            <div id="assessment" style="color: #4aaba5;font-weight: 500;font-size:16px;margin-right:10px;">
-                                <div class="more-assessment">
-                            @for (int i = 0; i < Model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Count(); i++)
-                            {
-
-                         @Model.AssessmentGroups[i].AssessmentGroup<br/>
-
-
-                            }</div>
-                            </div>
-                            <div style="clear:both"></div>
-                            <button id="expandbtn1" class="moreless-btn">Read more</button>
-                        }
-                  }
-      </div>
-      </td>
-     <td valign="top">
-         <div class="cell">
-        @if (Model.SkillChannels != null)
-                    {
-                         <div id="skill"  style="color:#1dbe52;font-weight: 600; margin-right:10px;font-size:16px; font-weight: 500; font-size: 14px; padding: 3px;">
-                              <div class="more-skill">
-                        @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
-                        {
-                           @item.IRFId<br/>
-
-                        }
-                        </div>
-                         </div>
-                        <div style="clear:both"></div>
-                       <button id="expandbtn" class="moreless-btn">Read more</button>
-                    }
-      </div>
-      </td>
-@*
-     <td valign="top">
-         <div class="cell">
-        <div style="font-size:17px;font-weight:normal;">
-                   
-                    @if (Model.Interviewers != null)
-                    { <div id="intervieweremail" style="height:50px;">
-                        @foreach (var item in Model.Interviewers?.Distinct())
-                        {
+                                                                <br />
 
 
-                          <span style="color: #7a9683;font-weight: 500;float:left;font-size:16px;">@item.EmailId</span>
-                           
+                                                            }
+                                                            @if (Model.RemainingAssessmentGroupsForSummary != null && Model.RemainingAssessmentGroupsForSummary.Count() > 0)
+                                                            {
+                                                                foreach (var item in Model.RemainingAssessmentGroupsForSummary)
+                                                                {
+                                                                    @item.AssessmentGroup
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div style="clear:both"></div>
+                                                    <button id="expandbtn1" class="moreless-btn">Read more</button>
+                                                }
+                                            }
 
 
-                        }</div>
-                       <button id="expandbtn" class="moreless-button">Read more</button>
-                       }
-                </div>
-      </div>
-      </td>*@
-    </tr>
-    
-  </tbody>
-  </table>
-  </div>
+                                        </div>
+                                    </td>
+                                    <td valign="top" style="padding: 10px 10px; background: #c8d2c826;width:35%">
+                                        <div>
+                                            @if (Model.SkillChannels != null)
+                                            {
+                                                <div id="skill" style="color:#1dbe52;font-weight: 600; margin-right:10px;font-size:16px; font-weight: 500; font-size: 14px; padding: 3px;">
+                                                    <div class="more-skill">
+                                                        @foreach (var item in Model.SkillChannels.Where(x => x.IsSelectedForCampaign))
+                                                        {
+                                                            @item.IRFId
 
-            <a asp-action="Campaigns" class="button" style="width: 200px;
+                                                            <br />
+
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div style="clear:both"></div>
+                                                <button id="expandbtn" class="moreless-btn">Read more</button>
+                                            }
+                                        </div>
+                                    </td>
+                                    @*
+                                <td valign="top">
+                                <div class="cell">
+                                <div style="font-size:17px;font-weight:normal;">
+
+                                @if (Model.Interviewers != null)
+                                { <div id="intervieweremail" style="height:50px;">
+                                @foreach (var item in Model.Interviewers?.Distinct())
+                                {
+
+
+                                <span style="color: #7a9683;font-weight: 500;float:left;font-size:16px;">@item.EmailId</span>
+
+
+
+                                }</div>
+                                <button id="expandbtn" class="moreless-button">Read more</button>
+                                }
+                                </div>
+                                </div>
+                                </td>*@
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <a asp-action="Campaigns" class="button" style="width: 250px;
     text-decoration: none;
-    line-height: 36px;
-   background:grey;
-    color: #fff;">Campaign List</a>
+    line-height: 35px;
+    height: 40px;margin-top:35px;
+     background: #42a5f5;
+    color: #fff;">Campaign List »</a>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+
+    }
 </div>
 
 <script>
@@ -422,4 +780,33 @@
         }, 5000);
     }
   </script>
+  <script>
+          // toggle class show hide text section
+$(document).on('click', '.toggle-title', function() {
+    $(this).parent()
+        .toggleClass('toggled-on')
+        .toggleClass('toggled-off');
+});
 
+  </script>
+<link rel="stylesheet" defer href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link rel="stylesheet" defer href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" defer rel="stylesheet" />
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+  <script>
+      $(".js-select2").select2({
+      closeOnSelect : false,
+     
+      // allowHtml: true,
+      allowClear: true,
+      tags: true // создает новые опции на лету
+    });
+
+
+  </script>
