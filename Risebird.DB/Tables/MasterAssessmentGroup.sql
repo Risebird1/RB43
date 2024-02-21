@@ -6,12 +6,15 @@ BEGIN
 CREATE TABLE [dbo].[MasterAssessmentGroup](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[MAGName] [varchar](100) NULL,--MAG stands for Master Assessment Group
-	[IsDeleted] [bit] NOT NULL default 0,
+	[AssessmentGroupId][int] null,
+	[IsDeleted] [bit] NULL,
 	[CreatedOn] [datetime] NOT NULL,
-	[CreatedBy] [int] NOT NULL,
+	[CreatedBy] [varchar](100) NULL,
 	[ModifiedOn] [datetime] NULL,
-	[ModifiedBy] [int] NULL,
+	[ModifiedBy] [varchar](100) NULL,
+	CONSTRAINT [FK_MasterAssessmentGroup_AssessmentGroupId] FOREIGN KEY([AssessmentGroupId]) REFERENCES [dbo].[AssessmentGroup] ([id]),
 	CONSTRAINT UQ_MasterAssessmentGroup_MAGName UNIQUE(MAGName),
+	CONSTRAINT UQ_MasterAssessmentGroup_AssessmentGroupId UNIQUE(AssessmentGroupId),
 
  CONSTRAINT [PK_MasterAssessmentGroup] PRIMARY KEY CLUSTERED 
 (
@@ -22,7 +25,4 @@ CREATE TABLE [dbo].[MasterAssessmentGroup](
 END
 
 GO
-
-
-
 

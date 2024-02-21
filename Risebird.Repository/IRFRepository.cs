@@ -7775,7 +7775,12 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue)
+        /// <summary>
+        /// the functionality of this function was later changed to get both similar and dissimilar assessment groups, differentiated from each other by a flag
+        /// </summary>
+        /// <param name="searchValue"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG)
         {
             try
             {
@@ -7785,6 +7790,7 @@ namespace Risebird.Repository
                     {
                         var parameters = new DynamicParameters();
                         parameters.Add("@searchValue", searchValue.Trim());
+                        parameters.Add("@isAlreadyMasterAG", isAlreadyMasterAG);
                         var result = await SqlMapper.QueryAsync<AssignmentVM>(con, "dbo.usp_GetSimilarAssessmentGroups", parameters, null,
                             commandType: CommandType.StoredProcedure);
                         return result;
@@ -7835,13 +7841,22 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     DataTable agrpsDt = new DataTable();
+                    agrpsDt.Columns.Add("AssessmentGroupId", typeof(int));
+
                     if (model.AssessmentGroups != null && model.AssessmentGroups.Count() > 0 && model.AssessmentGroups.Any(x=>x.IsSelectedForCampaign))
                     {
-                        agrpsDt.Columns.Add("AssessmentGroupId", typeof(int));
-                        
                         foreach (var item in model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
                         {
                             agrpsDt.Rows.Add(item.id);
+                        }
+
+                    }
+
+                    if (model.SelectedRemainingAssessmentGroups != null && model.SelectedRemainingAssessmentGroups.Count() > 0)
+                    {
+                        foreach (var id in model.SelectedRemainingAssessmentGroups)
+                        {
+                            agrpsDt.Rows.Add(id);
                         }
 
                     }
@@ -7864,6 +7879,9 @@ namespace Risebird.Repository
 
                     cmd.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
                     cmd.Parameters["@timeNow"].Value = DateTime.Now;
+
+                    cmd.Parameters.Add(new SqlParameter("@CreateMasterAG", SqlDbType.Bit));
+                    cmd.Parameters["@CreateMasterAG"].Value = model.CreateMasterAG;
 
                     SqlParameter resultCampaignId = new SqlParameter();
                     resultCampaignId.ParameterName = "@resultCampaignId";
