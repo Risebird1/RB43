@@ -1057,7 +1057,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    ViewBag.emailid= emailid;
+                    ViewBag.emailid = emailid;
                     ViewBag.PageFrom = "Completed";
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
@@ -2531,8 +2531,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        #region Missed Candidate
         [HttpGet]
-        public async Task<IActionResult> InterviewManagementDetails(DateTime interviewdate)
+        public async Task<IActionResult> InterviewManagementDetails(string type, string pagetype)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2540,8 +2541,18 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var Emailid = HttpContext.Session.GetString("email")?.Trim();
                 Emailid = Emailid.Replace("\"", "");
-                var interviewmanagement = await _dashboardService.GetInterviewManagementDetails(interviewdate, interviewdate.AddDays(1), Emailid);
-                interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 1).ToList();
+                DateTime startdate;
+                DateTime enddate;
+                startdate = DateTime.Now.Date.AddDays(-7);
+                enddate = DateTime.Now.Date.AddDays(1);
+                if (HttpContext.Session.GetString("InterviewManagementDetailsfilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("InterviewManagementDetailsfilters"));
+                    startdate = Convert.ToDateTime(filter.StartDate);
+                    enddate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                }
+                var interviewmanagement = await _dashboardService.GetInterviewManagementDetails(startdate, enddate, Emailid);
+                interviewmanagement = interviewmanagement.Where(x => (x.IsRescheduleNotificationSent == 1 && x.MeetingStatus != 3 && x.MeetingStatus != 4 && x.MeetingStatus != 6 && x.MeetingStatus != 7 && x.MeetingStatus != 8) || (x.PerformedOn != null && (x.MeetingStatus == 1 || x.MeetingStatus == 5 || x.MeetingStatus == 9))).ToList();
                 interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                 return View(interviewmanagement);
             }
@@ -2550,6 +2561,53 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> InterviewManagementDetails(MyInterviewFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("InterviewManagementDetailsfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("InterviewManagementDetails");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetInterviewManagementDetailsfilters()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("InterviewManagementDetailsfilters");
+                    return RedirectToAction("InterviewManagementDetails");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("InterviewManagementDetails");
+            }
+        }
+        #endregion
+        #region Interview Management
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> EmergencyInterviewDetails(string interviewdate, string type, string pagetype)
@@ -2656,6 +2714,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("EmergencyInterviewDetails", new { interviewdate = DateTime.Now.Date.ToString() });
             }
         }
+        #endregion
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(string recipientType)

@@ -34,6 +34,7 @@ namespace Risebird.Entities.ViewModel
         public int ProxyCount { get; set; }
         public int BounceDroppedCandidateMailCount { get; set; }
         public int DMApproveCount { get; set; }
+        public int MissedCandidateCount { get; set; }
 
     }
     public class MeetingDetailsForParticipant

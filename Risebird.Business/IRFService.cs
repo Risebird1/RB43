@@ -3691,12 +3691,16 @@ namespace Risebird.Business
                 return false;
             }
         }
-
-        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue)
+        /// <summary>
+        /// the functionality of this function was later changed to get both similar and dissimilar assessment groups, differentiated from each other by a flag
+        /// </summary>
+        /// <param name="searchValue"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG = false)
         {
             try
             {
-                var result = await _irfRepository.GetSimilarAssessmentGroups(searchValue);
+                var result = await _irfRepository.GetSimilarAssessmentGroups(searchValue, isAlreadyMasterAG);
                 return result;
             }
             catch (Exception e)

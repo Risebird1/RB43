@@ -16,6 +16,7 @@ Create PROCEDURE [dbo].[usp_CreateOrUpdateCampaign]
 	@PerformedBy varchar(100),
 	@timeNow datetime,
 	@CampaignAssessmentGroupsBulkData AS [dbo].[CampaignAssessmentGroups_TableType] READONLY,
+	@CreateMasterAG bit,
 	@resultCampaignId int output
 	
 )    
@@ -47,7 +48,32 @@ BEGIN
 
 			SELECT @resultCampaignId, cbd.AssessmentGroupId, @timeNow, @PerformedBy FROM @CampaignAssessmentGroupsBulkData cbd   
 			
+			if(@CreateMasterAG = 1)
+			Begin
 
+			declare @resultMagId int
+
+			insert into MasterAssessmentGroup(MAGName, AssessmentGroupId, CreatedOn, CreatedBy)
+			values ((select AssessmentGroup from AssessmentGroup where id = @AssessmentGroupId), @AssessmentGroupId, @timeNow, @PerformedBy)
+
+			select  @resultMagId = SCOPE_IDENTITY()
+
+			insert into SecondaryAssessmentGroups 
+			([MAGId],
+			[AssessmentGroupId],
+			[CreatedModifiedOn])
+
+			SELECT @resultMagId, cbd.AssessmentGroupId, @timeNow FROM @CampaignAssessmentGroupsBulkData cbd   
+			WHERE NOT EXISTS (
+			SELECT 1
+			FROM SecondaryAssessmentGroups
+			WHERE SecondaryAssessmentGroups.AssessmentGroupId = cbd.AssessmentGroupId
+			  AND SecondaryAssessmentGroups.MAGId = @resultMagId
+			  and cbd.AssessmentGroupId != @AssessmentGroupId
+			)
+			
+
+			End
 
 	   End
 	   
@@ -67,7 +93,35 @@ BEGIN
 			
 
 	SELECT @resultCampaignId, cbd.AssessmentGroupId, @timeNow, @PerformedBy FROM @CampaignAssessmentGroupsBulkData cbd   
-		
+	
+	if(@CreateMasterAG = 1)
+	Begin
+
+	declare @magId int
+	declare @primaryAGId int = (select AssessmentGroupId from AGCampaigns where id =@campaignId)
+			
+	select  @magId = id from MasterAssessmentGroup where AssessmentGroupId = @primaryAGId
+
+	delete from SecondaryAssessmentGroups where MAGId= @magId
+
+	insert into SecondaryAssessmentGroups 
+	([MAGId],
+	[AssessmentGroupId],
+	[CreatedModifiedOn])
+
+	SELECT @magId, cbd.AssessmentGroupId, @timeNow FROM @CampaignAssessmentGroupsBulkData cbd   
+	WHERE NOT EXISTS (
+	SELECT 1
+	FROM SecondaryAssessmentGroups
+	WHERE SecondaryAssessmentGroups.AssessmentGroupId = cbd.AssessmentGroupId
+		AND SecondaryAssessmentGroups.MAGId = @magId
+		and cbd.AssessmentGroupId != @primaryAGId
+	)
+
+	END
+
+	
+
    End
 	
 

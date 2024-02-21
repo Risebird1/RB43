@@ -60,6 +60,8 @@
                                         <th width="4%">Number Of Interviewers(Active)</th>
                                         <th width="4%">Number Of IRF</th>
                                         <th>Insta Available</th>
+                                        <th>Is Master AG</th>
+                                        <th>Parent AG</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -93,6 +95,22 @@
                                             {
                                                 <td>No</td>
                                             }
+                                            @if (item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
+                                            {
+                                                <td>Yes</td>
+                                            }
+                                            else
+                                            {
+                                                <td>No</td>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.ParentAG))
+                                            {
+                                                <td>@item.ParentAG</td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
                                             <td class="text-left four">
                                                 
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Edit">
@@ -119,7 +137,7 @@
                                                         <span onclick="javascript:GetAllActiveAssessmentGroupInterviewersForSME('@item.id', '@item.AssessmentGroup')" title="Click here to appoint SME" class="mdc-fab__icon material-icons"><i style="font-size:13px;" class="fas fa-user-check"></i></span>
                                                 </button>
 
-                                                <a  style="text-decoration:none;" target="_blank" href="@Url.Action("CreateCampaign", "IRF" , new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup})" title="Create Email Campaign">
+                                                    <a style="text-decoration:none;" target="_blank" href="@Url.Action("CreateCampaign", "IRF" , new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG})" title="Create Email Campaign">
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Create Email Campaign" style="position:relative;top:3px;">
                                                             <span title="Create Email Campaign" class="mdc-fab__icon material-icons"><img style="width:18px;" src="~/img/email-campaign.png"/></span>
                                                     </button>

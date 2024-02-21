@@ -8638,7 +8638,7 @@ namespace Risebird.Web.Controllers
         #region Assessment Group Campaigns
 
         [Authorize]
-        public async Task<IActionResult> CreateCampaign(int assessmentGroupId, string assessmentGroupName)
+        public async Task<IActionResult> CreateCampaign(int assessmentGroupId, string assessmentGroupName, bool isAlreadyMasterAG)
         {
             try
             {
@@ -8654,9 +8654,17 @@ namespace Risebird.Web.Controllers
                         model.AssessmentGroupId = assessmentGroupId;
                         model.AssessmentGroupName = assessmentGroupName;
                         model.CurrentForm = "form_1";
+                        model.IsAlreadyMasterAG = isAlreadyMasterAG;
                         //var searchValue = assessmentGroupName.Trim()?.Split(" ")[0];
-                        model.AssessmentGroups = (IList<AssignmentVM>)(await _irfService.GetSimilarAssessmentGroups(assessmentGroupName.Trim()));//call db and search for assessmentGroups that carry a similar name
+                        var allAGs = (await _irfService.GetSimilarAssessmentGroups(assessmentGroupName.Trim(), isAlreadyMasterAG));//call db and search for assessmentGroups that carry a similar name.         /// the functionality of this function was later changed to get both similar and dissimilar assessment groups, differentiated from each other by a flag
+
+                        model.AssessmentGroups = (IList<AssignmentVM>)(allAGs.Where(x => x.isDirectlyTargeted).ToList());
                         model.AssessmentGroups.Where(x => x.AssessmentGroup == assessmentGroupName).FirstOrDefault().IsSelectedForCampaign = true;
+
+                        model.RemainingAssessmentGroups = allAGs.Where(x => !x.isDirectlyTargeted);
+                        
+                        model.SerializedRemainingAGList = JsonConvert.SerializeObject(model.RemainingAssessmentGroups);
+
                         return View(model);
                     }
                     else
@@ -8696,8 +8704,27 @@ namespace Risebird.Web.Controllers
                         //create a campaign and save all the selected assessment groups
                         model = _irfService.CreateCampaign(model, emailid);
                         
-                        model.CurrentForm = "form_2";
-                        model.SkillChannels = (IList<IRFVm>)(await _irfService.GetSkillChannelsForAssessmentGroups(model.AssessmentGroups.Where(x=>x.IsSelectedForCampaign).Select(x=>x.id).ToList()));//call db and search for assessmentGroups that carry a similar name
+                        if(model.id > 0)
+                        {
+                            model.CurrentForm = "form_2";
+                            var listAssessmentGroupsClubbed = new List<int>();
+                            listAssessmentGroupsClubbed.AddRange(model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Select(x => x.id));
+                            listAssessmentGroupsClubbed.AddRange(model.SelectedRemainingAssessmentGroups);
+                            model.SkillChannels = (IList<IRFVm>)(await _irfService.GetSkillChannelsForAssessmentGroups(listAssessmentGroupsClubbed));//call db and search for assessmentGroups that carry a similar name
+
+                        }
+                        else
+                        {
+                            model.CurrentForm = "form_1";
+                        }
+
+
+                        model.RemainingAssessmentGroups = JsonConvert.DeserializeObject<IEnumerable<AssignmentVM>>(model.SerializedRemainingAGList);
+
+                        model.RemainingAssessmentGroupsForSummary = model.RemainingAssessmentGroups.Where(obj => model.SelectedRemainingAssessmentGroups.Contains(obj.id));
+
+                        model.SerializedRemainingAssessmentGroupsForSummary = JsonConvert.SerializeObject(model.RemainingAssessmentGroupsForSummary);
+
                         return View("CreateCampaign", model);
                     }
                     else
@@ -8745,6 +8772,8 @@ namespace Risebird.Web.Controllers
 
                             //send mails to all concerned interviewers
                             SendCampaignLevelMailsToInterviewers(interviewers, model.AssessmentGroupName, model.id.Value);//fire and forget method, keeps sending emails to the interviewers in the background
+                            
+                            model.RemainingAssessmentGroupsForSummary = JsonConvert.DeserializeObject<IEnumerable<AssignmentVM>>(model.SerializedRemainingAssessmentGroupsForSummary);
 
                             model.OutcomeMessage = $"Successfully created campaign named {model.CampaignName} for assessment Group : {model.AssessmentGroupName}";
                         }
@@ -8754,7 +8783,6 @@ namespace Risebird.Web.Controllers
                             model.OutcomeMessage = $"Failed to create campaign for assessment Group : {model.AssessmentGroupName}";
 
                         }
-                        //model.SkillChannels = (IList<IRFVm>)(await _irfService.GetSkillChannelsForAssessmentGroups(model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Select(x => x.id).ToList()));//call db and search for assessmentGroups that carry a similar name
                         return View("CreateCampaign", model);
                     }
                     else

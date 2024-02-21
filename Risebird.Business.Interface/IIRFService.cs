@@ -154,7 +154,7 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
         Task<bool> ApproveDM(int id, string emailid);
         Task<bool> UpdateAffindaIndexFlag(string irfId, bool isIndexCreated);
-        Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue);
+        Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG = false);
         Task<IEnumerable<IRFVm>> GetSkillChannelsForAssessmentGroups(List<int> assessmentGroups);
         AGCampaignModel CreateCampaign(AGCampaignModel model, string loggedInUser);
         bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser);
