@@ -22,11 +22,8 @@ set @clientRole =(select top 1 cu.RoleId from UserList ul join ClientUser cu on 
             
 if(@clientRole=4)--staffing Agency            
 begin            
- Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName from 
- (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner     
-  
-               
-      
+ Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue from 
+ (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner         
  from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
  IRF.JDTiltle,                    
  ul.MobileNumber,im.resumeLink,        
@@ -61,13 +58,14 @@ begin
  join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail and im.IRFId=xy.IRFId                  
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
- join Client cl on cl.id=IRF.ClientId            
+ join Client cl on cl.id=IRF.ClientId          
+ outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=xy.imid and CandidateId = xy.CandidateMasterId order by cs.Date desc) as CandidateStatus
  where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2    
  order by dtCreatedOn desc             
 end            
 else if(@clientRole=1)        
 begin            
-  Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName from 
+  Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue from 
   (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner    
       
  from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
@@ -103,13 +101,14 @@ begin
  join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail and im.IRFId=xy.IRFId                  
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
- join Client cl on cl.id=IRF.ClientId    
+ join Client cl on cl.id=IRF.ClientId  
+ outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=xy.imid and CandidateId = xy.CandidateMasterId order by cs.Date desc) as CandidateStatus
  where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
  order by dtCreatedOn desc             
 end          
 else if(@clientRole=9)        
 begin            
-  Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName from 
+  Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue from 
   (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId ,cd.ChannelOwner   
 from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
  ul.MobileNumber,im.resumeLink,c.ClientHRAttemptContact as ClientHrContact,        
@@ -140,18 +139,15 @@ from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.Fir
  join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail and im.IRFId=xy.IRFId                  
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
- join Client cl on cl.id=IRF.ClientId    
+ join Client cl on cl.id=IRF.ClientId   
+ outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=xy.imid and CandidateId = xy.CandidateMasterId order by cs.Date desc) as CandidateStatus
  where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
  order by dtCreatedOn desc             
 end          
 else            
 begin            
- Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName 
- from (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner     
-  
-               
-     
-       
+ Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue
+ from (Select distinct imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner         
  from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
  ul.MobileNumber,im.resumeLink,        
  --im.ClientHrContact as ClientHrContact,        
@@ -186,6 +182,7 @@ begin
  join InterviewComments ic on im.id=ic.interviewid              
  join IRF on im.IRFId=IRF.IRFId              
  join Client cl on cl.id=IRF.ClientId   
+ outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=xy.imid and CandidateId = xy.CandidateMasterId order by cs.Date desc) as CandidateStatus
  where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2       
  order by dtCreatedOn desc             
 end            
@@ -200,10 +197,8 @@ Select @Role=idProfile from Userlist where Emailid=@Emailid
 if(@Role=1)                      
 Begin                    
                   
-Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName 
-from (Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId ,cd.ChannelOwner               
-  
-       
+Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue
+from (Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId ,cd.ChannelOwner                   
 from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,
 IRF.JDTiltle,                    
 ul.MobileNumber,        
@@ -235,7 +230,8 @@ group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountr
 join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail                  
 join InterviewComments ic on im.id=ic.interviewid                
 join IRF on im.IRFId=IRF.IRFId              
-join Client cl on cl.id=IRF.ClientId      
+join Client cl on cl.id=IRF.ClientId   
+outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=xy.imid and CandidateId = xy.CandidateMasterId order by cs.Date desc) as CandidateStatus
 where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
 order by dtCreatedOn desc                   
                   
@@ -243,10 +239,8 @@ End
 Else if(@Role=31 or @Role=32)                      
 Begin                    
                   
-Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName 
+Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue 
 from (Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry, CandidateMasterId,cd.ChannelOwner              
-  
-        
 from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
 ul.MobileNumber,        
 --im.ClientHrContact as ClientHrContact,        
@@ -281,6 +275,7 @@ join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEma
 join InterviewComments ic on im.id=ic.interviewid                
 join IRF on im.IRFId=IRF.IRFId              
 join Client cl on cl.id=IRF.ClientId    
+outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=xy.imid and CandidateId = xy.CandidateMasterId order by cs.Date desc) as CandidateStatus
 where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
 order by dtCreatedOn desc                   
                   
@@ -290,10 +285,8 @@ Begin
 declare @hrId int                        
 set @hrId = (select HR.id from UserList ul join HR on HR.UserId=ul.id where EmailId=@Emailid and idProfile=2)                        
                   
-Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName from 
-(Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry , CandidateMasterId,cd.ChannelOwner             
-  
-       
+Select xy.*,im.ClientHrContact,im.resumeLink,ic.MeetingStatus,im.confirmationStatus,irf.CalendlyLink,cl.Name as ClientName,CandidateStatus.StatusValue from 
+(Select imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,MAX(dtCreatedOn) as dtCreatedOn,JobCountry , CandidateMasterId,cd.ChannelOwner                   
 from (Select IRF.id as imid,ul.Emailid as candidateEmail,im.IRFId,(ISNULL(ul.FirstName,'') +' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,                    
 ul.MobileNumber,im.resumeLink,        
 --im.ClientHrContact as ClientHrContact,        
@@ -351,11 +344,13 @@ group by imid,candidateEmail,IRFId,candidateName,JDTiltle,MobileNumber,JobCountr
 join Interviewmeetings im on im.interviewdate=xy.dtCreatedOn and im.candidateEmail=xy.candidateEmail and im.IRFId=xy.IRFId                  
 join InterviewComments ic on im.id=ic.interviewid               
 join IRF on im.IRFId=IRF.IRFId              
-join Client cl on cl.id=IRF.ClientId   
+join Client cl on cl.id=IRF.ClientId  
+outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=xy.imid and CandidateId = xy.CandidateMasterId order by cs.Date desc) as CandidateStatus
 where MeetingStatus=1 or MeetingStatus=3 or MeetingStatus=5 or MeetingStatus=9 or confirmationStatus=2     
 order by dtCreatedOn desc                       
                   
 End                    
 End                    
 End  
+  
 GO

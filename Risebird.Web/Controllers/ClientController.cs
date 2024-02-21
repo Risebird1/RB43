@@ -3838,7 +3838,8 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 8].Value = "Resume";
                 Sheet.Cells[1, 9].Value = "Client HR";
                 Sheet.Cells[1, 10].Value = "Channel Owner";
-              
+                Sheet.Cells[1, 11].Value = "Latest Updated Status";
+
                 int i = 2;
                 if (meetings.Count() > 0)
                 {
@@ -3878,6 +3879,7 @@ namespace Risebird.Web.Controllers
                         }
                         Sheet.Cells[i, 9].Value = item.ClientHrContact;
                         Sheet.Cells[i, 10].Value = item.ChannelOwner;
+                        Sheet.Cells[i, 11].Value = item.StatusValue;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
