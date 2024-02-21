@@ -1277,7 +1277,7 @@ namespace Risebird.CommonHelper
                 {
                     await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 }
-
+               
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);
@@ -1940,7 +1940,7 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
                     }
                 }
-                object[] parameters = new object[] { CandidateName, interviewDate,"" };
+                object[] parameters = new object[] { CandidateName, interviewDate,""};
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotificationV2.html");
                string msgBody = string.Format(rawEmail, parameters);

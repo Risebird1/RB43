@@ -57,9 +57,9 @@ Select @PaymentSLA=Count(ps.id) from PaymentSLADetails ps join Interviewmeetings
   
 Select @Penalty=Count(ip.id) from InterviewPoints ip join Interviewmeetings im on im.id=ip.Interviewid where (PenaltyAmount>0 or Comment like '%Late Report%') and im.interviewer=@Emailid  
   
-Select @CandidateRating=Avg(cfd.Rating) From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid  
+Select @CandidateRating=Count(cfd.Rating) From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid and cfd.Rating<=3 
   
-Select @CustomerRating=avg(Rating) From ClientCommentsForReport cr join Interviewmeetings im on im.id=cr.Interviewid where im.interviewer=@Emailid  
+Select @CustomerRating=Count(Rating) From ClientCommentsForReport cr join Interviewmeetings im on im.id=cr.Interviewid where im.interviewer=@Emailid and cr.Rating<=3  
   
 Select @Redorequests=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and RedoInterview=1 and  interviewer=@Emailid   
   
