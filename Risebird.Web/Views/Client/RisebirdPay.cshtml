@@ -18,31 +18,36 @@
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
+               
                 <div class="mdc-card card bl-bg razorpay_con" style="background:transparent!important;">
-
-                    <div class="mdc-card-wrapper__text-section razorpay_btn">
-                        <div id="rbpay_2" style="padding:0px">
+                    <div class="mdc-card-wrapper__text-section">
+                   <div class="mdc-card-wrapper__text-section razorpay_btn" style="background:#fff;">
+                       <div style="float:left">
+                        <div id="rbpay_2" style="padding:0px;float:left">
                             <button class="form-control" id="btnall" onclick="FetchPaymentTransaction('All')">
                                 <i class="fa fa-money-bill"></i>
 
                                 All Transaction
                             </button>
                         </div>
-                        <div id="rbpay_7" style="padding:0px">
+                        <div id="rbpay_7" style="padding:0px;float:left">
                             <button class="form-control" id="btncredit" onclick="FetchPaymentTransaction('CREDIT')">
                                 <i class="fas fa-credit-card"></i>Penalty CREDIT
                             </button>
                         </div>
-                        <div id="rbpay_8" style="padding:0px"><button class="form-control" id="btndebit" onclick="FetchPaymentTransaction('DEBIT')"><i class="fa fa-credit-card "></i>Penalty Debit</button></div>
-                        <div style="padding-top:2vw">
-                            <p><span>Per Interview Rate:</span><label id="txtperInterviewrate"></label></p>
-                            <p><span>Penalty Credits:</span><label id="txttotalCredit"></label></p>
-                            <p><span>Interview Credits:</span><label id="txtInterviewCredit"></label></p>
+                        <div id="rbpay_8" style="padding:0px;float:left"><button class="form-control" id="btndebit" onclick="FetchPaymentTransaction('DEBIT')"><i class="fa fa-credit-card "></i>Penalty DEBIT</button></div>
+                        </div>
+                        <div style="float:right">
+                            <span style="float:left"><span style="font-size:15px;font-weight:600;line-height:35px;">Per Interview Rate:</span><i class="fa fa-money" aria-hidden="true" style="font-size: 19px;color: lightcoral;top:2px;left: 15px;position: relative;"></i> <label style="color: lightcoral;font-size:16px;padding:0px 15px;font-weight:bold;" id="txtperInterviewrate"></label></span>
+                            <span style="float:left"><span style="font-size:15px;font-weight:600;line-height:35px;">Penalty Credits:</span><img style="top:-7px;left:7px;width:22px;" class="zoom-icon"  src="~/img/credit-icon.png" /><label style="color:green;font-size:16px;padding:0px 15px;font-weight:bold;" id="txttotalCredit"></label></span>
+                                <span style="float:left"><span style="font-size:15px;font-weight:600;line-height:35px;">Interview Credits:</span><img style="top:-7px;left:7px;width:22px;" class="zoom-icon"  src="~/img/interview-credit.png" /><label style="color:green;font-size:16px;padding:0px 15px;font-weight:bold;" id="txtInterviewCredit"></label></span>
                         </div>
                     </div>
+                    
+                   
                     <div id="divtransaction" class="razorpay_details">
                         <!--Bind transaction details-->
-                    </div>
+                    </div></div>
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
