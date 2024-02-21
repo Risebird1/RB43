@@ -8716,24 +8716,32 @@ option {
     margin: 0px auto;
 }
 .campaignForm {
-    width: 800px;
+    width: 850px;
     min-height: 400px;
     margin-bottom: 125px;
     background-color: #ffffff;
     border-radius: 5px;
     box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.1);
-    margin: 30px auto;
+    margin: 30px auto 30px 230px;
     display: table;
     padding: 40px 40px 20px 40px;
+    border-bottom: 4px #42a5f540 solid;
 }
-.campaignForm h1{
-    font-size:24px;
-
-}
-    .campaignForm h1 span {
-        font-weight: bold;
-        color: #2a77b5;
+    .campaignForm h1 {
+        font-size: 24px;
+        position: absolute;
+        top: 50px;
+        background: #bbcad3;
+        width: 100%;
+        left: 0px;
+        color: #09395e;
+        padding: 13px;
+        text-align: center;
     }
+        .campaignForm h1 span {
+            font-weight: bold;
+            color: #09395e;
+        }
     .campaignForm .count {
         display: inline-block;
         color: white;
@@ -8744,7 +8752,7 @@ option {
         border-radius: 50%;
         float: left;
     }
-
+  
     .campaignForm .table {
         margin: 0 0 15px 0;
         width: 100%;
@@ -8754,13 +8762,15 @@ option {
     .campaignForm .moreless-btn, .moreless-btn {
         padding: 1px 6px 5px 6px !important;
         text-decoration: none;
-        font-size: 13px;
-        margin: 10px  0px;
-        height: 23px;
-        border-radius: 0px;
-        background: #b7b3b3;
-        color: #fff!important;
-        display:inline-block;
+        font-size: 12px;
+        margin: 10px 0px;
+        height: 20px;
+        width: 79px;
+        border-radius:5px;
+        line-height: 18px;
+        background: #b2b9d1;
+        color: #fff !important;
+        display: inline-block;
     }
     .moreless-btn:hover {
         background: #4491cf !important;
@@ -8771,7 +8781,10 @@ option {
         color: #ffffff;
         background: #9ba9c9 !important; /*background: #ea6153 !important;*/
     }
-
+    .sub-assmntgrp{
+        width:500px;
+        margin:30px auto;
+    }
     .campaignForm .row {
         display: table-row;
         background: #f6f6f6b0;
@@ -8804,15 +8817,18 @@ option {
         font-size: 16px;
         font-weight:500;
         position: relative;
-        top: 8px;
+        top: -2PX;
         color: #9b9c9d;
     }
-
-    .campaignForm .mdc-checkbox__checkmark {
-        left: 2px !important;
-        top: 1px;
-        width: 70%;
-    }
+.campaignForm input[type="text"] {
+    font-weight:normal;
+    height:40px;
+}
+.campaignForm .mdc-checkbox__checkmark {
+    left: 2px !important;
+    top: 1px;
+    width: 70%;
+}
     .campaignForm .mdc-checkbox__background {
         border: 1.5px solid #abb2a4 !important;
     }
@@ -8822,30 +8838,32 @@ option {
         background-color: #8BC34A !important;
     }
 
-    .campaignForm button[type=submit], .campaignForm button, .campaignForm .button {
-        height: 40px;
-        margin: 20px auto 10px auto;
-        padding: 0px 10px 0px 10px;
-        background: #e6e6e6;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        font-size: 19px;
-        color: #444;
-        text-align: center;
-        display: block;
-        font-size: 19px;
-        color: #444;
-        float:none;
+.campaignForm button[type=submit], .campaignForm button, .campaignForm .button {
+    height: 43px;
+    margin: 20px auto 10px auto;
+    padding: 0px 15px 0px 15px;
+    background: #42a5f5;
+    border: 1px solid #ccc;
+    font-size: 19px;
+    color: #FFF !important;
+    text-align: center;
+    display: block;
+    font-size: 19px;
+    line-height: 38px;
+    width: 250px;
+    float: none;
+}
+    .campaignForm button[type=submit]:hover, .campaignForm button:hover, .campaignForm .button:hover {
+        background: #96aab6 !important;
+        color: #fff !important;
     }
-        .campaignForm button[type=submit]:hover, .campaignForm button:hover, .campaignForm .button:hover{
-            background: #4491cf !important;
-            color: #fff !important;
-        }
-        
-        .buttonArea {
-            width: 340px;
-            margin: 0px auto;
-        }
+.campaignForm .buttonArea .previous, .campaignForm .buttonArea .next {
+    width:auto!important;
+}
+.buttonArea {
+    width: 365px;
+    margin: 0px auto;
+}
 .buttonArea .previous{
     float:left;
 }
@@ -8976,9 +8994,12 @@ option {
     line-height: 16px;
     display: inline-block;
 }
-    /***** Media queries *****/
-    @media only screen and (min-width: 1920px) {
-        .rbpay .sb-scrollbar {
+.select2-container--default .select2-search--inline .select2-search__field{
+    border:none!important;
+}
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
             position: absolute;
             right: -6px !important;
         }
@@ -9403,7 +9424,10 @@ option {
             width: 100%;
             left: 0px;
         }
-
+        .campaignForm {
+            width: 100% !important;
+            margin: 30px 0px 0px 0px!important;
+        }
         .calling-area {
             background: #eee4e4;
             font-size: 15px;

@@ -23,5 +23,13 @@ namespace Risebird.Entities.ViewModel
         public DateTime? ModifiedAt { get; set; }
         public string ModifiedBy { get; set; }
         public IEnumerable<AssessmentGroupInterviewerDetails> Interviewers { get; set; }
+        public bool CreateMasterAG { get; set; }
+        public IEnumerable<AssignmentVM> RemainingAssessmentGroups { get; set; }
+        public IEnumerable<AssignmentVM> RemainingAssessmentGroupsForSummary { get; set; }// filtered from the above RemaingingAssessmentGroups property
+        public string SerializedRemainingAssessmentGroupsForSummary { get; set; }// filtered from the above RemaingingAssessmentGroups property
+        public List<int> SelectedRemainingAssessmentGroups { get; set; }
+        public string SerializedRemainingAGList { get; set; }
+        public bool IsAlreadyMasterAG { get; set; } //need to set this property in order to show or hide the option of creating a master ag in the form 
+
     }
 }
