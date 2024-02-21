@@ -1949,7 +1949,6 @@ div.dataTables_wrapper div.dataTables_info {
 .mdc-card .form-control.active-razorbtn {
     background: #53a5f5 !important;
     color: #fff !important;
-    text-transform: uppercase;
 }
 
 .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus, .modal .form-control:focus {

@@ -166,9 +166,8 @@ table.dataTable > thead > tr, #divDetailedView table th, table.dataTable > thead
 }
 
 .mdc-card .form-control.active-razorbtn {
-    background: #53a5f5 !important;
-    color: #fff !important;
-    text-transform: uppercase;
+    background: #dbecff!important;
+    color: #54a5f5!important;
 }
 
 .razorpay_details table th {
