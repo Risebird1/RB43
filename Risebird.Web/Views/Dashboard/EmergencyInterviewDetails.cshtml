@@ -53,7 +53,7 @@
                         <div class="feedback-tab-ac" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>Delayed Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('RescheduleIM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>Missed Interviews </strong></div>
                     }
-                    else
+                    else if (ViewBag.Type == "RescheduleIM")
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('OnTimeIM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>On-Time Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('InterviewM','@ViewBag.interviewdate','@ViewBag.Pagetype')"><strong>Delayed Interviews</strong></div>

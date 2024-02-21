@@ -15,7 +15,12 @@ Create PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]
 AS                                    
 Begin  
 Declare @Role varchar(150)            
-Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid            
+Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid         
+
+declare @MissedCandidateCount int=(Select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id
+outer Apply(Select max(PerformedOn) as PerformedOn From  PageClickDetails where Interviewid=im.id and ButtonAction='JoinMeeting') pg
+where im.interviewdate>='2024-02-21' and im.interviewdate<='2024-02-22' and im.confirmationStatus=1 and ((im.IsRescheduleNotificationSent=1 and ic.MeetingStatus!=3 and ic.MeetingStatus!=4 and ic.MeetingStatus!=6 and ic.MeetingStatus!=7 and ic.MeetingStatus!=8)
+or (pg.PerformedOn is not null and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9))))
 if(@Role='SeniorHR')--or @Role='SupportAdmin'            
 BEGIN    
 declare @UnassignedInterviewsCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId            
@@ -126,7 +131,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @HighRiskInterviewers as HighRiskInterviewers ,
 @InterviewerVideoKYC as InterviewerVideoKYC,
 @ProxyCount as ProxyCount,
-@DMApproveCount as DMApproveCount
+@DMApproveCount as DMApproveCount,
+@MissedCandidateCount as MissedCandidateCount
 END          
 ELSE          
 BEGIN    
@@ -217,7 +223,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @HighRiskInterviewers as HighRiskInterviewers,
 @InterviewerVideoKYC as InterviewerVideoKYC,
 @ProxyCount as ProxyCount,
-@DMApproveCount as DMApproveCount
+@DMApproveCount as DMApproveCount,
+@MissedCandidateCount as MissedCandidateCount
 END          
 End
 GO
