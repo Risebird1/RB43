@@ -2926,7 +2926,10 @@ namespace Risebird.Web.Controllers
             }
         }
         #region PQI
-        
+        public async Task<IActionResult> InterviewerIRFDetails()
+        {
+            return View();
+        }
         #endregion
     }
 }
