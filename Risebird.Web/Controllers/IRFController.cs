@@ -8708,8 +8708,16 @@ namespace Risebird.Web.Controllers
                         {
                             model.CurrentForm = "form_2";
                             var listAssessmentGroupsClubbed = new List<int>();
-                            listAssessmentGroupsClubbed.AddRange(model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Select(x => x.id));
-                            listAssessmentGroupsClubbed.AddRange(model.SelectedRemainingAssessmentGroups);
+                            if(model.AssessmentGroups!=null)
+                            {
+                                listAssessmentGroupsClubbed.AddRange(model.AssessmentGroups.Where(x => x.IsSelectedForCampaign).Select(x => x.id));
+
+                            }
+                            if (model.SelectedRemainingAssessmentGroups != null)
+                            {
+                                listAssessmentGroupsClubbed.AddRange(model.SelectedRemainingAssessmentGroups);
+
+                            }
                             model.SkillChannels = (IList<IRFVm>)(await _irfService.GetSkillChannelsForAssessmentGroups(listAssessmentGroupsClubbed));//call db and search for assessmentGroups that carry a similar name
 
                         }
@@ -8718,12 +8726,21 @@ namespace Risebird.Web.Controllers
                             model.CurrentForm = "form_1";
                         }
 
+                        if(!string.IsNullOrEmpty(model.SerializedRemainingAGList))
+                        {
+                            model.RemainingAssessmentGroups = JsonConvert.DeserializeObject<IEnumerable<AssignmentVM>>(model.SerializedRemainingAGList);
 
-                        model.RemainingAssessmentGroups = JsonConvert.DeserializeObject<IEnumerable<AssignmentVM>>(model.SerializedRemainingAGList);
+                        }
 
-                        model.RemainingAssessmentGroupsForSummary = model.RemainingAssessmentGroups.Where(obj => model.SelectedRemainingAssessmentGroups.Contains(obj.id));
+                        if (model.SelectedRemainingAssessmentGroups!=null)
+                        {
+                            model.RemainingAssessmentGroupsForSummary = model.RemainingAssessmentGroups.Where(obj => model.SelectedRemainingAssessmentGroups.Contains(obj.id));
+                        }
+                        if(model.RemainingAssessmentGroupsForSummary != null)
+                        {
+                            model.SerializedRemainingAssessmentGroupsForSummary = JsonConvert.SerializeObject(model.RemainingAssessmentGroupsForSummary);
 
-                        model.SerializedRemainingAssessmentGroupsForSummary = JsonConvert.SerializeObject(model.RemainingAssessmentGroupsForSummary);
+                        }
 
                         return View("CreateCampaign", model);
                     }
@@ -8773,7 +8790,10 @@ namespace Risebird.Web.Controllers
                             //send mails to all concerned interviewers
                             SendCampaignLevelMailsToInterviewers(interviewers, model.AssessmentGroupName, model.id.Value);//fire and forget method, keeps sending emails to the interviewers in the background
                             
-                            model.RemainingAssessmentGroupsForSummary = JsonConvert.DeserializeObject<IEnumerable<AssignmentVM>>(model.SerializedRemainingAssessmentGroupsForSummary);
+                            if(!string.IsNullOrEmpty(model.SerializedRemainingAssessmentGroupsForSummary))
+                            {
+                                model.RemainingAssessmentGroupsForSummary = JsonConvert.DeserializeObject<IEnumerable<AssignmentVM>>(model.SerializedRemainingAssessmentGroupsForSummary);
+                            }
 
                             model.OutcomeMessage = $"Successfully created campaign named {model.CampaignName} for assessment Group : {model.AssessmentGroupName}";
                         }
