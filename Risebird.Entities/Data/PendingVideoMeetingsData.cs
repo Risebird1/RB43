@@ -13,5 +13,6 @@ namespace Risebird.Entities.Data
         public DateTime RequestedDate { get; set; }
         public string MeetingPlatform { get; set; }
         public string AudioTranscriptFileLink { get; set; }
+        public int VideoDuration { get; set; }
     }
 }
