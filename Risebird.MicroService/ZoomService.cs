@@ -112,7 +112,7 @@ namespace Risebird.MicroService
                             var videoRecordingFiles = convertedResponse.recording_files.Where(x => x.file_type == "MP4" && x.status.ToLower() == "completed");
                             string videoSasUrl = string.Empty;
                             int? videoDuration = null;
-                            if (string.IsNullOrEmpty(meeting.VideoLink) && (videoRecordingFiles != null || videoRecordingFiles.Count() == 1))
+                            if ((string.IsNullOrEmpty(meeting.VideoLink) || (!string.IsNullOrEmpty(meeting.VideoLink) && meeting.VideoDuration < 10)) && (videoRecordingFiles != null || videoRecordingFiles.Count() == 1))
                             {
                                 var recordingFile = videoRecordingFiles?.FirstOrDefault();
                                 var downloadUrl = recordingFile?.download_url;

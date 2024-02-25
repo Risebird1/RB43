@@ -2847,7 +2847,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetDMApproveDetails()
@@ -2884,7 +2883,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetOpenClickCampaignMailDetails(int campaignId)
@@ -2927,6 +2925,11 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
+        #region PQI
+        public async Task<IActionResult> InterviewerIRFDetails()
+        {
+            return View();
+        }
+        #endregion
     }
 }
