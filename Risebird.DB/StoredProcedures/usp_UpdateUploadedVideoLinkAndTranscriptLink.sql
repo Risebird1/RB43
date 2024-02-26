@@ -17,8 +17,26 @@ CREATE PROCEDURE [dbo].[usp_UpdateUploadedVideoLinkAndTranscriptLink]
 @transcriptLink varchar(2500) = null
 AS          
 Begin         
+
+
         
-update InterviewComments set VideoLink=@videoLink, VideoDuration = @videoDuration, AudioTranscriptFileLink =@transcriptLink where InterviewId=@interviewId        
+update InterviewComments 
+set VideoLink=  case 
+				when
+				(@videoLink is not null  and @videoLink != '') then @videoLink 
+				else VideoLink 
+				end, 
+VideoDuration = case 
+				when
+				(@videoDuration is not null) then @videoDuration 
+				else VideoDuration 
+				end,
+AudioTranscriptFileLink = case 
+						when
+						(@transcriptLink  is not null  and @transcriptLink  != '') then @transcriptLink  
+						else AudioTranscriptFileLink 
+						end
+where InterviewId=@interviewId        
         
 declare @meetingStatus int
 set @meetingStatus=(select MeetingStatus from InterviewComments where InterviewId=@interviewId)        
