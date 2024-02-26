@@ -2926,9 +2926,46 @@ namespace Risebird.Web.Controllers
             }
         }
         #region PQI
-        public async Task<IActionResult> InterviewerIRFDetails()
+        public async Task<IActionResult> InterviewerIRFDetails(string type)
         {
-            return View();
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
+                    {
+                        if (type == "Rejection")
+                        {
+                            ViewBag.Type = "Rejection";
+                        }
+                        else
+                        {
+                            type = "Selection";
+                            ViewBag.Type = "Selection";
+                        }
+                        var model = await _dashboardService.GetInterviewerIRFDetails(type);
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
         }
         #endregion
     }

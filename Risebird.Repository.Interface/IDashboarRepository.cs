@@ -64,9 +64,10 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateInterviewerVideoKYC(int id, string type);
         Task<IEnumerable<ProctoringReport>> GeProxyReport();
         Task<ProctoringReport> GetProxyReportCountDetails(int id);
-        Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate,string Emailid);
+        Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate, string Emailid);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<MeetingVM>> GetDMApproveDetailsRepository();
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailRepository(int campaignId);
+        Task<List<PQIDetails>> GetInterviewerIRFDetails(string type);
     }
 }
