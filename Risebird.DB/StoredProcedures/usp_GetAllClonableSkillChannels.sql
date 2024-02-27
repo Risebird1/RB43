@@ -22,11 +22,10 @@ Begin
  Join AssessmentGroup asg on asg.id = ir.AssessmentGroupId  
  left join AssessmentGroupCategory agc on agc.id = asg.Categoryid  
  left join IRF on IRF.CreatedFromTemplateId=csc.id
- where ir.[Status] = 1  
+ where ir.[Status] = 1 AND (csc.IsDeleted <> 1 OR csc.IsDeleted IS NULL) 
  GROUP BY csc.id , csc.Name, csc.CreatedFromIRFId, csc.MeetingPlatform, ir.CompanyType,ir.SeniorityLevelId, ir.CountryType, asg.AssessmentGroup, asg.id,
  ir.DifficultyLevel, ir.EmploymentType, ir.PerHourRate, agc.CategoryName, ir.PrimarySkills, csc.CreatedOn, ir.CLients
  order by csc.CreatedOn desc
- 
 End
 GO
 

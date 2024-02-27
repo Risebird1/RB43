@@ -13,5 +13,6 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateTemplate(EditSkillChannelTemplateVM templateDetails, string modifiedByEmailId);
         Task<bool> DeleteTemplate(int id);
         Task<bool> RestoreTemplate(int id);
+        Task<bool> DeleteClonableSkillChannel(int ClonableSkillChannelId, string ModifyedBy);
     }
 }

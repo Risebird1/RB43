@@ -356,6 +356,10 @@
                                                                     <button class="mdc-fab app-fab--absolute mb-40" aria-label="Edit the Template">
                                                                         <span onclick="location.href = '@Url.Action("Edit", "ClonableSkillChannelTemplate", new { id = item.ClonableSkillChannelId })'" title="Edit the Template" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                                     </button>
+
+                                                                     <button class="mdc-fab app-fab--absolute mb-40" aria-label="Delete the Template" style="background:#d72e22!important;position:relative;top:-2px;">
+                                                                        <span onclick="DeleteClonableSkillChannel('@item.ClonableSkillChannelId')" title="Delete the Template" class="mdc-fab__icon material-icons"><i class='fa fa-trash' style="font-size:13px;left:1px; position:relative;"></i></span>
+                                                                    </button>
                                                                 }
 
                                                                 @if (Model.Profile != "Client")
@@ -1058,6 +1062,93 @@ else if (Model.Message != null)
     function closeTemplateStatsModel() {
         var model = document.getElementById("TemplateStatsModel");
         model.style.display = "none";
+    }
+</script>
+<script>
+    function DeleteClonableSkillChannel(ClonableSkillChannelId)
+     {
+         swal.fire({
+            title: 'Are you sure?',
+            text:'Want to delete the template',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    //var IdIRF = dataID;
+                    $.ajax({
+             type: "POST",
+            url: "/Template/DeleteClonableSkillChannel",
+            data: {ClonableSkillChannelId:ClonableSkillChannelId},
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The Template has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Delete cancelled! :)',
+                    'error'
+                )
+            }
+        })
+
+
+    //         Swal.fire({
+    //         title: 'Are you sure?',
+    //         text: "You won't be able to revert this!",
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, delete it!',
+    //         closeOnCancel: false 
+    //     }).then((result) => {
+    //         console.log(result);
+    //         if (result) {
+    // $.ajax({
+    //         type: "POST",
+    //         url: "/Template/DeleteClonableSkillChannel",
+    //         data: {ClonableSkillChannelId:ClonableSkillChannelId},
+    //         success: function (data) {
+    //             Swal.fire(
+    //                         'Deleted!',
+    //                         'Your file has been deleted.',
+    //                         'success'
+    //                     ).then(function () {
+    //                         location.reload();
+    //                     }); 
+    //         },
+    //         error:function(thrownError)
+    //         {
+    //         console.log(thrownError);
+    //         }
+    //       });
+    //     }
+    //     })
     }
 </script>
 

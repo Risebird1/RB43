@@ -118,5 +118,20 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> DeleteClonableSkillChannel(int ClonableSkillChannelId, string ModifyedBy)
+        {
+            try
+            {
+                return await _templateRespository.DeleteClonableSkillChannel(ClonableSkillChannelId, ModifyedBy);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

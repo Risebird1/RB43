@@ -309,10 +309,22 @@ BEGIN
 
 		End
 		
-	
+	Declare @imid TABLE  
+(  
+   Id int 
+) 
+Insert into @imid 
+					select distinct im.id from TransInterviewer ti
+join UserList ul on ti.UserId=ul.id
+join IRF on ti.IRFId=IRF.id
+join InterviewMeetings im on ul.EmailId=im.interviewer and IRF.IRFId=im.IRFId
+where ti.IsActive=0 and ti.IRFId=@id and interviewDate>@timeNow
+					IF EXISTS( select * from @imid)
+					begin 
+					update InterviewMeetings set interviewer=null where id in(select id from @imid)
+					end
 	
 	End
-
   commit tran  
  end try  
  begin catch  
@@ -327,8 +339,7 @@ BEGIN
    
  end catch  
   
-    
-END     
+END 
 
 GO
 
