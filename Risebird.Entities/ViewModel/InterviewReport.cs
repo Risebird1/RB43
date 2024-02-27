@@ -359,6 +359,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsTranscript { get; set; }
         public bool IRFInterviewerActive { get; set; }
         public List<ZoomVideoQOSVM> QOSData { get; set; }
+        public int ClientId { get; set; }
     }
     public class RBInterviewDetails
     {
