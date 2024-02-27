@@ -706,7 +706,7 @@
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js"></script>
 <script src="~/js/FeedbackRecorder/Record.js"></script>
-
+<script src="~/js/common.js"></script>
 
 @if (ViewBag.Message != null)
 {
@@ -1168,51 +1168,7 @@ else
     }
 </script>
 <script>
-    function RemoveInterviewerFromSkillChannel(interviewerEmail, irfid) {
-        swal.fire({
-            title: 'Are you sure?',
-            text: 'Want to remove interviewer from the Skill channel interviews',
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Remove it!',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/Interview/RemoveInterviewerFromIRF",
-                        data: { interviewerEmail: interviewerEmail, irfid: irfid },
-                        success: function (result) {
-                            resolve(result);
-                        }
-                    })
-                })
-            },
-            allowOutsideClick: false
-        }).then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Removed!',
-                    type: 'success',
-                    html: '<p>The Interviewer has been removed.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    location.reload(true);
-                })
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Cancelled',
-                    'remove cancelled! :)',
-                    'error'
-                )
-            }
-        })
-    }
+   
     function replaceButtonWithResumeLink(buttonElementId, redactedResumeLink) {
         // Create a new anchor element
         var anchor = document.createElement('a');
