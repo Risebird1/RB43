@@ -69,8 +69,8 @@ BEGIN
 			FROM SecondaryAssessmentGroups
 			WHERE SecondaryAssessmentGroups.AssessmentGroupId = cbd.AssessmentGroupId
 			  AND SecondaryAssessmentGroups.MAGId = @resultMagId
-			  and cbd.AssessmentGroupId != @AssessmentGroupId
-			)
+			  --and cbd.AssessmentGroupId != @AssessmentGroupId
+			) and cbd.AssessmentGroupId != @AssessmentGroupId
 			
 
 			End
@@ -115,8 +115,8 @@ BEGIN
 	FROM SecondaryAssessmentGroups
 	WHERE SecondaryAssessmentGroups.AssessmentGroupId = cbd.AssessmentGroupId
 		AND SecondaryAssessmentGroups.MAGId = @magId
-		and cbd.AssessmentGroupId != @primaryAGId
-	)
+		--and cbd.AssessmentGroupId != @primaryAGId
+	) and cbd.AssessmentGroupId != @primaryAGId
 
 	END
 

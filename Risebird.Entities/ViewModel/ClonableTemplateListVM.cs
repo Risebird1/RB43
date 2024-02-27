@@ -20,5 +20,7 @@ namespace Risebird.Entities.ViewModel
         public string AccessType { get; set; }
         public string PublicUserEmailId { get; set; } // set when the Accesstype above is Public
         public string UniqueId { get; set; } // user's unique id set when the Accesstype above is Public
+        public string Message3 { get; set; }
+
     }
 }

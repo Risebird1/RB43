@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[ClonableSkillChannel](
 			[ModifiedBy][varchar](50) NULL,
 			[MeetingPlatform][varchar](25) NULL,
 			[IsAadhaarVerificationRequired][bit] NULL,
+            [IsDeleted] [bit] NULL,
  CONSTRAINT UC_ClonableSkillChannel_Name UNIQUE ([Name]),
  CONSTRAINT [PK_ClonableSkillChannel] PRIMARY KEY CLUSTERED 					
 (					
@@ -74,4 +75,15 @@ BEGIN
 END
 
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsDeleted')
+      AND Object_ID = Object_ID(N'ClonableSkillChannel'))
+BEGIN
+    alter table ClonableSkillChannel
+    add IsDeleted bit
+END
+
 GO

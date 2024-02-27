@@ -349,5 +349,41 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> DeleteClonableSkillChannel(int ClonableSkillChannelId,string ModifyedBy)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", ClonableSkillChannelId);
+                parameters.Add("@modifiedOn", DateTime.Now);
+                parameters.Add("@modifyedBy", ModifyedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteClonableSkillChannel", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    if (result != null && result.FirstOrDefault() == 0)
+                    {
+                        return true;
+                    }
+                    return false;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

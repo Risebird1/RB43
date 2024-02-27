@@ -9,15 +9,17 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]                               
-@currentdate datetime,          
-@Emailid varchar(150)            
-AS                                      
+Create PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]                             
+@currentdate datetime,        
+@Emailid varchar(150)          
+AS                                    
 Begin    
 Declare @Role varchar(150)              
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid           
   
-declare @MissedCandidateCount int=(Select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id  
+declare @MissedCandidateCount int=(Select Count(im.id) from InterviewMeetings im join InterviewComments ic on ic.Interviewid=im.id
+left join  IRF on IRF.IRFId=im.IRFId
+left join UserList ulc on ulc.id=IRF.RisebirdHr
 outer Apply(Select max(PerformedOn) as PerformedOn From  PageClickDetails where Interviewid=im.id and ButtonAction='JoinMeeting') pg  
 where im.interviewdate>=DateAdd(Day,-7,(CONVERT(VARCHAR(10),@currentdate,23))) and im.interviewdate<=DateAdd(Day,1,(CONVERT(VARCHAR(10),@currentdate,23))) and im.confirmationStatus=1 and ((im.IsRescheduleNotificationSent=1 and ic.MeetingStatus!=3 and ic.MeetingStatus!=4 and ic.MeetingStatus!=6 and ic.MeetingStatus!=7 and ic.MeetingStatus!=8)  
 or (pg.PerformedOn is not null and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9))))  
