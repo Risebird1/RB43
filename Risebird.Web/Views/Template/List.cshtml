@@ -587,7 +587,34 @@
         </div>
     </div>
 </div>
-@if (Model.Message != null)
+
+@if (Model.Message != null && Model.Message2 != null && Model.Message3 != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.Message';
+            if (msg.toLowerCase().includes("success")) {
+                Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    icon: 'info',
+                    html:
+                        '@Model.Message' +
+                        '<br/> Scheduling Link : <a target="_blank" href="@Model.Message2">Scheduling Link</a> '+
+                    '<br/> Skill Channel List : <a target="_blank" href="@Model.Message3">Click Here</a> ',
+                    confirmButtonText: "Close",
+                    allowOutsideClick: false
+                });
+            }
+            else {
+                swal.fire("Failed", '@Model.Message', "error");
+            }
+        }
+    </script>
+}
+else if (Model.Message != null)
 {
     <script type="text/javascript">
         $(document).ready(function () {
@@ -607,6 +634,54 @@
         //window.onload = my_code();
     </script>
 }
+
+
+
+@* @if (Model.Message != null && (Model.Message2 == null || Model.Message3 == null))
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful", '@Model.Message<br />Line1Scheduling Link : <a target="_blank" href="@Model.Message2">Scheduling Link</a><br /> Skill Channel List : <a target="_blank" href="@Model.Message3">Click Here</a> ', "success");
+            }
+            else {
+                swal.fire("Failed", '@Model.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+} *@
+
+@*@if (Model.Message != null && Model.Message2 != null && Model.Message3 != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.Message';
+            if (msg.toLowerCase().includes("success")) {
+                Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    icon: 'info',
+                    html: '<div>@Model.Message <br />Line1Scheduling Link : <a target="_blank" href="@Model.Message2">Scheduling Link</a><br /> Skill Channel List : <a target="_blank" href="@Model.Message3">Click Here</a> </div>'
+                     
+                    confirmButtonText: "Close",
+                    allowOutsideClick: false
+                });
+            }
+            else {
+                swal.fire("Failed", '@Model.Message', "error");
+            }
+        }
+    </script>
+}*@
 
 @*<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
     <script type="text/javascript">
