@@ -20,5 +20,7 @@ namespace Risebird.Entities.ViewModel
         public int TotalRejected { get; set; }
         public int rejectionrate { get; set; }
         public string ChannelOwner { get; set; }
+        public string CompanyName { get; set; }
+        public string Clienthr { get; set; }
     }
 }

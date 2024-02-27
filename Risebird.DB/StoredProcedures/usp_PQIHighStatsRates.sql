@@ -69,15 +69,17 @@ where (ic.InterviewStatus = 2) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6
 group by ir.IRFId,im.interviewer  
   
 ;With CTE as(
-Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId 
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr 
 from @tbl_RelevantInterviews im
 join IRF on IRF.IRFId=im.IRFId
 join UserList ul on IRF.RisebirdHr=ul.id
 join Client cl on cl.id=IRF.Clientid
+left join UserList ulc on ulc.id=IRF.BillingOwner
 left join UserList uli on uli.Emailid=im.interviewer
+left join InterviewerProfile ip on ip.UserId=uli.id
 left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewer=im.interviewer
 left join @tbl_InterviewerSelected ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer)
-Select * From CTE where selectionrate>=60
+Select * From CTE where selectionrate>=40
 END
 
 Else 
@@ -96,16 +98,19 @@ where (ic.InterviewStatus = 3) and (ic.MeetingStatus = 4  or ic.MeetingStatus = 
 group by ir.IRFId,im.interviewer  
   
 ;With CTE as(
-Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalRejected,(ISNULL(ism.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId 
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalRejected,(ISNULL(ism.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr  
 from @tbl_RelevantInterviews im
 join IRF on IRF.IRFId=im.IRFId
 join UserList ul on IRF.RisebirdHr=ul.id
 join Client cl on cl.id=IRF.Clientid
+left join UserList ulc on ulc.id=IRF.BillingOwner
 left join UserList uli on uli.Emailid=im.interviewer
+left join InterviewerProfile ip on ip.UserId=uli.id
 left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewer=im.interviewer
 left join @tbl_InterviewerRejected ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer)
-Select * From CTE where rejectionrate>=60
+Select * From CTE where rejectionrate>=80
 end
 END
+
 
 GO
