@@ -813,11 +813,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> UpdateInterviewerVideoKYC(int id,string type)
+        public async Task<bool> UpdateInterviewerVideoKYC(int id, string type)
         {
             try
             {
-                await _dashboardRespository.UpdateInterviewerVideoKYC(id,type);
+                await _dashboardRespository.UpdateInterviewerVideoKYC(id, type);
                 return true;
             }
             catch (Exception e)
@@ -852,7 +852,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate,string Emailid)
+        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate, string Emailid)
         {
             try
             {
@@ -895,6 +895,18 @@ namespace Risebird.Business
             try
             {
                 return await _dashboardRespository.GetOpenClickCampaignMailRepository(campaignId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type)
+        {
+            try
+            {
+                return await _dashboardRespository.GetInterviewerIRFDetails(type);
             }
             catch (Exception ex)
             {
