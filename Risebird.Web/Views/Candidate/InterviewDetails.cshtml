@@ -10,8 +10,125 @@
     ViewData["Title"] = "Interview Details";
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    int inthistCount = 0;
+    int scheduleCount = 0;
+    
 }
+
+<style>
+
+.vertical-mdl-tabs .mdl-tabs__tab-bar {
+    -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    margin-bottom: 35px;
+    height: inherit;
+    border-bottom: none;
+/*    border-right: 1px solid rgba(10, 11, 49, 0.20);*/
+}
+
+.vertical-mdl-tabs .mdl-tabs__tab {
+    width: 100%;
+    height: 100px;
+    line-height:27px;
+    box-sizing: border-box;
+    letter-spacing: 2px;
+    background:#f3f3f3;
+}
+
+.vertical-mdl-tabs.mdl-tabs.is-upgraded a.mdl-tabs__tab.is-active {
+    border-left: 5px solid #ED462F;    background: #fff;
+}
+.vertical-mdl-tabs.mdl-tabs.is-upgraded .mdl-tabs__tab.is-active:after {
+    content: inherit;
+    height: 0;
+}
+
+.vertical-mdl-tabs.mdl-tabs.is-upgraded .mdl-tabs__panel.is-active, .mdl-tabs__panel {
+    padding: 0 0px;
+}
+
+.vertical-mdl-tabs.mdl-tabs .mdl-tabs__tab {
+    text-align: left;
+}
+.small-txt{
+    font-size:11px;
+}
+.tab-div{
+    position:relative;
+    top:19px;
+}
+.tab-txt{
+    font-size:14px;
+}
+
+header
+{
+	font-family: 'Lobster', cursive;
+	text-align: center;
+	font-size: 25px;	
+}
+
+#info
+{
+	font-size: 18px;
+	color: #555;
+	text-align: center;
+	margin-bottom: 25px;
+}
+
+a{
+	color: #074E8C;
+}
+
+.scrollbar
+{
+    width:100%;
+	float: left;
+	height: 300px;
+	/*background: #F5F5F5;*/
+	overflow-y: scroll;
+	margin-bottom: 25px;
+}
+
+.force-overflow {
+    margin: 0px 10px 0px 0px;
+	/*min-height: 450px;*/
+}
+
+
+
+/*
+ *  STYLE 1
+ */
+
+
+#style-4::-webkit-scrollbar
+{
+	width: 5px;
+	background-color: #F5F5F5;
+}
+
+#style-4::-webkit-scrollbar-thumb
+{
+	background-color: #000000;
+	border: 2px solid #555555;
+}
+
+
+
+.mdl-tabs__panel h1 {
+     color: #000;
+     font-weight:500;
+    font-size: 18px;
+    text-transform: uppercase;
+    float:left;
+}
+
+</style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/tabs.css" />
+ <script src="~/Newassets/js/tabs.js" type="text/javascript"></script>
 <style>
     body {
         font-size: 1.3vw !important;
@@ -67,65 +184,39 @@
     </div>
     <div>
         <div class="content-wrappers">
-            @*  <div class="row">
-
-            <div class="col-md-12 col-xl-12 col-sm-12">
-            @if (Model.Timer > 0)
-            {
-            <div class="time_tab"> <span style="top:0px" class="time-left-txt">Time left to start the interview(In Mins):</span><div class="time-clock"><span class="timer">@Model.Timer</span></div></div>
-            }
-
-
-            </div>
-
-            </div>*@
+           
             <div class="row">
                 <div class="candidate-tab">
-                    <div class="col-md-3 pull-left tab-block">
-                        <div class="text-center">
-                            @if (string.IsNullOrEmpty(Model.CandidateDetails.LogoUrl))
-                            {
-                                <img style="max-height:80px" class="img-responsive company-logo" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
-                            }
-                            else
-                            {
-                                <img style="max-height:80px" class="img-responsive company-logo" src="@Model.CandidateDetails.LogoUrl" />
-                            }
-                        </div>
-                        <div class="tablinks card-block" onclick="openCity(event, 'Interviews')" id="defaultOpen">
-                            <div class="step">1</div>
-                            @*<img src="~/img/int-img-2.png" /> *@ <h1>Scheduled Interview</h1>
-                        </div>
+                    @if (string.IsNullOrEmpty(Model.CandidateDetails.LogoUrl))
+                    {
+                        <img style="max-height:45px;position: relative;top: -25px;" class="img-responsive" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
+                    }
+                    else
+                    {
+                        <img style="max-height:45px;position: relative; top: -25px;" class="img-responsive" src="@Model.CandidateDetails.LogoUrl" />
+                    }
+                    
+                
+  <div class="mdl-tabs vertical-mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+  <div class="mdl-grid mdl-grid--no-spacing">
 
-                        <div class="tablinks card-block" onclick="openCity(event, 'InterviewHistory')">
-                            <div class="step">2</div>
-                            @* <img src="~/img/int-img-1.png" />*@<h1>Interview History</h1>
-                        </div>
-
-                        <div class="tablinks card-block" onclick="openCity(event, 'Employer')">
-                            <div class="step">3</div>
-                            @* <img src="~/img/int-img-1.png" />*@<h1>Know Your Employer</h1>
-                        </div>
-
-                        <div class="tablinks card-block" onclick="openCity(event, 'Conditions')">
-                            <div class="step">4</div>
-                            @* <img src="~/img/int-img-3.png" />*@<h1>Interview Consent</h1>
-                        </div>
-                    </div>
-                    <div class="col-md-9 pull-left">
-                        <div id="Interviews" class="tabcontent">
-
-                            @foreach (var item in Model.Meetings)
+          <div class="col-md-12 pull-left">
+              <div class="left-pannel">
+      <div class="mdl-tabs__panel is-active" id="tab1-panel" style="position:relative;">
+         
+      
+          @foreach (var item in Model.Meetings)
                             {
                                 @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.confirmationStatus == "Confirmed")
-                                {
-                                    @* <b>Scheduled Interview</b>
-                            <br />*@
+                                { scheduleCount = +1;
+                   <div> <h1 style="margin:0px 0px 15px 0px;"><img width="22" src="../../img/schedule-time.png" style="margin-right:3px;">Scheduled Interview Details</h1></div>
 
-                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                
+
+                                  @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                     {
                                         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;position:relative">
-                                            <div class="calling" style="top:-8px;right:55px;text-transform:uppercase">
+                                            <div class="calling" style="top:130px;right:55px;text-transform:uppercase">
                                                 <h1 style="line-height: 25px;font-weight: 600;color: green;">
                                                     Call the Interviewer
                                                 </h1> <span class="calling-icon blink" aria-label="Click here to call the interviewer" style="line-height: 23px;">
@@ -133,131 +224,273 @@
                                                 </span>
                                             </div>
                                         </div>
-                                    }
-
-                                    <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" style="margin-left:15px;background:#42a5f5;cursor:pointer" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
+                                  }
+                                                <div class="clearfix"></div>
+                                   <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" style="margin-left:10px;background:#42a5f5;cursor:pointer;position: relative;top:6px;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
                                     <p style="line-height:32px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
-                                    @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
-                                    {
-                                        <p style="margin-bottom:25px;" class="meeting-link text-uppercase" onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)"> Click here to join the meeting <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></p>
-                                    }
-                                    else
-                                    {
-                                        <p style="margin-bottom:25px;" class="meeting-link text-uppercase">
-                                            Click here to join the meeting <a class="click_herebtn click_herebtn2" style="margin-left:15px;cursor: not-allowed;background: #42a5f57a;">
-                                                <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" /> Zoom Meeting Link</span>
-                                            </a>
-                                        </p>
-                                        <p style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></p>
-                                    }
-                                    <p style="padding-top:10px;"><b style="color:green;font-weight:normal;font-size:16px;"> Interview Time:</b><span style="color:green; font-weight:600"> @item.interviewDate</span></p>
+
+                                                <div style="padding:0px;margin:0px 0px 25px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block"></i><span style="color:green;font-size:15px; font-weight:600"> @item.interviewDate</span></div>
+                                                <div style="margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Google Meet joining info</div>
+                                                <img class="schedule-img" src="../../img/int-img-2.png">
+                                              @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                {
+                                                    <div style="margin:10px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
+                                                    onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)"> Click here to join the meeting 
+                                                  <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></div>
+                                                }
+                                                else
+                                                {
+                                                    <div style="margin:10px 0px 0px 0px;" class="meeting-link text-uppercase">
+                                                        Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;background:#42a5f57a;position: relative;top:6px;">
+                                                            <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" /> Zoom Meeting Link</span>
+                                                        </a>
+                                                    </div>
+                                                    <div style="position:relative;"> <span class="time-txt">(Please join 10 min before the interview time)</span></div>
+                                                }
+                                                 
+                                    
                                     @if (item.interviewDate >= DateTime.Now)
                                     {
-                                        <p>
+                                       
                                             <div class="interview">
-                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes',@item.Interviewid)">
-                                                    <div class="interviewresponsebtn greenbtn" target="_blank" onclick="ComfirmMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Yes! I am Available</div>
+                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Yes',@item.Interviewid)" style="margin-top:0px;">
+                                                    <div class="interviewresponsebtn greenbtn" target="_blank" onclick="ComfirmMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Yes! Available</div>
                                                 </div>
-                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Reschedule',@item.Interviewid)">
+                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Reschedule',@item.Interviewid)" style="margin-top:0px;">
                                                     @*<a href="@Model.SchedulingLink" target="_blank"> <span class="interviewresponsebtn" style="background:#cd362b;">Reschedule</span></a>*@
                                                     <div class="interviewresponsebtn redbtn" onclick="ReschuduleMeeting(@item.Interviewid,'@Model.Uniqueid',@Model.CandidateDetails.IRFId,'@Model.CandidateDetails.EmailId')">Reschedule</div>
                                                 </div>
-                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'No',@item.Interviewid)">
-                                                    <div class="interviewresponsebtn redbtn" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">No! I am not Available</div>
+                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'No',@item.Interviewid)" style="margin-top:0px;">
+                                                    <div class="interviewresponsebtn redbtn" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Not Available</div>
                                                 </div>
-                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Need Clarity',@item.Interviewid)">
-                                                    <div class="interviewresponsebtn redbtn" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId')">Need More Clarity</div>
+                                                <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Need Clarity',@item.Interviewid)" style="margin-top:0px;">
+                                                    <div class="interviewresponsebtn redbtn" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId')">Need Clarity</div>
                                                 </div>
                                             </div>
-                                        </p>
-                                    }
-                                }
-                            }
-                        </div>
-                        <div id="InterviewHistory" class="tabcontent">
-                            <p> <b style="margin-bottom:10px;">Interview History Details</b></p>
-                            @foreach (var item in Model.Meetings)
-                            {
+                                       
+                                                }
+                                            }
+                                          
+                                           
+                                            }
 
-                                @if (item.interviewDate < DateTime.Now || item.confirmationStatus != "Confirmed")
+                                        @if(scheduleCount == 0){
+                                          <div> <h1 style="margin:0px 0px 15px 0px;"><img width="22" src="../../img/schedule-time.png" style="margin-right:3px;">Scheduled Interview Details</h1></div>
+                                          <div class="clearfix"></div>
+                                          <div class="no-interview"><img width="150" src="../../img/no-interview.jpg"/>
+                                              <div class="schedule-heading">
+                                              <h1>No Upcoming Interviews <span> has been scheduled for future days</span></h1>
+                                             
+                                          </div>
+                                          
+                                          </div>
+                                          
+                                        }
+
+                                        
+
+      </div>
+      </div>
+         <div class="right-pannel">
+       <div class="mdl-tabs__panel" id="tab3-panel" style="display:block;">
+                                        
+                                        
+                                            <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/employer.png" style="margin-right:3px;"> KNOW YOUR EMPLOYER</h1></div>
+                                            <div style="clear:both"></div>
+                                           
+                                              <div class="w40">
+
+
+                                            <div style="line-height:32px;margin-bottom: 0px;"><b>Company Website :</b><br/> <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></div>
+
+                                            <div style="line-height:32px;margin-bottom:10px;text-align: left;font-size:14px;"><b>HR Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Hr Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>@Model.CandidateDetails.ClientHRAttemptContactMobile</div></div>
+                                            <div style="line-height:32px;margin-bottom:10px;font-size: 14px;"><b>Risebird Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Risebird Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Risebird Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>@Model.CandidateDetails.ChannelOwnerMobile</div></div>
+                                        </div>
+
+                                            @if (!String.IsNullOrWhiteSpace(Model.CandidateDetails.CompanyVideoLink))
+                                            {
+                                                <div class="w60">
+                                                    <div class="videoWrap" style="padding: 8px 10px;background: #f3eeee;">
+                                                    <video data-position='top' id="risetubevideo_3" controls class="vjs-tech video-width" controlsList="nodownload" autoplay>
+                                                        <source src="@Model.CandidateDetails.CompanyVideoLink" type="video/mp4" autoplay>
+                                                        <source src="@Model.CandidateDetails.CompanyVideoLink" type="video/mp4">
+                                                    </video>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        else
+                                        {
+                                            <div class="w60">
+                                                    <div class="videoWrap" style="padding: 8px 10px;background: #f3eeee;">
+                                                   <img src="../../img/no-video.jpg" />
+                                                </div>
+                                            </div>
+                                        }
+
+
+              
+                                  
+                                </div>
+                                  
+  
+
+  </div>
+  </div>
+
+   <div class="int-panel col-md-12 pull-left">
+     <div class="int-left-pannel">
+                                <div class="mdl-tabs__panel" id="tab2-panel" style="display:block;float:left">
+                                   
+                                    <h1 style="margin:0px 0px 15px 0px"><img width="23" src="../../img/history.png" style="position:relative;top:-5px;left: -2px;"> Interview History Details</h1>
+
+                                    <div class="scrollbar" id="style-4">
+                                        <div class="force-overflow">
+                                            @foreach (var item in Model.Meetings)
+                                            {
+
+                                                @if (item.interviewDate < DateTime.Now || item.confirmationStatus != "Confirmed")
+                                                    {
+                                                        inthistCount = +1;
+                                                    <div class="interview-tab">
+                                                        <div style="float:left"><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;display:inline-block"></i><span>@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Time:</b>*@ <span style="color: #0000008a;font-weight: 500;padding-left:5px;font-size: 15px;"> @item.interviewDate</span></span></div>
+                                                        <div style="float:right">
+                                                        @if (Model.IsReschedule)
+                                                        {
+                                                            <div class="meeting-link">Reschedule Interview Link : <a class="click_herebtn" href="@Model.SchedulingLink" target="_blank"><span>Click Here</span></a></div>
+                                                           
+                                                        }
+                                                        @if (item.confirmationStatus != "Confirmed")
+                                                        {
+                                                            <div style="text-align:right;margin:5px;"><b style="font-size:13px;padding:10px;color:grey">Status :</b><div class="current cancelled" style="font-size:13px;padding:2px 15px">@item.confirmationStatus</div></div>
+                                                            @*  <p><hr style="border-color: #8080803d;border-width:1px;margin-top:20px;" /></p>*@
+                                                        }
+
+
+                                                        else if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                        {
+                                                           <div style="text-align:right;margin:5px;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current pending" style="font-size:13px;padding:2px 5px;color:#2E7D32!important;background:#bddbcd59">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
+
+                                                        }
+
+                                                        else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
+                                                        {
+                                                           <div style="text-align:right;margin:5px;"> <b style="font-size:14px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current noshowcandidate" style="font-size:13px;padding:2px 5px;color:#94207bbd">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
+
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "No Show(Interviewer)")
+                                                        {
+                                                          <div style="text-align:right;margin:5px;"> <b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current" style="font-size:13px;padding:2px 5px;color:#7d6413bd;background:antiquewhite">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
+
+                                                        }
+
+                                                        else if (item.confirmationStatus == "Confirmed")
+                                                        {
+                                                            @*<p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current added" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>*@
+                                                                    <div style="text-align:right;margin:5px;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span>@item.MeetingStatusStatusDesc</span></div>
+
+
+                                                        }
+                                                    </div></div>
+                                                }
+
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                @if(inthistCount == 0)   {
+                                <div class="w-full"> 
+                                
+                                <div class="mdl-tabs__panel" id="tab4-panel" style="display:block;float:left">
+                                        <div id="interviewConsent" class="top-margin" style="clear:both;">
+                                          <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/consent.png" style="position:relative;left:-1px;"> INTERVIEW CONSENT DETAILS</h1></div>
+                                             <div style="clear:both"></div>
+                                            <div class="follow">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="section">
+  <div class="article">
+    <p>I confirm and authorize Risebird, (Arhat Talent Solutions Private Limited) and its partners and customers to use my ID proof data for verifying my identity to appear for an interview.</p>
+                                                            <p>I am aware and agree that this interview will be recorded and will be shared only with my employer in fully secured and encrypted format. It will be permanently deleted from all records in 2-3 weeks’ time.</p>
+                                                            <p>I am also aware that if I feel my interview is not up to the mark, I cancel my candidature anytime during or after the interview. My recordings will be deleted immediately.</p>
+  
+       <div class="moretext">
+         <p>I agree that my voice signature shall be used for authenticating my profile at the time of interview and on-boarding (if I get selected).</p>
+       <p>I will ensure that my webcam will be switched on and audio settings is done before the start of the meeting. I will not use Audio Splitter or speaker for voice communication.</p>
+      <p>I will not appear for the interview using mobile or tablet.</p>
+      <p>I will ensure to use Chrome (preferably) and download zoom plugin. I will join the meeting by clicking on the meeting link using my laptop.</p>
+                                                            <p>I will share my desktop during the interview and will have my desktop and browser clean and close all the apps before the start of the interview.</p>
+                                                            <p>I will not be late for my scheduled interview, and will join 5 minutes before time.</p>
+                                                            <p>I will ensure that I will be in the silent place where there is no background noise and with appropriate light during the interview. If required I will choose a clean uncluttered background.</p>
+                                                            <p>I am aware that this will be a hands-on interview, so I will have the editor open.</p>
+</div>
+  </div>
+  <a class="moreless-button" href="#" style="font-size:15px;margin: 15px 0px 0px 15px;text-align:left; display: inline-block;">Read more</a>
+</div>
+                                                          
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                    </div>
+                                }
+                                else
                                 {
+                                     <div class="int-right-pannel"> 
+                                
+                                <div class="mdl-tabs__panel" id="tab4-panel" style="display:block;float:left">
+                                        <div id="interviewConsent" class="top-margin" style="clear:both;">
+                                          <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/consent.png"/> INTERVIEW CONSENT DETAILS</h1></div>
+                                             <div style="clear:both"></div>
+                                            <div class="follow">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                           <div id="section">
+  <div class="article">
+     <p>I confirm and authorize Risebird, (Arhat Talent Solutions Private Limited) and its partners and customers to use my ID proof data for verifying my identity to appear for an interview.</p>
+                                                            <p>I am aware and agree that this interview will be recorded and will be shared only with my employer in fully secured and encrypted format. It will be permanently deleted from all records in 2-3 weeks’ time.</p>
+                                                            <p>I am also aware that if I feel my interview is not up to the mark, I cancel my candidature anytime during or after the interview. My recordings will be deleted immediately.</p>
+															
+     <div class="moretext">
+         <p>I agree that my voice signature shall be used for authenticating my profile at the time of interview and on-boarding (if I get selected).</p>
+       <p>I will ensure that my webcam will be switched on and audio settings is done before the start of the meeting. I will not use Audio Splitter or speaker for voice communication.</p>
+      <p>I will not appear for the interview using mobile or tablet.</p>
+      <p>I will ensure to use Chrome (preferably) and download zoom plugin. I will join the meeting by clicking on the meeting link using my laptop.</p>
+                                                            <p>I will share my desktop during the interview and will have my desktop and browser clean and close all the apps before the start of the interview.</p>
+                                                            <p>I will not be late for my scheduled interview, and will join 5 minutes before time.</p>
+                                                            <p>I will ensure that I will be in the silent place where there is no background noise and with appropriate light during the interview. If required I will choose a clean uncluttered background.</p>
+                                                            <p>I am aware that this will be a hands-on interview, so I will have the editor open.</p>
+</div>
 
-
-
-                                    <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Time:</b> <span style="color:green; font-weight:600"> @item.interviewDate</span></p>
-
-                                    @if (Model.IsReschedule)
-                                    {
-                                        <p class="meeting-link">Reschedule Interview Link : <a class="click_herebtn" href="@Model.SchedulingLink" target="_blank"><span>Click Here</span></a></p>
-                                        <p><hr style="border-color: #8080803d;border-width:1px;margin-top:20px;" /></p>
-                                    }
-                                    @if (item.confirmationStatus != "Confirmed")
-                                    {
-                                        <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current cancelled" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>
-                                        <p><hr style="border-color: #8080803d;border-width:1px;margin-top:20px;" /></p>
-                                    }
-                                    else if (item.confirmationStatus == "Confirmed")
-                                    {
-                                        @*<p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current added" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>*@
-                                        <p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span>@item.MeetingStatusStatusDesc</span></p>
-                                        <p><hr style="border-color: #8080803d;border-width:1px;margin-top:20px;" /></p>
-
-                                    }
-
+  </div>
+  <a class="moreless-button" href="#" style="font-size:15px;margin: 15px 0px 0px 15px;text-align:left; display: inline-block;">Read more</a>
+</div>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                    </div>
                                 }
-                            }
 
 
-                        </div>
-                        <div id="Employer" class="tabcontent">
-                            <div class="row">
-                                <div class="col-md-12">
+       </div>
+    </div>
+  </div>
+</div>
+</div>
 
 
-                                    <p style="line-height:32px;"><b>Company Website :</b> <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></p>
-
-                                    <p style="line-height:32px;"><b>HR Contact :&nbsp;</b><span style="color:green;font-weight:bold;">EmailId:&nbsp;</span>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<span style="color:green;font-weight:bold;padding-left:10px;">Click here to Call</span><c style="position:relative;top:-4px;left:10px;" onclick="captureclick('Call','Hr Contact')"><span onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')"><svg style="color: rgb(44, 139, 24);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone-plus-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM12.5 1a.5.5 0 0 1 .5.5V3h1.5a.5.5 0 0 1 0 1H13v1.5a.5.5 0 0 1-1 0V4h-1.5a.5.5 0 0 1 0-1H12V1.5a.5.5 0 0 1 .5-.5z" fill="#2c8b18"></path> </svg></span></c></p>
-                                    <p style="line-height:32px;"><b>Risebird Contact :&nbsp;</b><span style="color:green;font-weight:bold;">EmailId:&nbsp;</span>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<span style="color:green;font-weight:bold;padding-left:10px;">Click here to Call</span><c style="position:relative;top:-4px;left:10px;" onclick="captureclick('Call','Risebird Contact')"><span onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')"><svg style="color: rgb(44, 139, 24);" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-telephone-plus-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM12.5 1a.5.5 0 0 1 .5.5V3h1.5a.5.5 0 0 1 0 1H13v1.5a.5.5 0 0 1-1 0V4h-1.5a.5.5 0 0 1 0-1H12V1.5a.5.5 0 0 1 .5-.5z" fill="#2c8b18"></path> </svg></span></c></p>
-
-                                </div>
-                            </div>
-
-                            @if (!String.IsNullOrWhiteSpace(Model.CandidateDetails.CompanyVideoLink))
-                            {
-                                <div style="max-width:auto">
-                                    <video data-position='top' id="risetubevideo_3" controls class="vjs-tech video-width" controlsList="nodownload" autoplay>
-                                        <source src="@Model.CandidateDetails.CompanyVideoLink" type="video/mp4" autoplay>
-                                        <source src="@Model.CandidateDetails.CompanyVideoLink" type="video/mp4">
-                                    </video>
-                                </div>
-                            }
-                        </div>
-
-                        <div id="Conditions" class="tabcontent follow">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <ul>
-                                        <li>I confirm and authorize Risebird, (Arhat Talent Solutions Private Limited) and its partners and customers to use my ID proof data for verifying my identity to appear for an interview.</li>
-                                        <li>I am aware and agree that this interview will be recorded and will be shared only with my employer in fully secured and encrypted format. It will be permanently deleted from all records in 2-3 weeks’ time.</li>
-                                        <li>I am also aware that if I feel my interview is not up to the mark, I cancel my candidature anytime during or after the interview. My recordings will be deleted immediately.</li>
-                                        <li>I agree that my voice signature shall be used for authenticating my profile at the time of interview and on-boarding (if I get selected).</li>
-                                        <li>I will ensure that my webcam will be switched on and audio settings is done before the start of the meeting. I will not use Audio Splitter or speaker for voice communication.</li>
-                                        <li>I will not appear for the interview using mobile or tablet.</li>
-                                        <li>I will ensure to use Chrome (preferably) and download zoom plugin. I will join the meeting by clicking on the meeting link using my laptop.</li>
-                                        <li>I will share my desktop during the interview and will have my desktop and browser clean and close all the apps before the start of the interview.</li>
-                                        <li>I will not be late for my scheduled interview, and will join 5 minutes before time.</li>
-                                        <li>I will ensure that I will be in the silent place where there is no background noise and with appropriate light during the interview. If required I will choose a clean uncluttered background.</li>
-                                        <li>I am aware that this will be a hands-on interview, so I will have the editor open.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+  
+
 @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
@@ -479,6 +712,26 @@
         }
     }
 </script>
+<script>
+     $(document).ready(function(){
+       if ($('.scrollbar').height() < 300) {
+            $('.scrollbar').css("overflow", "hidden");
+           
+       }
+    });
+</script>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+<script>
+    $('.moreless-button').click(function() {
+  $('.moretext').slideToggle();
+  if ($('.moreless-button').text() == "Read more") {
+    $(this).text("Read less")
+  } else {
+    $(this).text("Read more")
+  }
+});
+</script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 <script src="~/js/TwilioCallMaker.js"></script>
