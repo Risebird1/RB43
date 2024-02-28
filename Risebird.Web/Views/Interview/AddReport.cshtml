@@ -62,7 +62,7 @@
         // }
         // else
         // {
-             interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
+        interviewStatusList = Html.GetEnumSelectList<InterviewStatus>().ToList();
         // }
 
         if (Model.HasDistinctParticipants == false)
@@ -74,7 +74,7 @@
         //if (timeSpan.TotalMinutes > 15)
         //{
         //    meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
-        //}
+    //}
 
     }
     else
@@ -98,7 +98,10 @@
         meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
     }
     meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
-    //interviewStatusList = interviewStatusList.Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString()).ToList();
+    if (Model.ClientId == 151)
+    {
+        interviewStatusList = interviewStatusList.Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString() && x.Value != ((int)InterviewStatus.MarginallyRejected).ToString()).ToList();
+    }
 
 }
 <link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />

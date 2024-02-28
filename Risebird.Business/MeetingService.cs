@@ -1246,7 +1246,7 @@ namespace Risebird.Business
                 reportModel.AudioTranscriptFileLink = interviewDetails.AudioTranscriptFileLink;
                 reportModel.IRFInterviewerActive = interviewDetails.IRFInterviewerActive;
                 reportModel.QOSData = (await _meetingRespository.GetZoomQOSDataByMeetingId(interviewId))?.ToList();
-
+                reportModel.ClientId = interviewDetails.ClientId;
                 return reportModel;
             }
             catch (Exception e)
@@ -2203,6 +2203,7 @@ namespace Risebird.Business
 
                 reportModel.IRFName = irfDetails.IRFId;
                 reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
+                reportModel.ClientId = interviewDetails.ClientId;
                 return reportModel;
             }
 
@@ -4125,7 +4126,7 @@ namespace Risebird.Business
                 return 0;
             }
         }
-        public async Task<bool> ConfirmInterviewavailability(string emailId, int id,string type)
+        public async Task<bool> ConfirmInterviewavailability(string emailId, int id, string type)
         {
             try
             {

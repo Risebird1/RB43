@@ -714,7 +714,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<NotUpdatedMeetings>(con, "usp_GetNotUpdatedMeetingsCount", dp,
-                        commandType: CommandType.StoredProcedure,commandTimeout:600);
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
                     return result.FirstOrDefault();
                 }
             }
@@ -1471,7 +1471,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate,string Emailid)
+        public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate, string Emailid)
         {
             try
             {
@@ -1521,7 +1521,7 @@ namespace Risebird.Repository
         {
             try
             {
-               
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetDmApproveDetails",
@@ -1541,12 +1541,12 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailRepository( int campaignId)
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailRepository(int campaignId)
         {
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@campaignId",campaignId);
+                parameters.Add("@campaignId", campaignId);
                 parameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1561,6 +1561,32 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@type", type);
+                parameters.Add("@timeNow", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<PQIDetails>(con, "usp_PQIHighStatsRates", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 }

@@ -49,5 +49,9 @@ namespace Risebird.Entities.ViewModel
         public int irfIntId { get; set; }
         public DateTime? FirstJoinedon { get; set; }
         public DateTime? FirstPerformedOn { get; set; }
+        public string candidateName { get; set; }
+        public string MobileNumber { get; set; }
+        public string IRFId { get; set; }
+        public string ChannelOwner { get; set; }
     }
 }

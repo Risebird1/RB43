@@ -695,6 +695,16 @@ namespace Risebird.Web.Controllers
                             model.Message = TempData["SuccessErrorCloneTemplateMessage"].ToString();
                             TempData.Remove("SuccessErrorCloneTemplateMessage");
                         }
+                        if (TempData["SuccessErrorCloneTemplateMessage2"] != null)
+                        {
+                            model.Message2 = TempData["SuccessErrorCloneTemplateMessage2"].ToString();
+                            TempData.Remove("SuccessErrorCloneTemplateMessage2");
+                        }
+                        if (TempData["SuccessErrorCloneTemplateMessage3"] != null)
+                        {
+                            model.Message3 = TempData["SuccessErrorCloneTemplateMessage3"].ToString();
+                            TempData.Remove("SuccessErrorCloneTemplateMessage3");
+                        }
                         model.Profile = profileName;
                         if (model.ClonableTemplates != null)
                         {
@@ -1168,6 +1178,42 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         var result = await _templateService.RestoreTemplate(id);
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(false);
+            }
+
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> DeleteClonableSkillChannel(int ClonableSkillChannelId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailId = HttpContext.Session.GetString("email")?.Trim();
+                    emailId = emailId.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+                        var result = await _templateService.DeleteClonableSkillChannel(ClonableSkillChannelId,emailId);
                         return Json(result);
                     }
                     else

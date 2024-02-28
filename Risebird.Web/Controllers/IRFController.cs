@@ -7574,9 +7574,12 @@ namespace Risebird.Web.Controllers
 
                             FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
 
-                            TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
-                            TempData["SuccessErrorMessage2"] = model.CalendlyLink;
-                            return RedirectToAction("Index");
+                            TempData["SuccessErrorCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                            TempData["SuccessErrorCloneTemplateMessage2"] = model.CalendlyLink;
+                            TempData["SuccessErrorCloneTemplateMessage3"] = "https://portal.risebird.io/IRF/Index";
+                            return RedirectToAction("List", "Template");
+
+                            //return RedirectToAction("Index");
                         }
                         else
                         {
@@ -8703,8 +8706,8 @@ namespace Risebird.Web.Controllers
                     {
                         //create a campaign and save all the selected assessment groups
                         model = _irfService.CreateCampaign(model, emailid);
-                        
-                        if(model.id > 0)
+
+                        if (model.id > 0)
                         {
                             model.CurrentForm = "form_2";
                             var listAssessmentGroupsClubbed = new List<int>();
@@ -8780,7 +8783,7 @@ namespace Risebird.Web.Controllers
                     {
                         //create a campaign and save all the selected assessment groups
                         var result = _irfService.AddSkillChannelsForCampaign(model, emailid);
-                        if(result)
+                        if (result)
                         {
                             //get all concerned interviewers
                             var interviewers = await _irfService.GetCampaignInterviewingMembers(model.id.HasValue ? model.id.Value : 0);
