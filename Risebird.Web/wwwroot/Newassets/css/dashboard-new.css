@@ -6057,7 +6057,7 @@ border: 1px #ccc solid!important;
 }
 
 .content-wrappers .meeting-link .click_herebtn {
-    padding: 15px 20px;
+    padding: 14px 12px;
 }
 
 .candidate-tab .card-block h1 {
@@ -6083,12 +6083,27 @@ border: 1px #ccc solid!important;
     margin: 20px 0px;
     color: #3094e5;
     font-weight: bold;
+    font-size: 16px;
+    position: relative;
+    top: -36px;
 }
 
-    .meeting-link .click_herebtn {
-        padding: 7px 35px;
-    }
-
+.int-panel{
+    margin-top:30px;
+}
+.content-wrappers .int-panel .meeting-link .click_herebtn {
+    padding: 5px 12px !important;
+    font-size: 12px !important;
+}
+.int-panel .meeting-link {
+    margin: 5px 0px 10px 0px;
+    color: #769bb9;
+    font-weight: bold;
+    font-size: 15px;
+    position: relative;
+    top: 0;
+    font-weight: 500;
+}
 .company-logo {
     text-align: center;
     padding: 10px 10px;
@@ -6096,7 +6111,7 @@ border: 1px #ccc solid!important;
 }
 
 .candidate-tab b {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
     color: #204065;
 }
@@ -6180,20 +6195,22 @@ border: 1px #ccc solid!important;
     border-radius: 120px 120px 120px 120px;
     background-color: #204065;
 }
-
+.int-panel{
+    margin-top:30px;
+}
 .follow ul {
     margin: 0px;
     padding: 0px;
 }
 
-    .follow ul li {
+    .follow ul li, .follow p{
         font-size: 15px;
         padding: 5px 27px;
         list-style: none;
         background-image: url(../../img/blue-tick.png);
         background-repeat: no-repeat;
-        background-position: 7px 10px;
-        background-size: 2%;
+        background-position: 0px 10px;
+        background-size:16px;
         color: #777575;
     }
 
@@ -6239,8 +6256,9 @@ border: 1px #ccc solid!important;
 }
 
 .content-wrappers {
-    max-width: 1000px;
+   max-width:1100px;
     margin: 0px auto;
+    margin: 60px auto 40px auto;
 }
 
     .content-wrappers .tabcontent {
@@ -7008,7 +7026,7 @@ border: 1px #ccc solid!important;
 }
 
 .cancelled {
-    background: red;
+    background: #f72424b0;
     color: #fff;
 }
 
@@ -8645,11 +8663,12 @@ option {
         top: -43px;
         right: 30px;
     }
-.calling h1 {
-    float: left;
-    font-size: 15px;
-    padding: 5px;
-}
+        .calling h1 {
+            float: left;
+            font-size: 15px;
+            padding: 5px;
+            margin: 0px;
+        }
 .calling-icon {
     float: left;
     border-radius: 100%;
@@ -8975,8 +8994,7 @@ option {
     color: green;
     font-weight: 600;
     position: absolute;
-    top: -30px;
-    left: -5px;
+    top: -40px;
     padding: 0px;
     margin: 0px;
 }
@@ -8996,6 +9014,96 @@ option {
 }
 .select2-container--default .select2-search--inline .select2-search__field{
     border:none!important;
+}
+.interview-tab {
+    width: 100%;
+    float: left;
+    padding: 15px 10px;
+    background: #fff;
+    box-shadow: 0px 5px 15px 0px rgb(131 124 124 / 6%);
+    margin: 0px 0px 10px 0px;
+}
+.pipe {
+    position: relative;
+    left: 20px;
+    display: inline-block;
+    height: 50px;
+    background: #bac0e6;
+    width: 2px;
+    top: 25px;
+}
+.left-pannel {
+    width: 50%;
+    float: left;
+}
+
+.right-pannel {
+    width: 50%;
+    float: left;
+}
+
+.int-left-pannel {
+    width: 50%;
+    margin: 0px 30px 0px 0px;
+    float: left;
+}
+ .int-left-pannel .mdl-tabs__panel h1 {
+        margin-top: 0px;
+    }
+.int-right-pannel {
+    width: 47%;
+    float: left;
+    margin: 0px 0px 0px 0px;
+}
+.candidate-tab .w40 {
+    width: 40%;
+    float: left;
+}
+.candidate-tab .w60 {
+    width: 60%;
+    float: left;
+}
+.candidate-tab .videoWrap video {
+    width: 100%;
+    height: 250px
+}
+.no-interview {
+    background: #b1e5e70d;
+    margin: 10px 30px 10px 0px;
+    padding: 10px;
+}
+.no-interview img{
+    margin:30px auto;
+    display:block;
+}
+.schedule-heading h1 {
+    font-size: 16px;
+    line-height: 26px;
+    text-align: center;
+    float: none;
+    color: #8c9398;
+    margin: 0px 0px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.schedule-heading span {
+    font-size: 13px;
+    text-align: center;
+    color: #8c9398;
+    display: block;
+    font-weight: 400;
+}
+.schedule-img {
+    width: 145px;
+    position: absolute;
+    top: 20px;
+    right: 95px;
+    opacity: 0.20;
+}
+.right-pannel a {
+    font-size: 17px;
+    color: blue;
+    text-decoration: none;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
@@ -10094,7 +10202,7 @@ option {
         .candidate-tab .card-block {
             max-width: 160px;
         }
-
+     
         .videoContainer {
             width: 270px;
             height: 280px;
@@ -10285,7 +10393,10 @@ option {
             position: relative;
             top: -10px;
         }
-        
+        .interviewresponsebtn {
+            margin-bottom: 20px;
+            padding: 7px 9px!important;
+        }
         .calling-area {
             font-size: 13.5px !important;
             padding: 20px 10px !important;
@@ -10721,10 +10832,10 @@ option {
         }
 
         .content-wrappers .meeting-link .click_herebtn {
-            padding: 10px 20px;
+            padding: 10px 6px;
             position: relative;
             top: -2px;
-            font-size: 11px;
+            font-size: 9px;
         }
 
         .candidate-tab .tab-block .step {
@@ -10770,6 +10881,25 @@ option {
             top: -20px;
             float: right;
         }
+        .left-pannel, .right-pannel, .int-left-pannel, .int-right-pannel {
+            width: 100%;
+            float: left;
+        }
+        .candidate-tab .w40{
+            width:100%;
+            float:left;
+            text-align:left;
+        }
+        .candidate-tab .w60 {
+            width: 100%;
+            float: left;
+         
+        }
+
+        .schedule-img{
+            display:none;
+        }
+
     }
 
 
@@ -11127,10 +11257,19 @@ option {
         }
 
         .content-wrappers .meeting-link .click_herebtn {
-            padding: 10px 20px;
-            position: relative;
-            top: 15px;
-            font-size: 13px;
+            margin: 0px 0px 45px 0px;
+            display: block;font-size:14px;
+        }
+        .candidate-tab .pipe {
+            display: none;
+        }
+        .meeting-link{
+            top:0px;
+        }
+        .interviewresponsebtn {
+            padding: 7px 15px;
+            margin: 10px 0px 10px 0px;
+            width: 155px;
         }
     }
 
