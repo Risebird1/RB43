@@ -211,6 +211,9 @@ input[type="radio"]:checked:before, input[type="checkbox"]:checked:before {
 .survey .cadName [data-tooltip]:after {
     left: 60% !important;
 }
+.company-logo-img {
+    text-align: left;
+}
 
 .selectedmeeting .candidate-details .mtop-5 [data-tooltip]:before {
     margin-left: 0px !important;
@@ -6094,6 +6097,7 @@ border: 1px #ccc solid!important;
 .content-wrappers .int-panel .meeting-link .click_herebtn {
     padding: 5px 12px !important;
     font-size: 12px !important;
+    margin: 0px !important;
 }
 .int-panel .meeting-link {
     margin: 5px 0px 10px 0px;
@@ -9105,6 +9109,7 @@ option {
     color: blue;
     text-decoration: none;
 }
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -9587,7 +9592,11 @@ option {
         #tblbodyCandidate .action {
             max-width: 100% !important;
         }
-
+        .no-interview img {
+            margin: 10px auto 10px auto!important;
+            display: block;
+            width: 150px!important;
+        }
         .tab-menu ul li:nth-child(3) .skillcount {
             right: 1px !important;
         }
@@ -9899,6 +9908,32 @@ option {
             left: 12px !important;
             font-size: 12px !important;
         }
+        .content-wrappers {
+            width: 100%;
+            padding: 0px 20px !important;
+        }
+        .int-left-pannel {
+            width: 50%;
+            margin: 0px 20px 0px 0px !important;
+            float: left;
+        }
+        .meeting-link{
+            font-size:14px;
+        }
+        .content-wrappers .meeting-link .click_herebtn {
+            padding: 14px 11px;
+            margin-left: 35px !important;
+        }
+        .click_herebtn{
+            font-size:12px;
+        }
+        .time-txt{
+            font-size:12px;
+        }
+        .click_herebtn {
+            margin: 10px 1px 0px 5px!important;
+            font-size: 12px!important;
+        }
     }
 
     @media (min-width: 992px) and (max-width: 1199px) {
@@ -10058,7 +10093,15 @@ option {
         #calenderTimeslot {
             left: 20px;
         }
-
+        .interview-tab .left-div {
+            float: none !important;
+            text-align: center !important;
+        }
+        .no-interview img {
+            margin: 10px auto 10px auto !important;
+            display: block;
+            width: 120px !important;
+        }
         .calling-area span {
             text-align: left !important;
         }
@@ -10078,7 +10121,9 @@ option {
                 color: #cb2c2c;
                 text-align: left !important;
             }
-
+        .meeting-link {
+            font-size: 16px;
+        }
         .event .calendar-con {
             min-width: 90% !important;
             max-width: 90% !important;
@@ -10381,1000 +10426,1093 @@ option {
             position: relative;
             top: -6px;
         }
-    }
-
-    @media only screen and (max-width: 767px) {
-        #clientduser li {
+        .left-pannel {
             width: 100%;
             float: left;
         }
-        .interviewWrapper .heading-txt {
-            line-height: 25px;
-            position: relative;
+        .right-pannel {
+            width: 100%;
+            float: left;
+        }
+        .schedule-img {
+            width: 180px;
+            position: absolute;
             top: -10px;
+            right: 200px;
+            opacity: 0.20;
         }
         .interviewresponsebtn {
-            margin-bottom: 20px;
-            padding: 7px 9px!important;
+            padding: 7px 41px;
+            margin: 0px 0px 20px 0px;
         }
-        .calling-area {
-            font-size: 13.5px !important;
-            padding: 20px 10px !important;
+        .content-wrappers {
+            width:100%;
+            padding: 0px 30px!important;
         }
-
-            .calling-area span {
-                display: none;
-            }
-
-        .assessmentgrp-btn {
-            float: none;
+        .content-wrappers .meeting-link .click_herebtn {
+            padding: 14px 41px;
         }
-
-        .risebirdPay-con {
-            width: calc(100% - 0%);
+        .click_herebtn {
+            margin: 10px 5px 0px 5px!important;
+            font-size:15px!important;
         }
 
-        .mobile-view-cl {
-            position: absolute !important;
-            right: 15px;
-        }
-
-            .mobile-view-cl .call-wrap {
-                top: 1px;
-                left: -4px;
-            }
-
-        .commonpool .available {
-            margin: 0px 0px 9px 0px;
-        }
-
-        .scrollbar {
-            overflow: hidden;
-        }
-
-        .template-top {
-            margin-top: 80px;
-        }
-
-        #reportForm video {
-            width: calc(100% - 4px) !important;
-            padding: 0px !important;
-        }
-
-        .generate-pdf {
-            position: relative !important;
-            left: 17px !important;
-        }
-
-        #userProfileForm .avatar-upload {
-            margin: 0px auto !important;
-        }
-
-        .irf-radiowrap {
-            padding: 0px 5px 0px 5px;
-            float: left;
-        }
-
-        #clientduser li:nth-child(5) .dtr-title {
-            float: left;
-        }
-
-        #clientduser li:nth-child(5) .dtr-data {
-            float: left;
-        }
-
-        #btnStart, #btnStop {
-            left: 150px;
-        }
-
-        .action-btn {
-            width: 100px;
-            margin: 0px auto;
-        }
-
-        .candidate .journey td.cadEmail {
-            width: 130px !important;
-        }
-
-        .scheduling .action {
-            position: inherit;
-        }
-
-        .custom-select {
-            font-size: 12px !important;
-        }
-
-        .select-selected {
-            padding: 6px 0px !important;
-        }
-
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            width: 350px !important;
-            height: 200px !important;
-        }
-
-        .event .calendar-con table {
-            width: 100% !important;
-            float: right;
-        }
-
-        .txttimezone-con {
-            position: initial;
-            left: 6px !important;
-            background: #dbdbdb8c;
-            width: 100% !important;
-            border-radius: 200px;
-            text-align: center;
-            color: #686363;
-            padding: 10px 0px 0px 10px;
-            margin: 0px auto !important;
-            display: block !important;
-        }
-
-        #calender table {
-            width: 100% !important;
-        }
-
-        #calender {
-            border: 0px !important;
-        }
-
-        .support svg {
-            position: relative;
-            left: 10px;
-            width: 16px;
-            top: -4px;
-        }
-
-        .mob-txt .clientName {
-            width: 211px;
-        }
-
-        .mob-img {
-            width: 15%;
-            float: left;
-        }
-
-        .mob-txt {
-            width: 85%;
-            float: left;
-        }
-
-        .mob-mb-0 {
-            margin-bottom: 0px;
-        }
-
-        .interviewer_2 {
-            width: 335px;
-            float: left;
-            display: block;
-        }
-
-        .searchCon.mb-10, .mb-10 {
-            margin-bottom: 10px !important;
-        }
-
-        .interviewerMemberModal
-        .navbar-toggle {
-            top: -5px;
-        }
-
-        .preview-section {
-            padding-top: 80px !important;
-        }
-
-        .preview-txt {
-            padding-left: 0px !important;
-        }
-
-            .preview-txt span {
-                color: #706a6a;
-                font-size: 15px;
-            }
-
-        #btnSave {
-            left: 0px !important;
-        }
-
-        .jd .skillname {
-            width: 100% !important;
-            text-align: center;
-        }
-
-        .jd .card-header-buttons.action.text-right {
-            text-align: center !important;
-        }
-
-        .canvas_div_pdf .card-body {
-            padding: 0px !important;
-        }
-
-        #tblbodyCandidate .action {
-            max-width: 100% !important;
-        }
-
-        .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
-            border: 0;
-            border-radius: 30px !important;
-            transition: all .3s;
-            padding: 0px 0px;
-            margin: 0px 1px !important;
-            min-width: 20px !important;
-            text-align: center;
-            height: 22px !important;
-            line-height: 24px;
-            color: #2c2c2c;
-            cursor: pointer;
-            font-size: 14px;
-            text-transform: uppercase;
-            background: transparent;
-            outline: none;
-        }
-
-        #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
-            padding-right: 10px !important;
-            padding-left: 10px !important;
-        }
-
-        #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
-            display: none !important;
-        }
-
-        .mob_canvas-height {
-            height: 400px;
-        }
-
-        #SkillTable select.form-control {
-            width: auto !important;
-        }
-
-        #InterviewerTable .form-control {
-            width: 200px !important;
-        }
-
-        .recommendation .multiselect.dropdown-toggle:after {
-            left: 1% !important;
-        }
-
-        .page-container .page-content .page-content-wrap {
-            float: left;
-            width: 100%;
-            margin-top: -10px !important;
-            padding: 0px 15px;
-            font-family: 'Open Sans', sans-serif;
-        }
-
-        #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-            color: red !important;
-            margin-left: 0 !important;
-            font-size: 12px !important;
-            width: 100%;
-            position: relative;
-            text-align: right;
-        }
-
-        .mob_h {
-            height: 2px;
-            width: auto;
-        }
+    }
 
 
-        .myinterview_modal .btn-group {
-            width: 100% !important;
-        }
+@media only screen and (max-width: 767px) {
+    #clientduser li {
+        width: 100%;
+        float: left;
+    }
 
-        .tabCon .tabs {
+    .int-left-pannel .scrollbar {
+        overflow: auto;
+    }
+
+    .interviewWrapper .heading-txt {
+        line-height: 25px;
+        position: relative;
+        top: -10px;
+    }
+
+    .interviewresponsebtn {
+        margin-bottom: 20px;
+        padding: 7px 9px !important;
+    }
+
+    .calling-area {
+        font-size: 13.5px !important;
+        padding: 20px 10px !important;
+    }
+
+        .calling-area span {
             display: none;
         }
 
-        .main-notification-title {
-            right: 9px !important;
-            padding-top: 0px !important;
-            position: relative;
-            top: 2px;
+    .content-wrappers {
+        padding: 0px !important;
+    }
+
+    .assessmentgrp-btn {
+        float: none;
+    }
+
+    .risebirdPay-con {
+        width: calc(100% - 0%);
+    }
+
+    .mobile-view-cl {
+        position: absolute !important;
+        right: 15px;
+    }
+
+        .mobile-view-cl .call-wrap {
+            top: 1px;
+            left: -4px;
         }
 
-        .user.user-r .main-notification-title {
-            top: 0px !important;
-        }
+    .commonpool .available {
+        margin: 0px 0px 9px 0px;
+    }
 
-        .user.user-r {
-            top: -28px !important;
-            left: -42px !important;
-        }
+    .scrollbar {
+        overflow: hidden;
+    }
 
-        .user {
-            position: relative !important;
-            top: 52px;
-            right: 0px !important;
-            left: 0px !important;
-        }
+    .template-top {
+        margin-top: 80px;
+    }
 
-        #txtpageHeader {
-            display: none;
-        }
+    #reportForm video {
+        width: calc(100% - 4px) !important;
+        padding: 0px !important;
+    }
 
-        .note-meeting {
-            width: 54%;
-            left: 30px;
-            position: absolute;
-            top: 12px !important;
+    .generate-pdf {
+        position: relative !important;
+        left: 17px !important;
+    }
+
+    #userProfileForm .avatar-upload {
+        margin: 0px auto !important;
+    }
+
+    .irf-radiowrap {
+        padding: 0px 5px 0px 5px;
+        float: left;
+    }
+
+    #clientduser li:nth-child(5) .dtr-title {
+        float: left;
+    }
+
+    #clientduser li:nth-child(5) .dtr-data {
+        float: left;
+    }
+
+    #btnStart, #btnStop {
+        left: 150px;
+    }
+
+    .action-btn {
+        width: 100px;
+        margin: 0px auto;
+    }
+
+    .candidate .journey td.cadEmail {
+        width: 130px !important;
+    }
+
+    .scheduling .action {
+        position: inherit;
+    }
+
+    .custom-select {
+        font-size: 12px !important;
+    }
+
+    .select-selected {
+        padding: 6px 0px !important;
+    }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 350px !important;
+        height: 200px !important;
+    }
+
+    .event .calendar-con table {
+        width: 100% !important;
+        float: right;
+    }
+
+    .txttimezone-con {
+        position: initial;
+        left: 6px !important;
+        background: #dbdbdb8c;
+        width: 100% !important;
+        border-radius: 200px;
+        text-align: center;
+        color: #686363;
+        padding: 10px 0px 0px 10px;
+        margin: 0px auto !important;
+        display: block !important;
+    }
+
+    #calender table {
+        width: 100% !important;
+    }
+
+    #calender {
+        border: 0px !important;
+    }
+
+    .support svg {
+        position: relative;
+        left: 10px;
+        width: 16px;
+        top: -4px;
+    }
+
+    .mob-txt .clientName {
+        width: 211px;
+    }
+
+    .mob-img {
+        width: 15%;
+        float: left;
+    }
+
+    .mob-txt {
+        width: 85%;
+        float: left;
+    }
+
+    .mob-mb-0 {
+        margin-bottom: 0px;
+    }
+
+    .interviewer_2 {
+        width: 335px;
+        float: left;
+        display: block;
+    }
+
+    .searchCon.mb-10, .mb-10 {
+        margin-bottom: 10px !important;
+    }
+
+    .interviewerMemberModal
+    .navbar-toggle {
+        top: -5px;
+    }
+
+    .preview-section {
+        padding-top: 80px !important;
+    }
+
+    .preview-txt {
+        padding-left: 0px !important;
+    }
+
+        .preview-txt span {
+            color: #706a6a;
             font-size: 15px;
         }
 
-        .nav-open .navbar {
-            left: 260px;
-        }
+    #btnSave {
+        left: 0px !important;
+    }
 
-        .top-panel {
-            padding: 0px 5px !important
-        }
+    .jd .skillname {
+        width: 100% !important;
+        text-align: center;
+    }
 
-        .timer {
-            font-size: 15px !important;
-        }
+    .jd .card-header-buttons.action.text-right {
+        text-align: center !important;
+    }
 
-        .rbpay .modal-dialog {
-            max-width: 100% !important
-        }
+    .canvas_div_pdf .card-body {
+        padding: 0px !important;
+    }
 
-        .mobpad {
-            padding: 0px !important;
-        }
+    #tblbodyCandidate .action {
+        max-width: 100% !important;
+    }
 
-        .mobpad {
-            padding: 0px !important;
-        }
+    .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
+        border: 0;
+        border-radius: 30px !important;
+        transition: all .3s;
+        padding: 0px 0px;
+        margin: 0px 1px !important;
+        min-width: 20px !important;
+        text-align: center;
+        height: 22px !important;
+        line-height: 24px;
+        color: #2c2c2c;
+        cursor: pointer;
+        font-size: 14px;
+        text-transform: uppercase;
+        background: transparent;
+        outline: none;
+    }
 
-        .navbar {
-            padding-top: 0;
-        }
+    #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+        padding-right: 10px !important;
+        padding-left: 10px !important;
+    }
 
-            .navbar.navbar-no-bg {
-                background: #333;
-                background: rgba(51, 51, 51, 0.9);
-            }
+    #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
+        display: none !important;
+    }
 
-        .navbar-brand {
-            height: 60px;
-            margin-left: 0px;
-        }
+    .mob_canvas-height {
+        height: 400px;
+    }
 
-        .navbar-collapse {
-            border: 0;
-        }
+    #SkillTable select.form-control {
+        width: auto !important;
+    }
 
-        .navbar-toggle {
-            margin-top: 12px !important;
-        }
+    #InterviewerTable .form-control {
+        width: 200px !important;
+    }
 
-        .top-content {
-            padding: 40px 0 110px 0;
-        }
+    .recommendation .multiselect.dropdown-toggle:after {
+        left: 1% !important;
+    }
 
-        .user-r .user-menu {
-            top: -15px;
-            left: auto;
-            right: -19px;
-        }
+    .page-container .page-content .page-content-wrap {
+        float: left;
+        width: 100%;
+        margin-top: -10px !important;
+        padding: 0px 15px;
+        font-family: 'Open Sans', sans-serif;
+    }
 
+    #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+        color: red !important;
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        width: 100%;
+        position: relative;
+        text-align: right;
+    }
 
-        .dashboard-icon {
-            margin: 0px auto !important;
-            float: none !important;
-            position: relative !important;
-            left: 0px !important;
-        }
-
-        .click-arrow {
-            position: relative !important;
-            top: 8px !important;
-            left: -10px !important;
-        }
-
-        .dashboard-cat-title {
-            position: relative;
-            top: 0px !important;
-            text-align: center !important;
-        }
-
-        .fixed-header {
-            width: calc(100% - 30px);
-        }
-
-        .candidatename-sla {
-            float: none;
-            margin: 0px;
-        }
-
-        .public-url div.dataTables_wrapper div.dataTables_filter {
-            text-align: right;
-            position: absolute;
-            left: 193px;
-            top: -34px;
-        }
-
-        .public-url #candidateTable_length {
-            top: 17px;
-            position: relative;
-            display: block;
-        }
-
-        .feedbackcontainer {
-            width: 100%;
-        }
-
-            .feedbackcontainer .accordion-heading a {
-                width: 100%;
-                height: auto;
-                justify-content: center;
-            }
-
-            .feedbackcontainer .w-auto {
-                width: 100% !important;
-            }
-
-        .redobtn {
-            float: none;
-            top: -51px;
-        }
-
-        .redo-text {
-            top: -51px;
-            line-height: 31px;
-        }
-
-        .submit-feedback {
-            position: fixed;
-            bottom: 0px;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        .content-wrappers .meeting-link .click_herebtn {
-            padding: 10px 6px;
-            position: relative;
-            top: -2px;
-            font-size: 9px;
-        }
-
-        .candidate-tab .tab-block .step {
-            display: none;
-        }
-
-        .candidate-tab .tab-block .card-block {
-            width: 31.3% !important;
-            float: left !important;
-            margin: 0px 5px !important;
-            height: 65px !important;
-        }
-
-            .candidate-tab .tab-block .card-block h1 {
-                padding-left: 0px !important;
-                text-align: center;
-            }
-
-        .videoContainer {
-            width: 100%;
-            left: 0px;
-        }
-
-        #btncamara, #btnoffcamara {
-            left: -335px;
-        }
-
-        .rules {
-            left: 0px;
-            top: 80px;
-        }
-
-        .about-int {
-            padding: 0px 10px 0px 0px;
-        }
-
-        #timer-clock {
-            margin-top: 8px;
-            width: 100px;
-            height: 76px;
-            position: relative;
-            left: 0px;
-            top: -20px;
-            float: right;
-        }
-        .left-pannel, .right-pannel, .int-left-pannel, .int-right-pannel {
-            width: 100%;
-            float: left;
-        }
-        .candidate-tab .w40{
-            width:100%;
-            float:left;
-            text-align:left;
-        }
-        .candidate-tab .w60 {
-            width: 100%;
-            float: left;
-         
-        }
-
-        .schedule-img{
-            display:none;
-        }
-
+    .mob_h {
+        height: 2px;
+        width: auto;
     }
 
 
+    .myinterview_modal .btn-group {
+        width: 100% !important;
+    }
 
-    @media only screen and (max-width: 480px) {
-        .candidate-tab .card-block h1 {
-            font-size: 13px !important;
-            background: url(../../img/interview.svg) -20px 37px no-repeat !important;
+    .tabCon .tabs {
+        display: none;
+    }
+
+    .main-notification-title {
+        right: 9px !important;
+        padding-top: 0px !important;
+        position: relative;
+        top: 2px;
+    }
+
+    .user.user-r .main-notification-title {
+        top: 0px !important;
+    }
+
+    .user.user-r {
+        top: -28px !important;
+        left: -42px !important;
+    }
+
+    .user {
+        position: relative !important;
+        top: 52px;
+        right: 0px !important;
+        left: 0px !important;
+    }
+
+    #txtpageHeader {
+        display: none;
+    }
+
+    .note-meeting {
+        width: 54%;
+        left: 30px;
+        position: absolute;
+        top: 12px !important;
+        font-size: 15px;
+    }
+
+    .nav-open .navbar {
+        left: 260px;
+    }
+
+    .top-panel {
+        padding: 0px 5px !important
+    }
+
+    .timer {
+        font-size: 15px !important;
+    }
+
+    .rbpay .modal-dialog {
+        max-width: 100% !important
+    }
+
+    .mobpad {
+        padding: 0px !important;
+    }
+
+    .mobpad {
+        padding: 0px !important;
+    }
+
+    .navbar {
+        padding-top: 0;
+    }
+
+        .navbar.navbar-no-bg {
+            background: #333;
+            background: rgba(51, 51, 51, 0.9);
         }
 
-        .candidate-tab .tab-block .card-block {
-            width: 30.3% !important;
-            float: left !important;
+    .navbar-brand {
+        height: 60px;
+        margin-left: 0px;
+    }
+
+    .navbar-collapse {
+        border: 0;
+    }
+
+    .navbar-toggle {
+        margin-top: 12px !important;
+    }
+
+    .top-content {
+        padding: 40px 0 110px 0;
+    }
+
+    .user-r .user-menu {
+        top: -15px;
+        left: auto;
+        right: -19px;
+    }
+
+
+    .dashboard-icon {
+        margin: 0px auto !important;
+        float: none !important;
+        position: relative !important;
+        left: 0px !important;
+    }
+
+    .click-arrow {
+        position: relative !important;
+        top: 8px !important;
+        left: -10px !important;
+    }
+
+    .dashboard-cat-title {
+        position: relative;
+        top: 0px !important;
+        text-align: center !important;
+    }
+
+    .fixed-header {
+        width: calc(100% - 30px);
+    }
+
+    .candidatename-sla {
+        float: none;
+        margin: 0px;
+    }
+
+    .public-url div.dataTables_wrapper div.dataTables_filter {
+        text-align: right;
+        position: absolute;
+        left: 193px;
+        top: -34px;
+    }
+
+    .public-url #candidateTable_length {
+        top: 17px;
+        position: relative;
+        display: block;
+    }
+
+    .feedbackcontainer {
+        width: 100%;
+    }
+
+        .feedbackcontainer .accordion-heading a {
+            width: 100%;
+            height: auto;
+            justify-content: center;
         }
 
-        #btnStop, #btnStart {
-            left: -12px !important;
+        .feedbackcontainer .w-auto {
+            width: 100% !important;
         }
+
+    .redobtn {
+        float: none;
+        top: -51px;
+    }
+
+    .redo-text {
+        top: -51px;
+        line-height: 31px;
+    }
+
+    .submit-feedback {
+        position: fixed;
+        bottom: 0px;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .content-wrappers .meeting-link .click_herebtn {
+        padding: 10px 20px;
+        position: relative;
+        margin-left: 40px !important;
+    }
+
+    .meeting-link {
+        font-size: 16px !important;
+    }
+
+    .candidate-tab .tab-block .step {
+        display: none;
+    }
+
+    .candidate-tab .tab-block .card-block {
+        width: 31.3% !important;
+        float: left !important;
+        margin: 0px 5px !important;
+        height: 65px !important;
+    }
+
+        .candidate-tab .tab-block .card-block h1 {
+            padding-left: 0px !important;
+            text-align: center;
+        }
+
+    .videoContainer {
+        width: 100%;
+        left: 0px;
+    }
+
+    #btncamara, #btnoffcamara {
+        left: -335px;
+    }
+
+    .rules {
+        left: 0px;
+        top: 80px;
+    }
+
+    .about-int {
+        padding: 0px 10px 0px 0px;
+    }
+
+    #timer-clock {
+        margin-top: 8px;
+        width: 100px;
+        height: 76px;
+        position: relative;
+        left: 0px;
+        top: -20px;
+        float: right;
+    }
+
+    .left-pannel, .right-pannel, .int-left-pannel, .int-right-pannel {
+        width: 100%;
+        float: left;
+        margin: 0px !important;
+    }
+
+    .candidate-tab .w40 {
+        width: 100%;
+        float: left;
+        text-align: left;
+    }
+
+    .candidate-tab .w60 {
+        width: 100%;
+        float: left;
+    }
+
+    .schedule-img {
+        display: none;
+    }
+
+    .time-txt {
+        font-size: 13px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .candidate-tab .card-block h1 {
+        font-size: 13px !important;
+        background: url(../../img/interview.svg) -20px 37px no-repeat !important;
+    }
+
+    .candidate-tab .tab-block .card-block {
+        width: 30.3% !important;
+        float: left !important;
+    }
+
+    .interview-tab .left-div {
+        float: none !important;
+        text-align: center !important;
+    }
+
+    #btnStop, #btnStart {
+        left: -12px !important;
+    }
+
+    .videoContainer video {
+        height: 310px !important;
+    }
+
+    .videoContainer {
+        height: 305px !important;
+    }
+
+    .public-url #candidateTable_length {
+        left: -22px;
+        position: relative;
+    }
+
+    .candidate-tab .tabcontent p {
+        font-size: 14px;
+    }
+
+    .public-url div.dataTables_wrapper div.dataTables_filter {
+        text-align: right;
+        position: absolute;
+        left: 104px;
+        top: -45px;
+    }
+
+    .public-url #candidateTable_length {
+        top: 9px;
+    }
+
+    .sharp.btn-xs {
+        width: 2.1rem;
+        height: 2.1rem;
+        min-width: 2.1rem;
+        min-height: 2.1rem;
+    }
+
+    .pad7 {
+        padding: 0px !important;
+    }
+
+    .note-filter {
+        font-size: 13px !important;
+        padding: 5px 0px !important;
+    }
+
+    .logo-cm {
+        position: relative;
+        top: -1px !important;
+        width: 23% !important;
+        left: 10px !important;
+    }
+
+    #scoreChart tspan {
+        font-size: 11.5px;
+    }
+
+    .custom-select {
+        line-height: 17px !important;
+    }
+
+    .txttimezone-con {
+        width: 300px !important;
+        min-height: 30px;
+    }
+
+    .currMonth {
+        padding: 0px 12px !important;
+    }
+
+    #calender table {
+        border-collapse: separate;
+        border-spacing: 4px 9px !important;
+    }
+
+    #calender {
+        width: 100% !important;
+    }
+
+    #calenderTimeslot {
+        width: 120px !important;
+    }
+
+    .time-btn {
+        width: 95px !important;
+        left: 9px !important;
+    }
+
+    #calender {
+        width: 325px !important;
+        padding-left: 10px !important;
+    }
+
+    .filter-note {
+        width: 100% !important;
+        float: left;
+        color: #2a9e2a;
+        padding-top: 4px;
+        position: absolute;
+        right: 20% !important;
+        top: 34px !important;
+        line-height: 16px;
+    }
+
+    .note-meeting {
+        left: 7px !important;
+        position: absolute;
+        top: -5px !important;
+        font-size: 15px;
+        width: 100% !important;
+    }
+
+    .popup-text {
+        right: 60px !important;
+        top: 24px !important;
+        font-size: 16px !important;
+    }
+
+    .single-video-left h1 .mdc-button {
+        height: 30px !important;
+    }
+
+    .single-video-left .join-time {
+        top: 8px !important;
+    }
+
+    .mob_canvas-height {
+        height: 300px;
+    }
+
+    .overall-rate {
+        position: absolute;
+        right: 25px;
+        top: -26px;
+        color: #7eb38e;
+        font-weight: normal;
+    }
+
+    .main-notification-title {
+        right: 9px !important;
+        padding-top: 0px !important;
+        position: relative;
+        top: 2px;
+    }
+
+    .user-r .user-menu {
+        top: -15px;
+        left: auto;
+        right: -19px;
+    }
+
+    .click-arrow {
+        position: relative !important;
+        top: 10px !important;
+        left: -10px !important;
+    }
+
+    .dashboard-cat-title {
+        position: relative;
+        top: 0px !important;
+        text-align: center !important;
+    }
+
+    .topheader-link-wrap {
+        width: 248px;
+        font-size: 10px;
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+
+    .topheader-link {
+        width: 23px;
+        height: 23px;
+    }
+
+    .video-alert {
+        left: 0px !important;
+        font-size: 12px !important;
+        line-height: 14px !important;
+    }
+
+    .time-txt {
+        font-size: 12px;
+    }
+
+    .meeting-link {
+        font-size: 14px !important;
+    }
+
+    .content-wrappers .meeting-link .click_herebtn {
+        padding: 13px 14px;
+        font-size: 11px !important;
+        margin-left: 30px !important;
+    }
+}
+
+@media only screen and (min-width: 480px) {
+
+    .dashboard-icon {
+        margin: 0px auto !important;
+        float: none !important;
+        position: relative !important;
+        left: 0px !important;
+    }
+}
+
+@media only screen and (max-width: 415px) {
+
+
+    .popup-text {
+        display: none !important;
+    }
+
+    #calenderTimeslot {
+        width: 100% !important;
+        margin-top: 0px !important;
+    }
+
+    #scoreChart tspan {
+        font-size: 11px;
+    }
+
+    .time-btn {
+        width: 100% !important;
+    }
+
+    .filter-note {
+        width: 252px;
+        right: 30% !important;
+        top: 40px !important;
+        line-height: 16px;
+    }
+
+    h1, h2 {
+        font-size: 32px;
+    }
+
+    .interview-status {
+        position: absolute;
+        top: -16px !important;
+        font-size: 14px !important;
+    }
+
+    .f1 {
+        padding-bottom: 20px;
+    }
+
+    .f1-buttons button {
+        margin-bottom: 5px;
+    }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 310px !important;
+        height: 180px !important;
+        left: 7px !important;
+    }
+
+    .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
+        font-size: 14px;
+    }
+
+    .candidate-tab .card-block {
+        height: 150px !important;
+        width: 30% !important;
+        margin: 10px 6px !important;
+    }
+
+    .step {
+        width: 40px !important;
+        height: 20px !important;
+        font-size: 13px !important;
+    }
+
+
+    .dashboard-cat-title {
+        position: relative;
+        top: 0px;
+        text-align: center;
+    }
+
+    .dashboard-count {
+        margin: 0px auto;
+        position: relative;
+        left: 80px;
+    }
+}
+
+@media only screen and (max-width: 375px) {
+    .scheduling .action {
+        position: absolute;
+        top: 6px;
+        right: 95px;
+    }
+
+    .click_herebtn {
+        top: 0px !important;
+        color: #fff !important;
+    }
+
+    .candidate-tab .card-block h1 {
+        font-size: 11px !important;
+    }
+
+    #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
+        margin-bottom: 10px;
+    }
+
+    .filter-note {
+        width: 210px !important;
+        right: 40% !important;
+        top: 40px !important;
+        line-height: 16px;
+    }
+
+    .support {
+        position: absolute;
+        left: auto;
+        right: 25px !important;
+        top: 12px !important;
+    }
+
+    .logo-cm {
+        position: relative;
+        top: 3px;
+        left: 10px;
+    }
+
+    .dashboard-cat-title {
+        position: relative !important;
+        top: 0px !important;
+        text-align: center !important;
+    }
+
+    .dashboard-count {
+        position: relative !important;
+        left: 80px !important;
+        text-align: center !important;
+    }
+
+    .feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label {
+        font-size: 12px;
+    }
+
+    .feedbackcontainer ul.ks-cboxtags li label {
+        font-size: 12px;
+    }
+
+    .page__title {
+        font-size: 13px;
+    }
+
+    .page {
+        top: 0px;
+        left: 0px;
+    }
+
+    .content-wrappers .meeting-link .click_herebtn {
+        margin: 10px 0px 35px 0px !important;
+        display: block;
+        font-size: 14px !important;
+        width: 100%;
+        padding: 8px;
+    }
+
+    .time-txt {
+        top: -23px !important;
+    }
+
+    .candidate-tab .pipe {
+        display: none;
+    }
+
+    .meeting-link {
+        top: 0px;
+    }
+
+    .interviewresponsebtn {
+        padding: 7px 15px;
+        margin: 10px 0px 10px 0px;
+        width: 155px;
+    }
+}
+
+@media only screen and (max-width: 360px) {
+    .logo-cm {
+        position: relative;
+        top: 4px !important;
+        left: 10px !important;
+    }
+
+    .right-div {
+        float: right;
+        width: 100%;
+        text-align: center;
+    }
+
+    .content-wrappers .right-div .meeting-link .click_herebtn {
+        margin: 10px auto !important;
+        width: 295px;
+    }
+
+    ul.ks-cboxtags li label {
+        font-size: 9.5px;
+    }
+
+    #scoreChart tspan {
+        font-size: 9.3px;
+    }
+
+    #calenderTimeslot {
+        left: 0px !important;
+    }
+
+    .videoContainer {
+        height: 215px !important;
+    }
 
         .videoContainer video {
-            height: 310px !important;
+            height: 220px !important;
         }
 
-        .videoContainer {
-            height: 305px !important;
-        }
-
-        .public-url #candidateTable_length {
-            left: -22px;
-            position: relative;
-        }
-
-        .candidate-tab .tabcontent p {
-            font-size: 14px;
-        }
-
-        .public-url div.dataTables_wrapper div.dataTables_filter {
-            text-align: right;
-            position: absolute;
-            left: 104px;
-            top: -45px;
-        }
-
-        .public-url #candidateTable_length {
-            top: 9px;
-        }
-
-        .sharp.btn-xs {
-   
-            width: 2.1rem;
-            height: 2.1rem;
-            min-width: 2.1rem;
-            min-height: 2.1rem;
-        }
-
-        .pad7 {
-            padding: 0px !important;
-        }
-
-        .note-filter {
-            font-size: 13px !important;
-            padding: 5px 0px !important;
-        }
-
-        .logo-cm {
-            position: relative;
-            top: -1px !important;
-            width: 23% !important;
-            left: 10px !important;
-        }
-
-        #scoreChart tspan {
-            font-size: 11.5px;
-        }
-
-        .custom-select {
-            line-height: 17px !important;
-        }
-
-        .txttimezone-con {
-            width: 300px !important;
-            min-height: 30px;
-        }
-
-        .currMonth {
-            padding: 0px 12px !important;
-        }
-
-        #calender table {
-            border-collapse: separate;
-            border-spacing: 4px 9px !important;
-        }
-
-        #calender {
-            width: 100% !important;
-        }
-
-        #calenderTimeslot {
-            width: 120px !important;
-        }
-
-        .time-btn {
-            width: 95px !important;
-            left: 9px !important;
-        }
-
-        #calender {
-            width: 325px !important;
-            padding-left: 10px !important;
-        }
-
-        .filter-note {
-            width: 100% !important;
-            float: left;
-            color: #2a9e2a;
-            padding-top: 4px;
-            position: absolute;
-            right: 20% !important;
-            top: 34px !important;
-            line-height: 16px;
-        }
-
-        .note-meeting {
-            left: 7px !important;
-            position: absolute;
-            top: -5px !important;
-            font-size: 15px;
-            width: 100% !important;
-        }
-
-        .popup-text {
-            right: 60px !important;
-            top: 24px !important;
-            font-size: 16px !important;
-        }
-
-        .single-video-left h1 .mdc-button {
-            height: 30px !important;
-        }
-
-        .single-video-left .join-time {
-            top: 8px !important;
-        }
-
-        .mob_canvas-height {
-            height: 300px;
-        }
-
-        .overall-rate {
-            position: absolute;
-            right: 25px;
-            top: -26px;
-            color: #7eb38e;
-            font-weight: normal;
-        }
-
-        .main-notification-title {
-            right: 9px !important;
-            padding-top: 0px !important;
-            position: relative;
-            top: 2px;
-        }
-
-        .user-r .user-menu {
-            top: -15px;
-            left: auto;
-            right: -19px;
-        }
-
-        .click-arrow {
-            position: relative !important;
-            top: 10px !important;
-            left: -10px !important;
-        }
-
-        .dashboard-cat-title {
-            position: relative;
-            top: 0px !important;
-            text-align: center !important;
-        }
-
-        .topheader-link-wrap {
-            width: 248px;
-            font-size: 10px;
-            margin: 0px !important;
-            padding: 0px !important;
-        }
-
-        .topheader-link {
-            width: 23px;
-            height: 23px;
-        }
-
-        .video-alert {
-            left: 0px !important;
-            font-size: 12px !important;
-            line-height: 14px !important;
-        }
+    .note-meeting {
+        width: 100% !important;
+        top: -11px !important;
+        font-size: 13px !important;
     }
 
-    @media only screen and (min-width: 480px) {
-
-        .dashboard-icon {
-            margin: 0px auto !important;
-            float: none !important;
-            position: relative !important;
-            left: 0px !important;
-        }
+    .single-video-left h1 .mdc-button {
+        height: 30px !important;
     }
 
-    @media only screen and (max-width: 415px) {
-
-
-        .popup-text {
-            display: none !important;
-        }
-
-        #calenderTimeslot {
-            width: 100% !important;
-            margin-top: 0px !important;
-        }
-
-        #scoreChart tspan {
-            font-size: 11px;
-        }
-
-        .time-btn {
-            width: 100% !important;
-        }
-
-        .filter-note {
-            width: 252px;
-            right: 30% !important;
-            top: 40px !important;
-            line-height: 16px;
-        }
-
-        h1, h2 {
-            font-size: 32px;
-        }
-
-        .interview-status {
-            position: absolute;
-            top: -16px !important;
-            font-size: 14px !important;
-        }
-
-        .f1 {
-            padding-bottom: 20px;
-        }
-
-        .f1-buttons button {
-            margin-bottom: 5px;
-        }
-
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            width: 310px !important;
-            height: 180px !important;
-            left: 7px !important;
-        }
-
-        .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
-            font-size: 14px;
-        }
-
-        .candidate-tab .card-block {
-            height: 150px !important;
-            width: 30% !important;
-            margin: 10px 6px !important;
-        }
-
-        .step {
-            width: 40px !important;
-            height: 20px !important;
-            font-size: 13px !important;
-        }
-
-
-        .dashboard-cat-title {
-            position: relative;
-            top: 0px;
-            text-align: center;
-        }
-
-        .dashboard-count {
-            margin: 0px auto;
-            position: relative;
-            left: 80px;
-        }
+    #btnStop, #btnStart {
+        left: -130px !important;
     }
 
-    @media only screen and (max-width: 375px) {
-        .scheduling .action {
-            position: absolute;
-            top: 6px;
-            right: 95px;
-        }
-
-
-        .candidate-tab .card-block h1 {
-            font-size: 11px !important;
-        }
-
-        #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
-            margin-bottom: 10px;
-        }
-
-        .filter-note {
-            width: 210px !important;
-            right: 40% !important;
-            top: 40px !important;
-            line-height: 16px;
-        }
-
-        .support {
-            position: absolute;
-            left: auto;
-            right: 25px !important;
-            top: 12px !important;
-        }
-
-        .logo-cm {
-            position: relative;
-            top: 3px;
-            left: 10px;
-        }
-
-        .dashboard-cat-title {
-            position: relative !important;
-            top: 0px !important;
-            text-align: center !important;
-        }
-
-        .dashboard-count {
-            position: relative !important;
-            left: 80px !important;
-            text-align: center !important;
-        }
-
-        .feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label {
-            font-size: 12px;
-        }
-
-        .feedbackcontainer ul.ks-cboxtags li label {
-            font-size: 12px;
-        }
-
-        .page__title {
-            font-size: 13px;
-        }
-
-        .page {
-            top: 0px;
-            left: 0px;
-        }
-
-        .content-wrappers .meeting-link .click_herebtn {
-            margin: 0px 0px 45px 0px;
-            display: block;font-size:14px;
-        }
-        .candidate-tab .pipe {
-            display: none;
-        }
-        .meeting-link{
-            top:0px;
-        }
-        .interviewresponsebtn {
-            padding: 7px 15px;
-            margin: 10px 0px 10px 0px;
-            width: 155px;
-        }
+    .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
+        font-size: 11px !important;
     }
 
-    @media only screen and (max-width: 360px) {
-        .logo-cm {
-            position: relative;
-            top: 4px !important;
-            left: 10px !important;
-        }
-
-        ul.ks-cboxtags li label {
-            font-size: 9.5px;
-        }
-
-        #scoreChart tspan {
-            font-size: 9.3px;
-        }
-
-        #calenderTimeslot {
-            left: 0px !important;
-        }
-
-        .videoContainer {
-            height: 215px !important;
-        }
-
-            .videoContainer video {
-                height: 220px !important;
-            }
-
-        .note-meeting {
-            width: 100% !important;
-            top: -11px !important;
-            font-size: 13px !important;
-        }
-
-        .single-video-left h1 .mdc-button {
-            height: 30px !important;
-        }
-
-        #btnStop, #btnStart {
-            left: -130px !important;
-        }
-
-        .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
-            font-size: 11px !important;
-        }
-
-        #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
-            padding-right: 5px !important;
-            padding-left: 5px !important;
-        }
-
-        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-            width: 285px !important;
-            height: 160px !important;
-            left: 7px !important;
-        }
-
-        .support {
-            position: absolute;
-            left: auto;
-        }
-
-        .main-img-user {
-            display: block;
-            position: relative;
-            width: 20px !important;
-            height: 20px !important;
-            margin: 0px 0px 0px 30px;
-            top: -43px !important;
-            border-radius: 100%;
-            left: -145px !important;
-            float: right;
-        }
-
-        .main-notification-title {
-            padding-top: 0px !important;
-            position: relative;
-            right: 9px !important;
-            top: -19px !important;
-            width: 100%;
-            text-align: center !important;
-            margin: 0px;
-            padding: 0px;
-        }
-
-        .user {
-            left: -110px !important;
-            top: 14px !important;
-            width: 100%;
-        }
-
-        .click-arrow {
-            position: relative !important;
-            top: 8px !important;
-            left: -25px !important;
-        }
-
-        .videoPreviewContainer {
-            width: 300px !important;
-            position: relative !important;
-            left: -23px !important;
-        }
+    #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+        padding-right: 5px !important;
+        padding-left: 5px !important;
     }
+
+    #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+        width: 285px !important;
+        height: 160px !important;
+        left: 7px !important;
+    }
+
+    .support {
+        position: absolute;
+        left: auto;
+    }
+
+    .main-img-user {
+        display: block;
+        position: relative;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0px 0px 0px 30px;
+        top: -43px !important;
+        border-radius: 100%;
+        left: -145px !important;
+        float: right;
+    }
+
+    .main-notification-title {
+        padding-top: 0px !important;
+        position: relative;
+        right: 9px !important;
+        top: -19px !important;
+        width: 100%;
+        text-align: center !important;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .user {
+        left: -110px !important;
+        top: 14px !important;
+        width: 100%;
+    }
+
+    .click-arrow {
+        position: relative !important;
+        top: 8px !important;
+        left: -25px !important;
+    }
+
+    .videoPreviewContainer {
+        width: 300px !important;
+        position: relative !important;
+        left: -23px !important;
+    }
+}
     /* EOF BUTTONS */
     /* FORM ELEMENTS */
     .fa, .fas, .far {
