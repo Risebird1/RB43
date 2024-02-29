@@ -189,11 +189,11 @@ a{
                 <div class="candidate-tab">
                     @if (string.IsNullOrEmpty(Model.CandidateDetails.LogoUrl))
                     {
-                        <img style="max-height:45px;position: relative;top: -25px;" class="img-responsive" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" />
+                       <div class="company-logo-img" style="text-align:left"><img style="max-height:45px;position: relative;top: -25px;" class="img-responsive" src="https://risebirdportal.blob.core.windows.net/logo/risebird.png" /></div>
                     }
                     else
                     {
-                        <img style="max-height:45px;position: relative; top: -25px;" class="img-responsive" src="@Model.CandidateDetails.LogoUrl" />
+                       <div class="company-logo-img" style="text-align:left"><img style="max-height:45px;position: relative; top: -25px;" class="img-responsive" src="@Model.CandidateDetails.LogoUrl" /></div>
                     }
                     
                 
@@ -226,10 +226,10 @@ a{
                                         </div>
                                   }
                                                 <div class="clearfix"></div>
-                                   <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" style="margin-left:10px;background:#42a5f5;cursor:pointer;position: relative;top:6px;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
+                                   <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" style="margin-left:10px;background:#42a5f5;cursor:pointer;position: relative;top:0px;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
                                     <p style="line-height:32px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
 
-                                                <div style="padding:0px;margin:0px 0px 25px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block"></i><span style="color:green;font-size:15px; font-weight:600"> @item.interviewDate</span></div>
+                                                <div style="padding:0px;margin:0px 0px 25px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 14px;"></i><span style="color:green;font-size:15px; font-weight:600"> @item.interviewDate</span></div>
                                                 <div style="margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Google Meet joining info</div>
                                                 <img class="schedule-img" src="../../img/int-img-2.png">
                                               @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
@@ -353,8 +353,8 @@ a{
                                                     {
                                                         inthistCount = +1;
                                                     <div class="interview-tab">
-                                                        <div style="float:left"><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;display:inline-block"></i><span>@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Time:</b>*@ <span style="color: #0000008a;font-weight: 500;padding-left:5px;font-size: 15px;"> @item.interviewDate</span></span></div>
-                                                        <div style="float:right">
+                                                            <div class="left-div" style="float:left"><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;display:inline-block;font-size:16px;"></i><span>@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Time:</b>*@ <span style="color: #0000008a;font-weight: 500;padding-left:5px;font-size: 15px;"> @item.interviewDate</span></span></div>
+                                                        <div class="right-div" style="float:right">
                                                         @if (Model.IsReschedule)
                                                         {
                                                             <div class="meeting-link">Reschedule Interview Link : <a class="click_herebtn" href="@Model.SchedulingLink" target="_blank"><span>Click Here</span></a></div>
@@ -362,32 +362,32 @@ a{
                                                         }
                                                         @if (item.confirmationStatus != "Confirmed")
                                                         {
-                                                            <div style="text-align:right;margin:5px;"><b style="font-size:13px;padding:10px;color:grey">Status :</b><div class="current cancelled" style="font-size:13px;padding:2px 15px">@item.confirmationStatus</div></div>
+                                                            <div style="text-align:right;"><b style="font-size:13px;padding:10px;color:grey">Status :</b><div class="current cancelled" style="font-size:13px;padding:2px 15px">@item.confirmationStatus</div></div>
                                                             @*  <p><hr style="border-color: #8080803d;border-width:1px;margin-top:20px;" /></p>*@
                                                         }
 
 
                                                         else if (item.MeetingStatusStatusDesc == "Status Pending")
                                                         {
-                                                           <div style="text-align:right;margin:5px;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current pending" style="font-size:13px;padding:2px 5px;color:#2E7D32!important;background:#bddbcd59">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
+                                                           <div style="text-align:right;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current pending" style="font-size:13px;padding:2px 5px;color:#2E7D32!important;background:#bddbcd59">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
 
                                                         }
 
                                                         else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
                                                         {
-                                                           <div style="text-align:right;margin:5px;"> <b style="font-size:14px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current noshowcandidate" style="font-size:13px;padding:2px 5px;color:#94207bbd">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
+                                                           <div style="text-align:right;"> <b style="font-size:14px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current noshowcandidate" style="font-size:13px;padding:2px 5px;color:#94207bbd">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
 
                                                         }
                                                         else if (item.MeetingStatusStatusDesc == "No Show(Interviewer)")
                                                         {
-                                                          <div style="text-align:right;margin:5px;"> <b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current" style="font-size:13px;padding:2px 5px;color:#7d6413bd;background:antiquewhite">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
+                                                          <div style="text-align:right;"> <b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current" style="font-size:13px;padding:2px 5px;color:#7d6413bd;background:antiquewhite">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
 
                                                         }
 
                                                         else if (item.confirmationStatus == "Confirmed")
                                                         {
                                                             @*<p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current added" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>*@
-                                                                    <div style="text-align:right;margin:5px;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span>@item.MeetingStatusStatusDesc</span></div>
+                                                                    <div style="text-align:right;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span>@item.MeetingStatusStatusDesc</span></div>
 
 
                                                         }
