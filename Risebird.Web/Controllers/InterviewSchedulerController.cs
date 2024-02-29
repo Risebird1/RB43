@@ -681,7 +681,7 @@ namespace Risebird.Web.Controllers
                                 var newmin = Convert.ToInt32(slots % 60);
                                 DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
                                 if (result.FirstOrDefault().StartDate <= value1)
-                                    model.Add(((int)(slots / 60)).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                    model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                             }
                             else
                             {
@@ -702,7 +702,7 @@ namespace Risebird.Web.Controllers
                                             value1 = value.AddDays(-1);
 
                                             if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
-                                                model.Add(((int)(slots / 60) + 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                model.Add(((int)(slots / 60) + 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                         }
                                     }
                                 }
@@ -720,7 +720,7 @@ namespace Risebird.Web.Controllers
                                             }
                                             DateTime value1 = new DateTime(year, month, (day + 1), newslot, newmin, 0);
                                             if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
-                                                model.Add(((int)(slots / 60) - 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                model.Add(((int)(slots / 60) - 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                         }
                                     }
                                 }
@@ -734,7 +734,7 @@ namespace Risebird.Web.Controllers
                                     }
                                     DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
                                     if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
-                                        model.Add(((int)(slots / 60)).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                        model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                 }
                             }
                         }
@@ -766,7 +766,7 @@ namespace Risebird.Web.Controllers
                                         {
                                             if (slots > offsetbuffer)
                                             {
-                                                model.Add(((int)(slots / 60)).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                             }
                                         }
                                     }
@@ -791,7 +791,7 @@ namespace Risebird.Web.Controllers
                                                     {
                                                         if (slots > offsetbuffer)
                                                         {
-                                                            model.Add(((int)(slots / 60) + 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                            model.Add(((int)(slots / 60) + 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                                         }
                                                     }
                                                 }
@@ -814,7 +814,7 @@ namespace Risebird.Web.Controllers
                                                     {
                                                         if (slots > offsetbuffer)
                                                         {
-                                                            model.Add(((slots / 60) - 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                            model.Add(((slots / 60) - 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                                         }
                                                     }
                                                 }
@@ -834,7 +834,7 @@ namespace Risebird.Web.Controllers
                                             {
                                                 if (slots > offsetbuffer)
                                                 {
-                                                    model.Add(((int)(slots / 60)).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                    model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                                 }
                                             }
                                         }
@@ -1636,9 +1636,9 @@ namespace Risebird.Web.Controllers
                     var TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(offset, item.SlotTime, TimeZonevalue);
                     int addontime = TimeZoneoffset + 330;
                     item.SlotTime = item.SlotTime.AddMinutes(-addontime);
-                    var _hour=item.SlotTime.Hour;
-                    var _minute=item.SlotTime.Minute;
-                    var timeslot = _hour + ":" + _minute;
+                    var _hour = item.SlotTime.Hour;
+                    var _minute = item.SlotTime.Minute;
+                    var timeslot = _hour.ToString("00") + ":" + _minute.ToString("00");
                     model.Add(timeslot);
                 }
             }
