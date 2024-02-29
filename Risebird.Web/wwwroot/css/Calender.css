@@ -282,7 +282,7 @@ table {
     border-left: 1px #8080805c solid;
 }
 
-#calenderTimeslot {
+#calenderTimeslot, #calenderRecoTimeslot {
     margin-top: 40px;
     height: 320px;
     overflow-y: auto;
@@ -597,7 +597,7 @@ table {
     display: none;
 }
 
-#calenderTimeslot table, #calenderTimeslot table tr td:hover {
+#calenderTimeslot table, #calenderRecoTimeslot table, #calenderTimeslot table tr td:hover, #calenderRecoTimeslot table tr td:hover {
     box-shadow: none !important;
     border: none !important;
 }
