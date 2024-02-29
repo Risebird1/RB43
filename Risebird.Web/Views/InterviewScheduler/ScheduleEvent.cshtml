@@ -12,7 +12,17 @@
         font-weight: bold;
         color: red;
     }
-
+    #calenderRecoTimeslot {
+    margin-top: 40px;
+    height: 320px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 225px;
+}
+    #calenderTimeslot table tr td:hover, #calenderRecoTimeslot table tr td:hover {
+        box-shadow: none !important;
+        border: none !important;
+    }
     .button {
         position: relative !important;
         padding: 13px 10px !important;
@@ -291,10 +301,11 @@
 
                         </div>
                     </div>
-                    <div id="calenderTimeslot" class="col-md-4 pull-left">
+                    <div id="calenderTimeslot" class="pull-left" style="display:none">
                     </div>
-                    <div id="calenderRecoTimeslot" class="col-md-4 pull-left">
+                    <div id="calenderRecoTimeslot" class="pull-left">
                     </div>
+                  
                 </div>
             </div>
 
@@ -577,6 +588,7 @@
         }
     }
     function bindslots(data) {
+        RevertChangeslots();
         bindrecommendedslots("");
         var html = '';
         html += '<table><tbody>';
@@ -586,15 +598,27 @@
         }
         html += '</tbody></table>';
         $("#calenderTimeslot").empty().html(html);
+
+    }
+    function Changeslots(){ 
+     $("#calenderRecoTimeslot").hide();
+     $("#calenderTimeslot").show();
+    }
+
+     function RevertChangeslots(){ 
+     $("#calenderRecoTimeslot").show();
+     $("#calenderTimeslot").hide();
     }
     function bindrecommendedslots(data) {
         var html = '';
         html += '<table><tbody>';
+         html += '<tr><td>recomended</td><tr>';
         for (var i = 0; i < data.length; i++) {
             rs++;
             html += '<tr><td><input type="hidden" id="txtslotid_' + rs + '" value="' + data[i] + '"><button class="button time-btn" onclick="submitDate(' + rs + ')"><span>' + data[i] + '</span></button></td></tr>';
         }
         html += '</tbody></table>';
+        html +='<a onclick="Changeslots()">view more</a>';
         $("#calenderRecoTimeslot").empty().html(html);
     }
     function submitDate(i) {
