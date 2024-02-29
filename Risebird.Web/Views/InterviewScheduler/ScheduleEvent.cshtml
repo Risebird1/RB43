@@ -27,8 +27,8 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-        font-size: 17px;
-        /* background: #e5e5e5 !important*/
+                        font-size: 17px;
+                        /* background: #e5e5e5 !important*/
     }
 
         .button span {
@@ -112,7 +112,8 @@
             <h3>This Schedule Interview Link is expired or no longer in use.</h3>
         </div>
         <div id="divconfirm" style="display:none">
-            <div class="card schedule-txt" style="border: 1px solid rgb(184 236 213)!important;  box-shadow: 0 1px 15px 1px rgb(159 195 179 / 25%)!important;"><img src="~/img/scheduled.png" />
+            <div class="card schedule-txt" style="border: 1px solid rgb(184 236 213)!important;  box-shadow: 0 1px 15px 1px rgb(159 195 179 / 25%)!important;">
+                <img src="~/img/scheduled.png" />
                 <h3>Your Interview is scheduled successfully!! </h3>
                 <h2>Interview Time has been alloted for @ViewBag.interviewDate</h2>
             </div>
@@ -242,7 +243,7 @@
 
                             <div class="txttimezone-con clearfix">
                                 <div class="select">
-                                    @Html.DropDownListFor(m=>m.TimeZones,Model.TimeZonesList,new{@id="ddlselecttimezone", @onchange="setoffsettime()", @class="drop-timezone"})
+                                    @Html.DropDownListFor(m => m.TimeZones, Model.TimeZonesList, new { @id = "ddlselecttimezone", @onchange = "setoffsettime()", @class = "drop-timezone" })
                                     @*<select id="ddlselecttimezone" onchange="setoffsettime()" class="drop-timezone">
                                     <option value="-12">[UTC - 12] Baker Island Time</option>
                                     <option value="-11">[UTC - 11] Niue Time, Samoa Standard Time</option>
@@ -292,7 +293,8 @@
                     </div>
                     <div id="calenderTimeslot" class="col-md-4 pull-left">
                     </div>
-
+                    <div id="calenderRecoTimeslot" class="col-md-4 pull-left">
+                    </div>
                 </div>
             </div>
 
@@ -372,14 +374,14 @@
                                         </div>
                                         <div class="col-md-6 pull-left">
                                             @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @class = "required" })
-                                            @Html.ValidationMessageFor(model => model.ResumeFile,"",new {@class="text-danger"})
+                                            @Html.ValidationMessageFor(model => model.ResumeFile, "", new { @class = "text-danger" })
                                             <span id="file-chosen" style="left:0px;font-size:14px;"></span>
                                         </div>
                                     </div>
                                 }
                                 else
                                 {
-                                    @Html.HiddenFor(m=>m.Resume)
+                                    @Html.HiddenFor(m => m.Resume)
                                 }
                                 <div class="form-group">
                                     <div class="mandate">
@@ -393,12 +395,12 @@
                                     </div>
                                     @if (Model._listhr != null && Model._listhr.Count() > 0)
                                     {
-                                        @Html.DropDownListFor(m => m.HRCoordinator,Model._listhr, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                        @Html.DropDownListFor(m => m.HRCoordinator, Model._listhr, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
                                     }
                                     else
                                     {
                                         @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
-                                        @Html.ValidationMessageFor(m => m.HRCoordinator,"",new{@class="text-danger"})
+                                        @Html.ValidationMessageFor(m => m.HRCoordinator, "", new { @class = "text-danger" })
                                     }
                                 </div>
                                 <div class="form-group">
@@ -407,7 +409,7 @@
                                     </div>
                                     @if (Model._liststaffing != null && Model._liststaffing.Count() > 0)
                                     {
-                                        @Html.DropDownListFor(m => m.StaffingAgiencies,Model._liststaffing, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                        @Html.DropDownListFor(m => m.StaffingAgiencies, Model._liststaffing, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
                                     }
                                     else
                                     {
@@ -416,17 +418,17 @@
                                 </div>
 
 
-                               <div class="form-group" >
+                                <div class="form-group">
                                     <div class="mandate" style="visibility:hidden">
                                         @Html.Label("", "Please checkmark your available infra for the video interview", htmlAttributes: new { @class = "form-label required" })
                                     </div>
-                                     @Html.HiddenFor(m=>m.Checkbox1)
-                                      @Html.HiddenFor(m=>m.Checkbox2)
-                                           @Html.HiddenFor(m=>m.Checkbox4)
-                                    <p> @Html.CheckBoxFor(m => m.Checkbox1) @Html.LabelFor(m => m.Checkbox1, htmlAttributes: new { @style = "font-weight:normal" , @checked="checked" }) </p>
-                                    <p> @Html.CheckBoxFor(m => m.Checkbox2) @Html.LabelFor(m => m.Checkbox2, htmlAttributes: new { @style = "font-weight:normal",  @checked="checked" }) </p>
+                                    @Html.HiddenFor(m => m.Checkbox1)
+                                    @Html.HiddenFor(m => m.Checkbox2)
+                                    @Html.HiddenFor(m => m.Checkbox4)
+                                    <p> @Html.CheckBoxFor(m => m.Checkbox1) @Html.LabelFor(m => m.Checkbox1, htmlAttributes: new { @style = "font-weight:normal", @checked = "checked" }) </p>
+                                    <p> @Html.CheckBoxFor(m => m.Checkbox2) @Html.LabelFor(m => m.Checkbox2, htmlAttributes: new { @style = "font-weight:normal", @checked = "checked" }) </p>
                                     @*<p> @Html.CheckBoxFor(m => m.Checkbox3) @Html.LabelFor(m => m.Checkbox3, htmlAttributes: new { @style = "font-weight:normal" }) </p>*@
-                                    <p> @Html.CheckBoxFor(m => m.Checkbox4) @Html.LabelFor(m => m.Checkbox4, htmlAttributes: new { @style = "font-weight:normal",  @checked="checked" }) </p>
+                                    <p> @Html.CheckBoxFor(m => m.Checkbox4) @Html.LabelFor(m => m.Checkbox4, htmlAttributes: new { @style = "font-weight:normal", @checked = "checked" }) </p>
                                     @*<p> @Html.CheckBoxFor(m => m.Checkbox5) @Html.LabelFor(m => m.Checkbox5, htmlAttributes: new { @style = "font-weight:normal" }) </p>*@
                                     @*<p> @Html.CheckBoxFor(m => m.Checkbox6) @Html.LabelFor(m => m.Checkbox6, htmlAttributes: new { @style = "font-weight:normal" }) </p>*@
                                 </div>
@@ -438,22 +440,22 @@
                                         </div>
                                         <div class="input-group">
                                             @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
-                                            @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
+                                            @Html.ValidationMessageFor(m => m.MobileNumber, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 }
                                 else
                                 {
-                                    @Html.HiddenFor(m=>m.MobileNumber)
+                                    @Html.HiddenFor(m => m.MobileNumber)
                                     <div class="input-group" style="display:none">
                                         @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
-                                        @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
+                                        @Html.ValidationMessageFor(m => m.MobileNumber, "", new { @class = "text-danger" })
                                     </div>
                                 }
                                 @Html.HiddenFor(m => m.Pagereturnvalue)
                                 <div class="clearfix"></div>
 
-                                @Html.HiddenFor(m=> m.MeetingPlatform)
+                                @Html.HiddenFor(m => m.MeetingPlatform)
                                 <div class="form-group">
                                     <input type="submit" value="Schedule Interview" onclick="return checkvalidation();" class="mdc-button mdc-button--raised" />
                                 </div>
@@ -467,6 +469,7 @@
 </div>
 <script src="~/js/InterviewCalender.js"></script>
 <script>
+    var rs = 0;
     $(document).ready(function () {
         setvalues();
     });
@@ -549,6 +552,14 @@
                     data: { day: selectdate, month: (state.todayMonth + 1), year: state.todayYear, id: $("#txthiddenid").val(), offset: offset, TimeZonevalue: timeZonevalue },
                     success: function (data) {
                         bindslots(data);
+                        $.ajax({
+                            type: "POST",
+                            url: "/InterviewScheduler/FetchRecommandedslots",
+                            data: { day: selectdate, month: (state.todayMonth + 1), year: state.todayYear, offset: offset, TimeZonevalue: timeZonevalue, slots: data },
+                            success: function (result) {
+                                bindrecommendedslots(result);
+                            }
+                        });
                     }
                 });
                 flag = true
@@ -566,13 +577,25 @@
         }
     }
     function bindslots(data) {
+        bindrecommendedslots("");
         var html = '';
         html += '<table><tbody>';
         for (var i = 0; i < data.length; i++) {
             html += '<tr><td><input type="hidden" id="txtslotid_' + i + '" value="' + data[i] + '"><button class="button time-btn" onclick="submitDate(' + i + ')"><span>' + data[i] + '</span></button></td></tr>';
+            rs = i;
         }
         html += '</tbody></table>';
         $("#calenderTimeslot").empty().html(html);
+    }
+    function bindrecommendedslots(data) {
+        var html = '';
+        html += '<table><tbody>';
+        for (var i = 0; i < data.length; i++) {
+            rs++;
+            html += '<tr><td><input type="hidden" id="txtslotid_' + rs + '" value="' + data[i] + '"><button class="button time-btn" onclick="submitDate(' + rs + ')"><span>' + data[i] + '</span></button></td></tr>';
+        }
+        html += '</tbody></table>';
+        $("#calenderRecoTimeslot").empty().html(html);
     }
     function submitDate(i) {
         //var offset = (new Date()).getTimezoneOffset();

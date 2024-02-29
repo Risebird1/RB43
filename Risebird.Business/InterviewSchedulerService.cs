@@ -385,5 +385,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<RecommendedSlotsVM>> FetchrecommendedSlots(List<DateTime> _slotscheck)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.FetchrecommendedSlots(_slotscheck);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

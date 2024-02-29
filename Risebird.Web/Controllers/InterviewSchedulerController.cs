@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using RestSharp;
 using Risebird.Business;
 using Risebird.Business.Interface;
@@ -598,7 +599,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.interviewDate = interviewdatetime;
                         if (model.Pagereturnvalue == 314999)
                         {
-                            return RedirectToAction("UnassignedInterviews", "Dashboard", new { actionstatus="interviewCount"});
+                            return RedirectToAction("UnassignedInterviews", "Dashboard", new { actionstatus = "interviewCount" });
                         }
                         else
                         {
@@ -1240,7 +1241,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                           // return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
+                            // return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
                             return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.inIRFid });
                         }
                     }
@@ -1611,6 +1612,35 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-
+        public async Task<JsonResult> FetchRecommandedslots(int day, int month, int year, int offset, string TimeZonevalue, List<string> slots)
+        {
+            List<string> model = new List<string>();
+            List<DateTime> slotswithtime = new List<DateTime>();
+            foreach (var item in slots)
+            {
+                var _time = item.Split(":");
+                DateTime value = new DateTime(Convert.ToInt32(year), Convert.ToInt32(month), Convert.ToInt32(day), Convert.ToInt32(_time[0]), Convert.ToInt32(_time[1]), 0);
+                //value = value.AddMinutes(addontime);
+                var TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(offset, value, TimeZonevalue);
+                value = value.AddMinutes(TimeZoneoffset);
+                TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(value, INDIAN_ZONE);
+                slotswithtime.Add(indianTime);
+            }
+            var result = await _interviewSchedulerservice.FetchrecommendedSlots(slotswithtime);
+            if (result != null)
+            {
+                result = result.OrderBy(x => x.interviewcount).Take(3);
+                foreach (var item in result)
+                {
+                    var TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(offset, item.SlotTime, TimeZonevalue);
+                    int addontime = TimeZoneoffset + 330;
+                    item.SlotTime = item.SlotTime.AddMinutes(-addontime);
+                    var timeslot = item.SlotTime.ToString().Split(" ").LastOrDefault();
+                    model.Add(timeslot.Substring(0, 5));
+                }
+            }
+            return Json(model);
+        }
     }
 }
