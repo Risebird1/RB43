@@ -1636,8 +1636,10 @@ namespace Risebird.Web.Controllers
                     var TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(offset, item.SlotTime, TimeZonevalue);
                     int addontime = TimeZoneoffset + 330;
                     item.SlotTime = item.SlotTime.AddMinutes(-addontime);
-                    var timeslot = item.SlotTime.ToString().Split(" ").LastOrDefault();
-                    model.Add(timeslot.Substring(0, 5));
+                    var _hour=item.SlotTime.Hour;
+                    var _minute=item.SlotTime.Minute;
+                    var timeslot = _hour + ":" + _minute;
+                    model.Add(timeslot);
                 }
             }
             return Json(model);
