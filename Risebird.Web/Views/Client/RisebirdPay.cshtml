@@ -10,11 +10,104 @@
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
+<style>
+
+.dropdown {
+       width: 135px;
+    position: relative;
+    z-index: 5;
+    margin: 0 0px;
+    float: left;
+}
+.filter{
+   position: absolute;
+    top: 10px;
+    right: 25px;
+    width: auto;
+}
+.interview-rate{
+   float: right;
+    position: relative;
+    right: 210px;
+}
+ #dropdownBtnFilter {
+    width: 100%;
+    text-align: left;
+    padding:6px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #4e4545;
+    position: relative;
+    font-weight: 400;
+    float: left;
+    border: 2px solid #f8f4f4!important;
+}
+ #dropdownBtnFilter i {
+  float: right;
+  transform: rotate(0deg); color: #b4cee8;
+}
+.fa-chevron-down:before {
+    content: "\f078";
+    color: #b4cee8;
+}
+#dropdownBtnFilter::before {
+  position: absolute;
+  content: '';
+  height: 2px;
+  width: calc(100% - 20px);
+  background-color: var(--active-filter-col);
+  left: 10px;
+  top: 2px;
+}
+
+ #dropdownFilterOptions {
+  display: none;
+  background-color: #302E2E;
+  flex-direction: column;
+  border-radius: 0 0 5px 5px;
+  overflow: hidden;
+  border: 2px solid white;
+}
+#dropdownFilterOptions {
+  display: none;
+  background-color: #302E2E;
+  flex-direction: column;
+  border-radius: 0 0 5px 5px;
+  overflow: hidden;
+  border: 2px solid white;
+}
+.filterOption {
+ padding: 10px;
+    background: #fff;
+    color: #000;
+    border: 1px #cccccc54 solid;
+    text-decoration: none;
+}
+.filterOption:hover{
+   background: #d5e1ee;
+    color: #fff;
+}
+
+    #clearBtn {
+        height: 39px;
+        padding: 0 10px;
+        border: 2px solid #fff;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: #b4cee8;
+        color: white;
+        margin-left: 0px;
+        float: left;
+        margin-top: -1px;
+    }
+</style>
 <div class="risebirdPay-con">
     <!-- Navbar -->
     <!-- End Navbar -->
    
     <input type="hidden" id="hidClientid" value="@ViewBag.ClientId" />
+    <input type="hidden" id="hidAction" />
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
@@ -37,14 +130,30 @@
                         </div>
                         <div id="rbpay_8" style="padding:0px;float:left"><button class="form-control" id="btndebit" onclick="FetchPaymentTransaction('DEBIT')"><i class="fa fa-credit-card "></i>Penalty DEBIT</button></div>
                         </div>
-                        <div style="float:right">
-                            <span style="float:left"><span style="font-size:15px;font-weight:600;line-height:35px;">Per Interview Rate:</span><i class="fa fa-money" aria-hidden="true" style="font-size: 19px;color: lightcoral;top:2px;left: 15px;position: relative;"></i> <label style="color: lightcoral;font-size:16px;padding:0px 15px;font-weight:bold;" id="txtperInterviewrate"></label></span>
-                            <span style="float:left"><span style="font-size:15px;font-weight:600;line-height:35px;">Penalty Credits:</span><img style="top:-7px;left:7px;width:22px;" class="zoom-icon"  src="~/img/credit-icon.png" /><label style="color:green;font-size:16px;padding:0px 15px;font-weight:bold;" id="txttotalCredit"></label></span>
-                                <span style="float:left"><span style="font-size:15px;font-weight:600;line-height:35px;">Interview Credits:</span><img style="top:-7px;left:7px;width:22px;" class="zoom-icon"  src="~/img/interview-credit.png" /><label style="color:green;font-size:16px;padding:0px 15px;font-weight:bold;" id="txtInterviewCredit"></label></span>
-                        </div>
-                    </div>
+                        <div class="interview-rate">
+                            <span style="float:left"><span style="font-size:13px;font-weight:500;line-height:35px;color:grey;">Per Interview Rate:</span><i class="fa fa-money" aria-hidden="true" style="font-size: 16px;color: lightcoral;top:2px;left:5px;position: relative;"></i> <label style="color: lightcoral;font-size:13px;padding:0px 7px 0px 0px;font-weight:bold;" id="txtperInterviewrate"></label></span>
+                            <span style="float:left"><span style="font-size:13px;font-weight:500;line-height:35px;color:grey">Penalty Crs:</span><img style="top:-4px;left:7px;width:15px;" class="zoom-icon"  src="~/img/credit-icon.png" /><label style="color:green;font-size:13px;padding:0px 7px 0px 11px;font-weight:bold;" id="txttotalCredit"></label></span>
+                                <span style="float:left"><span style="font-size:13px;font-weight:500;line-height:35px;color:grey">Interview Crs:</span><img style="top:-4px;left:7px;width:15px;" class="zoom-icon" src="~/img/interview-credit.png" /><label style="color:green;font-size:13px;padding:2px 7px 0px 10px;font-weight:bold;" id="txtInterviewCredit"></label></span>
+
+ </div>
+
+ <div class="filter">
+     <div class="dropdown">
+                            <button id="dropdownBtnFilter">Filter By<i class="fa fa-chevron-down"></i></button>
+                            <div id="dropdownFilterOptions" class="dropdownFilterOptions">
+                            <input class="filterOption" type="button" onclick="MonthkyWiseFilter(1)" value="1 Month" />
+                            <input class="filterOption" type="button" onclick="MonthkyWiseFilter(3)" value="3 Month" />
+                            <input class="filterOption" type="button" onclick="MonthkyWiseFilter(6)" value="6 Month" />
+
+
+   
+    </div>
+  </div>
+  
+  <button onclick="FetchPaymentTransaction('All')" id="clearBtn">Reset</button></div>
+   </div>
                     
-                   
+                       
                     <div id="divtransaction" class="razorpay_details">
                         <!--Bind transaction details-->
                     </div></div>
@@ -223,7 +332,8 @@
 </script>
 @*Wallet new Client Payment Sla*@
 <script>
-    function FetchPaymentTransaction(action) {
+    function FetchPaymentTransaction(action,month) {
+        $("#hidAction").val(action);
         if (action == "All") {
             $("#btnall").addClass("active-razorbtn");
             $("#btndebit").removeClass("active-razorbtn");
@@ -241,7 +351,7 @@
         $.ajax({
             type: "POST",
             url: "/Client/MoneyClientProtectionDetailsView",
-            data: { type: 'Pending', Clientid: $("#hidClientid").val(), actiontype: action },
+            data: { type: 'Pending', Clientid: $("#hidClientid").val(), actiontype: action,month:month},
             success: function (data) {
                 $('#divtransaction').html('');
                 $('#divtransaction').html(data);
@@ -252,5 +362,38 @@
             }
         });
     }
-</script>
 
+</script>
+<script>
+    function MonthkyWiseFilter(month)
+    {
+    var hidAction = $("#hidAction").val();
+     FetchPaymentTransaction(hidAction,month);
+    console.log(hidAction);
+    }
+</script>
+<script>
+
+
+const filterButton = document.getElementById('dropdownBtnFilter');
+const dropdownFilterOptions = document.getElementById('dropdownFilterOptions');
+const filterOptions = document.querySelectorAll('.filterOption');
+
+dropdownFilterOptions.style.display = "none";
+
+filterButton.addEventListener('click', () => {
+  if(dropdownFilterOptions.style.display === 'none'){
+    filterButton.style.borderBottom = 'none';
+    filterButton.style.borderRadius = '5px 5px 0 0';
+    dropdownFilterOptions.style.display = 'flex';
+    filterButton.childNodes[1].style.transform = 'rotate(180deg)'; 
+  } else {
+    filterButton.style.borderBottom = '2px solid white';
+    filterButton.style.borderRadius = '5px';
+    dropdownFilterOptions.style.display = 'none';
+    filterButton.childNodes[1].style.transform = 'rotate(0deg)';
+  }
+})
+
+
+</script>

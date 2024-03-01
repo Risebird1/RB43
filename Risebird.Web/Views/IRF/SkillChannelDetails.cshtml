@@ -243,13 +243,14 @@
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
+                                                        <th>Created On</th>
 
                                                         <th>Client</th>
                                                         <th>Billing Owner</th>
                                                         <th>Status</th>
 
                                                     }
-
+                                                    
                                                     <th>Risebird Channel Owner</th>
 
                                                     @if (ViewBag.Type == "ChannelOwner")
@@ -282,6 +283,7 @@
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
+                                                        <th>Created On</th>
 
                                                         <th>Client</th>
                                                         <th>Billing Owner</th>
@@ -325,6 +327,7 @@
                                                             @if (ViewBag.Type != "ChannelOwner")
                                                             {
                                                                 <td>@item.IRFId</td>
+                                                                <td>@item.CreatedOn</td>
 
                                                                 <td>@item.ClientCompName</td>
                                                                 <td>@item.BillingOwnerEmailId</td>

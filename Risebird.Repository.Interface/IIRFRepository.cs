@@ -233,5 +233,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<AGCampaignModel>> GetCampaignList();
         Task<AGCampaignModel> GetCampaignDetailsById(int campaignId);
         Task<bool> CheckCampaignUniqueness(string value);
+        Task<bool> CreateMAG(AGCampaignModel model, string loggedInUser);
     }
 }

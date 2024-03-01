@@ -8705,7 +8705,18 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         //create a campaign and save all the selected assessment groups
-                        model = _irfService.CreateCampaign(model, emailid);
+                        if(!model.CreateMAGOnly)
+                        {
+                            model = _irfService.CreateCampaign(model, emailid);
+                        }
+                        else
+                        {
+                            // create mag only
+                            await _irfService.CreateMAG(model, emailid);
+                            //add something in tempData here
+                            TempData["SuccessErrorMessageInterviewer"] = $"{model.AssessmentGroupName} successfully flagged as Master Assessment Group";
+                            return RedirectToAction("InterviewerEntitle");
+                        }
 
                         if (model.id > 0)
                         {
