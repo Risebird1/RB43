@@ -66,6 +66,7 @@
                                                 <tr>
                                                     <td>Interviewer</td>
                                                     <td>Skill Channel</td>
+                                                    <td>JD Title</td>
                                                     <td>Client HR</td>
                                                     <td>Client</td>
                                                     <td>Channel Owner</td>
@@ -88,6 +89,7 @@
                                                 <tr>
                                                     <td>Interviewer</td>
                                                     <td>Skill Channel</td>
+                                                    <td>JD Title</td>
                                                     <td>Client HR</td>
                                                     <td>Client</td>
                                                     <td>Channel Owner</td>
@@ -110,8 +112,11 @@
                                                 @foreach (var item in Model)
                                                 {
                                                     <tr>
-                                                        <td>@item.interviewer</td>
+                                                        <td>
+                                                            <c style="color:#0d6efd;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@item.interviewer')">@item.interviewer</c>
+                                                        </td>
                                                         <td>@item.IRFId</td>
+                                                        <td>@item.JDTiltle</td>
                                                         <td>@item.Clienthr</td>
                                                         <td>@item.Client</td>
                                                         <td>@item.ChannelOwner</td>
@@ -146,6 +151,11 @@
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
                                                                 </span>
                                                             </button>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
+                                                                <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                    <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
+                                                                </a>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 }
@@ -162,6 +172,7 @@
     </div>
 </div>
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 <script src="~/js/common.js"></script>
 <script>
     function searchResult() {

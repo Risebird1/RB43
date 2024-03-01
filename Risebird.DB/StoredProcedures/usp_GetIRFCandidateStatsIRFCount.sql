@@ -52,7 +52,7 @@ group by ca.IRFId, ca.CandidateMasterId,cm.UserId
               
               
   select irf.id, irf.IRFId, irf.JDTiltle, cl.[Name] as ClientCompName, irf.JobCountry, IsNULL(ulb.EmailId, '') as BillingOwnerEmailId, ul.EmailId as RisebirdHrEmail,
-  IRF.IsPaused,IRF.CreatedFromTemplateId,IRF.AssessmentGroupId,IRF.CalendlyLink,IRF.IsDeleted,
+  IRF.IsPaused,IRF.CreatedFromTemplateId,IRF.AssessmentGroupId,IRF.CalendlyLink,IRF.IsDeleted, irf.CreatedOn,
   (CASE WHEN IRF.IsPaused=1 Then'Paused' WHEN IRF.IsDeleted=1 THEN 'Archived' WHEN IRF.EndDate>=GETDATE() THEN 'Active' ELSE 'Archived' END) AS IRFStatus,
  (select count(UserId) from @TemporaryCandidateTableVariable where IRFId = irf.id) as CandidateCount,                
  (select count(UserId) from @TemporaryCandidateTableVariable                  

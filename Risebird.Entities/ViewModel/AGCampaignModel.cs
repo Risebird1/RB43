@@ -30,6 +30,7 @@ namespace Risebird.Entities.ViewModel
         public List<int> SelectedRemainingAssessmentGroups { get; set; }
         public string SerializedRemainingAGList { get; set; }
         public bool IsAlreadyMasterAG { get; set; } //need to set this property in order to show or hide the option of creating a master ag in the form 
+        public bool CreateMAGOnly { get; set; }//creates mag withouot sending emails
 
     }
 }

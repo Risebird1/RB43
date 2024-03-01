@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -4703,15 +4704,28 @@ namespace Risebird.Web.Controllers
             return PartialView(model);
         }
         [HttpPost]
-        public async Task<IActionResult> MoneyClientProtectionDetailsView(string type, int Clientid, string actiontype)
+        public async Task<IActionResult> MoneyClientProtectionDetailsView(string type, int Clientid, string actiontype,int? month=null)
         {
             var model = await _clientService.GetMoneyProtectionDetails(type, Clientid);
             model = model.Select(x => { x.HeuristicsscoreDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription(); return x; }).ToList();
             ViewBag.action = actiontype;
+            if (month == 1)
+            {
+                model = model.Where(m => m.AddedOn >= DateTime.Now.AddMonths(-1)).ToList();
+            }
+            else if(month == 3)
+            {
+                model = model.Where(m => m.AddedOn >= DateTime.Now.AddMonths(-3)).ToList();
+            }
+           else if(month == 6)
+            {
+                model = model.Where(m => m.AddedOn >= DateTime.Now.AddMonths(-6)).ToList();
+            }
             if (actiontype == "DEBIT")
             {
                 model = new List<MoneyProtectionVM>();
             }
+          
             return PartialView(model);
         }
         #endregion

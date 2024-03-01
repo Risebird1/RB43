@@ -7924,6 +7924,86 @@ namespace Risebird.Repository
             }
         }
 
+        /// <summary>
+        /// creates mag 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="loggedInUser"></param>
+        /// <returns></returns>
+        public async Task<bool> CreateMAG(AGCampaignModel model, string loggedInUser)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable agrpsDt = new DataTable();
+                    agrpsDt.Columns.Add("AssessmentGroupId", typeof(int));
+
+                    if (model.AssessmentGroups != null && model.AssessmentGroups.Count() > 0 && model.AssessmentGroups.Any(x => x.IsSelectedForCampaign))
+                    {
+                        foreach (var item in model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
+                        {
+                            agrpsDt.Rows.Add(item.id);
+                        }
+
+                    }
+
+                    if (model.SelectedRemainingAssessmentGroups != null && model.SelectedRemainingAssessmentGroups.Count() > 0)
+                    {
+                        foreach (var id in model.SelectedRemainingAssessmentGroups)
+                        {
+                            agrpsDt.Rows.Add(id);
+                        }
+
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_CreateMAG", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.Int));
+                    cmd.Parameters["@AssessmentGroupId"].Value = model.AssessmentGroupId;
+
+                    cmd.Parameters.Add(new SqlParameter("@PerformedBy", SqlDbType.VarChar));
+                    cmd.Parameters["@PerformedBy"].Value = loggedInUser;
+
+                    cmd.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
+                    cmd.Parameters["@timeNow"].Value = DateTime.Now;
+
+
+
+                    if (agrpsDt != null && agrpsDt.Rows.Count > 0)
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@CampaignAssessmentGroupsBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@CampaignAssessmentGroupsBulkData"].Value = agrpsDt;
+                    }
+
+                    con.Open();
+
+                    if (cmd.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser)
         {
             try

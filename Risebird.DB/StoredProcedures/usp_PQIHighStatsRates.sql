@@ -69,7 +69,7 @@ where (ic.InterviewStatus = 2) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6
 group by ir.IRFId,im.interviewer  
   
 ;With CTE as(
-Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr 
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle 
 from @tbl_RelevantInterviews im
 join IRF on IRF.IRFId=im.IRFId
 join UserList ul on IRF.RisebirdHr=ul.id
@@ -98,7 +98,7 @@ where (ic.InterviewStatus = 3) and (ic.MeetingStatus = 4  or ic.MeetingStatus = 
 group by ir.IRFId,im.interviewer  
   
 ;With CTE as(
-Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalRejected,(ISNULL(ism.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr  
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalRejected,(ISNULL(ism.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle  
 from @tbl_RelevantInterviews im
 join IRF on IRF.IRFId=im.IRFId
 join UserList ul on IRF.RisebirdHr=ul.id
@@ -111,6 +111,4 @@ left join @tbl_InterviewerRejected ism on ism.IRFId=im.IRFId and ism.interviewer
 Select * From CTE where rejectionrate>=80
 end
 END
-
-
 GO
