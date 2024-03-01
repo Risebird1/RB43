@@ -4378,6 +4378,8 @@ a.list-group-item:focus {
 
         .panel .panel-heading .panel-title {
             margin-left: 7px;
+            text-transform: uppercase;
+            font-weight: 500;
         }
 
         .panel .panel-heading .panel-title-box {
@@ -4532,6 +4534,7 @@ a.list-group-item:focus {
     display: block;
     float: left;
     color: #1b1e24;
+    margin:0px;
 }
 
 .panel .panel-footer {
@@ -5984,7 +5987,7 @@ border: 1px #ccc solid!important;
 
 .interviewresponsebtn {
     text-decoration: none;
-    padding: 7px 20px;
+    padding: 7px 65px;
     position: relative;
     clear: both;
     border-radius: 3px;
@@ -6060,7 +6063,7 @@ border: 1px #ccc solid!important;
 }
 
 .content-wrappers .meeting-link .click_herebtn {
-    padding: 14px 12px;
+    padding: 14px 40px;
 }
 
 .candidate-tab .card-block h1 {
@@ -6086,7 +6089,7 @@ border: 1px #ccc solid!important;
     margin: 20px 0px;
     color: #3094e5;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 19px;
     position: relative;
     top: -36px;
 }
@@ -6260,7 +6263,7 @@ border: 1px #ccc solid!important;
 }
 
 .content-wrappers {
-   max-width:1100px;
+   max-width:1000px;
     margin: 0px auto;
     margin: 60px auto 40px auto;
 }
@@ -8994,7 +8997,7 @@ option {
     font-weight: 600;
 }
 .time-txt {
-    font-size: 13px;
+    font-size: 14px;
     color: green;
     font-weight: 600;
     position: absolute;
@@ -9037,18 +9040,18 @@ option {
     top: 25px;
 }
 .left-pannel {
-    width: 50%;
+    width: 100%;
     float: left;
 }
 
 .right-pannel {
-    width: 50%;
+    width: 80%;
     float: left;
 }
 
 .int-left-pannel {
     width: 50%;
-    margin: 0px 30px 0px 0px;
+    margin: 0px 28px 0px 0px;
     float: left;
 }
  .int-left-pannel .mdl-tabs__panel h1 {
@@ -9098,14 +9101,15 @@ option {
     font-weight: 400;
 }
 .schedule-img {
-    width: 145px;
+    width: 260px;
     position: absolute;
     top: 20px;
     right: 95px;
     opacity: 0.20;
+
 }
 .right-pannel a {
-    font-size: 17px;
+    font-size: 20px;
     color: blue;
     text-decoration: none;
 }
@@ -9532,7 +9536,9 @@ option {
         .top-h {
             height: 60px !important;
         }
-
+        .interviewresponsebtn{
+            font-size:16px!important;
+        }
         .interviewWrapper {
             width: 100%;
             left: 0px;
@@ -9918,17 +9924,18 @@ option {
             float: left;
         }
         .meeting-link{
-            font-size:14px;
+            font-size:18px!important;
         }
         .content-wrappers .meeting-link .click_herebtn {
-            padding: 14px 11px;
+            padding: 14px 50px;
             margin-left: 35px !important;
+            font-size: 14px !important;
         }
         .click_herebtn{
             font-size:12px;
         }
         .time-txt{
-            font-size:12px;
+            font-size:14px;
         }
         .click_herebtn {
             margin: 10px 1px 0px 5px!important;
@@ -10079,7 +10086,9 @@ option {
         .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
             font-size: 11px !important;
         }
-
+        .interviewresponsebtn {
+            font-size: 14px !important;
+        }
         .w60 {
             width: 55%;
             float: left;
@@ -10442,7 +10451,7 @@ option {
             opacity: 0.20;
         }
         .interviewresponsebtn {
-            padding: 7px 41px;
+            padding: 7px 39px;
             margin: 0px 0px 20px 0px;
         }
         .content-wrappers {
@@ -10453,7 +10462,7 @@ option {
             padding: 14px 41px;
         }
         .click_herebtn {
-            margin: 10px 5px 0px 5px!important;
+            margin: 10px 3px 0px 3px !important;
             font-size:15px!important;
         }
 
@@ -10478,7 +10487,8 @@ option {
 
     .interviewresponsebtn {
         margin-bottom: 20px;
-        padding: 7px 9px !important;
+        padding: 7px 20px !important;
+        font-size: 14px !important;
     }
 
     .calling-area {
@@ -11009,7 +11019,9 @@ option {
         width: 30.3% !important;
         float: left !important;
     }
-
+    .interviewresponsebtn{
+        padding:7px 10px!important;
+    }
     .interview-tab .left-div {
         float: none !important;
         text-align: center !important;
@@ -11204,16 +11216,17 @@ option {
 
     .meeting-link {
         font-size: 14px !important;
+        margin: 10px 0px 0px 0px !important;
     }
 
     .content-wrappers .meeting-link .click_herebtn {
         padding: 13px 14px;
         font-size: 11px !important;
-        margin-left: 30px !important;
+        margin-left: 10px !important;
+        position: relative;
+        left: 15px;
     }
-}
 
-@media only screen and (min-width: 480px) {
 
     .dashboard-icon {
         margin: 0px auto !important;
@@ -11304,7 +11317,7 @@ option {
     }
 }
 
-@media only screen and (max-width: 375px) {
+@media only screen and (max-width: 380px) {
     .scheduling .action {
         position: absolute;
         top: 6px;
@@ -11379,24 +11392,27 @@ option {
         font-size: 14px !important;
         width: 100%;
         padding: 8px;
+        left: 0px;
     }
 
     .time-txt {
         top: -23px !important;
+        font-size: 14px !important;
     }
 
     .candidate-tab .pipe {
-        display: none;
+        display:none!important;
     }
 
     .meeting-link {
         top: 0px;
+        font-size: 16px !important;
     }
 
     .interviewresponsebtn {
         padding: 7px 15px;
         margin: 10px 0px 10px 0px;
-        width: 155px;
+        width: 141px;
     }
 }
 
@@ -17729,7 +17745,11 @@ div.tagsinput {
         right: 27px;
         top: 11px;
     }
-
+    .mdl-tabs {
+        display: block;
+        margin: 0px 20px !important;
+        width: calc(100% - 40px)!important;
+    }
     .content-wrappers .tabcontent {
         margin: 10px 0px 20px 0px;
     }
