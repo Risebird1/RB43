@@ -12,62 +12,70 @@
         font-weight: bold;
         color: red;
     }
-    #calenderRecoTimeslot {
-    margin-top:0px;
-    height: 320px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    width: 195px;
-}
-#calenderRecoTimeslot table{
-    border: 0px !important;
-    box-shadow: none!important;
-}
 
-#calenderRecoTimeslot .time-btn {
-    border: 1px solid #66BB6A !important;
-    color: #4CAF50;
-    left: 14px;
-    width: 145px;
-    background: #c5f48f70 !important;
-}
-#calenderRecoTimeslot .time-btn:hover {
-    border: 2px solid #689F38 !important;
-}
-#calenderRecoTimeslot .button:hover:before {
-    content: "Confirm!";
-    background-color: #c5f48f24 !important;
-    color: green;
-}
- #calenderTimeslot table tr td:hover, #calenderRecoTimeslot table tr td:hover {
-        box-shadow: none !important;
-        border: none !important;
+    #calenderRecoTimeslot {
+        margin-top: 0px;
+        height: 320px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 195px;
     }
 
-#calenderRecoTimeslot .click-arrow {
-    border-radius: 100%;
-    width: 20px;
-    height: 20px;
-    color: #a79c9c;
-    background: #efefef;
-    border: none;
-    position: relative;
-    top: -2px;
-    line-height: 14px;
-}
-#calenderRecoTimeslot .click-arrow svg{
-    position: relative;
-    left: -3px;
-}
-.changeslot {
-    position: relative;
-    right: -34px;
-    top: -13px;
-    color: grey !important;
-    text-decoration: none;
-    cursor: pointer;
-}
-.button {
+        #calenderRecoTimeslot table {
+            border: 0px !important;
+            box-shadow: none !important;
+        }
+
+        #calenderRecoTimeslot .time-btn {
+            border: 1px solid #66BB6A !important;
+            color: #4CAF50;
+            left: 14px;
+            width: 145px;
+            background: #c5f48f70 !important;
+        }
+
+            #calenderRecoTimeslot .time-btn:hover {
+                border: 2px solid #689F38 !important;
+            }
+
+        #calenderRecoTimeslot .button:hover:before {
+            content: "Confirm!";
+            background-color: #c5f48f24 !important;
+            color: green;
+        }
+
+        #calenderTimeslot table tr td:hover, #calenderRecoTimeslot table tr td:hover {
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        #calenderRecoTimeslot .click-arrow {
+            border-radius: 100%;
+            width: 20px;
+            height: 20px;
+            color: #a79c9c;
+            background: #efefef;
+            border: none;
+            position: relative;
+            top: -2px;
+            line-height: 14px;
+        }
+
+            #calenderRecoTimeslot .click-arrow svg {
+                position: relative;
+                left: -3px;
+            }
+
+    .changeslot {
+        position: relative;
+        right: -34px;
+        top: -13px;
+        color: grey !important;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .button {
         position: relative !important;
         padding: 13px 10px !important;
         background: none !important;
@@ -81,8 +89,8 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-                        font-size: 17px;
-                        /* background: #e5e5e5 !important*/
+                                font-size: 17px;
+                                /* background: #e5e5e5 !important*/
     }
 
         .button span {
@@ -198,8 +206,6 @@
                                 </svg>
                             </span><span class="pull-left time-txt">1&nbsp;hr</span>
                         </div>
-
-                        <div class="clearfix"><p style="clear: both;margin-top: 35px;margin-bottom: 0px;">Hey there</p><p style="margin:15px 10px 15px 0px">Thank you for scheduling a call with Risebird.</p><p style="margin:15px 10px 15px 0px">Please select a suitable slots as per your availability.</p><p><br></p><p style="margin:0px 10px 0px 0px;">You can also choose from recommended slots to schedule your meeting before confirming the details.</p><p><br></p><p>Regards</p><p>Risebird Team</p></div>
                     </div>
 
                     <div id="calender" class="col-md-6 pull-left">
@@ -351,7 +357,7 @@
                     </div>
                     <div id="calenderRecoTimeslot" class="pull-left">
                     </div>
-                  
+
                 </div>
             </div>
 
@@ -646,14 +652,14 @@
         $("#calenderTimeslot").empty().html(html);
 
     }
-    function Changeslots(){ 
-     $("#calenderRecoTimeslot").hide();
-     $("#calenderTimeslot").show();
+    function Changeslots() {
+        $("#calenderRecoTimeslot").hide();
+        $("#calenderTimeslot").show();
     }
 
-     function RevertChangeslots(){ 
-     $("#calenderRecoTimeslot").show();
-     $("#calenderTimeslot").hide();
+    function RevertChangeslots() {
+        $("#calenderRecoTimeslot").show();
+        $("#calenderTimeslot").hide();
     }
     function bindrecommendedslots(data) {
         var html = '';

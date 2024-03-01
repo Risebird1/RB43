@@ -139,6 +139,8 @@
                                                     <th>Meeting Status</th>
                                                     <th>Status</th>
                                                     <th>Channel Owner</th>
+                                                    <th>Latest Interview</th>
+                                                    <th>Latest Status</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -159,6 +161,8 @@
                                                     <th>Meeting Status</th>
                                                     <th>Status</th>
                                                     <th>Channel Owner</th>
+                                                    <th>Latest Interview</th>
+                                                    <th>Latest Status</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </tfoot>
@@ -333,6 +337,8 @@
                                                             <td></td>
                                                         }
                                                         <td>@item.ChannelOwner</td>
+                                                        <td>@item.LastInterviewDate</td>
+                                                        <td>@item.LastMeetingStatusStatusDesc</td>
                                                         <td>
                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
                                                                 <div class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="width:25px!important;height:25px!important;">

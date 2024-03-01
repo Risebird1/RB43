@@ -56,5 +56,8 @@ namespace Risebird.Entities.ViewModel
         public string SchedulerUniqueid { get; set; }
         public DateTime LastInterviewDate { get; set; }
         public int LastMeetingStatus { get; set; }
+        public string LastMeetingStatusStatusDesc { get; set; }
+        public string resumeLink { get; set; }
+        public string JDTiltle { get; set; }
     }
 }
