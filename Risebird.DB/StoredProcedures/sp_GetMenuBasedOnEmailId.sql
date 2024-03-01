@@ -67,7 +67,7 @@ END
 					join [dbo].[UserList] ul on pl.id = ul.idprofile 
 					left join ClientUser cu on cu.UserId=ul.id
 					left join Client c on c.id=cu.ClientId
-					where ul.EmailId = @EmailId AND ul.IsActive=1 and fn.IsStaffingAgencyAccess=1 and (@clientId=23 or (@clientId != 23 and fn.FunctionName != 'Templates'))
+					where ul.EmailId = @EmailId AND ul.IsActive=1 and fn.IsStaffingAgencyAccess=1 --and (@clientId=23 or (@clientId != 23 and fn.FunctionName != 'Templates'))
 					order by idisplayorder
 			end
 			else if(@profile = 'Client')
@@ -79,7 +79,7 @@ END
 					join [dbo].[UserList] ul on pl.id = ul.idprofile 
 					left join ClientUser cu on cu.UserId=ul.id
 					left join Client c on c.id=cu.ClientId 
-					where ul.EmailId = @EmailId AND ul.IsActive=1 and (@clientId=23 or (@clientId != 23 and fn.FunctionName != 'Templates'))
+					where ul.EmailId = @EmailId AND ul.IsActive=1 --and (@clientId=23 or (@clientId != 23 and fn.FunctionName != 'Templates'))
 					order by idisplayorder
 				end
 			else
