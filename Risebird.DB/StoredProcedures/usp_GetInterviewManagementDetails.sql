@@ -27,7 +27,7 @@ begin
 Declare @Clientid int
 Select @Clientid=cu.ClientId From UserList ul join ClientUser cu on cu.UserId=ul.id where ul.Emailid=@Emailid
 Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.FirstJoinedon, ic.MeetingStatus,tzme.Joinedcount as TotalCount,im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,im.confirmationStatus,ip.NickName as interviewer
-,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId,ulc.EmailId as ChannelOwner
+,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId,ulc.EmailId as ChannelOwner,IRF.JDTiltle,im.resumeLink
 from InterviewMeetings im        
 join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId
 Left join InterviewComments ic on ic.InterviewId=im.id      
@@ -45,7 +45,7 @@ else if(@Role='SeniorHR' or @Role='SupportAdmin')
 BEGIN  
 Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.FirstJoinedon, ic.MeetingStatus,tzme.Joinedcount as TotalCount,
 im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,
-im.confirmationStatus,im.interviewer,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId,ulc.EmailId as ChannelOwner
+im.confirmationStatus,im.interviewer,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId,ulc.EmailId as ChannelOwner,IRF.JDTiltle,im.resumeLink
 from InterviewMeetings im 
 join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId
 join SeniorHr sh on sh.Clientid=irf.ClientId
@@ -63,8 +63,9 @@ ELSE
 BEGIN
 Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.FirstJoinedon, ic.MeetingStatus,tzme.Joinedcount as TotalCount,
 im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,
-im.confirmationStatus,im.interviewer,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId,ulc.EmailId as ChannelOwner
-from InterviewMeetings im        
+im.confirmationStatus,im.interviewer,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId
+,ulc.EmailId as ChannelOwner,IRF.JDTiltle,im.resumeLink
+from InterviewMeetings im
 join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId
 Left join InterviewComments ic on ic.InterviewId=im.id      
 left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid  
@@ -76,5 +77,5 @@ outer apply(Select min(PerformedOn) FirstPerformedOn From PageClickDetails where
 where InterviewDate>@startDateParam and InterviewDate<@endDateParam and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)  
 END            
             
-End 
+End
 Go

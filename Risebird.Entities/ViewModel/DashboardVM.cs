@@ -53,5 +53,7 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
         public string IRFId { get; set; }
         public string ChannelOwner { get; set; }
+        public string JDTiltle { get; set; }
+        public string resumeLink { get; set; }
     }
 }

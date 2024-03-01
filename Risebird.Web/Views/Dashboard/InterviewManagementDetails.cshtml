@@ -132,6 +132,8 @@
                                                     <th>Candidate Email</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Mobile</th>
+                                                    <th>Candidate Resume</th>
+                                                    <th>JD Title</th>
                                                     <th>Client</th>
                                                     <th>Emergency Interview</th>
                                                     <th>Meeting Status</th>
@@ -150,6 +152,8 @@
                                                     <th>Candidate Email</th>
                                                     <th>Candidate Name</th>
                                                     <th>Candidate Mobile</th>
+                                                    <th>Candidate Resume</th>
+                                                    <th>JD Title</th>
                                                     <th>Client</th>
                                                     <th>Emergency Interview</th>
                                                     <th>Meeting Status</th>
@@ -206,6 +210,18 @@
                                                         {
                                                             <td></td>
                                                         }
+
+                                                        @if (item.resumeLink != null && item.resumeLink != "")
+                                                        {
+                                                            <td> <a style="padding:0px;" id="resumeId" target="_blank" title="Resume" href=@item.resumeLink><img style="position:relative;left: -3px;" src="/img/resume-icon.png" width="21">Resume</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Resume</td>
+                                                        }
+                                                        <td>
+                                                            @item.JDTiltle
+                                                        </td>
                                                         <td>@item.ClientName</td>
                                                         @if (item.EIAssigned)
                                                         {

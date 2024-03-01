@@ -1482,7 +1482,7 @@ namespace Risebird.Repository
                     parameters.Add("@enddate", interviewenddate);
                     parameters.Add("@Emailid", Emailid);
                     var result = await SqlMapper.QueryAsync<InterviewManagementVM>(con, "usp_GetInterviewManagementDetails", parameters,
-                        commandType: CommandType.StoredProcedure);
+                        commandType: CommandType.StoredProcedure,commandTimeout:600);
                     return result;
                 }
             }
