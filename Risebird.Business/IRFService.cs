@@ -3739,6 +3739,20 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> CreateMAG(AGCampaignModel model, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.CreateMAG(model, loggedInUser);
+                
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser)
         {
             try

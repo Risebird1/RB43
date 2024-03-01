@@ -35,7 +35,9 @@
     letter-spacing: 2px;
     background:#f3f3f3;
 }
-
+.none{
+    display:none;
+}
 .vertical-mdl-tabs.mdl-tabs.is-upgraded a.mdl-tabs__tab.is-active {
     border-left: 5px solid #ED462F;    background: #fff;
 }
@@ -120,14 +122,50 @@ a{
 .mdl-tabs__panel h1 {
      color: #000;
      font-weight:500;
-    font-size: 18px;
+    font-size: 16px;
     text-transform: uppercase;
     float:left;
 }
+ .panel-heading {
+  padding: 0;
+	border:0;
+}
+
+.panel .panel-title{
+    float:none!important;
+    display:inline;
+}
+.panel-title>a, .panel-title>a:active{
+	display:block;
+	padding:15px;
+    color: #998e8e !important;
+    font-size: 17px;
+    font-weight: 500;
+    padding: 0px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    word-spacing: 3px;
+    text-decoration: none !important;
+}
+.panel-heading  a:before {
+   font-family: 'Glyphicons Halflings';
+   content: "\e114";
+   float: right;
+   transition: all 0.5s;
+   position: relative;
+    right: 10px;
+  
+}
+.panel-heading.active a:before {
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	transform: rotate(180deg);
+} 
 
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/tabs.css" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
  <script src="~/Newassets/js/tabs.js" type="text/javascript"></script>
 <style>
     body {
@@ -196,12 +234,25 @@ a{
                        <div class="company-logo-img" style="text-align:left"><img style="max-height:45px;position: relative; top: -25px;" class="img-responsive" src="@Model.CandidateDetails.LogoUrl" /></div>
                     }
                     
-                
+
+
+
   <div class="mdl-tabs vertical-mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
   <div class="mdl-grid mdl-grid--no-spacing">
 
-          <div class="col-md-12 pull-left">
-              <div class="left-pannel">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading active" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Meeting Link
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+
+                 <div class="left-pannel">
       <div class="mdl-tabs__panel is-active" id="tab1-panel" style="position:relative;">
          
       
@@ -209,7 +260,7 @@ a{
                             {
                                 @if (item.interviewDate.AddMinutes(30) >= DateTime.Now && item.confirmationStatus == "Confirmed")
                                 { scheduleCount = +1;
-                   <div> <h1 style="margin:0px 0px 15px 0px;"><img width="22" src="../../img/schedule-time.png" style="margin-right:3px;">Scheduled Interview Details</h1></div>
+                   <div> <h1 style="margin:0px 0px 15px 0px;"><img width="22" src="../../img/schedule-time.png" style="margin-right:10px;">Scheduled Interview Details</h1></div>
 
                                                 
 
@@ -227,20 +278,20 @@ a{
                                   }
                                                 <div class="clearfix"></div>
                                    <p style="line-height:32px;"><b>JD Name :</b><c onclick="captureclick('JobDescription','Jd Link')"> <a class="click_herebtn" style="margin-left:10px;background:#42a5f5;cursor:pointer;position: relative;top:0px;" href="@Model.CandidateDetails.JDLink" target="_blank"><span>Click Here</span></a></c></p>
-                                    <p style="line-height:32px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
+                                    <p style="line-height:32px;font-size:17px;"><b>Primary Skill :</b> @Model.CandidateDetails.PrimarySkillInvite </p>
 
-                                                <div style="padding:0px;margin:0px 0px 25px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 14px;"></i><span style="color:green;font-size:15px; font-weight:600"> @item.interviewDate</span></div>
+                                                <div style="padding:0px;margin:0px 0px 25px 0px;"><span style="color:#204065;font-weight: 500;font-size:15px;"> Scheduled at :</span><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;margin-right: 6px;display:inline-block; font-size: 16px;"></i><span style="color:green;font-size:16px; font-weight:600"> @item.interviewDate</span></div>
                                                 <div style="margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Google Meet joining info</div>
                                                 <img class="schedule-img" src="../../img/int-img-2.png">
                                               @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                 {
-                                                    <div style="margin:10px 0px;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
+                                                    <div style="margin: 18px 0px 8px 0px;;font-size: 15px;line-height:37px;" class="meeting-link text-uppercase"
                                                     onclick="captureclick('ZoomMeeting','JoinMeeting',@item.Interviewid)"> Click here to join the meeting 
                                                   <span class="pipe" style="margin:0px 10px;top:18px;left:2px;"></span>  <a class="click_herebtn" href="@item.zoomLink" target="_blank"><span><img class="zoom-icon" src="~/img/zoom.png" /> Zoom Meeting Link</span></a></div>
                                                 }
                                                 else
                                                 {
-                                                    <div style="margin:10px 0px 0px 0px;" class="meeting-link text-uppercase">
+                                                                <div style="margin: 18px 0px 8px 0px;" class="meeting-link text-uppercase">
                                                         Click here to join the meeting <span class="pipe"></span><a class="click_herebtn click_herebtn2" style="margin-left:40px;cursor: not-allowed;background:#42a5f57a;position: relative;top:6px;">
                                                             <span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/zoom-disable.png" /> Zoom Meeting Link</span>
                                                         </a>
@@ -261,7 +312,7 @@ a{
                                                     <div class="interviewresponsebtn redbtn" onclick="ReschuduleMeeting(@item.Interviewid,'@Model.Uniqueid',@Model.CandidateDetails.IRFId,'@Model.CandidateDetails.EmailId')">Reschedule</div>
                                                 </div>
                                                 <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'No',@item.Interviewid)" style="margin-top:0px;">
-                                                    <div class="interviewresponsebtn redbtn" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Not Available</div>
+                                                            <div class="interviewresponsebtn redbtn" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Not Available</div>
                                                 </div>
                                                 <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Need Clarity',@item.Interviewid)" style="margin-top:0px;">
                                                     <div class="interviewresponsebtn redbtn" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId')">Need Clarity</div>
@@ -291,11 +342,26 @@ a{
 
       </div>
       </div>
-         <div class="right-pannel">
+
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          OTHER DETAILS
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+          <div class="col-md-12 pull-left">
+              <div class="right-pannel">
        <div class="mdl-tabs__panel" id="tab3-panel" style="display:block;">
                                         
                                         
-                                            <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/employer.png" style="margin-right:3px;"> KNOW YOUR EMPLOYER</h1></div>
+                                            <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/employer.png" style="margin-right:7px;top: -3px;position:relative;"> KNOW YOUR EMPLOYER</h1></div>
                                             <div style="clear:both"></div>
                                            
                                               <div class="w40">
@@ -303,8 +369,8 @@ a{
 
                                             <div style="line-height:32px;margin-bottom: 0px;"><b>Company Website :</b><br/> <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></div>
 
-                                            <div style="line-height:32px;margin-bottom:10px;text-align: left;font-size:14px;"><b>HR Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Hr Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>@Model.CandidateDetails.ClientHRAttemptContactMobile</div></div>
-                                            <div style="line-height:32px;margin-bottom:10px;font-size: 14px;"><b>Risebird Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Risebird Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Risebird Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>@Model.CandidateDetails.ChannelOwnerMobile</div></div>
+                                            <div style="line-height:32px;margin-bottom:10px;text-align: left;font-size:16px;"><b>HR Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Hr Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>@Model.CandidateDetails.ClientHRAttemptContactMobile</div></div>
+                                            <div style="line-height:32px;margin-bottom:10px;font-size: 16px;"><b>Risebird Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Risebird Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Risebird Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>@Model.CandidateDetails.ChannelOwnerMobile</div></div>
                                         </div>
 
                                             @if (!String.IsNullOrWhiteSpace(Model.CandidateDetails.CompanyVideoLink))
@@ -336,13 +402,12 @@ a{
   
 
   </div>
-  </div>
-
-   <div class="int-panel col-md-12 pull-left">
+          </div>
+           <div class="int-panel col-md-12 pull-left">
      <div class="int-left-pannel">
                                 <div class="mdl-tabs__panel" id="tab2-panel" style="display:block;float:left">
                                    
-                                    <h1 style="margin:0px 0px 15px 0px"><img width="23" src="../../img/history.png" style="position:relative;top:-5px;left: -2px;"> Interview History Details</h1>
+                                    <h1 style="margin:0px 0px 15px 0px"><img width="25" src="../../img/history.png" style="position:relative;top:-5px;left: -2px;margin-right:3px;"> Interview History Details</h1>
 
                                     <div class="scrollbar" id="style-4">
                                         <div class="force-overflow">
@@ -400,11 +465,13 @@ a{
                                 </div>
                                 </div>
                                 @if(inthistCount == 0)   {
-                                <div class="w-full"> 
+                                                
+                                                    <div class="w-full"> 
                                 
                                 <div class="mdl-tabs__panel" id="tab4-panel" style="display:block;float:left">
+
                                         <div id="interviewConsent" class="top-margin" style="clear:both;">
-                                          <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="23" src="../../img/consent.png" style="position:relative;left:-1px;"> INTERVIEW CONSENT DETAILS</h1></div>
+                                          <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right: 3px;"> INTERVIEW CONSENT DETAILS</h1></div>
                                              <div style="clear:both"></div>
                                             <div class="follow">
                                                 <div class="row">
@@ -476,19 +543,25 @@ a{
                                         </div>
                                     </div>
                                     </div>
+                                     
                                 }
 
 
        </div>
+
+      </div>
+    </div>
+  </div>
+ 
+</div>
+
     </div>
   </div>
 </div>
 </div>
-
-
-                </div>
-            </div>
-        </div>
+ </div>
+  </div>
+   </div>
   
 
 @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
@@ -531,6 +604,13 @@ a{
             });
         }
     }
+
+      
+            $(document).ready(function () {
+       if (inthistCount == 0) {
+      $('.int-left-pannel').css('display','none');
+       }
+       })
 </script>
 <script>
     function openCity(evt, tabid) {
@@ -658,6 +738,16 @@ a{
     }
 </script>
 <script>
+ $(document).ready(function () {
+if($('.w-full').length){
+$('.int-left-pannel').hide();
+ }
+if($('.int-right-pannel').length){
+ $('.int-left-pannel').show();
+ }
+ })
+</script>
+<script>
     startTimer();
     function startTimer() {
         var presentTime1 = document.getElementsByClassName('timer');
@@ -723,6 +813,7 @@ a{
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" type="text/javascript"></script>
 <script>
     $('.moreless-button').click(function() {
   $('.moretext').slideToggle();
@@ -732,6 +823,15 @@ a{
     $(this).text("Read more")
   }
 });
+</script>
+<script>
+     $('.panel-collapse').on('show.bs.collapse', function () {
+    $(this).siblings('.panel-heading').addClass('active');
+  });
+
+  $('.panel-collapse').on('hide.bs.collapse', function () {
+    $(this).siblings('.panel-heading').removeClass('active');
+  });
 </script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 <script src="~/js/TwilioCallMaker.js"></script>

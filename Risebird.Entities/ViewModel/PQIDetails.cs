@@ -22,5 +22,6 @@ namespace Risebird.Entities.ViewModel
         public string ChannelOwner { get; set; }
         public string CompanyName { get; set; }
         public string Clienthr { get; set; }
+        public string JDTiltle { get; set; }
     }
 }

@@ -265,107 +265,90 @@
      @Html.ValidationMessageFor(model => model.CampaignName, "", new { @id = "uniqueMsg", @class = "text-danger" })
 
         </div>
-        @if(!Model.CreateMasterAG)
+        @if(!Model.IsAlreadyMasterAG)
         {
-        <div class="msgroup">
-        <div class="mdc-checkbox">
-            @Html.CheckBoxFor(m => m.CreateMasterAG, new { @class = "mdc-checkbox__native-control" })
-             <div class="mdc-checkbox__background">
-                <svg class="mdc-checkbox__checkmark"
-                     viewBox="0 0 24 24">
-                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                </svg>
-                <div class="mdc-checkbox__mixedmark"></div>
+            <div class="msgroup">
+                <div class="mdc-checkbox">
+                    @Html.CheckBoxFor(m => m.CreateMasterAG, new { @class = "mdc-checkbox__native-control" })
+                     <div class="mdc-checkbox__background">
+                        <svg class="mdc-checkbox__checkmark"
+                             viewBox="0 0 24 24">
+                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                        </svg>
+                        <div class="mdc-checkbox__mixedmark"></div>
+                    </div>
+
+                </div>
+                <label class="assessment-name">Please tick the checkbox to create Master Assessment Group</label>
             </div>
 
-        </div>
-        <label class="assessment-name">Please tick the checkbox to create Master Assessment Group</label>
-        </div>
+            <div class="msgroup">
+                    <div class="mdc-checkbox">
+                        @Html.CheckBoxFor(m => m.CreateMAGOnly, new { @class = "mdc-checkbox__native-control" })
+                        <div class="mdc-checkbox__background">
+                            <svg class="mdc-checkbox__checkmark"
+                                 viewBox="0 0 24 24">
+                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                            </svg>
+                            <div class="mdc-checkbox__mixedmark"></div>
+                        </div>
+
+                    </div>
+                    <label class="assessment-name">Please tick the checkbox to only create a Master Assessment Group without sending emails. Please note, this will not create a campaign.</label>
+                </div>
+            
+        }
         <div class="col-md-12">
 
 
             <div class="toggled-off">
-  <div class="toggle-title">
-  
-    <h3>Click here to select Target assessment groups</h3>
+                <div class="toggle-title">
+
+                    <h3>Click here to select Target assessment groups</h3>
                     <i class="fa fa-angle-down fa-fw"></i>
                     <i class="fa fa-angle-up fa-fw"></i>
                 </div>
-  <!-- end toggle-title --->
-  <div class="toggle-content"> 
-   @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Count() > 0)
-            {
-                for (int i = 0; i < Model.AssessmentGroups.Count(); i++)
-                {
-                    <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
+                <!-- end toggle-title --->
+                <div class="toggle-content">
+                    @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Count() > 0)
+                    {
+                        for (int i = 0; i < Model.AssessmentGroups.Count(); i++)
+                        {
+                            <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
 
-                        <div class="mdc-checkbox" @* style="top:5px;" *@>
-                            @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
-                            <div class="mdc-checkbox__background">
-                                <svg class="mdc-checkbox__checkmark"
-                                     viewBox="0 0 24 24">
-                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                </svg>
-                                <div class="mdc-checkbox__mixedmark"></div>
+                                <div class="mdc-checkbox" @* style="top:5px;" *@>
+                                    @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
+                                    <div class="mdc-checkbox__background">
+                                        <svg class="mdc-checkbox__checkmark"
+                                             viewBox="0 0 24 24">
+                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                        </svg>
+                                        <div class="mdc-checkbox__mixedmark"></div>
+                                    </div>
+
+                                </div>
+                                <label class="assessment-name">@Model.AssessmentGroups[i].AssessmentGroup</label>
+                                @Html.HiddenFor(x => x.AssessmentGroups[i].id)
+                                @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
                             </div>
-
-                        </div>
-                        <label class="assessment-name">@Model.AssessmentGroups[i].AssessmentGroup</label>
-                        @Html.HiddenFor(x => x.AssessmentGroups[i].id)
-                        @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
-                    </div>
-                }
-            }
-  </div>
-  <!-- end section-toggle--> 
-</div>
+                        }
+                    }
+                </div>
+                <!-- end section-toggle-->
+            </div>
 
 
 
-
-
-
-          @*  <h2 style="text-align: left;font-size: 24px;color: #1d873a;">Select target assessment groups </h2>*@
-         @*   @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Count() > 0)
-            {
-                for (int i = 0; i < Model.AssessmentGroups.Count(); i++)
-                {
-                    <div class="mdc-form-field">
-
-                        <div class="mdc-checkbox">
-                            @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
-                            <div class="mdc-checkbox__background">
-                                <svg class="mdc-checkbox__checkmark"
-                                     viewBox="0 0 24 24">
-                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                </svg>
-                                <div class="mdc-checkbox__mixedmark"></div>
-                            </div>
-
-                        </div>
-                        <label class="assessment-name">@Model.AssessmentGroups[i].AssessmentGroup</label>
-                        @Html.HiddenFor(x => x.AssessmentGroups[i].id)
-                        @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
-                    </div>
-                }
-            }*@
         </div>
-        }
+
         <div class="form-group">
-@*            <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectedRemainingAssessmentGroups">Choose from the following remaining Assessment Groups</label>
-*@            <div class="sub-assmntgrp">
+            <div class="sub-assmntgrp">
                 <label class="input">
      
       
-                      <select id="SelectedRemainingAssessmentGroups" data-placeholder="None Selected" name="SelectedRemainingAssessmentGroups" class="js-select2 input__field" multiple="multiple">
+                     <select id="SelectedRemainingAssessmentGroups" data-placeholder="None Selected" name="SelectedRemainingAssessmentGroups" class="js-select2 input__field" multiple="multiple">
 
-                    @* @for (int i = 0; i < Model.RemainingAssessmentGroups.Count(); i++)
-                    {
-                        <option value="@Model.RemainingAssessmentGroups[i].id">@Model.RemainingAssessmentGroups[i].AssessmentGroup</option>
-
-                        @Html.HiddenFor(x => x.RemainingAssessmentGroups[i].id)
-                        @Html.HiddenFor(x => x.RemainingAssessmentGroups[i].AssessmentGroup)
-                    } *@
+                    
                     @if(Model.RemainingAssessmentGroups != null && Model.RemainingAssessmentGroups.Count()> 0)
                     {
                         foreach (var item in Model.RemainingAssessmentGroups)
@@ -397,7 +380,7 @@
 
         <button type="submit" id="id_Submit_Form1">Save and Next »</button>
 
-        <button type="button" id="id_Next_Form1" onclick="Navigate('form_2')" style="display:none">Next</button>
+        <button type="button" id="id_Next_Form1" onclick="Navigate('form_2')" style="display:none">Next »</button>
 
         @*     <button type="button" onclick="Navigate('form_2')">Next</button>
         *@

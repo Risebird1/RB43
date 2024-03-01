@@ -53,5 +53,8 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
         public string IRFId { get; set; }
         public string ChannelOwner { get; set; }
+        public string SchedulerUniqueid { get; set; }
+        public DateTime LastInterviewDate { get; set; }
+        public int LastMeetingStatus { get; set; }
     }
 }
