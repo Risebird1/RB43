@@ -14774,7 +14774,7 @@ button.close {
         cursor: pointer;
         font-size: 14px !important;
         line-height: 6px;
-        padding: 12px 15px;
+        padding: 12px 8px;
         background: #fff;
         color: #000;
         border-radius: 22px;
@@ -14791,7 +14791,7 @@ button.close {
     /* width: 78%;*/
     width: calc(100% - 20px);
     float: left;
-    margin-top: 60px;
+    margin-top:60px;
     /*position: absolute;
     left: 20%;
     top: 20px;*/
