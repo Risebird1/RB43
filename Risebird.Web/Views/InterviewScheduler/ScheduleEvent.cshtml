@@ -658,13 +658,15 @@
     function bindrecommendedslots(data) {
         var html = '';
         html += '<table><tbody>';
-         html += '<tr><td><h1 style="font-size:17px;color:green;padding:4px 10px;">Recomended Slots</h1></td><tr>';
-        for (var i = 0; i < data.length; i++) {
-            rs++;
-            html += '<tr><td><input type="hidden" id="txtslotid_' + rs + '" value="' + data[i] + '"><button class="button time-btn" onclick="submitDate(' + rs + ')"><span>' + data[i] + '</span></button></td></tr>';
+        if (data.length > 0) {
+            html += '<tr><td><h1 style="font-size:17px;color:green;padding:4px 10px;">Recomended Slots</h1></td><tr>';
+            for (var i = 0; i < data.length; i++) {
+                rs++;
+                html += '<tr><td><input type="hidden" id="txtslotid_' + rs + '" value="' + data[i] + '"><button class="button time-btn" onclick="submitDate(' + rs + ')"><span>' + data[i] + '</span></button></td></tr>';
+            }
+            html += '</tbody></table>'; title = "Detail View"
+            html += '<a class="changeslot" onclick="Changeslots()"><button class="click-arrow" ><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"></path></svg></button> view more</a>';
         }
-        html += '</tbody></table>';title="Detail View"
-        html +='<a class="changeslot" onclick="Changeslots()"><button class="click-arrow" ><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"></path></svg></button> view more</a>';
         $("#calenderRecoTimeslot").empty().html(html);
     }
     function submitDate(i) {
