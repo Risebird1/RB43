@@ -685,5 +685,49 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<RecommendedSlotsVM>> FetchrecommendedSlots(List<DateTime> _slotscheck)
+        {
+            try
+            {
+                DataTable _slots = new DataTable();
+                _slots.Columns.Add("SlotTime", typeof(DateTime));
+                foreach (var item in _slotscheck)
+                {
+                    _slots.Rows.Add(item);
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_GetrecommendedInterviewSlots", con);
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.Parameters.Add(new SqlParameter("@slotsData", SqlDbType.Structured));
+                    adapter.SelectCommand.Parameters["@slotsData"].Value = _slots;
+                    adapter.Fill(dataset);
+                    if (dataset.Tables.Count > 0)
+                    {
+                        var dt = dataset.Tables[0];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            var listMeetings = new List<RecommendedSlotsVM>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listMeetings.Add(new RecommendedSlotsVM
+                                {
+                                    interviewcount = !string.IsNullOrEmpty(dt.Rows[i]["interviewcount"].ToString()) ? Convert.ToInt32(dt.Rows[i]["interviewcount"]) : 0,
+                                    SlotTime = dt.Rows[i]["SlotTime"] != null ? Convert.ToDateTime(dt.Rows[i]["SlotTime"].ToString()) : new DateTime()
+                                });
+                            }
+                            return listMeetings;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

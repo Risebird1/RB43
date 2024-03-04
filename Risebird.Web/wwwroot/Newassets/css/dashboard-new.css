@@ -9564,7 +9564,7 @@ option {
             padding: 6px 6px !important;
         }
 
-        #calenderTimeslot {
+        #calenderTimeslot, #calenderRecoTimeslot {
             width: 180px !important;
             height: auto !important;
         }
@@ -10008,7 +10008,7 @@ option {
             margin-bottom: 0px !important;
         }
 
-        #calenderTimeslot {
+        #calenderTimeslot, #calenderRecoTimeslot {
             width: 190px !important;
         }
 
@@ -10099,7 +10099,7 @@ option {
             float: right;
         }
 
-        #calenderTimeslot {
+        #calenderTimeslot, #calenderRecoTimeslot {
             left: 20px;
         }
         .interview-tab .left-div {
@@ -10270,7 +10270,7 @@ option {
             width: 300px !important;
         }
 
-        #calenderTimeslot {
+        #calenderTimeslot, #calenderRecoTimeslot {
             margin-top: 40px;
             height: 320px;
             overflow-y: auto;
@@ -11108,7 +11108,7 @@ option {
         width: 100% !important;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         width: 120px !important;
     }
 
@@ -11243,7 +11243,7 @@ option {
         display: none !important;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         width: 100% !important;
         margin-top: 0px !important;
     }
@@ -11442,7 +11442,7 @@ option {
         font-size: 9.3px;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         left: 0px !important;
     }
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
@@ -594,7 +595,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.interviewDate = interviewdatetime;
                         if (model.Pagereturnvalue == 314999)
                         {
-                            return RedirectToAction("UnassignedInterviews", "Dashboard", new { actionstatus="interviewCount"});
+                            return RedirectToAction("UnassignedInterviews", "Dashboard", new { actionstatus = "interviewCount" });
                         }
                         else
                         {
@@ -676,7 +677,7 @@ namespace Risebird.Web.Controllers
                                 var newmin = Convert.ToInt32(slots % 60);
                                 DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
                                 if (result.FirstOrDefault().StartDate <= value1)
-                                    model.Add(((int)(slots / 60)).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                    model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                             }
                             else
                             {
@@ -697,7 +698,7 @@ namespace Risebird.Web.Controllers
                                             value1 = value.AddDays(-1);
 
                                             if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
-                                                model.Add(((int)(slots / 60) + 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                model.Add(((int)(slots / 60) + 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                         }
                                     }
                                 }
@@ -715,7 +716,7 @@ namespace Risebird.Web.Controllers
                                             }
                                             DateTime value1 = new DateTime(year, month, (day + 1), newslot, newmin, 0);
                                             if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
-                                                model.Add(((int)(slots / 60) - 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                model.Add(((int)(slots / 60) - 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                         }
                                     }
                                 }
@@ -729,7 +730,7 @@ namespace Risebird.Web.Controllers
                                     }
                                     DateTime value1 = new DateTime(year, month, day, newslot, newmin, 0);
                                     if (result.FirstOrDefault().StartDate.AddMinutes(-addontime) <= value1)
-                                        model.Add(((int)(slots / 60)).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                        model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                 }
                             }
                         }
@@ -761,7 +762,7 @@ namespace Risebird.Web.Controllers
                                         {
                                             if (slots > offsetbuffer)
                                             {
-                                                model.Add(((int)(slots / 60)).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                             }
                                         }
                                     }
@@ -786,7 +787,7 @@ namespace Risebird.Web.Controllers
                                                     {
                                                         if (slots > offsetbuffer)
                                                         {
-                                                            model.Add(((int)(slots / 60) + 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                            model.Add(((int)(slots / 60) + 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                                         }
                                                     }
                                                 }
@@ -809,7 +810,7 @@ namespace Risebird.Web.Controllers
                                                     {
                                                         if (slots > offsetbuffer)
                                                         {
-                                                            model.Add(((slots / 60) - 24).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                            model.Add(((slots / 60) - 24).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                                         }
                                                     }
                                                 }
@@ -829,7 +830,7 @@ namespace Risebird.Web.Controllers
                                             {
                                                 if (slots > offsetbuffer)
                                                 {
-                                                    model.Add(((int)(slots / 60)).ToString().Replace("-", "") + ":" + (slots % 60).ToString().Replace("-", ""));
+                                                    model.Add(((int)(slots / 60)).ToString("00").Replace("-", "") + ":" + (slots % 60).ToString("00").Replace("-", ""));
                                                 }
                                             }
                                         }
@@ -1236,7 +1237,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                           // return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
+                            // return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.Name });
                             return RedirectToAction("VerifiedInterviewDetails", "Candidate", new { emailid = model.Email, id = candidateuniqueid.uniqueid, IRFid = model._IRFDetails.inIRFid });
                         }
                     }
@@ -1607,6 +1608,37 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-
+        public async Task<JsonResult> FetchRecommandedslots(int day, int month, int year, int offset, string TimeZonevalue, List<string> slots)
+        {
+            List<string> model = new List<string>();
+            List<DateTime> slotswithtime = new List<DateTime>();
+            foreach (var item in slots)
+            {
+                var _time = item.Split(":");
+                DateTime value = new DateTime(Convert.ToInt32(year), Convert.ToInt32(month), Convert.ToInt32(day), Convert.ToInt32(_time[0]), Convert.ToInt32(_time[1]), 0);
+                //value = value.AddMinutes(addontime);
+                var TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(offset, value, TimeZonevalue);
+                value = value.AddMinutes(TimeZoneoffset);
+                TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(value, INDIAN_ZONE);
+                slotswithtime.Add(indianTime);
+            }
+            var result = await _interviewSchedulerservice.FetchrecommendedSlots(slotswithtime);
+            if (result != null)
+            {
+                result = result.OrderBy(x => x.interviewcount).Take(3);
+                foreach (var item in result)
+                {
+                    var TimeZoneoffset = _interviewSchedulerservice.FetchCurrentoffset(offset, item.SlotTime, TimeZonevalue);
+                    int addontime = TimeZoneoffset + 330;
+                    item.SlotTime = item.SlotTime.AddMinutes(-addontime);
+                    var _hour = item.SlotTime.Hour;
+                    var _minute = item.SlotTime.Minute;
+                    var timeslot = _hour.ToString("00") + ":" + _minute.ToString("00");
+                    model.Add(timeslot);
+                }
+            }
+            return Json(model);
+        }
     }
 }
