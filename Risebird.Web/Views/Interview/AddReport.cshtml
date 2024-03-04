@@ -98,7 +98,7 @@
         meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();
     }
     meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.DroppedBorderLine).ToString()).ToList();
-    if (Model.ClientId == 151)
+    if (Model.ClientId == 151 || Model.ClientId == 67)
     {
         interviewStatusList = interviewStatusList.Where(x => x.Value != ((int)InterviewStatus.BorderLine).ToString() && x.Value != ((int)InterviewStatus.MarginallyRejected).ToString()).ToList();
     }
