@@ -4402,7 +4402,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@timeEnd", DateTime.Now.AddHours(-3));
+                    parameters.Add("@timeEnd", DateTime.Now.AddMinutes(-30));
                     parameters.Add("@timeStart", DateTime.Now.AddDays(-7));
                     var result = await SqlMapper.QueryAsync<PendingVideoMeetingsData>(con, "usp_GetPendingVideoMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
