@@ -6132,7 +6132,7 @@ input[type="date"].form-control {
         padding: 6px 6px !important;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         width: 180px !important;
         height: auto !important;
     }
@@ -6523,7 +6523,7 @@ input[type="date"].form-control {
         margin-bottom: 0px !important;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         width: 190px !important;
     }
 
@@ -6612,7 +6612,7 @@ input[type="date"].form-control {
         float: right;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         left: 20px;
     }
 
@@ -6718,7 +6718,7 @@ input[type="date"].form-control {
         width: 300px !important;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         margin-top: 40px;
         height: 320px;
         overflow-y: auto;
@@ -7210,7 +7210,7 @@ input[type="date"].form-control {
         width: 100% !important;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         width: 120px !important;
     }
 
@@ -7288,7 +7288,7 @@ input[type="date"].form-control {
         display: none !important;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         width: 100% !important;
         margin-top: 0px !important;
     }
@@ -7362,7 +7362,7 @@ input[type="date"].form-control {
         font-size: 9.3px;
     }
 
-    #calenderTimeslot {
+    #calenderTimeslot, #calenderRecoTimeslot {
         left: 0px!important;
     }
 

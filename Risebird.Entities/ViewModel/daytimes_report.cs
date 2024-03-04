@@ -150,4 +150,9 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public string ZoomMeetingId { get; set; }
     }
+    public class RecommendedSlotsVM
+    {
+        public int interviewcount { get; set; }
+        public DateTime SlotTime { get; set; }
+    }
 }
