@@ -718,37 +718,60 @@
   <script>
       function checkUniqueness() {
         debugger;
-        var letterNumber = /^[0-9a-zA-Z]+$/;
-        var val = document.getElementById("CampaignName").value;
-        if (val !=null && !(val.match(letterNumber))) {
-            document.getElementById("CampaignName").focus();
-            document.getElementById("uniqueMsg").innerHTML = "Only Letters and Numbers are allowed.";
-            return false;
-        }
-        else {
-            $.ajax({
-                type: "GET",
-                url: "/IRF/CheckCampaignUniqueness",
-                data: { 'value': val },
-                success: function (response) {
-                    if (response == false) {
-                        //document.getElementById("btnUpload").disabled = true;
-                        document.getElementById("uniqueMsg").innerHTML = "This Campaign already exists. Kindly enter a different Name.";
-                        document.getElementById("CampaignName").focus();
-                        return false;
-                    }
-                    else {
-                        document.getElementById("uniqueMsg").innerHTML = "";
-                        //document.getElementById("btnUpload").disabled = false;
-                        disableSubmitButton(); // for 5 seconds
-                        return true;
-                    }
+        // var letterNumber = /^[0-9a-zA-Z]+$/;
+        // var val = document.getElementById("CampaignName").value;
+        // if (val !=null && !(val.match(letterNumber))) {
+        //     document.getElementById("CampaignName").focus();
+        //     document.getElementById("uniqueMsg").innerHTML = "Only Letters and Numbers are allowed.";
+        //     return false;
+        // }
+        // else {
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "/IRF/CheckCampaignUniqueness",
+        //         data: { 'value': val },
+        //         success: function (response) {
+        //             if (response == false) {
+        //                 //document.getElementById("btnUpload").disabled = true;
+        //                 document.getElementById("uniqueMsg").innerHTML = "This Campaign already exists. Kindly enter a different Name.";
+        //                 document.getElementById("CampaignName").focus();
+        //                 return false;
+        //             }
+        //             else {
+        //                 document.getElementById("uniqueMsg").innerHTML = "";
+        //                 //document.getElementById("btnUpload").disabled = false;
+        //                 disableSubmitButton(); // for 5 seconds
+        //                 return true;
+        //             }
 
+        //         }
+        //     });
+        //         disableSubmitButton(); // for 5 seconds
+        //     return true;
+        // }
+
+        $.ajax({
+            type: "GET",
+            url: "/IRF/CheckCampaignUniqueness",
+            data: { 'value': val },
+            success: function (response) {
+                if (response == false) {
+                    //document.getElementById("btnUpload").disabled = true;
+                    document.getElementById("uniqueMsg").innerHTML = "This Campaign already exists. Kindly enter a different Name.";
+                    document.getElementById("CampaignName").focus();
+                    return false;
                 }
-            });
-                disableSubmitButton(); // for 5 seconds
-            return true;
-        }
+                else {
+                    document.getElementById("uniqueMsg").innerHTML = "";
+                    //document.getElementById("btnUpload").disabled = false;
+                    disableSubmitButton(); // for 5 seconds
+                    return true;
+                }
+
+            }
+        });
+        disableSubmitButton(); // for 5 seconds
+        return true;
     }
 
     function disableSubmitButton() {
