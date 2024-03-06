@@ -275,9 +275,10 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     @* <th>Meeting Platform</th> *@
-                                                    <th>Tech Skills</th>
                                                     @if (Model.Profile != "Client")
                                                     {
+                                                        <th>Tech Skills</th>
+
                                                         <th>Skill Channels</th>
                                                         <th>Interviewers</th>
                                                     }
@@ -289,9 +290,10 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     @* <th>Meeting Platform</th> *@
-                                                    <th>Tech Skills</th>
                                                     @if (Model.Profile != "Client")
                                                     {
+                                                        <th>Tech Skills</th>
+
                                                         <th>Skill Channels</th>
                                                         <th>Interviewers</th>
                                                     }
@@ -326,14 +328,15 @@
                                                                 <td></td>
                                                             } *@
 
-                                                            <td>
-                                                                <button type="button" class="clickhere_btn pull-left">
-                                                                    <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
-                                                                </button>
-                                                            </td>
+                                                            
 
                                                             @if (Model.Profile != "Client")
                                                             {
+                                                                <td>
+                                                                    <button type="button" class="clickhere_btn pull-left">
+                                                                        <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup('@item.ClonableSkillChannelId', '@item.Name')" data-original-title="Click here to view Tech Skills"><font style="font-family: Roboto, sans-serif; font-size:12px;">   Click Here</font></span>
+                                                                    </button>
+                                                                </td>
                                                                 @if (item.SkillChannelCounts > 0)
                                                                 {
                                                                     <td title="Template Stats" style="color:blue!important;cursor:pointer" onclick="openTemplatestats('@item.ClonableSkillChannelId', '@item.Name')">@item.SkillChannelCounts</td>
@@ -592,7 +595,7 @@
     </div>
 </div>
 
-@if (Model.Message != null && Model.Message2 != null && Model.Message3 != null)
+@if (Model.Message != null && Model.Message2 != null)//&& Model.Message3 != null
 {
     <script type="text/javascript">
         $(document).ready(function () {
@@ -601,16 +604,47 @@
         function my_code() {
             var msg = '@Model.Message';
             if (msg.toLowerCase().includes("success")) {
+                @* debugger;
+                Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    text: '@Model.Message' +
+                        '<br/> Scheduling Link : <a target="_blank" href="@Model.Message2">Scheduling Link</a>',
+                    icon: "info",
+                    buttons: true,
+                })
+                .then((willOpen) => {
+                    if (willOpen) {
+                        // URL to open in a new tab
+                        var url = "https://portal.risebird.io";
+
+                        // Open the URL in a new tab
+                        var newTab = window.open(url, '_blank');
+                        newTab.focus(); // Focus on the new tab
+                    }
+                }); *@
+
+
+
+
                 Swal.fire({
                     title: '<strong>Successful</u></strong>',
                     icon: 'info',
                     html:
                         '@Model.Message' +
-                        '<br/> Scheduling Link : <a target="_blank" href="@Model.Message2">Scheduling Link</a> '+
-                    '<br/> Skill Channel List : <a target="_blank" href="@Model.Message3">Click Here</a> ',
+                        '<br/> Scheduling Link : <a target="_blank" href="@Model.Message2">Scheduling Link</a>',
                     confirmButtonText: "Close",
                     allowOutsideClick: false
-                });
+                }).then((result) => {
+                    if (result) {
+                        // URL to open in a new tab
+                        var url = "https://portal.risebird.io/Candidate/FetchInterviewerCommunicator?emailid=" + '@Model.LoggedInUser' + "&isClientLogin=True"
+                        // Open the URL in a new tab
+                        var newTab = window.open(url, '_blank');
+                        if (newTab) {
+                            newTab.focus(); // Focus on the new tab
+                        }
+                    }
+                });;
             }
             else {
                 swal.fire("Failed", '@Model.Message', "error");
@@ -845,7 +879,7 @@ else if (Model.Message != null)
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
             },
-            order: [[2, 'desc']]
+            order: [[1, 'desc']]
         });
         $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
 

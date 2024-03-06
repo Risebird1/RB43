@@ -706,11 +706,11 @@ namespace Risebird.Web.Controllers
                             model.Message2 = TempData["SuccessErrorCloneTemplateMessage2"].ToString();
                             TempData.Remove("SuccessErrorCloneTemplateMessage2");
                         }
-                        if (TempData["SuccessErrorCloneTemplateMessage3"] != null)
-                        {
-                            model.Message3 = TempData["SuccessErrorCloneTemplateMessage3"].ToString();
-                            TempData.Remove("SuccessErrorCloneTemplateMessage3");
-                        }
+                        //if (TempData["SuccessErrorCloneTemplateMessage3"] != null)
+                        //{
+                        //    model.Message3 = TempData["SuccessErrorCloneTemplateMessage3"].ToString();
+                        //    TempData.Remove("SuccessErrorCloneTemplateMessage3");
+                        //}
                         model.Profile = profileName;
                         if (model.ClonableTemplates != null)
                         {
