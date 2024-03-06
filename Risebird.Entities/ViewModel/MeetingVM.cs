@@ -96,6 +96,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Notice Period")]
 
         public string joiningTime { get; set; }
+        public DateTime? FirstJoinedon { get; set; }
+        public DateTime? FirstPerformedOn { get; set; }
+        public bool EIAssigned { get; set; }
         public string InterviewerComment { get; set; }
         public int? InterviewStatus { get; set; }
         public string InterviewStatusDescription { get; set; }

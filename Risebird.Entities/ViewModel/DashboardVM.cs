@@ -59,5 +59,6 @@ namespace Risebird.Entities.ViewModel
         public string LastMeetingStatusStatusDesc { get; set; }
         public string resumeLink { get; set; }
         public string JDTiltle { get; set; }
+        public string ZoomMeetingId { get; set; }
     }
 }

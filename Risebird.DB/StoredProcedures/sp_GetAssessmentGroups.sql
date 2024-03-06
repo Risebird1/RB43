@@ -44,7 +44,7 @@ left join AssessmentGroupCategory agc on agc.id=ag.Categoryid
 left join IRF on IRF.AssessmentGroupId=ag.id
 group by ag.id
 
-select ag.id,AssessmentGroup,PrimarySkills,
+select ag.id,ag.AssessmentGroup, ag.PrimarySkills,
 ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,ag.PerHourRate,
 afip.InterviewerCount as InterviewerCount, agrf.IRFCount as IrfCount
 ,
@@ -53,7 +53,7 @@ CASE
     ELSE 0
 END as IsMasterAG,
 CASE
-    WHEN mag2.id is not null THEN mag2.MAGName
+    WHEN mag2.id is not null THEN ag2.AssessmentGroup
     ELSE null
 END as ParentAG
 from AssessmentGroup ag 
@@ -63,9 +63,10 @@ left join AssessmentGroupCategory agc on agc.id=ag.Categoryid
 left join MasterAssessmentGroup mag on mag.AssessmentGroupId = ag.id
 left join SecondaryAssessmentGroups sag on sag.AssessmentGroupId = ag.id
 left join MasterAssessmentGroup mag2 on mag2.id = sag.MAGId
-group by ag.id,AssessmentGroup,PrimarySkills,
+left join AssessmentGroup ag2 on mag2.AssessmentGroupId = ag2.id
+group by ag.id,ag.AssessmentGroup,ag.PrimarySkills,
 ag.Isinstaavailable,agc.CategoryName,ag.CompanyType,ag.IsRelevant,ag.ProfileType,ag.CompetencyLevel,ag.Country,
-ag.PerHourRate,afip.InterviewerCount,agrf.IRFCount, mag.id, sag.id, mag2.id, mag2.MAGName
+ag.PerHourRate,afip.InterviewerCount,agrf.IRFCount, mag.id, sag.id, mag2.id, mag2.MAGName, ag2.AssessmentGroup
 
  DROP TABLE #temp_AssessmentIRFCount
 

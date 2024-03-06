@@ -680,10 +680,24 @@ namespace Risebird.Web.Controllers
                                     }
                                 }
 
+                                if (filter.Archive == "Yes")
+                                {
+                                    IEnumerable<ClonableSkillChannelVM> templatesFilteredByArchive = null;
+
+                                    templatesFilteredByArchive = model.ClonableTemplates.Where(c => c.IsDeleted == true);
+                                    if (templatesFilteredByArchive != null && templatesFilteredByArchive.Count() > 0)
+                                    {
+                                        model.ClonableTemplates = templatesFilteredByArchive;
+                                    }
+                                }
+
                             }
 
                             model.ClonableTemplates = model.ClonableTemplates?.ToList();
 
+                        }
+                        else {
+                            model.ClonableTemplates = model.ClonableTemplates.Where(x=>x.IsDeleted!=true);
                         }
                         var asmtGrpsPrSkillsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName, x.PrimarySkills))?.Distinct();
                         if (asmtGrpsPrSkillsMappedToCurrentTemplates != null)
@@ -700,11 +714,11 @@ namespace Risebird.Web.Controllers
                             model.Message2 = TempData["SuccessErrorCloneTemplateMessage2"].ToString();
                             TempData.Remove("SuccessErrorCloneTemplateMessage2");
                         }
-                        if (TempData["SuccessErrorCloneTemplateMessage3"] != null)
-                        {
-                            model.Message3 = TempData["SuccessErrorCloneTemplateMessage3"].ToString();
-                            TempData.Remove("SuccessErrorCloneTemplateMessage3");
-                        }
+                        //if (TempData["SuccessErrorCloneTemplateMessage3"] != null)
+                        //{
+                        //    model.Message3 = TempData["SuccessErrorCloneTemplateMessage3"].ToString();
+                        //    TempData.Remove("SuccessErrorCloneTemplateMessage3");
+                        //}
                         model.Profile = profileName;
                         if (model.ClonableTemplates != null)
                         {
@@ -771,7 +785,8 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("ClonableTemplatesFilters", JsonConvert.SerializeObject(filter));
                         }
-                        return RedirectToAction("Index");
+                       // return RedirectToAction("Index");
+                        return RedirectToAction("List");
                     }
                     else
                     {
@@ -1201,7 +1216,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> DeleteClonableSkillChannel(int ClonableSkillChannelId)
+        public async Task<IActionResult> DeleteClonableSkillChannel(int ClonableSkillChannelId,int action)
         {
             try
             {
@@ -1213,7 +1228,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
-                        var result = await _templateService.DeleteClonableSkillChannel(ClonableSkillChannelId,emailId);
+                        var result = await _templateService.DeleteClonableSkillChannel(ClonableSkillChannelId,emailId,action);
                         return Json(result);
                     }
                     else

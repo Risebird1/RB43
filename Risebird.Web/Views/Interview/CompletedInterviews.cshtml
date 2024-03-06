@@ -227,12 +227,17 @@
                                                     <th>Skill Channel ID</th>
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
-                                                    <th>Join Time</th>
+                                                       <th>Interviewer Joinedon</th>
+                                                     
                                                     <th>Candidate Email</th>
                                                     <th>Client Name</th>
                                                     <th>Interviewer</th>
                                                     <th>Mobile Number</th>
                                                     <th>Channel Owner</th>
+                                                    @if (ViewBag.Type != "OnTimeIM")
+                                                    {
+                                                        <th>Emergency Interview</th>
+                                                    }
                                                     <th>Interview Status</th>
                                                     <th>QC Completed</th>
                                                     <th>Actions</th>
@@ -243,12 +248,16 @@
                                                     <th>Skill Channel ID</th>
                                                     <th>Interview Date</th>
                                                     <th>Candidate Name</th>
-                                                    <th>Join Time</th>
+                                                      <th>Interviewer Joinedon</th>
                                                     <th>Candidate Email</th>
                                                     <th>Client Name</th>
                                                     <th>Interviewer</th>
                                                     <th>Mobile Number</th>
                                                     <th>Channel Owner</th>
+                                                     @if (ViewBag.Type != "OnTimeIM")
+                                                    {
+                                                        <th>Emergency Interview</th>
+                                                    }
                                                     <th>Interview Status</th>
                                                     <th>QC Completed</th>
                                                     <th>Actions</th>
@@ -262,12 +271,29 @@
                                                         <td>@item.IRFId </td>
                                                         <td>@item.interviewDate </td>
                                                         <td>@item.candidateName</td>
-                                                        <td>@item.Joinedon</td>
+                                                        <td class="intime-on">
+                                                            <div style="float:left">@item.Joinedon </div>
+                                                            
+                                                        </td>
+
+                                                       
                                                         <td>@item.candidateEmail</td>
                                                         <td>@item.Client</td>
                                                         <td>@item.interviewer</td>
                                                          <td>@item.MobileNumber</td>
                                                         <td>@item.risebirdHR</td>
+                                                         @if (ViewBag.Type != "OnTimeIM")
+                                                        {
+                                                            @if (item.EIAssigned)
+                                                            {
+                                                                <td style="color:forestgreen;font-weight:500;"><i class="fa fa-check" style="color: #4CAF50;font-size:15px;position:relative;top:2px;padding-right: 5px;"></i>Yes</td>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="color:#766b6b;font-weight:500;">No</td>
+                                                            }
+                                                        }
                                                         <td>@item.intervieweStatusStatDesc</td>
                                                         @if (item.QCPresent > 0)
                                                         {

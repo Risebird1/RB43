@@ -39,10 +39,10 @@
                                             <li><a href="#" class="active text-center" id="rtab-1" onclick="headerClickchange('tab-1')">Recommendations</a></li>
                                             <li><a href="#" id="rtab-2" class="" onclick="headerClickchange('tab-2')">Tech Skill </a><span id="count_SkillCollection" class="skillcount">@Model.SkillCollection.Count()</span></li>
                                             <li><a href="#" id="rtab-3" class="" onclick="headerClickchange('tab-3')">Interviewer</a><span id="count_Interviewer" class="skillcount">@Model.InterviewerCollection.Count()</span></li>
-                                            <li><a href="#" id="rtab-4" class="text-center" onclick="headerClickchange('tab-4')">Questions</a><span id="count_QuestionsTable" class="skillcount">@(Model.ClonableTemplateQuestionsCollection!=null ? Model.ClonableTemplateQuestionsCollection.Count() : 0)</span></li>
+                                            @* <li><a href="#" id="rtab-4" class="text-center" onclick="headerClickchange('tab-4')">Questions</a><span id="count_QuestionsTable" class="skillcount">@(Model.ClonableTemplateQuestionsCollection!=null ? Model.ClonableTemplateQuestionsCollection.Count() : 0)</span></li>
                                             <li id="li_joinability"><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Joinability</a><span id="count_Joinability" class="skillcount">@Model.Joinability.Count()</span></li>
                                             <li id="li_selectability"><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">Selectability</a><span id="count_Selectability" class="skillcount">@Model.Selectability.Count()</span></li>
-                                            <li id="li_generalSkill"><a href="#" id="rtab-7" class="" onclick="headerClickchange('tab-7')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li>
+                                            <li id="li_generalSkill"><a href="#" id="rtab-7" class="" onclick="headerClickchange('tab-7')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@Model.SkillGeneral.Count()</span></li> *@
 
                                         </ul>
                                     </div>
@@ -505,7 +505,7 @@
                                         </div>
                                     </div>
 
-                                    <h3 class="tab_drawer_heading" rel="tab-4">Questions</h3>
+                                    @* <h3 class="tab_drawer_heading" rel="tab-4">Questions</h3>
                                     <div class="tab-box" id="tab-4">
                                         <div class="tab-main-box">
                                             <div class="row">
@@ -538,7 +538,6 @@
                                                                                 @Html.EditorFor(m => m.ClonableTemplateQuestionsCollection[i].Question, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
                                                                             </td>
                                                                             <td class="text-center">
-                                                                                @*@Html.CheckBoxFor(m => m.ClonableTemplateQuestionsCollection[i].IsSelected, new { @checked = "checked" })*@
                                                                                 @Html.CheckBox("ClonableTemplateQuestionsCollection[" + i + "].IsSelected", new { @checked = "checked" })
 
                                                                             </td>
@@ -557,9 +556,9 @@
                                             </div>
 
                                         </div>
-                                    </div>
+                                    </div> *@
 
-                                    <h3 class="tab_drawer_heading" rel="tab-5">Joinability</h3>
+                                    @* <h3 class="tab_drawer_heading" rel="tab-5">Joinability</h3>
                                     <div class="tab-box" id="tab-5">
                                         <div class="tab-main-box">
                                             <div class="row">
@@ -648,8 +647,8 @@
 
                                             </div>
                                         </div>
-                                    </div>
-                                    <h3 class="tab_drawer_heading" rel="tab-6">Selectability</h3>
+                                    </div> *@
+                                    @* <h3 class="tab_drawer_heading" rel="tab-6">Selectability</h3>
                                     <div class="tab-box" id="tab-6">
                                         <div class="tab-main-box">
                                             <div class="row">
@@ -737,8 +736,8 @@
 
                                             </div>
                                         </div>
-                                    </div>
-                                    <h3 class="tab_drawer_heading" rel="tab-7">General Skill</h3>
+                                    </div> *@
+                                    @* <h3 class="tab_drawer_heading" rel="tab-7">General Skill</h3>
                                     <div class="tab-box" id="tab-7">
                                         <div class="tab-main-box">
                                             <div class="row">
@@ -828,7 +827,7 @@
 
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> *@
 
 
                                 </div>
@@ -894,37 +893,39 @@
                 $("#rtab-2").addClass("active");
                 document.getElementById("tab-2").style.display = "block";
                 document.getElementById("tab-3").style.display = "none";
-            }
-            else if (activeTab.trim() == "Questions") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-3").addClass("active");
-                document.getElementById("tab-3").style.display = "block";
-                document.getElementById("tab-4").style.display = "none";
-            }
-
-            else if (activeTab.trim() == "Joinability") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-4").addClass("active");
-                document.getElementById("tab-4").style.display = "block";
-                document.getElementById("tab-5").style.display = "none";
-            }
-
-            else if (activeTab.trim() == "Selectability") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-5").addClass("active");
-                document.getElementById("tab-5").style.display = "block";
-                document.getElementById("tab-6").style.display = "none";
-            }
-
-            else if (activeTab.trim() == "General Skill") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-6").addClass("active");
-                document.getElementById("tab-6").style.display = "block";
-                document.getElementById("tab-7").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
                 document.getElementById("btnUpload").style.display = "none";
-
             }
+            // else if (activeTab.trim() == "Questions") {
+            //     $(".tab-menu li a").removeClass("active");
+            //     $("#rtab-3").addClass("active");
+            //     document.getElementById("tab-3").style.display = "block";
+            //     document.getElementById("tab-4").style.display = "none";
+            // }
+
+            // else if (activeTab.trim() == "Joinability") {
+            //     $(".tab-menu li a").removeClass("active");
+            //     $("#rtab-4").addClass("active");
+            //     document.getElementById("tab-4").style.display = "block";
+            //     document.getElementById("tab-5").style.display = "none";
+            // }
+
+            // else if (activeTab.trim() == "Selectability") {
+            //     $(".tab-menu li a").removeClass("active");
+            //     $("#rtab-5").addClass("active");
+            //     document.getElementById("tab-5").style.display = "block";
+            //     document.getElementById("tab-6").style.display = "none";
+            // }
+
+            // else if (activeTab.trim() == "General Skill") {
+            //     $(".tab-menu li a").removeClass("active");
+            //     $("#rtab-6").addClass("active");
+            //     document.getElementById("tab-6").style.display = "block";
+            //     document.getElementById("tab-7").style.display = "none";
+            //     document.getElementById("btnNext").style.display = "block";
+            //     document.getElementById("btnUpload").style.display = "none";
+
+            // }
 
         });
         $("#btnNext").click(function () {
@@ -947,44 +948,46 @@
                     $("#rtab-3").addClass("active");
                     document.getElementById("tab-3").style.display = "block";
                     document.getElementById("tab-2").style.display = "none";
-                }
-            }
-            else if (activeTab.trim() == "Interviewer") {
-                flag = checkTabValidation(activeTab);
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-4").addClass("active");
-                    document.getElementById("tab-4").style.display = "block";
-                    document.getElementById("tab-3").style.display = "none";
-                }
-
-            }
-            else if (activeTab.trim() == "Questions") {
-                $(".tab-menu li a").removeClass("active");
-                $("#rtab-5").addClass("active");
-                document.getElementById("tab-5").style.display = "block";
-                document.getElementById("tab-4").style.display = "none";
-            }
-            else if (activeTab.trim() == "Joinability") {
-                flag = checkTabValidation(activeTab);
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-6").addClass("active");
-                    document.getElementById("tab-6").style.display = "block";
-                    document.getElementById("tab-5").style.display = "none";
-                }
-            }
-            else if (activeTab.trim() == "Selectability") {
-                flag = checkTabValidation(activeTab);
-                if (!flag) {
-                    $(".tab-menu li a").removeClass("active");
-                    $("#rtab-7").addClass("active");
-                    document.getElementById("tab-7").style.display = "block";
-                    document.getElementById("tab-6").style.display = "none";
                     document.getElementById("btnNext").style.display = "none";
                     document.getElementById("btnUpload").style.display = "block";
                 }
             }
+            // else if (activeTab.trim() == "Interviewer") {
+            //     flag = checkTabValidation(activeTab);
+            //     if (!flag) {
+            //         $(".tab-menu li a").removeClass("active");
+            //         $("#rtab-4").addClass("active");
+            //         document.getElementById("tab-4").style.display = "block";
+            //         document.getElementById("tab-3").style.display = "none";
+            //     }
+
+            // }
+            // else if (activeTab.trim() == "Questions") {
+            //     $(".tab-menu li a").removeClass("active");
+            //     $("#rtab-5").addClass("active");
+            //     document.getElementById("tab-5").style.display = "block";
+            //     document.getElementById("tab-4").style.display = "none";
+            // }
+            // else if (activeTab.trim() == "Joinability") {
+            //     flag = checkTabValidation(activeTab);
+            //     if (!flag) {
+            //         $(".tab-menu li a").removeClass("active");
+            //         $("#rtab-6").addClass("active");
+            //         document.getElementById("tab-6").style.display = "block";
+            //         document.getElementById("tab-5").style.display = "none";
+            //     }
+            // }
+            // else if (activeTab.trim() == "Selectability") {
+            //     flag = checkTabValidation(activeTab);
+            //     if (!flag) {
+            //         $(".tab-menu li a").removeClass("active");
+            //         $("#rtab-7").addClass("active");
+            //         document.getElementById("tab-7").style.display = "block";
+            //         document.getElementById("tab-6").style.display = "none";
+            //         document.getElementById("btnNext").style.display = "none";
+            //         document.getElementById("btnUpload").style.display = "block";
+            //     }
+            // }
         });
     });
 
@@ -1037,18 +1040,18 @@
             flag = checkWeightageTab("SkillCollection");
             return flag;
         }
-        else if (activeTab.trim() == "Joinability") {
-            flag = checkWeightageTab("Joinability");
-            return flag;
-        }
-        else if (activeTab.trim() == "Selectability") {
-            flag = checkWeightageTab("Selectability");
-            return flag;
-        }
-        else if (activeTab.trim() == "General Skill") {
-            flag = checkWeightageTab("SkillGeneral");
-            return flag;
-        }
+        // else if (activeTab.trim() == "Joinability") {
+        //     flag = checkWeightageTab("Joinability");
+        //     return flag;
+        // }
+        // else if (activeTab.trim() == "Selectability") {
+        //     flag = checkWeightageTab("Selectability");
+        //     return flag;
+        // }
+        // else if (activeTab.trim() == "General Skill") {
+        //     flag = checkWeightageTab("SkillGeneral");
+        //     return flag;
+        // }
         else if (activeTab.trim() == "Interviewer") {
             flag = checkInterviewerDetails();
             return flag;
