@@ -8,10 +8,15 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE usp_GetInterviewerInsights 
-@Emailid varchar(150)  
-AS  
-BEGIN  
+Create PROCEDURE usp_GetInterviewerInsights 
+@Emailid varchar(150), 
+@IrfId varchar(15)
+AS
+BEGIN
+if(@IrfId='')
+begin
+set @IrfId=null
+end
 Declare @TotalInterviews int  
 Declare @CompletedInterviews int  
 Declare @SelectedInterviews int  
@@ -32,59 +37,59 @@ Declare @RejectedComment int
 Declare @SelectedComment int 
 Declare @LessQuestions int 
   
-Select @TotalInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
+Select @TotalInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)  
   
   
 Select @CompletedInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)  
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)  and (@IrfId is null or im.IRFId=@IrfId)
   
 Select @SelectedInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4)  
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4) and (@IrfId is null or im.IRFId=@IrfId)
   
 Select @RejectedInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=3 or InterviewStatus=1)  
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=3 or InterviewStatus=1) and (@IrfId is null or im.IRFId=@IrfId)
   
 Select @NoShowInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
-and (MeetingStatus=5 or MeetingStatus=9)  
+and (MeetingStatus=5 or MeetingStatus=9) and (@IrfId is null or im.IRFId=@IrfId) 
   
 Select @NoShowCandidateInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
-and MeetingStatus=1  
+and MeetingStatus=1 and (@IrfId is null or im.IRFId=@IrfId) 
   
 Select @DroppedInterviews=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
-and MeetingStatus=3  
+and MeetingStatus=3 and (@IrfId is null or im.IRFId=@IrfId) 
   
-Select @PaymentSLA=Count(ps.id) from PaymentSLADetails ps join Interviewmeetings im on im.id=ps.Interviewid where im.interviewer=@Emailid  
+Select @PaymentSLA=Count(ps.id) from PaymentSLADetails ps join Interviewmeetings im on im.id=ps.Interviewid where im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)  
   
-Select @Penalty=Count(ip.id) from InterviewPoints ip join Interviewmeetings im on im.id=ip.Interviewid where (PenaltyAmount>0 or Comment like '%Late Report%') and im.interviewer=@Emailid  
+Select @Penalty=Count(ip.id) from InterviewPoints ip join Interviewmeetings im on im.id=ip.Interviewid where (PenaltyAmount>0 or Comment like '%Late Report%') and im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId) 
   
-Select @CandidateRating=Count(cfd.Rating) From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid and cfd.Rating<=3 
+Select @CandidateRating=Count(cfd.Rating) From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid and cfd.Rating<=3 and (@IrfId is null or im.IRFId=@IrfId)
   
-Select @CustomerRating=Count(Rating) From ClientCommentsForReport cr join Interviewmeetings im on im.id=cr.Interviewid where im.interviewer=@Emailid and cr.Rating<=3  
+Select @CustomerRating=Count(Rating) From ClientCommentsForReport cr join Interviewmeetings im on im.id=cr.Interviewid where im.interviewer=@Emailid and cr.Rating<=3 and (@IrfId is null or im.IRFId=@IrfId) 
   
-Select @Redorequests=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and RedoInterview=1 and  interviewer=@Emailid   
+Select @Redorequests=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and RedoInterview=1 and  interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)  
   
-Select @RedFlags=Count(tq.id) from Trans_QCFormReport tq join Interviewmeetings im  on im.id=tq.InterviewId where confirmationStatus=1 and Redflags>0 and  interviewer=@Emailid   
+Select @RedFlags=Count(tq.id) from Trans_QCFormReport tq join Interviewmeetings im  on im.id=tq.InterviewId where confirmationStatus=1 and Redflags>0 and  interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)  
   
-Select @JoinLateMeeting=Count(imj.id) from InterviewMeetingsJoinTime imj join InterviewMeetings im on im.id=imj.interviewid where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and im.interviewer=@Emailid   
+Select @JoinLateMeeting=Count(imj.id) from InterviewMeetingsJoinTime imj join InterviewMeetings im on im.id=imj.interviewid where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)  
   
 Select @JoinLateCandidateNoShow=Count(imj.id) from InterviewMeetingsJoinTime imj join InterviewMeetings im on im.id=imj.interviewid join InterviewComments ic on ic.Interviewid=im.id   
-where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and ic.MeetingStatus=1 and im.interviewer=@Emailid   
+where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and ic.MeetingStatus=1 and im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)  
   
 Select @UnassignInterviews=Count(ip.id) From InterviewPoints ip join InterviewMeetings im on im.id=ip.Interviewid join InterviewComments ic on ic.Interviewid=im.id Left join UserList ul on ul.id=ip.userid  
-where points<0 and ic.MeetingStatus!=5 and ic.MeetingStatus!=2 and ul.EmailId=@Emailid   
+where points<0 and ic.MeetingStatus!=5 and ic.MeetingStatus!=2 and ul.EmailId=@Emailid and (@IrfId is null or im.IRFId=@IrfId)  
   
-Select @SuspiciousCount=Count(si.Id) From SuspiciousInterviewer si join UserList ul on ul.id=si.UserId where SuspiciousStatus=1 and ul.EmailId=@Emailid  
+Select @SuspiciousCount=Count(si.Id) From SuspiciousInterviewer si join UserList ul on ul.id=si.UserId where SuspiciousStatus=1 and ul.EmailId=@Emailid 
 
 Select @SelectedComment=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4)  and Len(ic.InterviewerComment)<500 
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=2 or InterviewStatus=4)  and Len(ic.InterviewerComment)<500 and (@IrfId is null or im.IRFId=@IrfId)
 
 Select @RejectedComment=Count(im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid   
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=3 or InterviewStatus=1) and Len(ic.InterviewerComment)<250 
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (InterviewStatus=3 or InterviewStatus=1) and Len(ic.InterviewerComment)<250 and (@IrfId is null or im.IRFId=@IrfId)
 
  ;with CTE(Interviewid,totalQuestions) as  (select qd.Interviewid,Count(qd.id) as totalQuestions from QuestionsDiscussed qd join InterviewMeetings im on im.id=qd.InterviewId  group by qd.Interviewid having Count(qd.id)<5)
  Select @LessQuestions=Count(im.id) From CTE join Interviewmeetings im on im.id=CTE.Interviewid join InterviewComments ic on im.id=ic.InterviewId 
 where confirmationStatus=1 and  interviewer=@Emailid 
-and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8)
+and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (@IrfId is null or im.IRFId=@IrfId)
   
 Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Sum(ti.Point) as ReliabilityScore,ip.ResumeLink as ResumeLink,
 @TotalInterviews as TotalInterviews,@CompletedInterviews as CompletedInterviews,@SelectedInterviews as SelectedInterviews,@RejectedInterviews as RejectedInterviews,  
@@ -97,7 +102,5 @@ left join TransInterviewersReliabilityScores ti on ti.InterviewerId=ip.id
 left join SuspiciousInterviewer si on si.UserId=ul.id and si.SuspiciousStatus=1  
 where ul.EmailId=@Emailid  
 Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Isnull(ul.FirstName,''),Case When Isnull(si.id,0)>0 then 1 else 0 end,ul.uniqueid,ip.ResumeLink
-  
-END  
-  
+END   
 Go

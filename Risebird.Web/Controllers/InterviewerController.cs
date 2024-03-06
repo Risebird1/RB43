@@ -58,11 +58,11 @@ namespace Risebird.Web.Controllers
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
 
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-        ISkillService skillService, IProfileService profileService, 
-        IInterviewerRepository interviewerRepository, IMeetingService meetingService, 
+        ISkillService skillService, IProfileService profileService,
+        IInterviewerRepository interviewerRepository, IMeetingService meetingService,
         IIRFRepository iRFRepository, IConfiguration configuration, ISupportService supportService,
         INotificationHelper notificationHelper, IIRFService irfService, IUserRepository userRepository,
-        IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService, 
+        IFileMimeTypeHelper fileMimeTypeHelper, IAadhaarService aadhaarService,
         IWhatsAppHelper whatsAppHelper, ISASUrlHelper sasUrlHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper)
 
         {
@@ -3554,11 +3554,11 @@ namespace Risebird.Web.Controllers
                     model.UserId = userid;
                     model.id = irfid;
                 }
-                if(!string.IsNullOrEmpty(resumeLink) && userid != 0)
+                if (!string.IsNullOrEmpty(resumeLink) && userid != 0)
                 {
                     //call method to redact resume and save the redacted resume
                     var redactedResumeLink = await RedactResume(resumeLink, userid);
-                    if(!string.IsNullOrEmpty(redactedResumeLink))
+                    if (!string.IsNullOrEmpty(redactedResumeLink))
                     {
                         return Json(redactedResumeLink);
                     }
@@ -3995,9 +3995,9 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region Interviewer Insights
-        public async Task<IActionResult> InterviewerInsights(string interviewer)
+        public async Task<IActionResult> InterviewerInsights(string interviewer, string IrfId)
         {
-            var result = await _interviewerService.GetInterviewerInsights(interviewer);
+            var result = await _interviewerService.GetInterviewerInsights(interviewer, IrfId);
             if (result == null)
             {
                 result = new InterviewerInsightsVM();
@@ -4006,6 +4006,7 @@ namespace Risebird.Web.Controllers
             {
                 result.ResumeLink = result.ResumeLink.Replace(" ", "%20");
             }
+            result.IRFId = IrfId;
             return PartialView(result);
         }
         public async Task<IActionResult> ReliabilityScoreDetails(string interviewer)
@@ -4013,9 +4014,9 @@ namespace Risebird.Web.Controllers
             var result = await _interviewerService.GetReliabilityScoreDetails(interviewer);
             return PartialView(result);
         }
-        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type)
+        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type,string Irfid)
         {
-            var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer, type);
+            var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer, type, Irfid);
             return PartialView(result);
         }
         public async Task<JsonResult> AcknowledgeRedmarkers(string uniqueid)
@@ -4030,7 +4031,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                var _redmarkers = await _interviewerRepository.GetInterviewerInsights(emailId);
+                var _redmarkers = await _interviewerRepository.GetInterviewerInsights(emailId, string.Empty);
                 return PartialView(_redmarkers);
             }
             else
