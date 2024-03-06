@@ -119,11 +119,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> DeleteClonableSkillChannel(int ClonableSkillChannelId, string ModifyedBy)
+        public async Task<bool> DeleteClonableSkillChannel(int ClonableSkillChannelId, string ModifyedBy, int action)
         {
             try
             {
-                return await _templateRespository.DeleteClonableSkillChannel(ClonableSkillChannelId, ModifyedBy);
+                return await _templateRespository.DeleteClonableSkillChannel(ClonableSkillChannelId, ModifyedBy,action);
             }
 
             catch (Exception e)

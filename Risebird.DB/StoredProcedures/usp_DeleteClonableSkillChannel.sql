@@ -11,9 +11,10 @@ GO
 Create procedure usp_DeleteClonableSkillChannel
 @id int,
 @modifiedOn datetime,
-@modifyedBy varchar(100)
+@modifyedBy varchar(100),
+@action int
 AS
-BEGIN
-update ClonableSkillChannel set IsDeleted=1,ModifiedOn=@modifiedOn,ModifiedBy=@modifyedBy where id=@id
+Begin
+update ClonableSkillChannel set IsDeleted=@action,ModifiedOn=@modifiedOn,ModifiedBy=@modifyedBy where id=@id
 END
 GO
