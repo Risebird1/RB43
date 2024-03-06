@@ -59,10 +59,10 @@
     </div>
 </div>
 <script>
-    function InsightsDetails(interviewer) {
+    function InsightsDetails(interviewer, IrfId) {
         $.ajax({
             url: '/Interviewer/InterviewerInsights',
-            data: { 'interviewer': interviewer },
+            data: { 'interviewer': interviewer, 'IrfId': IrfId },
             type: "GET",
             success: function (data) {
                 openInterviewerInsightsModel();
@@ -102,10 +102,10 @@
         var modal = document.getElementById("ReliabilityModel");
         modal.style.display = "block";
     }
-    function InsightsDetailsMarkersView(interviewer, type) {
+    function InsightsDetailsMarkersView(interviewer, type, Irfid) {
         $.ajax({
             url: '/Interviewer/InterviewerInsightsMarkersDetails',
-            data: { 'interviewer': interviewer, 'type': type },
+            data: { 'interviewer': interviewer, 'type': type, 'Irfid': Irfid },
             type: "GET",
             success: function (data) {
                 openInsightsDetailsView();
@@ -124,4 +124,20 @@
         modal.style.display = "block";
     }
 
+</script>
+<script>
+    function InsightsIRFDetails(interviewer, IrfId) {
+        $.ajax({
+            url: '/Interviewer/InterviewerInsights',
+            data: { 'interviewer': interviewer, 'IrfId': IrfId },
+            type: "GET",
+            success: function (data) {
+                openInterviewerInsightsModel();
+                $('#divInsightsmodel').html('');
+                $('#divInsightsmodel').html(data);
+                $("#txtheaderInsights").text('( ' + interviewer + ' )');
+                $('#hidlastlogin').text($('#LastLogin').val());
+            }
+        });
+    }
 </script>

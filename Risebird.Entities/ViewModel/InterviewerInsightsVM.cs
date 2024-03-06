@@ -32,9 +32,9 @@ namespace Risebird.Entities.ViewModel
         public int Penalty { get; set; }
         public decimal CandidateRating { get; set; }
         public decimal CustomerRating { get; set; }
-        public int Redorequests{ get; set; }
-        public int RedFlags{ get; set; }
-        public int JoinLateMeeting{ get; set; }
+        public int Redorequests { get; set; }
+        public int RedFlags { get; set; }
+        public int JoinLateMeeting { get; set; }
         public int JoinLateCandidateNoShow { get; set; }
         public int UnassignInterviews { get; set; }
         public int SuspiciousCount { get; set; }
@@ -46,13 +46,10 @@ namespace Risebird.Entities.ViewModel
         public string CandidateInteractionQuality { get; set; }
         public string LimitedHandoncoding { get; set; }
         public string UnethicalPractices { get; set; }
-        public string PoorCommunicationSkills
-        {
-            get; set;
-        }
- public string WeakInfrastructure { get; set; }
+        public string PoorCommunicationSkills { get; set; }
+        public string WeakInfrastructure { get; set; }
         public string TimeManagement { get; set; }
-
+        public string IRFId { get; set; }
     }
     public class InterviewerInsightsMarkersDetailsVM
     {
@@ -71,7 +68,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? interviewDate { get; set; }
         public string interviewer { get; set; }
         public int RedMarker { get; set; }
-        public string candidateName {  get; set; }
+        public string candidateName { get; set; }
         public string candidateEmail { get; set; }
         public string ResumeLink { get; set; }
         public string MobileNumber { get; set; }

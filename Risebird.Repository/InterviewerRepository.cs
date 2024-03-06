@@ -3135,12 +3135,13 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public async Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid)
+        public async Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid,string IrfId)
         {
             try
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@Emailid", Emailid);
+                dynamicParam.Add("@IrfId", IrfId);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<InterviewerInsightsVM>(conChange, "usp_GetInterviewerInsights", dynamicParam,
@@ -3173,13 +3174,14 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type)
+        public async Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type,string Irfid)
         {
             try
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@Emailid", Emailid);
                 dynamicParam.Add("@type", type);
+                dynamicParam.Add("@Irfid", Irfid);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<InterviewerInsightsMarkersDetailsVM>(conChange, "usp_GetInterviewerInsightsMarkersDetails", dynamicParam,
