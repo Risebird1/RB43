@@ -56,11 +56,11 @@ namespace Risebird.Business
                 model.IsNewSkillChannel = isNewSkillChannel;
                 //get tech skills, general skills, joinability, selectability from the irf
                 model.SkillCollection = (IList<TransSkill>)await _irfRepository.GetSkillsbyIRFid(irfId);
-                model.SkillGeneral = (IList<TransSkillGeneral>)_irfRepository.GetSkillsGeneralbyIRFid(irfId);
-                model.Joinability = (IList<TransJoinability>)_irfRepository.GetTransJoinability(irfId);
-                model.Selectability = (IList<TransSelectability>)_irfRepository.GetTransSelectability(irfId);
+                //model.SkillGeneral = (IList<TransSkillGeneral>)_irfRepository.GetSkillsGeneralbyIRFid(irfId);
+                //model.Joinability = (IList<TransJoinability>)_irfRepository.GetTransJoinability(irfId);
+                //model.Selectability = (IList<TransSelectability>)_irfRepository.GetTransSelectability(irfId);
 
-                model.ClonableTemplateQuestionsCollection = (IList<ClonableTemplateQuestion>)(await _irfRepository.GetQuestionsForAssessmentGroup(assessmentGroupId));
+                //model.ClonableTemplateQuestionsCollection = (IList<ClonableTemplateQuestion>)(await _irfRepository.GetQuestionsForAssessmentGroup(assessmentGroupId));
 
                 model.IRFRecommendations = new IRFRecommendations();
 
@@ -166,9 +166,9 @@ namespace Risebird.Business
             }
 
             //populate the dropdowns for levels, types etc.
-            model.JoinabilityTypeList = new SelectList(_irfRepository.GetJoinabilityMatrix(), "id", "Name");
-            model.SkillGeneralTypeList = new SelectList(_irfRepository.GetGeneralSkillMatrix(), "id", "Name");
-            model.SelectabilityTypeList = new SelectList(_irfRepository.GetSelectabilityMatrix(), "id", "Name");
+            //model.JoinabilityTypeList = new SelectList(_irfRepository.GetJoinabilityMatrix(), "id", "Name");
+            //model.SkillGeneralTypeList = new SelectList(_irfRepository.GetGeneralSkillMatrix(), "id", "Name");
+            //model.SelectabilityTypeList = new SelectList(_irfRepository.GetSelectabilityMatrix(), "id", "Name");
 
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
@@ -259,6 +259,8 @@ namespace Risebird.Business
                 {
                     model.IRFRecommendations.Clients = string.Join(',', model.IRFRecommendations.ClientArray);
                 }
+
+                model.ClonableTemplateQuestionsCollection = (IList<ClonableTemplateQuestion>)(await _irfRepository.GetQuestionsForAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value));
                 var result = await _clonableSkillChannelTemplateRepository.CreateClonableSkillChannel(model);
                 if (result)
                 {

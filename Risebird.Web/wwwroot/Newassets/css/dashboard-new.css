@@ -9113,7 +9113,11 @@ option {
     color: blue;
     text-decoration: none;
 }
-
+.campaignForm .text-danger {
+    font-size:13px!important;
+    position: relative;
+    top: 3px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -10474,11 +10478,31 @@ option {
         width: 100%;
         float: left;
     }
-
+    .campaignName {
+        width: 100%!important;
+        margin: 40px auto;
+    }
+    .msgroup, .sub-assmntgrp {
+        width: 100% !important;
+        margin: 0px auto;
+    }
     .int-left-pannel .scrollbar {
         overflow: auto;
     }
-
+    .input__label {
+        line-height: 27px;
+        color: #7e7f82 !important;
+        font-size: 16px!important;
+        padding:0px!important;
+    }
+    .campaignForm {
+        width: calc(100% - 30px) !important;
+        margin: 90px 10px 20px 15px !important;
+        padding: 10px;
+    }
+    .toggle-title{
+        width:100%!important;
+    }
     .interviewWrapper .heading-txt {
         line-height: 25px;
         position: relative;
@@ -11019,8 +11043,11 @@ option {
         width: 30.3% !important;
         float: left !important;
     }
-    .interviewresponsebtn{
-        padding:7px 10px!important;
+    .campaignForm .msgroup .assessment-name{
+        width:87%!important;
+    }
+    .interviewresponsebtn {
+        padding: 7px 10px !important;
     }
     .interview-tab .left-div {
         float: none !important;
@@ -11237,8 +11264,18 @@ option {
 }
 
 @media only screen and (max-width: 415px) {
-
-
+    .toggle-title{
+        padding:10px 0px!important;
+    }
+        .toggle-title h3 {
+            font-size: 15px!important;
+        }
+        .toggle-title i {
+            position: absolute;
+            right: -4px !important;
+            font-size: 1.5em !important;
+            top: 13px !important;
+        }
     .popup-text {
         display: none !important;
     }

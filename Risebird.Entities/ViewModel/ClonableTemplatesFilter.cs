@@ -24,5 +24,6 @@
         public string uniqueId { get; set; }
         public string type { get; set; }
         public string profile { get; set; }
+        public string Archive { get; set; }
     }
 }
