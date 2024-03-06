@@ -349,7 +349,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> DeleteClonableSkillChannel(int ClonableSkillChannelId,string ModifyedBy)
+        public async Task<bool> DeleteClonableSkillChannel(int ClonableSkillChannelId,string ModifyedBy,int action)
         {
             try
             {
@@ -358,6 +358,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", ClonableSkillChannelId);
                 parameters.Add("@modifiedOn", DateTime.Now);
                 parameters.Add("@modifyedBy", ModifyedBy);
+                parameters.Add("@action", action);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteClonableSkillChannel", parameters,

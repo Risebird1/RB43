@@ -275,9 +275,15 @@
                                                         <th>Candidate Name</th>
 
                                                     }
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                    @if (ViewBag.actionstatus == "QCReport")
                                                     {
                                                         <th>Join Time</th>
+                                                    }
+
+                                                     @if (ViewBag.actionstatus == "QCPendingReport")
+                                                    {
+                                                     <th>Interviewer Joinedon</th>
+                                                    
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
@@ -311,6 +317,8 @@
 
                                                         }
                                                     }
+
+                                                    
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Client Name</th>
@@ -498,9 +506,15 @@
                                                     {
                                                         <th>Candidate Name</th>
                                                     }
-                                                    @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                    @if (ViewBag.actionstatus == "QCReport")
                                                     {
                                                         <th>Join Time</th>
+                                                    }
+
+                                                     @if (ViewBag.actionstatus == "QCPendingReport")
+                                                    {
+                                                      <th>Interviewer Joinedon</th>
+                                                   
                                                     }
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
@@ -534,6 +548,8 @@
                                                             }
                                                         }
                                                     }
+
+                                                   
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
                                                         <th>Client Name</th>
@@ -821,9 +837,17 @@
                                                         {
                                                             <td>@item.candidateName</td>
                                                         }
-                                                        @if (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                        @if (ViewBag.actionstatus == "QCReport")
                                                         {
                                                             <td>@item.Joinedon</td>
+                                                        }
+                                                         @if (ViewBag.actionstatus == "QCPendingReport")
+                                                        {
+                                                           <td class="intime-on">
+                                                            <div style="float:left">@item.Joinedon </div>
+                                                           
+                                                        </td>
+
                                                         }
                                                         @if (ViewBag.actionstatus == "UnAttendedZoomLink")
                                                         {
