@@ -5,7 +5,7 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+ <link href="~/Newassets/css/chosen.css" rel="stylesheet" />
 <style>
     body {
         background: #f0f0f0 !important;
@@ -24,8 +24,8 @@
 .input {
     position: relative;
     width:100%;
-        border: 2px green solid;
-        font-family: Sora, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    border: 0px;
+     font-family: Sora, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
     }
 
 .input__field {
@@ -42,19 +42,19 @@
 .input__label {
     position: absolute;
     left: 0;
-       top: -35px;
+    top: -50px;
     padding: 10px;
     margin: 10px;
-
     white-space: nowrap;
     transform: translate(0, 0);
     transform-origin: 0 0;
     background: #FFF;
     transition: transform 120ms ease-in;
-       font-weight: bold;
+    font-weight: 500;
     line-height: 1.2;
-    font-size: 15px;
-    color: green;
+    color: #7e7f82 !important;
+    font-size: 17px;
+    margin: 7px;
 }
  input:-webkit-autofill,
   input:-webkit-autofill:focus {
@@ -85,9 +85,12 @@
     border: 1.5px solid #000 !important;
 }
 .campaignForm .msgroup .assessment-name{
-        font-size: 16px;
-    top: -19px;
-    color: #000;
+    font-size: 16px;
+    top: -4px;
+    color:#857c7c;
+    width: 90%;
+    font-weight: 400;
+    margin: 0px 0px 20px 0px;
 }
 .campaignForm .msgroup .mdc-checkbox {
     top: -10px;
@@ -121,7 +124,7 @@
     border-radius: 11px;
     text-align: center;
     width: 460px;
-    margin: 0px auto;
+    margin: 0px auto 30px auto;
 }
 
 .toggle-title i {
@@ -138,105 +141,6 @@
     display: none; 
 }
 
- .select2-container {
-  min-width: 400px;
-}
-
-.select2-results__option {
-  padding-right: 20px;
-  vertical-align: middle;
-}
-.select2-results__option:before {
-  content: "";
-  display: inline-block;
-  position: relative;
-  height: 20px;
-  width: 20px;
-  border: 2px solid #e9e9e9;
-  border-radius: 4px;
-  background-color: #fff;
-  margin-right: 20px;
-  vertical-align: middle;
-}
-.select2-results__option[aria-selected=true]:before {
-  font-family:fontAwesome;
-  content: "\f00c";
-  color: #fff;
-  background-color: #f77750;
-  border: 0;
-  display: inline-block;
-  padding-left: 3px;
-}
-.select2-container--default .select2-results__option[aria-selected=true] {
-  background-color: #fff;
-}
-.select2-container--default .select2-results__option--highlighted[aria-selected] {
-  background-color: #eaeaeb;
-  color: #272727;
-}
-.select2-container--default .select2-selection--multiple {
-  margin-bottom: 7px;
-}
-.select2-container--default.select2-container--open.select2-container--below .select2-selection--multiple {
-  border-radius: 4px;
-}
-.select2-container--default.select2-container--focus .select2-selection--multiple {
-  border-color: #f77750;
-  border-width: 2px;
-}
-.select2-container--default .select2-selection--multiple {
-  border-width: 2px;
-}
-.select2-container--open .select2-dropdown--below {
-  
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-
-}
-.select2-selection .select2-selection--multiple:after {
-  content: 'hhghgh';
-}
-/* select with icons badges single*/
-.select-icon .select2-selection__placeholder .badge {
-  display: none;
-}
-.select-icon .placeholder {
-/*  display: none; */
-}
-.select-icon .select2-results__option:before,
-.select-icon .select2-results__option[aria-selected=true]:before {
-  display: none !important;
-  /* content: "" !important; */
-}
-.select-icon  .select2-search--dropdown {
-  display: none;
-}
-  .campaignForm .select2-container--default .select2-selection--multiple {
-        background-color: white !important;
-        border:none!important;
-        border-radius: 4px;
-        cursor: text;
-    
-    }
-
-    .campaignForm .select2-container--default .select2-search--inline .select2-search__field {
-        border:none!important;
-    }
-    .campaignForm  .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    background-color: #b6c3cb61;
-    border: 0px solid #aaa;
-    border-radius: 4px;
-    cursor: default;
-    float: left;
-    margin-right: 5px;
-    margin-top: 12px;
-    padding: 4px 5px;
-}
-
-    .campaignForm .select2-container {
-        min-width: 100%;
-        background: #fff;
-    }
 
   .sub-assmntgrp input::-ms-input-placeholder { /* Edge 12-18 */
  color: #888;
@@ -250,6 +154,14 @@
         left: 8px;
         font-weight: normal;
 }
+
+    .campaignForm  input[type="text"] {
+     padding: 23px 20px;
+    vertical-align: middle;
+      background: #eeeeee7a;
+    border: 1px solid #eee;
+    box-shadow: 0 0 5px rgb(0 0 0 / 11%);
+}
 </style>
 
 <div class="campaignForm">
@@ -259,7 +171,7 @@
           
        <label class="input">
       <input class="input__field" type="text" placeholder=" "  id="CampaignName" name="CampaignName" onblur = "checkUniqueness(this.value)" value="@Model.CampaignName" required>
-      <span class="input__label" style="top:-24px!important;color:green!important;font-size: 18px;margin:7px;padding:5px;">Your Campaign Name</span>
+      <span  style="color:#7e7f82 !important;font-size: 17px;margin:7px;padding:5px; position:absolute;top:-50px !important;font-weight: 600;">Your Campaign Name</span>
     </label>
             
      @Html.ValidationMessageFor(model => model.CampaignName, "", new { @id = "uniqueMsg", @class = "text-danger" })
@@ -267,8 +179,8 @@
         </div>
         @if(!Model.IsAlreadyMasterAG)
         {
-            <div class="msgroup">
-                <div class="mdc-checkbox">
+            <div class="msgroup clearfix">
+                <div class="mdc-checkbox pull-left">
                     @Html.CheckBoxFor(m => m.CreateMasterAG, new { @class = "mdc-checkbox__native-control" })
                      <div class="mdc-checkbox__background">
                         <svg class="mdc-checkbox__checkmark"
@@ -279,11 +191,11 @@
                     </div>
 
                 </div>
-                <label class="assessment-name">Please tick the checkbox to create Master Assessment Group</label>
+                <label class="assessment-name pull-left">Please tick the checkbox to create Master Assessment Group</label>
             </div>
 
-            <div class="msgroup">
-                    <div class="mdc-checkbox">
+            <div class="msgroup clearfix">
+                    <div class="mdc-checkbox pull-left">
                         @Html.CheckBoxFor(m => m.CreateMAGOnly, new { @class = "mdc-checkbox__native-control" })
                         <div class="mdc-checkbox__background">
                             <svg class="mdc-checkbox__checkmark"
@@ -294,7 +206,7 @@
                         </div>
 
                     </div>
-                    <label class="assessment-name">Please tick the checkbox to only create a Master Assessment Group without sending emails. Please note, this will not create a campaign.</label>
+                    <label class="assessment-name pull-left">Please tick the checkbox only to create a Master Assessment Group without sending emails. Please note, this will not create a campaign.</label>
                 </div>
             
         }
@@ -341,12 +253,13 @@
 
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="margin-top:60px;">
             <div class="sub-assmntgrp">
                 <label class="input">
      
       
-                     <select id="SelectedRemainingAssessmentGroups" data-placeholder="None Selected" name="SelectedRemainingAssessmentGroups" class="js-select2 input__field" multiple="multiple">
+               <span id="make_checkbox_select"> 
+                   <select id="SelectedRemainingAssessmentGroups" data-placeholder="None Selected" name="SelectedRemainingAssessmentGroups" multiple class="chosen-select" id="multiple-label-example" tabindex="8">
 
                     
                     @if(Model.RemainingAssessmentGroups != null && Model.RemainingAssessmentGroups.Count()> 0)
@@ -364,12 +277,12 @@
                 </select>
 
       
-      
-      
+
+      </span>  
       <span class="input__label">Choose from remaining Assessment Groups</span>
     </label>
 
-
+         
 
 
             </div>
@@ -388,7 +301,7 @@
         @Html.HiddenFor(x => x.AssessmentGroupName)
         @Html.HiddenFor(x => x.id)
     </form>
-
+   
     <form asp-action="CreateCampaignS2" method="post" id="form_2" class="form-container" style="display:none">
         <h1 asp-for="AssessmentGroupId">Campaign For<span> @Model.AssessmentGroupName</span></h1>
 
@@ -801,18 +714,8 @@ $(document).on('click', '.toggle-title', function() {
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" defer rel="stylesheet" />
 
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
-  <script>
-      $(".js-select2").select2({
-      closeOnSelect : false,
-     
-      // allowHtml: true,
-      allowClear: true,
-      tags: true // создает новые опции на лету
-    });
-
-
-  </script>
+  <script src="~/Newassets/js/chosen.jquery.min.js"></script>
+    <script src="~/Newassets/js/main.js"></script>

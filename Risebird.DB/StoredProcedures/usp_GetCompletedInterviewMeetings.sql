@@ -17,7 +17,7 @@ select distinct im.id imid,im.IRFId, im.interviewDate,im.candidateEmail,im.Clien
 im.candidateName,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientName,ic.VideoLink,ic.InterviewerComment,            
 ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus,ul.EmailId as risebirdHR,    
 im.HRCoordinatorEmailId,cl.[Name] as Client,tqc.id as QCPresent,  
-imjt.Joinedon  
+imjt.Joinedon,im.IsEmergency,im.EIAssigned
 from InterviewMeetings im                  
 inner join IRF on im.IRFId = IRF.IRFId     
 join USerList uli on uli.EmailId=im.candidateEmail  
@@ -28,7 +28,7 @@ left join userlist ulin on ulin.emailid= im.interviewer
 left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId                  
 left join Client cl on cl.id = irf.ClientId    
 left join PaymentSLADetails tqc on tqc.Interviewid=im.id  and ISNULL(tqc.isQcDone,0)=1  
-Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where im.interviewer=interviewer and im.id=interviewid) imjt  
+Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where im.interviewer=interviewer and im.id=interviewid) imjt 
 where IsNull(IsProctor,0)=0 and im.interviewDate >= @startDate AND im.interviewDate < @endDate and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)   
 and ISNULL(im.RedoInterview,0)=0  
 End  
