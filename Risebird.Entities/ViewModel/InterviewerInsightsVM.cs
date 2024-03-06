@@ -42,13 +42,10 @@ namespace Risebird.Entities.ViewModel
         public string CandidateInteractionQuality { get; set; }
         public string LimitedHandoncoding { get; set; }
         public string UnethicalPractices { get; set; }
-        public string PoorCommunicationSkills
-        {
-            get; set;
-        }
+        public string PoorCommunicationSkills { get; set; }
         public string WeakInfrastructure { get; set; }
         public string TimeManagement { get; set; }
-
+        public string IRFId { get; set; }
     }
     public class InterviewerInsightsMarkersDetailsVM
     {

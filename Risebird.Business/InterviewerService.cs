@@ -1466,11 +1466,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid)
+        public async Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid,string IrfId)
         {
             try
             {
-                return await _interviewerRepository.GetInterviewerInsights(Emailid);
+                return await _interviewerRepository.GetInterviewerInsights(Emailid, IrfId);
             }
             catch (Exception ex)
             {
@@ -1490,11 +1490,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type)
+        public async Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type,string Irfid)
         {
             try
             {
-                return await _interviewerRepository.GetInterviewerInsightsMarkersDetails(Emailid, type);
+                return await _interviewerRepository.GetInterviewerInsightsMarkersDetails(Emailid, type, Irfid);
             }
             catch (Exception ex)
             {

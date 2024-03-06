@@ -30,7 +30,7 @@ namespace Risebird.MicroService
             {
                 try
                 {
-                    var _redmarkers = await _interviewerRepository.GetInterviewerInsights(item.EmailId);
+                    var _redmarkers = await _interviewerRepository.GetInterviewerInsights(item.EmailId, string.Empty);
                     var _mailtemplate = await TemplateMarkers(_redmarkers);
                     var acklink = "https://portal.risebird.io/Interviewer/AcknowledgeRedmarkers?uniqueid=" + item.uniqueid;
                     //send mail tpo interviewer

@@ -10,12 +10,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-  
-    
-      
-      
-        
 CREATE PROCEDURE [dbo].[usp_GetDateWiseMeetingsSlots]            
 @dateValue datetime,  
 @Emailid varchar(150)  
@@ -49,7 +43,7 @@ select distinct irf.IRFId, (irf.irfID + '('+ CASE WHEN CHARINDEX('|', JDTiltle) 
  (select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and im.confirmationStatus=1 and confirmationStatus=1) as total,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=1  and confirmationStatus=1) as Proxy,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=2  and confirmationStatus=1) as Selected,        
- (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=3  and confirmationStatus=1) as Rejected,        
+ (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and (InterviewStatus=3 or InterviewStatus=5) and confirmationStatus=1) as Rejected,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=4  and confirmationStatus=1) as BorderLine,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus is null and MeetingStatus=1) as NoShowCount,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1) as ScheduledCount,        
@@ -74,7 +68,7 @@ BEGIN
  (select count(interviewSlot) from InterviewMeetings where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and im.confirmationStatus=1 and confirmationStatus=1) as total,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=1  and confirmationStatus=1) as Proxy,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=2  and confirmationStatus=1) as Selected,        
- (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=3  and confirmationStatus=1) as Rejected,        
+ (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and (InterviewStatus=3 or InterviewStatus=5)  and confirmationStatus=1) as Rejected,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus=4  and confirmationStatus=1) as BorderLine,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1 and InterviewStatus is null and MeetingStatus=1) as NoShowCount,        
  (select count(inm.id) from interviewmeetings inm left join InterviewComments inc on inc.InterviewId = inm.id where IRFId=im.IRFId and cast(interviewDate as date) = cast (@dateValue as date) and confirmationStatus=1) as ScheduledCount,        
@@ -88,13 +82,6 @@ BEGIN
  group by IRF.IRFId, irf.JDTiltle, im.IRFId, im.confirmationStatus,im.interviewer, im.interviewSlot, ten.IRFId, ten.EveningUnassinged, tmn.IRFId, tmn.MorningUnassinged order by total desc        
 END        
 End
-
-
-
-
-
-
-
 GO
     
       
