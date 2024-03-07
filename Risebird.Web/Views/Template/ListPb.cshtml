@@ -1,0 +1,841 @@
+﻿@model Risebird.Entities.ViewModel.ClonableTemplateListVM
+@using Risebird.Entities
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Templates";
+    ViewBag.PageHeader = "Templates";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    dynamic filter = null;
+    
+    string AssessmentGroupTemplate = string.Empty;
+    string SeniorityLevel = string.Empty;
+    string CountryType = string.Empty;
+    string CompanyType = string.Empty;
+    string EmploymentType = string.Empty;
+    string DifficultyLevel = string.Empty;
+    string Category = string.Empty;
+    string[] PrimarySkills = new string[] { };
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContextAccessor.HttpContext.Session.GetString("ClonableTemplatesFilters"));
+    //TemplateName = filter.TemplateName != null ? filter.TemplateName : new string[] { };
+    //CompetencyLevel = filter.CompetencyLevel != null ? filter.CompetencyLevel : new string[] { };
+    SeniorityLevel = filter.SeniorityLevel != null ? filter.SeniorityLevel : string.Empty;
+    CountryType = filter.CountryType != null ? filter.CountryType : string.Empty;
+    CompanyType = filter.CompanyType != null ? filter.CompanyType : string.Empty;
+    EmploymentType = filter.EmploymentType != null ? filter.EmploymentType : string.Empty;
+    DifficultyLevel = filter.DifficultyLevel != null ? filter.DifficultyLevel : string.Empty;
+    AssessmentGroupTemplate = filter.AssessmentGroupTemplate != null ? filter.AssessmentGroupTemplate : string.Empty;
+    Category = filter.Category != null ? filter.Category : string.Empty;
+    PrimarySkills = filter.PrimarySkills != null ? filter.PrimarySkills : string.Empty;
+}
+
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
+
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Templates</h4></div>
+                </div>
+
+                <div class="pull-right">
+                    <div>
+                        @* <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                            <div class="mdc-button__ripple"></div>
+                        </button> *@
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content  client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+                            <div class="toolbar">
+
+                                <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="filheader">
+                                                <div class="filavatar">
+                                                    <span class="fa fa-filter"></span>
+                                                </div>
+                                                <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                                            </div>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+
+
+
+                                            <form action="@Url.Action("ListPb","Template", new { emailId = Model.PublicUserEmailId, uniqueId = Model.UniqueId, type = "pbc", profile = "Client" })" method="post" id="formFilter">
+
+                                                <div class="modal-body">
+                                                    <div class="row">
+
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Category">Category</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="Category" name="Category" class="form-control" onchange="CategoryChanged(this.value)">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Model.ClonableTemplates?.Select(x => x.CategoryName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CompanyType">Company Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CompanyType" name="CompanyType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<CompanyType>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="DifficultyLevel">Difficulty Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="DifficultyLevel" name="DifficultyLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="EmploymentType">Employment Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="EmploymentType" name="EmploymentType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<EmploymentTypeOptions>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkills">Primary Skills</label>
+                                                                <div class="col-md-12 col-sm-12">
+
+                                                                    <select id="PrimarySkills" name="PrimarySkills" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @*@{
+                                                                        var primarySkills = new List<string>();
+                                                                        foreach (var item in Model.ClonableTemplates)
+                                                                        {
+                                                                        if (!string.IsNullOrEmpty(item.PrimarySkills))
+                                                                        {
+                                                                        var splitSkills = item.PrimarySkills.Split(";");
+                                                                        if (splitSkills != null && splitSkills.Count() > 0)
+                                                                        {
+                                                                        primarySkills.AddRange(splitSkills);
+                                                                        }
+                                                                        }
+                                                                        }
+
+                                                                        }
+                                                                        @foreach (var item in primarySkills)
+                                                                        {
+                                                                        <option value="@item">@item</option>
+                                                                        }*@
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="CountryType">Country Type</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="CountryType" name="CountryType" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<CountryTypeEnum>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SeniorityLevel">Seniority Level</label>
+                                                                <div class="col-md-12 col-sm-12">
+
+                                                                    <select id="SeniorityLevel" name="SeniorityLevel" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @foreach (var item in Html.GetEnumSelectList<JobLevels>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="AssessmentGroupTemplate">Assessment Group</label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <select id="AssessmentGroupTemplate" name="AssessmentGroupTemplate" @*data-placeholder="None Selected"*@ class="form-control">
+                                                                        <option value="">Select</option>
+                                                                        @*@foreach (var item in Model.ClonableTemplates?.Select(x => x.AssessmentGroupName)?.Where(x => !string.IsNullOrEmpty(x))?.Distinct().ToList())
+                                                                        {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                        <option value="@item">@item</option>
+                                                                        }
+                                                                        }*@
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="form-group">
+
+                                                                <div>
+                                                                    <div class="col-md-12 col-sm-12">
+
+                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 20px 0px 10px 0px;float:right;margin-left:5px;">
+                                                                            <font style="font-size:12px;"> Reset Filter</font>
+                                                                        </button>
+
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin:20px 0px 10px 0px;float:right">
+                                                                            <font style="font-size:12px;"> Apply Filter</font>
+                                                                        </button>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+
+
+
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div>
+
+                                    <div id="tableID" class="second" style="overflow-x:scroll">
+                                        <table id="cloneTemplateTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    
+                                                    <th>Actions</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    
+                                                    <th>Actions</th>
+
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+
+                                                @if (Model.ClonableTemplates != null && Model.ClonableTemplates.Count() > 0)
+                                                {
+                                                    foreach (var item in Model.ClonableTemplates)
+                                                    {
+
+                                                        <tr>
+                                                            @if (!string.IsNullOrEmpty(item.Name))
+                                                            {
+                                                                <td> @item.Name </td>
+                                                                @* <td> @Html.Raw(item.Name)</td> *@
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+
+                                                            <td>
+                                                                
+                                                                @if (Model.Profile == "Client")
+                                                                {
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Create Interview Link">
+                                                                        <span onclick="OpenModalForCreatingInterviewLink('@item.ClonableSkillChannelId', '@item.Name', '@item.AssessmentGroupName', '@item.AssessmentGroupId', '@item.MeetingPlatform')" title="Create Interview Link" class="mdc-fab__icon material-icons">
+                                                                            @*<i style="font-size:14px!important;" class="fa fa-plus-circle"></i>*@
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                }
+
+                                                            </td>
+
+
+                                                        </tr>
+
+
+                                                    }
+                                                }
+
+                                            </tbody>
+
+                                        </table>
+
+
+
+
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <!-- end content-->
+                        </div>
+
+                        <!-- end col-md-12 -->
+                    </div>
+
+
+
+
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <div id="interviewLinkModal" class="modal modal-bg">
+        <!-- Modal content -->
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+                <div class="filheader">
+                    <h5 class="modal-title pull-left" id="interviewLinkModalHeading" style="width:600px">Generate Interview Link<span class="popup-text" id="skill_id_pop"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseIRFPopup()">
+                        <span aria-hidden="true" id="interviewLinkModalClose" style="cursor:pointer;">&times;</span>
+                    </button>
+                </div>
+
+
+
+                <div class="modal-body" id="interviewLinkModalBody">
+
+                    <form action="@Url.Action("CreateInterviewLinkV1","IRF")" method="post" id="formInterviewLink" enctype="multipart/form-data" onsubmit="return ValidateCreateInterviewLinkForm()">
+                        @Html.AntiForgeryToken()
+                        @* <div class="mb-3 mt-3">
+                        <label for="JDTiltle" class="form-label">Job Title:</label>
+                        <input type="text" class="form-control" id="JDTiltle" placeholder="Enter Primary Skill and Role(max 40 char)" name="JDTiltle" for="JDTiltle">
+                        <label id="error_JDTiltle" class="text-danger"></label>
+                        </div> *@
+                        <div class="mb-3">
+                            <label for="JDFile" class="form-label">Job Description:</label>
+                            <input type="file" for="JDFile" accept=".pdf,.doc,.docx" class="form-control" id="JDFile" placeholder="Upload Job Description File(.pdf,.txt)" name="JDFile">
+                            <label id="error_JDFile" class="text-danger"></label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="BillingOwner" class="form-label">Billing Owner:</label>
+                            @Html.DropDownList("BillingOwner", new List<SelectListItem>(), "Select", new { @class = "select-css form-control" })
+                            <label id="error_BillingOwner" class="text-danger"></label>
+                        </div>
+
+                        @* <div class="mb-3 mt-3">
+                        <label for="ClientName" class="form-label">Project Name:</label>
+                        <input type="text" class="form-control" id="ClientName" name="ClientName" for="ClientName">
+                        <label id="error_ClientName" class="text-danger"></label>
+                        </div> *@
+
+                        <input type="hidden" for="CreatedFromTemplateId" name="CreatedFromTemplateId" id="CreatedFromTemplateId" />
+                        <input type="hidden" for="IRFId" name="IRFId" id="IRFId" />
+                        <input type="hidden" for="AssessmentGroupId" name="AssessmentGroupId" id="AssessmentGroupId" />
+                        <input type="hidden" for="ClientId" name="ClientId" id="ClientId" />
+                        <input type="hidden" for="MeetingPlatform" name="MeetingPlatform" id="MeetingPlatform" />
+                        <input type="hidden" for="JDTiltle" name="JDTiltle" id="JDTiltle" />
+                        <input type="hidden" for="AccessType" name="AccessType" id="AccessType" value="@Model.AccessType"/>
+                        <input type="hidden" for="PublicUserEmailId" name="PublicUserEmailId" id="PublicUserEmailId" value="@Model.PublicUserEmailId" />
+                        <input type="hidden" for="UniqueId" name="UniqueId" id="UniqueId" value="@Model.UniqueId" />
+
+                        <button type="submit" class="btn btn-primary">Generate Interview Link</button>
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+<</div>
+@if (Model.Message != null && Model.Message2 != null)//&& Model.Message3 != null
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.Message';
+            if (msg.toLowerCase().includes("success")) {
+        
+
+                Swal.fire({
+                    title: '<strong>Successful</u></strong>',
+                    icon: 'info',
+                    html:
+                        '@Model.Message' +
+                        '<br/> Scheduling Link : <a target="_blank" href="@Model.Message2">Scheduling Link</a>',
+                    confirmButtonText: "Close",
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result) {
+                        // URL to open in a new tab
+                        var url = "https://portal.risebird.io/Candidate/FetchInterviewerCommunicator?emailid=" + '@Model.PublicUserEmailId' + "&isClientLogin=True"
+                        // Open the URL in a new tab
+                        var newTab = window.open(url, '_blank');
+                        if (newTab) {
+                            newTab.focus(); // Focus on the new tab
+                        }
+                    }
+                });
+            }
+            else {
+
+                swal.fire("Failed", '@Model.Message', "error");
+            }
+        }
+    </script>
+}
+else if (Model.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.Message';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful", '@Model.Message', "success");
+            }
+            else {
+                swal.fire("Failed", '@Model.Message', "error");
+            }
+
+        }
+
+        //window.onload = my_code();
+    </script>
+}
+
+<script>
+
+    function CloseIRFPopup() {
+        var modal = document.getElementById("interviewLinkModal");
+        modal.style.display = "none";
+    }
+</script>
+<script>
+    let clientCompanyName = '@Model.ClientCompanyName';
+    let clientId = '@Model.ClientId';
+    let isBillingOwnerPopulated = false;
+    let isModalOpened = false;
+    
+    function OpenModalForCreatingInterviewLink(templateId, templateName, assessmentGroupName, assessmentGroupId, meetingPlatform) {
+        var modal = document.getElementById("interviewLinkModal");
+        modal.style.display = "block";
+        var modalHeading = '';
+
+        if (templateName != null && templateName != '') {
+            modalHeading = 'Create Interview Link from: "' + templateName + '"';
+        }
+        else {
+            modalHeading = 'Create Interview Link';
+        }
+        if (isModalOpened) {
+            $('#JDTiltle').val('');
+            $('#JDFile').val('');
+            $('#error_JDTiltle').text('');
+            $('#error_JDFile').text('');
+            $('#error_BillingOwner').text('');
+        }
+
+        $('#interviewLinkModalHeading').text(modalHeading);
+        $('#CreatedFromTemplateId').val(templateId);
+        $('#AssessmentGroupId').val(assessmentGroupId);
+        $('#MeetingPlatform').val(meetingPlatform);
+        $('#JDTiltle').val(templateName);
+
+        if (!isBillingOwnerPopulated) {
+            PopulateBillingOwner();
+        }
+        GenerateSkillChannelName(assessmentGroupName);
+        if (!isModalOpened && clientId !== undefined) {
+            isModalOpened = true;
+            $('#ClientId').val(clientId);
+        }
+    }
+
+    function ValidateCreateInterviewLinkForm() {
+
+        //var jobProfile = $('#JDTiltle').val();
+        var jdFile = $('#JDFile').val();
+        var billingOwner = $('#BillingOwner').val();
+
+        var flag = true;
+
+
+        // if (jobProfile == null || jobProfile == '') {
+        //     document.getElementById('error_JDTiltle').innerHTML = "Job Title is required.";
+        //     flag = false;
+        // }
+        // else if (jobProfile.length > 40) {
+        //     document.getElementById("error_JDTiltle").innerHTML = "The Job Title should not be more than 40 characters long.";
+        //     flag = false;
+        // }
+        // else {
+        //     document.getElementById('error_JDTiltle').innerHTML = "";
+        // }
+        if (jdFile == null || jdFile == '') {
+            document.getElementById('error_JDFile').innerHTML = "Kindly upload a file here.";
+            flag = false;
+        }
+        else {
+            document.getElementById('error_JDFile').innerHTML = "";
+        }
+        if (billingOwner == null || billingOwner == '') {
+            document.getElementById('error_BillingOwner').innerHTML = "Billing owner is required.";
+            flag = false;
+        }
+        else {
+            document.getElementById('error_BillingOwner').innerHTML = "";
+        }
+
+        return flag;
+
+    }
+
+    function PopulateBillingOwner() {
+
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetClientUser",
+            data: { 'clientId': clientId },
+            success: function (data) {
+
+                var drpbilling = $("#BillingOwner");
+                $("#BillingOwner option").remove();
+                if (data.length > 0) {
+                    $(data).each(function () {
+                        var option = $("<option />");
+                        //Set Text part.
+                        option.html(this.text);
+                        //Set Value part.
+                        option.val(this.value);
+                        //Add the Option element to DropDownList.
+                        drpbilling.append(option);
+                    });
+                }
+                isBillingOwnerPopulated = true;
+            }
+        });
+    }
+
+    function GenerateSkillChannelName(assessmentGroupName) {
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GenerateSkillChannelName",
+            data: { 'assessmentGroupName': assessmentGroupName, 'clientCompanyName': clientCompanyName },
+            success: function (data) {
+                if (data != null && data != '') {
+                    document.getElementById('IRFId').value = data;
+                }
+            }
+        });
+    }
+</script>
+<script>
+
+    function searchResult() {
+        $('#cloneTemplateTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#cloneTemplateTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+        var table = $('#cloneTemplateTable').DataTable({
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            order: [[1, 'desc']]
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+
+    };
+
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#cloneTemplateTable").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#cloneTemplateTable").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#cloneTemplateTable").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script src="~/js/TemplateFilter.js"></script>
+<script>
+    var asgGrpPrSkillsCategoryMapArray;
+    $(document).ready(function () {
+        //$("#PrimarySkills").multiselect();
+
+        $("#ResetFilter").click(function () {
+            ResetFilter();
+        })
+
+        if ('@filter' != '') {
+            ApplySessionFilter();
+        }
+
+        var asmtGrpsPrSkillsMappedToCurrentTemplates = '@Model.AsmtGrpsPrSkillsMappedToCurrentTemplates';
+        if (asmtGrpsPrSkillsMappedToCurrentTemplates != null) {
+            asgGrpPrSkillsCategoryMapArray = JSON.parse(asmtGrpsPrSkillsMappedToCurrentTemplates.replace(/&quot;/g, '"'));
+        }
+        FilterAsmtGrpPrSkillDropDown($("#Category").val(), asgGrpPrSkillsCategoryMapArray);
+    });
+
+    function ResetFilter() {
+
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "/Template/ResetClonableTemplateFilter",
+            success: function (result) {
+                location.reload(true);
+            }
+        });
+    }
+
+    function ApplySessionFilter() {
+    @*var templateName =  @Html.Raw(Json.Serialize(TemplateName));*@
+    @*var competencyLevel =  @Html.Raw(Json.Serialize(CompetencyLevel));*@
+        var seniorityLevel = @Html.Raw(Json.Serialize(SeniorityLevel));
+        var countryType = @Html.Raw(Json.Serialize(CountryType));
+        var companyType = @Html.Raw(Json.Serialize(CompanyType));
+        var employmentType = @Html.Raw(Json.Serialize(EmploymentType));
+        var difficultyLevel = @Html.Raw(Json.Serialize(DifficultyLevel));
+        var assessmentGroupTemplate = @Html.Raw(Json.Serialize(AssessmentGroupTemplate));
+        var category = @Html.Raw(Json.Serialize(Category));
+        var primarySkills = @Html.Raw(Json.Serialize(PrimarySkills));
+
+        //$("#TemplateName").val(templateName);
+        //$("#CompetencyLevel").val(competencyLevel);
+        $("#SeniorityLevel").val(seniorityLevel);
+        $("#CountryType").val(countryType);
+        $("#CompanyType").val(companyType);
+        $("#EmploymentType").val(employmentType);
+        $("#DifficultyLevel").val(difficultyLevel);
+        $("#AssessmentGroupTemplate").val(assessmentGroupTemplate);
+        $("#Category").val(category);
+        $("#PrimarySkills").val(primarySkills);
+    }
+
+</script>
+
+@* <script>
+    function openSkillpopup(id, templateName) {
+        $.ajax({
+            type: "POST",
+            url: "/ClonableSkillChannelTemplate/FetchTemplateTechSkillDetails",
+            data: { id: id },
+            success: function (data) {
+                var modal = document.getElementById("TemplateSkillModel");
+                $("#skill_id_pop").text(templateName);
+                modal.style.display = "block";
+                //bindSkillData(data);
+                $("#divTechSkillBody").empty().html(data);
+            }
+        });
+    }
+    function closeTemplateSkillModel() {
+        var model = document.getElementById("TemplateSkillModel");
+        model.style.display = "none";
+    }
+    function bindSkillData(data) {
+        var html = '';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="20%" class="table_heading">Level</th>';
+        html += '  <th width="70%" class="table_heading">Skill Name</th>';
+        html += '  <th width="10%" class="table_heading">Weightage</th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + data[i].levelName + '</td>';
+            html += '    <td>' + data[i].skillName + '</td>';
+            html += '  <td>' + data[i].weightage + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divTechSkillBody").empty().html(html);
+    }
+
+</script>
+
+<script>
+    function openInterviewersPopup(id, templateName) {
+        $.ajax({
+            type: "POST",
+            url: "/ClonableSkillChannelTemplate/FetchTemplateInterviewersDetails",
+            data: { id: id },
+            success: function (data) {
+                var modal = document.getElementById("InterviewersModel");
+                $("#interviewers_id_pop").text(templateName);
+                modal.style.display = "block";
+                //bindInterviewersData(data);
+                $("#divInterviewersBody").empty().html(data);
+            }
+        });
+    }
+    function closeInterviewersModel() {
+        var model = document.getElementById("InterviewersModel");
+        model.style.display = "none";
+    }
+    function bindInterviewersData(data) {
+        var html = '';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="InterviewersTable" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="25%" class="table_heading">Email</th>';
+        html += '  <th width="55%" class="table_heading">Skills</th>';
+        html += '  <th width="10%" class="table_heading">Rate</th>';
+        html += '  <th width="10%" class="table_heading">Resume</th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + data[i].emailId + '</td>';
+            html += '    <td>' + data[i].primarySkill + '</td>';
+            html += '  <td>' + data[i].perSuccessRate + '</td>';
+            //html += '  <td>' + data[i].resumeLink + '</td>';
+            html += '  <td>' + '<a href="' + data[i].resumeLink + '" target="_blank" data-tooltip="' + data[i].resumeLink + '" >Resume</a>' + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divInterviewersBody").empty().html(html);
+    }
+
+</script> *@
+@* <script>
+    function CategoryChanged(categorySelected) {
+        FilterAsmtGrpPrSkillDropDown(categorySelected, asgGrpPrSkillsCategoryMapArray)
+    }
+    function openTemplatestats(id, templateName) {
+        $.ajax({
+            type: "POST",
+            url: "/ClonableSkillChannelTemplate/FetchTemplateStatsDetails",
+            data: { id: id },
+            success: function (data) {
+                var modal = document.getElementById("TemplateStatsModel");
+                $("#Template_id_model").text(templateName);
+                modal.style.display = "block";
+                $("#divTemstatsBody").empty().html(data);
+            }
+        });
+    }
+    function closeTemplateStatsModel() {
+        var model = document.getElementById("TemplateStatsModel");
+        model.style.display = "none";
+    }
+</script> *@
+
+

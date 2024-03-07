@@ -175,11 +175,10 @@
                     <div class="pull-right">
                         <div class="topheader-header">
                             <div class="topheader-link-wrap">
-                                @if (ViewBag.ClientId == 23)//Risebird
+                                @* @if (ViewBag.ClientId == 23)//Risebird
                                 {
                                     var templateUrl = "/Template/Index?emailId=" + @ViewBag.emailid + "&uniqueId=" + @ViewBag.id + "&type=pbc&profile=Client";
                                     <button title="Book interviews based on dynamic marketplace rates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl)'">
-                                        @* '@Url.Action(action : "Index", controller : "Template", new { emailId = ViewBag.emailid, uniqueId = ViewBag.id, type = "pbc", profile = "client" })' *@
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad7">
                                             Book Interviews
@@ -187,18 +186,29 @@
 
                                     </button>
 
+                                } *@
+                                @{
+                                    var templateUrl2 = "/Template/ListPb?emailId=" + @ViewBag.emailid + "&uniqueId=" + @ViewBag.id + "&type=pbc&profile=Client";
+                                    <button title="Book interviews based on templates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl2)'" style="margin:5px 4px 0px 3px;">
+                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                        <div class="d-lg-inline-flex pad3">
+                                            Book Interviews
+                                        </div>
+
+                                    </button>
+
                                 }
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCandidateFeedback", "Survey", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'">
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCandidateFeedback", "Survey", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 0px 3px;">
                                     <span class="topheader-link"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size:11px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size:9px;"></i></span>
-                                    <div class="d-lg-inline-flex pad7">
+                                    <div class="d-lg-inline-flex pad3">
                                         Candidate Feedback
                                     </div>
 
                                 </button>
 
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'">
+                              <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 0px 3px;">
                                     <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
-                                    <div class="d-lg-inline-flex pad7">
+                                    <div class="d-lg-inline-flex pad3">
                                         Skill Channel Stats
                                     </div>
 
@@ -224,18 +234,18 @@
                                 <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
                                 </button>*@
 
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;">
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;margin:5px 4px 0px 3px;">
                                     <span class="topheader-link"><i class="fa fa-users" style="color:#fff"></i></span>
-                                    <div class="d-lg-inline-flex pad7">
+                                    <div class="d-lg-inline-flex pad3">
                                         Manage Interviews
                                     </div>
 
                                 </button>
 
 
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement('@ViewBag')" style="cursor:pointer,left:160px;">
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement('@ViewBag')" style="cursor:pointer;left:160px;margin:5px 4px 0px 3px;">
                                     <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
-                                    <div class="d-lg-inline-flex pad7">
+                                    <div class="d-lg-inline-flex pad3">
                                         Live Interview Co-ordination
                                     </div>
 
@@ -243,8 +253,20 @@
 
                             </div>
 
+                            <div class="mobile-view">
+                                <span class="filter">
+
+                                <span id="status_2"  data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter" data-original-title="Filter">
+
+                                    <span class="mdc-button__label"><span class="fa fa-filter"></span></span>
+                                    <span class="mdc-button__ripple"></span>
+                                </span>
+                            </span>
 
 
+                            <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
+                            </div>
+                            <div class="desktop-view pull-left">
                             <span class="filter">
 
                                 <span id="status_2" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-bs-toggle="modal" data-bs-target="#filterModal" style="vertical-align:top" data-toggle="tooltip" data-placement="top" data-tooltip="Note: To visualize data older and greater than 15 days, please apply filter" data-original-title="Filter">
@@ -256,7 +278,7 @@
 
 
                             <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
-
+                          </div>
 
                         </div>
 

@@ -7475,7 +7475,7 @@ namespace Risebird.Web.Controllers
             return skillChannelName;
         }
 
-        [Authorize]
+        //[Authorize]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> CreateInterviewLinkV1(IRFVm model)
@@ -7483,7 +7483,98 @@ namespace Risebird.Web.Controllers
             string emailId = string.Empty;
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if(!string.IsNullOrEmpty(model.UniqueId) && !string.IsNullOrEmpty(model.PublicUserEmailId) && !string.IsNullOrEmpty(model.AccessType) && model.AccessType == "Public")
+                {
+                    emailId = model.PublicUserEmailId;
+                    string uploadedFileURL = string.Empty;
+                    //if (model.ClientId == 0)
+                    //    model.ClientId = await _clientService.GetClientByEmailId(emailId);
+                    if (model.JDFile != null)
+                    {
+
+
+                        int virusScanResult = 0;
+                        using (var ms = new MemoryStream())
+                        {
+                            model.JDFile.CopyTo(ms);
+
+                            //VirusTotal virusTotal = new VirusTotal("30368672cc1d7fa0497a0d2c640544ade03ad455600d24c220bfd41c83b5e6d5");
+                            VirusTotal virusTotal = new VirusTotal(_configuration["VirusTotal:ApiKey"]);
+
+                            //Use HTTPS instead of HTTP
+                            virusTotal.UseTLS = true;
+
+                            //byte[] eicar = Encoding.ASCII.GetBytes(@"X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*");
+                            //VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(eicar);//ms
+
+                            VirusTotalNet.Results.FileReport fileReport = await virusTotal.GetFileReportAsync(ms);
+                            bool hasFileBeenScannedBefore = fileReport.ResponseCode == FileReportResponseCode.Present;
+
+                            if (hasFileBeenScannedBefore)
+                            {
+                                virusScanResult = fileReport.Positives;
+                            }
+                            else
+                            {
+                                //var fileResults = await virusTotal.ScanFileAsync(eicar, fileName);//ms
+                                var fileResults = await virusTotal.ScanFileAsync(ms, model.JDFile.FileName);
+                                virusScanResult = fileReport.Positives;
+                            }
+
+                            if (virusScanResult > 0)
+                            {
+                                TempData["SuccessErrorPublicCloneTemplateMessage"] = $"File upload failed. Virus Detected! Failed to create Skills Channel from {model.TemplateName}!";
+                                return RedirectToAction("ListPb", "Template", new { emailId = model.PublicUserEmailId, uniqueId = model.UniqueId, type = "pbc", profile = "Client" });
+
+                            }
+
+                        }
+
+                        var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
+                        if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint" || fileMimeType == "text/plain")
+                        {
+                            await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            model.JDLink = uploadedFileURL;
+                        }
+
+                    }
+
+                    //Start: Auto Generate Scheduling Link 
+                    model.StartDate = DateTime.Now;
+                    model.EndDate = DateTime.Now.AddMonths(3);
+
+                    //model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
+
+                    string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", model.MeetingPlatform);
+
+                    model.CalendlyLink = _schedulinglink;
+                    var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(model, emailId, "Client");
+                    //End: Auto Generate Scheduling Link
+                    if (result.Item1)
+                    {
+                        var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
+
+                        FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
+
+                        TempData["SuccessErrorPublicCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
+                        TempData["SuccessErrorPublicCloneTemplateMessage2"] = model.CalendlyLink;
+                        //TempData["SuccessErrorCloneTemplateMessage3"] = "https://portal.risebird.io/IRF/Index";
+                        return RedirectToAction("ListPb", "Template", new { emailId = model.PublicUserEmailId, uniqueId = model.UniqueId, type  = "pbc", profile = "Client"});
+
+                        //return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorCloneTemplateMessage"] = $"Failed to create Skills Channel from {model.TemplateName}!";
+                        return RedirectToAction("ListPb", "Template", new { emailId = model.PublicUserEmailId, uniqueId = model.UniqueId, type = "pbc", profile = "Client" });
+                    }
+
+                }
+                else if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
