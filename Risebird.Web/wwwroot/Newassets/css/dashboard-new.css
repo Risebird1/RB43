@@ -8754,7 +8754,7 @@ option {
     box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.1);
     margin: 30px auto 30px 230px;
     display: table;
-    padding: 40px 40px 20px 40px;
+    padding: 40px 40px 40px 40px;
     border-bottom: 4px #42a5f540 solid;
 }
     .campaignForm h1 {
@@ -10616,12 +10616,20 @@ option {
     #btnStart, #btnStop {
         left: 150px;
     }
-
+    #actionwrap .action-btn {
+        margin:0px!important;
+    }
+    #actionwrap.flex-w {
+        display:flow!important;
+    }
     .action-btn {
         width: 100px;
         margin: 0px auto;
     }
-
+    .animated-arrow > .main {
+        top: 0px!important;
+        left: -98px!important;
+    }
     .candidate .journey td.cadEmail {
         width: 130px !important;
     }
@@ -11066,6 +11074,11 @@ option {
         font-size: 13px !important;
         background: url(../../img/interview.svg) -20px 37px no-repeat !important;
     }
+
+    #entitleTable.dataTable > tbody > tr > td:first-child {
+        padding-right: 95px!important;
+    }
+
     .candidate-timeline.public-url .nopad{
         padding:0px!important;
     }

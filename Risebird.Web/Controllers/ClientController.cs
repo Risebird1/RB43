@@ -38,8 +38,9 @@ namespace Risebird.Web.Controllers
         private readonly IIRFService _irfService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IIRFRepository _irfRepository;
+        private readonly ISASUrlHelper _sasUrlHelper;
 
-        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository)
+        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, ISASUrlHelper sasUrlHelper)
         {
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -52,6 +53,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _irfRepository = irfRepository;
+            _sasUrlHelper = sasUrlHelper;
         }
 
         [HttpGet]
@@ -136,10 +138,19 @@ namespace Risebird.Web.Controllers
                             if (fileMimeType == "video/mp4" || fileMimeType == "video/mpeg" || fileMimeType == "video/quicktime")
                             {
                                 var fileName = client.VideoFile.FileName.Replace(" ", "_");
-                                await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
-                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientvaluevideosgifs");
-                                var blob = containerRef.GetBlockBlobReference(fileName);
-                                uploadedVideoURL = blob.Uri.ToString();
+                                //await _azureStorageHelper.InsertBlob(fileName, "clientvaluevideosgifs", client.VideoFile);
+                                //var containerRef = _azureStorageHelper.GetCloudBlobContainer("clientvaluevideosgifs");
+                                //var blob = containerRef.GetBlockBlobReference(fileName);
+                                //uploadedVideoURL = blob.Uri.ToString();
+                                using (var fileStream = client.VideoFile.OpenReadStream())
+                                {
+                                    uploadedVideoURL = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "clientvaluevideosgifs", null, fileStream);
+                                }
+                                var sas = _sasUrlHelper.CreateSasUrl("clientvaluevideosgifs");
+                                if (!string.IsNullOrEmpty(uploadedFileURL) && !string.IsNullOrEmpty(sas))
+                                {
+                                    uploadedFileURL = uploadedFileURL + "?" + sas;
+                                }
                                 client.CompanyVideoLink = uploadedVideoURL;
                             }
                         }
@@ -1057,7 +1068,7 @@ namespace Risebird.Web.Controllers
                     }
                     var allmeetingdata = JsonConvert.SerializeObject(meetings);
                     HttpContext.Session.SetString("SearchAllMeetings", allmeetingdata);
-                   // return View(meetings.ToPagedList(Page ?? 1, 10));
+                    // return View(meetings.ToPagedList(Page ?? 1, 10));
                     return View(meetings);
                     //return RedirectToAction("SignOut", "Session");
                 }
@@ -1230,7 +1241,7 @@ namespace Risebird.Web.Controllers
             {
                 int Page = 1;
 
-       
+
                 var meetings = JsonConvert.DeserializeObject<List<MeetingVM>>(HttpContext.Session.GetString("SearchAllMeetings"));
                 if (!string.IsNullOrEmpty(searchValue))
                 {
@@ -1266,7 +1277,7 @@ namespace Risebird.Web.Controllers
                 {
                     Pagestart = 0;
                     Pageend = 0;
-                } 
+                }
                 var result = new { result = meetings.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = meetings.Count };
                 return Json(result);
             }
@@ -1284,7 +1295,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 HttpContext.Session.Remove("AllPriorityClientMeetingsfilters");
-                return RedirectToAction("AllMeetings", "Client", new {Emailid = Emailid });
+                return RedirectToAction("AllMeetings", "Client", new { Emailid = Emailid });
             }
             catch (Exception ex)
             {
@@ -1359,7 +1370,7 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, 7].Value = "Project Name";
                     Sheet.Cells[1, 8].Value = "Primary Skill";
                     Sheet.Cells[1, 9].Value = "Interview Status";
-                   // Sheet.Cells[1, 10].Value = "Video Link";
+                    // Sheet.Cells[1, 10].Value = "Video Link";
                     Sheet.Cells[1, 10].Value = "Interviewer Comment";
                 }
                 //Sheet.Cells[1, 11].Value = "Report Link";
@@ -4704,7 +4715,7 @@ namespace Risebird.Web.Controllers
             return PartialView(model);
         }
         [HttpPost]
-        public async Task<IActionResult> MoneyClientProtectionDetailsView(string type, int Clientid, string actiontype,int? month=null)
+        public async Task<IActionResult> MoneyClientProtectionDetailsView(string type, int Clientid, string actiontype, int? month = null)
         {
             var model = await _clientService.GetMoneyProtectionDetails(type, Clientid);
             model = model.Select(x => { x.HeuristicsscoreDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.Heuristicsscore)).GetDescription(); return x; }).ToList();
@@ -4713,11 +4724,11 @@ namespace Risebird.Web.Controllers
             {
                 model = model.Where(m => m.AddedOn >= DateTime.Now.AddMonths(-1)).ToList();
             }
-            else if(month == 3)
+            else if (month == 3)
             {
                 model = model.Where(m => m.AddedOn >= DateTime.Now.AddMonths(-3)).ToList();
             }
-           else if(month == 6)
+            else if (month == 6)
             {
                 model = model.Where(m => m.AddedOn >= DateTime.Now.AddMonths(-6)).ToList();
             }
@@ -4725,7 +4736,7 @@ namespace Risebird.Web.Controllers
             {
                 model = new List<MoneyProtectionVM>();
             }
-          
+
             return PartialView(model);
         }
         #endregion

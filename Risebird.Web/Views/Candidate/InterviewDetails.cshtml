@@ -369,8 +369,8 @@ a{
 
                                             <div style="line-height:32px;margin-bottom: 0px;"><b>Company Website :</b><br/> <a href="@Model.CandidateDetails.CompanyLink" target="_blank">@Model.CandidateDetails.ClientName</a></div>
 
-                                            <div style="line-height:32px;margin-bottom:10px;text-align: left;font-size:16px;"><b>HR Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Hr Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>@Model.CandidateDetails.ClientHRAttemptContactMobile</div></div>
-                                            <div style="line-height:32px;margin-bottom:10px;font-size: 16px;"><b>Risebird Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Risebird Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Risebird Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>@Model.CandidateDetails.ChannelOwnerMobile</div></div>
+                                            <div style="line-height:32px;margin-bottom:10px;text-align: left;font-size:16px;"><b>HR Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ClientHRAttemptContact &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Hr Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.ClientHRAttemptContactMobile','@Model.CandidateDetails.ClientHRAttemptContact', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>Phone</div></div>
+                                            <div style="line-height:32px;margin-bottom:10px;font-size: 16px;"><b>Risebird Contact :</b> <br /><span><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;margin-right:5px;"></i></span>@Model.CandidateDetails.ChannelOwnerEmail &nbsp;<div style="position:relative;top:-4px;left:0px;" onclick="captureclick('Call','Risebird Contact')"><span style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Click here to call the Risebird Hr" onclick="CommonCallButtonClick('@Model.CandidateDetails.ChannelOwnerEmail','@Model.CandidateDetails.ChannelOwnerMobile','@Model.CandidateDetails.ChannelOwnerEmail', null, 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" /></span>Phone</div></div>
                                         </div>
 
                                             @if (!String.IsNullOrWhiteSpace(Model.CandidateDetails.CompanyVideoLink))
@@ -388,8 +388,8 @@ a{
                                         else
                                         {
                                             <div class="w60">
-                                                    <div class="videoWrap" style="padding: 8px 10px;background: #f3eeee;">
-                                                   <img src="../../img/no-video.jpg" />
+                                                    <div class="videoWrap" style="padding: 8px 10px;background:#191919;">
+                                                   <img style="margin: 0px auto;display: block;" src="../../img/no-video.jpg" />
                                                 </div>
                                             </div>
                                         }
@@ -627,7 +627,7 @@ a{
         document.getElementById(tabid).style.display = "block";
         evt.currentTarget.className += " active";
     }
-    document.getElementById("defaultOpen").click();
+    // document.getElementById("defaultOpen").click();
 
     function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid) {
         swal.fire({
