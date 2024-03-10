@@ -361,7 +361,7 @@
                                         <img src="/img/note.png" width="20" style="    position: relative;top:4px;"> Talking anything <b>personal</b> or <b>suspicious</b> with the candidate shall result in strict legal action <br /><span style="font-size: 13px;
     margin: 9px 0px 4px 0px;
     color: #e44d4d;
-    font-weight: 600;">Click on candidates number to call, activated before 10 minutes only</span>
+    font-weight: 600;">Click on the call button to call the candidate. The button will be enabled only 10 minutes before the scheduled meeting.</span>
                                     </span>
                                 </div>
                                 <div class="note-meeting text-left"> <b style="color:green">Note: To join the meeting click on Meeting Link and always use your Coded Name </b><b style="color:red">(@ViewBag.CodedName)</b></div>
@@ -489,7 +489,7 @@
 
                                                                                     </span>
                                                                                 </div>
-                                                                                @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
+                                                                           @if (item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now)
                                                                                 {
                                                                                     <div class="call-sec" style="width:100%;float:left;margin:10px 0px;">
                                                                                         <span class="call-area">
@@ -498,7 +498,7 @@
                                                                                                 <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.id')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="18" style="position:relative;top:4px;" /></span>
                                                                                             }
                                                                                         </span>
-                                                                                        @item.MobileNumber
+                                                                                       Call
                                                                                     </div>
                                                                                 }
 
