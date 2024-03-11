@@ -484,7 +484,7 @@ a.infos span.time:before {
 }
 
 .topbar-item {
-    top: 0px;
+    top: 12px;
     position: relative;
     right: 25px;
 }
@@ -5856,7 +5856,7 @@ input[type="date"].form-control {
     max-height: 100px !important;
 }
 
-.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, #entitleTable_filter input[type=search].form-control, .candidate_resume #resumeTable_filter input[type=search].form-control, .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus, #irfTable_filter input[type=search], #irfTable_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search], #MyInterviewList_filter input[type=search]:focus, #dupmeeting_filter input[type=search], #dupmeeting_filter input[type=search]:focus, #activityTable_filter input[type=search], #activityTable_filter input[type=search]:focus {
+.search-field #meeting_filter input[type=search], .search-field #meeting_filter input[type=search]:focus, #meeting_filter input[type=search]:focus, #meeting_filter input[type=search], #interviewersTbl_filter input[type=search], #interviewersTbl_filter input[type=search]:focus, #supportList_filter input[type=search], #supportList_filter input[type=search]:focus, #skillLevel_filter input[type=search], #skillLevel_filter input[type=search]:focus, #clientduser_filter input[type=search], #clientduser_filter input[type=search]:focus, #risebirduser_filter input[type=search], #risebirduser_filter input[type=search]:focus, .indexemp #interviewer_filter input[type=search], .indexemp #interviewer_filter input[type=search]:focus, .curatedgrp #meeting_filter input[type=search], .curatedgrp #meeting_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search].form-control, #IRFList_filter input[type=search], .candidate-timeline #candidateTable_filter input[type=search].form-control, #entitleTable_filter input[type=search].form-control,  .unassigned-int #meetingTable_filter input[type=search].form-control, #skill_filter input[type=search], #skill_filter input[type=search]:focus, #UserListTb_filter input[type=search], #UserListTb_filter input[type=search]:focus, #questionsTable_filter input[type=search], #questionsTable_filter input[type=search]:focus, #statusTable_filter input[type=search], #statusTable_filter input[type=search]:focus, .notschedulemeeting #meeting_filter input[type=search], .notschedulemeeting #meeting_filter input[type=search]:focus, #profile_filter input[type=search], #profile_filter input[type=search]:focus, #irfTable_filter input[type=search], #irfTable_filter input[type=search]:focus, #OpeninterviewList_filter input[type=search], #OpeninterviewList_filter input[type=search]:focus, #MyInterviewList_filter input[type=search], #MyInterviewList_filter input[type=search]:focus, #dupmeeting_filter input[type=search], #dupmeeting_filter input[type=search]:focus, #activityTable_filter input[type=search], #activityTable_filter input[type=search]:focus {
     background: #FFF;
     border: 1px #ccc solid !important;
     width: 256px !important;
@@ -5864,9 +5864,12 @@ input[type="date"].form-control {
     padding: 9px 10px 9px 10px;
     border-radius:7px;
 }
-input[type=search]:focus{
-border: 1px #ccc solid!important;
-    }
+.candidate-timeline #candidateTable_filter input[type=search].form-control{
+    width:200px!important;
+}
+input[type=search]:focus {
+    border: 1px #ccc solid !important;
+}
         .indexemp #search, #skillLevel_filter #search, #risebirduser_filter #search, #clientduser_filter #search, #skill_filter #search, #questionsTable_filter #search, #entitleTable_filter #search {
     right: 45px;
     z-index: 0;
@@ -7230,9 +7233,9 @@ border: 1px #ccc solid!important;
 
 .topheader-header {
     position: absolute;
-    top: 63px;
+    top: 64px;
     z-index: 1;
-    right: 315px;
+    right: 245px;
 }
 
 .topheader-link {
@@ -7268,7 +7271,8 @@ border: 1px #ccc solid!important;
         background: none;
         border: 0px;
         color: #817c7c;
-        font-weight: 600
+        font-weight: 600;
+        padding:0px;
     }
 
 .filter:hover + .note-filter {
@@ -8750,7 +8754,7 @@ option {
     box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.1);
     margin: 30px auto 30px 230px;
     display: table;
-    padding: 40px 40px 20px 40px;
+    padding: 40px 40px 40px 40px;
     border-bottom: 4px #42a5f540 solid;
 }
     .campaignForm h1 {
@@ -9540,6 +9544,10 @@ option {
         .top-h {
             height: 60px !important;
         }
+        .candidate-timeline.public-url table {
+            margin-top:72px !important;
+        }
+   
         .interviewresponsebtn{
             font-size:16px!important;
         }
@@ -9992,6 +10000,8 @@ option {
             .nodata img {
                 width: 26px !important;
             }
+    
+
 
         .logo-cm {
             position: relative;
@@ -10102,7 +10112,7 @@ option {
             width: 45%;
             float: right;
         }
-
+       
         #calenderTimeslot, #calenderRecoTimeslot {
             left: 20px;
         }
@@ -10223,14 +10233,32 @@ option {
     }
 
 
-    @media only screen and (max-width: 768px) {
-        [class^='col-xs-'],
-        [class^='col-sm-'],
-        [class^='col-md-'],
-        [class^='col-lg-'] {
-            margin-bottom: 10px;
-        }
+@media only screen and (max-width: 768px) {
+    [class^='col-xs-'],
+    [class^='col-sm-'],
+    [class^='col-md-'],
+    [class^='col-lg-'] {
+        margin-bottom: 10px;
+    }
 
+    .topheader-header .filter {
+        position: relative !important;
+        right: -186px !important;
+        top: -40px;
+    }
+
+    .topheader-header #status_3 {
+        position: relative !important;
+        right: -190px !important;
+        top: -41px;
+    
+    }
+    .topheader-header {
+        right: 222px;
+    }
+    .candidate-timeline.public-url table {
+        margin-top: 60px !important;
+    } 
         .logo-cm {
             position: relative;
             top: 4px !important;
@@ -10588,12 +10616,20 @@ option {
     #btnStart, #btnStop {
         left: 150px;
     }
-
+    #actionwrap .action-btn {
+        margin:0px!important;
+    }
+    #actionwrap.flex-w {
+        display:flow!important;
+    }
     .action-btn {
         width: 100px;
         margin: 0px auto;
     }
-
+    .animated-arrow > .main {
+        top: 0px!important;
+        left: -98px!important;
+    }
     .candidate .journey td.cadEmail {
         width: 130px !important;
     }
@@ -11039,6 +11075,21 @@ option {
         background: url(../../img/interview.svg) -20px 37px no-repeat !important;
     }
 
+    #entitleTable.dataTable > tbody > tr > td:first-child {
+        padding-right: 95px!important;
+    }
+
+    .candidate-timeline.public-url .nopad{
+        padding:0px!important;
+    }
+    .content.client .mdc-card-wrapper__text-section {
+        padding: 0px !important;
+    }
+    .topheader-header #status_3 {
+        position: relative !important;
+        right: 356px !important;
+        top: -2px;
+    }
     .candidate-tab .tab-block .card-block {
         width: 30.3% !important;
         float: left !important;
@@ -11079,7 +11130,7 @@ option {
         text-align: right;
         position: absolute;
         left: 104px;
-        top: -45px;
+        top: 31px;
     }
 
     .public-url #candidateTable_length {
@@ -11220,10 +11271,11 @@ option {
     }
 
     .topheader-link-wrap {
-        width: 248px;
+        width: 100%;
         font-size: 10px;
         margin: 0px !important;
-        padding: 0px !important;
+        padding: 0px 9px !important;
+        text-align: left;
     }
 
     .topheader-link {
@@ -11360,7 +11412,19 @@ option {
         top: 6px;
         right: 95px;
     }
+    .candidate-timeline.public-url table {
+        margin-top:60px !important;
+    }
+    .topheader-header .filter {
+        position: relative !important;
+        right: -135px !important;
+    }
 
+    .topheader-header #status_3 {
+        position: relative !important;
+        right: 238px !important;
+        top: -3px;
+    }
     .click_herebtn {
         top: 0px !important;
         color: #fff !important;
@@ -14430,7 +14494,12 @@ blockquote {
 .pad7 {
     padding: 7px;
 }
-
+.pad3 {
+    padding: 3px;
+}
+#candidateTable_filter input[type=search]{
+    width:200px!important;
+}
 .timer {
     display: inline;
     padding: 2px 8px;
@@ -17763,19 +17832,29 @@ div.tagsinput {
     .topheader-header {
         right: 0px !important;
     }
-
+    .candidate-timeline.public-url table {
+        margin-top: 64px !important;
+    }
         .topheader-header [data-tooltip]:before {
             left: -270px;
         }
 
     .mh-top {
-        margin-top: 60px !important;
+        margin-top: 74px !important;
     }
 
     .videoPreviewContainer {
         width: 100%;
     }
-
+    .topheader-header .filter {
+        position: relative !important;
+        right: -48px !important;
+        top: 7px;
+        background: #42a5f5;
+        padding: 7px;
+        color: #fff;
+    }
+ 
     .support {
         position: absolute;
         left: auto;

@@ -287,14 +287,14 @@
                                             </button>
                                             *@
 
-                                            <span onclick="location.href='@Url.Action("Risebirdpay", "Client")'"><span class="wallet-iconcolor" style="position:relative;top:7px;"><i class="fas fa-wallet" style=" font-size: 15px;position: relative;top: -5px; left: -3px;"></i></span><span class="pull-left d-lg-inline-flex pad7" style="color:#fff;font-size:12px;font-weight:bold;"><span style="position:relative;top:10px;">Penalty Wallet</span></span></span>
+                                            <span onclick="location.href='@Url.Action("Risebirdpay", "Client")'"><span class="wallet-iconcolor" style="position:relative;top:-1px;"><i class="fas fa-wallet" style=" font-size: 15px;position: relative;top: -5px; left: -3px;"></i></span><span class="pull-left d-lg-inline-flex pad7" style="color:#fff;font-size:12px;font-weight:bold;"><span style="position:relative;top:-2px;">Penalty Wallet</span></span></span>
                                             @* <span style="cursor:pointer;" onclick="location.href='@Url.Action("CreateInterviewRequest", "InterviewRequest")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> New Interview Request</font></span>
                                             <span style="cursor:pointer;" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Manage Interviews</font></span>
                                              *@
 
                                             <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top">
-                                                <span class="topheader-link" style="position:relative;top:7px;"><i class="fa fa-users" style="color:#fff"></i></span>
-                                                <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;position:relative;top:10px;">
+                                                <span class="topheader-link" style="position:relative;top:-1px;"><i class="fa fa-users" style="color:#fff"></i></span>
+                                                <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;position:relative;top:-2px;">
                                                     Manage Interviews
                                                 </div>
 
@@ -302,8 +302,8 @@
 
 
                                                    <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagementDetails('ClientDash')" style="cursor:pointer" style="left:160px;">
-                                    <span class="topheader-link" style="position:relative;top:7px;"><i class="fas fa-users-cog" style="color:#fff"></i></span>
-                                    <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;position:relative;top:10px;">
+                                    <span class="topheader-link" style="position:relative;top:-1px;"><i class="fas fa-users-cog" style="color:#fff"></i></span>
+                                    <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;position:relative;top:-2px;">
                                         Live Interview Co-ordination
                                     </div>
 
@@ -338,7 +338,7 @@
                                         @if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                                         {
                                             <div class="dropdownStats" style="fill:white">
-                                                <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="margin-right:-19px"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
+                                                <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="margin-right:-2px"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
                                                 <button class="dropbtnStats"><font style="font-family: arial;font-size: 15px !important;text-transform: capitalize;padding-right:20px;color:#fff;font-weight:normal"> Stats</font></button>
                                                 <div class="dropdown-contentStats">
                                                     <a href='@Url.Action("SkillChannelDetails", "IRF")'>Skill Channel Stats</a>
