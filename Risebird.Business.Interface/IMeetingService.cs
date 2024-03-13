@@ -237,5 +237,6 @@ namespace Risebird.Business.Interface
         Task<int> GetUniqueUserByEmailId(string emailId, string id);
         Task<bool> ConfirmInterviewavailability(string emailId, int id,string type);
         Task<bool> UpdateInterviewerAvailbilityStatusCampaignLevel(bool status, string uniqueid, int campaignId, string rsc = null);
+        Task<bool> MoveInterviewForTechQC(string Emailid,int interviewid,bool activestatus);
     }
 }

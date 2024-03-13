@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO      
                       
-CREATE PROCEDURE usp_GetInterviewerStatsAndRatingsDetails     
+Create PROCEDURE usp_GetInterviewerStatsAndRatingsDetails     
                   
 @timeNow datetime,
 @irfId int = null,
@@ -69,18 +69,20 @@ DECLARE @tbl_ResultInterviews TABLE (
 	InterviewStatus int,
 	ResultType varchar(30),
 	InterviewerJoinTime datetime,
-	irfId int
+	irfId int,
+	isTechQC bit
 )
 
 
 INSERT INTO @tbl_ResultInterviews    
 select im.id, im.interviewDate, im.candidateEmail, im.SkillChannel, cl.[Name], ic.MeetingStatus, 
-ic.InterviewStatus, @type, tijt.JoiningTime,IRF.id as irfId
+ic.InterviewStatus, @type, tijt.JoiningTime,IRF.id as irfId,ISNULL(tqd.IsActive,0) as isTechQC
 from @tbl_RelevantInterviews im
 left join InterviewComments ic on ic.InterviewId = im.id
 join IRF on irf.IRFId = im.SkillChannel
 join CLient cl on cl.id = irf.ClientId
 left join @tbl_InterviewerJoinTime tijt on tijt.interviewId = im.id
+left join TechQualityDetails tqd on tqd.Interviewid=im.id
 where (@type =  'all') 
 or (@type = 'completed' and ic.MeetingStatus in (4, 6, 7, 8))
 or (@type = 'selected' and (ic.InterviewStatus = 2) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6))
@@ -96,7 +98,7 @@ or (@type = 'scheduled' and ic.MeetingStatus = 2 and im.interviewDate > @timeNow
 
 
     
-	select * from @tbl_ResultInterviews
+select * from @tbl_ResultInterviews
 
 END        
   

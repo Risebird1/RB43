@@ -6,7 +6,14 @@
     ViewBag.PageHeader = "";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<style>
+    .client-dropdown .select2-selection{
+        display:inline-block;
+        height:40px;
+        width:100%;
+        margin-top:6px;
+    }
+</style>
 <link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
 
 <link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
@@ -53,18 +60,25 @@
                                         <h3 class="tab_drawer_heading" rel="tab-1">Recommendations</h3>
                                         <div class="tab-box" id="tab-1" style="display:block;">
                                             <div class="tab-main-box">
-                                                <h5>Template Details</h5>
+                                             <div class="row">
                                                 <div class="form-group col-md-6 col-sm-6 pr-1">
+                                                    
                                                     @Html.LabelFor(model => model.TemplateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                     @Html.EditorFor(m => m.TemplateName, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "validateName()" } })
                                                     <div style="position:relative">
                                                         @Html.ValidationMessageFor(model => model.TemplateName, "", new { @id = "error_TemplateName", @class = "text-danger", @style = "position:absolute" })
                                                     </div>
                                                 </div>
-                                                <br />
-                                                <h5>Meeting Platform</h5>
+                                               <div class="col-md-6 col-sm-6 pr-1">
+                                                   <div class="form-group">
+                                                            @Html.CheckBoxFor(model => model.IsAadhaarVerificationRequired) @Html.LabelFor(model => model.IsAadhaarVerificationRequired)
+                                                        </div>
+                                               </div>
+                                               </div>
                                                 <div class="row">
                                                     <div class="col-md-6">
+                                                      <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Meeting Platform">Meeting Platform</label>
+
                                                         <div class="form-group">
                                                             @foreach (var platform in Model.MeetingPlatformOptions)
                                                             {
@@ -75,12 +89,9 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            @Html.CheckBoxFor(model => model.IsAadhaarVerificationRequired) @Html.LabelFor(model => model.IsAadhaarVerificationRequired)
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <h5>Recommendation Details</h5>
+
+                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Recommendation Details">Recommendation Details</label>
+
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <label class="radio-inline">
@@ -92,12 +103,22 @@
 
                                                     </div>
                                                 </div>
+
+
+
+
+                                                     @*   <div class="form-group">
+                                                            @Html.CheckBoxFor(model => model.IsAadhaarVerificationRequired) @Html.LabelFor(model => model.IsAadhaarVerificationRequired)
+                                                        </div>*@
+                                                    </div>
+                                                </div>
+                                                
                                                 <div id="recommendationFields">
                                                     <div class="row">
                                                         <div class="col-md-6 col-sm-6 pr-1">
                                                             <div class="form-group">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
                                                                 </div>
 
                                                                 @if (Model.IRFRecommendations.AssessmentGroupsList != null && Model.IRFRecommendations.AssessmentGroupsList.Count() > 0)
@@ -118,7 +139,7 @@
                                                         <div class="col-md-6 col-sm-6 pr-1">
                                                             <div class="form-group">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
                                                                 </div>
                                                                 @if (Model.IRFRecommendations.CategoryId.HasValue)
                                                                 {
@@ -140,7 +161,7 @@
                                                         <div class="col-md-6 col-sm-6 pr-1">
                                                             <div class="form-group">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
                                                                 </div>
 
                                                                 @Html.DropDownListFor(model => model.IRFRecommendations.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "select-css form-control text-box single-line" })
@@ -151,7 +172,7 @@
                                                         <div class="col-md-6 col-sm-6 pr-1">
                                                             <div class="form-group">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style="padding-right:0px;" })<span class="red">*</span>
                                                                 </div>
                                                                 @Html.DropDownListFor(model => model.IRFRecommendations.CompanyType, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "select-css form-control text-box single-line" })
                                                                 @Html.ValidationMessageFor(model => model.IRFRecommendations.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
@@ -162,7 +183,7 @@
                                                         <div class="col-md-6 col-sm-6 pr-1">
                                                             <div class="form-group">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
                                                                 </div>
 
                                                                 <select class="form-control" asp-for="IRFRecommendations.SeniorityLevelArray" multiple">
@@ -181,7 +202,7 @@
 
 
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
                                                                 </div>
 
                                                                 <select class="form-control" asp-for="IRFRecommendations.DifficultyLevelArray" multiple">
@@ -202,7 +223,7 @@
                                                         <div class="col-md-6 col-sm-6 pr-1">
                                                             <div class="form-group">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
                                                                 </div>
 
                                                                 <select class="form-control" asp-for="IRFRecommendations.EmploymentTypeArray" multiple">
@@ -219,7 +240,7 @@
                                                         <div class="col-md-6 col-sm-6 pr-1">
                                                             <div class="form-group">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.PerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-bottom : -5px" })<span class="red">*</span>
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.PerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-bottom : -5px;padding-right:0px;" })<span class="red">*</span>
                                                                 </div>
                                                                 @Html.EditorFor(model => model.IRFRecommendations.PerHourRate, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
 
@@ -231,7 +252,7 @@
                                                         <div class="col-md-6 col-sm-6 pr-1">
                                                             <div class="form-group">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
                                                                 </div>
 
                                                                 @Html.TextBoxFor(model => model.IRFRecommendations.PrimarySkills, new { @class = "form-control text-box single-line", @placeholder = "Use ';' to distinguish separate skills. Each skill should be a maximum 20 character long.", @onblur = "validatePrimarySkill(this.value)" })
@@ -241,12 +262,12 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group">
+                                                            <div class="form-group client-dropdown">
                                                                 <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.Clients, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })@*<span class="red">*</span>*@
+                                                                    @Html.LabelFor(model => model.IRFRecommendations.Clients, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })@*<span class="red">*</span>*@
                                                                 </div>
 
-                                                                <select class="form-control" asp-for="IRFRecommendations.ClientArray" placeholder="Tag Client(s) you recommend this Template to." multiple">
+                                                                <select style="height:30px;display:inline-block;margin-top:6px;width:100%;" class="form-control" asp-for="IRFRecommendations.ClientArray" placeholder="Tag Client(s) you recommend this Template to." multiple">
                                                                     @foreach (var item in Model.IRFRecommendations.ClientList)
                                                                     {
                                                                         <option value="@item.Value">@item.Text</option>
