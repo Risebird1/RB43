@@ -3819,5 +3819,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroup)
+        {
+            try
+            {
+                return _irfRepository.CheckAssessmentGroupAlraedyExist(AssessmentGroup).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

@@ -51,7 +51,8 @@
                     @Html.LabelFor(model => model._skilldetails.AssessmentGroupName, htmlAttributes: new { @class = "control-label col-lg-6 col-md-6 col-sm-6 col-xs-6 desp-label" })<span class="red"> * </span>
                 </div>
                 @Html.EditorFor(model => model._skilldetails.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control", @type = "text", @required = "required" } })
-                @Html.ValidationMessageFor(model => model._skilldetails.AssessmentGroupName, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model._skilldetails.AssessmentGroupName, "", new { @class = "text-danger", @id = "ValidationAssessmentGroupName" })
+                <input type="hidden" name="_skilldetails.NewAssessmentGroupName" id="hdnAssessmentGroupName" />
             </div>
             <div class="form-group col-lg-6  col-md-6 col-sm-6 pull-left">
                 <div class="mandate">
@@ -225,4 +226,34 @@
             document.getElementById("codelanguagediv").style.display = "block";
         }
     }
+</script>
+<script>
+   
+    function checkAssessmentGroup() {
+        var assessmentGroupName = $('#zskilldetails_AssessmentGroupName').val();
+        $.ajax({
+            url: '/IRF/CheckAssessmentGroupAlraedyExist',
+            type: 'POST',
+            data: { 'AssessmentGroupName': assessmentGroupName },
+            success: function (data) {
+                if (data == true) {
+                    document.getElementById("ValidationAssessmentGroupName").innerHTML = "Assessment group already exists.";
+                     $("#btnUpload").prop("disabled", true);
+                } else {
+                    $("#btnUpload").prop("disabled", false);
+                }
+            }
+        });
+    }
+
+    $('#zskilldetails_AssessmentGroupName').keyup(function () {
+        var assessmentGroupName = $('#zskilldetails_AssessmentGroupName').val();
+        $('#hdnAssessmentGroupName').val(assessmentGroupName);
+    });
+
+    $(document).ready(function () {
+        $('#zskilldetails_AssessmentGroupName').blur(function () {
+            checkAssessmentGroup();
+        })
+    });
 </script>
