@@ -1816,7 +1816,7 @@
     }
 
     function validateName() {
-        var letterNumber = /^[0-9a-zA-Z]+$/;
+        @* var letterNumber = /^[0-9a-zA-Z]+$/; *@
 
         var val = document.getElementById("TemplateName").value;
 
@@ -1830,11 +1830,11 @@
             document.getElementById("error_TemplateName").innerHTML = "The Template Name should not be greated than 100 characters long.";
             return false;
         }
-        else if (!(val.match(letterNumber))) {
+    @*     else if (!(val.match(letterNumber))) {
             document.getElementById("TemplateName").focus();
             document.getElementById("error_TemplateName").innerHTML = "Only Letters and Numbers are allowed.";
             return false;
-        }
+        } *@
         else {
 
             $.ajax({
