@@ -8239,6 +8239,34 @@ namespace Risebird.Repository
             }
 
         }
+
+        public async Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroup)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@AssessmentGroup", AssessmentGroup);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_CheckAssessmentGroupAlraedyExist", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    if (result.Count() > 0)
+                    {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
     }
 }
 
