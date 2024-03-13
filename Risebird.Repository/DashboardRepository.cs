@@ -1482,7 +1482,7 @@ namespace Risebird.Repository
                     parameters.Add("@enddate", interviewenddate);
                     parameters.Add("@Emailid", Emailid);
                     var result = await SqlMapper.QueryAsync<InterviewManagementVM>(con, "usp_GetInterviewManagementDetails", parameters,
-                        commandType: CommandType.StoredProcedure,commandTimeout:600);
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
                     return result;
                 }
             }
@@ -1573,6 +1573,28 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<PQIDetails>(con, "usp_PQIHighStatsRates", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<List<MeetingVM>> FetchTechQCDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchTechQCDetails", null,
                         commandType: CommandType.StoredProcedure);
                     return result?.ToList();
                 }

@@ -1984,6 +1984,61 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper30">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="TechQCInterviews()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#e0b447"><img src="~/img/tech-qc.png"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Tech QC </strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong><span id="ribbonTechQcCount" onclick="TechQCInterviews()">@Model.NotUpdatedMeetingsObj.TechQCCount </span> </strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="111" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="TechQCInterviews()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#e0b447"><img src="~/img/tech-qc.png"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Tech QC</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>  <span style="cursor:pointer" id="ribbonTechQcCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.TechQCCount</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="TechQCInterviews()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2045,6 +2100,9 @@
     }
     function PQIDetalis(){
         window.location.href = "/Dashboard/InterviewerIRFDetails";
+    }
+    function TechQCInterviews() {
+        window.location.href = "/Dashboard/TechQCDetails";
     }
 </script>
 <script type="text/javascript">
@@ -2251,6 +2309,13 @@
                 else {
                     $(".flipper28").removeClass("flipper");
                 }
+                
+                if (parseInt(data.techQCCount) != parseInt($("#ribbonTechQcCount").text())) {
+                    $(".flipper30").addClass("flipper");
+                }
+                else {
+                    $(".flipper30").removeClass("flipper");
+                }
 
                 $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
@@ -2279,6 +2344,7 @@
                 $("#ribbonMailCount").text(data.bounceDroppedCandidateMailCount);
                 $("#ribbonDMApproveCount").text(data.dmApproveCount);
                 $("#ribbonMissedCandidateCount").text(data.missedCandidateCount);
+                $("#ribbonTechQcCount").text(data.techQCCount);
 
                 $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
                 $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
@@ -2307,6 +2373,7 @@
                 $("#ribbonMailCount_1").text(data.bounceDroppedCandidateMailCount);
                 $("#ribbonDMApproveCount_1").text(data.dmApproveCount);
                 $("#ribbonMissedCandidateCount_1").text(data.missedCandidateCount);
+                $("#ribbonTechQcCount_1").text(data.techQCCount);
 
                 $(".flipper").toggleClass("flip");
             }

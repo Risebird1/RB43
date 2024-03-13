@@ -889,7 +889,7 @@ namespace Risebird.Repository
                     var results = await con.QueryAsync<int>(query, dynamicParameters);
                     //if (results.FirstOrDefault() == 1)
                     //{
-                    return "We recommend to the interviewer to keep their video on throughout the interview. On keeping your Video On, you will be paid 10% of the Base Pay, which is close to 50 for Offshore & 100 for Onsite Interviews.Kindly use a Virtual Background, if keeping your Video ON. Rest assured your data is 100% private and you will never be mapped to your current company.";                                                                                                                                                                                
+                    return "We recommend to the interviewer to keep their video on throughout the interview. On keeping your Video On, you will be paid 10% of the Base Pay, which is close to 50 for Offshore & 100 for Onsite Interviews.Kindly use a Virtual Background, if keeping your Video ON. Rest assured your data is 100% private and you will never be mapped to your current company.";
                     //}
                     //else
                     //{
@@ -4779,7 +4779,7 @@ namespace Risebird.Repository
                     parameters.Add("Clientid", Clientid);
                     parameters.Add("Emailid", Emailid);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientReScheduledMeetings", parameters,
-                         commandType: CommandType.StoredProcedure,commandTimeout:600);
+                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
                 }
             }
             catch (SqlException ex)
@@ -7113,7 +7113,7 @@ namespace Risebird.Repository
                 return 0;
             }
         }
-        public async Task<bool> ConfirmInterviewavailability(string emailId, int id,string type)
+        public async Task<bool> ConfirmInterviewavailability(string emailId, int id, string type)
         {
             try
             {
@@ -7149,6 +7149,28 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerAvailbilityStatusCampaignLevel", dynamicParameters,
+                                            commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid,bool activestatus)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", Emailid);
+                dynamicParameters.Add("@interviewid", interviewid);
+                dynamicParameters.Add("@activestatus", activestatus);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_SaveTechQCDetails", dynamicParameters,
                                             commandType: CommandType.StoredProcedure);
                     return true;
                 }

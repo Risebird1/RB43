@@ -23,6 +23,9 @@ left join UserList ulc on ulc.id=IRF.RisebirdHr
 outer Apply(Select max(PerformedOn) as PerformedOn From  PageClickDetails where Interviewid=im.id and ButtonAction='JoinMeeting') pg  
 where im.interviewdate>=DateAdd(Day,-7,(CONVERT(VARCHAR(10),@currentdate,23))) and im.interviewdate<=DateAdd(Day,1,(CONVERT(VARCHAR(10),@currentdate,23))) and im.confirmationStatus=1 and ((im.IsRescheduleNotificationSent=1 and ic.MeetingStatus!=3 and ic.MeetingStatus!=4 and ic.MeetingStatus!=6 and ic.MeetingStatus!=7 and ic.MeetingStatus!=8)  
 or (pg.PerformedOn is not null and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9))))  
+
+declare @TechQCCount int =(Select count(id) from TechQualityDetails where isActive=1)
+
 if(@Role='SeniorHR')--or @Role='SupportAdmin'              
 BEGIN      
 declare @UnassignedInterviewsCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
@@ -136,7 +139,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @InterviewerVideoKYC as InterviewerVideoKYC,  
 @ProxyCount as ProxyCount,  
 @DMApproveCount as DMApproveCount,  
-@MissedCandidateCount as MissedCandidateCount  
+@MissedCandidateCount as MissedCandidateCount,
+@TechQCCount as TechQCCount
 END            
 ELSE            
 BEGIN      
@@ -231,7 +235,8 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @InterviewerVideoKYC as InterviewerVideoKYC,  
 @ProxyCount as ProxyCount,  
 @DMApproveCount as DMApproveCount,  
-@MissedCandidateCount as MissedCandidateCount  
+@MissedCandidateCount as MissedCandidateCount,
+@TechQCCount as TechQCCount
 END            
 End
 GO
