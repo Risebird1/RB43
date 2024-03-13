@@ -7729,7 +7729,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GenerateRescheuleLink(string CandidateEmailid, string uniqueid, int interviewid,int pageReturnType)
+        public async Task<JsonResult> GenerateRescheuleLink(string CandidateEmailid, string uniqueid, int interviewid, int pageReturnType)
         {
             if (!string.IsNullOrEmpty(uniqueid))
             {
@@ -8399,6 +8399,21 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
-
+        #region Tech Quality Controller
+        public async Task<JsonResult> MovetoTechQC(int interviewid, bool activestatus)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+                var result = await _meetingService.MoveInterviewForTechQC(Emailid, interviewid, activestatus);
+                if (result)
+                {
+                    return Json("Successfully updated.");
+                }
+            }
+            return Json("Fail to update, Please try again.");
+        }
+        #endregion
     }
 }

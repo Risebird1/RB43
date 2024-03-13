@@ -26,7 +26,7 @@
                 <th>Interview Date</th>
                 <th>Candidate</th>
                 <th>Skill Channel</th>
-                @if(string.IsNullOrEmpty(clientEmailId))
+                @if (string.IsNullOrEmpty(clientEmailId))
                 {
                     <th>Client</th>
 
@@ -35,6 +35,10 @@
                 <th>Interview Status</th>
                 <th>Report</th>
                 <th>Interviewer Joining Time</th>
+                @if (ViewBag.ClientEmailId == null)
+                {
+                    <th>Tech QC</th>
+                }
 
             </tr>
         </thead>
@@ -43,7 +47,7 @@
                 <th>Interview Date</th>
                 <th>Candidate</th>
                 <th>Skill Channel</th>
-                @if(string.IsNullOrEmpty(clientEmailId))
+                @if (string.IsNullOrEmpty(clientEmailId))
                 {
                     <th>Client</th>
 
@@ -52,7 +56,10 @@
                 <th>Interview Status</th>
                 <th>Report</th>
                 <th>Interviewer Joining Time</th>
-               
+                @if (ViewBag.ClientEmailId == null)
+                {
+                    <th>Tech QC</th>
+                }
             </tr>
         </tfoot>
         <tbody>
@@ -62,7 +69,7 @@
                 foreach (var item in Model)
                 {
                     <tr>
-                
+
                         <td>@item.interviewDate</td>
                         <td>@item.candidateEmail</td>
                         <td>@item.SkillChannel</td>
@@ -79,9 +86,9 @@
                         {
                             <td>@(item.MeetingStatus.HasValue && item.MeetingStatus.Value > 0 ? ((MeetingStatus)item.MeetingStatus).GetDescription() : "NA") </td>
                         }
-                        
+
                         @if (ViewBag.StatType == StatsTypes.Selected || ViewBag.StatType == StatsTypes.Rejected
-                            || ViewBag.StatType == StatsTypes.Borderline || ViewBag.StatType == StatsTypes.Proxy)
+                       || ViewBag.StatType == StatsTypes.Borderline || ViewBag.StatType == StatsTypes.Proxy)
                         {
                             <td>@(item.InterviewStatus.HasValue && item.InterviewStatus.Value > 0 ? ((InterviewStatus)item.InterviewStatus).GetDescription() : "NA") </td>
 
@@ -91,7 +98,7 @@
                             <td>NA</td>
                         }
                         <td>
-                            @if(item.InterviewStatus.HasValue  && item.InterviewStatus.Value == (int)InterviewStatus.Selected)
+                            @if (item.InterviewStatus.HasValue && item.InterviewStatus.Value == (int)InterviewStatus.Selected)
                             {
                                 <a target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = true })'>
                                     Report
@@ -108,9 +115,30 @@
                         <td>
                             @(item.InterviewerJoinTime.HasValue ? item.InterviewerJoinTime.Value.ToString() : "NA")
                         </td>
-
+                        @if (ViewBag.ClientEmailId == null)
+                        {
+                            <td>
+                                <div class="form-group">
+                                    <div class="switch-btn">
+                                        @* <span class="on-off">Off</span> *@
+                                        <div class="material-toggle">
+                                            @if (item.isTechQC)
+                                            {
+                                                <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,false)" checked="checked" value="false" name="Move To Tech QC">
+                                            }
+                                            else
+                                            {
+                                                <input class="switch" id="MoveToCP_@item.interviewId" type="checkbox" onchange="UpdateTechQCDetails(@item.interviewId,true)" value="false" name="Move To Tech QC">
+                                            }
+                                            <label for="MoveToCP_@item.interviewId" class=""></label>
+                                        </div>
+                                        @* <span class="on-off">On</span> *@
+                                    </div>
+                                </div>
+                            </td>
+                        }
                     </tr>
-            
+
                 }
             }
 
@@ -119,4 +147,15 @@
     </table>
 
 </div>
-
+<script>
+    function UpdateTechQCDetails(interviewid, activestatus) {
+        $.ajax({
+            type: "POST",
+            url: "/Interview/MovetoTechQC",
+            data: { 'interviewid': interviewid, 'activestatus': activestatus },
+            success: function (data) {
+                swal.fire(data);
+            }
+        });
+    }
+</script>

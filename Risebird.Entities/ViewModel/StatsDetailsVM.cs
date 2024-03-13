@@ -15,6 +15,6 @@ namespace Risebird.Entities.ViewModel
         public int irfId { get; set; }
         public DateTime? InterviewerJoinTime { get; set; }
         public int? interviewId { get; set; }
-
+        public bool isTechQC { get; set; }
     }
 }

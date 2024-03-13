@@ -224,19 +224,7 @@ Begin
 					SELECT @idIrf, cubd.ClientUserId, ClientUser.RoleId as ClientRoleId FROM @ClientUserBulkData cubd 
 					left join ClientUser on cubd.ClientUserId= ClientUser.UserId 
  
-					--quality controllers
-				 --	delete from TransQualityController where IRFId=@id        
-
-					--INSERT INTO [dbo].[TransQualityController](  
-					--[IRFId] ,  
-					--[UserId],  
-					--[PerSuccessRate],
-					--[IsActive],
-					--[InterviewerId])  
-     
-					--SELECT qcbd.*, InterviewerProfile.id as InterviewerId FROM @QCBulkData qcbd left join InterviewerProfile on qcbd.UserId = InterviewerProfile.UserId  
- 
-					--HRs
+					
 	
 					INSERT INTO [dbo].[TransHR](  
 					[IRFId] ,  
@@ -249,6 +237,92 @@ Begin
 						insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt) 
 						values (@idIrf, @SkillChannelSME, Isnull(@CreatedBy, ''), @CreatedOn)
 					End
+
+					if exists(select top 1 id from MasterAssessmentGroup where AssessmentGroupId = @AssessmentGroupId)
+					Begin
+						if not exists(select top 1 csc.id from ClonableSkillChannel csc join IRF on irf.id= csc.CreatedFromIRFId join AssessmentGroup ag on ag.id = irf.AssessmentGroupId where ag.id = @AssessmentGroupId and (csc.IsDeleted is null or csc.IsDeleted =0))
+						Begin
+							declare @idClonableIrf int, @templateName varchar(100)
+							set @idClonableIrf = 0
+							set @templateName = (select AssessmentGroup from AssessmentGroup where id = @AssessmentGroupId) + ' Template'
+  
+							if not exists (select 1 from ClonableSkillChannel where [Name] = @templateName)       
+							Begin     
+  
+							INSERT INTO [dbo].[ClonableSkillChannel]              
+								([Name]              
+								,[CreatedOn]              
+								,[CreatedFromIRFId]  
+								,[CreatedBy]   
+								,[MeetingPlatform]
+								,[IsAadhaarVerificationRequired])  
+							VALUES              
+							(@templateName,              
+								@CreatedOn,              
+								@idIrf,   
+								@CreatedBy,  
+								'Zoom',
+								@IsAadhaarVerificationRequired)        
+         
+							select @idClonableIrf = SCOPE_IDENTITY() 
+
+							if(@idClonableIrf != 0)
+							Begin
+
+
+								delete from TransClonableIRFTechSkill where ClonableIRFId= @idClonableIrf  
+  
+								 INSERT INTO [dbo].[TransClonableIRFTechSkill](      
+								 [ClonableIRFId] ,      
+								 [LevelId],      
+								 [SkillId],      
+								 [Weightage],[Concepts],[Natureofquestion],[Timelimit])      
+      
+								 SELECT @idClonableIrf, tsbd.LevelId, tsbd.[SkillId], tsbd.[Weightage], tsbd.[Concepts], tsbd.[Natureofquestion], tsbd.[Timelimit]  FROM @TechSkillBulkData tsbd
+
+
+								  delete from TransClonableIRFInterviewer where ClonableIRFId= @idClonableIrf  
+  
+								
+								;With CTE AS( Select id, AssessmentGroupId, UserId, value from InterviewerProfile cross Apply string_split(AssessmentGroupId,','))     
+
+								INSERT INTO [dbo].[TransClonableIRFInterviewer](    
+																[ClonableIRFId] ,    
+																[UserId],    
+																[PerSuccessRate],   
+																[IsActive],  
+																--[IsAvailable],  
+																[InterviewerId])  
+								Select Distinct @idClonableIrf, CTE.UserId, @FlatRate, 1, CTE.id      
+								From CTE join Userlist ul on CTE.UserId=ul.id       
+								where (CTE.value = @AssessmentGroupId or CTE.value in 
+								(select AssessmentGroupId from SecondaryAssessmentGroups where MAGId = 
+								(select id from MasterAssessmentGroup where AssessmentGroupId = @AssessmentGroupId))) and ul.IsActive=1    
+								group by CTE.UserId,CTE.AssessmentGroupId, CTE.id
+
+
+
+								--questions 
+								declare @createdByUserId int = (select id from UserList where EmailId = @CreatedBy)
+							
+								delete from ClonableTemplateQuestions where ClonableIRFId= @idClonableIrf  
+  
+								 INSERT INTO [dbo].[ClonableTemplateQuestions](    
+								 [ClonableIRFId] ,    
+								 [UserId],    
+								 [Skill],    
+								 [Question])    
+    
+								Select distinct @idClonableIrf, @createdByUserId, sk.id as SkillId, ts.Comment as Question From TechSkillComments ts 
+								join IRF on IRF.id=ts.IRFId join Skill sk on sk.id=ts.Skill 
+								where AssessmentGroupId = @assessmentGroupId 
+
+							End
+						End
+					End
+					END
+					     
+					  
 
 				End
 			else
@@ -270,7 +344,6 @@ Begin
 	End Catch
 
 End           
-      
 GO
 
 

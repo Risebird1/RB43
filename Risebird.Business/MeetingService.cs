@@ -4150,6 +4150,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid,bool activestatus)
+        {
+            try
+            {
+                return await _meetingRespository.MoveInterviewForTechQC(Emailid, interviewid, activestatus);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 
