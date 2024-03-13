@@ -410,8 +410,8 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@id"].Value = templateDetails.ClonableSkillChannelId;
 
-                    //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar));
-                    //cmdUpdateIRF.Parameters["@Name"].Value = templateDetails.TemplateName;
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@Name"].Value = templateDetails.TemplateName;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedFromIRFId", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@CreatedFromIRFId"].Value = templateDetails.id;
