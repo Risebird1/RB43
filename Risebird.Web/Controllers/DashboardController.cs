@@ -2943,7 +2943,12 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.Type = "Rejection";
                         }
-                        else
+                        else if (type == "NegativeCandidate")
+                        {
+                            type = "NegativeCandidate";
+                            ViewBag.Type = "NegativeCandidate";
+                        }
+                        else 
                         {
                             type = "Selection";
                             ViewBag.Type = "Selection";

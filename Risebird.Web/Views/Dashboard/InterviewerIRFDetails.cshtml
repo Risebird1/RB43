@@ -28,11 +28,19 @@
                     {
                         <div class="feedback-tab-ac" onclick="Changeurldetails('Selection')"><strong>High Selection Rate</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Rejection')"><strong>High Rejection Rate</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate')"><strong>High -ve Rating</strong></div>
+                    }
+                    else if (ViewBag.Type == "Rejection")
+                    {
+                        <div class="feedback-tab" onclick="Changeurldetails('Selection')"><strong>High Selection Rate</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Rejection')"><strong>High Rejection Rate</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate')"><strong>High -ve Rating</strong></div>
                     }
                     else
                     {
                         <div class="feedback-tab" onclick="Changeurldetails('Selection')"><strong>High Selection Rate</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Rejection')"><strong>High Rejection Rate</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Rejection')"><strong>High Rejection Rate</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('NegativeCandidate')"><strong>High -ve Rating</strong></div>
                     }
                 </div>
                 <div class="pull-right">
@@ -77,6 +85,10 @@
                                                         <td>Selected Interview</td>
                                                         <td>Selection Rate(%)</td>
                                                     }
+                                                    else if (ViewBag.Type == "NegativeCandidate")
+                                                    {
+                                                        <td>Negative Rating Interviews</td>
+                                                    }
                                                     else
                                                     {
                                                         <td>Rejected Interview</td>
@@ -100,6 +112,10 @@
                                                     {
                                                         <td>Selected Interview</td>
                                                         <td>Selection Rate(%)</td>
+                                                    }
+                                                    else if (ViewBag.Type == "NegativeCandidate")
+                                                    {
+                                                        <td>Negative Rating Interviews</td>
                                                     }
                                                     else
                                                     {
@@ -133,6 +149,10 @@
                                                                     @item.selectionrate %
                                                                 </a>
                                                             </td>
+                                                        }
+                                                        else if (ViewBag.Type == "NegativeCandidate")
+                                                        {
+                                                            <td>@item.NegativeRating</td>
                                                         }
                                                         else
                                                         {

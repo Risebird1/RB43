@@ -58,6 +58,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? Createdon { get; set; }
         public string MeetingStatus { get; set; }
         public int id { get; set; }
+        public DateTime? interviewDate { get; set; }
     }
     public class InterviewerRedmarkers
     {
