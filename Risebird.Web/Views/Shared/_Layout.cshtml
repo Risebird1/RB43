@@ -265,6 +265,8 @@
                         {
                             var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
                             profileName = profileName.Trim('"');
+                            var checkclientName = HttpContextAccessor.HttpContext.Session.GetString("clientName");
+                            checkclientName = checkclientName.Trim('"');
                             @if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "Interviewer")
                             {
                                 <div class="pull-left">
@@ -276,21 +278,13 @@
                                         }
                                         @if (profileName == "Client")
                                         {
-@*                                         <span style="cursor:pointer;" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Skill Channel Stats</font></span>
-*@
-                                    @*   <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top">
-                                                <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
-                                                <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;">
-                                                    Skill Channel Stats
-                                                </div>
-
-                                            </button>
-                                            *@
-
-                                            <span onclick="location.href='@Url.Action("Risebirdpay", "Client")'"><span class="wallet-iconcolor" style="position:relative;top:-1px;"><i class="fas fa-wallet" style=" font-size: 15px;position: relative;top: -5px; left: -3px;"></i></span><span class="pull-left d-lg-inline-flex pad7" style="color:#fff;font-size:12px;font-weight:bold;"><span style="position:relative;top:-2px;">Penalty Wallet</span></span></span>
+                                            @if (!string.IsNullOrEmpty(checkclientName) && checkclientName.Trim() == "UST US")
+                                            {
+                                                <span onclick="location.href='@Url.Action("Risebirdpay", "Client")'"><span class="wallet-iconcolor" style="position:relative;top:-1px;"><i class="fas fa-wallet" style=" font-size: 15px;position: relative;top: -5px; left: -3px;"></i></span><span class="pull-left d-lg-inline-flex pad7" style="color:#fff;font-size:12px;font-weight:bold;"><span style="position:relative;top:-2px;">Penalty Wallet</span></span></span>
+                                            }
                                             @* <span style="cursor:pointer;" onclick="location.href='@Url.Action("CreateInterviewRequest", "InterviewRequest")'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> New Interview Request</font></span>
-                                            <span style="cursor:pointer;" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Manage Interviews</font></span>
-                                             *@
+                                <span style="cursor:pointer;" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg><font style="font-family: arial;font-size: 14px !important;text-transform: capitalize;padding-right:20px;"> Manage Interviews</font></span>
+                                *@
 
                                             <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("FetchInterviewerCommunicator", "Candidate", new { emailid = email, isClientLogin = true })'" data-original-title="Tooltip on top">
                                                 <span class="topheader-link" style="position:relative;top:-1px;"><i class="fa fa-users" style="color:#fff"></i></span>
@@ -301,13 +295,13 @@
                                             </button>
 
 
-                                                   <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagementDetails('ClientDash')" style="cursor:pointer" style="left:160px;">
-                                    <span class="topheader-link" style="position:relative;top:-1px;"><i class="fas fa-users-cog" style="color:#fff"></i></span>
-                                    <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;position:relative;top:-2px;">
-                                        Live Interview Co-ordination
-                                    </div>
+                                            <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagementDetails('ClientDash')" style="cursor:pointer" style="left:160px;">
+                                                <span class="topheader-link" style="position:relative;top:-1px;"><i class="fas fa-users-cog" style="color:#fff"></i></span>
+                                                <div class="d-lg-inline-flex pad7" style="color:#fff;font-size:12px;position:relative;top:-2px;">
+                                                    Live Interview Co-ordination
+                                                </div>
 
-                                </button>
+                                            </button>
 
 
 
@@ -343,7 +337,7 @@
                                                 <div class="dropdown-contentStats">
                                                     <a href='@Url.Action("SkillChannelDetails", "IRF")'>Skill Channel Stats</a>
                                                     <a href='@Url.Action("InterviewerStatsAndRatings", "Interviewer")'>Interviewer Stats</a>
-                                                   @* <a href='@Url.Action("StaffingAgencyStats", "Client")'>Staffing Agency Stats</a>*@
+                                                    @* <a href='@Url.Action("StaffingAgencyStats", "Client")'>Staffing Agency Stats</a>*@
                                                     <a href='@Url.Action("Stats", "Client")'>Client Stats</a>
                                                 </div>
                                             </div>
@@ -399,7 +393,7 @@
                                             {
                                                 @if (@email.Length > 29)
                                                 {
-                                                    <span style="font-size:13px;" title="@email"> @email.Substring(0,27) ....</span>
+                                                    <span style="font-size:13px;" title="@email"> @email.Substring(0, 27) ....</span>
                                                 }
                                                 else
                                                 {
@@ -513,7 +507,7 @@
                                             {
                                                 @if (@email.Length > 29)
                                                 {
-                                                    <span style="font-size:13px;" title="@email"> @email.Substring(0,27) ....</span>
+                                                    <span style="font-size:13px;" title="@email"> @email.Substring(0, 27) ....</span>
                                                 }
                                                 else
                                                 {
@@ -601,10 +595,10 @@
                                     </a>
                                     @if (profileName == "Interviewer" || profileName == "Client")
                                     {
-                                        <div class="mdc-ripple-upgraded card-title-space js-tr-window-trigger" style="cursor:pointer;margin-top:-3px" data-panel="main" data-url="@Url.Action("RaiseBugRequest","Support")">
+                                        <div class="mdc-ripple-upgraded card-title-space js-tr-window-trigger" style="cursor:pointer;margin-top:-3px" data-panel="main" data-url="@Url.Action("RaiseBugRequest", "Support")">
                                             <button class="mdc-fab app-fab--absolute notification" aria-label="NeedAssistance">
                                                 <span data-toggle="tooltip" data-placement="top" title="Need Assistance" class="mdc-fab__icon material-icons">
-                                                                <i style="font-size: 15px;
+                                                    <i style="font-size: 15px;
     position: relative;left: 0px" class="fa fa-user"></i><i style="font-size: 14px;
     position: relative;left:0px" class="fa fa-question"></i>
                                                 </span>
@@ -846,8 +840,8 @@
 </body>
 </html>
 <script>
-     function openInterviewManagementDetails(Pagetype) {
-        window.location.href ="/Dashboard/EmergencyInterviewDetails?pagetype="+Pagetype;
+    function openInterviewManagementDetails(Pagetype) {
+        window.location.href = "/Dashboard/EmergencyInterviewDetails?pagetype=" + Pagetype;
     }
 </script>
 <script>
