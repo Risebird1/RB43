@@ -32,7 +32,7 @@ Select cr.id,cr.Comment as Comments,cr.CreatedBy,cr.CreatedAt as Createdon,cr.Ra
 end
 else if(@type Like 'Candidate Rating%')
 begin
-Select  cfd.id,cfd.Rating as MeetingStatus,cfd.Createdon From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)   
+Select  cfd.id,cfd.Rating as MeetingStatus,cfd.Createdon,(Convert(varchar(20),im.interviewDate)+' : '+im.candidateEmail) as Comments From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)   
 end
 END
 GO
