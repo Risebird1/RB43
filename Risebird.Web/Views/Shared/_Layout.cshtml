@@ -265,8 +265,12 @@
                         {
                             var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
                             profileName = profileName.Trim('"');
-                            var checkclientName = HttpContextAccessor.HttpContext.Session.GetString("clientName");
-                            checkclientName = checkclientName.Trim('"');
+                            var checkclientName = string.Empty; ;
+                            @if (@HttpContextAccessor.HttpContext.Session.GetString("clientName") != null)
+                            {
+                                checkclientName = HttpContextAccessor.HttpContext.Session.GetString("clientName");
+                                checkclientName = checkclientName?.Trim('"');
+                            }
                             @if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "Interviewer")
                             {
                                 <div class="pull-left">
