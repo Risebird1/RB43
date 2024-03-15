@@ -74,7 +74,7 @@
         //if (timeSpan.TotalMinutes > 15)
         //{
         //    meetingStatusList = meetingStatusList.Where(x => x.Value != ((int)MeetingStatus.NoShow).ToString() && x.Value != ((int)MeetingStatus.NoShowStatus).ToString()).ToList();
-    //}
+        //}
 
     }
     else
@@ -166,38 +166,38 @@
             @if (ViewBag.profile != "Interviewer")
             {
 
-            <div class="reportdropdown">
-                @if (ViewBag.PageReport != "Insta" )
-                {
-                    <button class="reportdropbtn">Connect with the Interviewer</button>
-                }
+                <div class="reportdropdown">
+                    @if (ViewBag.PageReport != "Insta")
+                    {
+                        <button class="reportdropbtn">Connect with the Interviewer</button>
+                    }
 
 
-                <div class="reportdropdown-content">
-                    <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = Model.InterviewId })">
-                        <text> Rate Interviewer </text>
-                    </button>
-                    @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
-                    {
-                        <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
-                            <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
+                    <div class="reportdropdown-content">
+                        <button style="margin-left: 10px;font-size: 11px" type="button" class="mdc-button  mdc-ripple-upgraded pull-left" data-toggle="ajax-modal" data-target="#addComment" data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = Model.InterviewId })">
+                            <text> Rate Interviewer </text>
                         </button>
-                    }
-                    @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
-                    {
-                        <button class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
-                            <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
-                        </button>
-                    }
+                        @if (Model.IsQCRequired && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                        {
+                            <button type="button" class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                                <span data-toggle="tooltip" data-placement="top" onclick="location.href = '@Url.Action("QCReportForm", "Interview", new { interviewid = @Model.InterviewId, interviewer = Model.Interviewer,type="InterviewAddReport" })'" data-original-title="Tooltip on top"><text> Report red flags</text></span>
+                            </button>
+                        }
+                        @if (Model.IsRedoInterview && (Model.MeetingStatus == 4 || Model.MeetingStatus == 6 || Model.MeetingStatus == 7 || Model.MeetingStatus == 8))
+                        {
+                            <button class="mdc-button mdc-ripple-upgraded pull-left" style="margin-left: 10px;font-size: 11px">
+                                <span onclick="OpenSecureRedoFormModel('@Model.InterviewId','@Model.InterviewStatus','InterviewAddReport')"><text> Redo Interview</text></span>
+                            </button>
+                        }
+                    </div>
                 </div>
-            </div>
-            
-        }
+
+            }
             @*<button style="margin-bottom: 4px; margin-left: 10px; background-color:red; font-size: 11px" type="button" class="mdc-button mdc-ripple-upgraded pull-left" data-toggle="ajax-modal-audio" data-target="#audioInstructions" data-url="@Url.Action("GetClientAudioInstructionsFeedbacks","Client", new { interviewId = Model.InterviewId})">
             <text style="color:white"> Audio Feedback </text>
             </button>*@
         </div>
-        @if (@*ViewBag.PageStatus == "Mainurl" ||*@ ViewBag.PageReport == "External" ||  ViewBag.profile != "Interviewer")
+        @if (@*ViewBag.PageStatus == "Mainurl" ||*@ ViewBag.PageReport == "External" || ViewBag.profile != "Interviewer")
         {
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate PDF" onclick="getPDF()"></div>
             <div class="pull-right mt-20"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" style="margin-bottom: 4px; margin-right: 15px;" value="Generate Public URL for Instant Report" onclick="GeneratePublicUrl(3)"></div>
@@ -297,9 +297,9 @@
                                                         {
                                                             <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
                                                         }
-                                                    
+
                                                     }
-                                                    
+
 
                                                 </div>
                                             </div>
@@ -393,13 +393,14 @@
                                                     <div class="form-group">
                                                         @Html.HiddenFor(m => m.PreviousMeetingStatus)
                                                         @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                         @if (ViewBag.profile!= "Interviewer")
-                                                       {
-                                                       <span> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })</span>
+                                                        @if (ViewBag.profile != "Interviewer")
+                                                        {
+                                                            <span> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })</span>
                                                         }
 
-                                                    else{
-                                                       <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })</span>
+                                                        else
+                                                        {
+                                                            <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })</span>
 
                                                         }
                                                         @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
@@ -438,7 +439,7 @@
                                                             </div>
                                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                 <div class="talktext">
-                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true"})
+                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
                                                                     <span id='remainingC'></span>
                                                                     <div id="words"></div>
                                                                 </div>
@@ -749,7 +750,7 @@
                                                             <th width="50%">Questions</th>
                                                             <th width="20%">SkillName</th>
                                                             <th width="10%">Rating</th>
-                                                           @* <th width="10%">Time(In Seconds)</th>*@
+                                                            @* <th width="10%">Time(In Seconds)</th>*@
                                                             <th width="10%" class="action text-center">Action</th>
                                                         </tr>
                                                     </thead>
@@ -876,10 +877,11 @@
                                             is mandatory in all Technical interviews.
                                             . otherwise, Customer may apply penalty from 10-100%.
                                         </div>
-                                         @if (ViewBag.profile == "Interviewer")  {
+                                        @if (ViewBag.profile == "Interviewer")
+                                        {
 
                                             <p>  Note: If the candidate is on the range of values, then take the lower experience category only, for example if the candidate has 3 years of experience, then take 1 - 3 years only.</p>
-                                            }
+                                        }
                                         <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="SkillTable">
                                                 <thead>
@@ -930,9 +932,9 @@
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
                                                             </tr>
-                                                           @* <tr>
-                                                                <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Characters limit 25 to 250.", maxlength = "250", @style = "font-weight: bold !important;" })</td>
-                                                            </tr>*@
+                                                            @* <tr>
+                                                    <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "form-control text-box single-line", @placeholder = "Characters limit 25 to 250.", maxlength = "250", @style = "font-weight: bold !important;" })</td>
+                                                    </tr>*@
                                                         }
                                                     }
                                                 </tbody>
@@ -1259,7 +1261,7 @@
                                                                             @{
                                                                                 if (Model.VideoLink != null)
                                                                                 {
-                                                                                                        <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                                                    <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
                                                                                 }
                                                                             }
                                                                         </div>
@@ -1922,11 +1924,11 @@
             $("#QuestionsCollection_" + finalIndex + "__Comment").append(option);
             });
             $("#QuestionsCollection_" + finalIndex + "__SkillName").val(optionsData[0].Item2);*@
-                                                                                                                                                                                                            //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-                                                                                                                                                                                                            // Check document for changes
-                                                                                                                                                                                                            //$.validator.unobtrusive.parse(document);
+                                                                                                                                                                                                                    //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+                                                                                                                                                                                                                    // Check document for changes
+                                                                                                                                                                                                                    //$.validator.unobtrusive.parse(document);
 
-                                                                                                                                                                                                        }
+                                                                                                                                                                                                                }
 
     function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
@@ -2026,7 +2028,7 @@
             });*@
 
 
-                                                                                                                                                                                                        }
+                                                                                                                                                                                                                }
 
     function MeetingStatusChanged(value) {
         if (value != null && value != '') {
@@ -2087,6 +2089,7 @@
     }
 
     function CheckLength(length) {
+        debugger;
         var comments = document.getElementById("InterviewerComment").value;
         if (comments.length >= length) {
             document.getElementById("interviewerComment_Error").innerHTML = "";
@@ -2123,7 +2126,7 @@
         //var interviewStatusElem = document.getElementById("InterviewStatus");
         var meetingStatusValue = document.getElementById("MeetingStatus").value;
         var interviewStatusValue = document.getElementById("InterviewStatus").value;
-        if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4) {
+        if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4 || interviewStatusValue == 3 || interviewStatusValue == 5) {
     @*var comments = document.getElementById("InterviewerComment").value;
                 if (comments.length >= 250) {
                 document.getElementById("interviewerComment_Error").innerHTML = "";
@@ -2135,9 +2138,9 @@
                 document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
                 return false;
                 }*@
-                                                                                                                           return CheckLength(250);
+                                                                                                                                   return CheckLength(250);
         }
-        else if (interviewStatusValue == 1 || interviewStatusValue == 3) {
+        else if (interviewStatusValue == 1) {
             return CheckLength(50);
         }
         else
@@ -2220,7 +2223,7 @@
 
     function CheckQuestionsCount() {
         var meetingStatusValue = document.getElementById("MeetingStatus").value;
-        if (meetingStatusValue == 4) {
+        if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
 
             var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
             if (questionItems != null && questionItems.length >= 5) {
@@ -2277,20 +2280,20 @@
             var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
             for (i = 0; i < questionItems.length; i++) {
                 var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
-              //  var techcomment = $("#TechSkillReportCollection_" + i + "__TechComments").val();
+                //  var techcomment = $("#TechSkillReportCollection_" + i + "__TechComments").val();
                 if (temp == null || temp == '') {
                     document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
                     document.getElementById('TechSkills_CommentError').focus();
                     return false;
                 }
-                @*if (techcomment != null && techcomment != '') {
+    @*if (techcomment != null && techcomment != '') {
                     if (techcomment.length < 25) {
-                        document.getElementById("TechSkillReportCollection_" + i + "__TechComments").focus();
-                        document.getElementById("TechSkills_CommentError").innerHTML = "Kindly enter a minimum of 25 characters.";
-                        return false;
+                    document.getElementById("TechSkillReportCollection_" + i + "__TechComments").focus();
+                    document.getElementById("TechSkills_CommentError").innerHTML = "Kindly enter a minimum of 25 characters.";
+                    return false;
                     }
-                }*@
-            }
+                    }*@
+                    }
         }
         document.getElementById('TechSkills_CommentError').innerHTML = "";
         return true;
@@ -2315,7 +2318,7 @@
                 }
                 });*@
 
-                                                                                                                                                                                                            }
+                                                                                                                                                                                                                    }
 
 
     });
@@ -2458,14 +2461,14 @@
     });
     $('#InterviewerComment').keyup(function () {
 
-            var InterviewerComment = $('#InterviewerComment').val();
-            var InterviewerCommentRemoveSpace = InterviewerComment.replace(/[\s\n]/g, "");
-            var remainingCharacters = Math.max((250 - InterviewerCommentRemoveSpace.length), 0);
+        var InterviewerComment = $('#InterviewerComment').val();
+        var InterviewerCommentRemoveSpace = InterviewerComment.replace(/[\s\n]/g, "");
+        var remainingCharacters = Math.max((250 - InterviewerCommentRemoveSpace.length), 0);
 
-            $("#remainingC").html("Remaining characters : " + remainingCharacters);
-            if (InterviewerCommentRemoveSpace.length >= 250) {
-                return false;
-            }
+        $("#remainingC").html("Remaining characters : " + remainingCharacters);
+        if (InterviewerCommentRemoveSpace.length >= 250) {
+            return false;
+        }
     });
 </script>
 <script>
