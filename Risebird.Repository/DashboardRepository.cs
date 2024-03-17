@@ -1588,6 +1588,31 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@type", type);
+                parameters.Add("@timeNow", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<PQIDetails>(con, "usp_PLIInfoDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<List<MeetingVM>> FetchTechQCDetails()
         {
             try
