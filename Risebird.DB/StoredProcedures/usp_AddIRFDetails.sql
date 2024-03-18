@@ -12,7 +12,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE [dbo].[usp_AddIRFDetails]            
 @IRFId nvarchar(200),            
-@clientName varchar(200),            
+--@clientName varchar(200),            
 @JDTiltle nvarchar(200),            
 @CompanyType varchar(200),            
 @ClientId int,            
@@ -70,7 +70,7 @@ Begin
 				Begin    
 				 INSERT INTO [dbo].[IRF]            
 				   ([IRFId]            
-				   ,[clientName]            
+				   --,[clientName]            
 				   ,[JDTiltle]            
 				   ,[CompanyType]            
 				   ,[ClientId]            
@@ -109,7 +109,7 @@ Begin
 				   --,[FixedAmount])            
 					   VALUES            
 						   (@IRFId,            
-				   @clientName,            
+				   --@clientName,            
 				   @JDTiltle,            
 				   @CompanyType,            
 				   @ClientId,            
