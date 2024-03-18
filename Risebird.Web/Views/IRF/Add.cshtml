@@ -63,8 +63,8 @@
                                             @*<li><a href="#" rel="tab-10" class="" id="rtab-10">E.Interviewer</a><span id="count_Em" class="skillcount">@(Model.EmergencyInterviewerCollection != null ? Model.EmergencyInterviewerCollection.Count() : 0)</span></li>*@
                                             @*<li><a href="#" rel="tab-11" class="" id="rtab-11">Resume Evaluator</a></li>*@
                                             @*<li><a href="#" rel="tab-11" class="text-center" id="rtab-11">Recommendation</a></li>*@
-                                            <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li>
-                                            <li><a href="#" rel="tab-13" class="" id="rtab-13">Subject Matter Expert</a></li>
+                                            @* <li><a href="#" rel="tab-11" class="" id="rtab-11">Coordinator</a><span id="count_Hr" class="skillcount">0</span></li> *@
+                                            @* <li><a href="#" rel="tab-13" class="" id="rtab-13">Subject Matter Expert</a></li> *@
                                             <li><a href="#" rel="tab-12" id="rtab-12" class="">Manage Channel</a></li>
                                         </ul>
 
@@ -94,12 +94,12 @@
                                                         @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                @* <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:20px;">
                                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Risebird Scheduler</label>
                                                         @Html.EditorFor(model => model.SchedulingLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @readOnly = "readonly", @placeholder = "Scheduler Link is auto generated." } })
                                                     </div>
-                                                </div>
+                                                </div> *@
 
 
                                                 @*<div class="col-md-4 col-sm-4 pull-left" style=" position: relative; top:-18px;">
@@ -161,7 +161,7 @@
 
 
 
-                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                @* <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -169,7 +169,7 @@
                                                         @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, "Select Billing Owner", new { @class = "select-css form-control", @required = "required" })
                                                         @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id = "error_BillingOwner", @class = "text-danger" })
                                                     </div>
-                                                </div>
+                                                </div> *@
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <div class="mandate">
@@ -286,25 +286,25 @@
 
                                                         </div>
 
-                                                        <div class="form-group" >
+                                                        @* <div class="form-group" >
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
                                                             @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, "Select", new { @class = "select-css form-control" })
                                                             @Html.ValidationMessageFor(model => model.PriorityLevelList, "", new { @id = "error_PriorityLevel", @class = "text-danger" })
-                                                        </div>
+                                                        </div> *@
 
-                                                        <div class="form-group">
+                                                        @* <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
                                                             @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.ClientName, "", new { @id = "error_ClientName", @class = "text-danger" })
 
-                                                        </div>
+                                                        </div> *@
                                                         
 
-                                                        <div class="form-group">
+                                                        @* <div class="form-group">
                                                             Upload Interview Instructions
                                                             <input id="rdcompanydetails" name="rdcompanydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)" style="position:relative;top:3px;margin:0px 5px;">
                                                             Provide Interview Instructions Link
@@ -322,10 +322,10 @@
 
                                                             @Html.TextBoxFor(model => model.CompanyDetailFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf, .txt, .pptx" })
 
-                                                        </div>
+                                                        </div> *@
                                                     </div>
                                                     <div class="col-md-4 col-sm-4 px-1">
-                                                        <div class="form-group">
+                                                        @* <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
@@ -335,16 +335,16 @@
 
 
 
-                                                        </div>
-                                                        <div class="form-group">
+                                                        </div> *@
+                                                        @* <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
                                                             @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
                                                             <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></span>
                                                             @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-                                                        </div>
-                                                        <div class="form-group">
+                                                        </div> *@
+                                                        @* <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
@@ -356,7 +356,7 @@
                                                             </div>
 
 
-                                                        </div>
+                                                        </div> *@
                                                         
                                                         <div class="form-group">
                                                             Upload JD <span class="red">*</span>
@@ -445,15 +445,17 @@
 
                                                         </div>
 
-                                                        <div class="form-group">
+                                                        @* <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
                                                             @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, "Select", new { @class = "select-css form-control" })
                                                             @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @id = "error_JobLevel", @class = "text-danger" })
 
-                                                        </div>
-                                                        <div class="form-group">
+                                                        </div> *@
+                                                        @Html.HiddenFor(m => m.NoOfIntterview)
+
+                                                        @* <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
@@ -465,15 +467,15 @@
                                                             </div>
 
 
-                                                        </div>
-                                                        <div class="form-group" style="margin-bottom:6px">
+                                                        </div> *@
+                                                        @* <div class="form-group" style="margin-bottom:6px">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.PrimarySkillInvite, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
                                                             @Html.EditorFor(model => model.PrimarySkillInvite, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                             @Html.ValidationMessageFor(model => model.PrimarySkillInvite, "", new { @id = "error_PrimarySkillInvite", @class = "text-danger" })
 
-                                                        </div>
+                                                        </div> *@
 
 
                                                         @Html.HiddenFor(m => m.Type)
@@ -1115,8 +1117,8 @@
 
                                                                     <tr>
                                                                         <td>
-                                        @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators,"Select", new { @class = "select-css form-control " })
-                                                                        </td>
+@*                                         @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators,"Select", new { @class = "select-css form-control " })
+ *@                                                                        </td>
 
                                                                         <td class="action text-center">
 
@@ -1135,7 +1137,7 @@
                                             </div>
                                         </div>-->
 
-                                        <h3 class="tab_drawer_heading" rel="tab-11">Coordinator</h3>
+                                        @* <h3 class="tab_drawer_heading" rel="tab-11">Coordinator</h3>
                                         <div class="tab-box" id="tab-11">
                                             <div class="tab-main-box">
                                                 <div class="row">
@@ -1164,13 +1166,12 @@
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
-                                                            @*<label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>*@
 
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> *@
 
                                         <h3 class="tab_drawer_heading" rel="tab-13">Subject Matter Expert</h3>
                                         <div class="tab-box" id="tab-13">
@@ -2981,7 +2982,7 @@
 
 </script>
 
-<script>
+@* <script>
 
     document.body.className += "js";
 
@@ -3070,7 +3071,7 @@
     //}
 
 
-</script>
+</script> *@
 
 
 <script>
@@ -3191,29 +3192,28 @@
             //    document.getElementById("btnNext").style.display = "block";
             //    document.getElementById("btnUpload").style.display = "none";
             //}
-            else if (activeTab.trim() == "Coordinator") {
+            @* else if (activeTab.trim() == "Coordinator") {
                 $(".tab-menu li a").removeClass("active");
-                @*$("#rtab-8").addClass("active");
-                document.getElementById("tab-8").style.display = "block";*@
                 $("#rtab-7").addClass("active");
                 document.getElementById("tab-7").style.display = "block";
                 document.getElementById("tab-11").style.display = "none";
 
-            }
-            else if (activeTab.trim() == "Subject Matter Expert") {
+            } *@
+            @* else if (activeTab.trim() == "Subject Matter Expert") {
                 $(".tab-menu li a").removeClass("active");
                 $("#rtab-11").addClass("active");
                 document.getElementById("tab-11").style.display = "block";
                 document.getElementById("tab-13").style.display = "none";
-            }
+            } *@
             else if (activeTab.trim() == "Manage Channel") {
                 $(".tab-menu li a").removeClass("active");
-                $("#rtab-13").addClass("active");
-                document.getElementById("tab-13").style.display = "block";
+                //$("#rtab-13").addClass("active");
+                $("#rtab-7").addClass("active");
+                document.getElementById("tab-7").style.display = "block";
                 document.getElementById("tab-12").style.display = "none";
                 document.getElementById("btnNext").style.display = "block";
                 document.getElementById("btnUpload").style.display = "none";
-                GetSMEListForAssessmentGroup();
+                //GetSMEListForAssessmentGroup();
             }
 
         });
@@ -3293,27 +3293,27 @@
 
                 flag = IsJobProfileNameInvalid(); //Check JDTiltle
 
-                if ($('#ClientName').val() == "") {
+                @* if ($('#ClientName').val() == "") {
                     $('#error_ClientName').text("Project Name field is required.");
                     flag = true;
                 }
                 else {
                     $('#error_ClientName').text("");
-                }
-                if ($('#PriorityLevel').val() == "") {
+                } *@
+                @* if ($('#PriorityLevel').val() == "") {
                     $('#error_PriorityLevel').text("The PriorityLevel field is required.");
                     flag = true;
                 }
                 else {
                     $('#error_PriorityLevel').text("");
-                }
-                if ($('#PrimarySkillInvite').val() == "") {
+                } *@
+                @* if ($('#PrimarySkillInvite').val() == "") {
                     $('#error_PrimarySkillInvite').text("Primary skill field is required.");
                     flag = true;
                 }
                 else {
                     $('#error_PrimarySkillInvite').text("");
-                }
+                } *@
 
                 if ($('#JDLink').val() == "" && $('#JDFile').val() == "") {
                     $('#error_JDLink').text("JD field is required.");
@@ -3325,7 +3325,7 @@
                 //if ($('#StartDate').val() != "") {
                 //    flag = !(checkStartDate($('#StartDate').val()));
                 //}
-                if ($('#StartDate').val() == "0001-01-01T00:00:00.000") {
+                @* if ($('#StartDate').val() == "0001-01-01T00:00:00.000") {
                     document.getElementById("startDateCheck").style.display = "block";
                     document.getElementById("startDateCheck").innerHTML = "Start Date should be greater than or equal to Current Date";
                     flag = true;
@@ -3345,7 +3345,7 @@
                     document.getElementById("endDateCheck").innerHTML = "";
                     document.getElementById("endDateCheck").style.display = "none";
 
-                }
+                } *@
                 if ($('#RisebirdHr').val() == "") {
                     $('#error_RisebirdHr').text("The Channel Owner field is required.");
                     flag = true;
@@ -3369,13 +3369,13 @@
                 //    $('#error_NoOfPosition').text("");
                 //}
 
-                if ($('#NoOfIntterview').val() == "") {
+                @* if ($('#NoOfIntterview').val() == "") {
                     $('#error_NoOfIntterview').text("The No of Intterview field is required.");
                     flag = true;
                 }
                 else {
                     $('#error_NoOfIntterview').text("");
-                }
+                } *@
 
                 //if ($('#PerMintuteRate').val() == "") {
                 //    $('#error_PerMintuteRate').text("The Per Interview Rate field is required.");
@@ -3466,9 +3466,12 @@
                     $(".tab-menu li a").removeClass("active");
                     @*$("#rtab-8").addClass("active");
                     document.getElementById("tab-8").style.display = "block";*@
-                    $("#rtab-11").addClass("active");
-                    document.getElementById("tab-11").style.display = "block";
+                    $("#rtab-12").addClass("active");
+                    document.getElementById("tab-12").style.display = "block";
+                    document.getElementById("btnNext").style.display = "none";
+                    document.getElementById("btnUpload").style.display = "block";
                     document.getElementById("tab-7").style.display = "none";
+
                 }
             }
             @*else if (activeTab.trim() == "Interviewer") {
@@ -3501,7 +3504,7 @@
                 }
             }*@
 
-            else if (activeTab.trim() == "Coordinator") {
+            @* else if (activeTab.trim() == "Coordinator") {
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-13").addClass("active");
@@ -3509,8 +3512,8 @@
                     document.getElementById("tab-11").style.display = "none";
                     GetSMEListForAssessmentGroup();
                 }
-            }
-            else if (activeTab.trim() == "Subject Matter Expert") {
+            } *@
+            @* else if (activeTab.trim() == "Subject Matter Expert") {
                 if (!flag) {
                     $(".tab-menu li a").removeClass("active");
                     $("#rtab-12").addClass("active");
@@ -3519,7 +3522,7 @@
                     document.getElementById("btnUpload").style.display = "block";
                     document.getElementById("tab-13").style.display = "none";
                 }
-            }
+            } *@
 
 
         });

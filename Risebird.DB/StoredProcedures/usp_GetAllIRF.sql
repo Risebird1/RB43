@@ -47,81 +47,69 @@ DECLARE @tbl_ConfirmedMeetings TABLE (
     IRFId INT,          
     ConfirmedMeetings int           
 );          
-INSERT INTO @tbl_ConfirmedMeetings          
-select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
-from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId    
---join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
-inner join UserList ul on ul.EmailId = im.candidateEmail           
-inner join CandidatesMaster cm on ul.id =cm.UserId          
-inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
-where im.confirmationStatus=1 group by IRF.id          
+--INSERT INTO @tbl_ConfirmedMeetings          
+--select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
+--from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId    
+----join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+--inner join UserList ul on ul.EmailId = im.candidateEmail           
+--inner join CandidatesMaster cm on ul.id =cm.UserId          
+--inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
+--where im.confirmationStatus=1 group by IRF.id          
           
 DECLARE @tbl_TotalMeetings TABLE (          
     IRFId INT,          
     TotalMeetings int           
 );          
-INSERT INTO @tbl_TotalMeetings          
-  Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca     
---join @tbl_IRFSubset irfSub on irfSub.IRFId = ca.IRFId  
-join CandidatesMaster cm on ca.CandidateMasterId=cm.id           
-group by ca.IRFId        
+--INSERT INTO @tbl_TotalMeetings          
+--  Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca     
+----join @tbl_IRFSubset irfSub on irfSub.IRFId = ca.IRFId  
+--join CandidatesMaster cm on ca.CandidateMasterId=cm.id           
+--group by ca.IRFId        
           
 DECLARE @tbl_SelectedMeetings TABLE (          
     IRFId INT,          
     SelectedMeetings int           
 );          
-INSERT INTO @tbl_SelectedMeetings          
-select irf.id as IRFId, count(im.id) as SelectedMeetings          
-from irf   
---join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
-left join InterviewMeetings im on irf.IRFId= im.IRFId           
-left join InterviewComments ic on im.id= ic.InterviewId          
-left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
-inner join UserList ul on ul.EmailId = im.candidateEmail           
-inner join CandidatesMaster cm on ul.id =cm.UserId          
-inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
-group by irf.id    
-union    
-select irf.id as IRFId, count(im.id) as SelectedMeetings          
-from irf   
---join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
-left join InterviewMeetings im on irf.IRFId= im.IRFId           
-left join InterviewComments ic on im.id= ic.InterviewId          
-inner join UserList ul on ul.EmailId = im.candidateEmail           
-inner join CandidatesMaster cm on ul.id =cm.UserId          
-inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
-group by irf.id    
+--INSERT INTO @tbl_SelectedMeetings          
+--select irf.id as IRFId, count(im.id) as SelectedMeetings          
+--from irf   
+----join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+--left join InterviewMeetings im on irf.IRFId= im.IRFId           
+--left join InterviewComments ic on im.id= ic.InterviewId          
+--left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+--inner join UserList ul on ul.EmailId = im.candidateEmail           
+--inner join CandidatesMaster cm on ul.id =cm.UserId          
+--inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+--where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
+--group by irf.id    
+--union    
+--select irf.id as IRFId, count(im.id) as SelectedMeetings          
+--from irf   
+----join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+--left join InterviewMeetings im on irf.IRFId= im.IRFId           
+--left join InterviewComments ic on im.id= ic.InterviewId          
+--inner join UserList ul on ul.EmailId = im.candidateEmail           
+--inner join CandidatesMaster cm on ul.id =cm.UserId          
+--inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+--where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
+--group by irf.id    
     
 DECLARE @tbl_CompletedMeetings TABLE (          
     IRFId INT,          
     ScheduledMeetings int           
 );          
-INSERT INTO @tbl_CompletedMeetings          
-select irf.id as IRFId, count(im.id) as ScheduledMeetings           
-from irf   
---join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
-left join InterviewMeetings im on irf.IRFId = im.IRFId           
-left join InterviewComments ic on ic.InterviewId= im.id           
-inner join UserList ul on ul.EmailId = im.candidateEmail           
-inner join CandidatesMaster cm on ul.id =cm.UserId          
-inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-where ic.MeetingStatus in (4,6,7,8)    and im.confirmationStatus=1         
-group by irf.id        
-        
-          
-          
-DECLARE @tbl_SubscribedTo TABLE (          
-    SubId int,          
-    IRFId INT          
-);          
-INSERT INTO @tbl_SubscribedTo          
-select id, Subscribers.IRFId from Subscribers     
---join @tbl_IRFSubset irfSub on Subscribers.IRFId = irfSub.IRFId  
-where UserId= (select id from  UserList ul where ul.EmailId = @EmailId and idProfile= (select id from [Profile] where [Name]=@Profile))          
-   
-          
+--INSERT INTO @tbl_CompletedMeetings          
+--select irf.id as IRFId, count(im.id) as ScheduledMeetings           
+--from irf   
+----join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+--left join InterviewMeetings im on irf.IRFId = im.IRFId           
+--left join InterviewComments ic on ic.InterviewId= im.id           
+--inner join UserList ul on ul.EmailId = im.candidateEmail           
+--inner join CandidatesMaster cm on ul.id =cm.UserId          
+--inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+--where ic.MeetingStatus in (4,6,7,8)    and im.confirmationStatus=1         
+--group by irf.id        
+      
 IF (@Profile = 'Client')            
  BEGIN            
   declare @roleId int,  @ClientId int     
@@ -129,52 +117,9 @@ IF (@Profile = 'Client')
   set @ClientId = (select ClientId from  ClientUser cu left join UserList ul on cu.UserId = ul.id  where ul.EmailId = @EmailId)          
      
   if(@roleId=1)    
-  begin    
-  delete from @tbl_ConfirmedMeetings    
-    
-  INSERT INTO @tbl_ConfirmedMeetings          
-  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
-  from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId           
-  inner join UserList ul on ul.EmailId = im.candidateEmail     
-  inner join CandidatesMaster cm on ul.id =cm.UserId          
-  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
-  where im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId group by IRF.id          
-          
-  delete from @tbl_TotalMeetings    
-    
-  INSERT INTO @tbl_TotalMeetings          
-    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca          
-  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
-  and ca.ClientHRAttemptContact=@EmailId    
-  group by ca.IRFId        
-          
-  delete from @tbl_SelectedMeetings    
-    
-  INSERT INTO @tbl_SelectedMeetings          
-  select irf.id as IRFId, count(im.id) as SelectedMeetings          
-  from irf left join InterviewMeetings im on irf.IRFId= im.IRFId           
-  left join InterviewComments ic on im.id= ic.InterviewId          
-  left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
-  inner join UserList ul on ul.EmailId = im.candidateEmail           
-  inner join CandidatesMaster cm on ul.id =cm.UserId          
-  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-  where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.InterviewId is not null     
-  and ca.ClientHRAttemptContact=@EmailId    
-  group by irf.id          
-          
-  delete from @tbl_CompletedMeetings    
-    
-  INSERT INTO @tbl_CompletedMeetings          
-  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
-  from irf left join InterviewMeetings im on irf.IRFId = im.IRFId           
-  left join InterviewComments ic on ic.InterviewId= im.id           
-  inner join UserList ul on ul.EmailId = im.candidateEmail           
-  inner join CandidatesMaster cm on ul.id =cm.UserId          
-  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-  where ic.MeetingStatus=4 and im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId       
-  group by irf.id     
-    
- delete from @tbl_IRFSubset  
+  begin  
+  
+  --delete from @tbl_IRFSubset  
     
  INSERT INTO @tbl_IRFSubset   
  select modifiedIRF.id from ( select ROW_NUMBER() over (order by irf.id desc) as rowNum,  
@@ -200,7 +145,68 @@ IF (@Profile = 'Client')
  and ((charindex('|', irf.JDTiltle) != 0 and TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1)) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
  or (charindex('|', irf.JDTiltle) = 0 and Trim(irf.JDTiltle) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
  or @PrimarySkillList IS NULL or @PrimarySkillList = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)  
-      
+   
+
+  --delete from @tbl_ConfirmedMeetings    
+    
+  INSERT INTO @tbl_ConfirmedMeetings          
+  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
+  from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId 
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  inner join UserList ul on ul.EmailId = im.candidateEmail     
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
+  where im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId group by IRF.id          
+          
+  --delete from @tbl_TotalMeetings    
+    
+  INSERT INTO @tbl_TotalMeetings          
+    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca    
+	join @tbl_IRFSubset irfSub on irfSub.IRFId = ca.IRFId 
+  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
+  and ca.ClientHRAttemptContact=@EmailId    
+  group by ca.IRFId        
+          
+  --delete from @tbl_SelectedMeetings    
+    
+  INSERT INTO @tbl_SelectedMeetings          
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
+group by irf.id    
+union    
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
+group by irf.id             
+          
+  --delete from @tbl_CompletedMeetings    
+    
+  INSERT INTO @tbl_CompletedMeetings          
+  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
+  from irf left join InterviewMeetings im on irf.IRFId = im.IRFId  
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  left join InterviewComments ic on ic.InterviewId= im.id           
+  inner join UserList ul on ul.EmailId = im.candidateEmail           
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+  where ic.MeetingStatus=4 and im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId       
+  group by irf.id     
+    
+    
     
    select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,          
    irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails, irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel, irf.IsPaused, irf.ClientName,          
@@ -225,49 +231,8 @@ IF (@Profile = 'Client')
   end    
   else if(@roleId=9)    
   begin    
-  delete from @tbl_ConfirmedMeetings    
-    
-  INSERT INTO @tbl_ConfirmedMeetings          
-  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
-  from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId           
-  inner join UserList ul on ul.EmailId = im.candidateEmail     
-  inner join CandidatesMaster cm on ul.id =cm.UserId          
-  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)          
-  where im.confirmationStatus=1 group by IRF.id          
-          
-  delete from @tbl_TotalMeetings    
-    
-  INSERT INTO @tbl_TotalMeetings          
-    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca          
-  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
-  group by ca.IRFId        
-          
-  delete from @tbl_SelectedMeetings    
-    
-  INSERT INTO @tbl_SelectedMeetings          
-  select irf.id as IRFId, count(im.id) as SelectedMeetings          
-  from irf left join InterviewMeetings im on irf.IRFId= im.IRFId           
-  left join InterviewComments ic on im.id= ic.InterviewId          
-  left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
-  inner join UserList ul on ul.EmailId = im.candidateEmail           
-  inner join CandidatesMaster cm on ul.id =cm.UserId          
-  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-  where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and qcf.InterviewId is not null     
-  group by irf.id          
-          
-       delete from @tbl_CompletedMeetings    
-    
-  INSERT INTO @tbl_CompletedMeetings          
-  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
-  from irf left join InterviewMeetings im on irf.IRFId = im.IRFId           
-  left join InterviewComments ic on ic.InterviewId= im.id           
-  inner join UserList ul on ul.EmailId = im.candidateEmail           
-  inner join CandidatesMaster cm on ul.id =cm.UserId          
-  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
-  where ic.MeetingStatus=4 and im.confirmationStatus=1 
-  group by irf.id     
-    
- delete from @tbl_IRFSubset  
+
+  --delete from @tbl_IRFSubset  
     
  INSERT INTO @tbl_IRFSubset   
  select modifiedIRF.id from ( select ROW_NUMBER() over (order by irf.id desc) as rowNum,  
@@ -292,7 +257,69 @@ IF (@Profile = 'Client')
  and ((charindex('|', irf.JDTiltle) != 0 and TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1)) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
  or (charindex('|', irf.JDTiltle) = 0 and Trim(irf.JDTiltle) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
  or @PrimarySkillList IS NULL or @PrimarySkillList = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)  
-      
+  
+
+
+
+  --delete from @tbl_ConfirmedMeetings    
+    
+  INSERT INTO @tbl_ConfirmedMeetings          
+  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
+  from IRF join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id
+  left join InterviewMeetings im on IRF.IRFId = im.IRFId           
+  inner join UserList ul on ul.EmailId = im.candidateEmail     
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)          
+  where im.confirmationStatus=1 group by IRF.id          
+          
+  --delete from @tbl_TotalMeetings    
+    
+  INSERT INTO @tbl_TotalMeetings          
+    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca  
+	join @tbl_IRFSubset irfSub on irfSub.IRFId = ca.IRFId
+  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
+  group by ca.IRFId        
+          
+  --delete from @tbl_SelectedMeetings    
+    
+INSERT INTO @tbl_SelectedMeetings          
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
+group by irf.id    
+union    
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+--join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
+group by irf.id              
+          
+  --delete from @tbl_CompletedMeetings    
+    
+  INSERT INTO @tbl_CompletedMeetings          
+  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
+  from irf join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id
+  left join InterviewMeetings im on irf.IRFId = im.IRFId           
+  left join InterviewComments ic on ic.InterviewId= im.id           
+  inner join UserList ul on ul.EmailId = im.candidateEmail           
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+  where ic.MeetingStatus=4 and im.confirmationStatus=1 
+  group by irf.id     
+    
+     
     
    select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,          
    irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails, irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel, irf.IsPaused, irf.ClientName,          
@@ -316,7 +343,7 @@ IF (@Profile = 'Client')
   else    
   begin   
   
- delete from @tbl_IRFSubset  
+ --delete from @tbl_IRFSubset  
     
  INSERT INTO @tbl_IRFSubset   
  select modifiedIRF.id from ( select ROW_NUMBER() over (order by irf.id desc) as rowNum,  
@@ -344,6 +371,65 @@ IF (@Profile = 'Client')
  or @PrimarySkillList IS NULL or @PrimarySkillList = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)  
       
   
+  --delete from @tbl_ConfirmedMeetings    
+    
+  INSERT INTO @tbl_ConfirmedMeetings          
+  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
+  from IRF join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id
+  left join InterviewMeetings im on IRF.IRFId = im.IRFId           
+  inner join UserList ul on ul.EmailId = im.candidateEmail     
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)          
+  where im.confirmationStatus=1 group by IRF.id          
+          
+  --delete from @tbl_TotalMeetings    
+    
+  INSERT INTO @tbl_TotalMeetings          
+    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca  
+	join @tbl_IRFSubset irfSub on irfSub.IRFId = ca.IRFId
+  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
+  group by ca.IRFId        
+          
+  --delete from @tbl_SelectedMeetings    
+    
+  INSERT INTO @tbl_SelectedMeetings          
+  select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
+group by irf.id    
+union    
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
+group by irf.id       
+          
+  --delete from @tbl_CompletedMeetings    
+    
+  INSERT INTO @tbl_CompletedMeetings          
+  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
+  from irf join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id
+  left join InterviewMeetings im on irf.IRFId = im.IRFId           
+  left join InterviewComments ic on ic.InterviewId= im.id           
+  inner join UserList ul on ul.EmailId = im.candidateEmail           
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+  where ic.MeetingStatus=4 and im.confirmationStatus=1 
+  group by irf.id  
+
+
    select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,          
    irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails, irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel, irf.IsPaused, irf.ClientName,          
    Client.[Name] as ClientCompName, tcm.ConfirmedMeetings, ttm.TotalMeetings, tsm.SelectedMeetings,        
@@ -370,7 +456,7 @@ IF (@Profile = 'Client')
 Else if(@Profile='Recruiter')          
  Begin       
    
- delete from @tbl_IRFSubset  
+ --delete from @tbl_IRFSubset  
     
  INSERT INTO @tbl_IRFSubset   
  select modifiedIRF.id from ( select ROW_NUMBER() over (order by irf.id desc) as rowNum,  
@@ -395,7 +481,66 @@ Else if(@Profile='Recruiter')
  and ((charindex('|', irf.JDTiltle) != 0 and TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1)) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
  or (charindex('|', irf.JDTiltle) = 0 and Trim(irf.JDTiltle) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
  or @PrimarySkillList IS NULL or @PrimarySkillList = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)  
-      
+    
+	INSERT INTO @tbl_ConfirmedMeetings          
+  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
+  from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId 
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  inner join UserList ul on ul.EmailId = im.candidateEmail     
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
+  where im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId group by IRF.id          
+          
+  --delete from @tbl_TotalMeetings    
+    
+  INSERT INTO @tbl_TotalMeetings          
+    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca    
+	join @tbl_IRFSubset irfSub on irfSub.IRFId = ca.IRFId 
+  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
+  and ca.ClientHRAttemptContact=@EmailId    
+  group by ca.IRFId        
+          
+  --delete from @tbl_SelectedMeetings    
+    
+  INSERT INTO @tbl_SelectedMeetings          
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
+group by irf.id    
+union    
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
+group by irf.id             
+          
+  --delete from @tbl_CompletedMeetings    
+    
+  INSERT INTO @tbl_CompletedMeetings          
+  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
+  from irf left join InterviewMeetings im on irf.IRFId = im.IRFId  
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  left join InterviewComments ic on ic.InterviewId= im.id           
+  inner join UserList ul on ul.EmailId = im.candidateEmail           
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+  where ic.MeetingStatus=4 and im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId       
+  group by irf.id
+
+
+
   select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,          
   irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails,irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel, irf.IsPaused, irf.ClientName,          
   Client.[Name] as ClientCompName, tcm.ConfirmedMeetings, ttm.TotalMeetings, tsm.SelectedMeetings,        
@@ -418,7 +563,7 @@ Else if(@Profile='Recruiter')
  End          
 Else if(@Profile='CuratedUser')          
  Begin    
- delete from @tbl_IRFSubset  
+ --delete from @tbl_IRFSubset  
   
  INSERT INTO @tbl_IRFSubset   
  select modifiedIRF.id from ( select ROW_NUMBER() over (order by irf.id desc) as rowNum,  
@@ -442,8 +587,42 @@ Else if(@Profile='CuratedUser')
  and ((charindex('|', irf.JDTiltle) != 0 and TRIM(SUBSTRING(irf.JDTiltle, 1, charindex('|', irf.JDTiltle) - 1)) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
  or (charindex('|', irf.JDTiltle) = 0 and Trim(irf.JDTiltle) in (select PrimarySkill from @tbl_FilterPrimarySkills))  
  or @PrimarySkillList IS NULL or @PrimarySkillList = '')) modifiedIRF where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)  
-      
-          
+   
+   
+   DECLARE @tbl_SubscribedTo TABLE (          
+    SubId int,          
+    IRFId INT          
+);          
+INSERT INTO @tbl_SubscribedTo          
+select id, Subscribers.IRFId from Subscribers     
+join @tbl_IRFSubset irfSub on Subscribers.IRFId = irfSub.IRFId  
+where UserId= (select id from  UserList ul where ul.EmailId = @EmailId and idProfile= (select id from [Profile] where [Name]=@Profile))          
+ 
+ 
+INSERT INTO @tbl_SelectedMeetings          
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+--join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
+group by irf.id    
+union    
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+--join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
+group by irf.id    
+
   select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.IsDeleted,          
   irf.CalendlyLink, irf.IsPaused, irf.ClientName,          
   Client.[Name] as ClientCompName, tsm.SelectedMeetings, sub.SubId, ulh.EmailId as RisebirdHREmail,  
@@ -461,7 +640,7 @@ Else if(@Profile='CuratedUser')
 Else if(@Profile='HR')          
  Begin   
   
- delete from @tbl_IRFSubset  
+ --delete from @tbl_IRFSubset  
    
  select modifiedIRF.id from (select ROW_NUMBER() over (order by filteredIRF.id desc) as rowNum, filteredIRF.id from (select irf.id from IRF   
  inner join Client on IRF.ClientId = Client.id  
@@ -514,6 +693,64 @@ Else if(@Profile='HR')
  where modifiedIRF.rowNum <= (@pageNumber*@pageSize)   
  and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)  
   
+  INSERT INTO @tbl_ConfirmedMeetings          
+  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
+  from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId 
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  inner join UserList ul on ul.EmailId = im.candidateEmail     
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
+  where im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId group by IRF.id          
+          
+  --delete from @tbl_TotalMeetings    
+    
+  INSERT INTO @tbl_TotalMeetings          
+    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca    
+	join @tbl_IRFSubset irfSub on irfSub.IRFId = ca.IRFId 
+  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
+  and ca.ClientHRAttemptContact=@EmailId    
+  group by ca.IRFId        
+          
+  --delete from @tbl_SelectedMeetings    
+    
+  INSERT INTO @tbl_SelectedMeetings          
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
+group by irf.id    
+union    
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
+group by irf.id             
+          
+  --delete from @tbl_CompletedMeetings    
+    
+  INSERT INTO @tbl_CompletedMeetings          
+  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
+  from irf left join InterviewMeetings im on irf.IRFId = im.IRFId  
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  left join InterviewComments ic on ic.InterviewId= im.id           
+  inner join UserList ul on ul.EmailId = im.candidateEmail           
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+  where ic.MeetingStatus=4 and im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId       
+  group by irf.id
+
+
   select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,          
   irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails, irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel,Client.CuratedLink as CuratedLink, irf.IsPaused, irf.ClientName,          
   Client.[Name] as ClientCompName, tcm.ConfirmedMeetings, ttm.TotalMeetings,        
@@ -584,6 +821,63 @@ Else if(@Profile='SeniorHR' or @Profile='SupportAdmin')
  where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)  
       
       
+	  INSERT INTO @tbl_ConfirmedMeetings          
+  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
+  from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId 
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  inner join UserList ul on ul.EmailId = im.candidateEmail     
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
+  where im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId group by IRF.id          
+          
+  --delete from @tbl_TotalMeetings    
+    
+  INSERT INTO @tbl_TotalMeetings          
+    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca    
+	join @tbl_IRFSubset irfSub on irfSub.IRFId = ca.IRFId 
+  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
+  and ca.ClientHRAttemptContact=@EmailId    
+  group by ca.IRFId        
+          
+  --delete from @tbl_SelectedMeetings    
+    
+  INSERT INTO @tbl_SelectedMeetings          
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
+group by irf.id    
+union    
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
+group by irf.id             
+          
+  --delete from @tbl_CompletedMeetings    
+    
+  INSERT INTO @tbl_CompletedMeetings          
+  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
+  from irf left join InterviewMeetings im on irf.IRFId = im.IRFId  
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  left join InterviewComments ic on ic.InterviewId= im.id           
+  inner join UserList ul on ul.EmailId = im.candidateEmail           
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+  where ic.MeetingStatus=4 and im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId       
+  group by irf.id
+
   select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,          
   irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails, irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel,Client.CuratedLink as CuratedLink, irf.IsPaused, irf.ClientName,          
   Client.[Name] as ClientCompName, tcm.ConfirmedMeetings, ttm.TotalMeetings,        
@@ -607,7 +901,7 @@ Else if(@Profile='SeniorHR' or @Profile='SupportAdmin')
 Else          
 begin  
   
- delete from @tbl_IRFSubset  
+ --delete from @tbl_IRFSubset  
   
  INSERT INTO @tbl_IRFSubset   
  select modifiedIRF.id from ( select ROW_NUMBER() over (order by irf.id desc) as rowNum,  
@@ -631,6 +925,63 @@ begin
  or @PrimarySkillList IS NULL or @PrimarySkillList = '')) modifiedIRF   
  where modifiedIRF.rowNum <= (@pageNumber*@pageSize) and  modifiedIRF.rowNum >=((@pageNumber-1)*@pageSize + 1)  
       
+ INSERT INTO @tbl_ConfirmedMeetings          
+  select IRF.id as IRFId, count(im.confirmationStatus) as ConfirmedMeetings           
+  from IRF left join InterviewMeetings im on IRF.IRFId = im.IRFId 
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  inner join UserList ul on ul.EmailId = im.candidateEmail     
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId = irf.id)     
+  where im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId group by IRF.id          
+          
+  --delete from @tbl_TotalMeetings    
+    
+  INSERT INTO @tbl_TotalMeetings          
+    Select ca.IRFId, Count(ca.id) as TotalMeetings from Candidate ca    
+	join @tbl_IRFSubset irfSub on irfSub.IRFId = ca.IRFId 
+  join CandidatesMaster cm on ca.CandidateMasterId=cm.id    
+  and ca.ClientHRAttemptContact=@EmailId    
+  group by ca.IRFId        
+          
+  --delete from @tbl_SelectedMeetings    
+    
+  INSERT INTO @tbl_SelectedMeetings          
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+left join QCFeedbackReport qcf on qcf.InterviewId = im.id          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4)  --and qcf.InterviewId is not null          
+group by irf.id    
+union    
+select irf.id as IRFId, count(im.id) as SelectedMeetings          
+from irf   
+join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id  
+left join InterviewMeetings im on irf.IRFId= im.IRFId           
+left join InterviewComments ic on im.id= ic.InterviewId          
+inner join UserList ul on ul.EmailId = im.candidateEmail           
+inner join CandidatesMaster cm on ul.id =cm.UserId          
+inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+where (ic.InterviewStatus= 2 or ic.InterviewStatus=4) and ISNULL(irf.IsQCRequired,0)=0    
+group by irf.id             
+          
+  --delete from @tbl_CompletedMeetings    
+    
+  INSERT INTO @tbl_CompletedMeetings          
+  select irf.id as IRFId, count(im.id) as ScheduledMeetings           
+  from irf left join InterviewMeetings im on irf.IRFId = im.IRFId  
+  join @tbl_IRFSubset irfSub on irfSub.IRFId = irf.id 
+  left join InterviewComments ic on ic.InterviewId= im.id           
+  inner join UserList ul on ul.EmailId = im.candidateEmail           
+  inner join CandidatesMaster cm on ul.id =cm.UserId          
+  inner join Candidate ca on (cm.id=ca.CandidateMasterId and ca.IRFId=irf.id)          
+  where ic.MeetingStatus=4 and im.confirmationStatus=1 and ca.ClientHRAttemptContact=@EmailId       
+  group by irf.id
+ 
  select ROW_NUMBER() over (order by irf.id desc) as rowNum,  
  irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,          
  irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.CompanyDetails, irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel,Client.CuratedLink as CuratedLink, irf.IsPaused, irf.ClientName,          
