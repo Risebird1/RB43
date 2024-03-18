@@ -265,7 +265,7 @@
                         {
                             var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
                             profileName = profileName.Trim('"');
-                           var checkclientName = string.Empty; 
+                            var checkclientName = string.Empty; ;
                             @if (@HttpContextAccessor.HttpContext.Session.GetString("clientName") != null)
                             {
                                 checkclientName = HttpContextAccessor.HttpContext.Session.GetString("clientName");

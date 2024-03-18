@@ -875,6 +875,10 @@ namespace Risebird.Web.Controllers
                         }
 
                         var domain = Request.Scheme + "://" + Request.Host.Value;
+
+                        irfDetails.StartDate = DateTime.Now;
+                        irfDetails.EndDate = DateTime.Now.AddMonths(3);
+
                         //Start: Auto Generate Scheduling Link 
 
                         var _schedulinglink = AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF");
