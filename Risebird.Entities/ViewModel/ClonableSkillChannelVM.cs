@@ -43,7 +43,7 @@ namespace Risebird.Entities.ViewModel
         //public string Heuristicsscore { get; set; }
         //public string JobCountry { get; set; }
         //public string CompanyType { get; set; }
-        public bool IsDeleted { get; set; }
+        new public bool IsDeleted { get; set; }
 
     }
 }

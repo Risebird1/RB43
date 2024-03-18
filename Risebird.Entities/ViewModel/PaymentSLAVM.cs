@@ -15,6 +15,7 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
         public string ChannelOwner { get; set; }
         public string candidateEmail { get; set; }
+        public string candidateName { get; set; }
         public string CreatedBy { get; set; }
         public string IRFId { get; set; }
         public int irfIntId { get; set; }
