@@ -40,3 +40,36 @@
     font-size: large;
     cursor: pointer;
 }
+.techinfocontainer .tooltiptext {
+    position: absolute;
+    left: -39%;
+    top: -69px;
+    background-color: #646161;
+    color: #fff;
+    white-space: nowrap;
+    padding: 6px 15px;
+    border-radius: 7px;
+    visibility: hidden;
+    font-size: 11px;
+    line-height: 14px;
+    font-family: Arial;
+}
+
+
+    .techinfocontainer .tooltiptext::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 100%;
+        transform: translateX(-50%);
+        border: 8px solid;
+        border-color: #646161 #0000 #0000 #0000;
+    }
+
+.techinfocontainer .tooltipquestion:hover .tooltiptext {
+    visibility: visible;
+    top: -42px;
+    opacity: 0.8;
+    z-index: 1000;
+    left: -105px;
+}

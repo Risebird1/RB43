@@ -1274,8 +1274,8 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.NVarChar));
                     cmdCreateIRF.Parameters["@IRFId"].Value = irfDetails.IRFId;
 
-                    cmdCreateIRF.Parameters.Add(new SqlParameter("@ClientName", SqlDbType.VarChar));
-                    cmdCreateIRF.Parameters["@ClientName"].Value = irfDetails.ClientName;
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@ClientName", SqlDbType.VarChar));
+                    //cmdCreateIRF.Parameters["@ClientName"].Value = irfDetails.ClientName;
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@JDTiltle", SqlDbType.NVarChar));
                     cmdCreateIRF.Parameters["@JDTiltle"].Value = irfDetails.JDTiltle;
@@ -1369,7 +1369,7 @@ namespace Risebird.Repository
 
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@SkillChannelSME", SqlDbType.Int));
-                    cmdCreateIRF.Parameters["@SkillChannelSME"].Value = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId;
+                    cmdCreateIRF.Parameters["@SkillChannelSME"].Value = irfDetails.SkillChannelSMEs?.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId;
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdCreateIRF.Parameters["@CreatedOn"].Value = irfDetails.CreatedOn;

@@ -1,4 +1,3 @@
-
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetAllClonableSkillChannels'))
 BEGIN
     DROP PROCEDURE dbo.usp_GetAllClonableSkillChannels
@@ -18,15 +17,14 @@ Begin
  ir.DifficultyLevel, ir.EmploymentType, ir.PerHourRate, agc.CategoryName, Count(IRF.IRFId) as SkillChannelCounts, 
  ir.PrimarySkills, csc.CreatedOn, ir.Clients as TaggedClients,csc.IsDeleted
  from ClonableSkillChannel csc   
- join IRFRecommendations ir on ir.CloneIRFId = csc.id  
- Join AssessmentGroup asg on asg.id = ir.AssessmentGroupId  
+ left join IRFRecommendations ir on ir.CloneIRFId = csc.id  
+ join irf irfc on irfc.id = csc.CreatedFromIRFId
+ Join AssessmentGroup asg on asg.id = irfc.AssessmentGroupId  
  left join AssessmentGroupCategory agc on agc.id = asg.Categoryid  
  left join IRF on IRF.CreatedFromTemplateId=csc.id
- where ir.[Status] = 1 --AND (csc.IsDeleted <> 1 OR csc.IsDeleted IS NULL) 
+ --where ir.[Status] = 1 --AND (csc.IsDeleted <> 1 OR csc.IsDeleted IS NULL) 
  GROUP BY csc.id , csc.Name, csc.CreatedFromIRFId, csc.MeetingPlatform, ir.CompanyType,ir.SeniorityLevelId, ir.CountryType, asg.AssessmentGroup, asg.id,
  ir.DifficultyLevel, ir.EmploymentType, ir.PerHourRate, agc.CategoryName, ir.PrimarySkills, csc.CreatedOn, ir.CLients,csc.IsDeleted
  order by csc.CreatedOn desc
 End
 GO
-
-
