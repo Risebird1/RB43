@@ -69,6 +69,17 @@ namespace Risebird.Business
                 irfDetails.CreatedOn = DateTime.Now; // DateTime.UtcNow;
                 irfDetails.CreatedBy = loggedInUser;
                 //irfDetails.IRFRecommendations.Status = irfDetails.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+
+
+
+                irfDetails.PrimarySkillInvite = irfDetails.JDTiltle;
+                irfDetails.CompanyDetails = string.Empty;
+                irfDetails.PerMintuteRate = 0;
+                irfDetails.TotalBudget = 0;
+                irfDetails.NoOfPosition = 0;
+                irfDetails.Type = "B2B";
+                irfDetails.PriorityLevel = (int)PriorityLevel.Medium;
+                irfDetails.JobLevel = Convert.ToInt16(JobLevels.SE);
                 int irfId = 0;
                 var result = _irfRepository.AddIRFDetails(irfDetails, out irfId);
                 if (result)
@@ -3810,6 +3821,20 @@ namespace Risebird.Business
             try
             {
                 return _irfRepository.CheckCampaignUniqueness(value).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroup)
+        {
+            try
+            {
+                return await _irfRepository.CheckAssessmentGroupAlraedyExist(AssessmentGroup);
             }
 
             catch (Exception e)

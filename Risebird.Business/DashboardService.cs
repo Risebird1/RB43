@@ -914,6 +914,18 @@ namespace Risebird.Business
             }
             return null;
         }
+        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type)
+        {
+            try
+            {
+                return await _dashboardRespository.InterviewerIRFLogisticDetails(type);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<List<MeetingVM>> FetchTechQCDetails()
         {
             try

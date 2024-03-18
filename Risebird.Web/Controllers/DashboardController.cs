@@ -2925,7 +2925,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        #region PQI
+        #region PQI and PLI
         public async Task<IActionResult> InterviewerIRFDetails(string type)
         {
             try
@@ -2943,12 +2943,69 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.Type = "Rejection";
                         }
+                        else if (type == "NegativeCandidate")
+                        {
+                            type = "NegativeCandidate";
+                            ViewBag.Type = "NegativeCandidate";
+                        }
                         else
                         {
                             type = "Selection";
                             ViewBag.Type = "Selection";
                         }
                         var model = await _dashboardService.GetInterviewerIRFDetails(type);
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public async Task<IActionResult> InterviewerIRFLogisticDetails(string type)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
+                    {
+                        if (type == "Shortselectcomment")
+                        {
+                            type = "Shortselectcomment";
+                            ViewBag.Type = "Shortselectcomment";
+                        }
+                        else if (type == "Shortrejectcomment")
+                        {
+                            type = "Shortrejectcomment";
+                            ViewBag.Type = "Shortrejectcomment";
+                        }
+                        else if (type == "Lessquestion")
+                        {
+                            type = "Lessquestion";
+                            ViewBag.Type = "Lessquestion";
+                        }
+                        else
+                        {
+                            type = "Latejoin";
+                            ViewBag.Type = "Latejoin";
+                        }
+                        var model = await _dashboardService.InterviewerIRFLogisticDetails(type);
                         return View(model);
                     }
                     else

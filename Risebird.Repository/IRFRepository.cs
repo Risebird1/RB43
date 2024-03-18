@@ -1274,8 +1274,8 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.NVarChar));
                     cmdCreateIRF.Parameters["@IRFId"].Value = irfDetails.IRFId;
 
-                    cmdCreateIRF.Parameters.Add(new SqlParameter("@ClientName", SqlDbType.VarChar));
-                    cmdCreateIRF.Parameters["@ClientName"].Value = irfDetails.ClientName;
+                    //cmdCreateIRF.Parameters.Add(new SqlParameter("@ClientName", SqlDbType.VarChar));
+                    //cmdCreateIRF.Parameters["@ClientName"].Value = irfDetails.ClientName;
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@JDTiltle", SqlDbType.NVarChar));
                     cmdCreateIRF.Parameters["@JDTiltle"].Value = irfDetails.JDTiltle;
@@ -1369,7 +1369,7 @@ namespace Risebird.Repository
 
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@SkillChannelSME", SqlDbType.Int));
-                    cmdCreateIRF.Parameters["@SkillChannelSME"].Value = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId;
+                    cmdCreateIRF.Parameters["@SkillChannelSME"].Value = irfDetails.SkillChannelSMEs?.Where(x => x.IsSelectedForIRF)?.FirstOrDefault()?.InterviewerProfileId;
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
                     cmdCreateIRF.Parameters["@CreatedOn"].Value = irfDetails.CreatedOn;
@@ -8231,6 +8231,34 @@ namespace Risebird.Repository
                     else
                         return true;
 
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
+        public async Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroup)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@AssessmentGroup", AssessmentGroup);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_CheckAssessmentGroupAlraedyExist", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    if (result.Count() > 0)
+                    {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
                 }
 
             }

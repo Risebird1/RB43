@@ -12,7 +12,7 @@ GO
 
 Create PROCEDURE [dbo].[usp_UpdateClonableSkillChannel]              
     
---@Name varchar(200),  
+@Name varchar(200),  
 @id int,                        
 @ModifiedOn date,     
 @ModifiedBy varchar(50), 
@@ -49,7 +49,7 @@ begin try
   update ClonableSkillChannel set ModifiedOn = @ModifiedOn,
   ModifiedBy = @ModifiedBy,
   IsAadhaarVerificationRequired=@IsAadhaarVerificationRequired,
-  MeetingPlatform = @MeetingPlatform
+  MeetingPlatform = @MeetingPlatform,[Name]=@Name
   where id =@id  
   End  
   
@@ -181,7 +181,7 @@ begin try
      
  end catch  
   
-End            
+End             
    
 GO
 

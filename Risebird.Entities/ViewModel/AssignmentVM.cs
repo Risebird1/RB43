@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -97,6 +98,7 @@ namespace Risebird.Entities.ViewModel
         public int[] SelectedSkillIds { get; set; }
         [Display(Name = "Assessment Group Name")]
         public string AssessmentGroupName { get; set; }
+        public string NewAssessmentGroupName { get; set; }
         public int id { get; set; }
         public List<SelectListItem> PrimarySkillsList { get; set; }
         [DisplayName("Is Insta Available")]

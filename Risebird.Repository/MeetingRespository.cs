@@ -4672,7 +4672,7 @@ namespace Risebird.Repository
                     parameters.Add("Clientid", Clientid);
                     parameters.Add("Emailid", Emailid);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientNotScheduledMeetings", parameters,
-                         commandType: CommandType.StoredProcedure);
+                         commandType: CommandType.StoredProcedure, commandTimeout:600 );
                 }
             }
             catch (SqlException ex)

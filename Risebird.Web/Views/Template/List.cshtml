@@ -284,9 +284,11 @@
                                             <thead>
                                                 <tr>
                                                     <th>Name</th>
+                                                     <th>Assessment Group Name</th>
                                                     @* <th>Meeting Platform</th> *@
                                                     @if (Model.Profile != "Client")
                                                     {
+                                                        <th>Created from Skills</th>
                                                         <th>Tech Skills</th>
 
                                                         <th>Skill Channels</th>
@@ -299,9 +301,10 @@
                                             <tfoot>
                                                 <tr>
                                                     <th>Name</th>
+                                                    <th>Assessment Group Name</th>
                                                     @* <th>Meeting Platform</th> *@
                                                     @if (Model.Profile != "Client")
-                                                    {
+                                                    {<th>Created from Skills</th>
                                                         <th>Tech Skills</th>
 
                                                         <th>Skill Channels</th>
@@ -338,7 +341,10 @@
                                                                 <td></td>
                                                             } *@
 
-                                                            
+                                                             @if (Model.Profile != "Client")
+                                                            {<td>@item.AssessmentGroupName</td>
+                                                                <td>@item.CreatedFromIRFId</td>
+                                                            }
 
                                                             @if (Model.Profile != "Client")
                                                             {
@@ -651,16 +657,16 @@
                     confirmButtonText: "Close",
                     allowOutsideClick: false
                 }).then((result) => {
-                    if (result) {
-                        // URL to open in a new tab
+                    @*if (result) {
+                        
                         var url = "https://portal.risebird.io/Candidate/FetchInterviewerCommunicator?emailid=" + '@Model.LoggedInUser' + "&isClientLogin=True"
-                        // Open the URL in a new tab
+                        
                         var newTab = window.open(url, '_blank');
                         if (newTab) {
                             newTab.focus(); // Focus on the new tab
                         }
-                    }
-                });;
+                    }*@
+                });
             }
             else {
                 swal.fire("Failed", '@Model.Message', "error");

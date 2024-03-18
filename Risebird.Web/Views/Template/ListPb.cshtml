@@ -432,7 +432,7 @@
                     confirmButtonText: "Close",
                     allowOutsideClick: false
                 }).then((result) => {
-                    if (result) {
+                    @*if (result) {
                         // URL to open in a new tab
                         var url = "https://portal.risebird.io/Candidate/FetchInterviewerCommunicator?emailid=" + '@Model.PublicUserEmailId' + "&isClientLogin=True"
                         // Open the URL in a new tab
@@ -440,7 +440,7 @@
                         if (newTab) {
                             newTab.focus(); // Focus on the new tab
                         }
-                    }
+                    }*@
                 });
             }
             else {

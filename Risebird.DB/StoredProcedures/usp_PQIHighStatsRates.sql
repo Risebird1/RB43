@@ -81,6 +81,34 @@ left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewe
 left join @tbl_InterviewerSelected ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer)
 Select * From CTE where selectionrate>=40
 END
+else if(@type Like '%NegativeCandidate%')
+begin
+DECLARE @tbl_InterviewerNegativeRating TABLE (                      
+        IRFId varchar(15),
+		interviewer varchar(200),  
+        NegativeRating int  
+);  
+  
+INSERT INTO @tbl_InterviewerNegativeRating    
+select ir.IRFId,im.interviewer, count(distinct im.id) from @tbl_RelevantIRFs ir
+join InterviewMeetings im on im.IRFId=ir.IRFId
+join CandidateFeedbackDetails cd on cd.InterviewId=im.id
+where cd.Rating<4
+group by ir.IRFId,im.interviewer  
+
+;With CTE as(
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.NegativeRating,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle 
+from @tbl_RelevantInterviews im
+join IRF on IRF.IRFId=im.IRFId
+join UserList ul on IRF.RisebirdHr=ul.id
+join Client cl on cl.id=IRF.Clientid
+left join UserList ulc on ulc.id=IRF.BillingOwner
+left join UserList uli on uli.Emailid=im.interviewer
+left join InterviewerProfile ip on ip.UserId=uli.id
+left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewer=im.interviewer
+left join @tbl_InterviewerNegativeRating ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer)
+Select * From CTE where NegativeRating>0
+end
 
 Else 
 begin

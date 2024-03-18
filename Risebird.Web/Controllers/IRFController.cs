@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -868,6 +869,10 @@ namespace Risebird.Web.Controllers
 
                         }
                         var domain = Request.Scheme + "://" + Request.Host.Value;
+
+                        irfDetails.StartDate = DateTime.Now;
+                        irfDetails.EndDate = DateTime.Now.AddMonths(3);
+
                         //Start: Auto Generate Scheduling Link 
 
                         var _schedulinglink = AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF");
@@ -4746,30 +4751,40 @@ namespace Risebird.Web.Controllers
             List<Skill> skills = await _skillService.GetSkills();
             List<string> selectedSkill = skills.Where(x => model._skilldetails.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
             model._skilldetails.PrimarySkill = string.Join(",", selectedSkill);
-            var result = _irfService.Addassignmentgroup(model._skilldetails);
-            if (result == "Success")
+            var CheckAssesmentGroupNameExistOrNot = await _irfRepository.CheckAssessmentGroupAlraedyExist(model._skilldetails.NewAssessmentGroupName);
+            if (CheckAssesmentGroupNameExistOrNot)
             {
-                if (model._skilldetails.id > 0)
-                {
-                    TempData["SuccessErrorMessageInterviewer"] = "Edited Successfully.";
-                }
-                else
-                {
-                    TempData["SuccessErrorMessageInterviewer"] = "Added Successfully.";
-                }
+                TempData["SuccessErrorMessageInterviewer"] = model._skilldetails.NewAssessmentGroupName+" " + "Already Exists";
             }
             else
             {
-                if (model._skilldetails.id > 0)
+                model._skilldetails.AssessmentGroupName = model._skilldetails.AssessmentGroupName.Trim();
+                var result = _irfService.Addassignmentgroup(model._skilldetails);
+                if (result == "Success")
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Failed to edit";
+                    if (model._skilldetails.id > 0)
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Edited Successfully.";
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Added Successfully.";
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessageInterviewer"] = "Failed to add";
+                    if (model._skilldetails.id > 0)
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Failed to edit";
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Failed to add";
+                    }
                 }
             }
-            return RedirectToAction("InterviewerEntitle");
+                return RedirectToAction("InterviewerEntitle");
+            
         }
 
         /// <summary>
@@ -9051,6 +9066,28 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        //[AcceptVerbs("Post","Get")]
+        [HttpPost]
+        public async Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroupName)
+        {
+            try 
+            {
+                var data= await _irfService.CheckAssessmentGroupAlraedyExist(AssessmentGroupName);
+                if (data)
+                {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+           catch(Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
         #endregion 

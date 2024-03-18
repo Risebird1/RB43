@@ -253,12 +253,12 @@ namespace Risebird.Web.Controllers
                         if (await _clonableSkillChannelTemplateService.UpdateClonableSkillChannel(model, emailId))
                         {
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Clonable Skill Channel Template '{model.TemplateName}' updated successfully!";
-                            return RedirectToAction("Index", "Template");
+                            return RedirectToAction("List", "Template");
                         }
                         else
                         {
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Failed! Clonable Skill Channel '{model.TemplateName}' could not be updated!";
-                            return RedirectToAction("Index", "Template");
+                            return RedirectToAction("List", "Template");
                         }
                     }
                     else

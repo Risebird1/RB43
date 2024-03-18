@@ -23,5 +23,10 @@ namespace Risebird.Entities.ViewModel
         public string CompanyName { get; set; }
         public string Clienthr { get; set; }
         public string JDTiltle { get; set; }
+        public int NegativeRating { get; set; }
+
+        public int TotallessComment { get; set; }
+        public int TotallessQuestions { get; set; }
+        public int TotalLatejoin { get; set; }
     }
 }
