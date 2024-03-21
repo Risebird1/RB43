@@ -939,5 +939,32 @@ namespace Risebird.Business
             return null;
         }
 
+        public async Task<List<MeetingVM>> GetColdCandidatesList()
+        {
+            try
+            {
+                return (await _dashboardRespository.GetColdCandidatesRepository()).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email)
+        {
+            try
+            {
+                await _dashboardRespository.MarkedColdCandidate(CandidateId,Email);
+                return true;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

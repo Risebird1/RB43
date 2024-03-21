@@ -3038,14 +3038,14 @@ namespace Risebird.Business
                 if (irfRecommendations != null)
                 {
                     irfDetails.AssessmentGroupName = irfRecommendations.AssessmentGroupName;
-                    irfDetails.JobCountry = irfRecommendations.CountryType?.ToString();
+                    //irfDetails.JobCountry = irfRecommendations.CountryType?.ToString();
                     //irfDetails.JobLevel = irfRecommendations.SeniorityLevelId;
                     irfDetails.JobLevel = (int)JobLevels.SE;
-                    irfDetails.CompanyType = irfRecommendations.CompanyType?.ToString();
-                    irfDetails.Heuristicsscore = irfRecommendations.CompetencyLevelId.HasValue ? irfRecommendations.CompetencyLevelId.Value : irfDetails.Heuristicsscore;
+                    //irfDetails.CompanyType = irfRecommendations.CompanyType?.ToString();
+                    //irfDetails.Heuristicsscore = irfRecommendations.CompetencyLevelId.HasValue ? irfRecommendations.CompetencyLevelId.Value : irfDetails.Heuristicsscore;
                 }
 
-                irfDetails.Heuristicsscore = Convert.ToInt16(Heuristicsscorelevel.Pro);
+                //irfDetails.Heuristicsscore = Convert.ToInt16(Heuristicsscorelevel.Pro);
                 //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
 
                 //irfDetails.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(irfDetails.CreatedFromTemplateId);

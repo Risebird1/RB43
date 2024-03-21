@@ -2894,7 +2894,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
                     {
                         IEnumerable<MailRecipientActivityDetailsVM> recipients = null;
 
@@ -2923,7 +2923,84 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        #region PQI and PLI
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetColdCandidatesList(int ColdCandidateValue)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        var data = await _dashboardService.GetColdCandidatesList();
+                        data = data.Select(x =>
+                        {
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+
+                        if (ColdCandidateValue == 1)
+                        {
+                         data= data.Where(x => x.IsColdCandidate == true).ToList();
+                            ViewBag.ColdCandidateValue = 1;
+
+                        }
+                        else {
+                            data = data.Where(x => x.IsColdCandidate != true).ToList();
+                            ViewBag.ColdCandidateValue = 0;
+                        }
+                       
+                        return View(data);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> MarkedColdCandidate(int CandidateId,string IRFId,string CandidateEmail)
+        {
+            try
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId,emailId);
+            
+                    if (data == true)
+                    {
+                    return Json("Candidate " + CandidateEmail + " for " +IRFId +" has been marked cold successfully");
+                    }
+                    else
+                    {
+                    return Json("Failed to mark candidate as Cold.");
+                    }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        #region PQI
         public async Task<IActionResult> InterviewerIRFDetails(string type)
         {
             try

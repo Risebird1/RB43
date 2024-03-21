@@ -81,6 +81,7 @@ namespace Risebird.Entities.ViewModel
         public string JDLink { get; set; }
         public string JoinabilityComments { get; set; }
         public string SelectabilityComments { get; set; }
+        public string LatestComment { get; set; }
         public double SelectabilityScore { get; set; }
         public double JoinabilityScore { get; set; }
         public int AddedByUserId { get; set; }
