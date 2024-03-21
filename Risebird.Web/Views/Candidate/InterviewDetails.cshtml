@@ -404,7 +404,44 @@ a{
   </div>
           </div>
            <div class="int-panel col-md-12 pull-left">
-     <div class="int-left-pannel">
+               <div class="w-full"> 
+                                
+                                <div class="mdl-tabs__panel" id="tab4-panel" style="display:block;float:left">
+
+                                        <div id="interviewConsent" class="top-margin" style="clear:both;">
+                                          <div>  <h1 style="margin:0px 0px 15px 0px;"><img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right: 3px;"> INTERVIEW CONSENT DETAILS</h1></div>
+                                             <div style="clear:both"></div>
+                                            <div class="follow">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="section">
+  <div class="article">
+    <p>I confirm and authorize Risebird, (Arhat Talent Solutions Private Limited) and its partners and customers to use my ID proof data for verifying my identity to appear for an interview.</p>
+                                                            <p>I am aware and agree that this interview will be recorded and will be shared only with my employer in fully secured and encrypted format. It will be permanently deleted from all records in 2-3 weeks’ time.</p>
+                                                            <p>I am also aware that if I feel my interview is not up to the mark, I cancel my candidature anytime during or after the interview. My recordings will be deleted immediately.</p>
+  
+       <div class="moretext">
+         <p>I agree that my voice signature shall be used for authenticating my profile at the time of interview and on-boarding (if I get selected).</p>
+       <p>I will ensure that my webcam will be switched on and audio settings is done before the start of the meeting. I will not use Audio Splitter or speaker for voice communication.</p>
+      <p>I will not appear for the interview using mobile or tablet.</p>
+      <p>I will ensure to use Chrome (preferably) and download zoom plugin. I will join the meeting by clicking on the meeting link using my laptop.</p>
+                                                            <p>I will share my desktop during the interview and will have my desktop and browser clean and close all the apps before the start of the interview.</p>
+                                                            <p>I will not be late for my scheduled interview, and will join 5 minutes before time.</p>
+                                                            <p>I will ensure that I will be in the silent place where there is no background noise and with appropriate light during the interview. If required I will choose a clean uncluttered background.</p>
+                                                            <p>I am aware that this will be a hands-on interview, so I will have the editor open.</p>
+</div>
+  </div>
+  <a class="moreless-button" href="#" style="font-size:15px;margin: 15px 0px 0px 15px;text-align:left; display: inline-block;">Read more</a>
+</div>
+                                                          
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                    </div>
+    @* <div class="int-left-pannel">
                                 <div class="mdl-tabs__panel" id="tab2-panel" style="display:block;float:left">
                                    
                                     <h1 style="margin:0px 0px 15px 0px"><img width="25" src="../../img/history.png" style="position:relative;top:-5px;left: -2px;margin-right:3px;"> Interview History Details</h1>
@@ -418,7 +455,7 @@ a{
                                                     {
                                                         inthistCount = +1;
                                                     <div class="interview-tab">
-                                                            <div class="left-div" style="float:left"><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;display:inline-block;font-size:16px;"></i><span>@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Time:</b>*@ <span style="color: #0000008a;font-weight: 500;padding-left:5px;font-size: 15px;"> @item.interviewDate</span></span></div>
+                                                            <div class="left-div" style="float:left"><i class="fa fa-calendar" aria-hidden="true" style="color: lightskyblue;margin-left:10px;display:inline-block;font-size:16px;"></i><span><span style="color: #0000008a;font-weight: 500;padding-left:5px;font-size: 15px;"> @item.interviewDate</span></span></div>
                                                         <div class="right-div" style="float:right">
                                                         @if (Model.IsReschedule)
                                                         {
@@ -428,30 +465,30 @@ a{
                                                         @if (item.confirmationStatus != "Confirmed")
                                                         {
                                                             <div style="text-align:right;"><b style="font-size:13px;padding:10px;color:grey">Status :</b><div class="current cancelled" style="font-size:13px;padding:2px 15px">@item.confirmationStatus</div></div>
-                                                            @*  <p><hr style="border-color: #8080803d;border-width:1px;margin-top:20px;" /></p>*@
+                                                           
                                                         }
 
 
                                                         else if (item.MeetingStatusStatusDesc == "Status Pending")
                                                         {
-                                                           <div style="text-align:right;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current pending" style="font-size:13px;padding:2px 5px;color:#2E7D32!important;background:#bddbcd59">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
+                                                           <div style="text-align:right;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current pending" style="font-size:13px;padding:2px 5px;color:#2E7D32!important;background:#bddbcd59"><span>@item.MeetingStatusStatusDesc</span></span></div>
 
                                                         }
 
                                                         else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
                                                         {
-                                                           <div style="text-align:right;"> <b style="font-size:14px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current noshowcandidate" style="font-size:13px;padding:2px 5px;color:#94207bbd">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
+                                                           <div style="text-align:right;"> <b style="font-size:14px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current noshowcandidate" style="font-size:13px;padding:2px 5px;color:#94207bbd"><span>@item.MeetingStatusStatusDesc</span></span></div>
 
                                                         }
                                                         else if (item.MeetingStatusStatusDesc == "No Show(Interviewer)")
                                                         {
-                                                          <div style="text-align:right;"> <b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current" style="font-size:13px;padding:2px 5px;color:#7d6413bd;background:antiquewhite">@*<b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b>*@<span>@item.MeetingStatusStatusDesc</span></span></div>
+                                                          <div style="text-align:right;"> <b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span class="current" style="font-size:13px;padding:2px 5px;color:#7d6413bd;background:antiquewhite"><span>@item.MeetingStatusStatusDesc</span></span></div>
 
                                                         }
 
                                                         else if (item.confirmationStatus == "Confirmed")
                                                         {
-                                                            @*<p><b style="color:#000;font-weight:normal;font-size:16px;"> Interview Status:</b><span class="current added" style="font-size:13px;margin-left:10px;">@item.confirmationStatus</span></p>*@
+                                                            
                                                                     <div style="text-align:right;"><b style="font-size:13px;padding:10px 5px 0px 10px;color:grey">Status :</b><span>@item.MeetingStatusStatusDesc</span></div>
 
 
@@ -547,7 +584,7 @@ a{
                                 }
 
 
-       </div>
+       </div>*@
 
       </div>
     </div>
