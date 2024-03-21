@@ -70,6 +70,8 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetDMApproveDetails();
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailDetails(int campaignId);
         Task<List<PQIDetails>> GetInterviewerIRFDetails(string type);
+        Task<List<MeetingVM>> GetColdCandidatesList();
+        Task<bool> MarkedColdCandidate(int CandidateId, string Email);
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type);
         Task<List<MeetingVM>> FetchTechQCDetails();
     }

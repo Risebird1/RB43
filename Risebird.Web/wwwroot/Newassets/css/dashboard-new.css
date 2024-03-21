@@ -6573,6 +6573,7 @@ input[type=search]:focus {
 }
 .videokyc {
     background: #80cbc46b;
+    padding: 8px !important;
 }
 .clarity {
     background: #25bd6a8a;
@@ -6656,6 +6657,7 @@ input[type=search]:focus {
     position: relative;
     top: 5px;
     line-height: 14px;
+    cursor:pointer!important;
 }
 
 .logo-cm {
@@ -6978,11 +6980,11 @@ input[type=search]:focus {
 .icon-field {
     width: auto;
     float: left;
-    padding: 0px 0px 5px 10px;
+    padding: 0px 0px 5px 6px;
 }
 
 .current {
-    font-size: 11px;
+    font-size: 12px;
     padding: 0px 6px;
     display: inline-block;
     font-weight: 600;
@@ -7138,14 +7140,13 @@ input[type=search]:focus {
     border-color: #76b39c;
 }
 .btn-invite, .btn-invite:hover {
-    background: #5ad3a6;
-    border-color: #5ad3a6;
+    background: #7feac2;
+    border-color: #7feac2;
     color: #fff !important;
 }
 .btn-edit {
-    background: #aecf79;
-    border-color: #aecf79;
-    color: #fff !important;
+    background: #c7e696;
+    border-color:#c7e696; color: #fff !important;
 }
 .btn-reset {
     background: #9aa6ea;
@@ -7158,8 +7159,8 @@ input[type=search]:focus {
     color: #fff !important;
 }
 .btn-copy {
-    background: #0d563c96;
-    border-color: #7aa19396 !important;
+    background: #91b4a7;
+    border-color: #91b4a7 !important;
     color: #fff !important;
 }
 
@@ -7170,14 +7171,13 @@ input[type=search]:focus {
     color: #fff !important;
 }
 .btn-unassign {
-    background: #f27c74;
-    border-color: #f27c74;
+    background: #f28d86;
+    border-color: #f28d86;
     color: #fff !important;
 }
 .btn-record {
-    background: #b30c0cb0;
-    border-color: #b30c0cb0;
-    color: #fff !important;
+    background: #e28a8a;
+    border-color:#e28a8a; color: #fff !important;
 }
 .btn-qc {
     background: #aaabbb;

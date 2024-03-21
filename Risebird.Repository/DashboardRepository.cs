@@ -1635,5 +1635,48 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<List<MeetingVM>> GetColdCandidatesRepository()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList", commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@FKCandidateId", CandidateId);
+                dynamicParam.Add("@ColdMarkedBY",Email);
+                dynamicParam.Add("@ColdMarkedDate",DateTime.Now);
+
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                  var result=  await SqlMapper.QueryAsync(conChange, "Usp_ColdCandidateMarked", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
