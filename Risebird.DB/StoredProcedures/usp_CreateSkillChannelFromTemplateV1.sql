@@ -14,9 +14,9 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplateV1]
 @IRFId nvarchar(200),              
 @ClientName varchar(200) = null,              
 @JDTiltle nvarchar(200),              
-@CompanyType varchar(200),              
+@CompanyType varchar(200)=null,              
 @ClientId int,              
-@JobCountry varchar(50),              
+@JobCountry varchar(50) = null,              
 @StartDate datetime,              
 @EndDate datetime,              
 @JDLink varchar(1000),              
@@ -57,11 +57,28 @@ Begin
 begin try    
   begin tran    
     
-  declare @irfIntId int  
+  declare @irfIntId int, @interviewDuration int, @planType int=2
   set @irfIntId = 0  
-  
+  set @interviewDuration = (select InterviewDuration from Client where id = @ClientId)
+  if(@interviewDuration = 30)
+  Begin
+	set @planType = 2
+  End
+  Else if(@interviewDuration = 45)
+  Begin
+	set @planType = 4
+  End
+  Else if(@interviewDuration = 60)
+  Begin
+	set @planType = 5
+  End
+
   --declare @flatRate int = 0
-  set @flatRate = (select rate from PlanTypeChargesMaster where CountryType = @JobCountry and PlanTypeEnumValue =@Heuristicsscore and CompanyType = @CompanyType)
+  --set @flatRate = (select rate from PlanTypeChargesMaster where CountryType = @JobCountry and PlanTypeEnumValue =@Heuristicsscore and CompanyType = @CompanyType)
+
+  set @flatRate = (select rate from PlanTypeChargesMaster where CountryType = (select CountryType from Client where id = @ClientId) 
+  and PlanTypeEnumValue = @planType
+  and CompanyType = (select ClientType from Client where id = @ClientId) )
 
 
 
@@ -109,9 +126,11 @@ begin try
   (@IRFId,              
   @clientName,              
   @JDTiltle,              
-  @CompanyType,              
+  --@CompanyType,     
+  (select ClientType from Client where id = @ClientId),
   @ClientId,              
-  @JobCountry,              
+  --@JobCountry,  
+  (select CountryType from Client where id = @ClientId) ,
   @StartDate,              
   @EndDate,              
   @JDLink,              
@@ -127,7 +146,8 @@ begin try
   @PriorityLevel,              
   @CompanyDetails,            
   @Type,          
-  @Heuristicsscore,          
+  --@Heuristicsscore,  
+  @planType,
   @PrimarySkillInvite,        
   @BillingOwner,      
   @AssessmentGroupId,  
