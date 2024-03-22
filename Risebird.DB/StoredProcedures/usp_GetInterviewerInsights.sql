@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE usp_GetInterviewerInsights 
+CREATE PROCEDURE usp_GetInterviewerInsights 
 @Emailid varchar(150),   
 @IrfId varchar(15)  
 AS  
@@ -36,7 +36,8 @@ Declare @SuspiciousCount int
 Declare @RejectedComment int   
 Declare @SelectedComment int   
 Declare @LessQuestions int   
-    
+Declare @ReliabilityScore int
+
 Select @TotalInterviews=Count(distinct im.id) from Interviewmeetings im join InterviewComments ic on im.id=ic.InterviewId where confirmationStatus=1 and  interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)    
     
     
@@ -90,17 +91,34 @@ and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) a
  Select @LessQuestions=Count(distinct im.id) From CTE join Interviewmeetings im on im.id=CTE.Interviewid join InterviewComments ic on im.id=ic.InterviewId   
 where confirmationStatus=1 and  interviewer=@Emailid   
 and (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and (@IrfId is null or im.IRFId=@IrfId)  
-    
-Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Sum(ti.Point) as ReliabilityScore,ip.ResumeLink as ResumeLink,  
+
+Select @ReliabilityScore=Sum(tq.Point) from TransInterviewersReliabilityScores tq left join Interviewmeetings im  on im.id=tq.InterviewMeetingId 
+left join InterviewerProfile ip on tq.InterviewerId=ip.id  join UserList ul on ul.id=ip.Userid     
+where ul.EmailId=@Emailid and (@IrfId is null or im.IRFId=@IrfId)    
+
+--Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Sum(ti.Point) as ReliabilityScore,ip.ResumeLink as ResumeLink,  
+--@TotalInterviews as TotalInterviews,@CompletedInterviews as CompletedInterviews,@SelectedInterviews as SelectedInterviews,@RejectedInterviews as RejectedInterviews,    
+--@NoShowInterviews as NoShowInterviews,@NoShowCandidateInterviews as NoShowCandidateInterviews,@DroppedInterviews as DroppedInterviews,Isnull(ul.FirstName,'') as interviewerName,    
+--Case When Isnull(si.id,0)>0 then 1 else 0 end as IsSuspicious,@PaymentSLA as PaymentSLA,@Penalty as Penalty,@CandidateRating as CandidateRating,@CustomerRating as CustomerRating,    
+--@Redorequests as Redorequests,@RedFlags as RedFlags,@JoinLateMeeting as JoinLateMeeting,@JoinLateCandidateNoShow as JoinLateCandidateNoShow,@UnassignInterviews as UnassignInterviews,@SuspiciousCount as SuspiciousCount,  
+--@SelectedComment as SelectedComment,@RejectedComment as RejectedComment,@LessQuestions as LessQuestions,ul.uniqueid  
+--from InterviewerProfile ip join UserList ul on ul.id=ip.Userid     
+--left join TransInterviewersReliabilityScores ti on ti.InterviewerId=ip.id 
+--left join SuspiciousInterviewer si on si.UserId=ul.id and si.SuspiciousStatus=1    
+--where ul.EmailId=@Emailid    
+--Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Isnull(ul.FirstName,''),Case When Isnull(si.id,0)>0 then 1 else 0 end,ul.uniqueid,ip.ResumeLink  
+
+Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,@ReliabilityScore as ReliabilityScore,ip.ResumeLink as ResumeLink,  
 @TotalInterviews as TotalInterviews,@CompletedInterviews as CompletedInterviews,@SelectedInterviews as SelectedInterviews,@RejectedInterviews as RejectedInterviews,    
 @NoShowInterviews as NoShowInterviews,@NoShowCandidateInterviews as NoShowCandidateInterviews,@DroppedInterviews as DroppedInterviews,Isnull(ul.FirstName,'') as interviewerName,    
 Case When Isnull(si.id,0)>0 then 1 else 0 end as IsSuspicious,@PaymentSLA as PaymentSLA,@Penalty as Penalty,@CandidateRating as CandidateRating,@CustomerRating as CustomerRating,    
 @Redorequests as Redorequests,@RedFlags as RedFlags,@JoinLateMeeting as JoinLateMeeting,@JoinLateCandidateNoShow as JoinLateCandidateNoShow,@UnassignInterviews as UnassignInterviews,@SuspiciousCount as SuspiciousCount,  
 @SelectedComment as SelectedComment,@RejectedComment as RejectedComment,@LessQuestions as LessQuestions,ul.uniqueid  
 from InterviewerProfile ip join UserList ul on ul.id=ip.Userid     
-left join TransInterviewersReliabilityScores ti on ti.InterviewerId=ip.id    
 left join SuspiciousInterviewer si on si.UserId=ul.id and si.SuspiciousStatus=1    
 where ul.EmailId=@Emailid    
 Group by ul.id,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Isnull(ul.FirstName,''),Case When Isnull(si.id,0)>0 then 1 else 0 end,ul.uniqueid,ip.ResumeLink  
 END     
+ 
+
 Go
