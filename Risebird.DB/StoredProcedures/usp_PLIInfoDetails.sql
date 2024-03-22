@@ -115,7 +115,7 @@ left join @tbl_InterviewerCompleted icm on icm.IRFId=CTE.IRFId and icm.interview
 end
 else if(@type Like '%Latejoin%')
 begin
-;with CTE as (Select im.IRFId,im.interviewer,Count(distinct imj.id) as TotalLatejoin
+;with CTE as (Select im.IRFId,im.interviewer,Count(distinct im.id) as TotalLatejoin
 from @tbl_RelevantIRFs ir join InterviewMeetings im on im.IRFId=ir.IRFId
 join InterviewMeetingsJoinTime imj on im.id=imj.interviewid join InterviewComments ic on ic.Interviewid=im.id     
 where DATEDIFF(MINUTE,interviewDate,Joinedon)>5 and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9)
