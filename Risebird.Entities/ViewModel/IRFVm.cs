@@ -182,6 +182,7 @@ namespace Risebird.Entities.ViewModel
         public int TemplateCreatedFromIRFId { get; set; }
         public bool UseAsCloneTemplate { get; set; }
         public int CreatedFromTemplateId { get; set; }
+        public string CreatedFromTemplateName { get; set; }//name of the template from which the irf is created(applicable only if it is created using a template)
         public string AssessmentGroupName { get; set; }
         public SelectList Clients { get; set; }
         public SelectList ClientUser { get; set; }
@@ -246,6 +247,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? AffindaEmbedUrlCreatedAt { get; set; }
         public int? urlCreationTimeElapsed { get; set; }
         public bool IsSelectedForCampaign { get; set; }
+        public string RisebirdHREmail { get; set; }
     }
     public class InterviewerIds
     {

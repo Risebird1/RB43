@@ -3837,8 +3837,20 @@ namespace Risebird.Business
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates()
+        {
+            try
+            {
+                return await _irfRepository.GetSkillChannelsCreatedUsingTemplates();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
 

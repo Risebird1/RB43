@@ -191,7 +191,7 @@
                                     <div class="col-md-6 col-sm-6 pl-1 pull-left rightpad">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.ClientType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.ClientType, Html.GetEnumSelectList<ClientTypeEnum>(), new { @class = "form-control" })
+                                            @Html.DropDownListFor(model => model.ClientType, Html.GetEnumSelectList<CompanyType>(), new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.ClientType, "", new { @class = "text-danger" })
 
                                         </div>

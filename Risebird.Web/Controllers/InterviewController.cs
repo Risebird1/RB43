@@ -8176,6 +8176,8 @@ namespace Risebird.Web.Controllers
                             select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
             var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
+            if (!string.IsNullOrEmpty(emailid))
+                result.interviewer = emailid.Replace("\"", "");
             result.AudioComment = _irfService.FetchIRFAudioLink(id);
             return View(result);
         }
