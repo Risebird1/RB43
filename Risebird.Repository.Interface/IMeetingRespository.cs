@@ -263,6 +263,7 @@ namespace Risebird.Repository.Interface
         Task<string> GetTranscriptUrlByMeeting(int id);
         Task<bool> AddBlackListCompany(BlackListCompanyVM model);
         Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type);
+        Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaHistoryDetailsById(int interviewid);
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
         Task<bool> PaymentSlaNotApproved(int interviewid, string emailid);
@@ -279,7 +280,7 @@ namespace Risebird.Repository.Interface
         Task<int> GetUniqueUserByEmailId(string emailId, string id);
         Task<bool> ConfirmInterviewavailability(string emailId, int id, string type);
         Task<bool> UpdateInterviewerAvailbilityStatusCampaignLevel(bool status, string uniqueId, int campaignId, string rsc = null);
-        Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid,bool activestatus);
+        Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid, bool activestatus);
         Task<List<MeetingVM>> GetQCOpenInterviews(string emailId);
         Task<bool> AssignYourSelfForMyQCInterviwsRepository(string emailId, int id);
         Task<List<MeetingVM>> GetMyQCInterviews(string emailId);
