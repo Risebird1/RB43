@@ -2041,7 +2041,7 @@
                         </div>
 
                         <div class="col-lg-3 col-md-4 col-sm-6">
-                            <div class="panel card flipper30">
+                            <div class="panel card flipper31">
                                 <div id="survey-feedback">
                                     <div class="front-card countdown__timer" style="cursor:pointer" onclick="ColdCandidatesDetalis()">
                                         <div class="panel-heading" data-position="bottom">
@@ -2094,13 +2094,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper32">
+                                <div id="survey-feedback">
                                     <div class="back-card countdown__timer" style="cursor:pointer" onclick="PLIDetalis()">
                                         <div class="panel-heading" data-position="bottom">
                                             <div id="slotsId">
@@ -2183,10 +2180,10 @@
     function Campaign() {
         window.location.href = "/IRF/Campaigns";
     }
-    function MissedCandidate(){
+    function MissedCandidate() {
         window.location.href = "/Dashboard/InterviewManagementDetails";
     }
-    function PQIDetalis(){
+    function PQIDetalis() {
         window.location.href = "/Dashboard/InterviewerIRFDetails";
     }
     function TechQCInterviews() {
@@ -2195,7 +2192,7 @@
     function PLIDetalis() {
         window.location.href = "/Dashboard/InterviewerIRFLogisticDetails";
     }
-     function ColdCandidatesDetalis(){
+    function ColdCandidatesDetalis() {
         window.location.href = "/Dashboard/GetColdCandidatesList";
     }
 </script>
@@ -2403,7 +2400,7 @@
                 else {
                     $(".flipper28").removeClass("flipper");
                 }
-                
+
                 if (parseInt(data.techQCCount) != parseInt($("#ribbonTechQcCount").text())) {
                     $(".flipper30").addClass("flipper");
                 }
