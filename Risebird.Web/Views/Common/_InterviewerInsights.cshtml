@@ -82,10 +82,10 @@
         modal.style.display = "block";
     }
 
-    function ReliabilityScoreDetails(interviewer) {
+    function ReliabilityScoreDetails(interviewer, IrfId) {
         $.ajax({
             url: '/Interviewer/ReliabilityScoreDetails',
-            data: { 'interviewer': interviewer },
+            data: { 'interviewer': interviewer, 'IrfId': IrfId },
             type: "GET",
             success: function (data) {
                 openReliabilityModel();

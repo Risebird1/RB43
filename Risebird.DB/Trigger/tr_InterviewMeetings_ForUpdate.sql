@@ -17,11 +17,49 @@ FOR UPDATE
 AS
 BEGIN
 
- Declare @id int, @candidateEmailId varchar(200)
+ Declare @id int, @candidateEmailId varchar(200), @initialInterviewer varchar(200), @currentInterviewer varchar(200)
 
  Select @id = Id from inserted
 
  select @candidateEmailId = Trim(candidateEmail) from InterviewMeetings where id = @id
+ 
+ select @initialInterviewer = Trim(interviewer) from deleted
+ select @currentInterviewer = Trim(interviewer) from inserted
+
+ if(@initialInterviewer is not null and @initialInterviewer != @currentInterviewer)
+ Begin
+
+    Declare @initialInterviewerUserId int, @currentInterviewerUserId int, @irfId int
+
+	select @initialInterviewerUserId = id from UserList where EmailId = @initialInterviewer
+	select @currentInterviewerUserId = id from UserList where EmailId = @currentInterviewer
+	select @irfId = id from IRF where IRFId = (select IRFId from InterviewMeetings where id = @id)
+
+
+	declare @Enumerator table (id int)
+	insert into @Enumerator    
+	select id from TechSkillComments     
+	where irfId = @irfId and UserId = @initialInterviewer
+
+	while exists (select 1 from @Enumerator)    
+	begin    
+		declare @idEnumerator int
+		select top 1 @idEnumerator = id from @Enumerator
+
+		if not exists(select id from TechSkillComments where userId = @currentInterviewerUserId 
+		and Comment = (select Comment from TechSkillComments where id=@idEnumerator) 
+		and Skill = (select Skill from TechSkillComments where id=@idEnumerator) and irfId = @irfId)
+		Begin
+			insert into TechSkillComments (Comment, Skill, IRFId, UserId)
+			(select Comment, Skill, @irfId, @currentInterviewerUserId from TechSkillComments where id = @idEnumerator)
+		End
+
+		delete from @Enumerator where id = @idEnumerator  
+
+	End
+
+ End
+
 
  if(@candidateEmailId != (select candidateEmail from InterviewMeetings where id = @id))
  Begin

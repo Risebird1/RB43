@@ -1479,11 +1479,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid)
+        public async Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid,string IrfId)
         {
             try
             {
-                return await _interviewerRepository.GetReliabilityScoreDetails(Emailid);
+                return await _interviewerRepository.GetReliabilityScoreDetails(Emailid, IrfId);
             }
             catch (Exception ex)
             {

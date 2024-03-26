@@ -9,14 +9,20 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_GetReliabilityScoreDetails
-@Emailid varchar(200)
+@Emailid varchar(200),
+@IrfId varchar(15)
 AS
 BEGIN
+if(@IrfId='')  
+begin  
+set @IrfId=null  
+end 
 Select ri.Name as ReliabilityScoreType,Sum(ti.Point) as Point,Count(ti.id) as TotalCount 
 from TransInterviewersReliabilityScores ti join ReliabilityScoreTypes ri on ri.id=ti.ReliabilityScoreTypeId
+left join Interviewmeetings im  on im.id=ti.InterviewMeetingId 
 join InterviewerProfile ip on ip.Id=ti.InterviewerId
 join UserList ul on ul.id=ip.Userid
-where ul.EmailId=@Emailid
+where ul.EmailId=@Emailid and (@IrfId is null or im.IRFId=@IrfId)    
 group by ri.Name 
 END
 GO
