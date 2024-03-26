@@ -6964,7 +6964,7 @@ input[type=search]:focus {
 }
 
 .icon {
-    height: 20px !important;
+    height:16px !important;
     position: relative;
     left: 7px;
     margin-right: 10px;
@@ -6991,6 +6991,7 @@ input[type=search]:focus {
     border-radius: 0.2rem;
     position: relative;
     top: 0px;
+  
 }
 
 .selected {
@@ -7063,7 +7064,7 @@ input[type=search]:focus {
 }
 
 .progress {
-    background: green;
+    background: #8cd38c;
     color: #fff;
 }
 .proxy-report {
@@ -7881,7 +7882,7 @@ ul.ks-cboxtags {
 }
 
 .template-top {
-    margin-top: 40px;
+    margin-top:20px;
 }
 
 .template-name-padding {
@@ -15466,7 +15467,7 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
 .client-ms #meeting_filter input[type=search] {
     background: #fff;
     border: 0px !important;
-    height:32px!important;
+    height:30px!important;
 }
 
 .dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {

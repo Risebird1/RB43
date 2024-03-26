@@ -1352,25 +1352,16 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 1].Value = "Candidate Name";
                         Sheet.Cells[1, 2].Value = "Candidate Email";
                         Sheet.Cells[1, 3].Value = "Resume";
-                        Sheet.Cells[1, 4].Value = "Type";
-                        Sheet.Cells[1, 5].Value = "Location";
-                        Sheet.Cells[1, 6].Value = "Skill";
-                        Sheet.Cells[1, 7].Value = "Work Auth";
-                        Sheet.Cells[1, 8].Value = "Current Location";
-                        Sheet.Cells[1, 9].Value = "Current Employer";
-                        Sheet.Cells[1, 10].Value = "Phone";
-                        Sheet.Cells[1, 11].Value = "Total Experience";
-                        Sheet.Cells[1, 12].Value = "Current Salary";
-                        Sheet.Cells[1, 13].Value = "Expected Salary";
-                        Sheet.Cells[1, 14].Value = "Notice";
-                        Sheet.Cells[1, 15].Value = "Invites Sent";
-                        Sheet.Cells[1, 16].Value = "Invite Confirmation";
-                        Sheet.Cells[1, 17].Value = "Schedule Status";
-                        Sheet.Cells[1, 18].Value = "Confirmation Status";
-                        Sheet.Cells[1, 19].Value = "Meeting Status";
-                        Sheet.Cells[1, 20].Value = "Interview Status";
-                        Sheet.Cells[1, 21].Value = "Interview Date";
-                        Sheet.Cells[1, 22].Value = "Video Link";
+                        Sheet.Cells[1, 4].Value = "Phone";
+                        Sheet.Cells[1, 5].Value = "JD Title";
+                        Sheet.Cells[1, 6].Value = "Channel Owner";
+                        Sheet.Cells[1, 7].Value = "Skill Channel ID";
+                        Sheet.Cells[1, 8].Value = "Interview Status";
+                        Sheet.Cells[1, 9].Value = "Current Status";
+                        Sheet.Cells[1, 10].Value = "Current Comments";
+                        Sheet.Cells[1, 11].Value = "Interview Date";
+                        Sheet.Cells[1, 12].Value = "Client Hr";
+                        Sheet.Cells[1, 13].Value = "Video Link";
 
                         int i = 2;
                         //string LastAction = null; ;
@@ -1399,49 +1390,56 @@ namespace Risebird.Web.Controllers
                                 {
                                     Sheet.Cells[i, 3].Value = "No Resume";
                                 }
-                                Sheet.Cells[i, 4].Value = item.Type ?? "NA";
-                                Sheet.Cells[i, 5].Value = item.Location ?? "NA";
 
-                                Sheet.Cells[i, 6].Value = item.Skill ?? "NA";
-
-                                Sheet.Cells[i, 7].Value = item.WorkAuth ?? "NA";
-
-                                Sheet.Cells[i, 8].Value = item.CurrentLocation ?? "NA";
-
-                                Sheet.Cells[i, 9].Value = item.CurrentEmployer ?? "NA";
-
-                                Sheet.Cells[i, 10].Value = item.Phone ?? "NA";
-
-                                Sheet.Cells[i, 11].Value = Convert.ToString(item.TotalExperience);//item.TotalExperience != 0 ? Convert.ToString(item.TotalExperience) : "NA";
-                                Sheet.Cells[i, 12].Value = Convert.ToString(item.CurrentSalary);//item.CurrentSalary != 0 ? Convert.ToString(item.CurrentSalary) : "NA";
-
-                                Sheet.Cells[i, 13].Value = Convert.ToString(item.ExpectedSalary);// item.ExpectedSalary != 0 ? Convert.ToString(item.ExpectedSalary) : "NA";
-                                Sheet.Cells[i, 14].Value = Convert.ToString(item.Notice);// item.Notice != 0 ? Convert.ToString(item.Notice) : "NA";
-
-                                Sheet.Cells[i, 15].Value = item.TotalInvites;
-                                Sheet.Cells[i, 16].Value = item.InviteConfirmation;
-                                Sheet.Cells[i, 17].Value = item.InviteConfirmation > 0 ? "Scheduled" : item.StatusValue;
-                                Sheet.Cells[i, 18].Value = item.confirmationStatusDesc != "0" ? item.confirmationStatusDesc : "NA";
-                                Sheet.Cells[i, 19].Value = item.MeetingStatusDesc != "0" ? item.MeetingStatusDesc : "NA";
-                                Sheet.Cells[i, 20].Value = item.InterviewStatusDesc != "0" ? item.InterviewStatusDesc : "NA";
-                                Sheet.Cells[i, 21].Value = item.interviewDate != null ? item.interviewDate?.ToString("dd MMMM yyyy") : "NA";
-                                if (!string.IsNullOrEmpty(item.VideoLink))
+                                Sheet.Cells[i, 4].Value = item.Phone ?? "NA";
+                                Sheet.Cells[i, 5].Value = item.JDTiltle ?? "NA";
+                                Sheet.Cells[i, 6].Value = item.ChannelOwnerEmail ?? "NA";
+                                Sheet.Cells[i, 7].Value = item.IRFName ?? "NA";
+                                Sheet.Cells[i, 8].Value = item.InterviewStatusDesc != "0" ? item.InterviewStatusDesc : "NA";
+                                Sheet.Cells[i, 9].Value = item.StatusValue != "0" ? item.StatusValue : "NA";
+                                if (item.StatusValue == "Meeting Status" || item.StatusValue == "Interview Status")
                                 {
                                     try
                                     {
-                                        Sheet.Cells[i, 22].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                        Sheet.Cells[i, 22].Value = "Video Link";
-                                        Sheet.Cells[i, 22].Style.Font.UnderLine = true;
-                                        Sheet.Cells[i, 22].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+
+                                        Sheet.Cells[i, 10].Value = item.LatestComment;
+
+
                                     }
                                     catch (Exception)
                                     {
-                                        Sheet.Cells[i, 22].Value = "No Video";
+                                        Sheet.Cells[i, 10].Value = "NA";
                                     }
                                 }
                                 else
                                 {
-                                    Sheet.Cells[i, 22].Value = "No Video";
+                                    Sheet.Cells[i, 10].Value = "NA";
+                                }
+
+
+
+
+
+                              //  Sheet.Cells[i, 10].Value = item.LatestComment != "0" ? item.LatestComment : "NA";
+                                Sheet.Cells[i, 11].Value = item.interviewDate != null ? item.interviewDate?.ToString("dd MMMM yyyy") : "NA";
+                                Sheet.Cells[i, 12].Value = item.ClientHRAttemptContact != "0" ? item.ClientHRAttemptContact : "NA";
+                                if (!string.IsNullOrEmpty(item.VideoLink))
+                                {
+                                    try
+                                    {
+                                        Sheet.Cells[i, 13].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                        Sheet.Cells[i, 13].Value = "Video Link";
+                                        Sheet.Cells[i, 13].Style.Font.UnderLine = true;
+                                        Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        Sheet.Cells[i, 13].Value = "No Video";
+                                    }
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 13].Value = "No Video";
                                 }
                                 i++;
                             }
