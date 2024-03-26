@@ -15494,7 +15494,9 @@ div.dataTables_wrapper div.dataTables_filter input:focus {
 }
 
 #MyInterviewList > thead > tr > th, #MyInterviewList > tfoot > tr > th {
-    padding: 5px 0px
+    padding: 5px!important;
+    text-transform:uppercase!important;
+    font-size:13px;
 }
 
 /*#questionsTable_filter input[type=search].form-control, #statusTable_filter input[type=search].form-control, #candidateTable_filter input[type=search].form-control, #supportList_filter input[type=search], #txtmeeting_filter input[type=search].form-control, #interviewersTbl_filter input[type=search].form-control, #dupmeeting_filter input[type=search].form-control, #meeting_filter input[type=search].form-control, .interview #meeting_filter input[type=search].form-control, #MyInterviewList_filter input[type=search].form-control, #interviewer_filter input[type=search].form-control, #OpeninterviewList_filter input[type=search].form-control, #profile_filter input[type=search].form-control, #risebirduser_filter input[type=search].form-control, #clientduser_filter input[type=search].form-control, #skill_filter input[type=search].form-control, #skillLevel_filter input[type=search].form-control {
