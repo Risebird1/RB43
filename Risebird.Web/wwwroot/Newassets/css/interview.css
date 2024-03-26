@@ -858,6 +858,7 @@ table {
 
 .table > tfoot > tr > th {
     padding: 5px 7px;
+    font-size: 1.08em;
 }
 
 td .wordwrap {
@@ -899,13 +900,6 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
     padding: 5px 4px;
     font-weight: normal !important;
 }
-
-.table > thead > tr > th, .table > tfoot > tr > th {
-    padding: 7px;
-    font-weight: normal !important;
-}
-
-
 
 table {
     border: 1px #ccc solid !important;
