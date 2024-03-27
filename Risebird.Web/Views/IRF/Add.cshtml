@@ -159,9 +159,7 @@
                                                     </div>
                                                 </div>
 
-
-
-                                                @* <div class="col-md-4 col-sm-4 pull-left">
+                                                <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -169,7 +167,8 @@
                                                         @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, "Select Billing Owner", new { @class = "select-css form-control", @required = "required" })
                                                         @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id = "error_BillingOwner", @class = "text-danger" })
                                                     </div>
-                                                </div> *@
+                                                </div>
+
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <div class="mandate">
