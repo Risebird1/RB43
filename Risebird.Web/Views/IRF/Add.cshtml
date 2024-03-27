@@ -137,7 +137,7 @@
                                                 </div>*@
 
                                                 
-                                                <div style="clear: both;height:0px;">&nbsp;</div>
+                                                
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:20px;">
                                                             <div class="mandate">
@@ -159,9 +159,7 @@
                                                     </div>
                                                 </div>
 
-
-
-                                                @* <div class="col-md-4 col-sm-4 pull-left">
+                                                <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <div class="mandate">
                                                             @Html.LabelFor(model => model.BillingOwner, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -169,7 +167,8 @@
                                                         @Html.DropDownListFor(model => model.BillingOwner, (SelectList)ViewBag.ClientUser, "Select Billing Owner", new { @class = "select-css form-control", @required = "required" })
                                                         @Html.ValidationMessageFor(model => model.BillingOwner, "", new { @id = "error_BillingOwner", @class = "text-danger" })
                                                     </div>
-                                                </div> *@
+                                                </div>
+
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <div class="mandate">
@@ -180,7 +179,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div style="clear: both;height:0px;">&nbsp;</div>
+                                               
                                                 @*<div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="form-group" style="margin-bottom:20px;">
                                                             <div class="mandate">
@@ -1271,8 +1270,8 @@
                                     </div>
 
                                     <div class="card-footer mt-20 clearfix">
-                                        <div class="row  mc-button-area pull-right">
-                                            <div class="col-md-12">
+                                        <div class="mc-button-area w-full">
+                                            <div class="pull-left">
                                                 @if (Model.TemplateId != 0)
                                                 {
                                                     @Html.ActionLink("Back", "Index", "Template", null, htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
@@ -1285,6 +1284,8 @@
                                                 {
                                                     @Html.ActionLink("Back", "InterviewerDetail", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
                                                 }
+                                                </div>
+                                                 <div class="pull-right">
                                                 <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
                                                 <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnNext" value="Next">

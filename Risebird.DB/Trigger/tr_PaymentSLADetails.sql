@@ -16,12 +16,14 @@ AS
 BEGIN
 Declare @id int
 Select @id = Id from inserted
+Declare @ModifiedOn datetime
+Select @ModifiedOn=IsNull(ModifiedOn,CreatedOn)  from PaymentSLADetails  where id=@id
 
 Insert into PaymentSLADetailsHistory (Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,
 CandidateInteractionQuality,LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,
 CreatedOn,PaymentDeduction,PaymentComplianceCount)
 (Select Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,
 CandidateInteractionQuality,LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,
-CreatedOn,PaymentDeduction,PaymentComplianceCount From PaymentSLADetails where id=@id)
+@ModifiedOn,PaymentDeduction,PaymentComplianceCount From PaymentSLADetails where id=@id)
 END
 GO

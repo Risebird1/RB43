@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.PaymentSLAVM>
+
+@foreach (var item in Model)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <p>@item.CreatedBy</p>
+            <p>@item.CreatedOn</p>
+        </div>
+        <div class="col-md-8 paymentli">
+            <ul>
+                @if (!string.IsNullOrWhiteSpace(item.Inaccuratedecisionmaking))
+                {
+                    <li><b>Inaccurate/ Arbitrary decision making:</b><div class="tags">@item.Inaccuratedecisionmaking</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.CandidateInteractionQuality))
+                {
+                    <li><b>Candidate Interaction Quality:</b><div class="tags">@item.CandidateInteractionQuality</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.LimitedHandoncoding))
+                {
+                    <li><b>Limited Handon coding / Practical scenarios:</b><div class="tags">@item.LimitedHandoncoding</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.WeakInfrastructure))
+                {
+                    <li><b>Weak Infrastructure:</b><div class="tags">@item.WeakInfrastructure</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.UnethicalPractices))
+                {
+                    <li><b>Unethical Practices:</b><div class="tags">@item.UnethicalPractices</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.TimeManagement))
+                {
+                    <li><b>Time Management:</b><div class="tags">@item.TimeManagement</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.PoorCommunicationSkills))
+                {
+                    <li><b>Poor Communication Skills:</b><div class="tags">@item.PoorCommunicationSkills</div> </li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.QuestionsRelevance))
+                {
+                    <li><b>Questions Relevance:</b><div class="tags"> @item.QuestionsRelevance</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.ScoreRubricIgnorance))
+                {
+                    <li><b>Score Rubric Ignorance:</b><div class="tags"> @item.ScoreRubricIgnorance</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.PoorFeedbackComments))
+                {
+                    <li><b>Poor Feedback Comments:</b><div class="tags"> @item.PoorFeedbackComments</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.WrongStatusUpdates))
+                {
+                    <li><b>Wrong Status Updates:</b><div class="tags"> @item.WrongStatusUpdates</div></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(item.ProctoringIgnorance))
+                {
+                    <li><b>Proctoring Ignorance:</b><div class="tags"> @item.ProctoringIgnorance</div></li>
+                }
+            </ul>
+        </div>
+        <hr />
+    </div>
+}
