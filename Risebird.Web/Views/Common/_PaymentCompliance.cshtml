@@ -20,18 +20,30 @@
 </div>
 
 <script>
-       function PaymentComplianceDetails(id, type) {
-      $.ajax({
-            url: '/Interview/PaymentCompliance',
-            data: { 'interviewid': id , type:type},
-          type: "GET",
-          success: function (data) {
+    function TotalPaymentComplianceDetails(id) {
+        $.ajax({
+            url: '/Interview/PaymentComplianceHistory',
+            data: { 'interviewid': id },
+            type: "GET",
+            success: function (data) {
                 openPaymentComplianceModel();
                 $('#divPaymentCompliancemodel').html('');
                 $('#divPaymentCompliancemodel').html(data);
-          }
-      });
-  }
+            }
+        });
+    }
+    function PaymentComplianceDetails(id, type) {
+        $.ajax({
+            url: '/Interview/PaymentCompliance',
+            data: { 'interviewid': id, type: type },
+            type: "GET",
+            success: function (data) {
+                openPaymentComplianceModel();
+                $('#divPaymentCompliancemodel').html('');
+                $('#divPaymentCompliancemodel').html(data);
+            }
+        });
+    }
 
     function closePaymentComplianceModel() {
         var modal = document.getElementById("PaymentComplianceModel");

@@ -3231,8 +3231,10 @@ namespace Risebird.Web.Controllers
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
                                 //Send mail to client for report
+
                                 //find all IRFowner and Users
-                                //var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
+                                var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
+                                
                                 //var maillist = string.Join(";", clientlist);
                                 //string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
                                 //Mail _mail1 = new Mail
@@ -3240,7 +3242,11 @@ namespace Risebird.Web.Controllers
                                 //    TO = maillist,
                                 //    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
                                 //};
-                                //var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
+                                if((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.PreviousMeetingStatus != model.MeetingStatus)
+                                {
+                                    await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
+                                }
+                                //var emailsend1 = await _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer
                                 string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + model.InterviewId;
                                 Mail _mail = new Mail
@@ -8131,6 +8137,19 @@ namespace Risebird.Web.Controllers
             try
             {
                 var result = await _meetingService.FetchPaymentSlaDetailsById(interviewid, type);
+                return PartialView(result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IActionResult> PaymentComplianceHistory(int interviewid)
+        {
+            try
+            {
+                var result = await _meetingService.FetchPaymentSlaHistoryDetailsById(interviewid);
                 return PartialView(result);
             }
             catch (Exception ex)

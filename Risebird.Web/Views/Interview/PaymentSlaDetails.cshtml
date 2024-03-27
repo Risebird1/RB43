@@ -71,8 +71,9 @@
                                                     <td>Interviewer Call</td>
                                                     <td>Red Marker</td>
                                                     <td>Payment Deduction</td>
-                                                      <td>Video Reward</td>
+                                                    <td>Video Reward</td>
                                                     <td>Payment Compliance</td>
+                                                    <td>Payment Compliance History</td>
                                                     <td>Channel Owner</td>
                                                     <td>Created By</td>
                                                     <td>Created Date</td>
@@ -97,7 +98,7 @@
                                                     <td>Interview Date</td>
                                                     <td>Join Date</td>
                                                     <td>JD Skills</td>
-                                                     <td>Candidate Name</td>
+                                                    <td>Candidate Name</td>
                                                     <td>Candidate Email</td>
                                                     <td>Interviewer</td>
                                                     <td>Company Name</td>
@@ -107,6 +108,7 @@
                                                     <td>Payment Deduction</td>
                                                     <td>Video Reward</td>
                                                     <td>Payment Compliance</td>
+                                                    <td>Payment Compliance History</td>
                                                     <td>Channel Owner</td>
                                                     <td>Created By</td>
                                                     <td>Created Date</td>
@@ -145,7 +147,7 @@
                                                         {
                                                             @if (item.CompanyName.Length > 30)
                                                             {
-                                                                <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0,29) ....</td>
+                                                                <td style="font-size:13px; color:brown" title="@item.CompanyName">@item.CompanyName.Substring(0, 29) ....</td>
                                                             }
                                                             else
                                                             {
@@ -185,7 +187,7 @@
                                                         }
                                                         <td>@item.PaymentDeduction %</td>
 
-                                                         <td>@item.VideoReward %</td>
+                                                        <td>@item.VideoReward %</td>
                                                         @*   @if (item.PaymentComplianceCount > 0)
                                                     { *@
                                                         <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="PaymentComplianceDetails('@item.Interviewid')">@item.PaymentComplianceCount</a></td>
@@ -194,6 +196,7 @@
                                                     {
                                                     <td class="text-center">0</td>
                                                     }  *@
+                                                        <td class="text-center"><a style="width: 30px;height: 30px;cursor:pointer; background: #d2cece66;display: inline-block;border-radius: 100%;line-height: 32px;" onClick="TotalPaymentComplianceDetails('@item.Interviewid')">@item.TotalPaymentComplianceCount</a></td>
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.CreatedBy</td>
                                                         <td>@item.CreatedOn</td>

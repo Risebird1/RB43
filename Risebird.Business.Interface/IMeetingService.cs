@@ -222,6 +222,7 @@ namespace Risebird.Business.Interface
         Task<string> GetTranscriptUrlByMeeting(int meetingId);
         Task<bool> AddBlackListCompanyService(BlackListCompanyVM model);
         Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type);
+        Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaHistoryDetailsById(int interviewid);
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
         Task<bool> PaymentSlaNotApproved(int interviewid, string emailid);

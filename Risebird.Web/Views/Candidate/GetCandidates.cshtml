@@ -257,7 +257,7 @@
                                                                 <th>Selectability </th>
                                                             }*@
                                                             <th>Interview Date</th>
-                                                            <th width="20%">Latest Status (Comments)</th>
+                                                            <th width="20%">Current Status</th>
                                                             <th>Communications</th>
                                                             <th> Actions </th>
                                                             @if (ViewBag.profile != "Client")
@@ -274,7 +274,7 @@
                                                         @foreach (var item in Model)
                                                         {
                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                                            string joinabilityColor;
+                                                            @*string joinabilityColor;
                                                             string selectabilityColor;
                                                             if (item.JoinabilityScore >= 70)
                                                             {
@@ -299,7 +299,7 @@
                                                             else
                                                             {
                                                                 selectabilityColor = "red";
-                                                            }
+                                                            }*@
                                                             <tr id="@item.id" data-changes="1">
                                                                 <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
                                                                 <td valign="top">
@@ -428,140 +428,142 @@
                                                                 <td class="text-center">@item.TotalInvites</td>
                                                                 <td class="text-center">@item.InviteConfirmation</td>
                                                                 <td>@item.interviewDate</td>
-                                                                <td><div>
+                                                                <td class="text-center">
 
 
                                                                      @if (item.StatusValue == "In Progress")
-                            {
-                           <span class="current progress" style="font-size:12px; height:19px;font-weight: 500;"> @item.StatusValue</span>
-                            }
-                            else if (item.StatusValue == "New")
-                            {
-                               
-                                <span class="current new" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
-                               
-                            }
+                                                                        {
+                                                                            <span class="current progress" style="font-size:12px; height:19px;font-weight: 500;"> @item.StatusValue</span>
+                                                                        }
+                                                                        else if (item.StatusValue == "New")
+                                                                        {
 
-                        else if (item.StatusValue == "Added")
-                        {
-                            <span class="current added" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
-                        }
+                                                                            <span class="current new" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
 
-                            else if (item.StatusValue == "Waiting For Response")
-                            {
-                               
-                                <span class="current waiting" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
-                                
-                            }
-                            else if (item.StatusValue == "Scheduled")
-                            {
-                                
-                                <span class="current scheduled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
-                                
-                            }
-                        else if (item.StatusValue == "Cancelled")
-                        {
-                           <span class="current cancelled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
-                        }
-                        else if (item.StatusValue == "No Show(Candidate)")
-                        {
-                           <span class="current noshowcandidate" style="font-size:12px;font-weight: 500;">@item.StatusValue</span>
-                        }
-                        
-                         else if (item.StatusValue == "Irrelevant")
-                           {
-                                 <span class="current irrelevant" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
-                            }
-                            else if (item.StatusValue == "Duplicate")
-                            {
-                                <span style=" color: hotpink;font-weight: 500;font-size:12px">
-                                    @item.StatusValue
-                                </span>
-                            }
-                            else if (item.StatusValue == "Not Interested")
-                            {
-                                <span style=" color: purple;font-weight: 500;font-size:12px">
-                                    @item.StatusValue
-                                </span>
-                            }
-                            else if (item.StatusValue == "Got Another Offer")
-                            {
-                                <span style=" color: darkgreen;font-weight: 500;font-size:12px">
-                                    @item.StatusValue
-                                </span>
-                            }
-                            else if (item.StatusValue == "Hold")
-                            {
-                                <span style="color: orangered;font-weight: 500;font-size:12px">
-                                    @item.StatusValue
-                                </span>
-                            }
-                             else if (item.StatusValue == "Meeting Status")
-                            {
-                                <span style="color: #c572ac;font-weight: 500; padding:2px; font-size: 12px;background: #e892c652;">
-                                    @item.StatusValue
-                                </span>
-                            }
-                               else if (item.StatusValue == "Invitation Sent")
-                            {
-                                <span style="color: #c572ac;font-weight: 500; padding:2px; font-size: 12px;background: #e892c652;">
-                                    @item.StatusValue
-                                </span>
-                            }
-                            else if (item.StatusValue == "Interview Status")
-                             {
-                                                                            <span style="color:#4832d4ab;font-weight: 500; padding:2px; font-size: 12px;background:#d9d6ef94;">
-                            @item.StatusValue
-                            </span>
-                            }
-                            else
-                            {
-                                <span> @item.StatusValue</span>
-                            }
-                                                                </div>
+                                                                        }
 
-                                                                @if (item.StatusValue == "Meeting Status" || item.StatusValue == "Interview Status"){
- <div style="margin-top:20px;display:block;"><span style="font-size:13px;color: #b09999;">Comments:</span><br/>
-                                                                
-                                                                @if (item.LatestComment != null && item.LatestComment != "")
-                                                                {
-                                                                    @if (item.LatestComment.Length > 20)
-                                                                    {
-                                                                        <div class="article">
-                                                                            <p style="margin-bottom:0px;">
-                                                                                @item.LatestComment.Substring(0, 20)
-                                                                            </p>
-                                                                            <p class="moretext_@item.id moretext">
-                                                                                @item.LatestComment.Substring(20, @item.LatestComment.Length - 20)
-                                                                            </p>
-                                                                        </div>
-                                                                        <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <div class="article" style="overflow:hidden;display:inline-flex">
-                                                                            <p>
-                                                                                @item.LatestComment.Substring(0, @item.LatestComment.Length)
-                                                                            </p>
-                                                                        </div>
-                                                                    }
-                                                                }
-                                                                
-                                                                
-                                                                
-                                                                        </div>
+                                                                        else if (item.StatusValue == "Added")
+                                                                        {
+                                                                            <span class="current added" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                        }
 
+                                                                        else if (item.StatusValue == "Waiting For Response")
+                                                                        {
 
-                                                                    }
+                                                                            <span class="current waiting" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
 
-                                                                    else
-                                                                    {
-                                                                       <div></div>
-                                                                    }
+                                                                        }
+                                                                        else if (item.StatusValue == "Scheduled")
+                                                                        {
 
+                                                                            <span class="current scheduled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
 
+                                                                        }
+                                                                        else if (item.StatusValue == "Cancelled")
+                                                                        {
+                                                                            <span class="current cancelled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                        }
+                                                                        else if (item.StatusValue == "No Show(Candidate)")
+                                                                        {
+                                                                            <span class="current noshowcandidate" style="font-size:12px;font-weight: 500;">@item.StatusValue</span>
+                                                                        }
 
+                                                                        else if (item.StatusValue == "Irrelevant")
+                                                                        {
+                                                                            <span class="current irrelevant" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                        }
+                                                                        else if (item.StatusValue == "Duplicate")
+                                                                        {
+                                                                            <span style=" color: hotpink;font-weight: 500;font-size:12px">
+                                                                                @item.StatusValue
+                                                                            </span>
+                                                                        }
+                                                                        else if (item.StatusValue == "Not Interested")
+                                                                        {
+                                                                            <span style=" color: purple;font-weight: 500;font-size:12px">
+                                                                                @item.StatusValue
+                                                                            </span>
+                                                                        }
+                                                                        else if (item.StatusValue == "Got Another Offer")
+                                                                        {
+                                                                            <span style=" color: darkgreen;font-weight: 500;font-size:12px">
+                                                                                @item.StatusValue
+                                                                            </span>
+                                                                        }
+                                                                        else if (item.StatusValue == "Hold")
+                                                                        {
+                                                                            <span style="color: orangered;font-weight: 500;font-size:12px">
+                                                                                @item.StatusValue
+                                                                            </span>
+                                                                        }
+                                                                        else if (item.StatusValue == "Meeting Status")
+                                                                        {
+                                                                            <div style="color: #c572ac;font-weight: 500; padding:2px; font-size: 12px;background: #e892c652;display: inline;">
+                                                                                @if (item.LatestComment != null && item.LatestComment != "")
+                                                                                {
+                                                                                    @if (item.LatestComment.Length > 20)
+                                                                                    {
+                                                                                        <div class="article">
+                                                                                            <p style="margin-bottom:0px;">
+                                                                                                @item.LatestComment.Substring(0, 20)
+                                                                                            </p>
+                                                                                            <p class="moretext_@item.id moretext">
+                                                                                                @item.LatestComment.Substring(20, @item.LatestComment.Length - 20)
+                                                                                            </p>
+                                                                                        </div>
+                                                                                        <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <div class="article" style="overflow:hidden;display:inline-flex">
+                                                                                            <p>
+                                                                                                @item.LatestComment.Substring(0, @item.LatestComment.Length)
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    }
+                                                                                }
+                                                                            </div>
+                                                                        }
+                                                                        else if (item.StatusValue == "Invitation Sent")
+                                                                        {
+                                                                            <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                @item.StatusValue
+                                                                            </span>
+                                                                        }
+                                                                        else if (item.StatusValue == "Interview Status")
+                                                                        {
+                                                                            <div style="color:#4832d4ab;font-weight: 500; padding:2px; font-size: 12px;background:#d9d6ef94;display: inline;">
+                                                                                @if (item.LatestComment != null && item.LatestComment != "")
+                                                                                {
+                                                                                    @if (item.LatestComment.Length > 20)
+                                                                                    {
+                                                                                        <div class="article">
+                                                                                            <p style="margin-bottom:0px;">
+                                                                                                @item.LatestComment.Substring(0, 20)
+                                                                                            </p>
+                                                                                            <p class="moretext_@item.id moretext">
+                                                                                                @item.LatestComment.Substring(20, @item.LatestComment.Length - 20)
+                                                                                            </p>
+                                                                                        </div>
+                                                                                        <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <div class="article" style="overflow:hidden;display:inline-flex">
+                                                                                            <p>
+                                                                                                @item.LatestComment.Substring(0, @item.LatestComment.Length)
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span> @item.StatusValue</span>
+                                                                                }
 
+                                                                            </div>
+
+                                                                        }
                                                                </td>
                                                                 @*<td class="text-center">@((@item.JoinabilityScore+@item.SelectabilityScore)/2)</td>*@
                                                               @*  @if (ViewBag.profile != "Client")
