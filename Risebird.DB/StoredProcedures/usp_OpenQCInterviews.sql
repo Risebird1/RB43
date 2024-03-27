@@ -17,13 +17,13 @@ from
 TechQualityDetails tqoi
 Join InterviewMeetings im on tqoi.Interviewid=im.id
 join IRF irf on im.IRFId=irf.IRFId 
-join [dbo].[TransInterviewer] tirf on IRF.id =tirf.IRFId       
-where 
-tqoi.IsActive=1 and tqoi.QcInterviewer is null
-and
-im.confirmationStatus = 1
+join [dbo].[TransInterviewer] tirf on IRF.id =tirf.IRFId 
+join [dbo].[UserList] ul on tirf.UserId = ul.id   
+where tqoi.IsActive=1 and tqoi.QcInterviewer is null
+and im.confirmationStatus = 1
 and tirf.IsActive=1
+and ul.EmailId=@emailID
 and im.interviewer!=@emailID
-order by im.interviewDate desc
+order by interviewDate desc
 END
 GO

@@ -3951,6 +3951,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaHistoryDetailsById(int interviewid)
+        {
+            try
+            {
+                return await _meetingRespository.FetchPaymentSlaHistoryDetailsById(interviewid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public async Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model)
         {
             try

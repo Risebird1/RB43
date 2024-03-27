@@ -8139,6 +8139,19 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        public async Task<IActionResult> PaymentComplianceHistory(int interviewid)
+        {
+            try
+            {
+                var result = await _meetingService.FetchPaymentSlaHistoryDetailsById(interviewid);
+                return PartialView(result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> ClientInterviewReview(int id, int actionType)
         {
