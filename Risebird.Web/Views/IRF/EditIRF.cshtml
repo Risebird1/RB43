@@ -1831,8 +1831,8 @@
                             </div>
 
                             <div class="card-footer mt-20 clearfix">
-                                <div class="row  mc-button-area pull-right">
-                                    <div class="col-md-12">
+                                <div class="mc-button-area w-full">
+                                    <div class="pull-left">
                                         @if (ViewBag.clonevalue == 1)
                                         {
                                             @Html.ActionLink("Back", "CloneSkillChannnel", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
@@ -1841,6 +1841,8 @@
                                         {
                                             @Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @id = "back", @class = "mdc-button mdc-button--raised mdc-ripple-upgraded pull-left", @role = "button" })
                                         }
+                                          </div>
+                                       <div class="pull-right">
                                         <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" id="btnPrev" value="Prev" style="display:none;">
 
                                         <input type="hidden" value="@ViewBag.IsClientUser" id="hidClientuser" />
