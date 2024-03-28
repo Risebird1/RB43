@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+//using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -3242,7 +3242,7 @@ namespace Risebird.Web.Controllers
                                 //    TO = maillist,
                                 //    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
                                 //};
-                                if((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.PreviousMeetingStatus != model.MeetingStatus)
+                                if((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus)
                                 {
                                     await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
                                 }
@@ -3812,6 +3812,7 @@ namespace Risebird.Web.Controllers
         {
             string userEmailId = string.Empty;
             ExcelPackage Ep = new ExcelPackage();
+
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("My Interviews");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_My_Interviews" + ".xlsx";
             try
