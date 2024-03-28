@@ -1356,10 +1356,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 7].Value = "Skill Channel ID";
                         Sheet.Cells[1, 8].Value = "Interview Status";
                         Sheet.Cells[1, 9].Value = "Current Status";
-                        Sheet.Cells[1, 10].Value = "Current Comments";
-                        Sheet.Cells[1, 11].Value = "Interview Date";
-                        Sheet.Cells[1, 12].Value = "Client Hr";
-                        Sheet.Cells[1, 13].Value = "Video Link";
+                        
+                        Sheet.Cells[1, 10].Value = "Interview Date";
+                        Sheet.Cells[1, 11].Value = "Client Hr";
+                        Sheet.Cells[1, 12].Value = "Video Link";
 
                         int i = 2;
                         //string LastAction = null; ;
@@ -1394,24 +1394,24 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 6].Value = item.ChannelOwnerEmail ?? "NA";
                                 Sheet.Cells[i, 7].Value = item.IRFName ?? "NA";
                                 Sheet.Cells[i, 8].Value = item.InterviewStatusDesc != "0" ? item.InterviewStatusDesc : "NA";
-                                Sheet.Cells[i, 9].Value = item.StatusValue != "0" ? item.StatusValue : "NA";
+                              //  Sheet.Cells[i, 9].Value = item.StatusValue != "0" ? item.StatusValue : "NA";
                                 if (item.StatusValue == "Meeting Status" || item.StatusValue == "Interview Status")
                                 {
                                     try
                                     {
 
-                                        Sheet.Cells[i, 10].Value = item.LatestComment;
+                                        Sheet.Cells[i, 9].Value = item.LatestComment;
 
 
                                     }
                                     catch (Exception)
                                     {
-                                        Sheet.Cells[i, 10].Value = "NA";
+                                        Sheet.Cells[i, 9].Value = "NA";
                                     }
                                 }
                                 else
                                 {
-                                    Sheet.Cells[i, 10].Value = "NA";
+                                    Sheet.Cells[i, 9].Value = item.StatusValue;
                                 }
 
 
@@ -1419,25 +1419,25 @@ namespace Risebird.Web.Controllers
 
 
                               //  Sheet.Cells[i, 10].Value = item.LatestComment != "0" ? item.LatestComment : "NA";
-                                Sheet.Cells[i, 11].Value = item.interviewDate != null ? item.interviewDate?.ToString("dd MMMM yyyy") : "NA";
-                                Sheet.Cells[i, 12].Value = item.ClientHRAttemptContact != "0" ? item.ClientHRAttemptContact : "NA";
+                                Sheet.Cells[i, 10].Value = item.interviewDate != null ? item.interviewDate?.ToString("dd MMMM yyyy") : "NA";
+                                Sheet.Cells[i, 11].Value = item.ClientHRAttemptContact != "0" ? item.ClientHRAttemptContact : "NA";
                                 if (!string.IsNullOrEmpty(item.VideoLink))
                                 {
                                     try
                                     {
-                                        Sheet.Cells[i, 13].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                        Sheet.Cells[i, 13].Value = "Video Link";
-                                        Sheet.Cells[i, 13].Style.Font.UnderLine = true;
-                                        Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                        Sheet.Cells[i, 12].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                        Sheet.Cells[i, 12].Value = "Video Link";
+                                        Sheet.Cells[i, 12].Style.Font.UnderLine = true;
+                                        Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                                     }
                                     catch (Exception)
                                     {
-                                        Sheet.Cells[i, 13].Value = "No Video";
+                                        Sheet.Cells[i, 12].Value = "No Video";
                                     }
                                 }
                                 else
                                 {
-                                    Sheet.Cells[i, 13].Value = "No Video";
+                                    Sheet.Cells[i, 12].Value = "No Video";
                                 }
                                 i++;
                             }

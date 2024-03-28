@@ -52,7 +52,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> RBFNQueryNotification(Mail model, string query);
         Task<string> ChannelRequestNotification(Mail model, string client, string Skill, string Requester);
         Task<string> RBFNPaymentConfirmationNotification(Mail model, string amount, StringBuilder sb);
-        Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill);
+        Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill, string attachmentBase64String = null, string fileName = null);
         Task<string> CandidateShortlistNotification(Mail model, string currenturl, string comment, string email, string[] videoidlist);
         Task<string> InterviewerWaitingNotification(Mail model, string zoomlink, string whowaiting, string candidateName, string InterviewDate, int interviewId);
         Task<string> CandidateWaitingEINotification(Mail model, string reassignmentLink, string zoomLink, int interviewId, string jdLink);
