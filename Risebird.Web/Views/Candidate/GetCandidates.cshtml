@@ -675,8 +675,8 @@
                                                                 </button>*@
 
 
-                                                                  <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: 2px;position: relative;cursor: pointer; width:23px!important;height:23px!important;border-radius:4px;">
-                                                                         <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status"><i class='fa fa-plus-square'></i></span>
+                                                                  <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: 2px;position: relative;cursor: pointer; width:25px!important;height:25px!important;border-radius:4px;">
+                                                                         <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;"></i></span>
                                                                          </div>
 
 
@@ -738,13 +738,13 @@
                                                                          
 
                                                                         <div class="btn btn-copy shadow btn-xs me-1" aria-label="Copy Public URL" style="top: 3px;border-radius:4px;position: relative;cursor: pointer; width:23px!important;height:23px!important;float:left;">
-                                                                       <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL"><i class='fa fa-clone' style="position:relative;left:1px;font-size:12px;"></i></span>
+                                                                       <span onclick="javascript:CopyPublicUrl('@item.EmailId','@item.IRFId',1);" title="Copy Public URL"><i class='fa fa-clone' style="position:relative;left:0px;font-size:12px;"></i></span>
                                                                          </div>
                                                                      
                                                                     }
 
-                                                                  <div>  <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
-                                                                            <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
+                                                                  <div>  <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
+                                                                            <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:-1px;font-size:13px; position: relative;"></i></span>
                                                                         </a></div>
 
 
@@ -754,19 +754,27 @@
                                                                     {
                                                                       
                                                                      <div class="btn btn-delete shadow btn-xs sharp me-1" aria-label="Delete" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background:#d35555">
-                                                                       <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete"><i class='fa fa-trash' style="font-size:12px;left:0.5px;top:-1px; position:relative;"></i></span>
+                                                                       <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete"><i class='fa fa-trash' style="font-size:13px;left:1px;top:0px; position:relative;color:#fff"></i></span>
                                                                          </div>
 
                                                                     }
 
-                                                                    @*@if (ViewBag.profile != "Client")
+                                                                    @if (ViewBag.profile != "Client")
                                                                 {
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                          @*      <button class="mdc-fab app-fab--absolute" aria-label="Report">
                                                                 <span onclick="location.href = '@Url.Action("Report", "Candidate", new { candidateId = item.CandidateMasterId, irfId = item.IRFId, rfName = item.IRFName })'" title="Report" class="mdc-fab__icon material-icons">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
                                                                 </span>
-                                                                </button>
-                                                                }*@
+                                                                </button>*@
+
+
+
+                                                                 <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.IRFId})">
+                                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="background:#98a3d7;border-color:#98a3d7; width:23px!important;height:23px!important;">
+                                                                                <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-3px;left:-1px" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                            </button>
+                                                                        </a>
+                                                                }
 
                                                                     @*@if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Client" || ViewBag.profile == "HR")
                                                                 {
@@ -797,7 +805,7 @@
                                                                         @if (item.Phone != null && item.Phone != string.Empty)
                                                                         {
 
-                                                                       <div id="getstatus_11"  class="btn  shadow btn-xs sharp-btn me-1" aria-label="Call Candidate" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background:#8baabe;color:#fff;">
+                                                                       <div id="getstatus_11"  class="btn shadow btn-xs sharp me-1" aria-label="Call Candidate" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background:#8baabe;color:#fff;">
                                                                         <span id="getstatus_11" class="call" onclick="AutoCallCandidate('@item.Phone','@item.IRFId', '@item.CandidateMasterId', '@item.Name')" title="Call Candidate">
                                                                         <span class="fa fa-phone-square" style="font-size:14px!important;position:relative;top:1px;"></span>
                                                                         </span>
