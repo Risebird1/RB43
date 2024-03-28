@@ -13,8 +13,10 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio.TwiML.Messaging;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.CommonHelper
@@ -1362,7 +1364,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill)
+        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill, string attachmentBase64String = null, string fileName = null)
         {
             try
             {
@@ -1421,8 +1423,13 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateLastStatusTemplate.html");
 
                 string msgBody = string.Format(rawEmail, parameters);
-
                 msg.HtmlContent = msgBody;
+
+                if(!string.IsNullOrEmpty(attachmentBase64String) && !string.IsNullOrEmpty(fileName))
+                {
+                    msg.AddAttachment(fileName, attachmentBase64String, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "attachment");//"filename.xlsx"//Convert.ToBase64String(attachment)
+                }
+
                 return await SendMail(msg);
             }
             catch (Exception ex)

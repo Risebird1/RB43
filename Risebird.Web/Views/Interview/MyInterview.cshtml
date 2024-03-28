@@ -403,8 +403,12 @@
                                                             @*<th id="myinterview_5">JD Link</th>*@
                                                             @*<th>Instructions</th>*@
                                                             <th id="myinterview_6">Resume</th>
-
                                                             @*<th>Client Instructions</th>*@
+                                                            @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
+                                                            {
+                                                                 <th>Is Proxy</th>                                                            
+                                                            }
+
                                                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                             {
                                                                 <th id="myinterview_7">Meeting Link</th>
@@ -429,6 +433,10 @@
                                                             <th>Resume</th>
 
                                                             @*<th>Client Instructions</th>*@
+                                                            @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
+                                                            {
+                                                                 <th>Is Proxy</th>                                                            
+                                                            }
                                                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                             {
                                                                 <th>Meeting Link</th>
@@ -611,6 +619,21 @@
                                                                 {
                                                                     <td>No Resume</td>
                                                                 }
+                                                              
+                                                           @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed){
+                                                               <td>
+                                                                   @if(@item.isProxyCandidate == true){
+                                                                           <p style="color:green;font-weight:bold;">Yes</p>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                           <p style="color:#989191;font-weight:500;">No</p> 
+                                                                        }
+                                                                    </td>
+                                                           
+                                                                
+                                                            }
+                                                                
 
                                                                 @*<td>
                                                             <a href="#" data-toggle="clientInstructions-modal" data-target="#clientInstructions"
@@ -868,6 +891,8 @@
             <div id="modal_clientComment_placeholder"></div>
 
             @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+            @await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
+            @await Html.PartialAsync("~/Views/Common/_ProxyReportDetails.cshtml")
 
             @*<div id="myModal" class="modal modal-bg">
             <!-- Modal content -->
