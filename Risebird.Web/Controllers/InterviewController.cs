@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+//using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -3231,8 +3231,10 @@ namespace Risebird.Web.Controllers
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
                                 //Send mail to client for report
+
                                 //find all IRFowner and Users
-                                //var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
+                                var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
+                                
                                 //var maillist = string.Join(";", clientlist);
                                 //string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
                                 //Mail _mail1 = new Mail
@@ -3240,7 +3242,11 @@ namespace Risebird.Web.Controllers
                                 //    TO = maillist,
                                 //    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
                                 //};
-                                //var emailsend1 = _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
+                                if((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus)
+                                {
+                                    await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
+                                }
+                                //var emailsend1 = await _notificationHelper.InstaReportClientNotification(_mail1, sendreporturl, model.CandidateName);
                                 //send mail to candiate or interviewer
                                 string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + model.InterviewId;
                                 Mail _mail = new Mail
@@ -3806,6 +3812,7 @@ namespace Risebird.Web.Controllers
         {
             string userEmailId = string.Empty;
             ExcelPackage Ep = new ExcelPackage();
+
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("My Interviews");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_My_Interviews" + ".xlsx";
             try
@@ -8133,6 +8140,19 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        public async Task<IActionResult> PaymentComplianceHistory(int interviewid)
+        {
+            try
+            {
+                var result = await _meetingService.FetchPaymentSlaHistoryDetailsById(interviewid);
+                return PartialView(result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> ClientInterviewReview(int id, int actionType)
         {
@@ -8170,6 +8190,8 @@ namespace Risebird.Web.Controllers
                             select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
             var result = await _meetingService.GetAudioCommentDetailsService(interviewId);
+            if (!string.IsNullOrEmpty(emailid))
+                result.interviewer = emailid.Replace("\"", "");
             result.AudioComment = _irfService.FetchIRFAudioLink(id);
             return View(result);
         }
@@ -8417,6 +8439,115 @@ namespace Risebird.Web.Controllers
                 }
             }
             return Json("Fail to update, Please try again.");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> QCOpenInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var meetings = await _meetingService.GetQCOpenInterviews(emailid);
+                       // meetings = meetings.Select(x => { x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                        }
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> AssignYourSelfForMyQCInterviws(int id)
+        {
+            try
+            {
+               
+                if (HttpContext.Session.GetString("email") != null )
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+
+                 
+                        var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
+                        if (result)
+                        {
+                            return Json("Assigned Successfully.");
+                        }
+                        else { return Json("Sorry! Could not assign."); }
+                  
+                }
+                else {
+                    return Json("");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyQualityControlledInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var meetings = await _meetingService.GetMyQCInterviews(emailid);
+                        // meetings = meetings.Select(x => { x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                        }
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
         #endregion
     }

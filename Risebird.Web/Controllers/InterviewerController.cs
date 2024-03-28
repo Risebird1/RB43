@@ -4009,9 +4009,9 @@ namespace Risebird.Web.Controllers
             result.IRFId = IrfId;
             return PartialView(result);
         }
-        public async Task<IActionResult> ReliabilityScoreDetails(string interviewer)
+        public async Task<IActionResult> ReliabilityScoreDetails(string interviewer, string IrfId)
         {
-            var result = await _interviewerService.GetReliabilityScoreDetails(interviewer);
+            var result = await _interviewerService.GetReliabilityScoreDetails(interviewer, IrfId);
             return PartialView(result);
         }
         public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type,string Irfid)

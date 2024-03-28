@@ -4672,7 +4672,7 @@ namespace Risebird.Repository
                     parameters.Add("Clientid", Clientid);
                     parameters.Add("Emailid", Emailid);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientNotScheduledMeetings", parameters,
-                         commandType: CommandType.StoredProcedure, commandTimeout:600 );
+                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
                 }
             }
             catch (SqlException ex)
@@ -6772,6 +6772,30 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaHistoryDetailsById(int interviewid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Interviewid", interviewid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<PaymentSLAVM>(con, "usp_GetPaymentSlaHistoryDetailsById", dynamicParameters,
+                      commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model)
         {
             try
@@ -7159,7 +7183,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public async Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid,bool activestatus)
+        public async Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid, bool activestatus)
         {
             try
             {
@@ -7180,6 +7204,78 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public async Task<List<MeetingVM>> GetQCOpenInterviews(string emailId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@emailID", emailId);
+                    var data = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_OpenQCInterviews", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return data.ToList();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AssignYourSelfForMyQCInterviwsRepository(string emailId, int id)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@emailId", emailId);
+
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_AssignYourSelfQC", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<List<MeetingVM>> GetMyQCInterviews(string emailId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@emailID", emailId);
+                    var data = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_MyQCInterview", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return data.ToList();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

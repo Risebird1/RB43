@@ -33,7 +33,7 @@ ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingS
 cm.id as CandidateMasterId, irf.Heuristicsscore as HeuristicProfileType, ic.VideoDuration, irf.JDTiltle,ca.IsProctor,    
 IRF.AudioComment,Cl.Name as ClientName,IRF.JobCountry,tqc.id as QCPresent,ISNULL(IRF.MeetingPlatform,'Zoom') MeetingPlatform,    
 im.BackUpLink,im.BackUpLinkId, irf.IsFixedInterviewduration, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as MaxInterviewDuration,tirf.PerSuccessRate as ExpectedPerHourRate,  
-Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge,irf.IsNewSkillChannel, ca.CodedResumeLink as CandidateCodedResumeLink  
+Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge,irf.IsNewSkillChannel, ca.CodedResumeLink as CandidateCodedResumeLink,pr.isProxyCandidate  
 from InterviewMeetings im                     
 inner join IRF  irf on im.IRFId=irf.IRFId left join InterviewComments ic on im.id = ic.InterviewId       
 left join Client cl on cl.id=IRF.ClientId      
@@ -45,7 +45,8 @@ left join Trans_QCFormReport tqc on tqc.Interviewid=im.id
 left join InterviewReport ir on ir.InterviewId = im.id    
 left join UserList uli on uli.Emailid=im.interviewer  
 left join [dbo].[TransInterviewer] tirf on IRF.id =tirf.IRFId and tirf.UserId=uli.id        
-left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType  
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType
+left join ProxyReport pr on im.id=pr.interviewid
 where interviewer = @emailIDParam and ((@type is null and im.confirmationStatus = 1) or    
 (@type = 'Pending' and ir.id is null and im.interviewDate <= dateadd(MINUTE, -60, @timeNow) and im.confirmationStatus = 1) or   --(dateadd(MINUTE, im.interviewDuration, im.interviewDate) < @timeNow  or (@timeNow >= im.interviewDate  and  @timeNow <= dateadd(MINUTE, im.interviewDuration, im.interviewDate)))  
 (@type = 'Completed' and im.interviewDate <= @timeNow  and ir.id is not null and im.confirmationStatus = 1) or     

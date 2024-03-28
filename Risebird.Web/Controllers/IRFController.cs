@@ -6568,8 +6568,8 @@ namespace Risebird.Web.Controllers
             var sun = new List<perdaytime>();
             var mon = new List<perdaytime>();
             sun.Add(new perdaytime { Start = "8", End = "23" });
-            mon.Add(new perdaytime { Start = "6", End = "9" });
-            mon.Add(new perdaytime { Start = "18", End = "23" });
+            mon.Add(new perdaytime { Start = "10", End = "23" });
+            //mon.Add(new perdaytime { Start = "18", End = "23" });
             model_Second.Add(new daytimes_second { Daytype = "sunday", dayCheck = true, dayvalue = sun });
             model_Second.Add(new daytimes_second { Daytype = "monday", dayCheck = true, dayvalue = mon });
             model_Second.Add(new daytimes_second { Daytype = "tuesday", dayCheck = true, dayvalue = mon });
@@ -9010,9 +9010,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
                     {
                         var model = await _irfService.GetCampaignList();
+                        ViewBag.Profile = profileName;
                         return View(model);
                     }
                     else
@@ -9091,5 +9092,41 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion 
+
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelsByTemplate()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
+                    {
+                        var model = await _irfService.GetSkillChannelsCreatedUsingTemplates();
+                        ViewBag.Profile = profileName;
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

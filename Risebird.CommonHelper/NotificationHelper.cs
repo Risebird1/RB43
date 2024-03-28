@@ -14,8 +14,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio.TwiML.Messaging;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.CommonHelper
@@ -1363,7 +1365,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill)
+        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill, string attachmentBase64String = null, string fileName = null)
         {
             try
             {
@@ -1422,8 +1424,13 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateLastStatusTemplate.html");
 
                 string msgBody = string.Format(rawEmail, parameters);
-
                 msg.HtmlContent = msgBody;
+
+                if(!string.IsNullOrEmpty(attachmentBase64String) && !string.IsNullOrEmpty(fileName))
+                {
+                    msg.AddAttachment(fileName, attachmentBase64String, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "attachment");//"filename.xlsx"//Convert.ToBase64String(attachment)
+                }
+
                 return await SendMail(msg);
             }
             catch (Exception ex)
@@ -3171,6 +3178,35 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, null, null, null, null, null, campaignId);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+        public async Task<string> SendNotificationToClientForSelectedCandidate(string candidateEmail, string candidateName, List<string> clientUsers, string interviewDate, string irfId, string primarySkill, string status, int interviewId, string clientlogo = null)
+        {
+            try
+            {
+
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = $"New Candidate named {candidateName} has been selected.";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+
+                foreach (var mail in clientUsers)
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+
+                object[] parameters = new object[] { candidateEmail, interviewDate, primarySkill, irfId, status };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientNotificationForSelectedCandidate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                msg.HtmlContent = msgBody;
+
+                return await SendMail(msg, null, interviewId);
             }
             catch (Exception)
             {

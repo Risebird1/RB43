@@ -222,6 +222,7 @@ namespace Risebird.Business.Interface
         Task<string> GetTranscriptUrlByMeeting(int meetingId);
         Task<bool> AddBlackListCompanyService(BlackListCompanyVM model);
         Task<PaymentSLAVM> FetchPaymentSlaDetailsById(int interviewid, string type);
+        Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaHistoryDetailsById(int interviewid);
         Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model);
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
         Task<bool> PaymentSlaNotApproved(int interviewid, string emailid);
@@ -238,5 +239,8 @@ namespace Risebird.Business.Interface
         Task<bool> ConfirmInterviewavailability(string emailId, int id,string type);
         Task<bool> UpdateInterviewerAvailbilityStatusCampaignLevel(bool status, string uniqueid, int campaignId, string rsc = null);
         Task<bool> MoveInterviewForTechQC(string Emailid,int interviewid,bool activestatus);
+        Task<List<MeetingVM>> GetQCOpenInterviews(string emailId);
+        Task<bool> AssignYourSelfForMyQCInterviws(string emailId, int id);
+        Task<List<MeetingVM>> GetMyQCInterviews(string emailId);
     }
 }

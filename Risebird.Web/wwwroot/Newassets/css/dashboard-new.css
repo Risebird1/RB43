@@ -3549,16 +3549,22 @@ table.interviewertable td.cadEmail {
 }
 
 
-    #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th, #InterviewerInsightsModel .table > thead > tr > th {
+ #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th{
         padding: 1px 8px;
         font-weight: normal !important;
         font-size: 14px;
         font-family: "Raleway", sans-serif;
     }
-
-#interviewerFlagDetailsModal .table > tbody > tr > td {
-    padding: 10px !important;
+#InterviewerInsightsModel .table > thead > tr > th {
+    font-size: 11px!important;
+    padding: 1px 8px;
+    font-weight: normal !important;
+    font-family: "Raleway", sans-serif;
 }
+
+        #interviewerFlagDetailsModal .table > tbody > tr > td {
+            padding: 10px !important;
+        }
 
 #interviewerMemberModal .table > tbody > tr > td {
     padding: 5px;
@@ -6573,6 +6579,7 @@ input[type=search]:focus {
 }
 .videokyc {
     background: #80cbc46b;
+    padding: 8px !important;
 }
 .clarity {
     background: #25bd6a8a;
@@ -6656,6 +6663,7 @@ input[type=search]:focus {
     position: relative;
     top: 5px;
     line-height: 14px;
+    cursor:pointer!important;
 }
 
 .logo-cm {
@@ -6962,7 +6970,7 @@ input[type=search]:focus {
 }
 
 .icon {
-    height: 20px !important;
+    height:16px !important;
     position: relative;
     left: 7px;
     margin-right: 10px;
@@ -6978,17 +6986,18 @@ input[type=search]:focus {
 .icon-field {
     width: auto;
     float: left;
-    padding: 0px 0px 5px 10px;
+    padding: 0px 0px 5px 6px;
 }
 
 .current {
-    font-size: 11px;
+    font-size: 12px;
     padding: 0px 6px;
     display: inline-block;
     font-weight: 600;
     border-radius: 0.2rem;
     position: relative;
     top: 0px;
+  
 }
 
 .selected {
@@ -7061,8 +7070,10 @@ input[type=search]:focus {
 }
 
 .progress {
-    background: green;
+    background: #8cd38c;
     color: #fff;
+    height: 21px;
+    line-height: 18px;
 }
 .proxy-report {
     background: #7667f0;
@@ -7138,14 +7149,13 @@ input[type=search]:focus {
     border-color: #76b39c;
 }
 .btn-invite, .btn-invite:hover {
-    background: #5ad3a6;
-    border-color: #5ad3a6;
+    background: #7feac2;
+    border-color: #7feac2;
     color: #fff !important;
 }
 .btn-edit {
-    background: #aecf79;
-    border-color: #aecf79;
-    color: #fff !important;
+    background: #c7e696;
+    border-color:#c7e696; color: #fff !important;
 }
 .btn-reset {
     background: #9aa6ea;
@@ -7158,8 +7168,8 @@ input[type=search]:focus {
     color: #fff !important;
 }
 .btn-copy {
-    background: #0d563c96;
-    border-color: #7aa19396 !important;
+    background: #91b4a7;
+    border-color: #91b4a7 !important;
     color: #fff !important;
 }
 
@@ -7170,14 +7180,13 @@ input[type=search]:focus {
     color: #fff !important;
 }
 .btn-unassign {
-    background: #f27c74;
-    border-color: #f27c74;
+    background: #f28d86;
+    border-color: #f28d86;
     color: #fff !important;
 }
 .btn-record {
-    background: #b30c0cb0;
-    border-color: #b30c0cb0;
-    color: #fff !important;
+    background: #e28a8a;
+    border-color:#e28a8a; color: #fff !important;
 }
 .btn-qc {
     background: #aaabbb;
@@ -7881,7 +7890,7 @@ ul.ks-cboxtags {
 }
 
 .template-top {
-    margin-top: 40px;
+    margin-top:20px;
 }
 
 .template-name-padding {
@@ -15466,7 +15475,7 @@ table#profile tr td:hover, table#risebirduser tr td:hover, table#clientduser tr 
 .client-ms #meeting_filter input[type=search] {
     background: #fff;
     border: 0px !important;
-    height:32px!important;
+    height:30px!important;
 }
 
 .dataTables_filter input[type=search], #resumeEvaluator_filter input[type=search], #recruiterTable_filter input[type=search] {
@@ -15494,7 +15503,9 @@ div.dataTables_wrapper div.dataTables_filter input:focus {
 }
 
 #MyInterviewList > thead > tr > th, #MyInterviewList > tfoot > tr > th {
-    padding: 5px 0px
+    padding: 5px!important;
+    text-transform:uppercase!important;
+    font-size:13px;
 }
 
 /*#questionsTable_filter input[type=search].form-control, #statusTable_filter input[type=search].form-control, #candidateTable_filter input[type=search].form-control, #supportList_filter input[type=search], #txtmeeting_filter input[type=search].form-control, #interviewersTbl_filter input[type=search].form-control, #dupmeeting_filter input[type=search].form-control, #meeting_filter input[type=search].form-control, .interview #meeting_filter input[type=search].form-control, #MyInterviewList_filter input[type=search].form-control, #interviewer_filter input[type=search].form-control, #OpeninterviewList_filter input[type=search].form-control, #profile_filter input[type=search].form-control, #risebirduser_filter input[type=search].form-control, #clientduser_filter input[type=search].form-control, #skill_filter input[type=search].form-control, #skillLevel_filter input[type=search].form-control {

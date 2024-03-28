@@ -3951,6 +3951,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaHistoryDetailsById(int interviewid)
+        {
+            try
+            {
+                return await _meetingRespository.FetchPaymentSlaHistoryDetailsById(interviewid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public async Task<bool> AddorUpdatePaymentSLADetails(PaymentSLAVM model)
         {
             try
@@ -4162,6 +4174,47 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public async Task<List<MeetingVM>> GetQCOpenInterviews(string emailId)
+        {
+            try
+            {
+                var openMeeting = await _meetingRespository.GetQCOpenInterviews(emailId);
+                return openMeeting;
+            }
+            catch (Exception ex)
+            {
+              await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+               return null;
+            }
+        }
+
+        public async Task<bool> AssignYourSelfForMyQCInterviws(string emailId, int id)
+        {
+            try
+            {
+                return await _meetingRespository.AssignYourSelfForMyQCInterviwsRepository(emailId, id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<List<MeetingVM>> GetMyQCInterviews(string emailId)
+        {
+            try
+            {
+                var openMeeting = await _meetingRespository.GetMyQCInterviews(emailId);
+                return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

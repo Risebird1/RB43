@@ -3859,15 +3859,20 @@ Created using IcoMoon - icomoon.io
         padding-bottom: 0;
     }
 
-.table > thead > tr > th {
+.table > thead > tr > th, .table > tfoot > tr > th {
     border-bottom-width: 1px;
     /*font-size: 1.45em;
   font-weight: 300;*/
-    font-size: 1.08em;
+    font-size: 13px;
     font-weight: 500;
     border: 0;
 }
 
+.table-striped.table-bordered th {
+    font-size: 13px;
+    text-transform: uppercase!important;
+    font-family: "Raleway", sans-serif;
+}
 .table .radio,
 .table .checkbox {
     margin-top: 0;

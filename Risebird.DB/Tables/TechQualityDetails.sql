@@ -15,6 +15,18 @@ CREATE TABLE [dbo].[TechQualityDetails](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SharedOn')
+      AND Object_ID = Object_ID(N'TechQualityDetails'))
+BEGIN
+    ALTER TABLE TechQualityDetails
+    Add [QcInterviewer] [varchar](100) NULL		
+END
+END
 GO
 
 

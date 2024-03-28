@@ -1,14 +1,21 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.OData.Edm;
+using OfficeOpenXml;
+//using OfficeOpenXml.Core.ExcelPackage;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Twilio.TwiML.Messaging;
 
 namespace Risebird.MicroService
 {
@@ -19,10 +26,11 @@ namespace Risebird.MicroService
         private readonly IIRFRepository _irfRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IExcelHelper _excelHelper;
 
         private readonly string connectionString;
 
-        public CandidateStatusNotifier(IConfiguration configuration, ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IIRFRepository irfRepository, INotificationHelper notificationHelper)
+        public CandidateStatusNotifier(IConfiguration configuration, ICandidateRepository candidateRepository, IApplicationErrorLogger applicationErrorLogger, IIRFRepository irfRepository, INotificationHelper notificationHelper, IExcelHelper excelHelper)
         {
             _configuration = configuration;
             _candidateRepository = candidateRepository;
@@ -30,11 +38,12 @@ namespace Risebird.MicroService
             _irfRepository = irfRepository;
             _notificationHelper = notificationHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
+            _excelHelper =  excelHelper;
 
         }
 
         [FunctionName("CandidateStatusNotifier")]
-        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, ILogger log)//0 0 0 * * *
         {
             try
             {
@@ -53,6 +62,7 @@ namespace Risebird.MicroService
                             var candidates = new List<string>();
 
                             var mailList = await _irfRepository.GetIRFClientsEmail(irf);
+                            
                             if (mailList == null || mailList.Count() == 0)
                             {
                                 continue;
@@ -92,7 +102,12 @@ namespace Risebird.MicroService
                             }
                             var details = data.Where(x => x.IRFintId == irf).FirstOrDefault();
                             var primarySkill = details.JDTitle.Split('|')[0];
-                            await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), candidates, details.IRFId, primarySkill);
+
+                            // Create an Excel file
+                            byte[] excelFile = _excelHelper.CreateExcelFile(candidates, details.IRFId);
+                            string fileName = "Risebird_CandidateStaus_" + primarySkill + "_" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ".xlsx";
+                            fileName = fileName.Replace(" ", "_");
+                            await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), candidates, details.IRFId, primarySkill, Convert.ToBase64String(excelFile), fileName);
                         }
                     }
 
@@ -106,5 +121,6 @@ namespace Risebird.MicroService
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+
     }
 }
