@@ -3549,16 +3549,22 @@ table.interviewertable td.cadEmail {
 }
 
 
-    #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th, #InterviewerInsightsModel .table > thead > tr > th {
+ #interviewerMemberModal .table > thead > tr > th, #interviewerMemberModal .table > tfoot > tr > th{
         padding: 1px 8px;
         font-weight: normal !important;
         font-size: 14px;
         font-family: "Raleway", sans-serif;
     }
-
-#interviewerFlagDetailsModal .table > tbody > tr > td {
-    padding: 10px !important;
+#InterviewerInsightsModel .table > thead > tr > th {
+    font-size: 11px!important;
+    padding: 1px 8px;
+    font-weight: normal !important;
+    font-family: "Raleway", sans-serif;
 }
+
+        #interviewerFlagDetailsModal .table > tbody > tr > td {
+            padding: 10px !important;
+        }
 
 #interviewerMemberModal .table > tbody > tr > td {
     padding: 5px;
@@ -7066,6 +7072,8 @@ input[type=search]:focus {
 .progress {
     background: #8cd38c;
     color: #fff;
+    height: 21px;
+    line-height: 18px;
 }
 .proxy-report {
     background: #7667f0;

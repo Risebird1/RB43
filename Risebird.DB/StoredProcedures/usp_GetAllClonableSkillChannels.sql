@@ -15,7 +15,7 @@ Begin
  select csc.id as ClonableSkillChannelId, csc.Name, csc.CreatedFromIRFId, csc.MeetingPlatform, ir.CompanyType as CompanyTypeId,-- ir.CompetencyLevelId,  
  ir.SeniorityLevelId, ir.CountryType, asg.AssessmentGroup as AssessmentGroupName, asg.id as AssessmentGroupId,  
  ir.DifficultyLevel, ir.EmploymentType, ir.PerHourRate, agc.CategoryName, Count(IRF.IRFId) as SkillChannelCounts, 
- ir.PrimarySkills, csc.CreatedOn, ir.Clients as TaggedClients,csc.IsDeleted
+ ir.PrimarySkills, csc.CreatedOn, ir.Clients as TaggedClients,csc.IsDeleted,irfc.IRFID as SkillChannelName
  from ClonableSkillChannel csc   
  left join IRFRecommendations ir on ir.CloneIRFId = csc.id  
  join irf irfc on irfc.id = csc.CreatedFromIRFId
@@ -24,7 +24,7 @@ Begin
  left join IRF on IRF.CreatedFromTemplateId=csc.id
  --where ir.[Status] = 1 --AND (csc.IsDeleted <> 1 OR csc.IsDeleted IS NULL) 
  GROUP BY csc.id , csc.Name, csc.CreatedFromIRFId, csc.MeetingPlatform, ir.CompanyType,ir.SeniorityLevelId, ir.CountryType, asg.AssessmentGroup, asg.id,
- ir.DifficultyLevel, ir.EmploymentType, ir.PerHourRate, agc.CategoryName, ir.PrimarySkills, csc.CreatedOn, ir.CLients,csc.IsDeleted
+ ir.DifficultyLevel, ir.EmploymentType, ir.PerHourRate, agc.CategoryName, ir.PrimarySkills, csc.CreatedOn, ir.CLients,csc.IsDeleted,irfc.IRFID
  order by csc.CreatedOn desc
 End
 GO
