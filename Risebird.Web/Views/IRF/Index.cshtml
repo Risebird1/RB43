@@ -1321,7 +1321,7 @@
 
     var currentPageNumber = 1;
     @*var maxPageCount = parseInt('@Model.MaxPageCount');*@
-                                    var allFetched = false;
+                                        var allFetched = false;
     var currentDataFetched = true;
     $(document).ready(function () {
 
@@ -3240,6 +3240,7 @@
             <div class="modal-body">
                 <input type="hidden" id="hidcalibartionid" />
                 <input type="hidden" id="hidcalibartionirfName" />
+                <input type="text" id="calibrationEmailids" placeholder="Enter emailids ; seperated" />
                 <input type="text" id="calibrationsubject" />
                 <input type="datetime-local" id="calibrationmeetingdate" />
                 <input type="button" onclick="ScheduleCalibrationCall()" value="Schedule Meeting" />
