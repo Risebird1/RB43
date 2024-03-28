@@ -44,6 +44,24 @@
     body {
         font-family: Arial, Helvetica, sans-serif;
     }
+    .meetingTime [type="datetime-local"] {
+    background-color: #ffffff!important;
+    background-size: 3.5% !important;
+    height: 43px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+    .meetingTime input::-ms-input-placeholder { /* Edge 12-18 */
+    font-size: 14px;
+    font-weight:500!important;
+}
+
+.meetingTime input::placeholder {
+    font-size: 14px;
+    font-weight: 500 !important;
+}
 </style>
 
 
@@ -672,9 +690,9 @@
                                                             <div class="stats-bttm-btn  col-lg-10 col-md-10 col-sm-10 col-xs-10 pull-left">
                                                                 @if (Model.Profile != "SeniorInterviewerManagement")
                                                                 {
-                                                                    <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background:#eea4349e;border-color:#f1c681">
+                                                                    <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background: #1a9b477d;border-color:#bedcc99e">
                                                                         <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId');" title="Calibration Meeting">
-                                                                            <span class="fas fa-list" style="color:#fff"></span>
+                                                                           <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
                                                                         </span>
                                                                     </button>
                                                                     <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Candidates List" style="width:25px!important;height:25px!important;background:#eea4349e;border-color:#f1c681">
@@ -695,7 +713,7 @@
 
                                                                     @if (Model.Profile != "Recruiter")
                                                                     {
-                                                                        <button id="skill_14" class="btn shadow btn-xs sharp me-1 item4" aria-label="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background: #1d919f96!important;border-color: #7abec7 !important;">
+                                                                        <button id="skill_14" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" aria-label="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background: #1d919f96!important;border-color: #7abec7 !important;">
                                                                             <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink })'" title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:0px;font-size:12px; position: relative;color:#fff"></i></span>
                                                                         </button>
 
@@ -3229,7 +3247,7 @@
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
-                    <span class="publicsharing-icon  fas fa-comments" style="font-size:24px;"></span>
+                    <span class="publicsharing-icon  fa fa-users" style="font-size:24px;position:relative;top:1px;left:-5px;"></span>
                 </div>
                 <h5 class="modal-title pull-left">Calibration Meeting</h5>
             </div>
@@ -3238,12 +3256,23 @@
             </button>
 
             <div class="modal-body">
+ 
                 <input type="hidden" id="hidcalibartionid" />
                 <input type="hidden" id="hidcalibartionirfName" />
-                <input type="text" id="calibrationEmailids" placeholder="Enter emailids ; seperated" />
-                <input type="text" id="calibrationsubject" />
-                <input type="datetime-local" id="calibrationmeetingdate" />
+              
+                <div class="meetingTime">
+                  <label style="width:100px;"> Email Id:</label>
+                <input style="margin-bottom:10px;" class="cal-field" type="text" id="calibrationEmailids" placeholder="Enter emailids ; seperated" />
+                </div>
+                <div>
+                  <label style="width:100px;"> Subject:</label>
+                <input style="margin-bottom:10px;" class="cal-field" type="text" id="calibrationsubject" />
+                </div>
+                <div class="meetingTime">
+                 <label style="width:100px;">Meeting Time:</label>
+               <input style="margin-bottom:10px;" class="cal-field" type="datetime-local" id="calibrationmeetingdate" />
                 <input type="button" onclick="ScheduleCalibrationCall()" value="Schedule Meeting" />
+                </div>
             </div>
         </div>
     </div>

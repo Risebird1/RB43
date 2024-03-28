@@ -7112,6 +7112,9 @@ input[type=search]:focus {
         width: 40%;
         left: 4px;
     }
+.cal-field{
+    width:83%;
+}
 
 .welcome {
     line-height: 22px;
@@ -10515,8 +10518,11 @@ option {
         width: 100%;
         float: left;
     }
+    .cal-field{
+        width:100%;
+    }
     .campaignName {
-        width: 100%!important;
+        width: 100% !important;
         margin: 40px auto;
     }
     .msgroup, .sub-assmntgrp {
