@@ -4164,7 +4164,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid,bool activestatus)
+        public async Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid, bool activestatus)
         {
             try
             {
@@ -4186,8 +4186,8 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-              await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-               return null;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 
@@ -4210,6 +4210,18 @@ namespace Risebird.Business
             {
                 var openMeeting = await _meetingRespository.GetMyQCInterviews(emailId);
                 return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid)
+        {
+            try
+            {
+                return await _meetingRespository.SaveCalibrationCallDetail(meetinglink, irfid, meetingdate, Emailid);
             }
             catch (Exception ex)
             {

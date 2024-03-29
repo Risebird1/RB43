@@ -44,24 +44,25 @@
     body {
         font-family: Arial, Helvetica, sans-serif;
     }
+
     .meetingTime [type="datetime-local"] {
-    background-color: #ffffff!important;
-    background-size: 3.5% !important;
-    height: 43px;
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 4px;
-}
+        background-color: #ffffff !important;
+        background-size: 3.5% !important;
+        height: 43px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 4px;
+    }
 
     .meetingTime input::-ms-input-placeholder { /* Edge 12-18 */
-    font-size: 14px;
-    font-weight:500!important;
-}
+        font-size: 14px;
+        font-weight: 500 !important;
+    }
 
-.meetingTime input::placeholder {
-    font-size: 14px;
-    font-weight: 500 !important;
-}
+    .meetingTime input::placeholder {
+        font-size: 14px;
+        font-weight: 500 !important;
+    }
 </style>
 
 
@@ -691,8 +692,8 @@
                                                                 @if (Model.Profile != "SeniorInterviewerManagement")
                                                                 {
                                                                     <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background: #1a9b477d;border-color:#bedcc99e">
-                                                                        <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId');" title="Calibration Meeting">
-                                                                           <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
+                                                                        <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId','@item.JDTiltle','@item.RisebirdHREmail');" title="Calibration Meeting">
+                                                                            <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
                                                                         </span>
                                                                     </button>
                                                                     <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Candidates List" style="width:25px!important;height:25px!important;background:#eea4349e;border-color:#f1c681">
@@ -1339,7 +1340,7 @@
 
     var currentPageNumber = 1;
     @*var maxPageCount = parseInt('@Model.MaxPageCount');*@
-                                        var allFetched = false;
+                                                    var allFetched = false;
     var currentDataFetched = true;
     $(document).ready(function () {
 
@@ -3256,33 +3257,35 @@
             </button>
 
             <div class="modal-body">
- 
                 <input type="hidden" id="hidcalibartionid" />
                 <input type="hidden" id="hidcalibartionirfName" />
-              
-                <div class="meetingTime">
-                  <label style="width:100px;"> Email Id:</label>
+                <input type="hidden" id="hidcalibartionrisebirdhr" />
+
+                @* <div class="meetingTime">
+                <label style="width:100px;"> Email Id:</label>
                 <input style="margin-bottom:10px;" class="cal-field" type="text" id="calibrationEmailids" placeholder="Enter emailids ; seperated" />
-                </div>
+                </div> *@
                 <div>
-                  <label style="width:100px;"> Subject:</label>
-                <input style="margin-bottom:10px;" class="cal-field" type="text" id="calibrationsubject" />
+                    <label style="width:100px;"> Subject:</label>
+                    <input style="margin-bottom:10px;" class="cal-field" type="text" id="calibrationsubject" />
                 </div>
                 <div class="meetingTime">
-                 <label style="width:100px;">Meeting Time:</label>
-               <input style="margin-bottom:10px;" class="cal-field" type="datetime-local" id="calibrationmeetingdate" />
-                <input class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" type="button" onclick="ScheduleCalibrationCall()" value="Schedule Meeting" />
+                    <label style="width:100px;">Meeting Time:</label>
+                    <input style="margin-bottom:10px;" class="cal-field" type="datetime-local" id="calibrationmeetingdate" />
+                    <input class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" type="button" onclick="ScheduleCalibrationCall()" value="Schedule Meeting" />
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    function opencalibrationModel(irfid, IRFName) {
+    function opencalibrationModel(irfid, IRFName, jdTitle,risebirdhr) {
         let dateInput = document.getElementById("calibrationmeetingdate");
         dateInput.min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(":"));
         $("#hidcalibartionid").val(irfid);
         $("#hidcalibartionirfName").val(IRFName);
+        $("#hidcalibartionrisebirdhr").val(risebirdhr);
+        $("#calibrationsubject").val("Invitation to Calibration Call for Interview Alignment for " + jdTitle + " : " + IRFName);
         var modalBct = document.getElementById("calibrationModel");
         modalBct.style.display = "block";
     }
@@ -3293,8 +3296,22 @@
     function ScheduleCalibrationCall(irfid, IRFName) {
         var irfid = $("#hidcalibartionid").val();
         var IRFName = $("#hidcalibartionirfName").val();
-        var emailids = $("#calibrationEmailids").val();
+        //var emailids = $("#calibrationEmailids").val();
         var subject = $("#calibrationsubject").val();
+        var risebirdhr = $("#hidcalibartionrisebirdhr").val();
         var meetingdate = $("#calibrationmeetingdate").val();
+        if (meetingdate == '') {
+            swal.fire("Select the meeting date and time");
+        } else {
+            $.ajax({
+                url: '/Interview/SendCalibrationNotification',
+                data: { 'irfid': irfid, 'IRFName': IRFName, 'subject': subject, 'meetingdate': meetingdate, 'risebirdhr': risebirdhr },
+                method: 'POST',
+                success: function (response) {
+                    swal.fire(response);
+                    closecalibrationModel();
+                }
+            });
+        }
     }
 </script>

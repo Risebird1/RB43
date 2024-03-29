@@ -7277,5 +7277,33 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@meetinglink", meetinglink);
+                    parameters.Add("@meetingdate", meetingdate);
+                    parameters.Add("@irfid", irfid);
+                    parameters.Add("@Emailid", Emailid);
+                    parameters.Add("@CreatedOn", DateTime.Now);
+                    var data = await SqlMapper.QueryAsync<string>(con, "usp_SaveCalibrationMeetingDetails", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return data.ToList();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

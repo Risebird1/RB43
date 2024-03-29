@@ -284,5 +284,6 @@ namespace Risebird.Repository.Interface
         Task<List<MeetingVM>> GetQCOpenInterviews(string emailId);
         Task<bool> AssignYourSelfForMyQCInterviwsRepository(string emailId, int id);
         Task<List<MeetingVM>> GetMyQCInterviews(string emailId);
+        Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid);
     }
 }

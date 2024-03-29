@@ -1279,7 +1279,7 @@ namespace Risebird.CommonHelper
                 {
                     await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 }
-               
+
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);
@@ -1426,7 +1426,7 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
 
-                if(!string.IsNullOrEmpty(attachmentBase64String) && !string.IsNullOrEmpty(fileName))
+                if (!string.IsNullOrEmpty(attachmentBase64String) && !string.IsNullOrEmpty(fileName))
                 {
                     msg.AddAttachment(fileName, attachmentBase64String, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "attachment");//"filename.xlsx"//Convert.ToBase64String(attachment)
                 }
@@ -1947,10 +1947,10 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
                     }
                 }
-                object[] parameters = new object[] { CandidateName, interviewDate,""};
+                object[] parameters = new object[] { CandidateName, interviewDate, "" };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotificationV2.html");
-               string msgBody = string.Format(rawEmail, parameters);
+                string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, irfId, interviewId);
             }
@@ -3213,7 +3213,38 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
 
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                if (!string.IsNullOrWhiteSpace(model.CC))
+                {
+                    var bccMails = model.CC.Split(";");
+                    foreach (var mail in bccMails)
+                    {
+                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    }
+                }
+                object[] parameters = new object[] { meetingdate.ToString(), "60 minute", url };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CalibrationMeetingNotificationV2.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
 
     }
 }

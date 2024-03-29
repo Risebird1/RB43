@@ -112,7 +112,8 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendReScheduleInterviewInfo(Mail model, DateTime interviewdatetime, string timezonevalue, DateTime newinterviewdatetime, string newtimezonevalue, string CandidateName, string ClientName, string JDTiltle, int? interviewId);
         Task<string> SendInterviewerRedMarkersNotification(Mail model, string _template, string acklink);
         Task<string> SendInerviewerMeetingReminder(Mail model, string url);
-        Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewers, string yesbutton, string nobutton, string agName, int campaignId); 
+        Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewers, string yesbutton, string nobutton, string agName, int campaignId);
         Task<string> SendNotificationToClientForSelectedCandidate(string candidateEmail, string candidateName, List<string> clientUsers, string interviewDate, string irfId, string primarySkill, string status, int interviewId, string clientlogo = null);
+        Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate);
     }
 }
