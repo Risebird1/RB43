@@ -7082,7 +7082,6 @@ input[type=search]:focus {
     background: orange;
     color: #94207bbd;
 }
-
 .offer {
     background: darkgreen;
     color: #fff;
@@ -7093,7 +7092,6 @@ input[type=search]:focus {
     float: left;
     display: flex;
 }
-
 .pskill {
     text-decoration: none;
     color: #1799bb;
@@ -7122,9 +7120,9 @@ input[type=search]:focus {
     color: #fff;
 }
 
-    .welcome span {
+ .welcome span {
         color: mediumspringgreen;
-    }
+ }
 
 .btn-calling, .btn-calling:hover {
     background: #1ba51be0 !important;
@@ -7140,8 +7138,6 @@ input[type=search]:focus {
     background: #f6b445c7;
     border-color: #f6b445c7;
 }
-
-
 .btn-adstatus, .btn-adstatus:hover {
     background: #aed580;
     border-color: #aed580;
