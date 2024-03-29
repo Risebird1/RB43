@@ -7106,16 +7106,15 @@ input[type=search]:focus {
     width: 30%;
 }
 
-    .logo-area .logo-cm {
+ .logo-area .logo-cm {
         position: relative;
         top: 4px;
         width: 40%;
         left: 4px;
-    }
+  }
 .cal-field{
     width:83%;
 }
-
 .welcome {
     line-height: 22px;
     font-size: 17px;
