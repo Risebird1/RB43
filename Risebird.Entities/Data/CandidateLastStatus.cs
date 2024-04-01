@@ -13,10 +13,13 @@ namespace Risebird.Entities.Data
         public string candidateName { get; set; }
         public string JDTitle { get; set; }
         public string Client { get; set; }
-        public DateTime interviewDate { get; set; }
+        public DateTime? interviewDate { get; set; }
         public DateTime PerformedOn { get; set; }
         //public int? MeetingStatus { get; set; }
         //public int? InterviewStatus { get; set; }
         public int? QCStatus { get; set; }
+        public string ResumeLink { get; set; }
+        public int? TotalTechScore { get; set; }
+        public string MobileNumber { get; set; }
     }
 }

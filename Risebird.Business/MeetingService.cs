@@ -3155,6 +3155,18 @@ namespace Risebird.Business
                 if (await _meetingRespository.CancelInterview(meetingid))
                 {
                     var meetingDetails = await _meetingRespository.GetMeetingDetails(meetingid);
+
+                    //get candidateId and irfId
+                    var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(meetingid);
+
+                    //add candidate status as cancelled here
+                    if (candidate != null && candidate.CandidateMasterId > 0 && candidate.IRFId > 0)
+                    {
+                        await _irfService.AddCandidateStatus(loggedInUser ?? "System", candidate.CandidateMasterId, candidate.IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingid);
+                    }
+
+                    //var result1 = await _irfService.AddCandidateStatus("System", candidateId, irfId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, meetingId);
+
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.MeetingCancelled;
                     activityTrackerModel.Particulars = "Meeting with: " + meetingDetails.candidateEmail;
