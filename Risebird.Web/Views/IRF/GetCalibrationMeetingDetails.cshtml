@@ -16,28 +16,38 @@
                 </tr>
             </thead>
             <tbody>
+                    @if (Model.Count() > 0)
+    {
                 @foreach (var item in Model)
                 {
-                <td>@item.MeetingDate</td>
-                    @if (!string.IsNullOrWhiteSpace(item.MeetingLink))
-                    {
-                    <td><a target="_blank" href="@item.MeetingLink">Meeting Link</a></td>
+                       
+                            <td>@item.MeetingDate</td>
+                            @if (!string.IsNullOrWhiteSpace(item.MeetingLink))
+                            {
+                                <td><a target="_blank" href="@item.MeetingLink">Meeting Link</a></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            <td>@item.CreatedBy</td>
+                            <td>@item.CreatedOn</td>
+                            @if (!string.IsNullOrWhiteSpace(item.VideoLink))
+                            {
+                                <td><a target="_blank" href="@item.VideoLink">Video</a></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+
+                        }
+                       
                     }
-                    else
-                    {
-                    <td></td>
-                    }
-                <td>@item.CreatedBy</td>
-                <td>@item.CreatedOn</td>
-                    @if (!string.IsNullOrWhiteSpace(item.VideoLink))
-                    {
-                    <td><a target="_blank" href="@item.VideoLink">Video</a></td>
-                    }
-                    else
-                    {
-                    <td></td>
-                    }
-                }
+                     else
+                        {
+                    <td colspan="5" style="padding:5px;text-align: center;color: #aaaac3;font-size: 16px;">No Record Found</td>
+                        }
             </tbody>
         </table>
     </div>
