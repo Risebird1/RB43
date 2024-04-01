@@ -1516,7 +1516,18 @@ namespace Risebird.Repository
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
                     }
-
+                    if (reportDetails.MeetingStatus != 2)
+                    {
+                        try
+                        {
+                            await SqlMapper.QueryAsync(con, "usp_FirstInterviewMovetoTechQC", parametersPoints,
+                                    commandType: CommandType.StoredProcedure);
+                        }
+                        catch (SqlException ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
+                    }
 
                     return true;
                 }
