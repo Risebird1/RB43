@@ -1644,5 +1644,44 @@ namespace Risebird.Web.Controllers
             }
             return Json(model);
         }
+        #region Calibration Meeting
+        [HttpPost]
+        public async Task<JsonResult> SendCalibrationNotification(int irfid, string IRFName, string subject, DateTime meetingdate, string risebirdhr)
+        {
+            //create zoom meeting link
+            var zoomLink = await CreateCalibrationZoomMeeting(subject, meetingdate, "");
+            if (!string.IsNullOrEmpty(zoomLink.join_url))
+            {
+                //save into db and fetch emailid's
+                var emailids = await _interviewSchedulerservice.SaveCalibrationCallDetail(zoomLink.join_url, irfid, meetingdate, "");
+                Mail _mail = new Mail
+                {
+                    TO = risebirdhr,
+                    CC = string.Join(";", emailids),
+                    Subject = $"{subject}"
+                };
+                //send mail to respentive emailid in bcc
+                var result = await _notificationHelper.SendCalibrationMeetingNotification(_mail, zoomLink.join_url, meetingdate);
+                return Json("Mail notification send successfully.");
+            }
+            //return success message
+            return Json("Fail to create and send meeting invite, try after sometime.");
+        }
+        public async Task<InstaZoomMeetingResponse> CreateCalibrationZoomMeeting(string subject, DateTime indianTime, string accountEmail)
+        {
+            InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
+            _zoommetingobject.topic = subject;
+            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
+            accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30), accountEmail);
+            if (string.IsNullOrEmpty(accountEmail))
+            {
+                return null;
+            }
+            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
+            zoomlink.accountemail = accountEmail;
+            var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
+            return zoomlink;
+        }
+        #endregion
     }
 }
