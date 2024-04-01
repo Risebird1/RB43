@@ -6332,12 +6332,12 @@ input[type=search]:focus {
 
 .meetingTime input::-ms-input-placeholder { /* Edge 12-18 */
     color: #565050ab;
-    font-size:14px;
+    font-size:14px!important;
     font-weight: 500 !important;
 }
 
 .meetingTime input::placeholder {
-    font-size: 14px;
+    font-size: 14px!important;
     color: #565050ab;
     font-weight: 500 !important;
 }
@@ -7132,8 +7132,10 @@ input[type=search]:focus {
         left: 4px;
   }
 .cal-field{
-    width:83%;
+    width:86.5%;
+    font-size:13px!important;
 }
+
 .welcome {
     line-height: 22px;
     font-size: 17px;
@@ -9149,6 +9151,14 @@ option {
     font-size:13px!important;
     position: relative;
     top: 3px;
+}
+.meetingDetails{
+    margin-top:8px;
+}
+.meetingDetails .table-striped.table-bordered th {
+    text-transform: capitalize !important;
+    padding: 3px 7px 3px 7px !important;
+    text-align: left !important;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
