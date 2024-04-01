@@ -9138,7 +9138,6 @@ namespace Risebird.Web.Controllers
             {
                 model = new List<CallibrationCallVM>();
             }
-            
             return PartialView(model);
         }
         #endregion
