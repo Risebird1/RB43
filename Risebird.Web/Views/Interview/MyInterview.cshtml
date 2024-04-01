@@ -406,7 +406,7 @@
                                                             @*<th>Client Instructions</th>*@
                                                             @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                                                             {
-                                                                 <th>Is Proxy</th>                                                            
+                                                                 <th>Proxy Voting</th>                                                            
                                                             }
 
                                                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
@@ -435,7 +435,7 @@
                                                             @*<th>Client Instructions</th>*@
                                                             @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                                                             {
-                                                                 <th>Is Proxy</th>                                                            
+                                                                <th>Proxy Voting</th>
                                                             }
                                                             @if (ViewBag.MeetingLineUpType != MeetingLineUpType.Cancelled)
                                                             {
@@ -621,15 +621,17 @@
                                                                 }
                                                               
                                                            @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed){
-                                                               <td>
-                                                                   @if(@item.isProxyCandidate == true){
-                                                                           <p style="color:green;font-weight:bold;">Yes</p>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                           <p style="color:#989191;font-weight:500;">No</p> 
-                                                                        }
-                                                                    </td>
+                                                                @if (item.ProxyvotingCount>0) { 
+                                                        <td class="text-center">
+                                                            <button style="width:23px;" class="proxy-count" type="button"  onclick="ProxyReportDetails('@item.ProxyId')"> @item.ProxyvotingCount</button>
+                                                           </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="text-center">
+                                                           @item.ProxyvotingCount
+                                                            </td>
+                                                             }
                                                            
                                                                 
                                                             }

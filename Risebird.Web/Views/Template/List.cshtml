@@ -289,8 +289,8 @@
                                                     @if (Model.Profile != "Client")
                                                     {
                                                         <th>Created from Skills</th>
+                                                        <th>Channel Owner</th>
                                                         <th>Tech Skills</th>
-
                                                         <th>Skill Channels</th>
                                                         <th>Interviewers</th>
                                                     }
@@ -304,9 +304,10 @@
                                                     <th>Assessment Group Name</th>
                                                     @* <th>Meeting Platform</th> *@
                                                     @if (Model.Profile != "Client")
-                                                    {<th>Created from Skills</th>
+                                                    {
+                                                        <th>Created from Skills</th>
+                                                        <th>Channel Owner</th>
                                                         <th>Tech Skills</th>
-
                                                         <th>Skill Channels</th>
                                                         <th>Interviewers</th>
                                                     }
@@ -344,6 +345,7 @@
                                                              @if (Model.Profile != "Client")
                                                             {
                                                                 <td>@item.SkillChannelName</td>
+                                                                <td>@item.ChannelOwner</td>
                                                             }
 
                                                             @if (Model.Profile != "Client")
@@ -595,7 +597,7 @@
 
                 </div>
 
-                <h5 class="modal-title pull-left">Template Stats <span class="popup-text" id="Template_id_model" style="font-size:9px"></span></h5>
+                <h5 class="modal-title pull-left">Template Stats <span class="popup-text" id="Template_id_model"></span></h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeTemplateStatsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>

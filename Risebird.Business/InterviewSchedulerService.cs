@@ -16,11 +16,16 @@ namespace Risebird.Business
     {
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IIRFService _irfService;
+        private readonly IIRFRepository _irfRepository;
 
-        public InterviewSchedulerService(IInterviewSchedulerRepository interviewSchedulerRepository, IApplicationErrorLogger applicationErrorLogger)
+        public InterviewSchedulerService(IInterviewSchedulerRepository interviewSchedulerRepository, IApplicationErrorLogger applicationErrorLogger,
+            IIRFService irfService, IIRFRepository irfRepository)
         {
             _interviewSchedulerRepository = interviewSchedulerRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _irfService = irfService;
+            _irfRepository = irfRepository;
         }
 
         public async Task<List<daytimes_report>> FetchEventList()
@@ -361,11 +366,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        /// <summary>
+        /// Cancel the previous meetings
+        /// </summary>
+        /// <param name="interviewid"></param>
+        /// <param name="newinterviewdate"></param>
+        /// <returns></returns>
         public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate)
         {
             try
             {
-                return await _interviewSchedulerRepository.UpdateReSchedulingInterview(interviewid, newinterviewdate);
+                var result = await _interviewSchedulerRepository.UpdateReSchedulingInterview(interviewid, newinterviewdate);
+                if(result != null)
+                {
+                    //get candidateId and irfId
+                    var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(interviewid);
+
+                    //add candidate status as cancelled here
+                    if(candidate != null && candidate.CandidateMasterId>0 && candidate.IRFId > 0)
+                    {
+                        await _irfService.AddCandidateStatus("System", candidate.CandidateMasterId, candidate.IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, interviewid);
+                    }
+
+                }
+                return result; 
             }
             catch (Exception ex)
             {

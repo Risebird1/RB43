@@ -38,6 +38,7 @@ namespace Risebird.Entities.ViewModel
         //public string[] MeetingPlatformOptions = new[] { MeetingPlatforms.Zoom, MeetingPlatforms.RisebirdMeet };
         public int SkillChannelCounts { get; set; }
         public string SkillChannelName { get; set; }
+        public string ChannelOwner { get; set; }
         public int InterviewCounts { get; set; }
         public string PrimarySkills { get; set; }
         public string TaggedClients { get; set; }
