@@ -61,7 +61,10 @@ namespace Risebird.MicroService
                         {
                             var candidates = new List<string>();
 
-                            var mailList = await _irfRepository.GetIRFClientsEmail(irf);
+                            //var mailList = await _irfRepository.GetIRFClientsEmail(irf);
+                            var mailList = new List<string>();
+                            mailList.Add("harshit_jajoo@risebird.io");
+                            mailList.Add("ruma_bose@risebird.io");
                             
                             if (mailList == null || mailList.Count() == 0)
                             {
@@ -94,7 +97,7 @@ namespace Risebird.MicroService
                                     status = item.StatusValue;
                                 }
 
-                                candidates.Add(item.candidateName + "|" + item.candidateEmail + "|" + status);
+                                candidates.Add(item.candidateName + "|" + item.candidateEmail + "|" + status + "|" + item.MobileNumber + "|" + item.TotalTechScore ?? "NA" + "|" + item.ResumeLink + "|" + (item.interviewDate!=null ? item.interviewDate.ToString() : "NA"));
                             }
                             if (candidates == null || candidates.Count() == 0)
                             {
@@ -105,7 +108,7 @@ namespace Risebird.MicroService
 
                             // Create an Excel file
                             byte[] excelFile = _excelHelper.CreateExcelFile(candidates, details.IRFId);
-                            string fileName = "Risebird_CandidateStaus_" + primarySkill + "_" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ".xlsx";
+                            string fileName = "Risebird_CandidateStaus_" + details.IRFId + "_" + primarySkill + "_" + DateTime.Now.AddDays(-1).ToString("dd MMMM yyyy") + ".xlsx";
                             fileName = fileName.Replace(" ", "_");
                             await _notificationHelper.SendCandidateLastStatusMail(mailList.ToList(), candidates, details.IRFId, primarySkill, Convert.ToBase64String(excelFile), fileName);
                         }

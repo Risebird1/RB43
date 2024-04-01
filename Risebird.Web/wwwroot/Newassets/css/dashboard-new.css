@@ -7191,7 +7191,6 @@ input[type=search]:focus {
     color: #fff !important;
 }
 
-
 .btn-share {
     background: #7ba260;
     border-color: #7ba260;
@@ -7333,28 +7332,28 @@ input[type=search]:focus {
     background-size: 1.5%;
     font-size:14.5px;
 }
-        .del-inst ul {
-            list-style: none;
-            padding: 0px;
-        }
+.del-inst ul {
+ list-style: none;
+ padding: 0px;
+ }
 
-    .del-inst ul li {
-        padding: 0px 4px 10px 20px;
-        color: #2a2222;
-        font-size: 13px;
-        line-height: 25px;
+.del-inst ul li {
+padding: 0px 4px 10px 20px;
+ color: #2a2222;
+ font-size: 13px;
+line-height: 25px;
     }
 
-        .del-inst ul li::before {
-            content: "\2022";
-            color: red;
-            font-weight: bold;
-            display: inline-block;
-            font-size: 22px;
-            position: relative;
-            left: -9px;
-            top: 4px;
-        }
+.del-inst ul li::before {
+ content: "\2022";
+ color: red;
+font-weight: bold;
+display: inline-block;
+ font-size: 22px;
+ position: relative;
+left: -9px;
+top: 4px;
+ }
 
 
 .yes-btn {

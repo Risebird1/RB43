@@ -49,6 +49,10 @@ namespace Risebird.CommonHelper
                     Sheet.Cells[1, 2].Value = "Email";
                     Sheet.Cells[1, 3].Value = "Status";
                     Sheet.Cells[1, 4].Value = "Skill Channel";
+                    Sheet.Cells[1, 5].Value = "Mobile";
+                    Sheet.Cells[1, 6].Value = "Tech Score";
+                    Sheet.Cells[1, 7].Value = "Resume";
+                    Sheet.Cells[1, 8].Value = "Interview Date";
 
 
                     int row = 2;
@@ -60,6 +64,11 @@ namespace Risebird.CommonHelper
                         Sheet.Cells[row, 2].Value = candidateArray[1];
                         Sheet.Cells[row, 3].Value = candidateArray[2];
                         Sheet.Cells[row, 4].Value = irfName;
+                        Sheet.Cells[row, 5].Value = candidateArray[3];
+                        Sheet.Cells[row, 6].Value = candidateArray[4];
+                        Sheet.Cells[row, 7].Value = candidateArray[5];
+                        Sheet.Cells[row, 8].Value = candidateArray[6];
+
                         row++;
                     }
 

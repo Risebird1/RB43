@@ -304,6 +304,7 @@ namespace Risebird.Repository
                     model.Comments = "Recruiter Disabled";
                     model.Status = (int)CandidateStatusOptions.Cancelled;
                     model.PerformedBy = "System";
+                    model.InterviewId = interviewid;
                     var result1 = _irfRepository.AddCandidateStatus(model);
                     var result = _candidateRepository.FetchChannelOwnerandInterviewer(interviewid).Result;
 
