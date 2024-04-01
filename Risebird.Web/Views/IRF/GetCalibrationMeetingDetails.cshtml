@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.CallibrationCallVM>
-<div style="    background: #dee4e982;padding:10px;">
+
+<div style="background: #dee4e982;padding:10px;">
     <div style="font-size: 14px; font-weight: 700; color: #518dbe;">
         <span><svg xmlns="http://www.w3.org/2000/svg" class="icon-tabler icon-tabler-list-details" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"> <path stroke="none" d="M0 0h24v24H0z" fill="none" /> <path d="M13 5h8" /> <path d="M13 9h5" /> <path d="M13 15h8" /> <path d="M13 19h5" /> <rect x="3" y="4" width="6" height="6" rx="1" /> <rect x="3" y="14" width="6" height="6" rx="1" /> </svg></span><span style="padding: 3px 3px 10px 3px;">Meeting Details:</span>
     </div>
@@ -18,25 +19,27 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                    <td>@item.MeetingDate</td>
-                        @if (!string.IsNullOrWhiteSpace(item.MeetingLink))
-                        {
-                        <td><a target="_blank" href="@item.MeetingLink">Meeting Link</a></td>
-                        }
-                        else
-                        {
-                        <td></td>
-                        }
-                    <td>@item.CreatedBy</td>
-                    <td>@item.CreatedOn</td>
-                        @if (!string.IsNullOrWhiteSpace(item.VideoLink))
-                        {
-                        <td><a target="_blank" href="@item.VideoLink">Video</a></td>
-                        }
-                        else
-                        {
-                        <td></td>
-                        }
+                        <tr>
+                            <td>@item.MeetingDate</td>
+                            @if (!string.IsNullOrWhiteSpace(item.MeetingLink))
+                            {
+                                <td><a target="_blank" href="@item.MeetingLink">Meeting Link</a></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                            <td>@item.CreatedBy</td>
+                            <td>@item.CreatedOn</td>
+                            @if (!string.IsNullOrWhiteSpace(item.VideoLink))
+                            {
+                                <td><a target="_blank" href="@item.VideoLink">Video</a></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        </tr>
                     }
                 </tbody>
             </table>
