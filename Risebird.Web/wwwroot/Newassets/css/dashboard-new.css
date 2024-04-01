@@ -6319,7 +6319,28 @@ input[type=search]:focus {
     position: relative;
     top: -6px;
 }
+.meetingTime [type="datetime-local"] {
+    background-color: #ffffff !important;
+    background-size: 3.5% !important;
+    height: 43px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    color: #565050ab;
+    outline:none;
+}
 
+.meetingTime input::-ms-input-placeholder { /* Edge 12-18 */
+    color: #565050ab;
+    font-size:14px;
+    font-weight: 500 !important;
+}
+
+.meetingTime input::placeholder {
+    font-size: 14px;
+    color: #565050ab;
+    font-weight: 500 !important;
+}
 /***** Media queries *****/
 .copy-btn {
     background: none;
