@@ -236,5 +236,6 @@ namespace Risebird.Repository.Interface
         Task<bool> CreateMAG(AGCampaignModel model, string loggedInUser);
         Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroup);
         Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates();
+        Task<IEnumerable<CallibrationCallVM>> GetCalibrationCallDetails(int irfid);
     }
 }

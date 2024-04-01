@@ -8269,13 +8269,35 @@ namespace Risebird.Repository
             }
 
         }
-        public async Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates()
+        public async Task<IEnumerable<CallibrationCallVM>> GetSkillChannelsCreatedUsingTemplates()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetSkillChannelsCreatedUsingTemplates", null,
+                    return await SqlMapper.QueryAsync<CallibrationCallVM>(con, "usp_GetSkillChannelsCreatedUsingTemplates", null,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<IRFVm>> GetCalibrationCallDetails(int irfid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetCalibrationCallDetails", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
                 }
             }
