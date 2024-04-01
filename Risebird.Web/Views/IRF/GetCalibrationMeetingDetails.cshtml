@@ -16,9 +16,9 @@
                 @foreach (var item in Model)
                 {
                 <td>@item.MeetingDate</td>
-                    @if (string.IsNullOrWhiteSpace(item.MeetingLink))
+                    @if (!string.IsNullOrWhiteSpace(item.MeetingLink))
                     {
-                    <td><a href="@item.MeetingLink">Meeting Link</a></td>
+                    <td><a target="_blank" href="@item.MeetingLink">Meeting Link</a></td>
                     }
                     else
                     {
@@ -26,9 +26,9 @@
                     }
                 <td>@item.CreatedBy</td>
                 <td>@item.CreatedOn</td>
-                    @if (string.IsNullOrWhiteSpace(item.VideoLink))
+                    @if (!string.IsNullOrWhiteSpace(item.VideoLink))
                     {
-                    <td><a href="@item.VideoLink">Video</a></td>
+                    <td><a target="_blank" href="@item.VideoLink">Video</a></td>
                     }
                     else
                     {
