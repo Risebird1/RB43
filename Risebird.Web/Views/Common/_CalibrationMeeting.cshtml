@@ -29,6 +29,9 @@
                     <input style="margin-bottom:10px;" class="cal-field" type="datetime-local" id="calibrationmeetingdate" />
                     <input class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" type="button" onclick="ScheduleCalibrationCall()" value="Schedule Meeting" />
                 </div>
+                <hr />
+                <div id="callibrationmeetingdetails">
+                </div>
             </div>
         </div>
     </div>
@@ -43,6 +46,15 @@
         $("#calibrationsubject").val("Invitation to Calibration Call for Interview Alignment for " + jdTitle + " : " + IRFName);
         var modalBct = document.getElementById("calibrationModel");
         modalBct.style.display = "block";
+        $.ajax({
+            url: '/IRF/GetCalibrationMeetingDetails',
+            data: { 'irfid': irfid },
+            method: 'GET',
+            success: function (data) {
+                $("#callibrationmeetingdetails").html('');
+                $("#callibrationmeetingdetails").html(data);
+            }
+        });
     }
     function closecalibrationModel() {
         var modalBct = document.getElementById("calibrationModel");

@@ -9131,14 +9131,15 @@ namespace Risebird.Web.Controllers
         }
         #region Callibration Meetings
         [HttpGet]
-        public async Task<JsonResult> GetCalibrationMeetingDetails(int irfid)
+        public async Task<IActionResult> GetCalibrationMeetingDetails(int irfid)
         {
             var model = await _irfService.GetCalibrationCallDetails(irfid);
             if (model == null)
             {
                 model = new List<CallibrationCallVM>();
             }
-            return Json(model);
+            
+            return PartialView(model);
         }
         #endregion
     }

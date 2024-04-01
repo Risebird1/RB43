@@ -3859,7 +3859,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await _irfRepository.GetSkillChannelsCreatedUsingTemplates();
+                return await _irfRepository.GetCalibrationCallDetails(irfid);
             }
             catch (Exception e)
             {
