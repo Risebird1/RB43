@@ -1648,12 +1648,18 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> SendCalibrationNotification(int irfid, string IRFName, string subject, DateTime meetingdate, string risebirdhr)
         {
+            var Emailid = string.Empty;
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                Emailid = HttpContext.Session.GetString("email")?.Trim();
+                Emailid = Emailid.Replace("\"", "");
+            }
             //create zoom meeting link
             var zoomLink = await CreateCalibrationZoomMeeting(subject, meetingdate, "");
             if (!string.IsNullOrEmpty(zoomLink.join_url))
             {
                 //save into db and fetch emailid's
-                var emailids = await _interviewSchedulerservice.SaveCalibrationCallDetail(zoomLink.join_url, irfid, meetingdate, "");
+                var emailids = await _interviewSchedulerservice.SaveCalibrationCallDetail(zoomLink.join_url, irfid, meetingdate, Emailid);
                 Mail _mail = new Mail
                 {
                     TO = risebirdhr,
