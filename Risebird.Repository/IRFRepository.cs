@@ -8289,6 +8289,26 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<Candidate> GetCandidateIdAndIrfIdByMeetingId(int interviewId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewId", interviewId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetCandidateIdAndIrfIdByMeetingId", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public async Task<IEnumerable<CallibrationCallVM>> GetCalibrationCallDetails(int irfid)
         {
             try
