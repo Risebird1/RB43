@@ -237,5 +237,6 @@ namespace Risebird.Repository.Interface
         Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroup);
         Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates();
         Task<Candidate> GetCandidateIdAndIrfIdByMeetingId(int interviewId);
+        Task<IEnumerable<CallibrationCallVM>> GetCalibrationCallDetails(int irfid);
     }
 }

@@ -11,6 +11,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.AffIndaModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -3234,7 +3235,7 @@ namespace Risebird.Web.Controllers
 
                                 //find all IRFowner and Users
                                 var clientlist = _meetingService.FetchClientListByIRFID(model.IRFId);
-                                
+
                                 //var maillist = string.Join(";", clientlist);
                                 //string sendreporturl = "https://" + Request.Host.ToString() + "/IRF/InstaAddReport?interviewId=" + model.InterviewId + "&irfId=" + model.IRFId;
                                 //Mail _mail1 = new Mail
@@ -3242,7 +3243,7 @@ namespace Risebird.Web.Controllers
                                 //    TO = maillist,
                                 //    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
                                 //};
-                                if((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus)
+                                if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus)
                                 {
                                     await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
                                 }
@@ -8462,7 +8463,7 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var meetings = await _meetingService.GetQCOpenInterviews(emailid);
-                       // meetings = meetings.Select(x => { x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        // meetings = meetings.Select(x => { x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -8491,22 +8492,23 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-               
-                if (HttpContext.Session.GetString("email") != null )
+
+                if (HttpContext.Session.GetString("email") != null)
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                 
-                        var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
-                        if (result)
-                        {
-                            return Json("Assigned Successfully.");
-                        }
-                        else { return Json("Sorry! Could not assign."); }
-                  
+
+                    var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
+                    if (result)
+                    {
+                        return Json("Assigned Successfully.");
+                    }
+                    else { return Json("Sorry! Could not assign."); }
+
                 }
-                else {
+                else
+                {
                     return Json("");
                 }
             }

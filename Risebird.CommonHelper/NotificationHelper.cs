@@ -1279,7 +1279,7 @@ namespace Risebird.CommonHelper
                 {
                     await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 }
-               
+
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);
@@ -1365,7 +1365,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill, string attachmentBase64String = null, string fileName = null)
+        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string attachmentBase64String = null, string fileName = null)//, string irfName, string primarySkill
         {
             try
             {
@@ -1383,50 +1383,50 @@ namespace Risebird.CommonHelper
                     }
                 }
 
-                DataTable dt = new DataTable();
-                dt.Columns.AddRange(new DataColumn[3] { new DataColumn("Name", typeof(string)),
-                    new DataColumn("Email", typeof(string)),
-                    new DataColumn("Status",typeof(string))   });
-                foreach (var candidate in candidates)
-                {
-                    dt.Rows.Add(candidate.Split('|')[0], candidate.Split('|')[1], candidate.Split('|')[2]);
-                }
+                //DataTable dt = new DataTable();
+                //dt.Columns.AddRange(new DataColumn[3] { new DataColumn("Name", typeof(string)),
+                //    new DataColumn("Email", typeof(string)),
+                //    new DataColumn("Status",typeof(string))   });
+                //foreach (var candidate in candidates)
+                //{
+                //    dt.Rows.Add(candidate.Split('|')[0], candidate.Split('|')[1], candidate.Split('|')[2]);
+                //}
 
-                StringBuilder sb = new StringBuilder();
-                //Table start.
-                sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
+                //StringBuilder sb = new StringBuilder();
+                ////Table start.
+                //sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
 
-                //Adding HeaderRow.
-                sb.Append("<tr>");
-                foreach (DataColumn column in dt.Columns)
-                {
-                    sb.Append("<th style='background-color: #B8DBFD;border: 1px solid #ccc; width:200px'>" + column.ColumnName + "</th>");
-                }
-                sb.Append("</tr>");
-
-
-                //Adding DataRow.
-                foreach (DataRow row in dt.Rows)
-                {
-                    sb.Append("<tr>");
-                    foreach (DataColumn column in dt.Columns)
-                    {
-                        sb.Append("<td style='width:100px;border: 1px solid #ccc'>" + row[column.ColumnName].ToString() + "</td>");
-                    }
-                    sb.Append("</tr>");
-                }
-
-                //Table end.
-                sb.Append("</table>");
+                ////Adding HeaderRow.
+                //sb.Append("<tr>");
+                //foreach (DataColumn column in dt.Columns)
+                //{
+                //    sb.Append("<th style='background-color: #B8DBFD;border: 1px solid #ccc; width:200px'>" + column.ColumnName + "</th>");
+                //}
+                //sb.Append("</tr>");
 
 
-                object[] parameters = new object[] { irfName, primarySkill, sb };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateLastStatusTemplate.html");
+                ////Adding DataRow.
+                //foreach (DataRow row in dt.Rows)
+                //{
+                //    sb.Append("<tr>");
+                //    foreach (DataColumn column in dt.Columns)
+                //    {
+                //        sb.Append("<td style='width:100px;border: 1px solid #ccc'>" + row[column.ColumnName].ToString() + "</td>");
+                //    }
+                //    sb.Append("</tr>");
+                //}
 
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
+                ////Table end.
+                //sb.Append("</table>");
 
-                if(!string.IsNullOrEmpty(attachmentBase64String) && !string.IsNullOrEmpty(fileName))
+
+                //object[] parameters = new object[] { irfName, primarySkill, sb };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateLastStatusTemplateV2.html");//CandidateLastStatusTemplate.ht,l
+
+                //string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = rawEmail;
+
+                if (!string.IsNullOrEmpty(attachmentBase64String) && !string.IsNullOrEmpty(fileName))
                 {
                     msg.AddAttachment(fileName, attachmentBase64String, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "attachment");//"filename.xlsx"//Convert.ToBase64String(attachment)
                 }
@@ -1947,10 +1947,10 @@ namespace Risebird.CommonHelper
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientEmail, null));
                     }
                 }
-                object[] parameters = new object[] { CandidateName, interviewDate,""};
+                object[] parameters = new object[] { CandidateName, interviewDate, "" };
                 //  string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotification.html");
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewCancelledClientNotificationV2.html");
-               string msgBody = string.Format(rawEmail, parameters);
+                string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, irfId, interviewId);
             }
@@ -3213,7 +3213,38 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate,int irfid)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = model.Subject;
+                var toMails = model.TO.Split(";");
 
+                foreach (var mail in toMails)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                }
+                if (!string.IsNullOrWhiteSpace(model.CC))
+                {
+                    var bccMails = model.CC.Split(";");
+                    foreach (var mail in bccMails)
+                    {
+                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    }
+                }
+                object[] parameters = new object[] { meetingdate.ToString(), "60 minute", url };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CalibrationMeetingNotificationV2.html");
+                string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg, irfid);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
 
     }
 }

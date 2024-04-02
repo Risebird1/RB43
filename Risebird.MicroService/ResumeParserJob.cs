@@ -74,7 +74,7 @@ namespace Risebird.MicroService
                         {
                             var documentData = JsonConvert.DeserializeObject<Document>(candidateData.Item1);
                             var candidate = new CandidateQuickAddModel();
-                            candidate.Name = documentData.data.name.raw;
+                            candidate.Name = documentData.data?.name?.raw;
                             if(!string.IsNullOrEmpty(candidateData.Item2))
                             {
                                 candidate.AffindaResumeIdentifier = candidateData.Item2;
@@ -109,8 +109,8 @@ namespace Risebird.MicroService
                             }
                             else
                             {
-                                //mark it as cant be parsed in the database
-                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false });
+                                //mark it as cant be processed in the database
+                                candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = true });
                                 continue;
                             }
                             if (documentData.data.phoneNumberDetails != null && documentData.data.phoneNumberDetails.Count() > 0)

@@ -4754,7 +4754,7 @@ namespace Risebird.Web.Controllers
             var CheckAssesmentGroupNameExistOrNot = await _irfRepository.CheckAssessmentGroupAlraedyExist(model._skilldetails.NewAssessmentGroupName);
             if (CheckAssesmentGroupNameExistOrNot)
             {
-                TempData["SuccessErrorMessageInterviewer"] = model._skilldetails.NewAssessmentGroupName+" " + "Already Exists";
+                TempData["SuccessErrorMessageInterviewer"] = model._skilldetails.NewAssessmentGroupName + " " + "Already Exists";
             }
             else
             {
@@ -4783,8 +4783,8 @@ namespace Risebird.Web.Controllers
                     }
                 }
             }
-                return RedirectToAction("InterviewerEntitle");
-            
+            return RedirectToAction("InterviewerEntitle");
+
         }
 
         /// <summary>
@@ -6792,7 +6792,7 @@ namespace Risebird.Web.Controllers
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = item.EmailId;
                                 _whatsAppVM.PrimarySkill = item.AGName;
-                                
+
                                 _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
                                 _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
                             }
@@ -7498,7 +7498,7 @@ namespace Risebird.Web.Controllers
             string emailId = string.Empty;
             try
             {
-                if(!string.IsNullOrEmpty(model.UniqueId) && !string.IsNullOrEmpty(model.PublicUserEmailId) && !string.IsNullOrEmpty(model.AccessType) && model.AccessType == "Public")
+                if (!string.IsNullOrEmpty(model.UniqueId) && !string.IsNullOrEmpty(model.PublicUserEmailId) && !string.IsNullOrEmpty(model.AccessType) && model.AccessType == "Public")
                 {
                     emailId = model.PublicUserEmailId;
                     string uploadedFileURL = string.Empty;
@@ -7578,7 +7578,7 @@ namespace Risebird.Web.Controllers
                         TempData["SuccessErrorPublicCloneTemplateMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                         TempData["SuccessErrorPublicCloneTemplateMessage2"] = model.CalendlyLink;
                         //TempData["SuccessErrorCloneTemplateMessage3"] = "https://portal.risebird.io/IRF/Index";
-                        return RedirectToAction("ListPb", "Template", new { emailId = model.PublicUserEmailId, uniqueId = model.UniqueId, type  = "pbc", profile = "Client"});
+                        return RedirectToAction("ListPb", "Template", new { emailId = model.PublicUserEmailId, uniqueId = model.UniqueId, type = "pbc", profile = "Client" });
 
                         //return RedirectToAction("Index");
                     }
@@ -8765,7 +8765,7 @@ namespace Risebird.Web.Controllers
                         model.AssessmentGroups.Where(x => x.AssessmentGroup == assessmentGroupName).FirstOrDefault().IsSelectedForCampaign = true;
 
                         model.RemainingAssessmentGroups = allAGs.Where(x => !x.isDirectlyTargeted);
-                        
+
                         model.SerializedRemainingAGList = JsonConvert.SerializeObject(model.RemainingAssessmentGroups);
 
                         return View(model);
@@ -8780,7 +8780,7 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -8805,7 +8805,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         //create a campaign and save all the selected assessment groups
-                        if(!model.CreateMAGOnly)
+                        if (!model.CreateMAGOnly)
                         {
                             model = _irfService.CreateCampaign(model, emailid);
                         }
@@ -8968,7 +8968,7 @@ namespace Risebird.Web.Controllers
             //_whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
             //_whatsAppVM.Event = "SkillChannel Interviewer Availbility";
 
-            var dto = new CampaignMailDTO { interviewers = interviewers, assessentGroupName = assessmentGroupName, campagignId = campaignId};
+            var dto = new CampaignMailDTO { interviewers = interviewers, assessentGroupName = assessmentGroupName, campagignId = campaignId };
             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SendCampaignMails";
             //var path = $"http://localhost:7071/api/SendCampaignMails";
             var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
@@ -9074,18 +9074,19 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroupName)
         {
-            try 
+            try
             {
-                var data= await _irfService.CheckAssessmentGroupAlraedyExist(AssessmentGroupName);
+                var data = await _irfService.CheckAssessmentGroupAlraedyExist(AssessmentGroupName);
                 if (data)
                 {
                     return true;
                 }
-                else {
+                else
+                {
                     return false;
                 }
             }
-           catch(Exception ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
@@ -9128,5 +9129,17 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        #region Callibration Meetings
+        [HttpGet]
+        public async Task<IActionResult> GetCalibrationMeetingDetails(int irfid)
+        {
+            var model = await _irfService.GetCalibrationCallDetails(irfid);
+            if (model == null)
+            {
+                model = new List<CallibrationCallVM>();
+            }
+            return PartialView(model);
+        }
+        #endregion
     }
 }

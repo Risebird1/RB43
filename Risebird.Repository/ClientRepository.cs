@@ -1288,5 +1288,25 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<IEnumerable<string>> GetClientUsersByClientId(int clientId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@clientId", clientId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<string>(con, "usp_GetClientUsersByClientId", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

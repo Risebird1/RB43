@@ -4175,7 +4175,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid,bool activestatus)
+        public async Task<bool> MoveInterviewForTechQC(string Emailid, int interviewid, bool activestatus)
         {
             try
             {
@@ -4197,8 +4197,8 @@ namespace Risebird.Business
             }
             catch (Exception ex)
             {
-              await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-               return null;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 

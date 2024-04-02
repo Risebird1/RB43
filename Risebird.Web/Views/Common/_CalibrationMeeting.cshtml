@@ -1,0 +1,84 @@
+﻿<div id="calibrationModel" class="modal modal-bg" style="z-index:100">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:825px!important">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fa fa-users" style="font-size:24px;position:relative;top:1px;left:-5px;"></span>
+                </div>
+                <h5 class="modal-title pull-left">Calibration Meeting</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" onclick="closecalibrationModel()" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <div class="modal-body">
+                <input type="hidden" id="hidcalibartionid" />
+                <input type="hidden" id="hidcalibartionirfName" />
+                <input type="hidden" id="hidcalibartionrisebirdhr" />
+
+                @* <div class="meetingTime">
+                <label style="width:100px;"> Email Id:</label>
+                <input style="margin-bottom:10px;" class="cal-field" type="text" id="calibrationEmailids" placeholder="Enter emailids ; seperated" />
+                </div> *@
+                <div>
+                    <label style="width:100px;"> Subject:</label>
+                    <input style="margin-bottom:10px;" class="cal-field" type="text" id="calibrationsubject" />
+                </div>
+                <div class="meetingTime">
+                    <label style="width:100px;">Meeting Time:</label>
+                    <input style="margin-bottom:10px;" class="cal-field" type="datetime-local" id="calibrationmeetingdate" />
+                    <input class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" type="button" onclick="ScheduleCalibrationCall()" value="Schedule Meeting" />
+                </div>
+               
+                <div id="callibrationmeetingdetails" style="clear:both;margin-top: 50px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function opencalibrationModel(irfid, IRFName, jdTitle, risebirdhr) {
+        let dateInput = document.getElementById("calibrationmeetingdate");
+        dateInput.min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(":"));
+        $("#hidcalibartionid").val(irfid);
+        $("#hidcalibartionirfName").val(IRFName);
+        $("#hidcalibartionrisebirdhr").val(risebirdhr);
+        $("#calibrationsubject").val("Invitation to Calibration Call for Interview Alignment for " + jdTitle + " : " + IRFName);
+        var modalBct = document.getElementById("calibrationModel");
+        modalBct.style.display = "block";
+        $.ajax({
+            url: '/IRF/GetCalibrationMeetingDetails',
+            data: { 'irfid': irfid },
+            method: 'GET',
+            success: function (data) {
+                $("#callibrationmeetingdetails").html('');
+                $("#callibrationmeetingdetails").html(data);
+            }
+        });
+    }
+    function closecalibrationModel() {
+        var modalBct = document.getElementById("calibrationModel");
+        modalBct.style.display = "none";
+    }
+    function ScheduleCalibrationCall(irfid, IRFName) {
+        var irfid = $("#hidcalibartionid").val();
+        var IRFName = $("#hidcalibartionirfName").val();
+        //var emailids = $("#calibrationEmailids").val();
+        var subject = $("#calibrationsubject").val();
+        var risebirdhr = $("#hidcalibartionrisebirdhr").val();
+        var meetingdate = $("#calibrationmeetingdate").val();
+        if (meetingdate == '') {
+            swal.fire("Select the meeting date and time");
+        } else {
+            $.ajax({
+                url: '/InterviewScheduler/SendCalibrationNotification',
+                data: { 'irfid': irfid, 'IRFName': IRFName, 'subject': subject, 'meetingdate': meetingdate, 'risebirdhr': risebirdhr },
+                method: 'POST',
+                success: function (response) {
+                    swal.fire(response);
+                    closecalibrationModel();
+                }
+            });
+        }
+    }
+</script>
