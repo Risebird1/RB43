@@ -8,7 +8,7 @@ namespace Risebird.CommonHelper.Interface
 {
     public interface IExcelHelper
     {
-        byte[] CreateExcelFile(List<string> candidates, string irfName);
+        byte[] CreateExcelFile(List<string> candidates);//, string irfName
 
     }
 }

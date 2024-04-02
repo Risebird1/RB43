@@ -87,7 +87,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@dateValue", DateTime.Now.AddDays(-1));
-                    var result = await SqlMapper.QueryAsync<CandidateLastStatus>(con, "usp_GetCandidateLastStatus", parameters,
+                    var result = await SqlMapper.QueryAsync<CandidateLastStatus>(con, "usp_GetCandidateLastStatusV2", parameters,//"usp_GetCandidateLastStatus"
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -283,11 +283,12 @@ namespace Risebird.Repository
                     resumeListDt.Columns.Add("IsProcessed", typeof(bool));
                     resumeListDt.Columns.Add("IsResumeParsed", typeof(bool));
                     resumeListDt.Columns.Add("IsResumeParsingFailed", typeof(bool));
+                    resumeListDt.Columns.Add("IsEmailMissing", typeof(bool));
 
 
                     foreach (var item in resumeList)
                     {
-                        resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed, item.IsResumeParsingFailed);
+                        resumeListDt.Rows.Add(item.id, item.IsProcessed, item.IsResumeParsed, item.IsResumeParsingFailed, item.IsEmailMissing);
                     }
 
                     SqlCommand cmd = new SqlCommand("usp_CandidateResumeBulkUpdate", con);
