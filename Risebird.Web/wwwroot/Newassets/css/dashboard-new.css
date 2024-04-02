@@ -6321,7 +6321,28 @@ input[type=search]:focus {
     position: relative;
     top: -6px;
 }
+.meetingTime [type="datetime-local"] {
+    background-color: #ffffff !important;
+    background-size: 3.5% !important;
+    height: 43px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    color: #565050ab;
+    outline:none;
+}
 
+.meetingTime input::-ms-input-placeholder { /* Edge 12-18 */
+    color: #565050ab;
+    font-size:14px!important;
+    font-weight: 500 !important;
+}
+
+.meetingTime input::placeholder {
+    font-size: 14px!important;
+    color: #565050ab;
+    font-weight: 500 !important;
+}
 /***** Media queries *****/
 .copy-btn {
     background: none;
@@ -7084,7 +7105,6 @@ input[type=search]:focus {
     background: orange;
     color: #94207bbd;
 }
-
 .offer {
     background: darkgreen;
     color: #fff;
@@ -7095,7 +7115,6 @@ input[type=search]:focus {
     float: left;
     display: flex;
 }
-
 .pskill {
     text-decoration: none;
     color: #1799bb;
@@ -7107,24 +7126,25 @@ input[type=search]:focus {
 .logo-area {
     width: 30%;
 }
-
-.logo-area .logo-cm {
+ .logo-area .logo-cm {
         position: relative;
         top: 4px;
         width: 40%;
         left: 4px;
+  }
+.cal-field{
+    width:86.5%;
+    font-size:13px!important;
 }
-
 .welcome {
     line-height: 22px;
     font-size: 17px;
     font-family: cursive;
     color: #fff;
 }
-
  .welcome span {
-    color: mediumspringgreen;
-}
+        color: mediumspringgreen;
+ }
 
 .btn-calling, .btn-calling:hover {
     background: #1ba51be0 !important;
@@ -7140,7 +7160,6 @@ input[type=search]:focus {
     background: #f6b445c7;
     border-color: #f6b445c7;
 }
-
 .btn-adstatus, .btn-adstatus:hover {
     background: #aed580;
     border-color: #aed580;
@@ -9131,6 +9150,14 @@ option {
     position: relative;
     top: 3px;
 }
+.meetingDetails{
+    margin-top:8px;
+}
+.meetingDetails .table-striped.table-bordered th {
+    text-transform: capitalize !important;
+    padding: 3px 7px 3px 7px !important;
+    text-align: left !important;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -10515,8 +10542,11 @@ option {
         width: 100%;
         float: left;
     }
+    .cal-field{
+        width:100%;
+    }
     .campaignName {
-        width: 100%!important;
+        width: 100% !important;
         margin: 40px auto;
     }
     .msgroup, .sub-assmntgrp {

@@ -302,6 +302,9 @@
                                                             }*@
                                                             <tr id="@item.id" data-changes="1">
                                                                 <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td>
+                                                              
+                                                              
+                                                                
                                                                 <td valign="top">
 
 
@@ -310,7 +313,7 @@
                                                                                 @if (item.Name.Length > 20)
                                                                                 {
 
-
+                                                                                    
                                                                                     <div class="cadName">
                                                                                         <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
                                                                                     </div>
@@ -371,6 +374,12 @@
                                                                     }
 
                                                                 </td>
+                                                               
+
+
+
+
+
                                                                 @if (ViewBag.profile != "Client")
                                                                 {
                                                                     <td class="text-center">@item.AttemptsCount</td>

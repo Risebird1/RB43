@@ -29,13 +29,14 @@
     .sidebar-mini .sidebar:hover {
         width: 80px !important;
     }
-    .navbar{
-        position:fixed;
+
+    .navbar {
+        position: fixed;
     }
 
     /*.mob_h {
-                                display: none !important
-                            }*/
+                                            display: none !important
+                                        }*/
 
     .tox-notifications-container {
         display: none
@@ -132,17 +133,12 @@
                                                                 <td>@item.IRFId</td>
                                                                 <td>
                                                                     <a href="@item.CalendlyLink" target="_blank">Scheduling Link</a>
-                                                              @*  <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Scheduling Link" title="Scheduling Link">
-                                                                        <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
-                                                                    </button>*@
-
-                                                                      <div class="btn btn-copy shadow btn-xs sharp me-1" aria-label="Copy Public URL" style="min-width:23px;min-height:24px;height:24px;width:23px;">
-                                                               <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><i class='fa fa-clone' style="font-size:11px;position:relative;left:0px;top:0px;"></i></span>
-                                                      </div>
-                                                
-
-
-
+                                                                    @*  <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Scheduling Link" title="Scheduling Link">
+                                                                <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg></span>
+                                                                </button>*@
+                                                                    <div class="btn btn-copy shadow btn-xs sharp me-1" aria-label="Copy Public URL" style="min-width:23px;min-height:24px;height:24px;width:23px;">
+                                                                        <span title="Scheduling Link" onclick="javascript:CopySchedulinglink('@item.CalendlyLink');"><i class='fa fa-clone' style="font-size:11px;position:relative;left:0px;top:0px;"></i></span>
+                                                                    </div>
                                                                 </td>
                                                                 <td> @item.BillingOwner </td>
                                                                 <td>
@@ -184,8 +180,6 @@
                                                                             </div>
                                                                         </a>
                                                                     }
-
-
                                                                 </td>
                                                                 <td class="text-center">
                                                                     @*<button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Broadcast Email to the Interviewers of this channel">
@@ -208,10 +202,15 @@
                                                                 {
 
                                                                 } *@
-                                                                     <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
+                                                                    <button id="skill_10" class="btn shadow btn-xs sharp me-1 item1" aria-label="Calibration Meeting" style="width:25px!important;height:25px!important;background: #1a9b477d;border-color:#bedcc99e">
+                                                                        <span onclick="javascript:opencalibrationModel('@item.id', '@item.IRFId','@item.JDTiltle','');" title="Calibration Meeting">
+                                                                            <i class="fa fa-users" aria-hidden="true" style="color: #fff;position: relative; left: -2px;"></i>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="HM Instruction">
                                                                         <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="HM Instruction">
                                                                             <svg style="color: white;position: relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
-                                                                            <svg fill="#fff" style="position:relative;top:2px;right:10px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>  
+                                                                            <svg fill="#fff" style="position:relative;top:2px;right:10px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
 
                                                                         </span>
                                                                     </button>
@@ -239,7 +238,6 @@
                                                                             <span onclick="location.href='@Url.Action("IRFCandidateReportsExporttoExcel", "Candidate",new { id=item.id,IRFId=item.IRFId})'" title="Download Candidate Reports"><svg style="color: white;position: relative;right:1px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
                                                                         </button>
                                                                     }
-
                                                                 </td>
                                                             </tr>
                                                         }
@@ -434,6 +432,7 @@
 
 @await Html.PartialAsync("~/Views/Candidate/UploadResumePartial.cshtml")
 @await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
+@await Html.PartialAsync("~/Views/Common/_CalibrationMeeting.cshtml")
 
 @if (ViewBag.Message != null && ViewBag.Message2 != null)
 {
