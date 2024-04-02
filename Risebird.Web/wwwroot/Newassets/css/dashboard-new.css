@@ -7124,7 +7124,6 @@ input[type=search]:focus {
 .logo-area {
     width: 30%;
 }
-
  .logo-area .logo-cm {
         position: relative;
         top: 4px;
@@ -7141,7 +7140,6 @@ input[type=search]:focus {
     font-family: cursive;
     color: #fff;
 }
-
  .welcome span {
         color: mediumspringgreen;
  }
