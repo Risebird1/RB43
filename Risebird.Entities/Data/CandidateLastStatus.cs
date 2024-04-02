@@ -21,5 +21,6 @@ namespace Risebird.Entities.Data
         public string ResumeLink { get; set; }
         public int? TotalTechScore { get; set; }
         public string MobileNumber { get; set; }
+        public int ClientId { get; set; }
     }
 }

@@ -3754,7 +3754,7 @@ namespace Risebird.Business
             try
             {
                 return await _irfRepository.CreateMAG(model, loggedInUser);
-                
+
             }
             catch (Exception e)
             {
@@ -3846,6 +3846,18 @@ namespace Risebird.Business
             try
             {
                 return await _irfRepository.GetSkillChannelsCreatedUsingTemplates();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<CallibrationCallVM>> GetCalibrationCallDetails(int irfid)
+        {
+            try
+            {
+                return await _irfRepository.GetCalibrationCallDetails(irfid);
             }
             catch (Exception e)
             {

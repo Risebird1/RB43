@@ -422,5 +422,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.SaveCalibrationCallDetail(meetinglink, irfid, meetingdate, Emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

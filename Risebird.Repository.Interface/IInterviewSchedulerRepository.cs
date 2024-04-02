@@ -36,5 +36,6 @@ namespace Risebird.Repository.Interface
         Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate);
         Task<CandidateIRFData> CheckCandidateDetailsByEmail(string IRFId, string Emailid);
         Task<IEnumerable<RecommendedSlotsVM>> FetchrecommendedSlots(List<DateTime> _slotscheck);
+        Task<List<string>> SaveCalibrationCallDetail(string meetinglink, int irfid, DateTime meetingdate, string Emailid);
     }
 }
