@@ -4016,6 +4016,7 @@ namespace Risebird.Web.Controllers
         }
         public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type,string Irfid)
         {
+            ViewBag.Type = type;
             var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer, type, Irfid);
             return PartialView(result);
         }

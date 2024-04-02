@@ -3590,7 +3590,9 @@ table.interviewertable td.cadEmail {
     color: #8d8d8f;
     font-size: 12px;
 }
-
+.Cmt{
+    display:none!important;
+}
 table.journey th, table.journey td {
     border-right: 1px solid #dee2e65e !important;
     max-width: 187px;
