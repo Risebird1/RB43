@@ -3213,7 +3213,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate)
+        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate,int irfid)
         {
             try
             {
@@ -3238,7 +3238,7 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CalibrationMeetingNotificationV2.html");
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                return await SendMail(msg, irfid);
             }
             catch (Exception)
             {

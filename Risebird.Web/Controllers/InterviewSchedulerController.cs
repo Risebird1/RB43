@@ -1667,7 +1667,7 @@ namespace Risebird.Web.Controllers
                     Subject = $"{subject}"
                 };
                 //send mail to respentive emailid in bcc
-                var result = await _notificationHelper.SendCalibrationMeetingNotification(_mail, zoomLink.join_url, meetingdate);
+                var result = await _notificationHelper.SendCalibrationMeetingNotification(_mail, zoomLink.join_url, meetingdate, irfid);
                 return Json("Mail notification send successfully.");
             }
             //return success message
