@@ -10,7 +10,7 @@ GO
 
 Create PROCEDURE [dbo].[usp_CandidateResumeBulkUpdate]    
 (    
-      @CandidateResumeBulkUpdateData AS [dbo].[CandidateResumeUpdate_TableType_Two] READONLY    
+      @CandidateResumeBulkUpdateData AS [dbo].[CandidateResumeUpdate_TableType_Three] READONLY    
 )    
 AS    
 BEGIN    
@@ -18,7 +18,8 @@ BEGIN
  begin try  
   begin tran  
   
-   update [dbo].[CandidateResume] set [IsProcessed] = crbd.IsProcessed, [IsResumeParsed] = crbd.IsResumeParsed, [IsResumeParsingFailed] = crbd.IsResumeParsingFailed
+   update [dbo].[CandidateResume] set [IsProcessed] = crbd.IsProcessed, [IsResumeParsed] = crbd.IsResumeParsed, [IsResumeParsingFailed] = crbd.IsResumeParsingFailed,
+   [IsEmailMissing] = crbd.IsEmailMissing
    from CandidateResume cr inner join @CandidateResumeBulkUpdateData crbd on crbd.id = cr.id
 
   commit tran  

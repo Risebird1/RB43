@@ -15,5 +15,7 @@ namespace Risebird.Entities.Data
         public bool IsResumeParsingFailed { get; set; }
         public string SkillChannelName { get; set; }
         public bool IsAffindaIndexCreated { get; set; }
+        public bool IsEmailMissing { get; set; }
+
     }
 }

@@ -1365,7 +1365,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string irfName, string primarySkill, string attachmentBase64String = null, string fileName = null)
+        public async Task<string> SendCandidateLastStatusMail(List<string> clientEmails, List<string> candidates, string attachmentBase64String = null, string fileName = null)//, string irfName, string primarySkill
         {
             try
             {
@@ -1383,48 +1383,48 @@ namespace Risebird.CommonHelper
                     }
                 }
 
-                DataTable dt = new DataTable();
-                dt.Columns.AddRange(new DataColumn[3] { new DataColumn("Name", typeof(string)),
-                    new DataColumn("Email", typeof(string)),
-                    new DataColumn("Status",typeof(string))   });
-                foreach (var candidate in candidates)
-                {
-                    dt.Rows.Add(candidate.Split('|')[0], candidate.Split('|')[1], candidate.Split('|')[2]);
-                }
+                //DataTable dt = new DataTable();
+                //dt.Columns.AddRange(new DataColumn[3] { new DataColumn("Name", typeof(string)),
+                //    new DataColumn("Email", typeof(string)),
+                //    new DataColumn("Status",typeof(string))   });
+                //foreach (var candidate in candidates)
+                //{
+                //    dt.Rows.Add(candidate.Split('|')[0], candidate.Split('|')[1], candidate.Split('|')[2]);
+                //}
 
-                StringBuilder sb = new StringBuilder();
-                //Table start.
-                sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
+                //StringBuilder sb = new StringBuilder();
+                ////Table start.
+                //sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
 
-                //Adding HeaderRow.
-                sb.Append("<tr>");
-                foreach (DataColumn column in dt.Columns)
-                {
-                    sb.Append("<th style='background-color: #B8DBFD;border: 1px solid #ccc; width:200px'>" + column.ColumnName + "</th>");
-                }
-                sb.Append("</tr>");
-
-
-                //Adding DataRow.
-                foreach (DataRow row in dt.Rows)
-                {
-                    sb.Append("<tr>");
-                    foreach (DataColumn column in dt.Columns)
-                    {
-                        sb.Append("<td style='width:100px;border: 1px solid #ccc'>" + row[column.ColumnName].ToString() + "</td>");
-                    }
-                    sb.Append("</tr>");
-                }
-
-                //Table end.
-                sb.Append("</table>");
+                ////Adding HeaderRow.
+                //sb.Append("<tr>");
+                //foreach (DataColumn column in dt.Columns)
+                //{
+                //    sb.Append("<th style='background-color: #B8DBFD;border: 1px solid #ccc; width:200px'>" + column.ColumnName + "</th>");
+                //}
+                //sb.Append("</tr>");
 
 
-                object[] parameters = new object[] { irfName, primarySkill, sb };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateLastStatusTemplate.html");
+                ////Adding DataRow.
+                //foreach (DataRow row in dt.Rows)
+                //{
+                //    sb.Append("<tr>");
+                //    foreach (DataColumn column in dt.Columns)
+                //    {
+                //        sb.Append("<td style='width:100px;border: 1px solid #ccc'>" + row[column.ColumnName].ToString() + "</td>");
+                //    }
+                //    sb.Append("</tr>");
+                //}
 
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
+                ////Table end.
+                //sb.Append("</table>");
+
+
+                //object[] parameters = new object[] { irfName, primarySkill, sb };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CandidateLastStatusTemplateV2.html");//CandidateLastStatusTemplate.ht,l
+
+                //string msgBody = string.Format(rawEmail, parameters);
+                msg.HtmlContent = rawEmail;
 
                 if (!string.IsNullOrEmpty(attachmentBase64String) && !string.IsNullOrEmpty(fileName))
                 {

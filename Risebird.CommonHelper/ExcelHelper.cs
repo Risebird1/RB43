@@ -25,7 +25,7 @@ namespace Risebird.CommonHelper
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public byte[] CreateExcelFile(List<string> candidates, string irfName)
+        public byte[] CreateExcelFile(List<string> candidates)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace Risebird.CommonHelper
                     Sheet.Cells["A1:S1"].Style.Font.Size = 12;
                     Sheet.Cells["A1:S1"].Style.WrapText = true;
 
-                    int startColumn = 1; int endColumn = 5;
+                    int startColumn = 1; int endColumn = 15;
                     for (int a = startColumn; a <= endColumn; a++)
                     {
                         Sheet.Column(a).Width = 30;
@@ -49,10 +49,11 @@ namespace Risebird.CommonHelper
                     Sheet.Cells[1, 2].Value = "Email";
                     Sheet.Cells[1, 3].Value = "Status";
                     Sheet.Cells[1, 4].Value = "Skill Channel";
-                    Sheet.Cells[1, 5].Value = "Mobile";
-                    Sheet.Cells[1, 6].Value = "Tech Score";
-                    Sheet.Cells[1, 7].Value = "Resume";
-                    Sheet.Cells[1, 8].Value = "Interview Date";
+                    Sheet.Cells[1, 5].Value = "Primary Skill";
+                    Sheet.Cells[1, 6].Value = "Mobile";
+                    Sheet.Cells[1, 7].Value = "Tech Score";
+                    Sheet.Cells[1, 8].Value = "Resume";
+                    Sheet.Cells[1, 9].Value = "Interview Date";
 
 
                     int row = 2;
@@ -63,11 +64,12 @@ namespace Risebird.CommonHelper
                         Sheet.Cells[row, 1].Value = candidateArray[0];
                         Sheet.Cells[row, 2].Value = candidateArray[1];
                         Sheet.Cells[row, 3].Value = candidateArray[2];
-                        Sheet.Cells[row, 4].Value = irfName;
-                        Sheet.Cells[row, 5].Value = candidateArray[3];
-                        Sheet.Cells[row, 6].Value = candidateArray[4];
-                        Sheet.Cells[row, 7].Value = candidateArray[5];
-                        Sheet.Cells[row, 8].Value = candidateArray[6];
+                        Sheet.Cells[row, 4].Value = candidateArray[7];
+                        Sheet.Cells[row, 5].Value = candidateArray[8];
+                        Sheet.Cells[row, 6].Value = candidateArray[3];
+                        Sheet.Cells[row, 7].Value = candidateArray[4];
+                        Sheet.Cells[row, 8].Value = candidateArray[5];
+                        Sheet.Cells[row, 9].Value = candidateArray[6];
 
                         row++;
                     }
