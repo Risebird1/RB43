@@ -9146,6 +9146,24 @@ namespace Risebird.Web.Controllers
             }
             return PartialView(model);
         }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> CalibrationMeetings(string emailid, string uniqueid)
+        {
+            try
+            {
+                ViewBag.id = uniqueid;
+                ViewBag.emailid = emailid;
+                var model = await _irfService.GetAllCalibrationMeetingsById(emailid);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var model = new List<CallibrationCallVM>();
+                return View(model);
+            }
+        }
         #endregion
     }
 }

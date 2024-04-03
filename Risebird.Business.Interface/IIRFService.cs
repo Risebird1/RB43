@@ -166,5 +166,6 @@ namespace Risebird.Business.Interface
         Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroup);
         Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates();
         Task<IEnumerable<CallibrationCallVM>> GetCalibrationCallDetails(int irfid);
+        Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid);
     }
 }
