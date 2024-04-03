@@ -3865,6 +3865,17 @@ namespace Risebird.Business
                 return null;
             }
         }
-
+        public async Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid)
+        {
+            try
+            {
+                return await _irfRepository.GetAllCalibrationMeetingsById(emailid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
