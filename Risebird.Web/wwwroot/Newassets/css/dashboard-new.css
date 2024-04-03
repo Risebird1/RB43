@@ -7401,9 +7401,14 @@ top: 4px;
 }
 
 .mh-top {
-    margin-top: 25px;
+    margin-top: 0px;
 }
-
+.tabs-wrapper {
+    position: absolute;
+    top: 80px;
+    width: 97%;
+    padding: 10px;
+}
 .clientlogoarea {
     width: auto;
     height: 38px;
@@ -9580,10 +9585,7 @@ option {
         .top-h {
             height: 60px !important;
         }
-        .candidate-timeline.public-url table {
-            margin-top:72px !important;
-        }
-   
+  
         .interviewresponsebtn{
             font-size:16px!important;
         }
@@ -10292,9 +10294,6 @@ option {
     .topheader-header {
         right: 222px;
     }
-    .candidate-timeline.public-url table {
-        margin-top: 60px !important;
-    } 
         .logo-cm {
             position: relative;
             top: 4px !important;
@@ -11451,9 +11450,7 @@ option {
         top: 6px;
         right: 95px;
     }
-    .candidate-timeline.public-url table {
-        margin-top:60px !important;
-    }
+
     .topheader-header .filter {
         position: relative !important;
         right: -135px !important;
@@ -11774,12 +11771,16 @@ input[type='radio'] {
     padding: 0px 10px 0px;
     clear: both;
 }
-
-.content.paymentdes {
-    margin-top: 30px;
-    padding: 30px 30px 30px;
-    clear: both;
-}
+    .content.client .client-tab #candidateTable_filter {
+        position: absolute;
+        right: -7px;
+        top: -40px;
+    }
+    .content.paymentdes {
+        margin-top: 30px;
+        padding: 30px 30px 30px;
+        clear: both;
+    }
 
 .mt-20 {
     margin-top: 20px;
@@ -17876,9 +17877,7 @@ div.tagsinput {
     .topheader-header {
         right: 0px !important;
     }
-    .candidate-timeline.public-url table {
-        margin-top: 64px !important;
-    }
+  
         .topheader-header [data-tooltip]:before {
             left: -270px;
         }

@@ -165,13 +165,13 @@
                                     <div class="col-md-6 col-sm-6 pl-1 pull-left rightpad">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.BillingType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.BillingType, Model.BillingTypeDrop, new { @class = "form-control" })
+                                            @Html.DropDownListFor(model => model.BillingType, Model.BillingTypeDrop, "Select", new { @class = "form-control" })
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                         <div class="form-group" style="padding-right:36px">
                                             @Html.LabelFor(model => model.InterviewDuration, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, new { @class = "form-control" })
+                                            @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, "Select", new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.InterviewDuration, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -191,7 +191,7 @@
                                     <div class="col-md-6 col-sm-6 pl-1 pull-left rightpad">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.ClientType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.ClientType, Html.GetEnumSelectList<CompanyType>(), new { @class = "form-control" })
+                                            @Html.DropDownListFor(model => model.ClientType, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.ClientType, "", new { @class = "text-danger" })
 
                                         </div>
@@ -199,7 +199,7 @@
                                     <div class="col-md-6 col-sm-6 pr-1 pull-left">
                                         <div class="form-group" style="padding-right:36px">
                                             @Html.LabelFor(model => model.CountryType, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.DropDownListFor(model => model.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), new { @class = "form-control" })
+                                            @Html.DropDownListFor(model => model.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "form-control" })
                                             @Html.ValidationMessageFor(model => model.CountryType, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
