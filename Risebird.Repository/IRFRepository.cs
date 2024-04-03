@@ -7818,7 +7818,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@AssessmentGroupsList", assessmentGroups != null  ? string.Join(",", assessmentGroups) : null);
+                    parameters.Add("@AssessmentGroupsList", assessmentGroups != null ? string.Join(",", assessmentGroups) : null);
                     return await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetSkillChannelsForAssessmentGroups", parameters, commandType: CommandType.StoredProcedure, commandTimeout: 300);
                 }
 
@@ -7843,7 +7843,7 @@ namespace Risebird.Repository
                     DataTable agrpsDt = new DataTable();
                     agrpsDt.Columns.Add("AssessmentGroupId", typeof(int));
 
-                    if (model.AssessmentGroups != null && model.AssessmentGroups.Count() > 0 && model.AssessmentGroups.Any(x=>x.IsSelectedForCampaign))
+                    if (model.AssessmentGroups != null && model.AssessmentGroups.Count() > 0 && model.AssessmentGroups.Any(x => x.IsSelectedForCampaign))
                     {
                         foreach (var item in model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
                         {
@@ -7895,7 +7895,7 @@ namespace Risebird.Repository
                         cmd.Parameters.Add(new SqlParameter("@CampaignAssessmentGroupsBulkData", SqlDbType.Structured));
                         cmd.Parameters["@CampaignAssessmentGroupsBulkData"].Value = agrpsDt;
                     }
-                    
+
                     con.Open();
 
                     if (cmd.ExecuteNonQuery() != 0)
@@ -8159,7 +8159,7 @@ namespace Risebird.Repository
                                 {
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
                                     AssessmentGroup = !string.IsNullOrEmpty(dt.Rows[i]["AssessmentGroup"].ToString()) ? dt.Rows[i]["AssessmentGroup"].ToString() : null
-                                    
+
                                 });
                             }
                             _resultVM.AssessmentGroups = (IList<AssignmentVM>)(assessmentGroups);
@@ -8179,7 +8179,7 @@ namespace Risebird.Repository
                                     id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
                                     IRFId = !string.IsNullOrEmpty(dt.Rows[i]["IRFId"].ToString()) ? dt.Rows[i]["IRFId"].ToString() : null,
                                     AssessmentGroupName = !string.IsNullOrEmpty(dt.Rows[i]["AssessmentGroupName"].ToString()) ? dt.Rows[i]["AssessmentGroupName"].ToString() : null
-                                    
+
                                 });
                             }
                             _resultVM.SkillChannels = (IList<IRFVm>)(irfList);
@@ -8204,7 +8204,7 @@ namespace Risebird.Repository
                             _resultVM.Interviewers = interviewers;
                         }
                     }
-                    
+
                     return _resultVM;
                 }
             }
@@ -8256,7 +8256,8 @@ namespace Risebird.Repository
                     {
                         return true;
                     }
-                    else {
+                    else
+                    {
                         return false;
                     }
                 }
@@ -8318,6 +8319,28 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CallibrationCallVM>(con, "usp_GetCalibrationCallDetails", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<CallibrationCallVM>(con, "usp_GetAllCalibrationMeetingsdetailsById", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
                 }
             }

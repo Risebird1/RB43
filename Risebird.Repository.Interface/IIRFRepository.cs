@@ -238,5 +238,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates();
         Task<Candidate> GetCandidateIdAndIrfIdByMeetingId(int interviewId);
         Task<IEnumerable<CallibrationCallVM>> GetCalibrationCallDetails(int irfid);
+        Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid);
     }
 }
