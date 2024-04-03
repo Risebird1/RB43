@@ -33,8 +33,8 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
-<div id="main-panel">
-    <div class="pt30">
+<div id="main-panel" class="top-m">
+ 
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="row card-header bg-w clearfix">
                 <div class="col-md-8 pull-left">
@@ -48,12 +48,12 @@
                         <input type="hidden" value="@ViewBag.id" id="hidduniqueid" />
                     </div>
                 </div>
-                <div class="pull-right">
+                <div class="pull-right text-right">
                     @Html.ActionLink("Back", "FetchInterviewerCommunicator", "Candidate", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                 </div>
             </div>
         </div>
-    </div>
+  
     <div class="content client ">
         <div class="row bl-bg">
             <div class="col-md-12">
