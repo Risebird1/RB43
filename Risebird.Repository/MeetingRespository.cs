@@ -7263,7 +7263,6 @@ namespace Risebird.Repository
                 return false;
             }
         }
-
         public async Task<List<MeetingVM>> GetMyQCInterviews(string emailId)
         {
             try
@@ -7336,6 +7335,29 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+        public async Task<List<DMInstructionVM>> GetMyDMInstruction(string emailId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@emailID", emailId);
+                    var data = await SqlMapper.QueryAsync<DMInstructionVM>(con, "usp_MyQCInterview", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return data.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }
