@@ -29,7 +29,7 @@
                     <input style="margin-bottom:10px;" class="cal-field" type="datetime-local" id="calibrationmeetingdate" />
                     <input class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" type="button" onclick="ScheduleCalibrationCall()" value="Schedule Meeting" />
                 </div>
-               
+
                 <div id="callibrationmeetingdetails" style="clear:both;margin-top: 50px;">
                 </div>
             </div>
@@ -80,5 +80,16 @@
                 }
             });
         }
+    }
+    function FetchCalibrationDetails(irfid) {
+        $.ajax({
+            url: '/IRF/GetCalibrationMeetingDetails',
+            data: { 'irfid': irfid },
+            method: 'GET',
+            success: function (data) {
+                $("#divcalibrationdetails").html('');
+                $("#divcalibrationdetails").html(data);
+            }
+        });
     }
 </script>
