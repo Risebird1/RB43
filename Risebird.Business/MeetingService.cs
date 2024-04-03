@@ -4215,12 +4215,24 @@ namespace Risebird.Business
                 return false;
             }
         }
-
         public async Task<List<MeetingVM>> GetMyQCInterviews(string emailId)
         {
             try
             {
                 var openMeeting = await _meetingRespository.GetMyQCInterviews(emailId);
+                return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<List<DMInstructionVM>> GetMyDMInstruction(string emailId)
+        {
+            try
+            {
+                var openMeeting = await _meetingRespository.GetMyDMInstruction(emailId);
                 return openMeeting;
             }
             catch (Exception ex)
