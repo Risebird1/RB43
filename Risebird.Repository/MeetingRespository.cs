@@ -7344,7 +7344,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@emailID", emailId);
-                    var data = await SqlMapper.QueryAsync<DMInstructionVM>(con, "usp_MyQCInterview", parameters,
+                    var data = await SqlMapper.QueryAsync<DMInstructionVM>(con, "usp_GetMyDMInstruction", parameters,
                          commandType: CommandType.StoredProcedure);
                     return data.ToList();
                 }

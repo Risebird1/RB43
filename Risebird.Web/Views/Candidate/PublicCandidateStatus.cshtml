@@ -110,7 +110,7 @@
     }
 
     .dataTables_wrapper div#candidateTable_length label {
-        display: none !important;
+        /*display: none !important;*/
     }
     .topheader-header [data-tooltip]:after {
         border-top: 8px solid #92938b !important;
@@ -218,8 +218,8 @@ ul.tabs li.active {
     .topheader-header .desktop-view{
       clear: both;
     position: relative;
-    top: -44px;
-    left: 235px;
+     top: -4px;
+    left: -64px;
 
 }
 
@@ -236,8 +236,8 @@ ul.tabs li.active {
 .topheader-header .desktop-view {
     clear: both;
     position: relative;
-    top: -5px;
-    left: 10px;
+       top: 47px;
+    left: -150px;
 }
 }
 @@media screen and (max-width: 767px) {
@@ -354,13 +354,13 @@ ul.tabs li.active {
                                 } *@
                                 @{
                                     var templateUrl2 = "/Template/ListPb?emailId=" + @ViewBag.emailid + "&uniqueId=" + @ViewBag.id + "&type=pbc&profile=Client";
-                                    <button title="Book interviews based on templates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl2)'" style="margin:5px 4px 5px 3px;">
-                                        <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
-                                        <div class="d-lg-inline-flex pad3">
-                                            Book Interviews
-                                        </div>
+                                            <button title="Book interviews based on templates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl2)'" style="margin:5px 4px 5px 3px;">
+                                                <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                                <div class="d-lg-inline-flex pad3">
+                                                    Book Interviews
+                                                </div>
 
-                                    </button>
+                                            </button>
 
                                 }
                                 <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCandidateFeedback", "Survey", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
@@ -598,24 +598,30 @@ ul.tabs li.active {
                                                 <div class="clearfix"></div>
                                                 <div class="tabs-wrapper">
                                                     <ul class="tabs">
-                                                        @if(ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
+                                                        @if (ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
                                                         {
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" class="active" @* rel="tab2" *@>Not Scheduled Meetings</li>
-                                                            @* <li rel="tab3">Cold Candidates</li>
-                                                            <li rel="tab4">Not Processed Resume</li> *@
+                                                            <li onclick="ColdCandidateByClient()"  rel="tab3">Cold Candidates</li>
+                                                            @*  <li rel="tab4">Not Processed Resume</li> *@
 
+                                                        }
+                                                        else if (ViewBag.CandidateType == CandidateTypeForClient.ColdCandidates.GetDescription())
+                                                        {
+                                                            <li onclick="ColdCandidateByClient()" class="active" rel="tab3">Cold Candidates</li>
                                                         }
                                                         else
                                                         {
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" class="active" rel="tab1">Scheduled Meetings</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
-                                                            @* <li rel="tab3">Cold Candidates</li>
-                                                            <li rel="tab4">Not Processed Resume</li> *@
-                                                            
+                                                            <li onclick="ColdCandidateByClient()" rel="tab3">Cold Candidates</li>
+                                                            @* 
+                                                        <li rel="tab4">Not Processed Resume</li>
+                                                        *@
+
                                                         }
 
-                                                        
+
                                                     </ul>
 <div class="tab_container">
                                                         <h3 class="d_active tab_drawer_heading" rel="tab1">Scheduled Meetings</h3>
@@ -1023,15 +1029,15 @@ ul.tabs li.active {
   <!-- #tab2 -->
   <h3 class="tab_drawer_heading" rel="tab3">Cold Candidates</h3>
   <div id="tab3" class="tab_content">
-  <h2>Tab 3 content</h2>
-    <p>Nulla eleifend felis vitae velit tristique imperdiet. Etiam nec imperdiet elit. Pellentesque sem lorem, scelerisque sed facilisis sed, vestibulum sit amet eros.</p>
+  @* <h2>Tab 3 content</h2>
+    <p>Nulla eleifend felis vitae velit tristique imperdiet. Etiam nec imperdiet elit. Pellentesque sem lorem, scelerisque sed facilisis sed, vestibulum sit amet eros.</p> *@
   </div>
   <!-- #tab3 -->
-                                                        <h3 class="tab_drawer_heading" rel="tab4">Not Processed Resume</h3>
+ @*  <h3 class="tab_drawer_heading" rel="tab4">Not Processed Resume</h3>
   <div id="tab4" class="tab_content">
   <h2>Tab 4 content</h2>
     <p>Integer ultrices lacus sit amet lorem viverra consequat. Vivamus lacinia interdum sapien non faucibus. Maecenas bibendum, lectus at ultrices viverra, elit magna egestas magna, a adipiscing mauris justo nec eros.</p>
-  </div>
+  </div>*@
   <!-- #tab4 --> 
 </div>
 <!-- .tab_container -->
@@ -2070,4 +2076,45 @@ ul.tabs li.active {
 	   of last tab */
 	$('ul.tabs li').last().addClass("tab_last");
 	
+</script>
+<script>
+    function ColdCandidateByClient() {
+        $.ajax({
+            url: '/Candidate/GetColdCandidatesListByClient',
+            type: 'GET',
+           @*  data: { 'irfId': irfId, 'candidateId': candidateId }, *@
+            success: function (data) {
+               $('#tab3').html('');
+                $('#tab3').html(data);
+            }
+        });
+    }
+</script>
+
+<script>
+    function ChangeTab(type) {
+        var currentUrl = window.location.href;
+
+        // Find the index of the substring after which substitution should occur
+        var originalString = currentUrl;
+        var substringToFind = "candidateType=";
+        var indexOfSubstring = originalString.indexOf(substringToFind);
+        var newString;
+        // Check if the substring is found
+        if (indexOfSubstring !== -1) {
+            // Define the new substring to replace the original part
+            //var newSubstring = "modified";
+
+            // Create the new string by substituting the part after the substring
+            newString = originalString.substring(0, indexOfSubstring + substringToFind.length) + type;//+ originalString.substring(indexOfSubstring + substringToFind.length);
+
+
+        }
+        else {
+            newString = originalString + '&candidateType=' + type;
+        }
+
+
+        window.location.href = newString;
+    }
 </script>

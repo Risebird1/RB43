@@ -518,5 +518,17 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<List<MeetingVM>> GetColdCandidatesListByClient(string Email)
+        {
+            try
+            {
+                return (await _candidateRepository.GetColdCandidatesByClientRepository(Email)).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
