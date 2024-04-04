@@ -3418,10 +3418,14 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PublicCandidateStatus(string emailid, string id)
+        public async Task<IActionResult> PublicCandidateStatus(string emailid, string id, string candidateType = null)
         {
             try
             {
+                if(string.IsNullOrEmpty(candidateType))
+                {
+                    candidateType = CandidateTypeForClient.Scheduled.GetDescription();
+                }
                 var Emailid = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
                 {
@@ -3448,13 +3452,19 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.Remove("PublicCandidateStatusfilters");
                     var candidateData = new List<CandidateTimelineData>();
 
+                    int dataType = 2;
+                    if(candidateType == CandidateTypeForClient.NotScheduled.GetDescription())
+                    {
+                        dataType = 1;
+                    }
+
                     if (client.ClientName == "FoundIt (Monster.com)")
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(15), 2, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(15), dataType, emailid)).ToList();
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), 2, emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), dataType , emailid)).ToList();
                     }
 
                     if (candidateData == null)
@@ -3570,6 +3580,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.profile = "Client";
                     ViewBag.ClientId = client.ClientId;
                     ViewBag.PageStatus = "Public";
+                    ViewBag.CandidateType = candidateType;
                     if (Emailid != emailid)
                     {
                         return RedirectToAction("PublicAllMeetings", new { id = id });
@@ -3599,13 +3610,17 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid, string id)
+        public async Task<IActionResult> PublicCandidateStatus(CandidateTimelineFilter filter, string emailid, string id, string candidateType = null)
         {
             ViewBag.emailid = emailid;
             ViewBag.id = id;
             ViewBag.Whatsappflag = false;
             try
             {
+                if (string.IsNullOrEmpty(candidateType))
+                {
+                    candidateType = CandidateTypeForClient.Scheduled.GetDescription();
+                }
                 var client = await _userRepository.GetClientUserDetails(emailid);
                 var model = new List<CandidateTimelineVM>();
                 if (filter != null)
@@ -3613,7 +3628,12 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.SetString("PublicCandidateStatusfilters", JsonConvert.SerializeObject(filter));
                 }
                 var candidateData = new List<CandidateTimelineData>();
-                int datatype = !string.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 2;
+                int datatype = 2;
+                if (candidateType == CandidateTypeForClient.NotScheduled.GetDescription())
+                {
+                    datatype = 1;
+                }
+                //int datatype = !string.IsNullOrEmpty(filter.DateType) ? Convert.ToInt32(filter.DateType) : 2;
                 if (filter.StartDate != null && filter.EndDate != null)
                 {
                     candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(filter.StartDate.Value, filter.EndDate.Value.AddDays(1), datatype, emailid)).ToList();
@@ -3755,6 +3775,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.profile = "Client";
                 ViewBag.PageStatus = "Public";
                 model = model.OrderByDescending(x => x.interviewDate).ToList();
+                ViewBag.CandidateType = candidateType;
                 return View(model);
             }
             catch (Exception ex)

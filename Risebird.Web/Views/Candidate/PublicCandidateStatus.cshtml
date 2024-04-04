@@ -148,7 +148,172 @@
     }
 </style>
 
+<style>
+    ul.tabs {
+	margin: 0;
+	padding: 0;
+	float: left;
+	list-style: none;
+	height: 32px;
+	border-bottom: 1px solid #333;
+	width: 100%;
+}
 
+ul.tabs li {
+	float: left;
+	margin: 0;
+	cursor: pointer;
+	padding: 0px 21px;
+	height: 31px;
+	line-height: 31px;
+	border-top: 1px solid #333;
+	border-left: 1px solid #333;
+	border-bottom: 0px solid #333;
+	background-color: #fff;
+	color: #666;
+	overflow: hidden;
+	position: relative;
+}
+
+.tab_last { border-right: 1px solid #333; }
+
+ul.tabs li:hover {
+	background-color: #ccc;
+	color: #fff;
+}
+
+ul.tabs li.active {
+	background-color: #57aef4;
+	color: #fff;
+        border-bottom: 1px solid #57aef4;
+	display: block;
+}
+
+.tab_container {
+	border: 1px solid #333;
+	border-top: none;
+	clear: both;
+	float: left;
+	width: 100%;
+	background: #fff;
+	overflow: auto;
+}
+
+.tab_content {
+	padding: 10px 15px;
+	display: none;
+}
+
+.tab_drawer_heading { display: none; }
+@@media screen and (max-width:1024px) {
+       ul.tabs {
+    margin: 60px 0px 0px 0px;
+    }
+    .tabs-wrapper{
+        padding:0px;
+    }
+    .topheader-link-wrap{
+        padding:10px;
+    }
+    .topheader-header .desktop-view{
+      clear: both;
+    position: relative;
+    top: -44px;
+    left: 235px;
+
+}
+
+}
+@@media screen and (max-width: 768px) {
+ 
+.tabs-wrapper{
+    width: 95%;
+    padding: 0px;
+}
+.topheader-link-wrap{
+    padding:0px 7px;
+}
+.topheader-header .desktop-view {
+    clear: both;
+    position: relative;
+    top: -5px;
+    left: 10px;
+}
+}
+@@media screen and (max-width: 767px) {
+	.tabs {
+		display: none;
+	}
+    .tabs-wrapper {
+        width:100%;
+       margin-top: 50px;
+    }
+	.tab_drawer_heading {
+		background-color: #d3d2d2;
+		color: #fff;
+		border-top: 0px;
+		margin: 5px 0;
+		padding: 5px 20px;
+		display: block;
+		cursor: pointer;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	.d_active {
+		background-color: #666;
+		color: #fff;
+	}
+    .tab_content{
+        padding:0px;
+    }
+    .tab_container .nopad{
+        padding:0px!important;
+    }
+    .tab_container{
+        border:0px!important;
+        padding: 10px;
+    }
+    .content.client .client-tab #candidateTable_filter {
+    position: absolute;
+    right: 20px;
+    top: -17px;
+    margin: 10px 0px 10px -11px;
+}
+.client-tab table.dataTable{
+    margin-top:30px!important;
+}
+.topheader-header .mobile-view{
+    clear: both;
+    position: relative;
+    top: -45px;
+    left: 130px;
+
+}
+}
+@@media screen and (max-width: 480px) {
+.topheader-header .mobile-view{
+    clear: both;
+    position: relative;
+    top: -40px;
+    left: 120px;
+
+}
+}
+@@media screen and (max-width: 360px) {
+.topheader-header .mobile-view{
+    clear: both;
+    position: relative;
+    top: -45px;
+    left: 225px;
+
+}
+}
+
+</style>
 <input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
@@ -189,7 +354,7 @@
                                 } *@
                                 @{
                                     var templateUrl2 = "/Template/ListPb?emailId=" + @ViewBag.emailid + "&uniqueId=" + @ViewBag.id + "&type=pbc&profile=Client";
-                                    <button title="Book interviews based on templates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl2)'" style="margin:5px 4px 0px 3px;">
+                                    <button title="Book interviews based on templates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl2)'" style="margin:5px 4px 5px 3px;">
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                         <div class="d-lg-inline-flex pad3">
                                             Book Interviews
@@ -198,7 +363,7 @@
                                     </button>
 
                                 }
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCandidateFeedback", "Survey", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 0px 3px;">
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicCandidateFeedback", "Survey", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
                                     <span class="topheader-link"><i class="far fa-user" aria-hidden="true" style="color:#fff;font-size:11px;"></i><i class="far fa-comment-alt" style="color:#fff;font-size:9px;"></i></span>
                                     <div class="d-lg-inline-flex pad3">
                                         Candidate Feedback
@@ -206,7 +371,7 @@
 
                                 </button>
 
-                              <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 0px 3px;">
+                              <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
                                     <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                     <div class="d-lg-inline-flex pad3">
                                         Skill Channel Stats
@@ -234,7 +399,7 @@
                                 <span data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" data-original-title="Tooltip on top"><font style="font-family:arial;">Manage Interviews</font></span>
                                 </button>*@
 
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;margin:5px 4px 0px 3px;">
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="FetchInterviewerCommunicator('@ViewBag.emailid')" style="left:160px;margin:5px 4px 5px 3px;">
                                     <span class="topheader-link"><i class="fa fa-users" style="color:#fff"></i></span>
                                     <div class="d-lg-inline-flex pad3">
                                         Manage Interviews
@@ -243,7 +408,7 @@
                                 </button>
 
 
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement('@ViewBag')" style="cursor:pointer;left:160px;margin:5px 4px 0px 3px;">
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="openInterviewManagement('@ViewBag')" style="cursor:pointer;left:160px;margin:5px 4px 5px 3px;">
                                     <span class="topheader-link"><i class="fas fa-users-cog" style="color:#fff"></i></span>
                                     <div class="d-lg-inline-flex pad3">
                                         Live Interview Co-ordination
@@ -315,11 +480,11 @@
                                                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
-                                                <form action="@Url.Action("PublicCandidateStatus", "Candidate",new { emailid=ViewBag.emailid,id=ViewBag.id})" method="post" id="form" onsubmit="return checkfilterDate();">
+                                                <form action="@Url.Action("PublicCandidateStatus", "Candidate",new { emailid=ViewBag.emailid,id=ViewBag.id, candidateType = ViewBag.CandidateType})" method="post" id="form" onsubmit="return checkfilterDate();">
 
                                                     <div class="modal-body publicmeeting">
                                                         <div class="row">
-                                                            <div class="col-md-6 col-sm-6">
+                                                            @* <div class="col-md-6 col-sm-6">
                                                                 <div class="form-group">
                                                                     <div class="col-md-12 col-sm-12">
                                                                         @Html.RadioButton("DateType", "1", new { @id = "Datetype_1", @style = "position:relative;top:4px;" }) Not Scheduled Meetings <span style="font-size: 14px; font-weight: 600; color: #0f6121;">(Filter based on Candidate Not Scheduled)</span>
@@ -332,7 +497,7 @@
                                                                         @Html.RadioButton("DateType", "2", new { @id = "Datetype_2", @checked = "checked", @style = "position:relative;top:4px;" }) Scheduled Meetings <span style="font-size:14px; font-weight:600;color: #0f6121;">(Filter based on Interview date)</span>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </div> *@
 
 
                                                             <div class="col-md-6 col-sm-6 border-rv">
@@ -431,10 +596,33 @@
 
 
                                                 <div class="clearfix"></div>
+                                                <div class="tabs-wrapper">
+                                                    <ul class="tabs">
+                                                        @if(ViewBag.CandidateType == CandidateTypeForClient.NotScheduled.GetDescription())
+                                                        {
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" class="active" @* rel="tab2" *@>Not Scheduled Meetings</li>
+                                                            @* <li rel="tab3">Cold Candidates</li>
+                                                            <li rel="tab4">Not Processed Resume</li> *@
 
-                                                <div class="col-sm-12 nopad">
+                                                        }
+                                                        else
+                                                        {
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" class="active" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
+                                                            @* <li rel="tab3">Cold Candidates</li>
+                                                            <li rel="tab4">Not Processed Resume</li> *@
+                                                            
+                                                        }
 
-                                                    <div class="table-responsive scrollbar style-2  mh-top" style="overflow-x:scroll" @*id="style-2"*@>
+                                                        
+                                                    </ul>
+<div class="tab_container">
+                                                        <h3 class="d_active tab_drawer_heading" rel="tab1">Scheduled Meetings</h3>
+  <div id="tab1" class="tab_content">
+ <div class="col-sm-12 nopad client-tab">
+
+                                                    <div class="table-responsive scrollbar style-2" style="overflow-x:scroll" @*id="style-2"*@>
                                                         <table id="candidateTable" class="table table-striped table-bordered dataTable journey" cellspacing="0" width="100%">
                                                             <thead>
                                                                 <tr>
@@ -825,6 +1013,36 @@
                                                     </div>
 
                                                 </div>
+  </div>
+  <!-- #tab1 -->
+  <h3 class="tab_drawer_heading" rel="tab2">Not Scheduled Meetings</h3>
+  <div id="tab2" class="tab_content">
+  <h2>Tab 2 content</h2>
+    <p>Nunc dui velit, scelerisque eu placerat volutpat, dapibus eu nisi. Vivamus eleifend vestibulum odio non vulputate.</p>
+  </div>
+  <!-- #tab2 -->
+  <h3 class="tab_drawer_heading" rel="tab3">Cold Candidates</h3>
+  <div id="tab3" class="tab_content">
+  <h2>Tab 3 content</h2>
+    <p>Nulla eleifend felis vitae velit tristique imperdiet. Etiam nec imperdiet elit. Pellentesque sem lorem, scelerisque sed facilisis sed, vestibulum sit amet eros.</p>
+  </div>
+  <!-- #tab3 -->
+                                                        <h3 class="tab_drawer_heading" rel="tab4">Not Processed Resume</h3>
+  <div id="tab4" class="tab_content">
+  <h2>Tab 4 content</h2>
+    <p>Integer ultrices lacus sit amet lorem viverra consequat. Vivamus lacinia interdum sapien non faucibus. Maecenas bibendum, lectus at ultrices viverra, elit magna egestas magna, a adipiscing mauris justo nec eros.</p>
+  </div>
+  <!-- #tab4 --> 
+</div>
+<!-- .tab_container -->
+</div>
+                                                </div>
+                                                
+
+
+
+
+
 
 
                                             </div>
@@ -1096,6 +1314,33 @@
 <script src="~/js/ModalFormServerValidation.js"></script>
 
 <script src="~/js/common.js"></script>
+<script>
+    function ChangeTab(type) {
+        var currentUrl = window.location.href;
+
+        // Find the index of the substring after which substitution should occur
+        var originalString = currentUrl;
+        var substringToFind = "candidateType=";
+        var indexOfSubstring = originalString.indexOf(substringToFind);
+        var newString;
+        // Check if the substring is found
+        if (indexOfSubstring !== -1) {
+            // Define the new substring to replace the original part
+            //var newSubstring = "modified";
+
+            // Create the new string by substituting the part after the substring
+            newString = originalString.substring(0, indexOfSubstring + substringToFind.length) + type ;//+ originalString.substring(indexOfSubstring + substringToFind.length);
+
+            
+        } 
+        else {
+            newString = originalString + '&candidateType=' + type;
+        }
+
+
+        window.location.href = newString;
+    }
+</script>
 <script>
     $(document).on('hidden.bs.modal', function (event) {
         if ($('.modal:visible').length) {
@@ -1784,4 +2029,45 @@
         var url="/Dashboard/EmergencyInterviewDetails?pagetype=Public";
         window.open(url, "_blank");
     }
+</script>
+<script>
+     // tabbed content
+    // http://www.entheosweb.com/tutorials/css/tabs.asp
+    $(".tab_content").hide();
+    $(".tab_content:first").show();
+
+  /* if in tab mode */
+    $("ul.tabs li").click(function() {
+		
+      $(".tab_content").hide();
+      var activeTab = $(this).attr("rel"); 
+      $("#"+activeTab).fadeIn();		
+		
+      $("ul.tabs li").removeClass("active");
+      $(this).addClass("active");
+
+	  $(".tab_drawer_heading").removeClass("d_active");
+	  $(".tab_drawer_heading[rel^='"+activeTab+"']").addClass("d_active");
+	  
+    });
+	/* if in drawer mode */
+	$(".tab_drawer_heading").click(function() {
+      
+      $(".tab_content").hide();
+      var d_activeTab = $(this).attr("rel"); 
+      $("#"+d_activeTab).fadeIn();
+	  
+	  $(".tab_drawer_heading").removeClass("d_active");
+      $(this).addClass("d_active");
+	  
+	  $("ul.tabs li").removeClass("active");
+	  $("ul.tabs li[rel^='"+d_activeTab+"']").addClass("active");
+    });
+	
+	
+	/* Extra class "tab_last" 
+	   to add border to right side
+	   of last tab */
+	$('ul.tabs li').last().addClass("tab_last");
+	
 </script>
