@@ -5039,5 +5039,48 @@ namespace Risebird.Web.Controllers
 
             return new string(randomArray);
         }
+        public async Task<IActionResult> Test(string id, int IRFId)
+        {
+            var model = new CandidateIRFDetailsVM();
+            return View(model);
+        }
+        public async Task<IActionResult> Test1(string id, int IRFId)
+        {
+            var model = new CandidateIRFDetailsVM();
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetColdCandidatesListByClient()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+
+                        var data = await _candidateService.GetColdCandidatesListByClient(emailid);
+                        data = data.Select(x =>
+                        {
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+                        return PartialView("_GetColdCandidatePartial", data);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

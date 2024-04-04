@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 
@@ -977,6 +978,26 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public async Task<List<MeetingVM>> GetColdCandidatesByClientRepository(string Email)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Email", Email);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidateByClient",parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }
