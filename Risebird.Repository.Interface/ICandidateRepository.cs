@@ -37,5 +37,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateResume>> GetCandidateResumesForParsing();
         Task<IEnumerable<IRFCandidateReport>> FetchSkillChannelCandidateReprots(int irfId);
         Task<bool> SaveCandidateCodedResume(Candidate model);
+        Task<List<MeetingVM>> GetColdCandidatesByClientRepository(string Email);
     }
 }
