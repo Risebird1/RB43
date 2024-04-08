@@ -330,6 +330,7 @@ namespace Risebird.Entities.ViewModel
         public string SuspiciousAddedBy { get; set; }
         public DateTime? SuspiciousAddOn { get; set; }
         public string SuspiciousMobileNumber { get; set; }
+        public bool IsActive { get; set; }
         public int CandidateMasterId { get; set; }
         public string scheduleUniqueid { get; set; }
         public int? VideoConfirmation { get; set; }
@@ -356,6 +357,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsColdCandidate {  get; set; }
         public string ColdMarkedBY { get; set;}
         public DateTime? ColdMarkedDate { get; set;}
+        public DateTime? RescheduleDate { get; set;}
+       
 
 
     }

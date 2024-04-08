@@ -530,5 +530,18 @@ namespace Risebird.Business
             }
             return null;
         }
+
+        public async Task<List<CandidateResume>> GetNotProcessedResumeByClient(string Email)
+        {
+            try
+            {
+                return (await _candidateRepository.GetNotProcessedResumeByClientRepository(Email)).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

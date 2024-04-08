@@ -367,6 +367,8 @@
                                                         <th>Suspicious Added By</th>
                                                         <th>Suspicious AddedOn</th>
                                                         <th>Mobile</th>
+                                                        <th>Active</th>
+                                                        <th>Red Marker</th>
                                                     }
                                                     @if (ViewBag.actionstatus == "CancelledInterviewCount")
                                                     {
@@ -598,6 +600,8 @@
                                                         <th>Suspicious Added By</th>
                                                         <th>Suspicious AddedOn</th>
                                                         <th>Mobile</th>
+                                                        <th>Active</th>
+                                                         <th>Red Marker</th>
                                                     }
 
                                                     @if (ViewBag.actionstatus == "CancelledInterviewCount")
@@ -1063,6 +1067,22 @@
                                                             <td>@item.SuspiciousAddedBy</td>
                                                             <td>@item.SuspiciousAddOn</td>
                                                             <td>@item.SuspiciousMobileNumber</td>
+                                                             @if (item.IsActive)
+                                                            {
+                                                            <td>Active</td>
+                                                             }
+                                                            else
+                                                            {
+                                                            <td>Inactive</td>
+                                                            }
+                                                               @if (item.interviewer != null || item.interviewer != "")
+                                                            {
+                                                                <td style="color:red;text-align:center"><d onclick="InsightsDetails('@item.SuspiciousEmail')" style="cursor:pointer">@item.RedMarker</d></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="color:red;text-align:center">@item.RedMarker</td>
+                                                            }
                                                         }
 
 

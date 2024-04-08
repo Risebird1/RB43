@@ -444,19 +444,21 @@ namespace Risebird.Business
 
                 //}
                 model.JobCountry = details.JobCountry;
+                model.AssessmentGroupId = details.AssessmentGroupId;
+                model.AssessmentGroupName = details.AssessmentGroupName;
 
                 var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
-                model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
+                //model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
 
-                if (model.IRFRecommendations != null)
-                {
-                    model.AssessmentGroupId = model.IRFRecommendations.AssessmentGroupId?.ToString();
-                    model.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupName;
-                    //model.JobCountry = model.IRFRecommendations.CountryType?.ToString();
-                    //model.JobLevel = (int)JobLevels.SE;
-                    //model.CompanyType = model.IRFRecommendations.CompanyType?.ToString();
-                    //model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore;
-                }
+                //if (model.IRFRecommendations != null)
+                //{
+                //    model.AssessmentGroupId = model.IRFRecommendations.AssessmentGroupId?.ToString();
+                //    model.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupName;
+                //    //model.JobCountry = model.IRFRecommendations.CountryType?.ToString();
+                //    //model.JobLevel = (int)JobLevels.SE;
+                //    //model.CompanyType = model.IRFRecommendations.CompanyType?.ToString();
+                //    //model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore;
+                //}
 
                 //var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
 

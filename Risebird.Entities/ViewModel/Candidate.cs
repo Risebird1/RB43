@@ -153,5 +153,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsResumeRedactAttempted { get; set; }
         public bool IsResumeRedactFailed { get; set; }
         public string CodedResumeLink { get; set; }
+        public bool IsColdCandidate { get; set; }
     }
 }

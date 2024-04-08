@@ -173,6 +173,11 @@
                                                     }
                                                     <th>Meeting Status</th>
                                                     <th>Status</th>
+                                                    @if (ViewBag.Type == "RescheduleIM")
+                                                    {
+                                                        <th>Latest Interview</th>
+                                                        <th>Latest Status</th>
+                                                    }
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -190,6 +195,11 @@
                                                     }
                                                     <th>Meeting Status</th>
                                                     <th>Status</th>
+                                                    @if (ViewBag.Type == "RescheduleIM")
+                                                    {
+                                                        <th>Latest Interview</th>
+                                                        <th>Latest Status</th>
+                                                    }
                                                     <th>Action</th>
                                                 </tr>
                                             </tfoot>
@@ -337,6 +347,57 @@
                                                         else
                                                         {
                                                             <td></td>
+                                                        }
+                                                          @if (ViewBag.Type == "RescheduleIM")
+                                                        {
+
+                                                            <td>@item.LastInterviewDate</td>
+                                                            @if (item.LastMeetingStatusStatusDesc == "Status Pending")
+                                                            {
+                                                                <td>
+                                                                    <span class="status mpending">@item.LastMeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.LastMeetingStatusStatusDesc == "Completed")
+                                                            {
+                                                                <td>
+                                                                    <span class="status mcomplete">@item.LastMeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.LastMeetingStatusStatusDesc == "Scheduled")
+                                                            {
+                                                                <td>
+                                                                    <span class="status mscheduled">@item.LastMeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.LastMeetingStatusStatusDesc == "Dropped")
+                                                            {
+                                                                <td>
+                                                                    <span class="status mdropped">@item.LastMeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.LastMeetingStatusStatusDesc == "No Show(Candidate)")
+                                                            {
+                                                                <td>
+                                                                    <span class="status mnoshow">@item.LastMeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.LastMeetingStatusStatusDesc == "No Show(Interviewer)")
+                                                            {
+                                                                <td>
+                                                                    <span class="status mnoshow-int">@item.LastMeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else if (item.LastMeetingStatusStatusDesc == "Dropped (Rejected)")
+                                                            {
+                                                                <td>
+                                                                    <span class="status mdropped" style="width:115px;">@item.LastMeetingStatusStatusDesc</span>
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td> <span class="status">@item.LastMeetingStatusStatusDesc</span></td>
+                                                            }
                                                         }
                                                         <td>
                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
