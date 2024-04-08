@@ -715,7 +715,7 @@
                             @if (Model.isapprovedchecked)
                             {
                                 @Html.HiddenFor(model=>model.VideoReward)
-                                <div class="form-group">
+                                <div class="form-group clearfix">
                                     <div class="accordion-group">
                                         <div class="accordion-heading">
                                             <a class="accordion-toggle">
@@ -734,7 +734,7 @@
                             }
                             else if (Model.Pagetype == "QCPendingReport" || Model.Pagetype == "CompletedInterview")
                             {
-                                <div class="form-group">
+                                <div class="form-group clearfix">
                                     <div class="accordion-group">
                                         <div class="accordion-heading">
                                             <a class="accordion-toggle">
@@ -759,7 +759,26 @@
                             else{
                                 @Html.HiddenFor(model=>model.VideoReward)
                             }
+
+                              <div class="form-group">
+                             <div class="accordion-group">
+                                        <div class="accordion-heading">
+                                            <a class="accordion-toggle">
+                                                @Html.LabelFor(model => model.Recommendation, htmlAttributes: new { @class = "label-name" })
+                                            </a>
+                                        </div>
+                                        <div class="accordion-body">
+                                            <div class="accordion-inner">
+                                             <div class="custom-select">                                  
+                                          <input type="radio" name="Recommendation" value="Shortlist" checked="checked" />Shortlist
+                                           <input type="radio" name="Recommendation" value="Remove"  />Remove
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                             </div>
                         </div>
+
                         <div class="col-md-6 col-sm-6">
                             <div class="form-group">
 

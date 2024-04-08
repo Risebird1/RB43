@@ -74,6 +74,7 @@ namespace Risebird.Entities.ViewModel
         public bool isQcDone { get; set; }
         public bool techqc { get; set; }
         public int TotalPaymentComplianceCount { get; set; }
+        public string Recommendation { get; set; }
     }
     public class PaymentSlabsVM
     {
