@@ -999,5 +999,26 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<List<CandidateResume>> GetNotProcessedResumeByClientRepository(string Email)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@clientEmailId", Email);
+                    var result = await SqlMapper.QueryAsync<CandidateResume>(con, "usp_GetNotProcessedResumesForClient", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
