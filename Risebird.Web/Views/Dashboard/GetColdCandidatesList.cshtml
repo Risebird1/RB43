@@ -7,7 +7,10 @@
     var Header = "<div>Cold Candidate</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
+<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
 <div class="main-panel" id="main-panel">
 
     <div class="content  client">
@@ -116,22 +119,12 @@
                                                         <td>@item.ChannelOwner</td>
                                                         <td>@item.MeetingStatusStatusDesc</td>
                                                         <td>
-                                                           @*  @if (item.MailCount != 0)
-                                                            {
-                                                                <div class="row">
-                                                                    <span class="icon-field"><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;padding: 0px 5px 0px 10px;"></i>  Emails :</span>    <span class="icon-field">
-                                                                            <a class="icon-link" href="#!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email })">
-                                                                            @item.MailCount
-                                                                        </a>
-                                                                    </span>
-                                                                </div>
-                                                            } *@
-
+                                                           
                                                                 @if (item.MailCount != 0)
                                                                 {
                                                                     <div class="row">
                                                                         <span class="icon-field" style="display:block;width:auto;float:left"><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;padding: 0px 5px 0px 0px;"></i>  Emails :</span>    <span class="icon-field" style="display:block;width:auto;float:left">
-                                                                            <a class="icon-link" href="#!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email })">
+                                                                            <a class="icon-link" href="#!!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email })">
                                                                                 @item.MailCount
                                                                             </a>
                                                                         </span>
@@ -157,7 +150,7 @@
                                                             else{
                                                             <span>
                                                                         <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#db6161;border-color:#db6161;position:relative;left:10px">
-                                                                            <span onclick="MarkedColdCandidate('@item.CandidateId','@item.IRFId', '@item.candidateEmail');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
+                                                                            <span onclick="MarkedColdCandidate('@item.CandidateId','@item.IRFId', '@item.candidateEmail','@item.imid','@item.irfIntId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
                                                                                 <img src="~/img/approve-blk.png" width="18" style="max-width: 18px!important;position: relative;top: -1.5px;left: -2px;" />
            </span>
        </button>
@@ -194,7 +187,13 @@
     </div>
 
 </div>
-@await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
+    @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
+   <div id="modal_recipientActivity_placeholder"></div>
+    <div id="modal_candidateCommunicationDetails_placeholder"></div>
+   <script src="~/js/ModalFormServerValidation.js"></script>
+    <script src="~/js/markcoldcandidate.js"></script>
+    <script src="~/js/common.js"></script>
+
 <script>
 
     $(document).ready(function () {
@@ -222,32 +221,7 @@
         window.location.href = "/Dashboard/GetColdCandidatesList?ColdCandidateValue=" + type;
     }
 
-        function MarkedColdCandidate(CandidateId,IRFId,CandidateEmail) {
-
-            if (CandidateId != '') {
-                $.ajax({
-                    url: '/Dashboard/MarkedColdCandidate',
-                    data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail':CandidateEmail },
-                    type: "POST",
-                    success: function (data) {
-                        // swal.fire(data).then(function () {
-                        //     location.reload(true);
-                        // });
-
-                        Swal.fire({
-                            title: 'Custom width',
-                            text: data, // Use the data variable here for the message
-                            width: '50%', // You can use 'px' or '%' for the width value
-                        }).then(function () {
-                            location.reload(true);
-                        });
-                    }
-                });
-            }
-            else {
-                swal.fire("Please Marked cold candidate.");
-            }
-        }
+  
 </script>
 
 

@@ -7171,6 +7171,7 @@ input[type=search]:focus {
     background: #f6b445c7;
     border-color: #f6b445c7;
 }
+
 .btn-adstatus, .btn-adstatus:hover {
     background: #aed580;
     border-color: #aed580;
@@ -11625,7 +11626,7 @@ option {
         padding-right: 5px !important;
         padding-left: 5px !important;
     }
-
+  
     #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
         width: 285px !important;
         height: 160px !important;

@@ -1636,15 +1636,25 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<List<MeetingVM>> GetColdCandidatesRepository()
+        public async Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList", commandTimeout: 600,
-                        commandType: CommandType.StoredProcedure);
-                    return result.ToList();
+                    if (ColdCandidateValue == 0)
+                    {
+
+                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList", commandTimeout: 600,
+                            commandType: CommandType.StoredProcedure);
+                        return result.ToList();
+                    }
+                    else
+                    {
+                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidate", commandTimeout: 600,
+                                                    commandType: CommandType.StoredProcedure);
+                        return result.ToList();
+                    }
                 }
 
             }
@@ -1655,7 +1665,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email)
+        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email,int InterviewId)
         {
             try
             {
@@ -1663,6 +1673,7 @@ namespace Risebird.Repository
                 dynamicParam.Add("@FKCandidateId", CandidateId);
                 dynamicParam.Add("@ColdMarkedBY",Email);
                 dynamicParam.Add("@ColdMarkedDate",DateTime.Now);
+                dynamicParam.Add("@InterviewId", InterviewId);
 
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
@@ -1677,6 +1688,28 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public async Task<InterviewUsersDetails> GetFutureDateInterviewSchedule(int interviewid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<InterviewUsersDetails>("usp_GetFutureDateInterviewSchedule", dynamicParameters, commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }
