@@ -8492,14 +8492,14 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-
-                    var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
-                    if (result)
-                    {
-                        return Json("Assigned Successfully.");
-                    }
-                    else { return Json("Sorry! Could not assign."); }
-
+                 
+                        var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
+                        if (result)
+                        {
+                            return Json("Assigned Successfully.");
+                        }
+                        else { return Json("Sorry! Could not assign."); }
+                  
                 }
                 else
                 {

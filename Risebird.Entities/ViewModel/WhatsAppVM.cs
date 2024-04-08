@@ -49,6 +49,7 @@ namespace Risebird.Entities.ViewModel
         public int irfIntId { get; set; }
         public string candidateEmail { get; set; }
         public string ZoomMeetingId { get; set; }
+        public int confirmationStatus { get; set; }
     }
     public class ResumeDetailsVM
     {

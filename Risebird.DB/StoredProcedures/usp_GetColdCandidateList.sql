@@ -16,7 +16,7 @@ FROM InterviewMeetings im
 JOIN InterviewComments ic ON im.id = ic.InterviewId
 JOIN IRF ON im.IRFId = IRF.IRFId
 GROUP BY im.candidateEmail, im.IRFId
-HAVING COUNT(im.candidateEmail) >= 4
+HAVING COUNT(im.candidateEmail) >= 5
 AND NOT EXISTS (
     SELECT 1
     FROM InterviewComments ic2
@@ -37,9 +37,9 @@ case
 	 when ul.LastName is null then ul.FirstName
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
 end as candidateName
-,(SELECT top 1 ic.id
+,(SELECT top 1 im.id
 FROM InterviewMeetings im
-JOIN InterviewComments ic ON im.id = ic.InterviewId
+--JOIN InterviewComments ic ON im.id = ic.InterviewId
 JOIN IRF ON im.IRFId = IRF.IRFId where im.candidateEmail =CTE.candidateEmail and im.IRFId=CTE.IRFId order by im.interviewDate desc) as imid
 ,cl.Name as ClientName,CountTable.MailCount
 ,cci.IsColdCandidate,cci.ColdMarkedBY,cci.ColdMarkedDate,ca.id as CandidateId,ulir.EmailId as ChannelOwner,ul.MobileNumber
@@ -51,6 +51,7 @@ left Join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 left join Userlist ulir on ulir.id=irf.RisebirdHr
 join Client cl on cl.id=IRF.ClientId 
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(IRF.id,CTE.candidateEmail) as CountTable
+where cci.IsColdCandidate is null or IsColdCandidate=0
 order by interviewDate desc
 End
 Go

@@ -372,7 +372,10 @@
                                                                             @item.Phone
                                                                             </span>
                                                                     }
-
+                                                                    @if (item.IsColdCandidate)
+                                                                    { 
+                                                                        <span>Cold Candidate Marked</span>
+                                                                    }
                                                                 </td>
                                                                
 
@@ -783,6 +786,14 @@
                                                                                 <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-3px;left:-1px" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                             </button>
                                                                         </a>
+
+                                                                        <span>
+                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#db6161;border-color:#db6161;position:relative;left:10px">
+                                                                                <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
+                                                                                    <img src="~/img/approve-blk.png" width="18" style="max-width: 18px!important;position: relative;top: -1.5px;left: -2px;" />
+                                                                                </span>
+                                                                            </button>
+                                                                        </span>
                                                                 }
 
                                                                     @*@if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Client" || ViewBag.profile == "HR")
@@ -1326,7 +1337,7 @@
                 </div>
             </div>*@
 
-
+            <script src="~/js/markcoldcandidate.js?v=1.1"></script>
             <div id="importResultModal" class="modal modal-bg">
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
@@ -1430,7 +1441,7 @@
 <div id="modal_clientComment_placeholder"></div>
 
 <div id="modal_candidateCommunicationDetails_placeholder"></div>
-<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/ModalFormServerValidation.js?v=1"></script>
 <script src="~/js/common.js"></script>
 <script>
     var spanImport = document.getElementById("importResultPopUp");

@@ -37,6 +37,6 @@ and im.confirmationStatus = 1
 and ul.IsActive=1
 and ul.EmailId=@emailID
 and im.interviewer!=@emailID
-order by interviewDate desc
+order by im.interviewDate desc
 END
 GO

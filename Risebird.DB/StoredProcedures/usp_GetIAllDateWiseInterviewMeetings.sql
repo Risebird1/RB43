@@ -17,7 +17,7 @@ AS
                   
 --declare @idProfile int                  
 --set @idProfile=(select)                  
-Begin                                  
+Begin
                       
 if(@EmailId is not null and ((select idProfile from UserList where EmailId=@EmailId)=2))                      
  Begin                    
@@ -41,6 +41,8 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,    
   im.BackUpLink, im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,    
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
+  --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId
+  ,iman.interviewDate RescheduleDate
   from  InterviewMeetings im                                
   inner join IRF on im.IRFId = IRF.IRFId                                
   left join UserList ulc on im.candidateEmail= ulc.EmailId                              
@@ -59,8 +61,11 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   join HR on HR.id = th.HRId                      
   join UserList ulhr on ulhr.id = HR.UserId      
   left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId      
-  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType    
-  where interviewDate >= @startDate AND interviewDate < @endDate and ulhr.EmailId=@EmailId                      
+  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType   
+  outer Apply(Select top(1)ima.interviewDate From InterviewMeetings ima join InterviewComments ica on ica.InterviewId=ima.id where im.IRFId=ima.IRFId and im.candidateEmail=ima.candidateEmail and ima.confirmationStatus=1 order by ima.Interviewdate desc) iman
+  --left join UserList ul on ul.id = cm.UserId
+  --left join ScheduleInterviewEvent si on si.SkillChannel=IRF.IRFId
+  where im.interviewDate >= @startDate AND im.interviewDate < @endDate and ulhr.EmailId=@EmailId                      
   Union                    
   select distinct im.id imid,im.IRFId, im.interviewDate, im.interviewSlot, Case When irf.IsNewSkillChannel=1 then pm.DurationSelectedMin else IRF.interviewDuration end as interviewDuration, ulc.EmailId as candidateEmail,                     
                     
@@ -83,6 +88,8 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,    
   im.BackUpLink,im.BackUpLinkId,  ulr.EmailId as ChannelOwner,    
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
+  --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId
+  ,iman.interviewDate RescheduleDate
   from InterviewMeetings im                                
   inner join IRF on im.IRFId = IRF.IRFId                                
   left join UserList ulc on im.candidateEmail= ulc.EmailId                              
@@ -98,8 +105,11 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId                          
   left join UserList ulr on ulr.id = irf.RisebirdHr      
   left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId      
-  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType    
-  where interviewDate >= @startDate AND interviewDate < @endDate and ulr.EmailId=@EmailId                 
+  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType   
+  outer Apply(Select top(1)ima.interviewDate From InterviewMeetings ima join InterviewComments ica on ica.InterviewId=ima.id where im.IRFId=ima.IRFId and im.candidateEmail=ima.candidateEmail and ima.confirmationStatus=1 order by ima.Interviewdate desc) iman
+  --left join UserList ul on ul.id = cm.UserId
+  --left join ScheduleInterviewEvent si on si.SkillChannel=IRF.IRFId
+  where im.interviewDate >= @startDate AND im.interviewDate < @endDate and ulr.EmailId=@EmailId                 
                       
  End                      
                       
@@ -125,6 +135,8 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,    
   im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,    
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker           
+  --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId
+  ,iman.interviewDate RescheduleDate
   from InterviewMeetings im                                
   inner join IRF on im.IRFId = IRF.IRFId              
   join SeniorHR sh on sh.Clientid=IRF.ClientId            
@@ -142,8 +154,11 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId                          
   left join Userlist ulsh on ulsh.id=sh.userid      
   left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId      
-  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType    
-  where interviewDate >= @startDate AND interviewDate < @endDate and ulsh.EmailId =@EmailId                     
+  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType 
+  outer Apply(Select top(1)ima.interviewDate From InterviewMeetings ima join InterviewComments ica on ica.InterviewId=ima.id where im.IRFId=ima.IRFId and im.candidateEmail=ima.candidateEmail and ima.confirmationStatus=1 order by ima.Interviewdate desc) iman
+  --left join UserList ul on ul.id = cm.UserId
+  --left join ScheduleInterviewEvent si on si.SkillChannel=IRF.IRFId
+  where im.interviewDate >= @startDate AND im.interviewDate < @endDate and ulsh.EmailId =@EmailId                     
  End                      
 else                      
  Begin                      
@@ -167,6 +182,8 @@ else
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,    
   im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,    
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
+ --,si.Uniqueid as SchedulerUniqueid
+ ,iman.interviewDate RescheduleDate
   from InterviewMeetings im                                
   inner join IRF on im.IRFId = IRF.IRFId                                
   left join UserList ulc on im.candidateEmail= ulc.EmailId                              
@@ -182,8 +199,10 @@ else
   left join Client cl on cl.id = irf.ClientId                               
   join Candidate ca on cm.id = ca.CandidateMasterId and irf.id= ca.IRFId                          
   left join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId       
-  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType    
-  where interviewDate >= @startDate AND interviewDate < @endDate                       
+  left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType
+  outer Apply(Select top(1)ima.interviewDate From InterviewMeetings ima join InterviewComments ica on ica.InterviewId=ima.id where im.IRFId=ima.IRFId and im.candidateEmail=ima.candidateEmail and ima.confirmationStatus=1 order by ima.Interviewdate desc) iman
+  --right join ScheduleInterviewEvent si on si.SkillChannel=IRF.IRFId
+  where im.interviewDate >= @startDate AND im.interviewDate < @endDate                       
  End    
                                  
 End               

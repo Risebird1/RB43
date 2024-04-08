@@ -357,6 +357,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsColdCandidate {  get; set; }
         public string ColdMarkedBY { get; set;}
         public DateTime? ColdMarkedDate { get; set;}
+        public DateTime? RescheduleDate { get; set;}
+       
 
     }
 

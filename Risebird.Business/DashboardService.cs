@@ -939,11 +939,11 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<List<MeetingVM>> GetColdCandidatesList()
+        public async Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue)
         {
             try
             {
-                return (await _dashboardRespository.GetColdCandidatesRepository()).ToList();
+                return (await _dashboardRespository.GetColdCandidatesRepository(ColdCandidateValue)).ToList();
             }
             catch (Exception ex)
             {
@@ -952,17 +952,30 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email)
+        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email, int InterviewId)
         {
             try
             {
-                await _dashboardRespository.MarkedColdCandidate(CandidateId,Email);
+                await _dashboardRespository.MarkedColdCandidate(CandidateId,Email,InterviewId);
                 return true;
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+        public async Task<InterviewUsersDetails> GetFutureDateInterviewSchedule(int interviewid)
+        {
+            try
+            {
+                return await _dashboardRespository.GetFutureDateInterviewSchedule(interviewid);
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
 

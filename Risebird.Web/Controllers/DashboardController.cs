@@ -42,12 +42,13 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewerService _interviewerService;
         private readonly IMeetingRespository _meetingRespository;
         private readonly IZoomHelper _zoomHelper;
+        private readonly ICandidateService _candidateService;
 
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
             IFileMimeTypeHelper fileMimeTypeHelper, IUserRepository userRepository, IInterviewerService interviewerService,
-            IMeetingRespository meetingRespository, IZoomHelper zoomHelper)
+            IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ICandidateService candidateService)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -61,6 +62,7 @@ namespace Risebird.Web.Controllers
             _interviewerService = interviewerService;
             _meetingRespository = meetingRespository;
             _zoomHelper = zoomHelper;
+            _candidateService = candidateService;
         }
 
         [Authorize]
@@ -2946,24 +2948,24 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        var data = await _dashboardService.GetColdCandidatesList();
+                        var data = await _dashboardService.GetColdCandidatesList(ColdCandidateValue);
                         data = data.Select(x =>
                         {
                             x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
+                        ViewBag.ColdCandidateValue = ColdCandidateValue;
+                        //if (ColdCandidateValue == 1)
+                        //{
+                        // data= data.Where(x => x.IsColdCandidate == true).ToList();
+                        //    ViewBag.ColdCandidateValue = 1;
 
-                        if (ColdCandidateValue == 1)
-                        {
-                         data= data.Where(x => x.IsColdCandidate == true).ToList();
-                            ViewBag.ColdCandidateValue = 1;
+                        //}
+                        //else {
+                        //    data = data.Where(x => x.IsColdCandidate != true).ToList();
+                        //    ViewBag.ColdCandidateValue = 0;
+                        //}
 
-                        }
-                        else {
-                            data = data.Where(x => x.IsColdCandidate != true).ToList();
-                            ViewBag.ColdCandidateValue = 0;
-                        }
-                       
                         return View(data);
                     }
                     else
@@ -2983,17 +2985,40 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> MarkedColdCandidate(int CandidateId,string IRFId,string CandidateEmail)
+        public async Task<JsonResult> MarkedColdCandidate(int CandidateId,string IRFId,string CandidateEmail,int InterviewId, int irfIntId)
         {
             try
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                var data = await _dashboardService.MarkedColdCandidate(CandidateId,emailId);
+                var result = await _dashboardService.GetFutureDateInterviewSchedule(InterviewId);
+                var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(InterviewId);
+                if (InterviewId > 0)
+                {
+                    //Case of future date schedule interviews and send mails
+                    if (result.confirmationStatus == 1 && result.interviewDate >= DateTime.Now)
+
+                    {
+                        List<string> interviewers = new List<string>();
+                        if (!string.IsNullOrEmpty(result.interviewer))
+                        {
+                            interviewers.Add(result.interviewer);
+                        }
+                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
+                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
+
+                    }
+                    else
+                    {
+                        //Case of Not update confirmationStatus=2,Cancellationsource='Cold Candidate' in store procedure
+                        InterviewId = 0;
+                    }
+                }
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId,emailId, InterviewId);
             
                     if (data == true)
                     {
-                    return Json("Candidate " + CandidateEmail + " for " +IRFId +" has been marked cold successfully");
+                    return Json("Candidate " +"("+ CandidateEmail +")"+ " for " +IRFId +" has been marked as cold successfully");
                     }
                     else
                     {

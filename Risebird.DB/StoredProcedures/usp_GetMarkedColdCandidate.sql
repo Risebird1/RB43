@@ -1,0 +1,52 @@
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetMarkedColdCandidate'))
+BEGIN
+    DROP PROCEDURE usp_GetMarkedColdCandidate
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_GetMarkedColdCandidate]   
+AS
+Begin
+With CTE AS(
+select cci.FKCandidateId,cci.IsColdCandidate,cci.ColdMarkedDate,cci.ColdMarkedBY ,c.IRFId as irfIntId,ul.EmailId as candidateEmail,IRF.IRFId,
+cm.id as CandidateMasterId,c.id as CandidateId,ulir.EmailId as ChannelOwner,ul.MobileNumber,cl.Name as ClientName,case 
+	 when ul.LastName is null then ul.FirstName
+	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
+end as candidateName
+from ColdCandidateInfos cci
+join
+Candidate c on cci.FKCandidateId=c.id
+Join CandidatesMaster cm on c.CandidateMasterId=cm.id
+join UserList ul on cm.UserId=ul.id
+join IRF on c.IRFId=IRF.id 
+left join Userlist ulir on ulir.id=irf.RisebirdHr
+join Client cl on cl.id=IRF.ClientId
+where cci.IsColdCandidate=1)
+Select CTE.*
+,(select max(InterviewDate) from InterviewMeetings where candidateEmail=CTE.candidateEmail and  IRFId=CTE.IRFId) as interviewDate
+,(SELECT top 1 ic.MeetingStatus
+FROM InterviewMeetings im
+JOIN InterviewComments ic ON im.id = ic.InterviewId
+JOIN IRF ON im.IRFId = IRF.IRFId where im.candidateEmail =CTE.candidateEmail and im.IRFId =CTE.IRFId order by im.interviewDate desc) as MeetingStatus
+,(SELECT top 1 im.id
+FROM InterviewMeetings im
+--JOIN InterviewComments ic ON im.id = ic.InterviewId
+JOIN IRF ON im.IRFId = IRF.IRFId where im.candidateEmail =CTE.candidateEmail and im.IRFId=CTE.IRFId order by im.interviewDate desc) as imid
+,CountTable.MailCount
+from CTE
+OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(CTE.irfIntId,CTE.candidateEmail) as CountTable
+order by interviewDate desc
+End
+GO
+
+
+
+
+
+
+
