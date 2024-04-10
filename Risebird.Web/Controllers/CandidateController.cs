@@ -1417,7 +1417,7 @@ namespace Risebird.Web.Controllers
 
 
                               //  Sheet.Cells[i, 10].Value = item.LatestComment != "0" ? item.LatestComment : "NA";
-                                Sheet.Cells[i, 10].Value = item.interviewDate != null ? item.interviewDate?.ToString("dd MMMM yyyy") : "NA";
+                                Sheet.Cells[i, 10].Value = item.interviewDate != null ? item.interviewDate?.ToString() : "NA";
                                 Sheet.Cells[i, 11].Value = item.ClientHRAttemptContact != "0" ? item.ClientHRAttemptContact : "NA";
                                 if (!string.IsNullOrEmpty(item.VideoLink))
                                 {
