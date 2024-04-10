@@ -971,7 +971,6 @@ input[type=number] {
     padding: 8px 0px 8px 0px;
 }
 
-
 #skill_card .card-blue .card-footer.action .stats-bttm-btn {
     padding: 0px 30px 0px 10px;
     text-align: right;
@@ -1540,7 +1539,58 @@ input[type=number] {
 .table-responsive-sm .table > tbody > tr > td {
     padding: 12px 5px !important;
 }
+#skill_card .dropdown-content {
+    position: absolute;
+    margin: 20px 0 0 0;
+    padding: 10px 0;
+    width: 207px;
+    left: -10px;
+    height: 195px;
+    box-sizing: border-box;
+    z-index: 2;
+    background: #f5f5f5;
+    border-radius: 6px;
+    list-style: none;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+}
 
+    #skill_card .dropdown-content .dropdown-content-menu, #skill_card .dropdown-content .dropdown-content-menu a {
+        width: 100%;
+        display: block;
+        text-align: left;
+        padding: 5px 10px;
+        color: #7a6767;
+        font-size: 13px;
+    }
+
+        #skill_card .dropdown-content .dropdown-content-menu:hover, #skill_card .dropdown-content .dropdown-content-menu a:hover {
+            background: #e8dddd;
+            color: #292424;
+        }
+
+    #skill_card .dropdown-content::before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        top: -11px;
+        left: 13%;
+        margin-left: -10px;
+        border-style: solid;
+        border-width: 0 10px 11px 10px;
+        border-color: transparent transparent #f5f2f2 transparent;
+    }
+
+#skill_card .card-footer .dropdown-content::before {
+    top: 195px !important;
+    left: 23px;
+    border-color: transparent transparent #f5f2f2 transparent !important;
+    transform: rotate(180deg) !important;
+}
+
+#skill_card .card-footer .dropdown-content {
+    bottom: -4px !important;
+}
 @media (min-width: 1200px) {
     .container {
         width: 1125px;
@@ -1627,6 +1677,13 @@ input[type=number] {
         width: 30%;
         text-align: left !important;
     }
+    #skill_card .dropdown-content {
+        left: -98px !important;
+    }
+
+        #skill_card .dropdown-content::before {
+            left: 55% !important;
+        }
 }
 
 @media screen and (max-width: 360px) {

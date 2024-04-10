@@ -603,21 +603,25 @@ ul.tabs li.active {
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" class="active" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient()"  rel="tab3">Cold Candidates</li>
-                                                            @*  <li rel="tab4">Not Processed Resume</li> *@
+                                                            <li onclick="NotProcessedResumeByClient()" rel="tab4">Not Processed Resume</li>
 
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.ColdCandidates.GetDescription())
                                                         {
                                                             <li onclick="ColdCandidateByClient()" class="active" rel="tab3">Cold Candidates</li>
                                                         }
+                                                        else if (ViewBag.CandidateType == CandidateTypeForClient.NotProcessedResumes.GetDescription())
+                                                        {
+                                                            <li onclick="NotProcessedResumeByClient()" class="active" rel="tab4">Not Processed Resume</li>
+                                                        }
                                                         else
                                                         {
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" class="active" rel="tab1">Scheduled Meetings</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient()" rel="tab3">Cold Candidates</li>
-                                                            @* 
-                                                        <li rel="tab4">Not Processed Resume</li>
-                                                        *@
+
+                                                            <li onclick="NotProcessedResumeByClient()"rel="tab4">Not Processed Resume</li>
+                                                        
 
                                                         }
 
@@ -1033,11 +1037,10 @@ ul.tabs li.active {
     <p>Nulla eleifend felis vitae velit tristique imperdiet. Etiam nec imperdiet elit. Pellentesque sem lorem, scelerisque sed facilisis sed, vestibulum sit amet eros.</p> *@
   </div>
   <!-- #tab3 -->
- @*  <h3 class="tab_drawer_heading" rel="tab4">Not Processed Resume</h3>
+  <h3 class="tab_drawer_heading" rel="tab4">Not Processed Resume</h3>
   <div id="tab4" class="tab_content">
-  <h2>Tab 4 content</h2>
-    <p>Integer ultrices lacus sit amet lorem viverra consequat. Vivamus lacinia interdum sapien non faucibus. Maecenas bibendum, lectus at ultrices viverra, elit magna egestas magna, a adipiscing mauris justo nec eros.</p>
-  </div>*@
+  
+  </div>
   <!-- #tab4 --> 
 </div>
 <!-- .tab_container -->
@@ -2089,6 +2092,17 @@ ul.tabs li.active {
             }
         });
     }
+    function NotProcessedResumeByClient() {
+        alert('hello');
+        $.ajax({
+            url: '/Candidate/GetNotProcessedResumeByClient',
+            type: 'GET',
+            success: function (data) {
+                $('#tab4').html('');
+                $('#tab4').html(data);
+            }
+            });
+        }
 </script>
 
 <script>

@@ -29,7 +29,7 @@ Select @Clientid=cu.ClientId From UserList ul join ClientUser cu on cu.UserId=ul
 Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.FirstJoinedon, ic.MeetingStatus,tzme.Joinedcount as TotalCount,im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,
 imc.PerformedOn,imcf.FirstPerformedOn,im.confirmationStatus,ip.NickName as interviewer    
 ,im.candidateEmail,cl.Name as ClientName,im.candidateName,im.MobileNumber,im.IRFId,ulc.EmailId as ChannelOwner,IRF.JDTiltle,im.resumeLink,  
-SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid    
+SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,iman.Interviewdate as LastInterviewDate,iman.MeetingStatus as LastMeetingStatus    
 from InterviewMeetings im            
 join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId    
 Left join InterviewComments ic on ic.InterviewId=im.id          
@@ -41,7 +41,8 @@ outer apply(Select max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where 
 outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imc    
 outer apply(Select min(Joinedon) FirstJoinedon from  InterviewMeetingsJoinTime where Interviewid=im.id) imjf    
 outer apply(Select min(PerformedOn) FirstPerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imcf    
-where InterviewDate>@startDateParam and InterviewDate<@endDateParam and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)  and IRF.ClientId=@Clientid    
+outer Apply(Select top(1)ima.interviewDate,ica.MeetingStatus From InterviewMeetings ima join InterviewComments ica on ica.InterviewId=ima.id where im.IRFId=ima.IRFId and im.candidateEmail=ima.candidateEmail and ima.confirmationStatus=1 order by ima.Interviewdate desc) iman
+where im.InterviewDate>@startDateParam and im.InterviewDate<@endDateParam and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)  and IRF.ClientId=@Clientid    
 end    
 else if(@Role='SeniorHR' or @Role='SupportAdmin')    
 BEGIN      
