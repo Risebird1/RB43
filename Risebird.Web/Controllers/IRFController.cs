@@ -9159,34 +9159,5 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-        #region Code Snippet
-        [HttpGet]
-        public async Task<IActionResult> InterviewCodeSnippet(int id, int irfid)
-        {
-            if (HttpContext.Session.GetString("email") != null)
-            {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                TechSkillComments model = new TechSkillComments();
-                var skills = await _irfService.GetTechSkills(irfid);
-                ViewBag.Skills = new SelectList(skills, "id", "Name");
-                model.IRFId = irfid;
-                model.Profile = profileName;
-                model.CreatedBy = emailid;
-                return PartialView(model);
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> InterviewCodeSnippet(TechSkillComments model)
-        {
-            return View();
-        }
-        #endregion
     }
 }
