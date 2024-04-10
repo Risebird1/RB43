@@ -29,7 +29,8 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @PaymentComplianceCount int,  
 @Rating int,
 @VideoEnable bit,
-@isQcDone bit
+@isQcDone bit,
+@Recommendation varchar(15)
 AS  
 BEGIN  
 Declare @Userid int       
@@ -48,15 +49,15 @@ Update PaymentSLADetails set Inaccuratedecisionmaking=@Inaccuratedecisionmaking,
 ScoreRubricIgnorance=@ScoreRubricIgnorance,PoorFeedbackComments=@PoorFeedbackComments,CandidateInteractionQuality=@CandidateInteractionQuality,  
 LimitedHandoncoding=@LimitedHandoncoding,WrongStatusUpdates=@WrongStatusUpdates,WeakInfrastructure=@WeakInfrastructure,ProctoringIgnorance=@ProctoringIgnorance,  
 UnethicalPractices=@UnethicalPractices,PoorCommunicationSkills=@PoorCommunicationSkills,ModifiedBy=@Emailid,ModifiedOn=@CreatedOn,PaymentDeduction=@PaymentDeduction,isapproved=@isapproved,  
-PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone  
+PaymentComplianceCount=@PaymentComplianceCount,VideoEnable=@VideoEnable,isQcDone=@isQcDone,Recommendation=@Recommendation  
 where Interviewid=@Interviewid  
 end  
 else  
 begin  
 Insert into PaymentSLADetails(Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,CandidateInteractionQuality,  
-LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone)   
+LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,CreatedOn,PaymentDeduction,PaymentComplianceCount,VideoEnable,isQcDone,Recommendation)   
 values(@Interviewid,@Inaccuratedecisionmaking,@TimeManagement,@QuestionsRelevance,@ScoreRubricIgnorance,@PoorFeedbackComments,@CandidateInteractionQuality,  
-@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone)   
+@LimitedHandoncoding,@WrongStatusUpdates,@WeakInfrastructure,@ProctoringIgnorance,@UnethicalPractices,@PoorCommunicationSkills,@Emailid,@CreatedOn,@PaymentDeduction,@PaymentComplianceCount,@VideoEnable,@isQcDone,@Recommendation)   
 end  
 end
 If(@isapproved=1)  

@@ -7910,6 +7910,11 @@ namespace Risebird.Web.Controllers
                 model.isapprovedchecked = isapproved;
                 model.isQcDone = isQcDone;
                 model.techqc = techqc;
+                if (techqc)
+                {
+                    if (string.IsNullOrWhiteSpace(model.Recommendation))
+                        model.Recommendation = "Shortlist";
+                }
                 model.Pagetype = pagetype;
                 await SetPaymentSLADropDown(model);
                 await SetInitialValue(model);
