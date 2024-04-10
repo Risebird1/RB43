@@ -637,7 +637,10 @@ ul.tabs li.active {
                                                             <thead>
                                                                 <tr>
                                                                     <th class="text-left">Candidate Details</th>
+                                                                     @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
+                                                        {
                                                                     <th class="text-left">Interview Date</th>
+                                                        }
                                                                     <th id="status_9">Report</th>
                                                                     @*<th id="status_4" class="text-left">JD Title</th>*@
                                                                     @*   <th id="status_8">Current Status</th>*@
@@ -653,7 +656,10 @@ ul.tabs li.active {
                                                             <tfoot>
                                                                 <tr>
                                                                     <th class="text-left">Candidate Detail</th>
+                                                                      @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
+                                                        {
                                                                     <th class="text-left">Interview Date</th>
+                                                        }
                                                                     <th>Report</th>
                                                                     @*<th class="text-left">JD Title</th>*@
                                                                     @*     <th>Current Status</th>*@
@@ -802,17 +808,20 @@ ul.tabs li.active {
                                                                                 <p>Client Hr:@item.HREmail</p>
                                                                             </div>
                                                                         </td>
-                                                                        @if (item.interviewDate != DateTime.MinValue)
-                                                                        {
-                                                                            <td class="cadEmail text-left">
-                                                                                <span class="int-datetime"> @item.interviewDate</span>
-                                                                            </td>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <td></td>
-                                                                        }
-                                                                        <td>
+                                                                          @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
+                                                                                    {
+                                                                                        @if (item.interviewDate != DateTime.MinValue)
+                                                                                        {
+                                                                                            <td class="cadEmail text-left">
+                                                                                                <span class="int-datetime"> @item.interviewDate</span>
+                                                                                            </td>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <td></td>
+                                                                                        }
+                                                                                    }
+                                                                                    <td>
                                                                             @if (item.RedoInterview == true)
                                                                             {
                                                                                 <p>No Report</p>
@@ -2093,7 +2102,6 @@ ul.tabs li.active {
         });
     }
     function NotProcessedResumeByClient() {
-        alert('hello');
         $.ajax({
             url: '/Candidate/GetNotProcessedResumeByClient',
             type: 'GET',
