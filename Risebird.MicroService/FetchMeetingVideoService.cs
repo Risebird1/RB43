@@ -68,7 +68,7 @@ namespace Risebird.MicroService
                             }
                             meeting.ZoomMeetingId = zoommeetingId;
                         }
-                        var ContainerName = meeting.meetingtype;
+                        var ContainerName = meeting.meetingtype.ToLower();
                         //create HTTP Rest Client
                         var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/{meeting.ZoomMeetingId}/recordings"));
                         //create HTTP Request 
@@ -122,7 +122,6 @@ namespace Risebird.MicroService
                                     }
                                 }
                             }
-                            var transcriptSasUrl = "";
                             if (!string.IsNullOrEmpty(videoSasUrl))
                             {
                                 //insert the SAS URL of the video, transcript and video duration in the database table
