@@ -4615,12 +4615,12 @@ namespace Risebird.Web.Controllers
             return Json(flags);
         }
 
-        public async Task<IActionResult> GetCommunicationDetails(int interviewId, int communicationMedium)
+        public async Task<IActionResult> GetCommunicationDetails(int communicationMedium, int? interviewId = null, int? irfId = null, string emailId = null)
         {
             try
             {
                 var model = new CommunicationDetailsWrapperVM();
-                var communicationList = await _candidateService.GetCandidateCommunicationDetails(interviewId, communicationMedium);
+                var communicationList = await _candidateService.GetCandidateCommunicationDetails(communicationMedium, interviewId, irfId, emailId);
                 model.CommunicationList = communicationList;
                 model.CommunicationMedium = communicationMedium;
                 return PartialView("GetCommunicationDetails", model);

@@ -3709,11 +3709,11 @@ namespace Risebird.Business
         /// </summary>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG = false)
+        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG = false, bool? forEditMAG = null)
         {
             try
             {
-                var result = await _irfRepository.GetSimilarAssessmentGroups(searchValue, isAlreadyMasterAG);
+                var result = await _irfRepository.GetSimilarAssessmentGroups(searchValue, isAlreadyMasterAG, forEditMAG);
                 return result;
             }
             catch (Exception e)
@@ -3756,6 +3756,20 @@ namespace Risebird.Business
             try
             {
                 return await _irfRepository.CreateMAG(model, loggedInUser);
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> EditMAG(AGCampaignModel model, string loggedInUser)
+        {
+            try
+            {
+                return await _irfRepository.EditMAG(model, loggedInUser);
 
             }
             catch (Exception e)
@@ -3872,6 +3886,18 @@ namespace Risebird.Business
             try
             {
                 return await _irfRepository.GetAllCalibrationMeetingsById(emailid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<SecondaryAssessmentGroups>> GetMAGSecondaryAssessmentGroupsById(int assessmentGroupId)
+        {
+            try
+            {
+                return await _irfRepository.GetMAGSecondaryAssessmentGroupsById(assessmentGroupId);
             }
             catch (Exception e)
             {
