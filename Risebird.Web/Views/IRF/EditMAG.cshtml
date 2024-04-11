@@ -1,0 +1,456 @@
+﻿@model Risebird.Entities.ViewModel.AGCampaignModel
+
+@{
+    ViewData["Title"] = "Edit MAG";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Newassets/css/chosen.css" rel="stylesheet" />
+<style>
+    body {
+        background: #f0f0f0 !important;
+    }
+
+    #skill, #assessment {
+        width: auto;
+        overflow: hidden;
+        height: 50px;
+    }
+
+    .readmore, .readmore1 {
+        height: auto !important;
+    }
+
+    .input {
+        position: relative;
+        width: 100%;
+        border: 0px;
+        font-family: Sora, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    }
+
+    .input__field {
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        border: 3px solid currentColor;
+        padding: calc(var(--size-bezel) * 1.5) var(--size-bezel);
+        color: currentColor;
+        background: transparent;
+        border-radius: var(--size-radius);
+    }
+
+    .input__label {
+        position: absolute;
+        left: 0;
+        top: -50px;
+        padding: 10px;
+        margin: 10px;
+        white-space: nowrap;
+        transform: translate(0, 0);
+        transform-origin: 0 0;
+        background: #FFF;
+        transition: transform 120ms ease-in;
+        font-weight: 500;
+        line-height: 1.2;
+        color: #7e7f82 !important;
+        font-size: 16px;
+        margin: 7px;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:focus {
+        transition: background-color 0s 600000s, color 0s 600000s !important;
+    }
+
+    .input__field:not(:placeholder-shown) + .input__label {
+        transform: translate(0.25rem, -65%) scale(0.8);
+        color: #fab700
+    }
+
+    .campaignForm .msgroup .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .campaignForm .msgroup .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+        border-color: #000 !important;
+        background-color: #fff !important;
+    }
+
+
+    .msgroup .mdc-checkbox .mdc-checkbox__native-control:enabled ~ .mdc-checkbox__background .mdc-checkbox__checkmark {
+        color: #fff;
+        width: 20px;
+        top: -6px;
+        color: var(--mdc-checkbox-ink-color, #000);
+    }
+
+    .msgroup {
+        width: 500px;
+        margin: 0px auto;
+    }
+
+    .campaignForm .msgroup .mdc-checkbox__background {
+        border: 1.5px solid #000 !important;
+    }
+
+    .campaignForm .msgroup .assessment-name {
+        font-size: 16px;
+        top: -4px;
+        color: #857c7c;
+        width: 90%;
+        font-weight: 400;
+        margin: 0px 0px 20px 0px;
+    }
+
+    .campaignForm .msgroup .mdc-checkbox {
+        top: -10px;
+    }
+
+    .toggled-on .toggle-content {
+        display: block;
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .toggle-content {
+        box-shadow: inset 0px 0px 10px #d8e8c8;
+    }
+
+        .toggle-content p {
+            margin: 15px 0 15px 0;
+        }
+
+    .toggled-on .fa-angle-down {
+        display: none;
+    }
+
+    .toggle-title {
+        cursor: pointer;
+        position: relative;
+        padding-left: 55px;
+        background-color: #e0f4cbbf;
+        padding: 10px;
+        border-radius: 11px;
+        text-align: center;
+        width: 460px;
+        margin: 0px auto 30px auto;
+    }
+
+        .toggle-title i {
+            position: absolute;
+            right: 7px;
+            font-size: 2em;
+            top: 8px;
+        }
+
+    .toggled-off .toggle-content {
+        display: none;
+    }
+
+    .toggled-off .fa-angle-up {
+        display: none;
+    }
+
+
+    .sub-assmntgrp input::-ms-input-placeholder { /* Edge 12-18 */
+        color: #888;
+        position: relative;
+        top: 5px;
+        left: 8px;
+        font-weight: normal;
+    }
+
+    .sub-assmntgrp input::placeholder {
+        color: #888;
+        position: relative;
+        top: 5px;
+        left: 8px;
+        font-weight: normal;
+    }
+
+    .campaignForm input[type="text"] {
+        padding: 23px 20px;
+        vertical-align: middle;
+        background: #eeeeee7a;
+        border: 1px solid #eee;
+        box-shadow: 0 0 5px rgb(0 0 0 / 11%);
+    }
+    #words{
+        float:left;
+    background: #a4b3bb4f;
+    margin: 5px 5px;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+    }
+</style>
+
+
+<div class="campaignForm">
+    <div style="margin-bottom:20px;width:100%;float:left">
+
+        <label style="font-size:17px;margin-bottom:10px;">Existing Assessment Groups</label>
+        <div style="clear:both">
+        @if (Model.SecondaryAGListForMAG != null && Model.SecondaryAGListForMAG.Count() > 0)
+        {
+            foreach (var item in Model.SecondaryAGListForMAG)
+            {
+              <div  id="words" > @item.SecondaryAssessmentGroupName</div>
+            }
+            
+        }
+        </div>
+    </div>
+    <div style="clear:both"></div>
+    @* style="display:none" *@
+    <form asp-action="EditMAG" method="post" id="form_1" class="form-container clearfix" >
+        <h1 asp-for="AssessmentGroupId"> MAG Name: <span> @Model.AssessmentGroupName</span></h1>
+        
+        
+        <div class="col-md-12">
+
+
+            <div class="toggled-off">
+                <div class="toggle-title">
+
+                    <h4>Click here to select Target assessment groups</h4>
+                    <i class="fa fa-angle-down fa-fw"></i>
+                    <i class="fa fa-angle-up fa-fw"></i>
+                </div>
+                <!-- end toggle-title --->
+                <div class="toggle-content">
+                    @if (Model.AssessmentGroups != null && Model.AssessmentGroups.Count() > 0)
+                    {
+                        for (int i = 0; i < Model.AssessmentGroups.Count(); i++)
+                        {
+                            
+                            <div class="mdc-form-field" @* style="margin-bottom: 10px;" *@>
+                                @if(Model.AssessmentGroups[i].IsSelectedForCampaign)
+                                {
+                                    <div class="mdc-checkbox" @* style="top:5px;" *@>
+                                        @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control", disabled = "disabled" })
+                                        <div class="mdc-checkbox__background">
+                                            <svg class="mdc-checkbox__checkmark"
+                                                 viewBox="0 0 24 24">
+                                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                            </svg>
+                                            <div class="mdc-checkbox__mixedmark"></div>
+                                        </div>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="mdc-checkbox" @* style="top:5px;" *@>
+                                        @Html.CheckBoxFor(m => m.AssessmentGroups[i].IsSelectedForCampaign, new { @class = "mdc-checkbox__native-control" })
+                                        <div class="mdc-checkbox__background">
+                                            <svg class="mdc-checkbox__checkmark"
+                                                 viewBox="0 0 24 24">
+                                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                            </svg>
+                                            <div class="mdc-checkbox__mixedmark"></div>
+                                        </div>
+
+                                    </div>
+                                }
+                                
+                                <label class="assessment-name">@Model.AssessmentGroups[i].AssessmentGroup</label>
+                                @Html.HiddenFor(x => x.AssessmentGroups[i].id)
+                                @Html.HiddenFor(x => x.AssessmentGroups[i].AssessmentGroup)
+                            </div>
+                        }
+                    }
+                </div>
+                <!-- end section-toggle-->
+            </div>
+
+
+
+        </div>
+
+        <div class="form-group" style="margin-top:60px;">
+            <div class="sub-assmntgrp">
+                <label class="input">
+
+
+                    <span id="make_checkbox_select">
+                        <select id="SelectedRemainingAssessmentGroups" data-placeholder="None Selected" name="SelectedRemainingAssessmentGroups" multiple class="chosen-select" id="multiple-label-example" tabindex="8">
+
+
+                            @if (Model.RemainingAssessmentGroups != null && Model.RemainingAssessmentGroups.Count() > 0)
+                            {
+                                foreach (var item in Model.RemainingAssessmentGroups)
+                                {
+                                    @if (item != null)
+                                    {
+                                        <option value="@item.id">@item.AssessmentGroup</option>
+                                    }
+
+                                }
+                            }
+
+                        </select>
+
+
+
+                    </span>
+                    <span class="input__label">Choose from remaining Assessment Groups</span>
+                </label>
+
+
+
+
+            </div>
+        </div>
+
+        <input type="hidden" name="SerializedRemainingAGList" id="SerializedRemainingAGList" value="@Model.SerializedRemainingAGList" />
+
+        <button type="submit" id="id_Submit_Form1">Save</button>
+
+
+        @Html.HiddenFor(x => x.AssessmentGroupId)
+        @Html.HiddenFor(x => x.AssessmentGroupName)
+        @Html.HiddenFor(x => x.id)
+    </form>
+
+    
+</div>
+
+<script>
+    // function showForm(formId) {
+    //     $('.form-container').hide();
+    //     $('#' + formId).show();
+    // }
+
+    // $(document).ready(function () {
+    //     showForm('@Model.CurrentForm');
+    // });
+
+    // function Navigate(formId) {
+    //     $('.form-container').hide();
+    //     $('#' + formId).show();
+    // }
+
+    // function Previous(formId) {
+    //     $('.form-container').hide();
+    //     $('#' + formId).show();
+    //     $('#id_Submit_Form1').hide();
+    //     $('#id_Next_Form1').show();
+    // }
+</script>
+
+@if (!string.IsNullOrEmpty(Model.OutcomeMessage))
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            my_code();
+        });
+        function my_code() {
+            var msg = '@Model.OutcomeMessage';
+            if (msg.toLowerCase().includes("success")) {
+                swal.fire("Successful", '@Model.OutcomeMessage', "success");
+            }
+            else {
+                swal.fire("Failed", '@Model.OutcomeMessage', "error");
+            }
+        }
+    </script>
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(function () {
+        $(".more-skill").each(function () {
+            if ($(this).height() <= 50) {
+                $('#expandbtn').css('display', 'none')
+            }
+            else {
+                $('#expandbtn').css('display', 'block')
+            }
+        });
+
+        $(".more-assessment").each(function () {
+            if ($(this).height() <= 50) {
+                $('#expandbtn1').css('display', 'none')
+            }
+            else {
+                $('#expandbtn1').css('display', 'block')
+            }
+        });
+    });
+    $(document).ready(function () {
+        $('#skill').removeClass("readmore");
+        $('#expandbtn').click(function () {
+            if ($('#skill').hasClass("readmore")) {
+                $('#expandbtn').html('Read more');
+                $('#skill').removeClass("readmore");
+
+            } else {
+                $('#expandbtn').html('Read less');
+                $('#skill').addClass("readmore");
+
+            }
+        });
+
+        $('#assessment').removeClass("readmore1");
+        $('#expandbtn1').click(function () {
+
+            if ($('#assessment').hasClass("readmore1")) {
+                $('#expandbtn1').html('Read more');
+                $('#assessment').removeClass("readmore1");
+
+            } else {
+                $('#expandbtn1').html('Read less');
+                $('#assessment').addClass("readmore1");
+            }
+        });
+
+
+    });
+</script>
+<script>
+    
+    function disableSubmitButton() {
+        var button = document.getElementById("id_Submit_Form1");
+
+        // Disable the button
+        button.disabled = true;
+
+        // Enable the button after 5 seconds
+        setTimeout(function () {
+            button.disabled = false;
+        }, 5000);
+    }
+</script>
+<script>
+    // toggle class show hide text section
+    $(document).on('click', '.toggle-title', function () {
+        $(this).parent()
+            .toggleClass('toggled-on')
+            .toggleClass('toggled-off');
+    });
+
+</script>
+<link rel="stylesheet" defer href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link rel="stylesheet" defer href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-css/1.4.6/select2-bootstrap.min.css">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" defer rel="stylesheet" />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script src="~/Newassets/js/chosen.jquery.min.js"></script>
+<script src="~/Newassets/js/main.js"></script>
+<script>
+    (function() {
+  var debounce, input = document.getElementById('words'),
+    output = document.getElementById('container'),
+    update = function() {
+      var words = input.value.trim().split(/,\s*/);
+      while (output.firstChild) output.removeChild(output.firstChild);
+      for (var i = 0; i < words.length; i++) {
+        var div = document.createElement('div');
+        div.textContent = words[i];
+        output.appendChild(div);
+      }
+    };
+ 
+</script>

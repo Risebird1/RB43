@@ -656,12 +656,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int interviewId, int communicationMedium)
+        public async Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int communicationMedium, int? interviewId=null, int? irfId = null, string emailId = null)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewId", interviewId);
+                dynamicParameters.Add("@irfId", irfId);
+                dynamicParameters.Add("@emailId", emailId);
                 dynamicParameters.Add("@CommunicationMedium", ((CommunicationMedium)communicationMedium).GetDescription());
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

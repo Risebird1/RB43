@@ -11,7 +11,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
        
-CREATE PROCEDURE [dbo].[usp_GetDateRangeWiseMeetingStatusForClientRoles]  
+Create PROCEDURE [dbo].[usp_GetDateRangeWiseMeetingStatusForClientRoles] 
 @emailId varchar(100),
 @startDateValue datetime, 
 @endDateValue datetime,
@@ -31,7 +31,7 @@ DECLARE @tbl_RelevantInterviews TABLE (
 
 INSERT INTO @tbl_RelevantInterviews    
 select im.id, im.interviewDate,  
-im.ClientHrContact, im.staffingAgency, ic.MeetingStatus, ic.InterviewStatus from InterviewMeetings im 
+isnull(im.ClientHrContact,'') ClientHrContact, isnull(im.staffingAgency,'') staffingAgency, ic.MeetingStatus, ic.InterviewStatus from InterviewMeetings im 
 join IRF on IRF.IRFId = im.IRFId
 join Client cl on cl.id=IRF.ClientId
 left join InterviewComments ic on ic.InterviewId = im.id
@@ -88,7 +88,7 @@ DECLARE @tbl_InterviewClientHrRejected TABLE (
 
 INSERT INTO @tbl_InterviewClientHrRejected  
 select im.ClientHrContact, count(im.id) from @tbl_RelevantInterviews im
-where (InterviewStatus = 3) and (MeetingStatus = 4  or MeetingStatus = 7)
+where (InterviewStatus = 3 or InterviewStatus = 5) and (MeetingStatus = 4  or MeetingStatus = 7)
 group by ClientHrContact
 
 DECLARE @tbl_InterviewClientHrProxy TABLE (  
@@ -108,7 +108,7 @@ DECLARE @tbl_InterviewClientHrNoShow TABLE (
 
 INSERT INTO @tbl_InterviewClientHrNoShow 
 select im.ClientHrContact, count(im.id) from @tbl_RelevantInterviews im
-where MeetingStatus = 5 or MeetingStatus = 1
+where MeetingStatus = 5 or MeetingStatus = 1 or MeetingStatus = 9
 group by ClientHrContact
 
 DECLARE @tbl_InterviewClientHrDropped TABLE ( 
@@ -193,7 +193,7 @@ DECLARE @tbl_InterviewStaffingAgencyRejected TABLE (
 
 INSERT INTO @tbl_InterviewStaffingAgencyRejected  
 select im.StaffingAgency, count(im.id) from @tbl_RelevantInterviews im
-where (InterviewStatus = 3) and (MeetingStatus = 4  or MeetingStatus = 7)
+where (InterviewStatus = 3 or InterviewStatus = 5) and (MeetingStatus = 4  or MeetingStatus = 7)
 group by StaffingAgency
 
 DECLARE @tbl_InterviewStaffingAgencyProxy TABLE (  
@@ -213,7 +213,7 @@ DECLARE @tbl_InterviewStaffingAgencyNoShow TABLE (
 
 INSERT INTO @tbl_InterviewStaffingAgencyNoShow 
 select im.StaffingAgency, count(im.id) from @tbl_RelevantInterviews im
-where MeetingStatus = 5 or MeetingStatus = 1
+where MeetingStatus = 5 or MeetingStatus = 1 or MeetingStatus = 9
 group by StaffingAgency
 
 DECLARE @tbl_InterviewStaffingAgencyDropped TABLE ( 
@@ -221,7 +221,7 @@ DECLARE @tbl_InterviewStaffingAgencyDropped TABLE (
 	TotalDropped int
 );
 
-INSERT INTO @tbl_InterviewClientHrDropped  
+INSERT INTO @tbl_InterviewStaffingAgencyDropped  
 select im.StaffingAgency, count(im.id) from @tbl_RelevantInterviews im
 where MeetingStatus = 3
 group by StaffingAgency
@@ -293,8 +293,6 @@ select distinct trc.StaffingAgency as EmailId, ti.TotalMeetings, ticom.TotalComp
 	ul.MobileNumber, ul.id
 	order by trc.StaffingAgency
 
-
 End
-
 GO
 

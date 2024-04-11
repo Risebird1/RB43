@@ -20,10 +20,23 @@ CREATE TABLE [dbo].[PaymentSLADetailsHistory](
 	[CreatedOn] [datetime] NULL,
 	[PaymentDeduction] [int] NULL,
 	[PaymentComplianceCount] [int] NULL,
+	[Recommendation] [varchar](15) NULL,
  CONSTRAINT [PK_PaymentSLADetailsHistory] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Recommendation')
+      AND Object_ID = Object_ID(N'PaymentSLADetailsHistory'))
+BEGIN
+    ALTER TABLE PaymentSLADetailsHistory
+    Add Recommendation varchar(15)
+END
 END
 GO

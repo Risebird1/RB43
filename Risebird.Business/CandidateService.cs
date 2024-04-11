@@ -427,11 +427,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int interviewId, int communicationMedium)
+        public async Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int communicationMedium, int? interviewId = null, int? irfId = null, string emailId = null)
         {
             try
             {
-                return await _candidateRepository.GetCandidateCommunicationDetails(interviewId, communicationMedium);
+                return await _candidateRepository.GetCandidateCommunicationDetails(communicationMedium, interviewId, irfId, emailId);
             }
 
             catch (Exception e)
