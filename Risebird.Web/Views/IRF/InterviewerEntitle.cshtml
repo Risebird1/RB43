@@ -131,12 +131,23 @@
                                                         </svg>
                                                     </span>
                                                 </button>
-                                                    <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { agId = item.id, agName = item.AssessmentGroup})" title="Interviewer Mail Activity">
+                                                <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { agId = item.id, agName = item.AssessmentGroup})" title="Interviewer Mail Activity">
                                                         <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewer Mail Activity For Availability" style="background:#f0b24973!important;border: 1px #f0b24973!important;width:25px!important;height:25px!important;position:relative;">
                                                             <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg style="position:relative;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>Interviewer Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
                                                         </button>
                                                 </a>
-                                                @* @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR")
+
+                                                @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
+                                                {
+                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Edit MAG" style="background:#76adcd73!important;border: 1px #76adcd73!important;width:25px!important;height:25px!important;position:relative;">
+                                                                <span onclick="location.href='@Url.Action("EditMAG", "IRF", new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG})'" title="Edit MAG" style="text-decoration:none" >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                            </svg>
+                                                        </span>
+                                                    </button>
+                                                }
+                                                        @* @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR")
                                                 {
                                                     <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { agId = item.id, agName = item.AssessmentGroup})" title="Client Interview Report">
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity For Availability" style="position:relative;top:3px;">

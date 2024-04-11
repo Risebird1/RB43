@@ -12,15 +12,29 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 Create PROCEDURE [dbo].[usp_GetCandidateCommunicationDetails]  
-@interviewId int,
+@interviewId int = null,
+@irfId int  = null,
+@emailId varchar(100) = null,
 @CommunicationMedium varchar(20)
 AS  
 Begin
-	declare @candidateEmail varchar(100) = (select candidateEmail from InterviewMeetings where id = @interviewId)
-	declare @irfId int = (select id from IRF where IRFId = (select IRFId from InterviewMeetings where id = @interviewId))
+declare @candidateEmail varchar(100)
+if(@emailId is not null and @emailId != '')
+Begin
+	set @candidateEmail= @emailId
+End
+else if (@emailId is null and @interviewId is not null)
+Begin
+	set @candidateEmail = (select candidateEmail from InterviewMeetings where id = @interviewId)
+End
+	 
+	if(@irfId is null and @interviewId is not null and @interviewId > 0)
+	Begin
+		set @irfId = (select id from IRF where IRFId = (select IRFId from InterviewMeetings where id = @interviewId))
+	End
 	if(@CommunicationMedium = 'VoiceCall')
 	Begin
-		select CallRecipient, [Caller], RecordingUri from CallRecordingData where CallRecipient = @candidateEmail and IRFId = @irfId--InterviewId = @interviewId
+		select CallRecipient, [Caller], ('https://api.twilio.com/2010-04-01/Accounts/ACcad9f6682d4a76df9af7cde78dd0867e/Recordings/' + RecordingSid) as CallRecordingUri from CallRecordingData where CallRecipient = @candidateEmail and IRFId = @irfId--InterviewId = @interviewId
 	End
 	else if(@CommunicationMedium = 'Whatsapp')
 	Begin

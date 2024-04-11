@@ -25,12 +25,15 @@ namespace Risebird.Entities.ViewModel
         public IEnumerable<AssessmentGroupInterviewerDetails> Interviewers { get; set; }
         public bool CreateMasterAG { get; set; }
         public IEnumerable<AssignmentVM> RemainingAssessmentGroups { get; set; }
+        public List<AssignmentVM> RemainingAssessmentGroupsList { get; set; }
         public IEnumerable<AssignmentVM> RemainingAssessmentGroupsForSummary { get; set; }// filtered from the above RemaingingAssessmentGroups property
         public string SerializedRemainingAssessmentGroupsForSummary { get; set; }// filtered from the above RemaingingAssessmentGroups property
         public List<int> SelectedRemainingAssessmentGroups { get; set; }
         public string SerializedRemainingAGList { get; set; }
         public bool IsAlreadyMasterAG { get; set; } //need to set this property in order to show or hide the option of creating a master ag in the form 
         public bool CreateMAGOnly { get; set; }//creates mag withouot sending emails
+
+        public IEnumerable<SecondaryAssessmentGroups> SecondaryAGListForMAG { get; set; }//used in edit MAG form, to show the list of secondary ags already added to a mag
 
     }
 }

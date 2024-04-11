@@ -10,7 +10,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE usp_GetSimilarAssessmentGroups
 @searchValue varchar(1000),
-@isAlreadyMasterAG bit
+@isAlreadyMasterAG bit,
+@forEditMAG bit = null
 as
 BEGIN
 
@@ -47,7 +48,16 @@ select id, AssessmentGroup, 0 from AssessmentGroup where id not in (select id fr
 
 if(@isAlreadyMasterAG =1)
 Begin
-	select distinct id, AssessmentGroup, isDirectlyTargeted from @tbl_Result 
+	if(@forEditMAG is not null and @forEditMAG = 1)
+	Begin
+		select distinct id, AssessmentGroup, isDirectlyTargeted from @tbl_Result 
+		where id not in (select AssessmentGroupId from SecondaryAssessmentGroups)
+
+	end 
+	Else
+	Begin
+		select distinct id, AssessmentGroup, isDirectlyTargeted from @tbl_Result 
+	End
 
 End
 else

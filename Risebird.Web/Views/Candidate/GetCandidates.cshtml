@@ -594,7 +594,7 @@
                                                                     {
                                                                         <div class="row">
                                                                             <span class="icon-field"><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;padding: 0px 5px 0px 10px;"></i>  Emails :</span>    <span class="icon-field">
-                                                                                <a class="icon-link" href="#!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email})">
+                                                                                <a class="icon-link" href="#!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { emailId = item.EmailId, irfId = item.IRFId, interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email})">
                                                                                     @item.MailCount
                                                                                 </a>
                                                                             </span>
@@ -606,7 +606,7 @@
                                                                             <span class="icon-field">
                                                                                 <img class="icon vc" src="~/img/voice-call.png" />  Voice Calls :
                                                                             </span>   <span class="icon-field">
-                                                                                <a class="icon-link" href="#!!_@item.imid" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                <a class="icon-link" href="#!!_@item.imid" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { emailId = item.EmailId, irfId = item.IRFId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
                                                                                     @item.CallsCount
                                                                                 </a>
                                                                             </span>
@@ -619,7 +619,7 @@
                                                                             <span class="icon-field">
                                                                                 <img class="icon" src="~/img/whatsapp.png" />   Whatsapp :
                                                                             </span>  <span class="icon-field">
-                                                                                <a class="icon-link" href="#!!!_@item.imid" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                <a class="icon-link" href="#!!!_@item.imid" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { emailId = item.EmailId, interviewId = item.imid, irfId = item.IRFId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
                                                                                     @item.WhatsappCount
                                                                                 </a>
                                                                             </span>

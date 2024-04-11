@@ -9125,8 +9125,9 @@ option {
     display: block;
     font-size: 19px;
     line-height: 38px;
-    width: 250px;
+    width: 185px;
     float: none;
+    border-radius:3px;
 }
     .campaignForm button[type=submit]:hover, .campaignForm button:hover, .campaignForm .button:hover {
         background: #96aab6 !important;

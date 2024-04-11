@@ -27,7 +27,7 @@ namespace Risebird.Business.Interface
         Task<string> FetchCandidateResumeById(int id);
         Task<string> FetchBillingownerById(int id);
         Task<InterviewUsersDetails> FetchChannelOwnerByInterviewid(int interviewid);
-        Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int interviewId, int communicationMedium);
+        Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int communicationMedium, int? interviewId = null, int? irfId = null, string emailId = null);
         Task<CandidateIRFDetailsVM> GetIRFDetailsForCandidate(string emailId, int irfId);
         Task<int> GetuniqueCandidateByEmailId(string emailId, string id);
         Task<string> GetCandidateUniqueId(string emailId);

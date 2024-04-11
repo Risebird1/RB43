@@ -72,7 +72,9 @@ namespace Risebird.Entities.ViewModel
         public int VideoReward { get; set; }
         public bool VideoEnable { get; set; }
         public bool isQcDone { get; set; }
+        public bool techqc { get; set; }
         public int TotalPaymentComplianceCount { get; set; }
+        public string Recommendation { get; set; }
     }
     public class PaymentSlabsVM
     {

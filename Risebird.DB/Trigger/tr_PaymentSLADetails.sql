@@ -21,9 +21,9 @@ Select @ModifiedOn=IsNull(ModifiedOn,CreatedOn)  from PaymentSLADetails  where i
 
 Insert into PaymentSLADetailsHistory (Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,
 CandidateInteractionQuality,LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,
-CreatedOn,PaymentDeduction,PaymentComplianceCount)
+CreatedOn,PaymentDeduction,PaymentComplianceCount,Recommendation)
 (Select Interviewid,Inaccuratedecisionmaking,TimeManagement,QuestionsRelevance,ScoreRubricIgnorance,PoorFeedbackComments,
 CandidateInteractionQuality,LimitedHandoncoding,WrongStatusUpdates,WeakInfrastructure,ProctoringIgnorance,UnethicalPractices,PoorCommunicationSkills,CreatedBy,
-@ModifiedOn,PaymentDeduction,PaymentComplianceCount From PaymentSLADetails where id=@id)
+@ModifiedOn,PaymentDeduction,PaymentComplianceCount,Recommendation From PaymentSLADetails where id=@id)
 END
 GO
