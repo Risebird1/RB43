@@ -11,7 +11,7 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_SaveSentMailDetailsBulkInsert]    
 (    
-      @SentMailDetailsBulkData AS [dbo].[SentMailDetails_TableType] READONLY    
+      @SentMailDetailsBulkData AS [dbo].[SentMailDetails_TableTypeV2] READONLY    
 )
 AS    
 Begin  
@@ -19,10 +19,10 @@ Begin
 begin try
 	begin tran
 
-	Insert into SentMailDetails([To], Cc, Bcc, MailBody, MailSubject, sg_message_id, IRFId, InterviewId, CreatedAt, SentBy)
+	Insert into SentMailDetails([To], Cc, Bcc, MailBody, MailSubject, sg_message_id, IRFId, InterviewId, CreatedAt, SentBy, IsACS)
 
 	select smd.[To], smd.Cc, smd.Bcc, smd.MailBody, smd.MailSubject, smd.sg_message_id, irf.id, smd.InterviewId, 
-	smd.CreatedAt, smd.SentBy from @SentMailDetailsBulkData smd 
+	smd.CreatedAt, smd.SentBy, smd.IsACS from @SentMailDetailsBulkData smd 
 	join InterviewMeetings im on im.id = smd.InterviewId
 	join IRF on irf.IRFId = im.IRFId
 

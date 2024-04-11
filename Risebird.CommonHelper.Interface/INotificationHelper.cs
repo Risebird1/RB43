@@ -20,7 +20,7 @@ namespace Risebird.CommonHelper.Interface
         Task<string> CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId, int? irfId = null);
         // Task<string> SendQCInterviewerMail(List<string> interviwers, string meetingDate);
         Task<string> SendInterviewCancelledMail(List<string> interviewers, string interviewDate, List<string> irfOwnersAndRestrictedIrfOwners = null, int? irfId = null, int? interviewId = null);
-        Task<string> SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator);
+        //Task<string> SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator);
         Task<string> SendInterviewCancelledMail(string interviewer, string interviewDate, string IRFid, int? irfId = null);
         Task<string> SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate, int? irfId = null);
         Task<string> CuretatedNotification(Mail model, string UserType, string EmailParameter);

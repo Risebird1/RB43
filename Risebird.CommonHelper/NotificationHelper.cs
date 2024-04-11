@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure;
+using Azure.Communication.Email;
+using Google.Apis.Drive.v3.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -10,15 +13,14 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
+using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-using Twilio.TwiML.Messaging;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
+using Twilio.TwiML.Fax;
 
 namespace Risebird.CommonHelper
 {
@@ -34,6 +36,7 @@ namespace Risebird.CommonHelper
         private readonly string _sendGridClientKey = string.Empty;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IValidationHelper _validationHelper;
+        private readonly bool _useACS = false;
         public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository, IHttpContextAccessor httpContextAccessor, IValidationHelper validationHelper)
         {
             _configuration = configuration;
@@ -46,28 +49,50 @@ namespace Risebird.CommonHelper
             _sendGridRepository = sendGridRepository;
             _httpContextAccessor = httpContextAccessor;
             _validationHelper = validationHelper;
+            _useACS = Convert.ToBoolean(_configuration["AzureCommunicationService:useACS"]);
         }
 
         public async Task<string> SendHelpsupportMail(Mail model)
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Support Notification");
-                msg.Subject = model.Subject;
-
-                var toMails = model.TO.Split(";");
-                foreach (var mail in toMails)
+                if (_useACS)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
+                    var msgObj = new ACSMessageObject();
+
+                    msgObj.MessageSubject = model.Subject;
+                    msgObj.SentFrom = mailFrom;
+
+                    msgObj.ToList = model.TO.Split(";")?.ToList();
+
+                    object[] parameters = new object[] { model.Body };
+
+                    string msgBody = string.Format(model.Body);
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj);
+
                 }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Support Notification");
+                    msg.Subject = model.Subject;
 
-                object[] parameters = new object[] { model.Body };
+                    var toMails = model.TO.Split(";");
+                    foreach (var mail in toMails)
+                    {
+                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    }
 
-                string msgBody = string.Format(model.Body);
-                msg.HtmlContent = msgBody;
+                    object[] parameters = new object[] { model.Body };
 
-                return await SendMail(msg);
+                    string msgBody = string.Format(model.Body);
+                    msg.HtmlContent = msgBody;
+
+                    return await SendMail(msg);
+                }
             }
             catch (Exception)
             {
@@ -111,24 +136,48 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Urgent");
-                msg.Subject = "New Interview has been scheduled on date: " + meetingDate;
-
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
-                foreach (var mails in interviwers)
+                if (_useACS)
                 {
-                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mails, null));
+                    var msgObj = new ACSMessageObject();
+                    msgObj.MessageSubject = "New Interview has been scheduled on date: " + meetingDate;
+                    msgObj.SentFrom = mailFrom;
+                    msgObj.BccList = interviwers;
+
+                    object[] parameters = new object[] { meetingDate };
+
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotificationV2.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj);
+
+                }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Urgent");
+                    msg.Subject = "New Interview has been scheduled on date: " + meetingDate;
+
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                    foreach (var mails in interviwers)
+                    {
+                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mails, null));
+                    }
+
+                    object[] parameters = new object[] { meetingDate };
+                    // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotification.html");//"InterviewMailTemplate.html"
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotificationV2.html");//"InterviewMailTemplate.html"
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msg.HtmlContent = msgBody;
+
+                    return await SendMail(msg, irfId, interviewId);
+
                 }
 
-                object[] parameters = new object[] { meetingDate };
-                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotification.html");//"InterviewMailTemplate.html"
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmergencyInterviewNotificationV2.html");//"InterviewMailTemplate.html"
-                string msgBody = string.Format(rawEmail, parameters);
 
-                msg.HtmlContent = msgBody;
 
-                return await SendMail(msg, irfId, interviewId);
             }
             catch (Exception)
             {
@@ -206,24 +255,50 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                if (_useACS)
+                {
 
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Notification");
-                msg.Subject = "New Interview has been assigned on date: " + meetingDate;
-                //msg.Subject = "New Interview has been assigned on date: " + DateTime.Now.ToString();
+                    var msgObj = new ACSMessageObject();
+                    msgObj.MessageSubject = "New Interview has been assigned on date: " + meetingDate;
+                    msgObj.SentFrom = mailFrom;
+                    var toList = new List<string>
+                    {
+                        interviwers
+                    };
 
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviwers, null));
-                //msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("harshit_jajoo@risebird.io", null));
+                    msgObj.ToList = toList;
 
-                object[] parameters = new object[] { meetingDate };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewAssingmentMailTemplate.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                //string msgBody = "You have been assigned with a new interview.";
+                    object[] parameters = new object[] { meetingDate };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewAssingmentMailTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
 
 
-                msg.HtmlContent = msgBody;
+                    msgObj.MessageBody = msgBody;
 
-                return await SendMail(msg);
+                    return await SendACSMail(msgObj);
+
+                }
+
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Notification");
+                    msg.Subject = "New Interview has been assigned on date: " + meetingDate;
+                    //msg.Subject = "New Interview has been assigned on date: " + DateTime.Now.ToString();
+
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviwers, null));
+                    //msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("harshit_jajoo@risebird.io", null));
+
+                    object[] parameters = new object[] { meetingDate };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewAssingmentMailTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+                    //string msgBody = "You have been assigned with a new interview.";
+
+
+                    msg.HtmlContent = msgBody;
+
+                    return await SendMail(msg);
+                }
             }
             catch (Exception)
             {
@@ -235,34 +310,87 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Invite");
-                msg.Subject = ClientName + " - Video Interview - " + primarySkill;
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, emailId.Split("@").First()));
-                if (clientUsers != null && clientUsers.Count > 0)
+                if (_useACS)
                 {
-                    foreach (var clientUser in clientUsers)
-                    {
-                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, clientUser.EmailId.Split("@").First()));
-                    }
-                    if (!string.IsNullOrEmpty(staffingAgency) && !clientUsers.Any(x => x.EmailId == staffingAgency) && _validationHelper.ValidateEmailAddress(staffingAgency))
-                    {
-                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
-                    }
-                }
-                else if (!string.IsNullOrEmpty(clientHREmail) && _validationHelper.ValidateEmailAddress(clientHREmail))
-                {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
-                }
-                msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("tanishka_gupta@risebird.io", "Tanishka Gupta"));
-                msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("dilruba_sultana@risebird.io", "Dilruba Sultana"));
 
-                object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
-                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplateV2.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
-                return await SendMail(msg, irfId);
+                    var msgObj = new ACSMessageObject();
+                    msgObj.MessageSubject = ClientName + " - Video Interview - " + primarySkill;
+                    msgObj.SentFrom = mailFrom;
+                    var toList = new List<string>
+                    {
+                        emailId
+                    };
+
+                    msgObj.ToList = toList;
+
+                    var ccList = new List<string>();
+
+                    if (clientUsers != null && clientUsers.Count > 0)
+                    {
+                        foreach (var clientUser in clientUsers)
+                        {
+                            ccList.Add(clientUser.EmailId);
+                        }
+                        if (!string.IsNullOrEmpty(staffingAgency) && !clientUsers.Any(x => x.EmailId == staffingAgency) && _validationHelper.ValidateEmailAddress(staffingAgency))
+                        {
+                            ccList.Add(staffingAgency);
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(clientHREmail) && _validationHelper.ValidateEmailAddress(clientHREmail))
+                    {
+                        ccList.Add(clientHREmail);
+                    }
+
+                    msgObj.CcList = ccList;
+
+                    var bccList = new List<string>
+                    {
+                        "tanishka_gupta@risebird.io",
+                        "dilruba_sultana@risebird.io"
+                    };
+
+                    msgObj.BccList = bccList;
+
+                    object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplateV2.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj, irfId);
+
+                }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Invite");
+                    msg.Subject = ClientName + " - Video Interview - " + primarySkill;
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId, emailId.Split("@").First()));
+                    if (clientUsers != null && clientUsers.Count > 0)
+                    {
+                        foreach (var clientUser in clientUsers)
+                        {
+                            msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, clientUser.EmailId.Split("@").First()));
+                        }
+                        if (!string.IsNullOrEmpty(staffingAgency) && !clientUsers.Any(x => x.EmailId == staffingAgency) && _validationHelper.ValidateEmailAddress(staffingAgency))
+                        {
+                            msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(staffingAgency, staffingAgency.Split("@").First()));
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(clientHREmail) && _validationHelper.ValidateEmailAddress(clientHREmail))
+                    {
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientHREmail, clientHREmail.Split("@").First()));
+                    }
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("tanishka_gupta@risebird.io", "Tanishka Gupta"));
+                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress("dilruba_sultana@risebird.io", "Dilruba Sultana"));
+
+                    object[] parameters = new object[] { candidateName, ClientName, primarySkill, jdLink };
+                    // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplateV2.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+                    msg.HtmlContent = msgBody;
+                    return await SendMail(msg, irfId);
+                }
             }
             catch (Exception)
             {
@@ -275,22 +403,57 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "No more vacancies!");
-                msg.Subject = ClientName + " Video Interview " + primarySkill;
-
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId.ToLower(), "Candidate"));
-                foreach (var clientUser in clientUsers)
+                if (_useACS)
                 {
-                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, null));
+
+                    var msgObj = new ACSMessageObject();
+
+                    msgObj.MessageSubject = ClientName + " Video Interview " + primarySkill;
+                    msgObj.SentFrom = mailFrom;
+                    var toList = new List<string>
+                    {
+                        emailId
+                    };
+
+                    msgObj.ToList = toList;
+
+                    var ccList = new List<string>();
+
+                    foreach (var clientUser in clientUsers)
+                    {
+                        ccList.Add(clientUser.EmailId);
+                    }
+
+                    msgObj.CcList = ccList;
+
+                    object[] parameters = new object[] { ClientName, primarySkill };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteCandidateTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj, irfId);
+
                 }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "No more vacancies!");
+                    msg.Subject = ClientName + " Video Interview " + primarySkill;
 
-                object[] parameters = new object[] { ClientName, primarySkill };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteCandidateTemplate.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(emailId.ToLower(), "Candidate"));
+                    foreach (var clientUser in clientUsers)
+                    {
+                        msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(clientUser.EmailId, null));
+                    }
 
-                return await SendMail(msg, irfId);
+                    object[] parameters = new object[] { ClientName, primarySkill };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteCandidateTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+                    msg.HtmlContent = msgBody;
+
+                    return await SendMail(msg, irfId);
+                }
             }
             catch (Exception)
             {
@@ -302,28 +465,57 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
-                msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
-
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
-                foreach (var mail in interviewers)
+                if (_useACS)
                 {
-                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
+                    var msgObj = new ACSMessageObject();
+
+                    msgObj.MessageSubject = "Interview has been Cancelled for the date: " + interviewDate;
+                    msgObj.SentFrom = mailFrom;
+
+
+                    msgObj.BccList = interviewers;
+
+                    StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("You have received this communication as an interview has been cancelled on interview date: " + interviewDate + " .");
+                    msgBody.AppendLine(
+                        "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("Thank You, Team Risebird");
+
+                    msgObj.MessageBody = msgBody.ToString();
+
+                    return await SendACSMail(msgObj, irfId, interviewId);
+
                 }
-                StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
-                msgBody.Append("\n");
-                msgBody.Append("\n");
-                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interview date: " + interviewDate + " .");
-                msgBody.AppendLine(
-                    "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
-                msgBody.Append("\n");
-                msgBody.Append("\n");
-                msgBody.AppendLine("Thank You, Team Risebird");
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
+                    msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
 
-                msg.HtmlContent = msgBody.ToString();
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                    foreach (var mail in interviewers)
+                    {
+                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    }
+                    StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("You have received this communication as an interview has been cancelled on interview date: " + interviewDate + " .");
+                    msgBody.AppendLine(
+                        "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("Thank You, Team Risebird");
 
-                return await SendMail(msg, irfId, interviewId);
+                    msg.HtmlContent = msgBody.ToString();
+
+                    return await SendMail(msg, irfId, interviewId);
+                }
             }
             catch (Exception)
             {
@@ -331,57 +523,89 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator)
-        {
-            try
-            {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = "New Candidate has been onboarded on: " + DateTime.Now.ToString("dd MMM yyyy");
+        //public async Task<string> SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator)
+        //{
+        //    try
+        //    {
+        //        var msg = new SendGridMessage();
+        //        msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+        //        msg.Subject = "New Candidate has been onboarded on: " + DateTime.Now.ToString("dd MMM yyyy");
 
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
-                foreach (var mail in mailIds)
-                {
-                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
-                }
+        //        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+        //        foreach (var mail in mailIds)
+        //        {
+        //            msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+        //        }
 
-                object[] parameters = new object[] { evaluator, candidateName, irfName };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ResumeEvaluationReminderTemplate.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
+        //        object[] parameters = new object[] { evaluator, candidateName, irfName };
+        //        string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ResumeEvaluationReminderTemplate.html");
+        //        string msgBody = string.Format(rawEmail, parameters);
+        //        msg.HtmlContent = msgBody;
 
-                return await SendMail(msg);
-            }
-            catch (Exception)
-            {
-                return "Failed to send mail. Please check all fields and try again.";
-            }
-        }
+        //        return await SendMail(msg);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return "Failed to send mail. Please check all fields and try again.";
+        //    }
+        //}
 
         public async Task<string> SendInterviewCancelledMail(string interviewer, string interviewDate, string IRFid, int? irfId = null)
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
-                msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewer, "Risebird"));
+                if (_useACS)
+                {
+
+                    var msgObj = new ACSMessageObject();
+
+                    msgObj.MessageSubject = "Interview has been Cancelled for the date: " + interviewDate;
+                    msgObj.SentFrom = mailFrom;
+                    var toList = new List<string>
+                    {
+                        interviewer
+                    };
+
+                    msgObj.ToList = toList;
+
+                    StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("You have received this communication as an interview has been cancelled for the date: " + interviewDate + " . And SkillChannel Id: " + IRFid);
+                    msgBody.AppendLine(
+                        "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("Thank You, Team Risebird");
+
+                    msgObj.MessageBody = msgBody.ToString();
+
+                    return await SendACSMail(msgObj, irfId);
+
+                }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
+                    msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewer, "Risebird"));
 
 
-                StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
-                msgBody.Append("\n");
-                msgBody.Append("\n");
-                msgBody.AppendLine("You have received this communication as an interview has been cancelled for the date: " + interviewDate + " . And SkillChannel Id: " + IRFid);
-                msgBody.AppendLine(
-                    "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
-                msgBody.Append("\n");
-                msgBody.Append("\n");
-                msgBody.AppendLine("Thank You, Team Risebird");
+                    StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("You have received this communication as an interview has been cancelled for the date: " + interviewDate + " . And SkillChannel Id: " + IRFid);
+                    msgBody.AppendLine(
+                        "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("Thank You, Team Risebird");
 
-                msg.HtmlContent = msgBody.ToString();
+                    msg.HtmlContent = msgBody.ToString();
 
-                return await SendMail(msg, irfId);
+                    return await SendMail(msg, irfId);
+                }
             }
             catch (Exception)
             {
@@ -393,26 +617,60 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
-                msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateMail, "Risebird"));
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(clientHRMail, "Risebird"));
+                if (_useACS)
+                {
 
-                StringBuilder msgBody = new StringBuilder("Dear Candidate,");
-                msgBody.Append("\n");
-                msgBody.Append("\n");
-                msgBody.AppendLine("You have received this communication as an interview has been cancelled for the date: " + interviewDate + " .");
-                msgBody.AppendLine(
-                    "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
-                msgBody.Append("\n");
-                msgBody.Append("\n");
-                msgBody.AppendLine("Thank You, Team Risebird");
+                    var msgObj = new ACSMessageObject();
 
-                msg.HtmlContent = msgBody.ToString();
+                    msgObj.MessageSubject = "Interview has been Cancelled for the date: " + interviewDate;
+                    msgObj.SentFrom = mailFrom;
+                    var toList = new List<string>
+                    {
+                        candidateMail,
+                        clientHRMail
+                    };
 
-                return await SendMail(msg, irfId);
+                    msgObj.ToList = toList;
+
+                    StringBuilder msgBody = new StringBuilder("Dear Candidate,");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("You have received this communication as an interview has been cancelled for the date: " + interviewDate + " .");
+                    msgBody.AppendLine(
+                        "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("Thank You, Team Risebird");
+
+
+                    msgObj.MessageBody = msgBody.ToString();
+
+                    return await SendACSMail(msgObj, irfId);
+
+                }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Interview Cancel");
+                    msg.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(candidateMail, "Risebird"));
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(clientHRMail, "Risebird"));
+
+                    StringBuilder msgBody = new StringBuilder("Dear Candidate,");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("You have received this communication as an interview has been cancelled for the date: " + interviewDate + " .");
+                    msgBody.AppendLine(
+                        "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                    msgBody.Append("\n");
+                    msgBody.Append("\n");
+                    msgBody.AppendLine("Thank You, Team Risebird");
+
+                    msg.HtmlContent = msgBody.ToString();
+
+                    return await SendMail(msg, irfId);
+                }
             }
             catch (Exception)
             {
@@ -423,23 +681,45 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = model.Subject;
-                var toMails = model.TO.Split(";");
-                foreach (var mail in toMails)
+                if (_useACS)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    var msgObj = new ACSMessageObject();
+
+                    msgObj.MessageSubject = model.Subject;
+                    msgObj.SentFrom = mailFrom;
+
+                    var toMails = model.TO.Split(";")?.ToList();
+
+                    msgObj.ToList = toMails;
+
+                    object[] parameters = new object[] { UserType, EmailParameter };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmailNotification.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+                    return await SendACSMail(msgObj);
 
                 }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                    msg.Subject = model.Subject;
+                    var toMails = model.TO.Split(";");
+                    foreach (var mail in toMails)
+                    {
+                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
-                object[] parameters = new object[] { UserType, EmailParameter };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmailNotification.html");
-                string msgBody = string.Format(rawEmail, parameters);
+                    }
 
-                msg.HtmlContent = msgBody;
+                    object[] parameters = new object[] { UserType, EmailParameter };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmailNotification.html");
+                    string msgBody = string.Format(rawEmail, parameters);
 
-                return await SendMail(msg);
+                    msg.HtmlContent = msgBody;
+
+                    return await SendMail(msg);
+                }
             }
             catch (Exception)
             {
@@ -451,23 +731,50 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = "New candidate selected!";
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
-
-                foreach (var mail in curatedUsers)
+                if (_useACS)
                 {
-                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
+                    var msgObj = new ACSMessageObject();
+
+                    msgObj.MessageSubject = "New candidate selected!";
+                    msgObj.SentFrom = mailFrom;
+                    var bccList = new List<string>();
+                    foreach (var mail in curatedUsers)
+                    {
+                        bccList.Add(mail);
+                    }
+
+                    msgObj.BccList = bccList;
+
+                    object[] parameters = new object[] { irf, primarySkill, codedName, meetingDate };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CuratedUserSelectedMail.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj);
 
                 }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                    msg.Subject = "New candidate selected!";
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird"));
 
-                object[] parameters = new object[] { irf, primarySkill, codedName, meetingDate };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CuratedUserSelectedMail.html");
-                string msgBody = string.Format(rawEmail, parameters);
+                    foreach (var mail in curatedUsers)
+                    {
+                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
-                msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                    }
+
+                    object[] parameters = new object[] { irf, primarySkill, codedName, meetingDate };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CuratedUserSelectedMail.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msg.HtmlContent = msgBody;
+                    return await SendMail(msg);
+                }
             }
             catch (Exception)
             {
@@ -479,54 +786,108 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = model.Subject;
-
-                var toMails = model.TO.Split(";");
-                foreach (var mail in toMails)
+                if (_useACS)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
+                    var msgObj = new ACSMessageObject();
+                    msgObj.MessageSubject = model.Subject;
+                    msgObj.SentFrom = mailFrom;
+                    var toMails = model.TO.Split(";")?.ToList();
+                    msgObj.ToList = toMails;
+
+                    var ccList = new List<string>
+                    {
+                        model.CC
+                    };
+                    msgObj.CcList = ccList;
+
+                    object[] parameters = new object[] { UrlDetails, skills };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InternalUserSharingTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj);
 
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                    msg.Subject = model.Subject;
+
+                    var toMails = model.TO.Split(";");
+                    foreach (var mail in toMails)
+                    {
+                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
+                    }
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
 
 
-                object[] parameters = new object[] { UrlDetails, skills };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InternalUserSharingTemplate.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
-                return await SendMail(msg);
+                    object[] parameters = new object[] { UrlDetails, skills };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InternalUserSharingTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+                    msg.HtmlContent = msgBody;
+                    return await SendMail(msg);
+                }
             }
             catch (Exception)
             {
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
+
         public async Task<string> SharedVideoNofiticationExternal(Mail model, string UrlDetails, string url)
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = model.Subject;
-
-                var toMails = model.TO.Split(";");
-                foreach (var mail in toMails)
+                if (_useACS)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    var msgObj = new ACSMessageObject();
+                    msgObj.MessageSubject = model.Subject;
+                    msgObj.SentFrom = mailFrom;
+                    var toMails = model.TO.Split(";")?.ToList();
+                    msgObj.ToList = toMails;
+
+                    var ccList = new List<string>
+                    {
+                        model.CC
+                    };
+                    msgObj.CcList = ccList;
+
+                    object[] parameters = new object[] { UrlDetails, url };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj);
 
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                    msg.Subject = model.Subject;
+
+                    var toMails = model.TO.Split(";");
+                    foreach (var mail in toMails)
+                    {
+                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
+                    }
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
 
 
-                object[] parameters = new object[] { UrlDetails, url };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplate.html");
-                string msgBody = string.Format(rawEmail, parameters);
+                    object[] parameters = new object[] { UrlDetails, url };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
 
-                msg.HtmlContent = msgBody;
+                    msg.HtmlContent = msgBody;
 
-                return await SendMail(msg);
+                    return await SendMail(msg);
+                }
             }
             catch (Exception)
             {
@@ -537,26 +898,53 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = model.Subject;
-
-                var toMails = model.TO.Split(";");
-                foreach (var mail in toMails)
+                if (_useACS)
                 {
-                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+                    var msgObj = new ACSMessageObject();
+                    msgObj.MessageSubject = model.Subject;
+                    msgObj.SentFrom = mailFrom;
+                    var toMails = model.TO.Split(";")?.ToList();
+                    msgObj.ToList = toMails;
+
+                    var ccList = new List<string>
+                    {
+                        model.CC
+                    };
+                    msgObj.CcList = ccList;
+
+                    var anchrTag = "<a href=" + url + ">Please Click to see the video</a>";
+                    object[] parameters = new object[] { name, anchrTag, comment, resumeLink };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplateNew.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj);
 
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                    msg.Subject = model.Subject;
+
+                    var toMails = model.TO.Split(";");
+                    foreach (var mail in toMails)
+                    {
+                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
+
+                    }
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
 
 
-                var anchrTag = "<a href=" + url + ">Please Click to see the video</a>";
-                object[] parameters = new object[] { name, anchrTag, comment, resumeLink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplateNew.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
+                    var anchrTag = "<a href=" + url + ">Please Click to see the video</a>";
+                    object[] parameters = new object[] { name, anchrTag, comment, resumeLink };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplateNew.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+                    msg.HtmlContent = msgBody;
 
-                return await SendMail(msg);
+                    return await SendMail(msg);
+                }
             }
             catch (Exception)
             {
@@ -567,31 +955,62 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
-                msg.Subject = model.Subject;
-
-                foreach (var supportEmail in supportEmails)
+                if (_useACS)
                 {
-                    if (!string.IsNullOrEmpty(supportEmail))
+                    var msgObj = new ACSMessageObject();
+                    msgObj.MessageSubject = model.Subject;
+                    msgObj.SentFrom = mailFrom;
+                    foreach (var supportEmail in supportEmails)
                     {
-                        msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(supportEmail, null));
+                        if (!string.IsNullOrEmpty(supportEmail))
+                        {
+                            msgObj.ToList.Add(supportEmail);
+                        }
                     }
+
+                    foreach (var email in receivers)
+                    {
+                        msgObj.CcList.Add(email);
+
+                    }                   
+
+                    object[] parameters = new object[] { model.BroadcastReciever, model.Message };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplateV2.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj);
+
                 }
-                foreach (var email in receivers)
+                else
                 {
-                    msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(email, null));
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                    msg.Subject = model.Subject;
 
+                    foreach (var supportEmail in supportEmails)
+                    {
+                        if (!string.IsNullOrEmpty(supportEmail))
+                        {
+                            msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(supportEmail, null));
+                        }
+                    }
+                    foreach (var email in receivers)
+                    {
+                        msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(email, null));
+
+                    }
+
+                    object[] parameters = new object[] { model.BroadcastReciever, model.Message };
+                    // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplate.html");
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplateV2.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+                    msg.HtmlContent = msgBody;
+
+
+                    return await SendMail(msg);
                 }
-
-                object[] parameters = new object[] { model.BroadcastReciever, model.Message };
-                // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplate.html");
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "BroadcastTemplateV2.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
-
-
-                return await SendMail(msg);
             }
             catch (Exception)
             {
@@ -602,20 +1021,40 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Discussion Invite");
-                msg.Subject = "Discussion Invitation(" + primarySkill + ")";
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerMailId, "Interviewer"));
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(hrEmailId, null));
+                if (_useACS)
+                {
+                    var msgObj = new ACSMessageObject();
+                    msgObj.MessageSubject = "Discussion Invitation(" + primarySkill + ")";
+                    msgObj.SentFrom = mailFrom;
+                    msgObj.ToList.Add(interviewerMailId);
+                    msgObj.CcList.Add(hrEmailId);                    
+
+                    object[] parameters = new object[] { primarySkill, calendlyLink };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteInterviewerTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj);
+
+                }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Discussion Invite");
+                    msg.Subject = "Discussion Invitation(" + primarySkill + ")";
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerMailId, "Interviewer"));
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(hrEmailId, null));
 
 
 
-                object[] parameters = new object[] { primarySkill, calendlyLink };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteInterviewerTemplate.html");
-                string msgBody = string.Format(rawEmail, parameters);
-                msg.HtmlContent = msgBody;
+                    object[] parameters = new object[] { primarySkill, calendlyLink };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteInterviewerTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+                    msg.HtmlContent = msgBody;
 
-                return await SendMail(msg);
+                    return await SendMail(msg);
+                }
             }
             catch (Exception)
             {
@@ -627,20 +1066,40 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var msg = new SendGridMessage();
-                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Discussion cancelled!");
-                msg.Subject = "Discussion Cancelled";
-                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerMailId, "Interviewer"));
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(hrEmailId, null));
+                if (_useACS)
+                {
+                    var msgObj = new ACSMessageObject();
+                    msgObj.MessageSubject = "Discussion Cancelled";
+                    msgObj.SentFrom = mailFrom;
+                    msgObj.ToList.Add(interviewerMailId);
+                    msgObj.CcList.Add(hrEmailId);
+
+                    object[] parameters = new object[] { iscName, primarySkill };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteInterviewerTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
+
+                    msgObj.MessageBody = msgBody;
+
+                    return await SendACSMail(msgObj);
+
+                }
+                else
+                {
+                    var msg = new SendGridMessage();
+                    msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Discussion cancelled!");
+                    msg.Subject = "Discussion Cancelled";
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(interviewerMailId, "Interviewer"));
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(hrEmailId, null));
 
 
-                object[] parameters = new object[] { iscName, primarySkill };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteInterviewerTemplate.html");
-                string msgBody = string.Format(rawEmail, parameters);
+                    object[] parameters = new object[] { iscName, primarySkill };
+                    string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteInterviewerTemplate.html");
+                    string msgBody = string.Format(rawEmail, parameters);
 
-                msg.HtmlContent = msgBody;
+                    msg.HtmlContent = msgBody;
 
-                return await SendMail(msg);
+                    return await SendMail(msg);
+                }
             }
             catch (Exception)
             {
@@ -3246,5 +3705,174 @@ namespace Risebird.CommonHelper
             }
         }
 
+        #region Azure Communication Service
+
+        public async Task<string> SendACSMail(ACSMessageObject msg, int? IRFId = null, int? interviewId = null, string IRFName = null, List<int> interviewIds = null, int? assessmentGroupId = null, int? campaignId = null)
+        {
+            try
+            {
+
+                string acsConnectionString = _configuration["AzureCommunicationService:ACSconnectionString"];
+                var emailClient = new EmailClient(acsConnectionString);
+
+                // Create the email content
+                var emailContent = new EmailContent(msg.MessageSubject)
+                {
+                    //PlainText = "This email message is sent from Azure Communication Service Email.",
+                    //Html = "<html><body><h1>Quick send email test</h1><br/><h4>This email message is sent from Azure Communication Service Email.</h4><p>This mail was sent using .NET SDK!!</p></body></html>"
+                    Html = msg.MessageBody
+                };
+
+                // Create the To list
+                var toRecipients = new List<Azure.Communication.Email.EmailAddress>();
+                if (msg != null && msg.ToList != null)
+                {
+                    foreach (var item in msg.ToList)
+                    {
+                        toRecipients.Add(new Azure.Communication.Email.EmailAddress(item));
+                    }
+                }
+
+
+                // Create the CC list
+                var ccRecipients = new List<Azure.Communication.Email.EmailAddress>();
+                if (msg != null && msg.CcList != null)
+                {
+                    foreach (var item in msg.CcList)
+                    {
+                        ccRecipients.Add(new Azure.Communication.Email.EmailAddress(item));
+                    }
+                }
+
+
+                // Create the BCC list
+                var bccRecipients = new List<Azure.Communication.Email.EmailAddress>();
+
+                if (msg != null && msg.BccList != null)
+                {
+                    foreach (var item in msg.BccList)
+                    {
+                        bccRecipients.Add(new Azure.Communication.Email.EmailAddress(item));
+                    }
+                }
+
+
+
+                EmailRecipients emailRecipients = new EmailRecipients(toRecipients, ccRecipients, bccRecipients);
+
+                // Create the EmailMessage
+                var emailMessage = new EmailMessage(
+                    senderAddress: msg.SentFrom, //"DoNotReply@ccfb1255-2f0a-4904-a4d9-a94428647df4.azurecomm.net", // The email address of the domain registered with the Communication Services resource
+
+                    emailRecipients,
+                    emailContent);
+
+                // Add optional ReplyTo address which is where any replies to the email will go to.
+                //emailMessage.ReplyTo.Add(new EmailAddress("<replytoemailalias@emaildomain.com>"));
+
+                string operationId;
+                try
+                {
+                    EmailSendOperation emailSendOperation = emailClient.Send(WaitUntil.Completed, emailMessage);
+
+                    /// Get the OperationId so that it can be used for tracking the message for troubleshooting
+                    operationId = emailSendOperation.Id;
+                }
+                catch (RequestFailedException ex)
+                {
+                    return "Failed to send mail. Please check all fields and try again.";
+                }
+
+                string currentUser = string.Empty;
+                try
+                {
+                    if (_httpContextAccessor != null && _httpContextAccessor.HttpContext != null)
+                    {
+                        currentUser = _httpContextAccessor.HttpContext.Session.GetString("email")?.Trim();
+                        currentUser = currentUser?.Replace("\"", "");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+
+
+                SentMailDetails obj = new SentMailDetails();
+                obj.operationId = operationId;
+                obj.sg_message_id = operationId;
+
+                obj.MailSubject = msg.MessageSubject;
+                StringBuilder tos = new StringBuilder();
+                StringBuilder ccs = new StringBuilder();
+                StringBuilder bccs = new StringBuilder();
+
+                if (tos.Length == 0)
+                {
+                    if (msg.ToList != null)
+                    {
+                        tos.Append(string.Join(",", msg.ToList));
+                    }
+                }
+                else
+                {
+                    tos = tos.Append(",");
+                    tos.Append(string.Join(",", msg.ToList));
+                }
+
+                if (ccs.Length == 0)
+                {
+                    if (msg.CcList != null)
+                    {
+                        ccs.Append(string.Join(",", msg.CcList));
+                    }
+                }
+                else
+                {
+                    ccs = ccs.Append(",");
+                    ccs.Append(string.Join(",", msg.CcList));
+                }
+
+                if (bccs.Length == 0)
+                {
+                    if (msg.BccList != null)
+                    {
+                        bccs.Append(string.Join(",", msg.BccList));
+                    }
+                }
+                else
+                {
+                    bccs = bccs.Append(",");
+                    bccs.Append(string.Join(",", msg.BccList));
+                }
+
+                obj.To = tos != null ? tos.ToString() : null;
+                obj.Cc = ccs != null ? ccs.ToString() : null;
+                obj.Bcc = bccs != null ? bccs.ToString() : null;
+                obj.MailBody = msg.MessageBody;
+                obj.IRFId = IRFId;
+                obj.InterviewId = interviewId;
+                obj.SentBy = currentUser;
+                obj.IRFName = IRFName;
+                if (interviewIds != null && interviewIds.Count() > 0)
+                {
+                    obj.InterviewIdList = interviewIds;
+                }
+                obj.AssessmentGroupId = assessmentGroupId;
+                obj.CampaignId = campaignId;
+                obj.IsACS = true;
+                _ = await _sendGridRepository.SaveSentMailDetails(obj);
+                return "Mail sent successfully.";
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+
+        #endregion
     }
 }

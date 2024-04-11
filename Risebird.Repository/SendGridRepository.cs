@@ -85,6 +85,7 @@ namespace Risebird.Repository
                         sentMailDt.Columns.Add("InterviewId", typeof(int));
                         sentMailDt.Columns.Add("CreatedAt", typeof(DateTime));
                         sentMailDt.Columns.Add("SentBy", typeof(string));
+                        sentMailDt.Columns.Add("IsACS", typeof(string));
 
 
                         foreach (var item in model.InterviewIdList)
@@ -124,6 +125,7 @@ namespace Risebird.Repository
                         parameters.Add("@IRFName", model.IRFName);
                         parameters.Add("@AssessmentGroupId", model.AssessmentGroupId);
                         parameters.Add("@CampaignId", model.CampaignId);
+                        parameters.Add("@IsACS", model.IsACS);
 
                         await SqlMapper.QueryAsync(con, "usp_SaveSentMailDetails", parameters,
                              commandType: CommandType.StoredProcedure);
