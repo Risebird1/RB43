@@ -782,7 +782,7 @@ namespace Risebird.Web.Controllers
                     if (string.IsNullOrWhiteSpace(model.message))
                     {
                         var companyname = model.summary?.recentEmployerData.establishmentName;
-                        ; var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
+                        var companystatus = await _aadhaarService.CheckCompanyStatus(companyname);
                         if (companystatus != null)
                         {
                             //var _dob = model.uanDetails1.FirstOrDefault()?.date_of_birth;

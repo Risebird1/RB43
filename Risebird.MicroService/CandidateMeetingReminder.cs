@@ -43,16 +43,15 @@ namespace Risebird.MicroService
         public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-            string timeZoneValue = "IST";
+            string timeZoneValue = string.Empty;
             //Fetch Interview 24 hours,6 hours and 2 hours before
             var candidatemeetinglist = await _meetingService.FetchCandidateMeetingsForReminder();
             foreach (var item in candidatemeetinglist)
             {
                 try
                 {
-
+                    timeZoneValue = "IST";
                     log.LogInformation($"Actual candidate data used : {item.CandidateEmail},{item.interviewDate},{item.TimeZonesValue},,{item.TimeZoneoffset}");
-
 
                     var primaryskill = item.PrimarySkillInvite;
                     string yesbutton = "https://portal.risebird.io/Interview/CandidateMeetingsStatus?meetingid=" + item.Interviewid + "&status=1&uniqueid=" + item.uniqueid + "&Irfid=" + item.Irfid + "&candidateId=" + item.candidateid;

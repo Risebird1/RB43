@@ -7892,7 +7892,7 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type, bool isQcDone)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string interviewer, bool isapproved, string pagetype, string type, bool isQcDone, bool techqc)
         {
             try
             {
@@ -7909,6 +7909,12 @@ namespace Risebird.Web.Controllers
                 model.Interviewer = interviewer;
                 model.isapprovedchecked = isapproved;
                 model.isQcDone = isQcDone;
+                model.techqc = techqc;
+                if (techqc)
+                {
+                    if (string.IsNullOrWhiteSpace(model.Recommendation))
+                        model.Recommendation = "Shortlist";
+                }
                 model.Pagetype = pagetype;
                 await SetPaymentSLADropDown(model);
                 await SetInitialValue(model);

@@ -6,6 +6,10 @@
         <div class="col-md-4">
             <p>@item.CreatedBy</p>
             <p>@item.CreatedOn</p>
+            @if (!string.IsNullOrWhiteSpace(Recommendation))
+            {
+                <p>@item.Recommendation</p>
+            }
         </div>
         <div class="col-md-8 paymentli">
             <ul>
