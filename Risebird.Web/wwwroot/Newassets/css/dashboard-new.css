@@ -9376,6 +9376,24 @@ option {
     padding: 3px 7px 3px 7px !important;
     text-align: left !important;
 }
+.calibration-btn {
+    position: relative;
+    right: 18px;
+    top: -10px;
+}
+.cold-mark {
+    background: #e3ab8391;
+    color: #fff;
+    padding: 1px 2px 2px 2px;
+    position: relative;
+    top: -59px;
+    font-size: 11px;
+    left: -14px;
+}
+.left-p {
+    right: 268px;
+    top: 75px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -10242,7 +10260,13 @@ option {
             padding: 20px 10px;
             margin-bottom: 10px;
         }
-
+        .calibration-btn {
+            top: 3px !important;
+            right: 18px;
+        }
+        .calibrationbtn-mob {
+            padding-right: 31px!important;
+        }
         .nodata {
             text-align: center;
             font-size: 17px !important;
@@ -10363,7 +10387,10 @@ option {
             width: 45%;
             float: right;
         }
-       
+        .left-p {
+            right: 274px!important;
+            top: 68px!important;
+        }
         #calenderTimeslot, #calenderRecoTimeslot {
             left: 20px;
         }
@@ -10756,6 +10783,15 @@ option {
     }
     .cal-field{
         width:100%;
+    }
+    .mob-top{
+        margin-top:60px!important;
+    }
+    .m-w-60 {
+        width: 60%!important;
+    }
+    .m-w-40 {
+        width: 40%!important;
     }
     .campaignName {
         width: 100% !important;
@@ -11324,6 +11360,10 @@ option {
     .candidate-tab .card-block h1 {
         font-size: 13px !important;
         background: url(../../img/interview.svg) -20px 37px no-repeat !important;
+    }
+    .calibration-btn {
+        top: -12px !important;
+        right: 200px!important;
     }
 
     #entitleTable.dataTable > tbody > tr > td:first-child {
@@ -18088,6 +18128,10 @@ div.tagsinput {
         padding-right: 15px !important;
         padding-left: 15px !important;
     }
+    .calibration-btn {
+        top: -10px !important;
+        right: 210px;
+    }
     .topheader-header {
         right: 0px !important;
     }
@@ -18095,7 +18139,12 @@ div.tagsinput {
         .topheader-header [data-tooltip]:before {
             left: -270px;
         }
-
+    .calibrationbtn-mob {
+        top: -62px!important;
+        left: 106px!important;
+        position: relative!important;
+        width: 10px!important;
+    }
     .mh-top {
         margin-top: 74px !important;
     }

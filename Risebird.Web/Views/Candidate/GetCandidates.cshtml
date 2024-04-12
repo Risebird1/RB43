@@ -195,7 +195,7 @@
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
 
-                                                <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th style="border-right: 0px !important;"></th>
@@ -336,12 +336,12 @@
 
                                                                 @if (item.EmailId != null && item.EmailId != "")
                                                                 {
-                                                                    @if (item.EmailId.Length > 20)
+                                                                    @if (item.EmailId.Length > 30)
                                                                     {
 
 
                                                                         <div class="cadEmail">
-                                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="email-field">Emaild: @item.EmailId.Substring(0,20)... </span> </a>
+                                                                            <a onclick="" data-tooltip="@item.EmailId"><span class="email-field">Emaild: @item.EmailId.Substring(0,30)... </span> </a>
 
                                                                         </div>
                                                                     }
@@ -374,7 +374,7 @@
                                                                     }
                                                                     @if (item.IsColdCandidate)
                                                                     { 
-                                                                        <span>Cold Candidate Marked</span>
+                                                                        <span class="cold-mark">Cold Candidate Marked</span>
                                                                     }
                                                                 </td>
                                                                
@@ -687,8 +687,8 @@
                                                                 </button>*@
 
 
-                                                                  <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: 2px;position: relative;cursor: pointer; width:25px!important;height:25px!important;border-radius:4px;">
-                                                                         <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;"></i></span>
+                                                                  <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: 2px;position: relative;cursor: pointer; width:23px!important;height:23px!important;border-radius:4px;">
+                                                                         <span onclick="OpenStatusModal('@item.IRFId','@item.CandidateMasterId', '@item.IRFName', '@item.Name')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;"></i></span>
                                                                          </div>
 
 
@@ -755,7 +755,7 @@
                                                                      
                                                                     }
 
-                                                                  <div>  <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
+                                                                  <div style="float:left;margin: 0px 4px 0px 0px;">  <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
                                                                             <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:-1px;font-size:13px; position: relative;"></i></span>
                                                                         </a></div>
 
@@ -765,8 +765,8 @@
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
                                                                     {
                                                                       
-                                                                     <div class="btn btn-delete shadow btn-xs sharp me-1" aria-label="Delete" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background:#d35555">
-                                                                       <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete"><i class='fa fa-trash' style="font-size:13px;left:1px;top:0px; position:relative;color:#fff"></i></span>
+                                                                     <div class="btn btn-delete shadow btn-xs sharp me-1 pull-left" aria-label="Delete" style="top:4px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background:#d35555;margin: 0px 0px 0px 4px;">
+                                                                       <span onclick="javascript:DeleteCandidate('@item.id', '@item.EmailId');" title="Delete"><i class='fa fa-trash' style="font-size:13px;left:0px;top:0px; position:relative;color:#fff"></i></span>
                                                                          </div>
 
                                                                     }
@@ -780,20 +780,20 @@
                                                                 </button>*@
 
 
-
+                                                                <div style="float:left;">
                                                                  <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.imid, irfId=item.IRFId})">
-                                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="background:#98a3d7;border-color:#98a3d7; width:23px!important;height:23px!important;">
+                                                                            <button class="btn shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="background:#98a3d7;border-color:#98a3d7; width:23px!important;height:23px!important; top:3px;position:relative;   margin: 0px 0px 0px 3px;">
                                                                                 <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-3px;left:-1px" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                             </button>
-                                                                        </a>
+                                                                        </a></div>
 
-                                                                        <span>
-                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#db6161;border-color:#db6161;position:relative;left:10px">
+                                                                       <div style="float:left">
+                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:23px!important;height:23px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:3px;margin: 0px 0px 0px 3px;">
                                                                                 <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
-                                                                                    <img src="~/img/approve-blk.png" width="18" style="max-width: 18px!important;position: relative;top: -1.5px;left: -2px;" />
+                                                                                    <img src="~/img/approve-blk.png" width="16" style="max-width: 16px!important;position: relative;top: -1.5px;left: -2px;" />
                                                                                 </span>
                                                                             </button>
-                                                                        </span>
+                                                                        </div>
                                                                 }
 
                                                                     @*@if (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Client" || ViewBag.profile == "HR")
@@ -1058,17 +1058,19 @@
                                         <div class="col-sm-12 col-md-5 pull-left" id="divmeetingentries">
                                             Showing @ViewBag.PageStartCount to @ViewBag.PageEndCount of @ViewBag.TotalCount entries
                                         </div>
-                                          @if (ViewBag.AccessType != null && ViewBag.AccessType != "Public"){
-                                        <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
-                                            @Html.PagedListPager(Model, Page => Url.Action("GetCandidates", new { id = ViewBag.IRFId, irfName = ViewBag.IRFName, Page = Page, searchValue = ViewBag.Searchvalue }))
-                                        </div>
-                                          }
-                                          else{
-                                               <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
+                                        @if (ViewBag.AccessType != null && ViewBag.AccessType == "Public"){
+                                            <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
                                             @Html.PagedListPager(Model, Page => Url.Action("GetPublicCandidates", new { id = ViewBag.IRFId, irfName = ViewBag.IRFName,profileName=ViewBag.profile,emailid=ViewBag.emailid, Page = Page, searchValue = ViewBag.Searchvalue }))
                                         </div>
+                                         
                                           }
-
+                                            else{
+                                         
+                                            <div class="col-sm-12 col-md-7 dataTables_paginate pull-right " id="divmeetingpages">
+                                            @Html.PagedListPager(Model, Page => Url.Action("GetCandidates", new { id = ViewBag.IRFId, irfName = ViewBag.IRFName, Page = Page, searchValue = ViewBag.Searchvalue }))
+                                        </div>  
+                                            }
+                                         
                                     </div>
                                 </div>
                             </div>
