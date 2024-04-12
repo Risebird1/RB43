@@ -123,6 +123,7 @@ namespace Risebird.Entities.Data
         public int Surcharge { get; set; }
         public string logolink { get; set; }
         public string CandidateCodedResumeLink { get; set; }//Candidate's redacted resume link
+        public string ConsentFormUrl { get; set; }
 
     }
 }
