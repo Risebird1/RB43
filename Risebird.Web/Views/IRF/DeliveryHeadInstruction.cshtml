@@ -22,22 +22,6 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
-@* <style>
-    #loader {
-    display: none;
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #3498db;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: @@keyframes spin 1s linear infinite;
-}
-
-    @@keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-</style> *@
 
 <div class="main-panel " id="main-panel">
     <!-- Navbar -->
@@ -185,6 +169,38 @@
                                     </div>
 
                                 </div>
+
+                                @* Start:Candidate consent acknowledgement *@
+                                <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
+                                    <div class="card">
+                                        <label class="question" for="checkbox_eleven">
+                                            <label for="checkbox_eleven">
+                                                <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Job Consent Acknowledgement
+                                            </label>
+                                            <span class="round">
+                                                <input type="checkbox" class="coupon_question trigger" id="checkbox_eleven" name="question1" data-trigger="hidden_fields_eleven" />
+                                                <label class="edit-wrap" onclick="javascript:openPopupConsentModal('@Model.id');"><i class='fa fa-edit' style='color: white'></i></label>
+                                                <span id="hidden_fields_eleven_1" class="expand-panel"><i class='fas fa-chevron-down'></i></span>
+                                                <span id="hidden_fields_eleven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                                            </span>
+                                        </label>
+                                        <fieldset class="answer hidden" id="hidden_fields_eleven">
+                                            <div>
+                                                <div class="tab-main-box" style="padding:5px 0px 0px 0px;">
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="table-responsive-sm">
+                                                                <div class="consent clearfix" id="divconcentform">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                @* End:Candidate consent acknowledgement *@
                                 @* Start:Interviewer *@
                                 <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-left:11px;padding-right:11px;">
                                     <div class="card">
@@ -548,7 +564,7 @@
                                         <label class="question" for="checkbox_ten">
                                             <label for="checkbox_ten">
                                                 <i class="fas fa-users" aria-hidden="true" style="font-size:18px;margin-right:10px;position: relative;top: 3px;"></i><i class="fas fa-comments" aria-hidden="true" style="font-size: 12px;margin-right: 10px;position: relative;left: -16px;top: -10px;"></i>
-                                                Calibration Meeting:
+                                                <span style="position: relative;left: -20px;"> Calibration Meeting:</span>
                                             </label>
                                             <span class="round">
                                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_ten" name="question1" data-trigger="hidden_fields_ten" />
@@ -573,6 +589,8 @@
                                     </div>
                                 </div>
                                 @* End:Calibration Meeting details *@
+
+
                             </div>
                         </div>
                     </div>
@@ -728,6 +746,46 @@
         </div>
     </div>
 </div>
+
+
+
+<div id="PopupConsentModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-file-text-o" style="font-size:25px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="consentHeading">Consent</h5>
+            </div>
+            <button onclick="closePopupConsentModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="divconsentModel" style="position:relative;">
+                <div class="consent clearfix">
+                    <label class="form-label">Upload Consent Form:</label>
+
+                    <form class="form">
+                        <div class="filextension">Please upload the document only in 'pdf'</div>
+                        <div class="file-upload-wrapper" data-text="Select your file!">
+
+
+                            <input name="file-upload-field" type="file" class="file-upload-field" id="selectFile" value="" accept=".pdf">
+
+                        </div>
+                    </form>
+                </div>
+                <div class="submit-form clearfix">
+                    <input type="button" id="fileUpload" name="fileUpload" value="SUBMIT CONSENT FORM" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space submitconsent-btn" onclick="beginUpload(@Model.id)" />
+                    <div style="position:absolute;top:76px;left:0px;width: 100%;margin:10px auto;"> <label id="txtuploading" class="txtuploading" style="display:none;margin:-4px auto;"></label></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @await Html.PartialAsync("~/Views/Common/_CalibrationMeeting.cshtml")
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script src="~/js/SkillChannelAddEdit.js"></script>
@@ -1008,6 +1066,7 @@
             GetInstruction();
             var irfId = $("#id").val();
             FetchCalibrationDetails(irfId);
+            GetConsentForm();
         });
         function GetInstruction() {
             var irfId = $("#id").val();
@@ -1290,6 +1349,30 @@ else
             }
         });
     }
+
+
+    function openConsentModal(irfid) {
+        $("#consentHeading").text('Consent Form');
+        $.ajax({
+            url: '/Candidate/CandidateConsentDetails',
+            data: { id: irfid },
+            success: function (data) {
+                openPopupConsentModal();
+                $('#divconsentModel').html('');
+                $('#divconsentModel').html(data);
+            }
+        });
+    }
+
+    function openPopupConsentModal() {
+        document.getElementById("txtuploading").style.display = "none";
+        var modal = document.getElementById("PopupConsentModal");
+        modal.style.display = "block";
+    }
+    function closePopupConsentModal() {
+        var modal = document.getElementById("PopupConsentModal");
+        modal.style.display = "none";
+    }
     function ApproveDH(irfid) {
         $.ajax({
             type: 'POST',
@@ -1301,4 +1384,54 @@ else
             }
         });
     }
+    function beginUpload(irfid) {
+        var fileControl = document.getElementById("selectFile");
+        var fileChunk = new FormData();
+        fileChunk.append('irfid', irfid);
+        if (fileControl.files.length > 0) {
+            for (var i = 0; i < fileControl.files.length; i++) {
+                fileChunk.append('file', fileControl.files[i]);
+            }
+        }
+        $("#fileUpload").hide();
+        document.getElementById("txtuploading").style.display = "block";
+        $("#txtuploading").text("Uploading...");
+        $.ajax({
+            type: "POST",
+            url: "/IRF/UploadConsentFile",
+            data: fileChunk,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            success: function (data) {
+                $("#txtuploading").text(data);
+                $("#fileUpload").show();
+                GetConsentForm();
+            }
+        });
+    }
+    function GetConsentForm() {
+        var irfid = document.getElementById("id").value;
+        $.ajax({
+            type: 'POST',
+            url: '/IRF/GetConsentForm',
+            data: { irfid: irfid },
+            success: function (data) {
+                BindConsentForm(data);
+            }
+        });
+    }
+    function BindConsentForm(data) {
+        var html = '';
+        if (data != null && data != '') {
+            html += '<div id="CandidateDetails"><a target="_blank" href="' + data + '"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>';
+        }
+        $("#divconcentform").empty().html(html);
+    }
 </script>
+<script>
+    $("form").on("change", ".file-upload-field", function () {
+        $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
+    });
+</script>
+

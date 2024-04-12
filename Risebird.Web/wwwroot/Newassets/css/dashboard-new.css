@@ -6553,6 +6553,117 @@ input[type=search]:focus {
     }
 }
 
+.consent .form {
+    width: 470px;
+    margin: 0px 20px 10px 20px;
+    float: left;
+}
+.consent .filextension {
+    padding: 0px 75px;
+    text-align: left;
+    color: #a19696;
+    font-weight: 500;
+    font-size: 13px;
+}
+.submit-form {
+    display: block;
+    width: 250px;
+    margin: 0px auto 10px auto;
+}
+.submitconsent-btn {
+    overflow: hidden;
+    float: none;
+    width:100%;
+    margin: 30px auto 0px auto;
+   
+}
+
+.consent .form-label {
+    float: left;
+    line-height: 30px;
+    padding-top:32px;
+    font-size: 14px;
+    text-transform:uppercase;
+}
+
+.consent .file-upload-wrapper {
+    position: relative;
+    width: 100%;
+    height: 40px;
+}
+
+    .consent .file-upload-wrapper:after {
+        content: attr(data-text);
+        font-size: 16px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #f4f2f2;
+        padding: 10px 15px;
+        display: block;
+        width: calc(100% - 40px);
+        pointer-events: none;
+        z-index: 20;
+        height: 40px;
+        line-height: 21px;
+        color: #999;
+        border-radius: 5px 10px 10px 5px;
+        font-weight: 300;
+    }
+.txtuploading {
+    display: BLOCK;
+    text-align: center;
+    font-weight: 400;
+    background: #b1e9b175;
+    WIDTH: 620px;
+    MARGIN: 0px auto 30px auto;
+    border: 1px dotted #89d689;
+}
+.consent .file-upload-wrapper:before {
+    content: "Browse";
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-block;
+    height: 40px;
+    background: #5baf75;
+    color: #fff;
+    font-weight: 700;
+    z-index: 25;
+    font-size: 13px;
+    line-height: 40px;
+    padding: 0 15px;
+    text-transform: uppercase;
+    pointer-events: none;
+    border-radius: 0 5px 5px 0;
+}
+
+    .consent .file-upload-wrapper:hover:before {
+        background: #3d8c63;
+    }
+
+.consent .file-upload-wrapper input {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    display: block;
+    cursor: pointer;
+    width: 100%;
+}
+.consent-label{
+    width:93%;
+    float:left;
+}
+#PopupConsentModal .modal-lg {
+    max-width: 740px !important;
+}
 /***** Media queries *****/
 .copy-btn {
     background: none;
@@ -9394,6 +9505,16 @@ option {
     right: 268px;
     top: 75px;
 }
+.consent-note {
+    font-size: 12.2px!important;
+    color: #929c9c!important;
+    text-transform: none;
+    margin: 0px;
+    padding: 0px 0px 0px 30px;
+    font-weight: 400!important;
+    text-transform:capitalize!important;
+ 
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -10781,17 +10902,11 @@ option {
         width: 100%;
         float: left;
     }
-    .cal-field{
+    .consent .filextension{
+        padding:0px!important
+    }
+    .submitconsent-btn{
         width:100%;
-    }
-    .mob-top{
-        margin-top:60px!important;
-    }
-    .m-w-60 {
-        width: 60%!important;
-    }
-    .m-w-40 {
-        width: 40%!important;
     }
     .campaignName {
         width: 100% !important;
@@ -10829,7 +10944,11 @@ option {
         padding: 7px 20px !important;
         font-size: 14px !important;
     }
-
+    .consent .form {
+        width:100%;
+        margin: 0px;
+        float: left;
+    }
     .calling-area {
         font-size: 13.5px !important;
         padding: 20px 10px !important;
@@ -11366,8 +11485,14 @@ option {
         right: 200px!important;
     }
 
+    .consent-label{
+   width:80%!important;
+    }
+    .consent-note{
+        padding:0px!important;
+    }
     #entitleTable.dataTable > tbody > tr > td:first-child {
-        padding-right: 95px!important;
+        padding-right: 95px !important;
     }
 
     .candidate-timeline.public-url .nopad{
