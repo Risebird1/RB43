@@ -154,7 +154,7 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
         Task<bool> ApproveDM(int id, string emailid);
         Task<bool> UpdateAffindaIndexFlag(string irfId, bool isIndexCreated);
-        Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG = false);
+        Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG = false, bool? forEditMAG = null);
         Task<IEnumerable<IRFVm>> GetSkillChannelsForAssessmentGroups(List<int> assessmentGroups);
         AGCampaignModel CreateCampaign(AGCampaignModel model, string loggedInUser);
         bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser);
@@ -167,5 +167,9 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates();
         Task<IEnumerable<CallibrationCallVM>> GetCalibrationCallDetails(int irfid);
         Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid);
+        Task<IEnumerable<SecondaryAssessmentGroups>> GetMAGSecondaryAssessmentGroupsById(int assessmentGroupId);
+        Task<bool> EditMAG(AGCampaignModel model, string loggedInUser);
+        Task<bool> UpdateConsentFile(int irfid, string uploadedFileURL);
+        Task<string> GetConsentFile(int irfid);
     }
 }

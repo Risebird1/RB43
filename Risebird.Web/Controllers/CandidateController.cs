@@ -1421,7 +1421,7 @@ namespace Risebird.Web.Controllers
 
 
                               //  Sheet.Cells[i, 10].Value = item.LatestComment != "0" ? item.LatestComment : "NA";
-                                Sheet.Cells[i, 10].Value = item.interviewDate != null ? item.interviewDate?.ToString("dd MMMM yyyy") : "NA";
+                                Sheet.Cells[i, 10].Value = item.interviewDate != null ? item.interviewDate?.ToString() : "NA";
                                 Sheet.Cells[i, 11].Value = item.ClientHRAttemptContact != "0" ? item.ClientHRAttemptContact : "NA";
                                 if (!string.IsNullOrEmpty(item.VideoLink))
                                 {
@@ -4615,12 +4615,12 @@ namespace Risebird.Web.Controllers
             return Json(flags);
         }
 
-        public async Task<IActionResult> GetCommunicationDetails(int interviewId, int communicationMedium)
+        public async Task<IActionResult> GetCommunicationDetails(int communicationMedium, int? interviewId = null, int? irfId = null, string emailId = null)
         {
             try
             {
                 var model = new CommunicationDetailsWrapperVM();
-                var communicationList = await _candidateService.GetCandidateCommunicationDetails(interviewId, communicationMedium);
+                var communicationList = await _candidateService.GetCandidateCommunicationDetails(communicationMedium, interviewId, irfId, emailId);
                 model.CommunicationList = communicationList;
                 model.CommunicationMedium = communicationMedium;
                 return PartialView("GetCommunicationDetails", model);

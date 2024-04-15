@@ -7780,7 +7780,7 @@ namespace Risebird.Repository
         /// </summary>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG)
+        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG, bool? forEditMAG = null)
         {
             try
             {
@@ -7791,6 +7791,7 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("@searchValue", searchValue.Trim());
                         parameters.Add("@isAlreadyMasterAG", isAlreadyMasterAG);
+                        parameters.Add("@forEditMAG", forEditMAG);
                         var result = await SqlMapper.QueryAsync<AssignmentVM>(con, "dbo.usp_GetSimilarAssessmentGroups", parameters, null,
                             commandType: CommandType.StoredProcedure);
                         return result;
@@ -8006,6 +8007,80 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> EditMAG(AGCampaignModel model, string loggedInUser)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable agrpsDt = new DataTable();
+                    agrpsDt.Columns.Add("AssessmentGroupId", typeof(int));
+
+                    if (model.AssessmentGroups != null && model.AssessmentGroups.Count() > 0 && model.AssessmentGroups.Any(x => x.IsSelectedForCampaign))
+                    {
+                        foreach (var item in model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
+                        {
+                            agrpsDt.Rows.Add(item.id);
+                        }
+
+                    }
+
+                    if (model.SelectedRemainingAssessmentGroups != null && model.SelectedRemainingAssessmentGroups.Count() > 0)
+                    {
+                        foreach (var id in model.SelectedRemainingAssessmentGroups)
+                        {
+                            agrpsDt.Rows.Add(id);
+                        }
+
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_EditMAG", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.Int));
+                    cmd.Parameters["@AssessmentGroupId"].Value = model.AssessmentGroupId;
+
+                    cmd.Parameters.Add(new SqlParameter("@PerformedBy", SqlDbType.VarChar));
+                    cmd.Parameters["@PerformedBy"].Value = loggedInUser;
+
+                    cmd.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
+                    cmd.Parameters["@timeNow"].Value = DateTime.Now;
+
+
+
+                    if (agrpsDt != null && agrpsDt.Rows.Count > 0)
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@CampaignAssessmentGroupsBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@CampaignAssessmentGroupsBulkData"].Value = agrpsDt;
+                    }
+
+                    con.Open();
+
+                    if (cmd.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser)
         {
             try
@@ -8142,6 +8217,8 @@ namespace Risebird.Repository
                             _resultVM.CreatedAt = !string.IsNullOrEmpty(dt.Rows[0]["CreatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["CreatedAt"]) : new DateTime();
                             _resultVM.ModifiedBy = !string.IsNullOrEmpty(dt.Rows[0]["ModifiedBy"].ToString()) ? dt.Rows[0]["ModifiedBy"].ToString() : null;
                             _resultVM.ModifiedAt = !string.IsNullOrEmpty(dt.Rows[0]["ModifiedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["ModifiedAt"]) : new DateTime();
+                            _resultVM.AssessmentGroupId = !string.IsNullOrEmpty(dt.Rows[0]["AssessmentGroupId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AssessmentGroupId"]) : 0;
+                            _resultVM.IsAlreadyMasterAG = !string.IsNullOrEmpty(dt.Rows[0]["IsAlreadyMasterAG"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAlreadyMasterAG"]) : false;
 
 
                         }
@@ -8342,6 +8419,77 @@ namespace Risebird.Repository
                 {
                     return await SqlMapper.QueryAsync<CallibrationCallVM>(con, "usp_GetAllCalibrationMeetingsdetailsById", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<SecondaryAssessmentGroups>> GetMAGSecondaryAssessmentGroupsById(int assessmentGroupId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@assessmentGroupId", assessmentGroupId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<SecondaryAssessmentGroups>(con, "usp_GetMAGSecondaryAssessmentGroupsById", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateConsentFile(int irfid, string uploadedFileURL)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                dynamicParameters.Add("@uploadedFileURL", uploadedFileURL);
+                dynamicParameters.Add("@CreatedOn", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateConsentForm", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<string> GetConsentFile(int irfid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetConsentForm", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
                 }
             }
             catch (SqlException ex)

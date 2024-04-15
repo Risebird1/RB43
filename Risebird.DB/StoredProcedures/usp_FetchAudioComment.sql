@@ -12,7 +12,9 @@ Create Procedure usp_FetchAudioComment
 @interviewId int
 as 
 begin
-Select irf.AudioComment,irf.CompanyDetails,im.zoomLink,im.interviewDate,irf.JDLink,irf.JobLevel,im.candidateEmail,im.MobileNumber,im.id,im.candidateName,irf.IRFID from InterviewMeetings im                   
- join IRF  irf on im.IRFId=irf.IRFId where im.id=@interviewId
+Select irf.AudioComment,irf.CompanyDetails,im.zoomLink,im.interviewDate,irf.JDLink,irf.JobLevel,im.candidateEmail,im.MobileNumber,im.id,im.candidateName,irf.IRFID,cf.FormURL as ConsentFormUrl 
+from InterviewMeetings im                   
+ join IRF  irf on im.IRFId=irf.IRFId Left join ConsentForms cf on cf.IRFId=IRF.id
+ where im.id=@interviewId
  End
 GO
