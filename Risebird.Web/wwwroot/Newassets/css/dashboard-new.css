@@ -688,7 +688,9 @@ table tr td.relatedvideo:hover {
     width: 15px;
     height: 15px;
 }
-
+.mdc-radio .mdc-radio__background::before{
+    background:none!important;
+}
 .curated-score .table-responsive-sm .table > tbody > tr > td:last-child {
     padding: 12px 5px !important;
     border: 0px !important;
