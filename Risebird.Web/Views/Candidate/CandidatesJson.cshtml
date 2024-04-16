@@ -16,10 +16,10 @@
 
                          <th>Candidate Details</th>
 
-                        @if (ViewBag.profile != "Client")
+                        @* @if (ViewBag.profile != "Client")
                         {
                             <th id="getstatus_2">RB Attempts</th>
-                        }
+                        } *@
                         <th id="getstatus_3">Resume</th>
                         @if (ViewBag.profile == "Client")
                         {
@@ -48,10 +48,10 @@
                         <th style="border-right: 0px !important;"></th>
                           <th>Candidate Details</th>
 
-                        @if (ViewBag.profile != "Client")
+                        @* @if (ViewBag.profile != "Client")
                         {
                             <th>RB Attempts</th>
-                        }
+                        } *@
                         <th>Resume</th>
                         @if (ViewBag.profile == "Client")
                         {
@@ -202,10 +202,10 @@
                                 <td></td>
                             }*@
 
-                            @if (ViewBag.profile != "Client")
+                            @* @if (ViewBag.profile != "Client")
                             {
                                 <td class="text-center">@item.AttemptsCount</td>
-                            }
+                            } *@
 
                             @if (item.ResumeLink != null && item.ResumeLink != "")
                             {

@@ -1212,7 +1212,7 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "select-css form-control ", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control interviewersDrpDwn", @onchange = "InterviewerChanged(this.value, this.id)", data_initial_value = "", data_initial_text= "" })
                                                                                 @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
                                                                                 @Html.Hidden("InterviewerCollection[0].Source", new {Value = Model.LoggedEmail})
                                                                             </td>
@@ -1281,7 +1281,7 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control select-css ", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled" })
+                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, "Select", new { @class = "form-control select-css interviewersDrpDwn", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled", data_initial_value = Model.InterviewerCollection[i].UserId, data_initial_text= Model.InterviewerCollection[i].EmailId })
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
 
@@ -1929,7 +1929,76 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script src="~/js/SkillChannelAddEdit.js"></script>
 <script src="~/js/AddEditSkillChannelCommonMethods.js"></script>
+<script>
+    function ManageInterviewerDropDowns(){
+        var dropdowns = document.querySelectorAll('.interviewersDrpDwn');
+        if(dropdowns != null){
+            // Remove initial values from other dropdowns
+        dropdowns.forEach(function(dropdown) {
+            var selectedValue = dropdown.value;
+            dropdowns.forEach(function(otherDropdown) {
+                if (otherDropdown !== dropdown) {
+                    var optionToRemove = otherDropdown.querySelector('option[value="' + selectedValue + '"]');
+                    if (optionToRemove) {
+                        otherDropdown.removeChild(optionToRemove);
+                    }
+                }
+            });
+        });
 
+        // Attach change event listener to each dropdown
+        dropdowns.forEach(function(dropdown) {
+            dropdown.addEventListener('change', function() {
+                var selectedValue = this.value;
+                // Get the selected option index
+                var selectedIndex = this.selectedIndex;
+
+                // Get the selected option text
+                var selectedOptionText = dropdown.options[selectedIndex].text;
+
+                var initialValue = this.getAttribute('data-initial-value');
+                var initialText = this.getAttribute('data-initial-text');
+
+                $(this).attr("data-initial-value", selectedValue);
+                $(this).attr("data-initial-text", selectedOptionText);
+
+                // Remove selected value from other dropdowns
+                dropdowns.forEach(function(otherDropdown) {
+                    if (otherDropdown !== dropdown) {
+                        var optionToRemove = otherDropdown.querySelector('option[value="' + selectedValue + '"]');
+                        if (optionToRemove) {
+                            otherDropdown.removeChild(optionToRemove);
+                        }
+                    }
+                });
+
+                // Add back the selected value to other dropdowns if not already present
+                dropdowns.forEach(function(otherDropdown) {
+                    if (otherDropdown !== dropdown) {
+                        var optionToAddBack = document.createElement('option');
+                        
+                        //var initialValue = this.querySelector('option[selected]');
+                
+                        // Add back initial value to other dropdowns
+                        if (initialValue && initialValue !== selectedValue) {
+                            optionToAddBack.value = initialValue;
+                            
+                            optionToAddBack.textContent = initialText;
+                            if (!otherDropdown.querySelector('option[value="' + selectedValue + '"]')) {
+                                otherDropdown.appendChild(optionToAddBack);
+                            }
+                        }
+                        
+                    }
+                });
+            });
+        });
+
+        }
+
+    }
+    
+</script>
 <script type="text/javascript">
     $(document).ready(function () {
         
@@ -2065,6 +2134,7 @@
 
                     $("#rtab-8").addClass("active");
                     document.getElementById("tab-8").style.display = "block";
+                    ManageInterviewerDropDowns();
                 }
                 else {
                     $("#rtab-7").addClass("active");
@@ -2204,6 +2274,7 @@
                         $("#rtab-8").addClass("active");
                         document.getElementById("tab-8").style.display = "block";
                         document.getElementById("tab-7").style.display = "none";
+                        ManageInterviewerDropDowns();
                     }
                     else {
                         //if (isQcRequired) {
@@ -2509,6 +2580,10 @@
     function headerClickchange(newHeader) {
         var activeTab = $(".active").text();
         var flag = false;
+        if(newHeader == 'tab-8')//interviewer's tab
+        {
+            ManageInterviewerDropDowns();
+        }
         if (activeTab.trim() == "Event Details") {
             flag = checkTabValidation(activeTab);
             if (!flag) {
@@ -3692,7 +3767,6 @@
 
     function AddRowInterviewer() {
         //document.getElementById("btnUpload").disabled = false;
-
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
         //if (rowCount == 6) {
@@ -3726,7 +3800,8 @@
         $tr.find("a").attr("href", "");
         $tr.find("a").attr("data-tooltip", "");
         $tr.find("a").html("");
-
+        $tr.find("select").attr("data-initial-value", "");
+        $tr.find("select").attr("data-initial-text", "");
         // add cloned row as last row
         $("#InterviewerTable").find("tbody tr:last").after($tr);
 
@@ -3738,6 +3813,9 @@
         $form.data("validator", null);
         $('#InterviewerCollection_' + (parseInt(rowCount) - 1) + '__UserId').attr("disabled", false);
         $('#InterviewerCollection_' + (parseInt(rowCount) - 1) + '__Source').val('@Model.LoggedEmail');
+        
+        ManageInterviewerDropDowns();
+
         // Check document for changes
         //  $.validator.unobtrusive.parse(document);
 

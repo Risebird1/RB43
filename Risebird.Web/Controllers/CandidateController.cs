@@ -34,7 +34,7 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private static List<CandidateTimelineVM> _modelDetails;
-        private static List<Candidate> _candidateModelDetails;
+        //private static List<Candidate> _candidateModelDetails;
         private readonly IIRFService _irfService;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IEvaluatorService _evaluatorService;
@@ -823,35 +823,36 @@ namespace Risebird.Web.Controllers
 
                         }
 
-                        ViewBag.TotalCount = candidateList.Count;
+                        //ViewBag.TotalCount = candidateList.Count;
 
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                        int a = candidateList.Count / 10;
-                        if (candidateList.Count % 10 == 0)
-                        {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                        }
-                        else
-                        {
-                            a = a + 1;
-                            if (a == Page)
-                            {
-                                ViewBag.PageEndCount = candidateList.Count;
-                            }
-                            else
-                            {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        //ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        //int a = candidateList.Count / 10;
+                        //if (candidateList.Count % 10 == 0)
+                        //{
+                        //    ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        //}
+                        //else
+                        //{
+                        //    a = a + 1;
+                        //    if (a == Page)
+                        //    {
+                        //        ViewBag.PageEndCount = candidateList.Count;
+                        //    }
+                        //    else
+                        //    {
+                        //        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
 
-                            }
+                        //    }
 
-                        }
-                        if (candidateList.Count == 0)
-                        {
-                            ViewBag.PageStartCount = 0;
-                            ViewBag.PageEndCount = 0;
-                        }
-                        _candidateModelDetails = candidateList;
-                        return View(candidateList.ToPagedList(Page ?? 1, 10));
+                        //}
+                        //if (candidateList.Count == 0)
+                        //{
+                        //    ViewBag.PageStartCount = 0;
+                        //    ViewBag.PageEndCount = 0;
+                        //}
+                        //_candidateModelDetails = candidateList;
+                        //return View(candidateList.ToPagedList(Page ?? 1, 10));
+                        return View(candidateList);
 
 
 
@@ -920,36 +921,37 @@ namespace Risebird.Web.Controllers
 
                 }
 
-                ViewBag.TotalCount = candidateList.Count;
+                //ViewBag.TotalCount = candidateList.Count;
 
-                ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                int a = candidateList.Count / 10;
-                if (candidateList.Count % 10 == 0)
-                {
-                    ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                }
-                else
-                {
-                    a = a + 1;
-                    if (a == Page)
-                    {
-                        ViewBag.PageEndCount = candidateList.Count;
-                    }
-                    else
-                    {
-                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                //ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                //int a = candidateList.Count / 10;
+                //if (candidateList.Count % 10 == 0)
+                //{
+                //    ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                //}
+                //else
+                //{
+                //    a = a + 1;
+                //    if (a == Page)
+                //    {
+                //        ViewBag.PageEndCount = candidateList.Count;
+                //    }
+                //    else
+                //    {
+                //        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
 
-                    }
+                //    }
 
-                }
-                if (candidateList.Count == 0)
-                {
-                    ViewBag.PageStartCount = 0;
-                    ViewBag.PageEndCount = 0;
-                }
-                _candidateModelDetails = candidateList;
+                //}
+                //if (candidateList.Count == 0)
+                //{
+                //    ViewBag.PageStartCount = 0;
+                //    ViewBag.PageEndCount = 0;
+                //}
+                //_candidateModelDetails = candidateList;
                 ViewBag.AccessType = "Public";
-                return View("GetCandidates", candidateList.ToPagedList(Page ?? 1, 10));
+                //return View("GetCandidates", candidateList.ToPagedList(Page ?? 1, 10));
+                return View("GetCandidates", candidateList);
 
             }
             catch (Exception ex)
@@ -2206,37 +2208,37 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> DeleteStatus(int id)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
-                    {
-                        var result = await _irfService.DeleteCandidateStatus(id);
-                        return Json(result);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(false);
-            }
-        }
+        //[Authorize]
+        //[HttpPost]
+        //public async Task<IActionResult> DeleteStatus(int id)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+        //            {
+        //                var result = await _irfService.DeleteCandidateStatus(id);
+        //                return Json(result);
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return Json(false);
+        //    }
+        //}
 
         [Authorize]
         [HttpGet]
