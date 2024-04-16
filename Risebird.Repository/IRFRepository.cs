@@ -5199,7 +5199,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteCandidateStatus", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteCandidateStatus", parameters,// this procedure has been temporarily dropped from production on 15th April, 2024
                         commandType: CommandType.StoredProcedure);
                     return true;
 

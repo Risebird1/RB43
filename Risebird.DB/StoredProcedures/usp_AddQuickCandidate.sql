@@ -20,126 +20,146 @@ CREATE PROCEDURE [dbo].usp_AddQuickCandidate
 @date datetime,      
 @ClientHREmail varchar(200) = null,      
 @ProfileSource varchar(200) = null,     
-@WhatsappNumber varchar(15),  
+@WhatsappNumber varchar(15), 
+@AffindaResumeIdentifier varchar(75) = null,
 @operationStatus varchar(200) out      
       
         
 AS        
-Begin        
- declare  @ProfileId int, @addedByEmail varchar(100);      
- set @ProfileId = (select id from [Profile] where [Name]='Candidate')       
- set @addedByEmail= (select EmailId from UserList where id=@AddedByUserId)      
+Begin 
+	begin try
+		begin tran
+
+			declare  @ProfileId int, @addedByEmail varchar(100);      
+			set @ProfileId = (select id from [Profile] where [Name]='Candidate')       
+			set @addedByEmail= (select EmailId from UserList where id=@AddedByUserId)      
       
-IF EXISTS(select 1 from Candidate where IRFId=@IRFId and CandidateMasterId = (select id from CandidatesMaster where UserId= (select id from UserList where EmailId=@EmailId)))      
-Begin      
- select @operationStatus='Duplicate candidate'      
-End      
+			IF EXISTS(select 1 from Candidate where IRFId=@IRFId and CandidateMasterId = (select id from CandidatesMaster where UserId= (select id from UserList where EmailId=@EmailId)))      
+			Begin      
+			 select @operationStatus='Duplicate candidate'      
+			End      
       
        
-Else IF Exists(select 1 from UserList where EmailId=@EmailId and idProfile != @ProfileId)      
-Begin      
- select @operationStatus='User exists with a different Profile'      
-End      
+			Else IF Exists(select 1 from UserList where EmailId=@EmailId and idProfile != @ProfileId)      
+			Begin      
+			 select @operationStatus='User exists with a different Profile'      
+			End      
       
-Else IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)        
- Begin        
-  INSERT INTO [dbo].[UserList]        
-  (idProfile,        
-  FirstName,         
-  LastName,        
-  EmailId,        
-  LastLogin,        
-  LastLogout,        
-  IsActive,        
-  ImageURL,        
-  MobileNumber,    
-  WhatsappNumber,  
-  uniqueid)        
+			Else IF NOT EXISTS (SELECT 1   FROM   UserList    WHERE  EmailId = @EmailId)        
+			 Begin        
+			  INSERT INTO [dbo].[UserList]        
+			  (idProfile,        
+			  FirstName,         
+			  LastName,        
+			  EmailId,        
+			  LastLogin,        
+			  LastLogout,        
+			  IsActive,        
+			  ImageURL,        
+			  MobileNumber,    
+			  WhatsappNumber,  
+			  uniqueid)        
          
-  VALUES        
-  (23,        
-  @Name,        
-  null,        
-  @EmailId,        
-  null,        
-  null,        
-  1,        
-  null,        
-  @Phone,    
-  @WhatsappNumber,  
-  NEWID())        
+			  VALUES        
+			  (23,        
+			  @Name,        
+			  null,        
+			  @EmailId,        
+			  null,        
+			  null,        
+			  1,        
+			  null,        
+			  @Phone,    
+			  @WhatsappNumber,  
+			  NEWID())        
         
-  declare        
-  @UserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)        
+			  declare        
+			  @UserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)        
         
-  insert into CandidatesMaster ([UserId]) values (@UserId)        
+			  insert into CandidatesMaster ([UserId]) values (@UserId)        
         
-  insert into Candidate        
-  ([IRFId],        
-  [ResumeLink],          
-  [Phone],        
-  [AddedByUserId],        
-  [CandidateMasterId],      
-  [ClientHRAttemptContact],      
-  [ProfileSource])        
-  values      
-  (@IRFId,        
-  @ResumeLink,         
-  @Phone,        
-  @AddedByUserId,        
-  (select id from CandidatesMaster where UserId=@UserId),      
-  @ClientHREmail,      
-  @ProfileSource)        
+			  insert into Candidate        
+			  ([IRFId],        
+			  [ResumeLink],          
+			  [Phone],        
+			  [AddedByUserId],        
+			  [CandidateMasterId],      
+			  [ClientHRAttemptContact],      
+			  [ProfileSource],
+			  [AffindaResumeIdentifier])        
+			  values      
+			  (@IRFId,        
+			  @ResumeLink,         
+			  @Phone,        
+			  @AddedByUserId,        
+			  (select id from CandidatesMaster where UserId=@UserId),      
+			  @ClientHREmail,      
+			  @ProfileSource,
+			  @AffindaResumeIdentifier)        
       
-  insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy)       
-  values (@IRFId, (select id from CandidatesMaster where UserId=@UserId), 'Added', GetDate(), 12, @addedByEmail)      
+			  insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy)       
+			  values (@IRFId, (select id from CandidatesMaster where UserId=@UserId), 'Added', GetDate(), 12, @addedByEmail)      
       
-  insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))        
-  select @operationStatus='Candidate imported successfully'      
+			  insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where UserId=@UserId))        
+			  select @operationStatus='Candidate imported successfully'      
         
- End        
+			 End        
         
-Else        
+			Else        
         
-Begin        
- declare        
+			Begin        
+			 declare        
         
- @CandidateUserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)        
+			 @CandidateUserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)        
         
         
- IF NOT EXISTS (SELECT 1   FROM   CandidatesMaster    WHERE  UserId = @CandidateUserId)        
- Begin        
-  insert into CandidatesMaster ([UserId]) values (@CandidateUserId)        
- End        
- Update UserList Set WhatsappNumber=@WhatsappNumber where  EmailId = @EmailId     
+			 IF NOT EXISTS (SELECT 1   FROM   CandidatesMaster    WHERE  UserId = @CandidateUserId)        
+			 Begin        
+			  insert into CandidatesMaster ([UserId]) values (@CandidateUserId)        
+			 End        
+			 Update UserList Set WhatsappNumber=@WhatsappNumber where  EmailId = @EmailId     
         
- insert into Candidate        
- ([IRFId],        
- [ResumeLink],        
- [Phone],         
- [AddedByUserId],        
- [CandidateMasterId],      
- [ClientHRAttemptContact],      
- [ProfileSource]      
- )        
- values(@IRFId,        
- @ResumeLink,        
- @Phone,        
- @AddedByUserId,        
- (select id from CandidatesMaster where UserId=@CandidateUserId),      
- @ClientHREmail,      
- @ProfileSource      
- )          
+			 insert into Candidate        
+			 ([IRFId],        
+			 [ResumeLink],        
+			 [Phone],         
+			 [AddedByUserId],        
+			 [CandidateMasterId],      
+			 [ClientHRAttemptContact],      
+			 [ProfileSource],
+			 [AffindaResumeIdentifier]
+			 )        
+			 values(@IRFId,        
+			 @ResumeLink,        
+			 @Phone,        
+			 @AddedByUserId,        
+			 (select id from CandidatesMaster where UserId=@CandidateUserId),      
+			 @ClientHREmail,      
+			 @ProfileSource,
+			 @AffindaResumeIdentifier
+			 )          
         
- insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy)       
- values (@IRFId, (select id from CandidatesMaster where UserId=@CandidateUserId), 'Added', GetDate(), 12, @addedByEmail)      
+			 insert into CandidateStatus (IRFId, CandidateId, Comments, [Date], [Status], PerformedBy)       
+			 values (@IRFId, (select id from CandidatesMaster where UserId=@CandidateUserId), 'Added', GetDate(), 12, @addedByEmail)      
       
- insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))      
- select @operationStatus='Candidate imported successfully'      
+			 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where  UserId=@CandidateUserId))      
+			 select @operationStatus='Candidate imported successfully'      
       
         
-End        
-        
+			End        
+  
+
+		commit tran
+	end try
+	Begin catch 
+		rollback transaction
+		DECLARE @Message varchar(MAX) = ERROR_MESSAGE(),  
+				@Severity int = ERROR_SEVERITY(),  
+				@State smallint = ERROR_STATE()  
+   
+		RAISERROR (@Message, @Severity, @State)
+	end catch
+      
 END 
 GO
     
