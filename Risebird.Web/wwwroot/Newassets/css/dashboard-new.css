@@ -6666,6 +6666,15 @@ input[type=search]:focus {
 #PopupConsentModal .modal-lg {
     max-width: 740px !important;
 }
+#QuestionsNewTable thead > tr > th {
+    padding: 3px 5px;
+    background: #d2d0d0;
+}
+
+#QuestionsNewTable thead > tr > td {
+    padding: 3px 5px;
+    background: #d2d0d0;
+}
 /***** Media queries *****/
 .copy-btn {
     background: none;
