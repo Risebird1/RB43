@@ -18,7 +18,7 @@ AS
 Begin
 
 
-select ul.EmailId from ClientUser cu join UserList ul on ul.id = cu.UserId where cu.ClientId=@clientId and ul.IsActive = 1
+select ul.EmailId from ClientUser cu join UserList ul on ul.id = cu.UserId where cu.ClientId=@clientId and ul.IsActive = 1 and cu.IsEmailNotification =1
 
 
 End
