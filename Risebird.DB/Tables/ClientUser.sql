@@ -26,4 +26,13 @@ BEGIN
     ALTER TABLE ClientUser
     Add [IsPasswordReset] [bit] NULL
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsEmailNotification')
+      AND Object_ID = Object_ID(N'ClientUser'))
+BEGIN
+    ALTER TABLE ClientUser
+    Add [IsEmailNotification] [bit] default 1
+END
 GO
