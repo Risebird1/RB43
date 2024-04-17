@@ -2006,13 +2006,14 @@ ul.tabs li.active {
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
-                        url: '/Interview/GenerateRescheuleLink',
+                        url: '/InterviewScheduler/GenerateCandidatescheuleLink',
                         method: 'POST',
                         data: {
                             'CandidateEmailid': candidateEmailid,
                             'interviewid': interviewid,
                             'uniqueid': uniqueid,
-                            'Irfid': irfid
+                            'Irfid': irfid,
+                            'schedulertype': 1
                         },
                         success: function (result) {
                             location.href = result;

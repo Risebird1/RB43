@@ -4770,18 +4770,18 @@ namespace Risebird.Web.Controllers
                 }).ToList();
                 CandidateDetails.CandidateDetails.IRFId = IRFid;
                 var details = CandidateDetails.Meetings.OrderByDescending(x => x.interviewDate).FirstOrDefault();
-                if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
-                {
-                    CandidateDetails.IsReschedule = true;
-                    if (string.IsNullOrEmpty(CandidateDetails.Uniqueid))
-                    {
-                        string stepfirst = CandidateDetails.CandidateDetails.CalendlyLink.Split("?").LastOrDefault();
-                        var olduniqueid = stepfirst.Split("=").LastOrDefault();
-                        var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateDetails.CandidateDetails.EmailId);
-                        CandidateDetails.Uniqueid = oneTimeSchedulingLink;
-                    }
-                    CandidateDetails.SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + CandidateDetails.Uniqueid;
-                }
+                //if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
+                //{
+                //    CandidateDetails.IsReschedule = true;
+                //    if (string.IsNullOrEmpty(CandidateDetails.Uniqueid))
+                //    {
+                //        string stepfirst = CandidateDetails.CandidateDetails.CalendlyLink.Split("?").LastOrDefault();
+                //        var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                //        var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateDetails.CandidateDetails.EmailId);
+                //        CandidateDetails.Uniqueid = oneTimeSchedulingLink;
+                //    }
+                //    CandidateDetails.SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + CandidateDetails.Uniqueid;
+                //}
                 //Start: InterviewMeeting Timer
                 var time = details.interviewDate.AddMinutes(-15);
                 var currentTime = DateTime.UtcNow;

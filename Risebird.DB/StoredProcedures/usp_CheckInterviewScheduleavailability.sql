@@ -20,5 +20,12 @@ where candidateEmail = @candidateEmail and IRFId= @IRFId and RedoInterview = 0
 and interviewDate>=@timenow and confirmationStatus=1
 union
 Select 'OtherProfile' as interviewtype,'' as interviewDate From UserList where Emailid=@candidateEmail and idprofile!=23
+union
+Select 'ColdCandidate' as interviewtype,'' as interviewDate From ColdCandidateInfos cci 
+join Candidate ca on ca.id=cci.FKCandidateId
+join CandidatesMaster cm on cm.id=ca.CandidateMasterId
+join UserList ul on ul.id=cm.UserId
+join IRF on IRF.id=ca.IRFId
+where ul.EmailId=@candidateEmail and IRF.IRFId=@IRFId
 END
 GO
