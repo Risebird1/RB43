@@ -246,11 +246,12 @@ namespace Risebird.Repository
                     resumeListDt.Columns.Add("ResumeLink", typeof(string));
                     resumeListDt.Columns.Add("AddedBy", typeof(int));
                     resumeListDt.Columns.Add("AddedOn", typeof(DateTime));
+                    resumeListDt.Columns.Add("ClientHREmailId", typeof(string));
 
 
                     foreach (var item in resumeList)
                     {
-                        resumeListDt.Rows.Add(item.IRFId, item.ResumeLink, item.AddedBy, DateTime.Now);
+                        resumeListDt.Rows.Add(item.IRFId, item.ResumeLink, item.AddedBy, DateTime.Now, item.ClientHREmailId);
                     }
 
                     SqlCommand cmdJoinability = new SqlCommand("usp_CandidateResumeBulkInsert", con);

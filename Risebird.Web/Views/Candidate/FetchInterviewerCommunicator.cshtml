@@ -56,14 +56,14 @@
                         <div class="mobile-view"> <h4 class="card-title"> Manage Interviews</h4></div>
                     </div>
                 </div>
-                <div class="col-md-4 m-w-40 pull-left">
+                <div class="col-md-4 m-w-40 pull-left mob-ht">
                     <div class="pull-right">
                         <input type="hidden" value="@ViewBag.emailid" id="hiddemailid" />
                         <input type="hidden" value="@ViewBag.id" id="hidduniqueid" />
                         <input type="hidden" value="@ViewBag.IsClientLogin" id="hiddIsClientLogin" />
                         @if (!(bool)(ViewBag.IsClientLogin ?? false))
                         {
-                            @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                            @Html.ActionLink("Back", "PublicCandidateStatus", "Candidate", new { emailid = ViewBag.emailid, id = ViewBag.id }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded mob-backbtn", @role = "button" })
                         }
                     </div>
                 </div>

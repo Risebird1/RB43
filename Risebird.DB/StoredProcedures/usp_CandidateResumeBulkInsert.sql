@@ -10,7 +10,7 @@ GO
 
 Create PROCEDURE [dbo].[usp_CandidateResumeBulkInsert]    
 (    
-      @CandidateResumeBulkData AS [dbo].[CandidateResume_TableType] READONLY    
+      @CandidateResumeBulkData AS [dbo].[CandidateResume_TableTypeV2] READONLY    
 )    
 AS    
 BEGIN    
@@ -23,6 +23,7 @@ BEGIN
    [ResumeLink],    
    [AddedBy],    
    [AddedOn],
+   [ClientHREmailId],
    [IsProcessed],
    [IsResumeParsed])    
     

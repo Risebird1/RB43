@@ -13,6 +13,68 @@
         color: red;
     }
 
+    #calenderRecoTimeslot {
+        margin-top: 0px;
+        height: 320px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 195px;
+    }
+
+        #calenderRecoTimeslot table {
+            border: 0px !important;
+            box-shadow: none !important;
+        }
+
+        #calenderRecoTimeslot .time-btn {
+            border: 1px solid #66BB6A !important;
+            color: #4CAF50;
+            left: 14px;
+            width: 145px;
+            background: #c5f48f70 !important;
+        }
+
+            #calenderRecoTimeslot .time-btn:hover {
+                border: 2px solid #689F38 !important;
+            }
+
+        #calenderRecoTimeslot .button:hover:before {
+            content: "Confirm!";
+            background-color: #c5f48f24 !important;
+            color: green;
+        }
+
+        #calenderTimeslot table tr td:hover, #calenderRecoTimeslot table tr td:hover {
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        #calenderRecoTimeslot .click-arrow {
+            border-radius: 100%;
+            width: 20px;
+            height: 20px;
+            color: #a79c9c;
+            background: #efefef;
+            border: none;
+            position: relative;
+            top: -2px;
+            line-height: 14px;
+        }
+
+            #calenderRecoTimeslot .click-arrow svg {
+                position: relative;
+                left: -3px;
+            }
+
+    .changeslot {
+        position: relative;
+        right: -34px;
+        top: -13px;
+        color: grey !important;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
     .button {
         position: relative !important;
         padding: 13px 10px !important;
@@ -26,10 +88,6 @@
         height: 52px;
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
-        /* border: 1px solid #c0c1c3c2 !important;
-                                                                                                                                                                color: #9b9393;*/
-        font-size: 17px;
-        /* background: #e5e5e5 !important*/
     }
 
         .button span {
@@ -233,12 +291,14 @@
                         <div>
                             <div class="txttimezone-con clearfix">
                                 <div class="select">
-                                    @Html.DropDownListFor(m=>m.TimeZones,Model.TimeZonesList,new{@id="ddlselecttimezone", @onchange="setoffsettime()", @class="drop-timezone"})
+                                    @Html.DropDownListFor(m => m.TimeZones, Model.TimeZonesList, new { @id = "ddlselecttimezone", @onchange = "setoffsettime()", @class = "drop-timezone" })
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="calenderTimeslot" class="col-md-4 pull-left">
+                    <div id="calenderTimeslot" class="pull-left" style="display:none">
+                    </div>
+                    <div id="calenderRecoTimeslot" class="pull-left">
                     </div>
                 </div>
             </div>
@@ -306,7 +366,7 @@
                                         @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "form-label required" })
 
                                     </div>
-                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12", @readonly = "readonly" })
                                 </div>
                                 @if (string.IsNullOrWhiteSpace(Model.Resume))
                                 {
@@ -316,14 +376,14 @@
                                         </div>
                                         <div class="col-md-6 pull-left">
                                             @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @class = "required" })
-                                            @Html.ValidationMessageFor(model => model.ResumeFile,"",new {@class="text-danger"})
+                                            @Html.ValidationMessageFor(model => model.ResumeFile, "", new { @class = "text-danger" })
                                             <span id="file-chosen"></span>
                                         </div>
                                     </div>
                                 }
                                 else
                                 {
-                                    @Html.HiddenFor(m=>m.Resume)
+                                    @Html.HiddenFor(m => m.Resume)
                                 }
                                 <div class="form-group">
                                     <div class="mandate">
@@ -337,12 +397,12 @@
                                     </div>
                                     @if (Model._listhr != null && Model._listhr.Count() > 0)
                                     {
-                                        @Html.DropDownListFor(m => m.HRCoordinator,Model._listhr, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                        @Html.DropDownListFor(m => m.HRCoordinator, Model._listhr, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
                                     }
                                     else
                                     {
                                         @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
-                                        @Html.ValidationMessageFor(m => m.HRCoordinator,"",new{@class="text-danger"})
+                                        @Html.ValidationMessageFor(m => m.HRCoordinator, "", new { @class = "text-danger" })
                                     }
                                 </div>
                                 <div class="form-group">
@@ -351,14 +411,14 @@
                                     </div>
                                     @if (Model._liststaffing != null && Model._liststaffing.Count() > 0)
                                     {
-                                        @Html.DropDownListFor(m => m.StaffingAgiencies,Model._liststaffing, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                        @Html.DropDownListFor(m => m.StaffingAgiencies, Model._liststaffing, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
                                     }
                                     else
                                     {
                                         @Html.TextBoxFor(m => m.StaffingAgiencies, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
                                     }
                                 </div>
-                           <div class="form-group">
+                                <div class="form-group">
                                     <div class="mandate">
                                         @Html.Label("", "Please checkmark your available infra for the video interview", htmlAttributes: new { @class = "form-label required" })
                                     </div>
@@ -377,21 +437,21 @@
                                         </div>
                                         <div class="input-group">
                                             @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
-                                            @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
+                                            @Html.ValidationMessageFor(m => m.MobileNumber, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 }
                                 else
                                 {
-                                    @Html.HiddenFor(m=>m.MobileNumber)
+                                    @Html.HiddenFor(m => m.MobileNumber)
                                     <div class="input-group" style="display:none">
                                         @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
-                                        @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
+                                        @Html.ValidationMessageFor(m => m.MobileNumber, "", new { @class = "text-danger" })
                                     </div>
                                 }
                                 <div class="clearfix"></div>
 
-                                @Html.HiddenFor(m=> m.MeetingPlatform)
+                                @Html.HiddenFor(m => m.MeetingPlatform)
                                 <div class="form-group">
                                     <input type="submit" value="Schedule Interview" onclick="return checkvalidation();" class="mdc-button mdc-button--raised" />
                                 </div>
@@ -405,6 +465,7 @@
 </div>
 <script src="~/js/InterviewCalender.js"></script>
 <script>
+    var rs = 0;
     $(document).ready(function () {
         setvalues();
     });
@@ -487,6 +548,14 @@
                     data: { day: selectdate, month: (state.todayMonth + 1), year: state.todayYear, id: $("#txthiddenid").val(), offset: offset, TimeZonevalue: timeZonevalue },
                     success: function (data) {
                         bindslots(data);
+                        $.ajax({
+                            type: "POST",
+                            url: "/InterviewScheduler/FetchRecommandedslots",
+                            data: { day: selectdate, month: (state.todayMonth + 1), year: state.todayYear, offset: offset, TimeZonevalue: timeZonevalue, slots: data },
+                            success: function (result) {
+                                bindrecommendedslots(result);
+                            }
+                        });
                     }
                 });
                 flag = true
@@ -504,13 +573,39 @@
         }
     }
     function bindslots(data) {
+        RevertChangeslots();
+        bindrecommendedslots("");
         var html = '';
         html += '<table><tbody>';
         for (var i = 0; i < data.length; i++) {
             html += '<tr><td><input type="hidden" id="txtslotid_' + i + '" value="' + data[i] + '"><button class="button time-btn" onclick="submitDate(' + i + ')"><span>' + data[i] + '</span></button></td></tr>';
+            rs = i;
         }
         html += '</tbody></table>';
         $("#calenderTimeslot").empty().html(html);
+    }
+    function Changeslots() {
+        $("#calenderRecoTimeslot").hide();
+        $("#calenderTimeslot").show();
+    }
+
+    function RevertChangeslots() {
+        $("#calenderRecoTimeslot").show();
+        $("#calenderTimeslot").hide();
+    }
+    function bindrecommendedslots(data) {
+        var html = '';
+        html += '<table><tbody>';
+        if (data.length > 0) {
+            html += '<tr><td><h1 style="font-size:17px;color:green;padding:4px 10px;">Recomended Slots</h1></td><tr>';
+            for (var i = 0; i < data.length; i++) {
+                rs++;
+                html += '<tr><td><input type="hidden" id="txtslotid_' + rs + '" value="' + data[i] + '"><button class="button time-btn" onclick="submitDate(' + rs + ')"><span>' + data[i] + '</span></button></td></tr>';
+            }
+            html += '</tbody></table>'; title = "Detail View"
+            html += '<a class="changeslot" onclick="Changeslots()"><button class="click-arrow" ><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"></path></svg></button> view more</a>';
+        }
+        $("#calenderRecoTimeslot").empty().html(html);
     }
     function submitDate(i) {
         //var offset = (new Date()).getTimezoneOffset();

@@ -126,6 +126,7 @@ namespace Risebird.MicroService
                             candidate.CandidateResumeId = resume.id;
                             candidate.IRFId = resume.IRFId;
                             candidate.AddedByUserId = resume.AddedBy;
+                            candidate.ClientHREmail = resume.ClientHREmailId;
                             candidateList.Add(candidate);
                         }
                         else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again

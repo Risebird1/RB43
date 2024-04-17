@@ -1961,9 +1961,9 @@
 
                 $(this).attr("data-initial-value", selectedValue);
                 $(this).attr("data-initial-text", selectedOptionText);
-
+                var dropdownListModified = document.querySelectorAll('.interviewersDrpDwn');
                 // Remove selected value from other dropdowns
-                dropdowns.forEach(function(otherDropdown) {
+                dropdownListModified.forEach(function(otherDropdown) {
                     if (otherDropdown !== dropdown) {
                         var optionToRemove = otherDropdown.querySelector('option[value="' + selectedValue + '"]');
                         if (optionToRemove) {
@@ -1973,14 +1973,11 @@
                 });
 
                 // Add back the selected value to other dropdowns if not already present
-                dropdowns.forEach(function(otherDropdown) {
+                dropdownListModified.forEach(function(otherDropdown) {
                     if (otherDropdown !== dropdown) {
                         var optionToAddBack = document.createElement('option');
-                        
-                        //var initialValue = this.querySelector('option[selected]');
-                
                         // Add back initial value to other dropdowns
-                        if (initialValue && initialValue !== selectedValue) {
+                        if (initialValue && initialValue != "" && initialValue !== selectedValue) {
                             optionToAddBack.value = initialValue;
                             
                             optionToAddBack.textContent = initialText;

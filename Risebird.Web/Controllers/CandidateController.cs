@@ -53,6 +53,7 @@ namespace Risebird.Web.Controllers
         private readonly IAadhaarService _aadhaarService;
         private readonly IZoomHelper _zoomHelper;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
+        private readonly IInterviewSchedulerService _interviewSchedulerservice;
 
 
         //private static string Searchvalue;
@@ -60,7 +61,7 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor,
-            IAadhaarService aadhaarService, IZoomHelper zoomHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper)
+            IAadhaarService aadhaarService, IZoomHelper zoomHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper, IInterviewSchedulerService interviewSchedulerservice)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -84,6 +85,7 @@ namespace Risebird.Web.Controllers
             _aadhaarService = aadhaarService;
             _zoomHelper = zoomHelper;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
+            _interviewSchedulerservice = interviewSchedulerservice;
         }
 
         [HttpGet]
@@ -3189,7 +3191,7 @@ namespace Risebird.Web.Controllers
                                                     //generate SAS URL from the uploaded video url
                                                     var sas = _sasUrlHelper.CreateSasUrl("resumes");
                                                     sasUrl = uploadedaudioFileURL + "?" + sas;
-                                                    resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                                    resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl, ClientHREmailId = model.ClientHREmailId });
                                                 }
                                             }
                                             else
@@ -3268,6 +3270,7 @@ namespace Risebird.Web.Controllers
                         model.IRFName = irfName;
                         model.IRFId = irfId;
                         model.Profile = profileName;
+                        model.ListHR = new SelectList(await _interviewSchedulerservice.fetchSkillChannelHRDetails(irfName));
 
                         if (TempData["SuccessErrorMessageCandidateResume"] != null)
                         {
@@ -4368,7 +4371,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         var sas = _sasUrlHelper.CreateSasUrl("resumes");
                                         sasUrl = uploadedaudioFileURL + "?" + sas;
-                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl, ClientHREmailId = emailId });
                                     }
                                 }
                                 else
@@ -4419,6 +4422,7 @@ namespace Risebird.Web.Controllers
                 model.IRFName = irfName;
                 model.IRFId = irfId;
                 model.Profile = "Client";
+                //model.ClientHREmailId = emailid;
                 ViewBag.emailid = emailid;
                 ViewBag.id = id;
                 if (TempData["SuccessErrorMessageCandidateResume"] != null)
@@ -4764,18 +4768,18 @@ namespace Risebird.Web.Controllers
                 }).ToList();
                 CandidateDetails.CandidateDetails.IRFId = IRFid;
                 var details = CandidateDetails.Meetings.OrderByDescending(x => x.interviewDate).FirstOrDefault();
-                if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
-                {
-                    CandidateDetails.IsReschedule = true;
-                    if (string.IsNullOrEmpty(CandidateDetails.Uniqueid))
-                    {
-                        string stepfirst = CandidateDetails.CandidateDetails.CalendlyLink.Split("?").LastOrDefault();
-                        var olduniqueid = stepfirst.Split("=").LastOrDefault();
-                        var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateDetails.CandidateDetails.EmailId);
-                        CandidateDetails.Uniqueid = oneTimeSchedulingLink;
-                    }
-                    CandidateDetails.SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + CandidateDetails.Uniqueid;
-                }
+                //if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
+                //{
+                //    CandidateDetails.IsReschedule = true;
+                //    if (string.IsNullOrEmpty(CandidateDetails.Uniqueid))
+                //    {
+                //        string stepfirst = CandidateDetails.CandidateDetails.CalendlyLink.Split("?").LastOrDefault();
+                //        var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                //        var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateDetails.CandidateDetails.EmailId);
+                //        CandidateDetails.Uniqueid = oneTimeSchedulingLink;
+                //    }
+                //    CandidateDetails.SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + CandidateDetails.Uniqueid;
+                //}
                 //Start: InterviewMeeting Timer
                 var time = details.interviewDate.AddMinutes(-15);
                 var currentTime = DateTime.UtcNow;
