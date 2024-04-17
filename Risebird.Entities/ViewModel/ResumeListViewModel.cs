@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,6 +20,11 @@ namespace Risebird.Entities.ViewModel
         //public UploadCandidateResumesViewModel UploadResumeModel { get; set; }
         [Display(Name = "Upload Resume(s)")]
         public List<IFormFile> ResumeFiles { get; set; }
+        public SelectList ListHR { get; set; }
+
+        [Display(Name = "Client HR")]
+        public string ClientHREmailId { get; set; }
+
 
     }
 }

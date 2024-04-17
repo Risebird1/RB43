@@ -14,5 +14,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Upload Resume(s)")]
         public List<IFormFile> ResumeFiles { get; set; }
+        public string ClientHREmailId { get; set; }
+
     }
 }
