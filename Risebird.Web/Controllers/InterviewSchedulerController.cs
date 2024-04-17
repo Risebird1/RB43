@@ -10,6 +10,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -398,6 +399,11 @@ namespace Risebird.Web.Controllers
                         if (_interviewdetails.Any(x => x.interviewtype.Contains("FutureScheduled")))
                         {
                             ModelState.AddModelError(string.Empty, "An interview has already been scheduled for you on " + _interviewdetails.Where(x => x.interviewtype.Contains("FutureScheduled")).Select(x => x.interviewDate).FirstOrDefault() + ". Please contact the admin for further information.");
+                            return View(model);
+                        }
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("ColdCandidate")))
+                        {
+                            ModelState.AddModelError(string.Empty, "Your Emailid is marked cold. Please contact the admin for further information.");
                             return View(model);
                         }
                     }
@@ -1072,6 +1078,11 @@ namespace Risebird.Web.Controllers
                             ModelState.AddModelError(string.Empty, "An interview has already been completed for you on" + _interviewdetails.Where(x => x.interviewtype.Contains("PastComplete")).Select(x => x.interviewDate).FirstOrDefault() + ". Please contact the admin for further information.");
                             return View(model);
                         }
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("ColdCandidate")))
+                        {
+                            ModelState.AddModelError(string.Empty, "Your Emailid is marked cold. Please contact the admin for further information.");
+                            return View(model);
+                        }
                     }
                 }
                 string interviewOnDevice = string.Empty;
@@ -1256,7 +1267,7 @@ namespace Risebird.Web.Controllers
             }
         }
         #region Candidate Schedule Event With Pre filled details
-        public async Task<IActionResult> CandidateScheduleEvent(string id, string CandidateEmail)
+        public async Task<IActionResult> CandidateScheduleEvent(string id, string CandidateEmail, int returnvaluetype, string type, int interviewid)
         {
             var model = new ScheculeInterview();
             model.Checkbox1 = true;
@@ -1355,6 +1366,12 @@ namespace Risebird.Web.Controllers
                 model.TimeZonesList = items;
                 ViewBag.Start = 3;
             }
+            if (type == "314915")//314915: candidate
+            {
+                model.interviewid = interviewid;
+                model.returnvaluetype = returnvaluetype;
+                return View("ReScheduleEvent", model);
+            }
             return View(model);
         }
         [HttpPost]
@@ -1399,6 +1416,11 @@ namespace Risebird.Web.Controllers
                         if (_interviewdetails.Any(x => x.interviewtype.Contains("FutureScheduled")))
                         {
                             ModelState.AddModelError(string.Empty, "An interview has already been scheduled for you on " + _interviewdetails.Where(x => x.interviewtype.Contains("FutureScheduled")).Select(x => x.interviewDate).FirstOrDefault() + ". Please contact the admin for further information.");
+                            return View(model);
+                        }
+                        if (_interviewdetails.Any(x => x.interviewtype.Contains("ColdCandidate")))
+                        {
+                            ModelState.AddModelError(string.Empty, "Your Emailid is marked cold. Please contact the admin for further information.");
                             return View(model);
                         }
                     }
@@ -1680,6 +1702,42 @@ namespace Risebird.Web.Controllers
             zoomlink.accountemail = accountEmail;
             var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;
+        }
+        #endregion
+        #region Candidate Reschedule Link
+        /// <summary>
+        /// GenerateRescheuleLink
+        /// </summary>
+        /// <param name="CandidateEmailid"></param>
+        /// <param name="uniqueid"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> GenerateCandidatescheuleLink(string CandidateEmailid, string uniqueid, int interviewid, int schedulertype)
+        {
+            if (!string.IsNullOrEmpty(uniqueid))
+            {
+                var SchedulingLink = string.Empty;
+                if (schedulertype == 2)
+                {
+                    SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/CandidateScheduleEvent?id=" + uniqueid + "&CandidateEmail=" + CandidateEmailid;
+                }
+                else
+                {
+                    var oneTimeSchedulingLink = await _interviewSchedulerservice.GenerateOneTimeEvent(uniqueid, CandidateEmailid);
+                    if (schedulertype == 1)
+                    {
+                        //schedule interview then cancel the other interview
+                        SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + CandidateEmailid + "&returnvaluetype=" + 2 + "&interviewid=" + interviewid + "&type=" + 314915;
+                    }
+                    else
+                    {
+                        //Only schedule interview
+                        SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + CandidateEmailid;
+                    }
+                }
+                return Json(SchedulingLink);
+            }
+            return Json("");
         }
         #endregion
     }
