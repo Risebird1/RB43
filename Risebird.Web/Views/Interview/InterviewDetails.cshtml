@@ -576,7 +576,7 @@
             <fieldset class="answer hidden" id="hidden_fields_ten">
                 <div class="answer-label"></div>
                 <div id="divcodesnippets">
-                    <iframe src="https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt" frameborder="0"></iframe>
+                    @* <iframe src="https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt" frameborder="0"></iframe> *@
                 </div>
             </fieldset>
         </div>
@@ -921,13 +921,13 @@
                 openPopupDetailsModal();
                 $('#divpopupModel').html('');
                 $('#divpopupModel').html(data);
-                FetchCodesnippet();
             }
         });
     }
     function FetchCodesnippet() {
         var interviewid = $("#hidinterviewid").val();
         $.ajax({
+            type: "POST",
             url: '/IRF/GetCodeSnippet',
             data: { interviewid: interviewid },
             success: function (data) {

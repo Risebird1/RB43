@@ -9400,8 +9400,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> GetCodeSnippet(int interviewid)
         {
-            //var result = await _irfService.GetConsentFile(interviewid);
-            var result = "https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt";
+            var result = await _irfService.GetCodeSnippetFile(interviewid);
             return Json(result);
         }
         #endregion
