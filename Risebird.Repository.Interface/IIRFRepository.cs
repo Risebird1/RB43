@@ -244,5 +244,6 @@ namespace Risebird.Repository.Interface
 
         Task<bool> UpdateConsentFile(int irfid, string uploadedFileURL);
         Task<string> GetConsentFile(int irfid);
+        Task<IEnumerable<IRF>> GetDayStatsByClientUser(DateTime startDate, DateTime endDate, string emailid);
     }
 }
