@@ -9546,6 +9546,25 @@ option {
 .default-open .collapsible-panel .fas {
     right: -12px;
 }
+.footer-nav {
+    position: fixed;
+    z-index: 99999;
+    bottom: 0;
+    display: none;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    font-weight: normal;
+    color: #fff;
+    text-align: center;
+    left: 80px;
+    cursor: pointer;
+}
+
+    .show, .footer-nav:hover {
+        display: block;
+    }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -10574,6 +10593,9 @@ option {
                 color: #cb2c2c;
                 text-align: left !important;
             }
+        .footer-nav {
+            left: 0px!important;
+        }
         .meeting-link {
             font-size: 16px;
         }
@@ -10932,6 +10954,9 @@ option {
     #clientduser li {
         width: 100%;
         float: left;
+    }
+    .footer-nav {
+        left: 0px !important;
     }
     .mob-ht {
         margin-bottom: 0px!important;
@@ -11520,6 +11545,7 @@ option {
     .time-txt {
         font-size: 13px;
     }
+
 }
 
 @media only screen and (max-width: 480px) {
@@ -11531,7 +11557,9 @@ option {
         top: -12px !important;
         right: 200px!important;
     }
-
+    .footer-nav .button-wrapper h2 {
+        font-size: 19px !important;
+    }
     .consent-label{
    width:80%!important;
     }
@@ -11984,7 +12012,9 @@ option {
         top: 4px !important;
         left: 10px !important;
     }
-
+    .footer-nav .button-wrapper h2{
+        font-size:15px!important;
+    }
     .right-div {
         float: right;
         width: 100%;
