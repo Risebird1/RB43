@@ -9397,6 +9397,13 @@ namespace Risebird.Web.Controllers
                 return Json("");
             }
         }
+        [HttpPost]
+        public async Task<JsonResult> GetCodeSnippet(int interviewid)
+        {
+            var result = await _irfService.GetConsentFile(interviewid);
+            result = "https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt";
+            return Json(result);
+        }
         #endregion
     }
 }

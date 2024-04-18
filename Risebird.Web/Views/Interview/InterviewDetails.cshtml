@@ -16,6 +16,7 @@
 </script>
 
 <input type="hidden" value="@ViewBag.id" id="id" />
+<input type="hidden" value="@ViewBag.InterviewId" id="hidinterviewid" />
 
 <div class="interviewWrapper">
 
@@ -917,6 +918,16 @@
                 openPopupDetailsModal();
                 $('#divpopupModel').html('');
                 $('#divpopupModel').html(data);
+            }
+        });
+    }
+    function FetchCodesnippet() {
+        var interviewid = $("#hidinterviewid").val();
+        $.ajax({
+            url: '/IRF/GetCodeSnippet',
+            data: { interviewid: interviewid },
+            success: function (data) {
+
             }
         });
     }
