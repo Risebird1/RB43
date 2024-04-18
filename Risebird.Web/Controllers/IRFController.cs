@@ -9377,13 +9377,14 @@ namespace Risebird.Web.Controllers
                 var model = Request.Form.Files[0];
                 string outputFileName = model.FileName.Replace(" ", "_");
                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
-                if (fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                FileInfo fi = new FileInfo(outputFileName);
+                if (fi.Extension.ToLower() == ".txt")
                 {
-                    await _azureStorageHelper.InsertBlob(outputFileName, "consentforms", model);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("consentforms");
+                    await _azureStorageHelper.InsertResumeBlob(outputFileName, "codesnippet", model, fi.Extension.ToLower());
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("codesnippet");
                     var blob = containerRef.GetBlockBlobReference(outputFileName);
                     uploadedFileURL = blob.Uri.ToString();
-                    var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL,null);
+                    var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL, null);
                     return Json("Upload completed successfully.");
                 }
                 else
