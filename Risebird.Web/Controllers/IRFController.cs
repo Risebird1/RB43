@@ -9347,29 +9347,54 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> InterviewCodeSnippet(int id, int irfid)
         {
-            if (HttpContext.Session.GetString("email") != null)
-            {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                TechSkillComments model = new TechSkillComments();
-                var skills = await _irfService.GetTechSkills(irfid);
-                ViewBag.Skills = new SelectList(skills, "id", "Name");
-                model.IRFId = irfid;
-                model.Profile = profileName;
-                model.CreatedBy = emailid;
-                return PartialView(model);
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName?.Replace("\"", "");
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid?.Replace("\"", "");
+            TechSkillComments model = new TechSkillComments();
+            var skills = await _irfService.GetTechSkills(irfid);
+            ViewBag.Skills = new SelectList(skills, "id", "Name");
+            model.IRFId = irfid;
+            model.interviewid = id;
+            model.Profile = profileName;
+            model.CreatedBy = emailid;
+            return PartialView(model);
         }
         [HttpPost]
         public async Task<IActionResult> InterviewCodeSnippet(TechSkillComments model)
         {
             return View();
+        }
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadInterviewCodeSnippet()
+        {
+            if (Request.Form.Files.Count() > 0)
+            {
+                var interviewid = Convert.ToInt32(Request.Form["interviewid"].ToString());
+                string uploadedFileURL = string.Empty;
+                var model = Request.Form.Files[0];
+                string outputFileName = model.FileName.Replace(" ", "_");
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
+                if (fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                {
+                    await _azureStorageHelper.InsertBlob(outputFileName, "consentforms", model);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("consentforms");
+                    var blob = containerRef.GetBlockBlobReference(outputFileName);
+                    uploadedFileURL = blob.Uri.ToString();
+                    var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL,null);
+                    return Json("Upload completed successfully.");
+                }
+                else
+                {
+                    return Json("Only Text file is allowed.");
+                }
+            }
+            else
+            {
+                return Json("");
+            }
         }
         #endregion
     }
