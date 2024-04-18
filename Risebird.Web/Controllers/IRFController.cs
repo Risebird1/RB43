@@ -8,6 +8,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using Org.BouncyCastle.Asn1;
 using RestSharp;
+using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -17,6 +18,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -9315,11 +9317,13 @@ namespace Risebird.Web.Controllers
                 var irfid = Convert.ToInt32(Request.Form["irfid"].ToString());
                 string uploadedFileURL = string.Empty;
                 var model = Request.Form.Files[0];
-                string outputFileName = model.FileName.Replace(" ", "_");
+                string outputFileName = model.FileName.Replace(" ", "").Replace("+", "").Replace("_", "");
                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
+                FileInfo fi = new FileInfo(outputFileName);
                 if (fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                 {
-                    await _azureStorageHelper.InsertBlob(outputFileName, "consentforms", model);
+                    //await _azureStorageHelper.InsertBlob(outputFileName, "consentforms", model);
+                    await _azureStorageHelper.InsertResumeBlob(outputFileName, "consentforms", model, fi.Extension);
                     var containerRef = _azureStorageHelper.GetCloudBlobContainer("consentforms");
                     var blob = containerRef.GetBlockBlobReference(outputFileName);
                     uploadedFileURL = blob.Uri.ToString();
@@ -9341,6 +9345,55 @@ namespace Risebird.Web.Controllers
         {
             var result = await _irfService.GetConsentFile(irfid);
             return Json(result);
+        }
+        #endregion
+
+        #region Day Stats
+        public async Task<IActionResult> DateChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            ViewBag.IsClientLogin = isClientLogin;
+            var profileName = "Client";
+            ViewBag.profile = profileName;
+            ViewBag.PageStatus = "Public";
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            var startdate = DateTime.Now.AddDays(-7);
+            var enddate = DateTime.Now.AddDays(1);
+            if (HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    startdate = filter.StartDate.Value;
+                    enddate = filter.EndDate.Value;
+                }
+            }
+            var DayinterviewList = (await _irfService.GetDayStatsByClientUser(startdate, enddate, emailid))?.ToList();
+            return View(DayinterviewList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> DateChannelDetails(SkillChannelDetailsFilter filter, string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            if (filter != null)
+            {
+                HttpContext.Session.SetString("SkillChannelDetailsFilters", JsonConvert.SerializeObject(filter));
+            }
+            return RedirectToAction("DateChannelDetails", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetDateChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            try
+            {
+                HttpContext.Session.Remove("SkillChannelDetailsFilters");
+                return RedirectToAction("DateChannelDetails", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
         #endregion
         #region Code Snippet

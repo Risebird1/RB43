@@ -66,7 +66,10 @@
             </label>
 
             <fieldset class="answer hidden" id="hidden_fields_eight">
-                <div id="CandidateDetails"><a target="_blank" href="@Model.ConsentFormUrl"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>
+                @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
+                {
+                    <div id="CandidateDetails"><a target="_blank" href="@Model.ConsentFormUrl"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>
+                }
             </fieldset>
 
         </div>

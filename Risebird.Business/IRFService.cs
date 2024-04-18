@@ -3929,6 +3929,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<IRF>> GetDayStatsByClientUser(DateTime startDate, DateTime endDate, string emailid)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetDayStatsByClientUser(startDate, endDate, emailid);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<string> GetCodeSnippetFile(int interviewid)
         {
             try
