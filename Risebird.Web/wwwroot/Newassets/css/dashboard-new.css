@@ -9532,7 +9532,14 @@ option {
     text-transform:capitalize!important;
  
 }
-
+#divcodesnippets iframe {
+    display: block;
+    margin: 20px auto;
+    width: 800px;
+    height: 300px;
+    background: #fff;
+    padding: 10px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
