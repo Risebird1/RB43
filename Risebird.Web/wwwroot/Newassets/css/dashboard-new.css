@@ -9540,6 +9540,12 @@ option {
     background: #fff;
     padding: 10px;
 }
+.show-default{
+    display:block!important;
+}
+.default-open .collapsible-panel .fas {
+    right: -12px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

@@ -292,6 +292,11 @@
                                                                                                     <a class="upload-resume-btn" onclick="UploadOrConvertIntoCodedInterviewerResume(this.id, @Model.InterviewerCollection[i].UserId,@Model.id,'@Model.InterviewerCollection[i].EmailId', '@Model.InterviewerCollection[i].ResumeLink')" id=@("InterviewerCollection_" + i + "__ResumeLink")>Convert Resume(Into Coded)</a>
                                                                                                 </td>
                                                                                             }
+                                                                                            else
+                                                                                            {
+                                                                                                <td></td>
+                                                                                            }
+
 
                                                                                         }
                                                                                         else
@@ -300,6 +305,8 @@
                                                                                                 <a id=@("InterviewerCollection_" + i + "__ResumeLink")>No Resume</a>
                                                                                             </td>
                                                                                         }
+
+                                                                               
                                                                                     }
                                                                                     <td>
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })

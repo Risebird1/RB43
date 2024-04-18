@@ -98,7 +98,7 @@
     <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
 
-            <label class="question" for="checkbox_three">
+            <label class="question default-open" for="checkbox_three">
                 <label for="checkbox_three">
                     <i class="fa fa-file-audio-o" aria-hidden="true"></i>
                     Audio Instruction
@@ -108,15 +108,15 @@
                     <label style="visibility:hidden" for="checkbox_three"></label>
 
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" checked />
                     <label for="hidden_fields_three_1"></label>
-                    <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
 
                     <span id="hidden_fields_three_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                 </span>
             </label>
 
-            <fieldset class="answer hidden" id="hidden_fields_three">
+            <fieldset class="answer hidden show-default" id="hidden_fields_three">
                 <audio controls><source src="@Model.AudioComment">Recording</audio>
                 @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                 {
@@ -215,7 +215,7 @@
 
     <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_five">
+            <label class="question default-open" for="checkbox_five">
                 <label for="checkbox_five">
                     <i class="fa fa-signal" aria-hidden="true"></i>
 
@@ -226,16 +226,16 @@
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
                     <label style="visibility:hidden" for="checkbox_five"></label>
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" checked />
                     <label for="hidden_fields_five_1"></label>
-                    <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-
+              @*      <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>*@
+              <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
                     <span id="hidden_fields_five_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
 
                 </span>
             </label>
 
-            <fieldset class="answer hidden" id="hidden_fields_five">
+            <fieldset class="answer hidden  show-default" id="hidden_fields_five">
                 <div class="answer-label">
                     <div class="col-md-7 pull-left">
                         <span class="heading pull-left">Seniority</span>
@@ -263,7 +263,7 @@
 
     <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_four">
+            <label class="question default-open" for="checkbox_four">
                 <label for="checkbox_four">
                     <i class="fa fa-link" aria-hidden="true"></i>
                     JOB DESCRIPTION LINK
@@ -273,15 +273,15 @@
                     <label style="visibility:hidden" for="checkbox_four"></label>
 
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" checked />
                     <label for="hidden_fields_four_1"></label>
 
-                    <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
                     <span id="hidden_fields_four_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                 </span>
             </label>
 
-            <fieldset class="answer hidden" id="hidden_fields_four">
+            <fieldset class="answer hidden show-default" id="hidden_fields_four">
 
                 <div id="CandidateDetails"><a target="_blank" href="@Model.JDLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> JDLink</span></a></div>
 
@@ -295,7 +295,7 @@
 
     <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_six">
+            <label class="question default-open" for="checkbox_six">
                 <label for="checkbox_six">
                     <i class="fa fa-file-text-o" aria-hidden="true"></i>
                     Format
@@ -303,13 +303,13 @@
                 <span class="round">
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
                     <label style="visibility:hidden" for="checkbox_six"></label>
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_six_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_six_1" name="Checkshow" checked />
                     <label for="hidden_fields_six_1"></label>
-                    <span id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
                     <span id="hidden_fields_six_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                 </span>
             </label>
-            <fieldset class="format answer hidden" id="hidden_fields_six">
+            <fieldset class="format answer hidden show-default" id="hidden_fields_six">
                 <div class="answer-label" style="float: left;    width: auto;">
                     <span class="heading pull-left">
                         <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" disabled />
@@ -378,7 +378,7 @@
 
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
         <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_seven">
+            <label class="question default-open" for="checkbox_seven">
                 <label for="checkbox_seven" style="color:#de3535">
                     <svg style="color: #898484;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 512 512"><title>ionicons-v5-a</title><path d="M448,256c0-106-86-192-192-192S64,150,64,256s86,192,192,192S448,362,448,256Z" style="fill:none;stroke: #de3535;stroke-miterlimit:10;stroke-width:32px" fill="grey"></path><path d="M250.26,166.05,256,288l5.73-121.95a5.74,5.74,0,0,0-5.79-6h0A5.74,5.74,0,0,0,250.26,166.05Z" style="fill:none;stroke: #de3535;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px" fill="red"></path><path d="M256,367.91a20,20,0,1,1,20-20A20,20,0,0,1,256,367.91Z" fill="#de3535"></path></svg>
                     Candidate Proxy Alert <span style="font-size:14px; text-transform:capitalize; font-weight:normal;color: #a29c9c;"></span>
@@ -387,14 +387,14 @@
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
                     <label style="visibility:hidden" for="checkbox_seven"></label>
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" checked/>
                     <label for="hidden_fields_seven_1"></label>
 
-                    <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
                     <span id="hidden_fields_seven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                 </span>
             </label>
-            <fieldset class="format answer hidden" id="hidden_fields_seven">
+            <fieldset class="format answer hidden show-default" id="hidden_fields_seven">
                 @*  <div style="width:100%;float:left;"> <label style="font-size:14px;"> Eyes Movement</label> </div>
                 <div class="answer-label" style="float: left;width:auto; ">
                 <span class="heading pull-left">
