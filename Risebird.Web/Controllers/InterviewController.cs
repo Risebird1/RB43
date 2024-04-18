@@ -5504,7 +5504,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                bool isInterviewer = false;
+                //bool isInterviewer = false;
                 ViewBag.IRFID = irfId;
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 if (model != null)
@@ -5519,22 +5519,27 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.IsClient = isClient;
                     ViewBag.IsClientSelected = isClientSelected;
-                    model.IsInterviewer = isInterviewer;
-                    model.PreviousMeetingStatus = model.MeetingStatus;
-                    model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                    //model.IsInterviewer = isInterviewer;
+                    //model.PreviousMeetingStatus = model.MeetingStatus;
+                    //model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                     await GetStatusList(model, irfId, 0);
-                    var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
-                    var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
-                    if (menus != null)
-                    {
-                        menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
-                        HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
-                    }
+                    //var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                    //var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    //if (menus != null)
+                    //{
+                    //    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                    //    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                    //}
                     ViewBag.PageStatus = "PublicExternal";
-                    ViewBag.PageReport = "";
+                    //ViewBag.PageReport = "";
+                    ViewBag.PageReport = "PublicExternal";
                     if (model.IsProctor)
                     {
                         return View("ProctorReport", model);
+                    }
+                    else if(isClient)
+                    {
+                        return View("ClientReport", model);
                     }
                     else
                     {

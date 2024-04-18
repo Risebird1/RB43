@@ -38,6 +38,11 @@
     .readmore {
         height: auto !important;
     }
+
+    input[type=number]::-webkit-inner-spin-button {
+        opacity: 1
+    
+}
 </style>
 
 @if (ViewBag.PageStatus == "Public")
@@ -101,7 +106,7 @@
             @*<span class="discretion"><strong style="font-size:15px;">Report discretion:</strong> Till the time QC is passed, Risebird can not ensure that all quality standards are met on this report. Use this report at your own discretion.</span>*@
         </div>
         <div class="col-md-12 nopad" style="margin:0px;">
-            <div class="card-header bg-w clearfix">
+            <div class="card-header bg-w clearfix" style="height:50px;">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title"> Interview Report</h4></div>
@@ -330,9 +335,18 @@
                                                         }
                                                     }
                                                 </div>
-                                                <p class="note-skill">
+                                                <div style="margin-top:15px">
+                                                <div>
+
+                                                    <img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Communication Score:</div>
+                                                  <div>  <label for="score" class="pull-left" style="line-height:5px;">Score must be (between 1 and 10):</label>
+                                                       <div class="communication-count pull-left">  @Model.CommunicationalProficiency /10</div>
+
+                                               </div>
+                                                </div>
+                                                <div class="note-skill">
                                                     <b> Note:</b> % score for every skill represents difference between candidate actual and required competency. 
-                                                </p>
+                                                </div>
 
                                             </div>
 

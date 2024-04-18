@@ -1343,6 +1343,7 @@ namespace Risebird.Repository
                     parameters.Add("@VideoDuration", reportDetails.VideoDuration);
                     parameters.Add("@PerformedBy", loggedInEmailId);
                     parameters.Add("@PerformedAt", DateTime.Now);
+                    parameters.Add("@CommunicationalProficiency", reportDetails.CommunicationalProficiency);
 
                     DynamicParameters parametersPoints = new DynamicParameters();
 
