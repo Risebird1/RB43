@@ -358,8 +358,7 @@ namespace Risebird.Entities.ViewModel
         public string ColdMarkedBY { get; set;}
         public DateTime? ColdMarkedDate { get; set;}
         public DateTime? RescheduleDate { get; set;}
-       
-
+        public int CommunicationalProficiency { get; set; }
     }
 
     public class VedioComments

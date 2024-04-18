@@ -210,7 +210,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<Interviewer>(
-                        con, $"select intp.UserId, intp.ResumeLink, PrimarySkill = STUFF((SELECT distinct  ', ' + Name FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b WHERE b.InterviewerProfileId = intp.Id FOR XML PATH('')), 1, 1, '') FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1 and intp.UserId= {userId}", null, commandType: Text)?.FirstOrDefault();
+                        con, $"select intp.UserId, intp.ResumeLink, intp.CompanyName, PrimarySkill = STUFF((SELECT distinct  ', ' + Name FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b WHERE b.InterviewerProfileId = intp.Id FOR XML PATH('')), 1, 1, '') FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1 and intp.UserId= {userId}", null, commandType: Text)?.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
@@ -8488,6 +8488,31 @@ namespace Risebird.Repository
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_GetConsentForm", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
                     return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<IRF>> GetDayStatsByClientUser(DateTime startDate, DateTime endDate, string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@emailid", emailid);
+                    return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetDayStatsByClientUser", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
                 }
             }
             catch (SqlException ex)

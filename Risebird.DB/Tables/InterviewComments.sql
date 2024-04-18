@@ -48,6 +48,7 @@ CREATE TABLE [dbo].[InterviewComments](
     [AudioTranscriptFileLink][varchar](2500) NULL,
     [ReportAccepted][bit],
     [ReportAcceptedBy][varchar](200) NULL,
+    [CommunicationalProficiency][int]NULL,
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
  CONSTRAINT [PK_InterviewComments] PRIMARY KEY CLUSTERED 
@@ -255,6 +256,16 @@ IF NOT EXISTS(
 BEGIN
 	ALTER TABLE InterviewComments
 	Add ReportAcceptedBy varchar(200)
+END
+
+IF NOT EXISTS(
+	SELECT *
+	FROM sys.columns
+	WHERE Name IN (N'CommunicationalProficiency')
+		AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+	ALTER TABLE InterviewComments
+	Add CommunicationalProficiency int
 END
 
 End

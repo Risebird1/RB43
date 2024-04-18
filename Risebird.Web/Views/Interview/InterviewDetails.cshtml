@@ -74,7 +74,10 @@
             </label>
 
             <fieldset class="answer hidden" id="hidden_fields_eight">
-                <div id="CandidateDetails"><a target="_blank" href="@Model.ConsentFormUrl"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>
+                @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
+                {
+                    <div id="CandidateDetails"><a target="_blank" href="@Model.ConsentFormUrl"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>
+                }
             </fieldset>
 
         </div>
@@ -102,7 +105,7 @@
             </fieldset>
         </div>
     </div>
-    
+
     <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
 
@@ -219,9 +222,9 @@
             </fieldset>
 
         </div>
-        </div>
+    </div>
 
-          <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question" for="checkbox_five">
                 <label for="checkbox_five">
@@ -267,9 +270,9 @@
                 </div>
             </fieldset>
         </div>
-        </div>
+    </div>
 
-         <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question" for="checkbox_four">
                 <label for="checkbox_four">
@@ -300,8 +303,8 @@
 
 
 
-  
-            <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+
+    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question" for="checkbox_six">
                 <label for="checkbox_six">
@@ -567,7 +570,7 @@
     </div>
 
 
-    
+
     <div class="button-wrapper" style="margin-bottom:20px;">
         <h2 class="text-center pad10 pull-left" style="color:#a3a1a1;font-weight:bold;margin-bottom:20px;">Click here to join the meeting</h2>
         @if (Model.zoomLink != null && Model.zoomLink != "")

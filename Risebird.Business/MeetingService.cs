@@ -1248,6 +1248,7 @@ namespace Risebird.Business
                 reportModel.IRFInterviewerActive = interviewDetails.IRFInterviewerActive;
                 reportModel.QOSData = (await _meetingRespository.GetZoomQOSDataByMeetingId(interviewId))?.ToList();
                 reportModel.ClientId = interviewDetails.ClientId;
+                reportModel.CommunicationalProficiency = interviewDetails.CommunicationalProficiency;
                 return reportModel;
             }
             catch (Exception e)

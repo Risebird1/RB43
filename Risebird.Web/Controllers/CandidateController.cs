@@ -2709,18 +2709,18 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:P1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:P1"].Style.Font.Size = 12;
                 Sheet.Cells["A1:P1"].Style.WrapText = true;
-                int startColumn = 1; int endColumn = 6;
+                int startColumn = 1; int endColumn = 8;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
-                    Sheet.Column(a).Width = 35;
+                    Sheet.Column(a).Width = 40;
                 }
                 Sheet.Cells[1, 1].Value = "Name";
-                Sheet.Cells[1, 2].Value = "EmailId";
-                Sheet.Cells[1, 3].Value = "Resume Link";
-                Sheet.Cells[1, 4].Value = "Phone(With Country code)";
-                Sheet.Cells[1, 5].Value = "WhatsApp Number(Without Country code)";
-                Sheet.Cells[1, 6].Value = "Client HR Email ID";
-                Sheet.Cells[1, 7].Value = "Staffing Agency Email ID";
+                Sheet.Cells[1, 2].Value = "Candidate EmailId";
+                Sheet.Cells[1, 3].Value = "Resume Link - open access weblink";
+                Sheet.Cells[1, 4].Value = "Phone(With Country code) 918105232345";
+                //Sheet.Cells[1, 5].Value = "WhatsApp Number(Without Country code)";
+                Sheet.Cells[1, 5].Value = "Client HR Email ID";
+                Sheet.Cells[1, 6].Value = "Staffing Agency Email ID";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception)
@@ -2802,15 +2802,16 @@ namespace Risebird.Web.Controllers
                                                         Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true)
                                               ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString())
                                               : string.Empty,
-                                                        WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
-                                              ? workSheet.Cells[rowIterator, 5].Value.ToString()
-                                              : string.Empty,
+                                              //          WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
+                                              //? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                              //: string.Empty,
+                                                        WhatsappNumber = string.Empty,
                                                         //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
                                                         //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
                                                         //    : string.Empty,
-                                                        ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
+                                                        ClientHREmail = workSheet.Cells[rowIterator, 5].Value.ToString().ToLower(),
 
-                                                        ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
+                                                        ProfileSource = workSheet.Cells[rowIterator, 6].Value != null ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
                                                         IRFId = IRFId
 
                                                     };
@@ -2822,7 +2823,7 @@ namespace Risebird.Web.Controllers
                                                 catch (Exception ex)
                                                 {
                                                     if (workSheet.Cells[rowIterator, 2] == null || workSheet.Cells[rowIterator, 2].Value == null
-                                                        || workSheet.Cells[rowIterator, 6] == null || workSheet.Cells[rowIterator, 6].Value == null)
+                                                        || workSheet.Cells[rowIterator, 5] == null || workSheet.Cells[rowIterator, 5].Value == null)
                                                     {
                                                         result.Append("Failed! Candidate EmailId and Client HR EmailId are mandatory. Please check for the missing entries.");
                                                     }
