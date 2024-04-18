@@ -365,6 +365,7 @@ app.UseCsp(builder =>
     builder.Frame
            .AllowSelf()
            .Allow("https://wchat.freshchat.com/")
+           .Allow("https://risebirdportal.blob.core.windows.net/")
            .Allow("https://calendly.com/")
            .Allow("https://cdn.tiny.cloud/1/no-api-key/")
            .Allow("https://app.shuftipro.com/")

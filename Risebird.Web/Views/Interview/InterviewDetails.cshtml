@@ -575,7 +575,9 @@
 
             <fieldset class="answer hidden" id="hidden_fields_ten">
                 <div class="answer-label"></div>
-                <div id="divcodesnippets"></div>
+                <div id="divcodesnippets">
+                    <iframe src="https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt"></iframe>
+                </div>
             </fieldset>
         </div>
     </div>
@@ -865,6 +867,7 @@
     $(document).ready(function () {
         GetquestionList();
         InsightsDetails('@Model.interviewer', '@Model.IRFID');
+        FetchCodesnippet();
     });
     function GetquestionList() {
         $.ajax({
@@ -918,6 +921,7 @@
                 openPopupDetailsModal();
                 $('#divpopupModel').html('');
                 $('#divpopupModel').html(data);
+                FetchCodesnippet();
             }
         });
     }
@@ -927,8 +931,15 @@
             url: '/IRF/GetCodeSnippet',
             data: { interviewid: interviewid },
             success: function (data) {
-
+                BindCodeSnippet(data);
             }
         });
+    }
+    function BindCodeSnippet(data) {
+        var html = '';
+        if (data != null) {
+            html += '<iframe src="' + data + '"></iframe>';
+        }
+        $("#divcodesnippets").empty().html(html);
     }
 </script>
