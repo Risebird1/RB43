@@ -1283,6 +1283,7 @@ namespace Risebird.Web.Controllers
                     }
 
                     model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
+                    model.ClonableTemplates = model.ClonableTemplates.Where(x => !x.IsDeleted);
 
                     if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
                     {
