@@ -688,7 +688,9 @@ table tr td.relatedvideo:hover {
     width: 15px;
     height: 15px;
 }
-
+.mdc-radio .mdc-radio__background::before{
+    background:none!important;
+}
 .curated-score .table-responsive-sm .table > tbody > tr > td:last-child {
     padding: 12px 5px !important;
     border: 0px !important;
@@ -6663,6 +6665,15 @@ input[type=search]:focus {
 }
 #PopupConsentModal .modal-lg {
     max-width: 740px !important;
+}
+#QuestionsNewTable thead > tr > th {
+    padding: 3px 5px;
+    background: #d2d0d0;
+}
+
+#QuestionsNewTable thead > tr > td {
+    padding: 3px 5px;
+    background: #d2d0d0;
 }
 /***** Media queries *****/
 .copy-btn {
