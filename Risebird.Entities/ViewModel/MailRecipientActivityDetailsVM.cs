@@ -33,7 +33,7 @@ namespace Risebird.Entities.ViewModel
         public string CalendlyLink { get; set; }
         public string CandidateClientHR { get; set; }
         public DateTime EndDate { get; set; }
-       // public bool IsActive { get; set; }
+        // public bool IsActive { get; set; }
         public string IsAvailable { get; set; }
         public string CampaignName { get; set; }
     }

@@ -1665,20 +1665,20 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email,int InterviewId)
+        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email, int InterviewId)
         {
             try
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@FKCandidateId", CandidateId);
-                dynamicParam.Add("@ColdMarkedBY",Email);
-                dynamicParam.Add("@ColdMarkedDate",DateTime.Now);
+                dynamicParam.Add("@ColdMarkedBY", Email);
+                dynamicParam.Add("@ColdMarkedDate", DateTime.Now);
                 dynamicParam.Add("@InterviewId", InterviewId);
 
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
-                  var result=  await SqlMapper.QueryAsync(conChange, "Usp_ColdCandidateMarked", dynamicParam,
-                       commandType: CommandType.StoredProcedure);
+                    var result = await SqlMapper.QueryAsync(conChange, "Usp_ColdCandidateMarked", dynamicParam,
+                         commandType: CommandType.StoredProcedure);
                     return true;
 
                 }

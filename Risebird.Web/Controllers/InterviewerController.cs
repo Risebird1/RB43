@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
@@ -4011,7 +4010,7 @@ namespace Risebird.Web.Controllers
             var result = await _interviewerService.GetReliabilityScoreDetails(interviewer, IrfId);
             return PartialView(result);
         }
-        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type,string Irfid)
+        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type, string Irfid)
         {
             ViewBag.Type = type;
             var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer, type, Irfid);

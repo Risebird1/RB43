@@ -78,6 +78,7 @@ SELECT [InterviewMeetings].id as imid
   ,AudioTranscriptFileLink
   ,ti.IsActive as IRFInterviewerActive
   ,cl.id as ClientId
+  ,InterviewComments.CommunicationalProficiency
 FROM [dbo].[InterviewMeetings]    
 inner join     
 IRF on [InterviewMeetings].IRFId = IRF.IRFId    

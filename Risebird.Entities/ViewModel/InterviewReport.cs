@@ -360,6 +360,9 @@ namespace Risebird.Entities.ViewModel
         public bool IRFInterviewerActive { get; set; }
         public List<ZoomVideoQOSVM> QOSData { get; set; }
         public int ClientId { get; set; }
+
+        [Display(Name = "Rate Candidate's Communication Skills(out of 10)")]
+        public int CommunicationalProficiency { get; set; }
     }
     public class RBInterviewDetails
     {

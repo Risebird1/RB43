@@ -351,16 +351,14 @@ namespace Risebird.Entities.ViewModel
         public bool IRFInterviewerActive { get; set; }
         public bool DMApproved { get; set; }
         public string DMApprovedBy { get; set; }
-        public int MailCount {get; set;}
-        public int CallsCount { get; set;}
-        public int WhatsappCount { get; set;}
-        public bool IsColdCandidate {  get; set; }
-        public string ColdMarkedBY { get; set;}
-        public DateTime? ColdMarkedDate { get; set;}
-        public DateTime? RescheduleDate { get; set;}
-       
-
-
+        public int MailCount { get; set; }
+        public int CallsCount { get; set; }
+        public int WhatsappCount { get; set; }
+        public bool IsColdCandidate { get; set; }
+        public string ColdMarkedBY { get; set; }
+        public DateTime? ColdMarkedDate { get; set; }
+        public DateTime? RescheduleDate { get; set; }
+        public int CommunicationalProficiency { get; set; }
     }
 
     public class VedioComments

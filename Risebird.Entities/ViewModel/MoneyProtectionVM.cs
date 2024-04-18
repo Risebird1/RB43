@@ -20,6 +20,6 @@ namespace Risebird.Entities.ViewModel
         public int PerInterviewRate { get; set; }
         public int Interviewid { get; set; }
         public int PaymentComplianceCount { get; set; }
-        public string ClientHrContact{ get; set; }
+        public string ClientHrContact { get; set; }
     }
 }

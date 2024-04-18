@@ -696,8 +696,9 @@ namespace Risebird.Web.Controllers
                             model.ClonableTemplates = model.ClonableTemplates?.ToList();
 
                         }
-                        else {
-                            model.ClonableTemplates = model.ClonableTemplates.Where(x=>x.IsDeleted!=true);
+                        else
+                        {
+                            model.ClonableTemplates = model.ClonableTemplates.Where(x => x.IsDeleted != true);
                         }
                         var asmtGrpsPrSkillsMappedToCurrentTemplates = model.ClonableTemplates?.Select(x => (x.AssessmentGroupName, x.CategoryName, x.PrimarySkills))?.Distinct();
                         if (asmtGrpsPrSkillsMappedToCurrentTemplates != null)
@@ -785,7 +786,7 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("ClonableTemplatesFilters", JsonConvert.SerializeObject(filter));
                         }
-                       // return RedirectToAction("Index");
+                        // return RedirectToAction("Index");
                         return RedirectToAction("List");
                     }
                     else
@@ -1216,7 +1217,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> DeleteClonableSkillChannel(int ClonableSkillChannelId,int action)
+        public async Task<IActionResult> DeleteClonableSkillChannel(int ClonableSkillChannelId, int action)
         {
             try
             {
@@ -1228,7 +1229,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
-                        var result = await _templateService.DeleteClonableSkillChannel(ClonableSkillChannelId,emailId,action);
+                        var result = await _templateService.DeleteClonableSkillChannel(ClonableSkillChannelId, emailId, action);
                         return Json(result);
                     }
                     else
@@ -1259,10 +1260,10 @@ namespace Risebird.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(uniqueId) && !string.IsNullOrEmpty(emailId) && type == "pbc" && profile == "Client")
                 {
-                    
+
                     ClonableTemplateListVM model = new ClonableTemplateListVM();
                     model.Profile = "Client";
-                    
+
                     model.AccessType = "Public";
                     model.PublicUserEmailId = emailId;
                     model.UniqueId = uniqueId;
@@ -1277,6 +1278,7 @@ namespace Risebird.Web.Controllers
                     }
 
                     model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
+                    model.ClonableTemplates = model.ClonableTemplates.Where(x => !x.IsDeleted);
 
                     if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
                     {

@@ -92,7 +92,7 @@ namespace Risebird.CommonHelper
 
                     identifier = responseObj.meta.identifier;
 
-                    if(isAffindaIndexCreated.HasValue && isAffindaIndexCreated.Value == true)
+                    if (isAffindaIndexCreated.HasValue && isAffindaIndexCreated.Value == true)
                     {
                         await IndexADocument(responseObj.meta.identifier, skillChannelName);
 
@@ -227,8 +227,8 @@ namespace Risebird.CommonHelper
                     response.EnsureSuccessStatusCode();
                     //response.StatusCode
                     var responseObjTypeDefinition = new
-                    { 
-                        data = new { redactedPdf  = string.Empty}
+                    {
+                        data = new { redactedPdf = string.Empty }
                     };
 
                     var body = await response.Content.ReadAsStringAsync();
@@ -290,7 +290,7 @@ namespace Risebird.CommonHelper
                 },
                     Content = new MultipartFormDataContent
                     {
-                        
+
                         new StringContent(indexName)
                         {
                             Headers =
@@ -407,7 +407,7 @@ namespace Risebird.CommonHelper
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
-            
+
         }
     }
 }

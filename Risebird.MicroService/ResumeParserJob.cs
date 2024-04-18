@@ -1,20 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -53,7 +51,7 @@ namespace Risebird.MicroService
 
         }
         [FunctionName("ResumeParserJob")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, ILogger log)//0 */5 * * * *
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)//0 */5 * * * *
         {
             try
             {
@@ -77,7 +75,7 @@ namespace Risebird.MicroService
                             var documentData = JsonConvert.DeserializeObject<Document>(candidateData.Item1);
                             var candidate = new CandidateQuickAddModel();
                             candidate.Name = documentData.data?.name?.raw;
-                            if(!string.IsNullOrEmpty(candidateData.Item2))
+                            if (!string.IsNullOrEmpty(candidateData.Item2))
                             {
                                 candidate.AffindaResumeIdentifier = candidateData.Item2;
                             }

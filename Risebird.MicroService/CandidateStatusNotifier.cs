@@ -1,23 +1,15 @@
-using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.OData.Edm;
-using OfficeOpenXml;
 //using OfficeOpenXml.Core.ExcelPackage;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
-using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Twilio.TwiML.Messaging;
 
 namespace Risebird.MicroService
 {
@@ -41,7 +33,7 @@ namespace Risebird.MicroService
             _irfRepository = irfRepository;
             _notificationHelper = notificationHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
-            _excelHelper =  excelHelper;
+            _excelHelper = excelHelper;
             _clientRepository = clientRepository;
 
         }
@@ -119,7 +111,7 @@ namespace Risebird.MicroService
                     //}
                     var clientIdList = new List<int>();
                     clientIdList = data.Select(x => x.ClientId).Distinct().ToList();
-                    if(clientIdList != null  && clientIdList.Count()>0)
+                    if (clientIdList != null && clientIdList.Count() > 0)
                     {
                         foreach (var clientId in clientIdList)
                         {
@@ -128,14 +120,14 @@ namespace Risebird.MicroService
                             //mailList.Add("harshit_jajoo@risebird.io");
                             //mailList.Add("ruma_bose@risebird.io");
                             var irfList = new List<int>();
-                            irfList = data.Where(x=>x.ClientId == clientId).Select(x => x.IRFintId).Distinct().ToList();
+                            irfList = data.Where(x => x.ClientId == clientId).Select(x => x.IRFintId).Distinct().ToList();
                             if (irfList != null)
                             {
                                 var candidates = new List<string>();
 
                                 foreach (var irf in irfList)
                                 {
-                                    
+
                                     if (mailList == null || mailList.Count() == 0)
                                     {
                                         continue;
@@ -191,7 +183,7 @@ namespace Risebird.MicroService
                             }
                         }
                     }
-                    
+
                 }
 
                 log.LogInformation($"C# Timer trigger function completed at: {DateTime.Now}");

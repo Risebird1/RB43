@@ -13,11 +13,8 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using Twilio.TwiML.Messaging;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.CommonHelper
 {
@@ -3212,7 +3209,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate,int irfid)
+        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate, int irfid)
         {
             try
             {

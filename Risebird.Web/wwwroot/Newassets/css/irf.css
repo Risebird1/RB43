@@ -1544,7 +1544,7 @@ input[type=number] {
     margin: 20px 0 0 0;
     padding: 10px 0;
     width: 207px;
-    left: -10px;
+    left: -172px;
     height: 195px;
     box-sizing: border-box;
     z-index: 2;
@@ -1574,7 +1574,7 @@ input[type=number] {
         width: 0;
         height: 0;
         top: -11px;
-        left: 13%;
+        right: 5%;
         margin-left: -10px;
         border-style: solid;
         border-width: 0 10px 11px 10px;

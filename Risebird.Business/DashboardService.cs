@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Business
 {
@@ -956,7 +955,7 @@ namespace Risebird.Business
         {
             try
             {
-                await _dashboardRespository.MarkedColdCandidate(CandidateId,Email,InterviewId);
+                await _dashboardRespository.MarkedColdCandidate(CandidateId, Email, InterviewId);
                 return true;
             }
             catch (Exception e)

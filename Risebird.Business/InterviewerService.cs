@@ -1466,7 +1466,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid,string IrfId)
+        public async Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid, string IrfId)
         {
             try
             {
@@ -1478,7 +1478,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid,string IrfId)
+        public async Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid, string IrfId)
         {
             try
             {
@@ -1490,7 +1490,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type,string Irfid)
+        public async Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type, string Irfid)
         {
             try
             {

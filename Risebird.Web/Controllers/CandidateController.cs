@@ -1358,7 +1358,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 7].Value = "Skill Channel ID";
                         Sheet.Cells[1, 8].Value = "Interview Status";
                         Sheet.Cells[1, 9].Value = "Current Status";
-                        
+
                         Sheet.Cells[1, 10].Value = "Interview Date";
                         Sheet.Cells[1, 11].Value = "Client Hr";
                         Sheet.Cells[1, 12].Value = "Video Link";
@@ -1396,7 +1396,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 6].Value = item.ChannelOwnerEmail ?? "NA";
                                 Sheet.Cells[i, 7].Value = item.IRFName ?? "NA";
                                 Sheet.Cells[i, 8].Value = item.InterviewStatusDesc != "0" ? item.InterviewStatusDesc : "NA";
-                              //  Sheet.Cells[i, 9].Value = item.StatusValue != "0" ? item.StatusValue : "NA";
+                                //  Sheet.Cells[i, 9].Value = item.StatusValue != "0" ? item.StatusValue : "NA";
                                 if (item.StatusValue == "Meeting Status" || item.StatusValue == "Interview Status")
                                 {
                                     try
@@ -1420,7 +1420,7 @@ namespace Risebird.Web.Controllers
 
 
 
-                              //  Sheet.Cells[i, 10].Value = item.LatestComment != "0" ? item.LatestComment : "NA";
+                                //  Sheet.Cells[i, 10].Value = item.LatestComment != "0" ? item.LatestComment : "NA";
                                 Sheet.Cells[i, 10].Value = item.interviewDate != null ? item.interviewDate?.ToString() : "NA";
                                 Sheet.Cells[i, 11].Value = item.ClientHRAttemptContact != "0" ? item.ClientHRAttemptContact : "NA";
                                 if (!string.IsNullOrEmpty(item.VideoLink))
@@ -2707,18 +2707,18 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:P1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:P1"].Style.Font.Size = 12;
                 Sheet.Cells["A1:P1"].Style.WrapText = true;
-                int startColumn = 1; int endColumn = 6;
+                int startColumn = 1; int endColumn = 8;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
-                    Sheet.Column(a).Width = 35;
+                    Sheet.Column(a).Width = 40;
                 }
                 Sheet.Cells[1, 1].Value = "Name";
-                Sheet.Cells[1, 2].Value = "EmailId";
-                Sheet.Cells[1, 3].Value = "Resume Link";
-                Sheet.Cells[1, 4].Value = "Phone(With Country code)";
-                Sheet.Cells[1, 5].Value = "WhatsApp Number(Without Country code)";
-                Sheet.Cells[1, 6].Value = "Client HR Email ID";
-                Sheet.Cells[1, 7].Value = "Staffing Agency Email ID";
+                Sheet.Cells[1, 2].Value = "Candidate EmailId";
+                Sheet.Cells[1, 3].Value = "Resume Link - open access weblink";
+                Sheet.Cells[1, 4].Value = "Phone(With Country code) 918105232345";
+                //Sheet.Cells[1, 5].Value = "WhatsApp Number(Without Country code)";
+                Sheet.Cells[1, 5].Value = "Client HR Email ID";
+                Sheet.Cells[1, 6].Value = "Staffing Agency Email ID";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
             catch (Exception)
@@ -2800,15 +2800,16 @@ namespace Risebird.Web.Controllers
                                                         Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true)
                                               ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString())
                                               : string.Empty,
-                                                        WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
-                                              ? workSheet.Cells[rowIterator, 5].Value.ToString()
-                                              : string.Empty,
+                                                        //          WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
+                                                        //? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                                        //: string.Empty,
+                                                        WhatsappNumber = string.Empty,
                                                         //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
                                                         //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
                                                         //    : string.Empty,
-                                                        ClientHREmail = workSheet.Cells[rowIterator, 6].Value.ToString().ToLower(),
+                                                        ClientHREmail = workSheet.Cells[rowIterator, 5].Value.ToString().ToLower(),
 
-                                                        ProfileSource = workSheet.Cells[rowIterator, 7].Value != null ? workSheet.Cells[rowIterator, 7].Value.ToString() : string.Empty,
+                                                        ProfileSource = workSheet.Cells[rowIterator, 6].Value != null ? workSheet.Cells[rowIterator, 6].Value.ToString() : string.Empty,
                                                         IRFId = IRFId
 
                                                     };
@@ -2820,7 +2821,7 @@ namespace Risebird.Web.Controllers
                                                 catch (Exception ex)
                                                 {
                                                     if (workSheet.Cells[rowIterator, 2] == null || workSheet.Cells[rowIterator, 2].Value == null
-                                                        || workSheet.Cells[rowIterator, 6] == null || workSheet.Cells[rowIterator, 6].Value == null)
+                                                        || workSheet.Cells[rowIterator, 5] == null || workSheet.Cells[rowIterator, 5].Value == null)
                                                     {
                                                         result.Append("Failed! Candidate EmailId and Client HR EmailId are mandatory. Please check for the missing entries.");
                                                     }
@@ -3423,7 +3424,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if(string.IsNullOrEmpty(candidateType))
+                if (string.IsNullOrEmpty(candidateType))
                 {
                     candidateType = CandidateTypeForClient.Scheduled.GetDescription();
                 }
@@ -3454,7 +3455,7 @@ namespace Risebird.Web.Controllers
                     var candidateData = new List<CandidateTimelineData>();
 
                     int dataType = 2;
-                    if(candidateType == CandidateTypeForClient.NotScheduled.GetDescription())
+                    if (candidateType == CandidateTypeForClient.NotScheduled.GetDescription())
                     {
                         dataType = 1;
                     }
@@ -3465,7 +3466,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), dataType , emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), dataType, emailid)).ToList();
                     }
 
                     if (candidateData == null)
@@ -5069,13 +5070,13 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                        var data = await _candidateService.GetColdCandidatesListByClient(emailid);
-                        data = data.Select(x =>
-                        {
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
-                        return PartialView("_GetColdCandidatePartial", data);
+                    var data = await _candidateService.GetColdCandidatesListByClient(emailid);
+                    data = data.Select(x =>
+                    {
+                        x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                        return x;
+                    }).ToList();
+                    return PartialView("_GetColdCandidatePartial", data);
                 }
                 else
                 {

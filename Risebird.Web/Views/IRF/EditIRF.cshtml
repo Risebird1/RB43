@@ -63,18 +63,18 @@
                                             <li><a href="#" id="rtab-7" class="text-center" onclick="headerClickchange('tab-7')">Client</a><span id="count_ClientTable" class="skillcount">@(Model.ClientCollection != null ? @Model.ClientCollection.Count() : 0)</span></li>
                                             @if (Model.Profile != "Client")
                                             {
-                                                <li id="li_joinability"><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@(Model.Joinability != null ? Model.Joinability.Count() : 0)</span></li>
-                                                <li id="li_selectability"><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@(Model.Selectability != null ? Model.Selectability.Count() : 0)</span></li>
-                                                <li id="li_generalSkill"><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@(Model.SkillGeneral!=null ? Model.SkillGeneral.Count() : 0 )</span></li>
-                                                <li><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection !=null ? Model.InterviewerCollection.Count() :  0)</span></li>
+                                                <li class="tab-pad" id="li_joinability"><a href="#" id="rtab-4" class="" onclick="headerClickchange('tab-4')">Joinability</a><span id="count_Joinability" class="skillcount">@(Model.Joinability != null ? Model.Joinability.Count() : 0)</span></li>
+                                                <li class="tab-pad" id="li_selectability"><a href="#" id="rtab-5" class="" onclick="headerClickchange('tab-5')">Selectability</a><span id="count_Selectability" class="skillcount">@(Model.Selectability != null ? Model.Selectability.Count() : 0)</span></li>
+                                                <li class="tab-pad" id="li_generalSkill"><a href="#" id="rtab-6" class="" onclick="headerClickchange('tab-6')">General Skill</a><span id="count_SkillGeneral" class="skillcount">@(Model.SkillGeneral!=null ? Model.SkillGeneral.Count() : 0 )</span></li>
+                                                <li ><a href="#" id="rtab-8" class="" onclick="headerClickchange('tab-8')">Interviewer</a><span id="count_Interviewer" class="skillcount">@(Model.InterviewerCollection !=null ? Model.InterviewerCollection.Count() :  0)</span></li>
                                                 @*<li id="qc"><a href="#" id="rtab-9" class="text-center" onclick="headerClickchange('tab-9')">QC</a><span id="count_qc" class="skillcount">@Model.QualityController.Count()</span></li>*@
                                                 @*<li><a href="#" id="rtab-10" class="" onclick="headerClickchange('tab-10')">E.Interviewer</a><span id="count_Em" class="skillcount">@Model.EmergencyInterviewerCollection.Count()</span></li>*@
-                                                <li><a href="#" id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a><span id="count_Hr" class="skillcount">@(Model.HRCollection != null ? Model.HRCollection.Count() : 0 )</span></li>
+                                                <li class="tab-pad"><a href="#" id="rtab-11" class="" onclick="headerClickchange('tab-11')">Coordinator</a><span id="count_Hr" class="skillcount">@(Model.HRCollection != null ? Model.HRCollection.Count() : 0 )</span></li>
                                             }
                                             @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR" || Model.Profile=="SeniorInterviewerManagement")
                                             {
-                                                <li><a href="#" id="rtab-13" class="" onclick="headerClickchange('tab-13')">Subject Matter Expert</a></li>
-                                                <li><a href="#" id="rtab-12" class="" onclick="headerClickchange('tab-12')">Manage Channel</a></li>
+                                                <li class="tab-pad"><a href="#" id="rtab-13" class="" onclick="headerClickchange('tab-13')">Subject Matter Expert</a></li>
+                                                <li class="tab-pad"><a href="#" id="rtab-12" class="" onclick="headerClickchange('tab-12')">Manage Channel</a></li>
                                             }
                                         </ul>
                                     </div>
@@ -1187,14 +1187,16 @@
                                                 <div class="row">
 
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="scrollbar int-table" id="style-2">
                                                         <div class="table-responsive-sm">
                                                             <table class="table table-bordered mbn" id="InterviewerTable">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th width="20%" class="table_heading">User <span class="red">*</span></th>
+                                                                        <th width="40%" class="table_heading">User <span class="red">*</span></th>
                                                                         <th width="20%" class="table_heading">Resume</th>
                                                                         <th width="20%" class="table_heading">Skills</th>
                                                                         <th width="10%" class="table_heading">Per Interviewer Rate<span style="color:red">*</span></th>
+                                                                        <th width="20%" class="table_heading">Company Name</th>
                                                                         @if(Model.IsNewSkillChannel)
                                                                         {
                                                                             <th width="10%" class="table_heading">Surcharge</th>
@@ -1212,7 +1214,7 @@
                                                                     {
                                                                         <tr>
                                                                             <td>
-                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control interviewersDrpDwn", @onchange = "InterviewerChanged(this.value, this.id)", data_initial_value = "", data_initial_text= "" })
+                                                                                @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, "Select", new { @class = "select-css form-control interviewersDrpDwn",@style="width:200px;", @onchange = "InterviewerChanged(this.value, this.id)", data_initial_value = "", data_initial_text= "" })
                                                                                 @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
                                                                                 @Html.Hidden("InterviewerCollection[0].Source", new {Value = Model.LoggedEmail})
                                                                             </td>
@@ -1222,7 +1224,7 @@
 
                                                                             </td>
                                                                             <td>
-                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.TextBox("InterviewerCollection[0].PrimarySkill", null, new { @class = "form-control",@style="width:200px;", @readonly = "readonly" })
                                                                             </td>
                                                                             <td>
                                                                                 @*@if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
@@ -1235,6 +1237,9 @@
                                                                                 }*@
                                                                                 @Html.TextBox("InterviewerCollection[0].PerSuccessRate", null, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
 
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.TextBox("InterviewerCollection[0].CompanyName", null, new { @class = "form-control",@style="width:300px;", @readonly = "readonly" })
                                                                             </td>
                                                                             @if(Model.IsNewSkillChannel)
                                                                             {
@@ -1252,7 +1257,7 @@
                                                                                 </td>
                                                                             }
                                                                             <td>
-                                                                                @Html.TextBox("InterviewerCollection[0].ClientAction", null, new { @class = "form-control", @readonly = "readonly" })
+                                                                                @Html.TextBox("InterviewerCollection[0].ClientAction", null, new { @class = "form-control",@style="width:100px;", @readonly = "readonly" })
                                                                             </td>
                                                                             <td class="text-center">
                                                                                 @Html.CheckBox("InterviewerCollection[0].IsActive") @*, new { @checked = "checked" }*@
@@ -1281,7 +1286,7 @@
                                                                         {
                                                                             <tr>
                                                                                 <td>
-                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, "Select", new { @class = "form-control select-css interviewersDrpDwn", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled", data_initial_value = Model.InterviewerCollection[i].UserId, data_initial_text= Model.InterviewerCollection[i].EmailId })
+                                                                                    @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, "Select", new { @class = "form-control select-css interviewersDrpDwn", @style="width:200px;",@onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled", data_initial_value = Model.InterviewerCollection[i].UserId, data_initial_text= Model.InterviewerCollection[i].EmailId })
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                     @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
 
@@ -1301,7 +1306,7 @@
                                                                                     </td>
                                                                                 }
                                                                                 <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control",@style="width:200px;", @readonly = "readonly" })
                                                                                 </td>
                                                                                 <td>
                                                                                     @*@if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin")
@@ -1314,6 +1319,9 @@
                                                                                     }*@
                                                                                     @Html.TextBoxFor(m => m.InterviewerCollection[i].PerSuccessRate, new { @class = "form-control", @type = "number", @min = "1", @readonly = "readonly" })
 
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].CompanyName, new { @class = "form-control", @style="width:300px;", @readonly = "readonly" })
                                                                                 </td>
                                                                                 @if(Model.IsNewSkillChannel)
                                                                                 {
@@ -1331,7 +1339,7 @@
 
                                                                                 }
                                                                                 <td>
-                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].ClientAction, new { @class = "form-control", @readonly = "readonly" })
+                                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].ClientAction, new { @class = "form-control",@style="width:100px;", @readonly = "readonly" })
                                                                                 </td>
                                                                                 <td class="text-center">
                                                                                     @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
@@ -1372,6 +1380,7 @@
                                                             </table>
                                                             <label class="text-danger" id="noInterviewer"></label>
 
+                                                        </div>
                                                         </div>
                                                     </div><!--end of col-md-12-->
                                                 </div>
@@ -1719,7 +1728,7 @@
                                                                         <div class="mdc-checkbox__ripple"></div>
                                                                     </div>
                                                                     @Html.LabelFor(model => model.IsMeetingAutoCancelled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
-                                                                    <i style="margin-right:-4vw" title="Auto-cancels a candidate interview if the candidate fails to confirm his/her availability atleast an hour prior to the scheduled datetime." class="fa fa-info-circle"></i>
+                                                                    <i style="position:relative;right:65px;font-size:14px;" title="Auto-cancels a candidate interview if the candidate fails to confirm his/her availability atleast an hour prior to the scheduled datetime." class="fa fa-info-circle"></i>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-4 col-sm-4 pull-left">
@@ -1736,7 +1745,7 @@
                                                                         <div class="mdc-checkbox__ripple"></div>
                                                                     </div>
                                                                     @Html.LabelFor(model => model.IsMeetingNotificationSend, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
-                                                                    <i style="margin-right:-4vw" title="Notifies when either of the Candidate or the Interviewer has joined the meeting and is waiting for the other participant to join.(Only applicable for Zoom Meetings)" class="fa fa-info-circle"></i>
+                                                                    <i style="position:relative;right:65px;font-size:14px;" title="Notifies when either of the Candidate or the Interviewer has joined the meeting and is waiting for the other participant to join.(Only applicable for Zoom Meetings)" class="fa fa-info-circle"></i>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-4 col-sm-4 pull-left">
@@ -1763,8 +1772,53 @@
                                                                     @Html.LabelFor(model => model.IsLocked, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
                                                                 </div>
                                                             </div>
-                                                           
-                                                           
+                                                            <div class="col-md-12 col-sm-12 pull-left mt-20">
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Meeting Platform</label>
+                                                                <div class="form-group">
+                                                                    @foreach (var platform in Model.MeetingPlatformOptions)
+                                                                    {
+                                                                        <label class="radio-inline">
+                                                                            <input type="radio" asp-for="MeetingPlatform" value="@platform" style="position: relative; top: 3px; margin: 0px 5px;" />@platform<br />
+                                                                        </label>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            @*<div class="col-md-4 col-sm-4 pull-left">
+                                                                @Html.LabelFor(model => model.InterviewDuration, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                                @Html.DropDownListFor(model => model.InterviewDuration, Model.InterviewDurationList, new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.InterviewDuration, "", new { @class = "text-danger" })
+                                                            </div>*@
+                                                            @*<div class="col-md-4 col-sm-4 pull-left">
+                                                                <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                                    <div class="mdc-checkbox">
+                                                                        @Html.CheckBoxFor(m => m.IsFixedInterviewduration, new { @class = "mdc-checkbox__native-control", @onclick="ShowAmountIfChecked()" })
+                                                                        <div class="mdc-checkbox__background">
+                                                                            <svg class="mdc-checkbox__checkmark"
+                                                                             viewBox="0 0 24 24">
+                                                                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                            </svg>
+                                                                            <div class="mdc-checkbox__mixedmark"></div>
+                                                                        </div>
+                                                                        <div class="mdc-checkbox__ripple"></div>
+                                                                    </div>
+                                                                    @Html.LabelFor(model => model.IsFixedInterviewduration, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                                    <i style="margin-right:-4vw" title="Fixed Interview duration(Select and rejected duration is same)" class="fa fa-info-circle"></i>
+                                                                </div>
+                                                            </div>*@
+                                                            @*@{
+                                                                string displayAmount = "none";
+                                                                if(Model.IsFixedInterviewduration)
+                                                                {
+                                                                    displayAmount = "block";
+                                                                }
+                                                            }*@
+                                                            @*<div class="col-md-4 col-sm-4 pull-left" style="display:@displayAmount" id="id_div_fixedAmount">
+                                                                <div class="mandate">
+                                                                    @Html.LabelFor(model => model.FixedAmount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                </div>
+                                                                @Html.EditorFor(model => model.FixedAmount, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line", @max = "900", @min = "100" } })
+                                                                @Html.ValidationMessageFor(model => model.FixedAmount, "", new { @id = "error_FixedAmount", @class = "text-danger" })
+                                                            </div>*@
                                                         </div>
                                                     </div>
                                                 </div>
@@ -4033,6 +4087,7 @@
         var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
         var rateElementid = 'InterviewerCollection_' + index + '__PerSuccessRate';
         var resumeElementid = 'InterviewerCollection_' + index + '__ResumeLink';
+        var companyNameElementid = 'InterviewerCollection_' + index + '__CompanyName';
 
 
         $.ajax({
@@ -4042,6 +4097,7 @@
             data: { 'id': val },
             success: function (result) {
                 $("#" + skillElementid).val(result.primarySkill);
+                $("#" + companyNameElementid).val(result.companyName);
                 //$("#" + resumeElementid).val(result.resumeLink);
                 const anchorElement = document.getElementById(resumeElementid);
                 anchorElement.href = result.resumeLink;

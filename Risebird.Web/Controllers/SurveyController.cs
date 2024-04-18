@@ -910,7 +910,7 @@ namespace Risebird.Web.Controllers
                 x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                 return x;
             }).ToList();
-            
+
             ViewBag.IRFId = "0";
             return View("CandidateFeedBack", modelData);
         }

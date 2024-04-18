@@ -7,8 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 //using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -2651,7 +2649,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.Type = "RescheduleIM";
                     interviewmanagement = interviewmanagement.Where(x => (x.IsRescheduleNotificationSent == 1 && x.MeetingStatus != 3 && x.MeetingStatus != 4 && x.MeetingStatus != 6 && x.MeetingStatus != 7 && x.MeetingStatus != 8) || (x.PerformedOn != null && (x.MeetingStatus == 1 || x.MeetingStatus == 5 || x.MeetingStatus == 9))).ToList();
-                    interviewmanagement = interviewmanagement.Select(x => {x.LastMeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.LastMeetingStatus)).GetDescription(); return x; }).ToList();
+                    interviewmanagement = interviewmanagement.Select(x => { x.LastMeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.LastMeetingStatus)).GetDescription(); return x; }).ToList();
                 }
                 else
                 {
@@ -2979,7 +2977,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> MarkedColdCandidate(int CandidateId,string IRFId,string CandidateEmail,int InterviewId, int irfIntId)
+        public async Task<JsonResult> MarkedColdCandidate(int CandidateId, string IRFId, string CandidateEmail, int InterviewId, int irfIntId)
         {
             try
             {
@@ -3008,16 +3006,16 @@ namespace Risebird.Web.Controllers
                         InterviewId = 0;
                     }
                 }
-                var data = await _dashboardService.MarkedColdCandidate(CandidateId,emailId, InterviewId);
-            
-                    if (data == true)
-                    {
-                    return Json("Candidate " +"("+ CandidateEmail +")"+ " for " +IRFId +" has been marked as cold successfully");
-                    }
-                    else
-                    {
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId);
+
+                if (data == true)
+                {
+                    return Json("Candidate " + "(" + CandidateEmail + ")" + " for " + IRFId + " has been marked as cold successfully");
+                }
+                else
+                {
                     return Json("Failed to mark candidate as Cold.");
-                    }
+                }
             }
             catch (Exception ex)
             {
