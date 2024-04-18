@@ -34,7 +34,7 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private static List<CandidateTimelineVM> _modelDetails;
-        private static List<Candidate> _candidateModelDetails;
+        //private static List<Candidate> _candidateModelDetails;
         private readonly IIRFService _irfService;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IEvaluatorService _evaluatorService;
@@ -55,6 +55,7 @@ namespace Risebird.Web.Controllers
         private readonly IAadhaarService _aadhaarService;
         private readonly IZoomHelper _zoomHelper;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
+        private readonly IInterviewSchedulerService _interviewSchedulerservice;
 
 
         //private static string Searchvalue;
@@ -62,7 +63,7 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor,
-            IAadhaarService aadhaarService, IZoomHelper zoomHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper)
+            IAadhaarService aadhaarService, IZoomHelper zoomHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper, IInterviewSchedulerService interviewSchedulerservice)
         {
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -86,6 +87,7 @@ namespace Risebird.Web.Controllers
             _aadhaarService = aadhaarService;
             _zoomHelper = zoomHelper;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
+            _interviewSchedulerservice = interviewSchedulerservice;
         }
 
         [HttpGet]
@@ -823,35 +825,36 @@ namespace Risebird.Web.Controllers
 
                         }
 
-                        ViewBag.TotalCount = candidateList.Count;
+                        //ViewBag.TotalCount = candidateList.Count;
 
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                        int a = candidateList.Count / 10;
-                        if (candidateList.Count % 10 == 0)
-                        {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                        }
-                        else
-                        {
-                            a = a + 1;
-                            if (a == Page)
-                            {
-                                ViewBag.PageEndCount = candidateList.Count;
-                            }
-                            else
-                            {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        //ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                        //int a = candidateList.Count / 10;
+                        //if (candidateList.Count % 10 == 0)
+                        //{
+                        //    ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                        //}
+                        //else
+                        //{
+                        //    a = a + 1;
+                        //    if (a == Page)
+                        //    {
+                        //        ViewBag.PageEndCount = candidateList.Count;
+                        //    }
+                        //    else
+                        //    {
+                        //        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
 
-                            }
+                        //    }
 
-                        }
-                        if (candidateList.Count == 0)
-                        {
-                            ViewBag.PageStartCount = 0;
-                            ViewBag.PageEndCount = 0;
-                        }
-                        _candidateModelDetails = candidateList;
-                        return View(candidateList.ToPagedList(Page ?? 1, 10));
+                        //}
+                        //if (candidateList.Count == 0)
+                        //{
+                        //    ViewBag.PageStartCount = 0;
+                        //    ViewBag.PageEndCount = 0;
+                        //}
+                        //_candidateModelDetails = candidateList;
+                        //return View(candidateList.ToPagedList(Page ?? 1, 10));
+                        return View(candidateList);
 
 
 
@@ -920,36 +923,37 @@ namespace Risebird.Web.Controllers
 
                 }
 
-                ViewBag.TotalCount = candidateList.Count;
+                //ViewBag.TotalCount = candidateList.Count;
 
-                ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                int a = candidateList.Count / 10;
-                if (candidateList.Count % 10 == 0)
-                {
-                    ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                }
-                else
-                {
-                    a = a + 1;
-                    if (a == Page)
-                    {
-                        ViewBag.PageEndCount = candidateList.Count;
-                    }
-                    else
-                    {
-                        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                //ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
+                //int a = candidateList.Count / 10;
+                //if (candidateList.Count % 10 == 0)
+                //{
+                //    ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
+                //}
+                //else
+                //{
+                //    a = a + 1;
+                //    if (a == Page)
+                //    {
+                //        ViewBag.PageEndCount = candidateList.Count;
+                //    }
+                //    else
+                //    {
+                //        ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
 
-                    }
+                //    }
 
-                }
-                if (candidateList.Count == 0)
-                {
-                    ViewBag.PageStartCount = 0;
-                    ViewBag.PageEndCount = 0;
-                }
-                _candidateModelDetails = candidateList;
+                //}
+                //if (candidateList.Count == 0)
+                //{
+                //    ViewBag.PageStartCount = 0;
+                //    ViewBag.PageEndCount = 0;
+                //}
+                //_candidateModelDetails = candidateList;
                 ViewBag.AccessType = "Public";
-                return View("GetCandidates", candidateList.ToPagedList(Page ?? 1, 10));
+                //return View("GetCandidates", candidateList.ToPagedList(Page ?? 1, 10));
+                return View("GetCandidates", candidateList);
 
             }
             catch (Exception ex)
@@ -2206,37 +2210,37 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> DeleteStatus(int id)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
-                    {
-                        var result = await _irfService.DeleteCandidateStatus(id);
-                        return Json(result);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(false);
-            }
-        }
+        //[Authorize]
+        //[HttpPost]
+        //public async Task<IActionResult> DeleteStatus(int id)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //            profileName = profileName.Replace("\"", "");
+        //            if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+        //            {
+        //                var result = await _irfService.DeleteCandidateStatus(id);
+        //                return Json(result);
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("SignOut", "Session");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return Json(false);
+        //    }
+        //}
 
         [Authorize]
         [HttpGet]
@@ -3189,7 +3193,7 @@ namespace Risebird.Web.Controllers
                                                     //generate SAS URL from the uploaded video url
                                                     var sas = _sasUrlHelper.CreateSasUrl("resumes");
                                                     sasUrl = uploadedaudioFileURL + "?" + sas;
-                                                    resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                                    resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl, ClientHREmailId = model.ClientHREmailId });
                                                 }
                                             }
                                             else
@@ -3268,6 +3272,7 @@ namespace Risebird.Web.Controllers
                         model.IRFName = irfName;
                         model.IRFId = irfId;
                         model.Profile = profileName;
+                        model.ListHR = new SelectList(await _interviewSchedulerservice.fetchSkillChannelHRDetails(irfName));
 
                         if (TempData["SuccessErrorMessageCandidateResume"] != null)
                         {
@@ -4368,7 +4373,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         var sas = _sasUrlHelper.CreateSasUrl("resumes");
                                         sasUrl = uploadedaudioFileURL + "?" + sas;
-                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl });
+                                        resumeList.Add(new CandidateResume { IRFId = model.IRFId, AddedBy = addedByUserId, ResumeLink = sasUrl, ClientHREmailId = emailId });
                                     }
                                 }
                                 else
@@ -4419,6 +4424,7 @@ namespace Risebird.Web.Controllers
                 model.IRFName = irfName;
                 model.IRFId = irfId;
                 model.Profile = "Client";
+                //model.ClientHREmailId = emailid;
                 ViewBag.emailid = emailid;
                 ViewBag.id = id;
                 if (TempData["SuccessErrorMessageCandidateResume"] != null)
@@ -4764,18 +4770,18 @@ namespace Risebird.Web.Controllers
                 }).ToList();
                 CandidateDetails.CandidateDetails.IRFId = IRFid;
                 var details = CandidateDetails.Meetings.OrderByDescending(x => x.interviewDate).FirstOrDefault();
-                if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
-                {
-                    CandidateDetails.IsReschedule = true;
-                    if (string.IsNullOrEmpty(CandidateDetails.Uniqueid))
-                    {
-                        string stepfirst = CandidateDetails.CandidateDetails.CalendlyLink.Split("?").LastOrDefault();
-                        var olduniqueid = stepfirst.Split("=").LastOrDefault();
-                        var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateDetails.CandidateDetails.EmailId);
-                        CandidateDetails.Uniqueid = oneTimeSchedulingLink;
-                    }
-                    CandidateDetails.SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + CandidateDetails.Uniqueid;
-                }
+                //if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
+                //{
+                //    CandidateDetails.IsReschedule = true;
+                //    if (string.IsNullOrEmpty(CandidateDetails.Uniqueid))
+                //    {
+                //        string stepfirst = CandidateDetails.CandidateDetails.CalendlyLink.Split("?").LastOrDefault();
+                //        var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                //        var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateDetails.CandidateDetails.EmailId);
+                //        CandidateDetails.Uniqueid = oneTimeSchedulingLink;
+                //    }
+                //    CandidateDetails.SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + CandidateDetails.Uniqueid;
+                //}
                 //Start: InterviewMeeting Timer
                 var time = details.interviewDate.AddMinutes(-15);
                 var currentTime = DateTime.UtcNow;

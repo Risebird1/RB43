@@ -175,7 +175,7 @@
                                     <div class="card">
                                         <label class="question" for="checkbox_eleven">
                                             <label for="checkbox_eleven">
-                                                <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Job Consent Acknowledgement
+                                                <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Job Consent Acknowledgement<label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px;padding: 0px 10px 0px 4px;font-weight: 400;">This is to be shared with the candidate and their video consent to be recorded at the end of interview</label>
                                             </label>
                                             <span class="round">
                                                 <input type="checkbox" class="coupon_question trigger" id="checkbox_eleven" name="question1" data-trigger="hidden_fields_eleven" />
@@ -1127,9 +1127,28 @@
             for (i = 0; i < data.length; i++) {
                 html += '   <tr>';
                 html += '  <td>' + data[i].skillName + '</td>';
-                html += '  <td>' + data[i].comment + '</td>';
-                html += '  <td><div class="sample-btn"><span style="float:right;" onclick="DeleteSampleQuestion(' + data[i].id + ')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
-                html += '  </tr>';
+               @* html += '  <td>' + data[i].comment + '</td>';*@
+                 html += '<td>';
+            html += ' <div>';
+            if (data[i].comment != null && data[i].comment != "") {
+                if (data[i].comment.length > 40) {
+                    html += '<div class="article">';
+                    html += '<p style="margin-bottom:0px;">' + data[i].comment.substring(0, 50) + '</p>';
+                    html += '<p class="moretext_' + data[i].id + ' moretext">' + data[i].comment + '</p>';
+                    html += '</div>';
+                }
+                else {
+                    html += '<div class="article"><p>' + data[i].comment.substring(0, data[i].comment.length) + '</p></div>';
+                }
+            }
+            else {
+                html += '<div></div>';
+            }
+            html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
+            html += '</div>';
+            html += ' </td>';
+            html += '  <td style="text-align:center"><div><span  onclick="DeleteSampleQuestion(' + data[i].id + ')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
+            html += '  </tr>';
             }
             html += '</tbody>';
             html += ' </table></div>';
@@ -1424,7 +1443,7 @@ else
     function BindConsentForm(data) {
         var html = '';
         if (data != null && data != '') {
-            html += '<div id="CandidateDetails"><a target="_blank" href="' + data + '"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>';
+            html += '<div id="CandidateDetails" style="padding: 10px 10px 12px 0px;"><a target="_blank" href="' + data + '"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>';
         }
         $("#divconcentform").empty().html(html);
     }
@@ -1433,5 +1452,17 @@ else
     $("form").on("change", ".file-upload-field", function () {
         $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
     });
+</script>
+<script>
+      function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
 </script>
 

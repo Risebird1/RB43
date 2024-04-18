@@ -10,7 +10,8 @@ CREATE TABLE [dbo].[CandidateResume](
 			[IsProcessed][bit],
 			[IsResumeParsed][bit] null,
 			[IsResumeParsingFailed][bit] null,
-			[IsEmailMissing][bit] null
+			[IsEmailMissing][bit] null,
+			[ClientHREmailId][varchar](100) null,
 			CONSTRAINT [FK_CandidateResumes_IRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 			CONSTRAINT [FK_CandidateResumes_AddedBy] FOREIGN KEY (AddedBy) REFERENCES UserList(id),
  CONSTRAINT [PK_CandidateResumes] PRIMARY KEY CLUSTERED 					
@@ -63,6 +64,13 @@ AND Object_ID = Object_ID(N'CandidateResume'))
 BEGIN
 	alter table CandidateResume
 	Add IsEmailMissing bit null
+END
+
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'ClientHREmailId')
+AND Object_ID = Object_ID(N'CandidateResume'))
+BEGIN
+	alter table CandidateResume
+	Add ClientHREmailId varchar(100) null
 END
 
 Go

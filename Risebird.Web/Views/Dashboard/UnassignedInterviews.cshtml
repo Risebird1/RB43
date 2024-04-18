@@ -2300,17 +2300,16 @@
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
-                        url: '/Interview/GenerateRescheuleLink',
+                        url: '/InterviewScheduler/GenerateCandidatescheuleLink',
                         method: 'POST',
                         data: {
                             'CandidateEmailid': candidateEmailid,
                             'interviewid': interviewid,
                             'uniqueid': uniqueid,
                             'Irfid': irfid,
-                            'pageReturnType':1
+                            'schedulertype': 2
                         },
                         success: function (result) {
-                          @*  // location.href = result; *@
                           window.open(result, '_blank');
                             resolve(result)
                         },

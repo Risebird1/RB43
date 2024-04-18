@@ -70,7 +70,19 @@
                                             <div class="canvas_div_pdf">
                                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                                <div class="upload_resume">
+                                                <div class="col-md-12 col-sm-12 pr-1 pull-left row">
+                                                    <div class="form-group" style="margin-top:10px;margin-bottom:0px;">
+                                                        @Html.LabelFor(model => model.ClientHREmailId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-4 desp-label pull-left padresume",@style="font-size:16px!important;" })
+                                                      
+                                                           <span class="custom-select-dropdown">
+                                                           @Html.DropDownListFor(model => model.ClientHREmailId, Model.ListHR, "Select", new { @style = "width:250px;top:-5px;" })
+                                                           </span>
+                                                        
+                                                        @Html.ValidationMessageFor(model => model.ClientHREmailId, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div style="clear:both"></div>
+                                                <div class="upload_resume" style="padding-top:0px;">
 
                                                     <div class="col-md-12 col-sm-12">
                                                     

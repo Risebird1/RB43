@@ -8792,6 +8792,12 @@ ul.ks-cboxtags {
             top: 56%;
             left: 35%;
         }
+.padresume {
+    padding-left: 115px!important;
+}
+#candidateTableId_filter input {
+     border: 1px solid #D5D5D5 !important;
+}
 
 option {
     left: 0;
@@ -9502,7 +9508,7 @@ option {
     left: -14px;
 }
 .left-p {
-    right: 268px;
+    left: 210px;
     top: 75px;
 }
 .consent-note {
@@ -9515,6 +9521,7 @@ option {
     text-transform:capitalize!important;
  
 }
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -10901,6 +10908,22 @@ option {
     #clientduser li {
         width: 100%;
         float: left;
+    }
+    .mob-ht {
+        margin-bottom: 0px!important;
+        height: 10px!important;
+    }
+    .mob-backbtn {
+        position: absolute;
+        top: -27px;
+        right: 0px;
+    }
+    .mob-top {
+        margin-top: 60px!important;
+    }
+    .padresume {
+        padding-left: 0px !important;
+        margin-bottom: 15px!important;
     }
     .consent .filextension{
         padding:0px!important
