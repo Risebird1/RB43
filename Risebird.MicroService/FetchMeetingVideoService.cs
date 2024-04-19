@@ -122,7 +122,6 @@ namespace Risebird.MicroService
                                     }
                                 }
                             }
-                            var transcriptSasUrl = "";
                             if (!string.IsNullOrEmpty(videoSasUrl))
                             {
                                 //insert the SAS URL of the video, transcript and video duration in the database table

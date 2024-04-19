@@ -688,7 +688,9 @@ table tr td.relatedvideo:hover {
     width: 15px;
     height: 15px;
 }
-
+.mdc-radio .mdc-radio__background::before{
+    background:none!important;
+}
 .curated-score .table-responsive-sm .table > tbody > tr > td:last-child {
     padding: 12px 5px !important;
     border: 0px !important;
@@ -6664,6 +6666,30 @@ input[type=search]:focus {
 #PopupConsentModal .modal-lg {
     max-width: 740px !important;
 }
+#QuestionsNewTable thead > tr > th {
+    padding: 3px 5px;
+    background: #d2d0d0;
+}
+
+#QuestionsNewTable thead > tr > td {
+    padding: 3px 5px;
+    background: #d2d0d0;
+}
+#PopupDetailsModal .txtuploading {
+    display: block;
+    margin: 0px auto;
+    position: relative;
+    bottom: -160px;
+    text-align: center;
+    font-weight: 400;
+    background: #b1e9b175;
+    width: 530px;
+    border: 1px dotted #89d689;
+}
+#PopupDetailsModal #files-area {
+    position: relative;
+    top: -17px;
+}
 /***** Media queries *****/
 .copy-btn {
     background: none;
@@ -9527,7 +9553,39 @@ option {
     text-transform:capitalize!important;
  
 }
+#divcodesnippets iframe {
+    display: block;
+    margin: 20px auto;
+    width: 800px;
+    height: 300px;
+    background: #fff;
+    padding: 10px;
+}
+.show-default{
+    display:block!important;
+}
+.default-open .collapsible-panel .fas {
+    right: -12px;
+}
+.footer-nav {
+    position: fixed;
+    z-index: 999;
+    bottom: 0;
+    display: none;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    font-weight: normal;
+    color: #fff;
+    text-align: center;
+    left: 80px;
+    cursor: pointer;
+}
 
+    .show, .footer-nav:hover {
+        display: block;
+    }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -10556,6 +10614,9 @@ option {
                 color: #cb2c2c;
                 text-align: left !important;
             }
+        .footer-nav {
+            left: 0px!important;
+        }
         .meeting-link {
             font-size: 16px;
         }
@@ -10915,9 +10976,13 @@ option {
         width: 100%;
         float: left;
     }
+    .footer-nav {
+        left: 0px !important;
+    }
+ 
     .mob-ht {
-        margin-bottom: 0px!important;
-        height: 10px!important;
+        margin-bottom: 0px !important;
+        height: 10px !important;
     }
     .mob-backbtn {
         position: absolute;
@@ -11505,6 +11570,7 @@ option {
     .time-txt {
         font-size: 13px;
     }
+
 }
 
 @media only screen and (max-width: 480px) {
@@ -11516,7 +11582,9 @@ option {
         top: -12px !important;
         right: 200px!important;
     }
-
+    .footer-nav .button-wrapper h2 {
+        font-size: 19px !important;
+    }
     .consent-label{
    width:80%!important;
     }
@@ -11969,11 +12037,20 @@ option {
         top: 4px !important;
         left: 10px !important;
     }
-
-    .right-div {
+    .footer-nav .button-wrapper h2{
+        font-size:15px!important;
+    }
+    .drop-box {
+        width: 100%;
+        margin: 10px 5px;
+    }
+        .right-div {
         float: right;
         width: 100%;
         text-align: center;
+    }
+    .drop-btn {
+        width: 235px!important;
     }
 
     .content-wrappers .right-div .meeting-link .click_herebtn {

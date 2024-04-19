@@ -9397,5 +9397,66 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+        #region Code Snippet
+        [HttpGet]
+        public async Task<IActionResult> InterviewCodeSnippet(int id, int irfid)
+        {
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName?.Replace("\"", "");
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid?.Replace("\"", "");
+            TechSkillComments model = new TechSkillComments();
+            var skills = await _irfService.GetTechSkills(irfid);
+            ViewBag.Skills = new SelectList(skills, "id", "Name");
+            model.IRFId = irfid;
+            model.interviewid = id;
+            model.Profile = profileName;
+            model.CreatedBy = emailid;
+            return PartialView(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> InterviewCodeSnippet(TechSkillComments model)
+        {
+            return View();
+        }
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadInterviewCodeSnippet()
+        {
+            if (Request.Form.Files.Count() > 0)
+            {
+                var interviewid = Convert.ToInt32(Request.Form["interviewid"].ToString());
+                string uploadedFileURL = string.Empty;
+                var model = Request.Form.Files[0];
+                string outputFileName = model.FileName.Replace(" ", "_");
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
+                FileInfo fi = new FileInfo(outputFileName);
+                if (fi.Extension.ToLower() == ".txt")
+                {
+                    await _azureStorageHelper.InsertResumeBlob(outputFileName, "codesnippet", model, fi.Extension.ToLower());
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("codesnippet");
+                    var blob = containerRef.GetBlockBlobReference(outputFileName);
+                    uploadedFileURL = blob.Uri.ToString();
+                    var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL, null);
+                    return Json("Upload completed successfully.");
+                }
+                else
+                {
+                    return Json("Only Text file is allowed.");
+                }
+            }
+            else
+            {
+                return Json("");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetCodeSnippet(int interviewid)
+        {
+            var result = await _irfService.GetCodeSnippetFile(interviewid);
+            return Json(result);
+        }
+        #endregion
     }
 }
