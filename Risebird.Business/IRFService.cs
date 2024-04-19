@@ -3940,5 +3940,29 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> GetCodeSnippetFile(int interviewid)
+        {
+            try
+            {
+                return await _irfRepository.GetCodeSnippetFile(interviewid);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<bool> UpdateCodeSnippetFile(int interviewid, string uploadedFileURL, List<SkillComment> model)
+        {
+            try
+            {
+                return await _irfRepository.UpdateCodeSnippetFile(interviewid, uploadedFileURL, model);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

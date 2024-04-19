@@ -241,9 +241,10 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid);
         Task<IEnumerable<SecondaryAssessmentGroups>> GetMAGSecondaryAssessmentGroupsById(int assessmentGroupId);
         Task<bool> EditMAG(AGCampaignModel model, string loggedInUser);
-
         Task<bool> UpdateConsentFile(int irfid, string uploadedFileURL);
         Task<string> GetConsentFile(int irfid);
         Task<IEnumerable<IRF>> GetDayStatsByClientUser(DateTime startDate, DateTime endDate, string emailid);
+        Task<string> GetCodeSnippetFile(int interviewid);
+        Task<bool> UpdateCodeSnippetFile(int interviewid, string uploadedFileURL, List<SkillComment> model);
     }
 }
