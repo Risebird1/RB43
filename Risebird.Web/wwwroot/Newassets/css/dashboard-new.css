@@ -6675,6 +6675,21 @@ input[type=search]:focus {
     padding: 3px 5px;
     background: #d2d0d0;
 }
+#PopupDetailsModal .txtuploading {
+    display: block;
+    margin: 0px auto;
+    position: relative;
+    bottom: -160px;
+    text-align: center;
+    font-weight: 400;
+    background: #b1e9b175;
+    width: 530px;
+    border: 1px dotted #89d689;
+}
+#PopupDetailsModal #files-area {
+    position: relative;
+    top: -17px;
+}
 /***** Media queries *****/
 .copy-btn {
     background: none;
@@ -9554,7 +9569,7 @@ option {
 }
 .footer-nav {
     position: fixed;
-    z-index: 99999;
+    z-index: 999;
     bottom: 0;
     display: none;
     width: 100%;
@@ -10964,9 +10979,10 @@ option {
     .footer-nav {
         left: 0px !important;
     }
+ 
     .mob-ht {
-        margin-bottom: 0px!important;
-        height: 10px!important;
+        margin-bottom: 0px !important;
+        height: 10px !important;
     }
     .mob-backbtn {
         position: absolute;
@@ -12024,10 +12040,17 @@ option {
     .footer-nav .button-wrapper h2{
         font-size:15px!important;
     }
-    .right-div {
+    .drop-box {
+        width: 100%;
+        margin: 10px 5px;
+    }
+        .right-div {
         float: right;
         width: 100%;
         text-align: center;
+    }
+    .drop-btn {
+        width: 235px!important;
     }
 
     .content-wrappers .right-div .meeting-link .click_herebtn {
