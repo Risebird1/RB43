@@ -8527,6 +8527,83 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<string> GetCodeSnippetFile(int interviewid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetCodeSnippetFile", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateCodeSnippetFile(int interviewid, string uploadedFileURL, List<SkillComment> model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                dynamicParameters.Add("@uploadedFileURL", uploadedFileURL);
+                dynamicParameters.Add("@CreatedOn", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateCodeSnippetFile", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                //    DataTable techSkillCommentsDt = new DataTable();
+                //    techSkillCommentsDt.Columns.Add("IRFId", typeof(int));
+                //    techSkillCommentsDt.Columns.Add("Skill", typeof(int));
+                //    techSkillCommentsDt.Columns.Add("Comment", typeof(string));
+                //    techSkillCommentsDt.Columns.Add("CreatedBy", typeof(string));
+                //    foreach (var item in model)
+                //    {
+                //        techSkillCommentsDt.Rows.Add(interviewid, Convert.ToInt32(item.Skill), item.Comment, item.CreatedBy);
+                //    }
+                //    SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddIRFSampleQuestions", con);
+                //    cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
+                //    cmdAddSkillComments.Parameters.Add(new SqlParameter("@IRFSampleQuestionsBulkData", SqlDbType.Structured));
+                //    cmdAddSkillComments.Parameters["@IRFSampleQuestionsBulkData"].Value = techSkillCommentsDt;
+                //    cmdAddSkillComments.Parameters.Add(new SqlParameter("@interviewid", SqlDbType.Int));
+                //    cmdAddSkillComments.Parameters["@interviewid"].Value = interviewid;
+                //    cmdAddSkillComments.Parameters.Add(new SqlParameter("@uploadedFileURL", SqlDbType.VarChar));
+                //    cmdAddSkillComments.Parameters["@uploadedFileURL"].Value = uploadedFileURL;
+                //    cmdAddSkillComments.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
+                //    cmdAddSkillComments.Parameters["@CreatedOn"].Value = DateTime.Now;
+                //    con.Open();
+
+                //    if (await cmdAddSkillComments.ExecuteNonQueryAsync() != 0)
+                //    {
+                //        con.Close();
+                //    }
+                //    return true;
+                //}
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
 

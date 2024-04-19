@@ -19,5 +19,6 @@ namespace Risebird.Entities.ViewModel
         public string SkillsOptionsData { get; set; }
         public string IrfName { get; set; }
         public string CreatedBy { get; set; }
+        public int interviewid { get; set; }
     }
 }
