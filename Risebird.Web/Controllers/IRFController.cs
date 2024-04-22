@@ -9479,11 +9479,11 @@ namespace Risebird.Web.Controllers
                 ViewBag.meetingtype = meetingtype;
                 if (meetingtype == "Select")
                 {
-                    meetings = meetings?.Where(x => x.InterviewStatus == 2 || x.InterviewStatus == 4)?.ToList();
+                    meetings = meetings?.Where(x => (x.InterviewStatus == 2 || x.InterviewStatus == 4) && !x.RedoInterview)?.ToList();
                 }
                 else if (meetingtype == "Reject")
                 {
-                    meetings = meetings?.Where(x => x.InterviewStatus == 3 || x.InterviewStatus == 5)?.ToList();
+                    meetings = meetings?.Where(x => x.InterviewStatus == 3 || x.InterviewStatus == 5 && !x.RedoInterview)?.ToList();
                 }
                 return View(meetings);
             }
