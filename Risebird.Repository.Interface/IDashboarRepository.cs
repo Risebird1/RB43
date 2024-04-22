@@ -68,7 +68,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<MeetingVM>> GetDMApproveDetailsRepository();
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailRepository(int campaignId);
-        Task<List<PQIDetails>> GetInterviewerIRFDetails(string type);
+        Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid);
         Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue);
         Task<bool> MarkedColdCandidate(int CandidateId, string Email, int InterviewId);
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type);
