@@ -335,17 +335,24 @@
                                                         }
                                                     }
                                                 </div>
-                                                <div style="margin-top:15px">
-                                                <div>
+                                                @if(Model.CommunicationalProficiency != 0)
+                                                {
+                                                    <div style="margin-top:15px">
+                                                        <div>
+                                                            <img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Communicational Proficiency:
+                                                        </div>
+                                                        <div>
+                                                            @* <label for="score" class="pull-left" style="line-height:5px;">Score must be (between 1 and 10):</label> *@
+                                                            <div class="communication-count pull-left">  @Model.CommunicationalProficiency / 10</div>
 
-                                                    <img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Communication Score:</div>
-                                                  <div>  <label for="score" class="pull-left" style="line-height:5px;">Score must be (between 1 and 10):</label>
-                                                       <div class="communication-count pull-left">  @Model.CommunicationalProficiency /10</div>
+                                                        </div>
 
-                                               </div>
-                                                </div>
+                                                    </div>
+                                                    
+                                                }
+                                                
                                                 <div class="note-skill">
-                                                    <b> Note:</b> % score for every skill represents difference between candidate actual and required competency. 
+                                                    <b> Note:</b> % score against every skill represents the difference between candidate's actual and required competency. 
                                                 </div>
 
                                             </div>
