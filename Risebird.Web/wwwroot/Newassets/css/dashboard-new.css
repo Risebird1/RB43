@@ -9569,7 +9569,7 @@ option {
 }
 .footer-nav {
     position: fixed;
-    z-index: 99999;
+    z-index: 999;
     bottom: 0;
     display: none;
     width: 100%;
@@ -10979,6 +10979,7 @@ option {
     .footer-nav {
         left: 0px !important;
     }
+ 
     .mob-ht {
         margin-bottom: 0px !important;
         height: 10px !important;
