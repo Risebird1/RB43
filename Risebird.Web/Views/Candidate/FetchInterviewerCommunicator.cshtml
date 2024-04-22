@@ -35,8 +35,8 @@
     }
 
     /*.mob_h {
-                                                                display: none !important
-                                                            }*/
+                                                                                display: none !important
+                                                                            }*/
 
     .tox-notifications-container {
         display: none
@@ -200,6 +200,16 @@
                                                                 }
 
                                                                 <td class="text-center">
+                                                                    <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Select",irfId=item.id})" title="Selected Meetings">
+                                                                        <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings">
+                                                                            <span title="Selected Meetings"><span class="fas fa-list" style="color:#fff"></span></span>
+                                                                        </div>
+                                                                    </a>
+                                                                    <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Reject",irfId=item.id})" title="Rejected Meetings">
+                                                                        <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings">
+                                                                            <span title="Rejected Meetings"><span class="fas fa-list" style="color:#fff"></span></span>
+                                                                        </div>
+                                                                    </a>
                                                                     <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
                                                                         <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId', 'public');" title="Upload Resumes">
                                                                             <span class="fas fa-upload"></span>

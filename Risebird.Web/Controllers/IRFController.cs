@@ -9457,5 +9457,42 @@ namespace Risebird.Web.Controllers
             return Json(result);
         }
         #endregion
+        #region Manage Interview Select/Reject
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelMeetingsDetails(string uniqueid, int irfId, string meetingtype, string IRFName)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid?.Replace("\"", "");
+                if (string.IsNullOrEmpty(emailid))
+                {
+                    return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+                }
+                var selectedMeeting = new List<MeetingVM>();
+                var meetings = new List<MeetingVM>();
+                meetings = await _irfService.GetIRFInterviewMeetingsForClient(irfId, "Client", emailid);
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                ViewBag.IRF = IRFName;
+                ViewBag.id = uniqueid;
+                ViewBag.IRFintId = irfId;
+                ViewBag.meetingtype = meetingtype;
+                if (meetingtype == "Select")
+                {
+                    meetings = meetings?.Where(x => x.InterviewStatus == 2 || x.InterviewStatus == 4)?.ToList();
+                }
+                else if (meetingtype == "Reject")
+                {
+                    meetings = meetings?.Where(x => x.InterviewStatus == 3 || x.InterviewStatus == 5)?.ToList();
+                }
+                return View(meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+            }
+        }
+        #endregion
     }
 }
