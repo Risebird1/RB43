@@ -176,7 +176,7 @@
                                                             <td>
                                                                 @if (ViewBag.PageStatus == "Public")
                                                                 {
-                                                                    <a title="Total Selected">
+                                                                    <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">
                                                                         @item.selectionrate %
                                                                     </a>
                                                                 }
@@ -198,7 +198,7 @@
                                                             <td>
                                                                 @if (ViewBag.PageStatus == "Public")
                                                                 {
-                                                                    <a title="Total Rejected">
+                                                                    <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.NickName,usePl="Public"})">
                                                                         @item.rejectionrate %
                                                                     </a>
                                                                 }
