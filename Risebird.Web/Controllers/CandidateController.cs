@@ -4882,7 +4882,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 8].Value = item.ClientHrContact;
                         Sheet.Cells[i, 9].Value = item.IRFId;
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + item.IRFId + "&isClient=true";
+                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + id + "&isClient=true";
                         try
                         {
                             Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
