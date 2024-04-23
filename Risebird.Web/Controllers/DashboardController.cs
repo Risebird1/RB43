@@ -3194,5 +3194,52 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        public async Task<IActionResult> PotentialPausedDetails(int type)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var modelList = await _dashboardService.PotentialPausedDetails();
+                        if (modelList == null)
+                        {
+                            modelList = new List<MeetingVM>();
+                        }
+                        if (type == 0)
+                        {
+                            modelList = modelList.Where(x=>!x.IsPaused).ToList();
+                            ViewBag.ColdCandidateValue = 0;
+                        }
+                        else {
+                            modelList = modelList.Where(x => x.IsPaused).ToList();
+                            ViewBag.ColdCandidateValue = 1;
+                        }
+                       // modelList = modelList.Select(x => { x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; return x; }).ToList();
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

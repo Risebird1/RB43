@@ -51,7 +51,7 @@ namespace Risebird.Business.Interface
         string GetRecruiterDomain(int userId);
         List<InterviewVM> GetUpComingInterviewList();
         List<IRFVm> GetUpComingIRFList();
-        Task<bool> PauseIRF(int irfId, string irfName);
+        Task<bool> PauseIRF(int irfId, string irfName, string emailid);
         bool PlayIRF(int irfId, string irfName);
         Task<IEnumerable<IRF>> GetAllIRFs(string emailId, string profileName, int? pageNumber, string searchValue = null, IRFFilter filterModel = null);
         Task<bool> SubscribeCuratedGroup(int id, string emailId, string profile);

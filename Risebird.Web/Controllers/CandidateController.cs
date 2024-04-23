@@ -4473,7 +4473,9 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (await _irfService.PauseIRF(irfId, irfName))
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (await _irfService.PauseIRF(irfId, irfName, emailid))
                 {
                     return Json("IRF has been paused Successfully!");
                 }
