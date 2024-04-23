@@ -7,6 +7,11 @@
     var Header = "<div>Cold Candidate</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
+<style>
+    .swal2-popup #swal2-content{
+       font-size:18px;
+    }
+</style>
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
 <link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
@@ -62,10 +67,10 @@
                             <div class="toolbar">
 
 
-                                <div>
+                                    <div class="cold-candidate">
 
                                     <div id="tableID" class="second" style="overflow-x:scroll">
-                                        <table id="mailsTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+                                        <table id="mailsTable" class="table table-striped  table-bordered dt-responsive" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
                                                     <th>Skill Channel</th>
@@ -146,10 +151,18 @@
                                                                 </span>
                                                             </button>
                                                             @if (ViewBag.ColdCandidateValue == 1)
-                                                            { }
+                                                            {
+                                                                    <span>
+                                                                        <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;left:10px">
+                                                                            <span onclick="UndoMarkedColdCandidate('@item.CandidateId','@item.IRFId', '@item.candidateEmail','@item.irfIntId','@item.scheduleUniqueid','@item.imid');" title="Undo Mark Cold Candidate" class="mdc-fab__icon touch">
+                                                                                <img src="~/img/approve-blk.png" width="18" style="max-width: 18px!important;position: relative;top: -1.5px;left: -2px;" />
+                                                                            </span>
+                                                                        </button>
+                                                                    </span>
+                                                            }
                                                             else{
                                                             <span>
-                                                                        <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#db6161;border-color:#db6161;position:relative;left:10px">
+                                                                        <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;left:10px">
                                                                             <span onclick="MarkedColdCandidate('@item.CandidateId','@item.IRFId', '@item.candidateEmail','@item.imid','@item.irfIntId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
                                                                                 <img src="~/img/approve-blk.png" width="18" style="max-width: 18px!important;position: relative;top: -1.5px;left: -2px;" />
            </span>
@@ -187,11 +200,12 @@
     </div>
 
 </div>
+</div>
     @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
    <div id="modal_recipientActivity_placeholder"></div>
     <div id="modal_candidateCommunicationDetails_placeholder"></div>
    <script src="~/js/ModalFormServerValidation.js"></script>
-    <script src="~/js/markcoldcandidate.js"></script>
+    <script src="~/js/markcoldcandidate.js" asp-append-version="true"></script>
     <script src="~/js/common.js"></script>
 
 <script>
