@@ -80,7 +80,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransRecruiter> GetTransRecruiter(int id);
         IEnumerable<InterviewVM> GetUpComingInterviewList();
         IEnumerable<IRFVm> GetUpComingIRFList();
-        Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId);
+        Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId, string emailid);
         IEnumerable<TransClientUser> GetTransClientUserRole(int id);
         IEnumerable<MeetingVM> GetIRFInterviewMeetingsCountData(int id);
         //bool AddPausedMeetings(int irfId, int meetingId);

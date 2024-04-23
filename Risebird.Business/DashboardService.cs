@@ -977,5 +977,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<List<MeetingVM>> PotentialPausedDetails()
+        {
+            try
+            {
+                return await _dashboardRespository.PotentialPausedRepository();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

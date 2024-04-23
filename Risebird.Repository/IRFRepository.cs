@@ -3981,7 +3981,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId)
+        public async Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId,string emailid)
         {
             try
             {
@@ -3990,6 +3990,7 @@ namespace Risebird.Repository
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", IRFId);
                     dynamicParameters.Add("@date", DateTime.Now);
+                    dynamicParameters.Add("@emailid",emailid);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_UpdateMeetingStatus", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
                 }
