@@ -4858,7 +4858,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 8].Value = "Client Hr";
                 Sheet.Cells[1, 9].Value = "Skill Channel ID";
                 Sheet.Cells[1, 10].Value = "Interviewer Comment";
-                Sheet.Cells[1, 11].Value = "Video Link";
+                Sheet.Cells[1, 11].Value = "Executive URL";
                 int j = 11;
                 foreach (var item in skillslist)
                 {
@@ -4882,24 +4882,19 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 8].Value = item.ClientHrContact;
                         Sheet.Cells[i, 9].Value = item.IRFId;
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + item.IRFId + "&isClient=true";
+                        try
                         {
-                            try
-                            {
-                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 11].Value = "Video Link";
-                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 11].Value = "No Video";
-                            }
+                            Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, 11].Value = "Executive Report";
+                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
-                        else
+                        catch (Exception)
                         {
-                            Sheet.Cells[i, 11].Value = "No Video";
+                            Sheet.Cells[i, 11].Value = "No Report";
                         }
+                        
                         j = 11;
                         var totalskillscore = 0.0;
                         var totalskillscount = 0;
