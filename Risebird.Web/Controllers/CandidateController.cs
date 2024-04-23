@@ -5067,25 +5067,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                var data = await _candidateService.GetColdCandidatesListByClient(emailid);
+                data = data.Select(x =>
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+                return PartialView("_GetColdCandidatePartial", data);
 
-                        var data = await _candidateService.GetColdCandidatesListByClient(emailid);
-                        data = data.Select(x =>
-                        {
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
-                        return PartialView("_GetColdCandidatePartial", data);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
             }
             catch (Exception ex)
             {
