@@ -3027,7 +3027,31 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        public async Task<JsonResult> UndoMarkedColdCandidate(int CandidateId, string IRFId, string CandidateEmail, int irfIntId)
+        {
+            try
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                
+          
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId,0);
 
+                if (data == true)
+                {
+                    return Json("Candidate " + "(" + CandidateEmail + ")" + " for " + IRFId + " has been undo as cold successfully");
+                }
+                else
+                {
+                    return Json("Failed to undo cold candidate .");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         #region PQI
         public async Task<IActionResult> InterviewerIRFDetails(string type)
         {

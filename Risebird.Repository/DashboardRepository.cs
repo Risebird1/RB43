@@ -1645,8 +1645,11 @@ namespace Risebird.Repository
                 {
                     if (ColdCandidateValue == 0)
                     {
-
-                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList", commandTimeout: 600,
+                        var parameters = new DynamicParameters();
+                        
+                        parameters.Add("@startDate", DateTime.Now.AddMonths(-6));
+                        parameters.Add("@endDate", DateTime.Now);
+                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList",parameters ,commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                         return result.ToList();
                     }
