@@ -901,11 +901,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type)
+        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null)
         {
             try
             {
-                return await _dashboardRespository.GetInterviewerIRFDetails(type);
+                return await _dashboardRespository.GetInterviewerIRFDetails(type, uniqueid);
             }
             catch (Exception ex)
             {
@@ -977,6 +977,5 @@ namespace Risebird.Business
                 return null;
             }
         }
-
     }
 }

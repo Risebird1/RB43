@@ -22,5 +22,6 @@
         public int TotallessComment { get; set; }
         public int TotallessQuestions { get; set; }
         public int TotalLatejoin { get; set; }
+        public string NickName { get; set; }
     }
 }

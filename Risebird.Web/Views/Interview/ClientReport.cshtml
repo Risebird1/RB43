@@ -7,7 +7,7 @@
 @{
     ViewData["Title"] = "Interview Report";
     ViewBag.PageHeader = "Interview Report";
-    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
 
     var meetingStatusList = new List<SelectListItem>();
     meetingStatusList = Html.GetEnumSelectList<MeetingStatus>().ToList();

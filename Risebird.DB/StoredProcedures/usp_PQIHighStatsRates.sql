@@ -10,9 +10,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE Procedure usp_PQIHighStatsRates
 @timeNow datetime,
+@uniqueid varchar(50),
 @type varchar(50)
 AS
 BEGIN
+Declare @Emailid varchar(150)
+if(@uniqueid!=null or @uniqueid!='')
+begin
+Select @Emailid=Emailid from ClientPublicURLs where uniqueid=@uniqueid
+end
 declare @yesterdayDate date = cast(dateadd(day, -1, @timeNow) as date)  
 
 DECLARE @tbl_RelevantIRFs TABLE (                      
@@ -20,10 +26,17 @@ DECLARE @tbl_RelevantIRFs TABLE (
  IRFId varchar(15)
 )  
   
+--INSERT INTO @tbl_RelevantIRFs      
+--select distinct IRF.id, im.IRFId  from InterviewMeetings im  
+--join IRF on IRF.IRFId=im.IRFId
+--where (cast(im.interviewDate as date)>= @yesterdayDate) and confirmationStatus = 1 
+
 INSERT INTO @tbl_RelevantIRFs      
-select IRF.id, im.IRFId  from InterviewMeetings im  
+select distinct IRF.id, im.IRFId  from InterviewMeetings im  
 join IRF on IRF.IRFId=im.IRFId
-where (cast(im.interviewDate as date)>= @yesterdayDate) and confirmationStatus = 1 
+left join TransClientUser tc on tc.IRFId=IRF.id
+left join UserList ul on tc.ClientUserId=ul.id 
+where (cast(im.interviewDate as date)>= @yesterdayDate) and confirmationStatus = 1 and (@Emailid is null or ul.EmailId=@Emailid)
 
 DECLARE @tbl_RelevantInterviews TABLE (                      
  IRFId varchar(15),
@@ -69,7 +82,7 @@ where (ic.InterviewStatus = 2) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6
 group by ir.IRFId,im.interviewer  
   
 ;With CTE as(
-Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle 
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName 
 from @tbl_RelevantInterviews im
 join IRF on IRF.IRFId=im.IRFId
 join UserList ul on IRF.RisebirdHr=ul.id
@@ -97,7 +110,7 @@ where cd.Rating<4
 group by ir.IRFId,im.interviewer  
 
 ;With CTE as(
-Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.NegativeRating,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle 
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.NegativeRating,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName 
 from @tbl_RelevantInterviews im
 join IRF on IRF.IRFId=im.IRFId
 join UserList ul on IRF.RisebirdHr=ul.id
@@ -126,7 +139,7 @@ where (ic.InterviewStatus = 3) and (ic.MeetingStatus = 4  or ic.MeetingStatus = 
 group by ir.IRFId,im.interviewer  
   
 ;With CTE as(
-Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalRejected,(ISNULL(ism.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle  
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalRejected,(ISNULL(ism.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName  
 from @tbl_RelevantInterviews im
 join IRF on IRF.IRFId=im.IRFId
 join UserList ul on IRF.RisebirdHr=ul.id

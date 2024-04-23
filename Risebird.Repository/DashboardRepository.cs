@@ -1562,12 +1562,13 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type)
+        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type,string uniqueid)
         {
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@type", type);
+                parameters.Add("@uniqueid", uniqueid);
                 parameters.Add("@timeNow", DateTime.Now);
 
                 using (SqlConnection con = new SqlConnection(connectionString))

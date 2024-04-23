@@ -3123,6 +3123,35 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        public async Task<IActionResult> InterviewerRiskIRFDetails(string type, string uniqueid)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid?.Replace("\"", "");
+            if (string.IsNullOrEmpty(emailid))
+            {
+                return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+            }
+            ViewBag.Profile = "Client";
+            ViewBag.Emailid = emailid;
+            ViewBag.PageStatus = "Public";
+            ViewBag.uniqueid = uniqueid;
+            if (type == "Rejection")
+            {
+                ViewBag.Type = "Rejection";
+            }
+            else if (type == "NegativeCandidate")
+            {
+                type = "NegativeCandidate";
+                ViewBag.Type = "NegativeCandidate";
+            }
+            else
+            {
+                type = "Selection";
+                ViewBag.Type = "Selection";
+            }
+            var model = await _dashboardService.GetInterviewerIRFDetails(type, uniqueid);
+            return View("InterviewerIRFDetails", model);
+        }
         #endregion
         public async Task<IActionResult> TechQCDetails()
         {
