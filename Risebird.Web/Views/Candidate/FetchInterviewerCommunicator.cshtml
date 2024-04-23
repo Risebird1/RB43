@@ -200,14 +200,14 @@
                                                                 }
 
                                                                 <td class="text-center">
-                                                                    <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Select",irfId=item.id})" title="Selected Meetings">
-                                                                        <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings">
-                                                                            <span title="Selected Meetings"><span class="fas fa-list" style="color:#fff"></span></span>
+                                                                    <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Select",irfId=item.id})" title="Selected Meetings">
+                                                                        <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings" style="background: #27a827;">
+                                                                            <span title="Selected Meetings"><span class="fa fa-user-check" style="color:#fff;font-size:11px;color:#fff;font-size: 13px;position: relative;left: -2px;"></span></span>
                                                                         </div>
                                                                     </a>
-                                                                    <a target="_blank" style="position:relative;top:0px;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Reject",irfId=item.id})" title="Rejected Meetings">
-                                                                        <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings">
-                                                                            <span title="Rejected Meetings"><span class="fas fa-list" style="color:#fff"></span></span>
+                                                                    <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Reject",irfId=item.id})" title="Rejected Meetings">
+                                                                        <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings" style="background: #cb2b18;">
+                                                                            <span title="Rejected Meetings"><span class="fa fa-user" style="color:#fff;position:relative;left: -1px;top:0px;font-size:11px;"></span><span class="fa fa-times" style="color:#fff;font-size: 11px;position:relative;left: -5px;top:0px;animation:auto;"></span></span>
                                                                         </div>
                                                                     </a>
                                                                     <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Upload Resumes">
@@ -278,7 +278,7 @@
                                                                     else
                                                                     {
                                                                         <button id="skill_16" class="btn shadow btn-xs sharp me-1  trash-btn" aria-label="Pause">
-                                                                            <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                            <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" style="position:relative;left:-1px;top:-1px"><svg fill="#fff" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                                         </button>
                                                                     }
                                                                     @*<button class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Interviewer Stats">
