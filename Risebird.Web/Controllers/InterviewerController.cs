@@ -4014,7 +4014,7 @@ namespace Risebird.Web.Controllers
             var result = await _interviewerService.GetReliabilityScoreDetails(interviewer, IrfId);
             return PartialView(result);
         }
-        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type,string Irfid)
+        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type, string Irfid)
         {
             ViewBag.Type = type;
             var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer, type, Irfid);
