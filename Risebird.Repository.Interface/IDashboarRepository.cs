@@ -73,6 +73,7 @@ namespace Risebird.Repository.Interface
         Task<bool> MarkedColdCandidate(int CandidateId, string Email, int InterviewId);
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type);
         Task<List<MeetingVM>> FetchTechQCDetails();
+        Task<List<MeetingVM>> PotentialPausedRepository();
         Task<InterviewUsersDetails> GetFutureDateInterviewSchedule(int interviewid);
     }
 }

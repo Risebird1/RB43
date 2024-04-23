@@ -13,7 +13,8 @@ GO
   
 Create PROCEDURE [dbo].[usp_UpdateMeetingStatus]  
 @IRFId nvarchar(100),  
-@date DateTime  
+@date DateTime,
+@emailid varchar(100)
 AS  
 Begin  
 update IRF  
@@ -21,7 +22,6 @@ set IsPaused = 1
 where IRFId=@IRFId  
 update InterviewComments set MeetingStatus=null where InterviewId in   
 (select id from InterviewMeetings where IRFId=@IRFId and interviewDate>@date)  
-
   DECLARE @OutputTable Table(
   interviewer varchar(200),
   candidateEmail varchar(200),
@@ -32,12 +32,13 @@ update InterviewComments set MeetingStatus=null where InterviewId in
   IRFId varchar(200)
   );
 UPDATE InterviewMeetings  
-SET confirmationStatus = 2  
+SET confirmationStatus = 2,Cancellationsource='Paused by: '+ @emailid 
 OUTPUT inserted.interviewer, inserted.candidateEmail, inserted.candidateName, inserted.ClientHrContact, inserted.interviewDate, inserted.id as imid ,inserted.IRFId
 into @OutputTable
 WHERE IRFId = @IRFId and interviewDate >= @date  
+  
 select * from @OutputTable
-End  
+End 
   
 
 GO

@@ -3524,6 +3524,8 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.CallsCount = firstData.CallsCount;
                         candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
                         candidateTimeline.RedoInterview = firstData.RedoInterview;
+                        candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
+                        candidateTimeline.CandidateId = firstData.CandidateId;
                         //candidateTimeline.staffingAgency = firstData.staffingAgency;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -4471,7 +4473,9 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (await _irfService.PauseIRF(irfId, irfName))
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (await _irfService.PauseIRF(irfId, irfName, emailid))
                 {
                     return Json("IRF has been paused Successfully!");
                 }
@@ -5059,55 +5063,36 @@ namespace Risebird.Web.Controllers
             return View(model);
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetColdCandidatesListByClient()
+        public async Task<IActionResult> GetColdCandidatesListByClient(string emailid)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                var data = await _candidateService.GetColdCandidatesListByClient(emailid);
+                data = data.Select(x =>
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-
-                        var data = await _candidateService.GetColdCandidatesListByClient(emailid);
-                        data = data.Select(x =>
-                        {
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
-                        return PartialView("_GetColdCandidatePartial", data);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+                return PartialView("_GetColdCandidatePartial", data);
             }
+            
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetNotProcessedResumeByClient()
+        public async Task<IActionResult> GetNotProcessedResumeByClient(string emailid)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
                     var data = await _candidateService.GetNotProcessedResumeByClient(emailid);
                     return PartialView("_GetNotProcessedResumeByClientPartial", data);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
+               
             }
             catch (Exception ex)
             {

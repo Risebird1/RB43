@@ -75,5 +75,6 @@ namespace Risebird.Business.Interface
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type);
         Task<List<MeetingVM>> FetchTechQCDetails();
         Task<InterviewUsersDetails> GetFutureDateInterviewSchedule(int interviewid);
+        Task<List<MeetingVM>> PotentialPausedDetails();
     }
 }

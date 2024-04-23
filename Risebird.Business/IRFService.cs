@@ -33,6 +33,7 @@ namespace Risebird.Business
         private readonly IClonableSkillChannelTemplateRepository _clonableSkillChannelTemplateRepository;
         //private readonly IClientRepository _clientRepository;
         private readonly IUserRepository _userRepository;
+       
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
             INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration,
@@ -56,6 +57,7 @@ namespace Risebird.Business
             _clonableSkillChannelTemplateRepository = clonableSkillChannelTemplateRepository;
             //_clientRepository = clientRepository;
             _userRepository = userRepository;
+
         }
 
         #region IRF Functions
@@ -1452,12 +1454,12 @@ namespace Risebird.Business
                 return new List<IRFVm>();
             }
         }
-        public async Task<bool> PauseIRF(int irfId, string irfName)
+        public async Task<bool> PauseIRF(int irfId, string irfName, string emailid)
         {
             try
             {
                 //update meeting status
-                var updatedMeetings = await _irfRepository.UpdateMeetingStatus(irfName);
+                var updatedMeetings = await _irfRepository.UpdateMeetingStatus(irfName,emailid);
 
                 //send mails
                 if (updatedMeetings != null && updatedMeetings.Count() != 0)
@@ -1466,13 +1468,15 @@ namespace Risebird.Business
                     foreach (var item in updatedMeetings ?? new List<MeetingVM>())
                     {
                         await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
-                        //insert meeting in PausedIRF
-                        // _irfRepository.AddPausedMeetings(irfId, item.imid);
-                        // item.candidateEmail = "tanishka_gupta@risebird.io";
-                        await _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact, item.interviewDate.ToString("MMMM dd, yyyy"), irfId);
+                        await _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, null, item.interviewDate.ToString("MMMM dd, yyyy"), irfId);
+                        if (emailid!= item.ClientHrContact) {
+                            List<string> ClientHrContact = new List<string>();
+                            ClientHrContact.Add(item.ClientHrContact);
+                            await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.candidateName, ClientHrContact, irfId, item.imid);
 
+                        }
+                        await _notificationHelper.SendInterviewCancelledMail(item.risebirdHR, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
                     }
-                    //_notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
 
                 }
                 return true;
