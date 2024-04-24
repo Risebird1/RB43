@@ -1645,8 +1645,11 @@ namespace Risebird.Repository
                 {
                     if (ColdCandidateValue == 0)
                     {
-
-                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList", commandTimeout: 600,
+                        var parameters = new DynamicParameters();
+                        
+                        parameters.Add("@startDate", DateTime.Now.AddMonths(-6));
+                        parameters.Add("@endDate", DateTime.Now);
+                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList",parameters ,commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                         return result.ToList();
                     }
@@ -1711,6 +1714,29 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<List<MeetingVM>> PotentialPausedRepository()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetPotentialPauseChannel", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.ToList();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 }

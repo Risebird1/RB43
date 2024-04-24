@@ -100,7 +100,9 @@ table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
 .table > tbody > tr > td {
     padding: 0px 5px;
 }
-
+#mailsTable tr > td {
+    padding: 12px 5px !important;
+}
 table td {
     color: #504e4e;
 }
