@@ -74,6 +74,17 @@
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
                         </button>*@
+
+                        @if (ViewBag.AccessType != "Public")
+                        {
+                         @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
+                        </button>
+                        *@
+
+                         <i class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'"></i>
+
+                        }
                         @if (ViewBag.ButtonAccess && ViewBag.AccessType != "Public")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -88,12 +99,7 @@
                             </button>
                         }
 
-                        @if (ViewBag.AccessType != "Public")
-                        {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
-                            </button>
-                        }
+                       
                         @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                         {
                             @if (ViewBag.ClientRole != "HRs")
@@ -106,6 +112,7 @@
                                 }
                             }
                         }
+                       
                         @if (ViewBag.AccessType != "Public")
                         {
                             <button id="getstatus_13" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -113,7 +120,7 @@
                             </button>
                         }
 
-
+                      
 
                         @*@Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })*@
 
@@ -217,7 +224,12 @@
                                                             <th id="getstatus_5">Confirmation</th>
                                                            
                                                             <th>Interview Time</th>
-                                                            <th>Current Status</th>
+                                                            @if (ViewBag.profile != "Client")
+                                                            {
+                                                                <th>Candidate Journey</th>
+                                                                <th>Current Interview Status</th>
+
+                                                            }
                                                             <th>Communications</th>
                                                             <th> Actions </th>
                                                             @if (ViewBag.profile != "Client")
@@ -246,8 +258,15 @@
 
                                                             
                                                             <th>Interview Date</th>
-                                                            <th width="20%">Current Status</th>
+                                                            @if (ViewBag.profile != "Client")
+                                                            {
+                                                                <th width="20%">Candidate Journey</th>
+                                                                <th>Current Interview Status</th>
+
+                                                            }
                                                             <th>Communications</th>
+                                                            
+
                                                             <th> Actions </th>
                                                             @if (ViewBag.profile != "Client")
 															{
@@ -260,9 +279,21 @@
 
                                                         @foreach (var item in Model)
                                                         {
+                                                              var colorcode = "";
+                                                   
+                                                            if (item.HasEmailDroppedOrBounced == true)
+                                                        {
+                                                            colorcode = "red";
+                                                        }
+                                                            else
+                                                            {
+                                                                colorcode = "#fff";
+                                                            }
+
+
                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                                            
-                                                            <tr id="@item.id" data-changes="1">
+
+                                                            <tr id="@item.id" data-changes="1" style="background:@colorcode">
                                                                 @* <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td> *@
                                                               
                                                                 <td valign="top">
@@ -378,7 +409,9 @@
                                                                 <td class="text-center">@item.TotalInvites</td>
                                                                 <td class="text-center">@item.InviteConfirmation</td>
                                                                 <td>@item.interviewDate</td>
-                                                                <td class="text-center">
+                                                                @if (ViewBag.profile != "Client")
+                                                                {
+                                                                    <td class="text-center">
 
 
                                                                     @if (item.StatusValue == "In Progress")
@@ -514,7 +547,12 @@
                                                                         </div>
 
                                                                         }
-                                                               </td>
+                                                                    </td>
+                                                                    <td>
+                                                                        @item.CurrentInterviewStatus
+                                                                    </td>
+                                                                }
+                                                                
                                                                 
                                                                 <td>
                                                                     @if (item.MailCount != 0)
@@ -555,7 +593,7 @@
 
                                                                 </td>
 
-
+                                                                
                                                                 <td class="text-left">
 
                                                                     @if (ViewBag.profile != "Recruiter")

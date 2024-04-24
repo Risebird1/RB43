@@ -35,7 +35,8 @@ select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.
 (select ca.id, ca.IRFId, ca.ResumeLink,ca.TotalInvites, ca.[Type], ca.[Location], ca.Skill, ca.WorkAuth, ca.CurrentLocation, ca.CurrentEmployer,    
 ca.TotalExperience, ca.CurrentSalary, ca.ExpectedSalary, ca.Notice, ca.SelectabilityComments,ca.Heuristicsscore,    
 ca.JoinabilityComments, ca.JoinabilityScore, ca.SelectabilityScore, ca.TechSkillComments, ca.SkillGeneralComments,ca.CostEstimate,    
-ca.TechSkillScore, ca.SkillGeneralScore, ca.AddedByUserId, ca.VoiceItUserId, ca.InviteDate, ca.[Status], ul.EmailId, ca.Phone,    
+ca.TechSkillScore, ca.SkillGeneralScore, ca.AddedByUserId, ca.VoiceItUserId, ca.InviteDate, ca.[Status], ul.EmailId, ca.Phone, 
+dbo.fn_candidateCurrentInterviewStatus(ul.EmailId, irf.IRFId) as CurrentInterviewStatus, dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced,
 case 
 	 when ul.LastName is null then ul.FirstName
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
@@ -71,6 +72,7 @@ select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.
 ca.TotalExperience, ca.CurrentSalary, ca.ExpectedSalary, ca.Notice, ca.SelectabilityComments,ca.Heuristicsscore,    
 ca.JoinabilityComments, ca.JoinabilityScore, ca.SelectabilityScore, ca.TechSkillComments, ca.SkillGeneralComments,ca.CostEstimate,    
 ca.TechSkillScore, ca.SkillGeneralScore, ca.AddedByUserId, ca.VoiceItUserId, ca.InviteDate, ca.[Status], ul.EmailId, ca.Phone,    
+dbo.fn_candidateCurrentInterviewStatus(ul.EmailId, irf.IRFId) as CurrentInterviewStatus, dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced,
 case 
 	 when ul.LastName is null then ul.FirstName
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
