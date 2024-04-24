@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[usp_GetCandidateTimelineByDateStatus]         
+Create PROCEDURE [dbo].[usp_GetCandidateTimelineByDateStatus]         
 @EmailId varchar(100),                            
 @startDate datetime,                            
 @endDate datetime,                    
@@ -204,7 +204,7 @@ left join Trans_QCFormReport tqr on tqr.interviewid=im.id
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
-where ulsh.EmailId=@EmailId and im.interviewDate>=@startDate and im.interviewDate<=@endDate and cci.FKCandidateId <>1   
+where ulsh.EmailId=@EmailId and im.interviewDate>=@startDate and im.interviewDate<=@endDate and ISNULL(cci.IsColdCandidate,0) !=1   
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                            
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
@@ -242,7 +242,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0 and ca.ClientHRAttemptContact=@EmailId      
-and im.interviewDate>=@startDate and im.interviewDate<=@endDate and cci.IsColdCandidate<>1       
+and im.interviewDate>=@startDate and im.interviewDate<=@endDate and ISNULL(cci.IsColdCandidate,0) !=1   
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                            
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,im.id,IRF.id,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
@@ -278,7 +278,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0 and (ca.ProfileSource=@EmailId or im.staffingAgency= @EmailId)                             
-and im.interviewDate>=@startDate and im.interviewDate<=@endDate and cci.IsColdCandidate<>1      
+and im.interviewDate>=@startDate and im.interviewDate<=@endDate and ISNULL(cci.IsColdCandidate,0) !=1   
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                            
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
@@ -311,7 +311,7 @@ left join Trans_QCFormReport tqr on tqr.interviewid=im.id
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where irf.IsDeleted=0 and irf.Clientid=@Clientid                             
-and im.interviewDate>=@startDate and im.interviewDate<=@endDate and cci.IsColdCandidate<>1      
+and im.interviewDate>=@startDate and im.interviewDate<=@endDate and ISNULL(cci.IsColdCandidate,0) !=1   
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                            
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
@@ -349,7 +349,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0      
-and im.interviewDate>=@startDate and im.interviewDate<=@endDate AND cci.IsColdCandidate<>1     
+and im.interviewDate>=@startDate and im.interviewDate<=@endDate AND ISNULL(cci.IsColdCandidate,0) !=1   
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                            
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus,im.id,IRF.id, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,       
@@ -386,7 +386,7 @@ left join Trans_QCFormReport tqr on tqr.interviewid=im.id
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
-where im.interviewDate>=@startDate and im.interviewDate<=@endDate AND cci.IsColdCandidate<>1   
+where im.interviewDate>=@startDate and im.interviewDate<=@endDate AND ISNULL(cci.IsColdCandidate,0) !=1   
 group by ca.id, ca.CandidateMasterId, ul.EmailId,                            
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
@@ -396,5 +396,4 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
 END                    
                                
 End
-
 Go

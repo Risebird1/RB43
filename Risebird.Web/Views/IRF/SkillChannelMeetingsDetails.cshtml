@@ -93,23 +93,46 @@
                                                                 <td> @item.interviewDate </td>
                                                                 @if (item.candidateName != null && item.candidateName != "")
                                                                 {
-                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 20)
+                                                                    @if (item.IsOnline == 1 && item.candidateName.Length > 13)
                                                                     {
                                                                         <td>
-                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 20)...  </a>
+                                                                            <span class="call-area">
+                                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                {
+                                                                                    <span id="intselmeet_9" onclick="CommonCallButtonClick( '@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call Candidate"><img src="~/img/calling.png" width="17" /></span>
+                                                                                }
+                                                                            </span>
+
+                                                                            <a onclick="directopenChat('@item.candidateEmail')"><span class="dot" style="background-color:green"></span>     @item.candidateName.Substring(0, 13)...  </a>
+                                                                           
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        @if (item.candidateName.Length > 20)
+                                                                        @if (item.candidateName.Length > 13)
                                                                         {
                                                                             <td class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 20)... </a>
+
+                                                                                <span class="call-area">
+                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span id="intselmeet_9" onclick="CommonCallButtonClick( '@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call Candidate"><img src="~/img/calling.png" width="17" style="rotate:9deg;" /></span>
+                                                                                    }
+                                                                                </span>
+
+                                                                                <a onclick="" data-tooltip="@item.candidateName"><span class="dot"></span> @item.candidateName.Substring(0, 13)... </a>
+
                                                                             </td>
                                                                         }
                                                                         else
                                                                         {
                                                                             <td class="cadName">
+                                                                                <span class="call-area">
+                                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                                    {
+                                                                                        <span id="intselmeet_9" onclick="CommonCallButtonClick( '@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call Candidate"><img src="~/img/calling.png" width="17" style="rotate: 9deg;" /></span>
+                                                                                    }
+                                                                                </span>
                                                                                 <a onclick=""><span class="dot"></span> @item.candidateName </a>
                                                                             </td>
                                                                         }
@@ -154,14 +177,20 @@
                                                                 <td> @item.intervieweStatusStatDesc </td>
 
                                                                 <td class="text-right action">
-                                                                    @if (ViewBag.profileName == "client")
+                                                                    @* @if (ViewBag.profile != "Client" )
                                                                     {
-                                                                        <span id="intselmeet_8" title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="btn-call"><i class="fa fa-thumbs-up"></i></span>
+                                                                        <span  id="intselmeet_8" title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="btn  shadow btn-xs sharp me-1 item1" style="background:#53a4f4;border-color:#53a4f4;width:25px!important;height:25px!important;transition:none;"><svg style="position:relative;top:0px;left:-1px;" fill="#fff" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                     }
-                                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                    {
-                                                                        <span id="intselmeet_9" onclick="CommonCallButtonClick( '@item.candidateName','@item.MobileNumber', '@item.candidateEmail', '@item.imid', null, 'Candidate')" title="Call Candidate" class="btn-call"><i class="fa fa-phone-alt"></i></span>
-                                                                    }
+                                                                    <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="#" title="Shortlist Interviewer">
+                                                                        <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Shortlist Interviewer" style="background:#c3df82fc;border-color:#dbee7699;width:25px!important;height:25px!important;">
+                                                                            <span title="Shortlist Interviewer"><img style="max-width:18px;position:relative;left:-2px;top:-1px;" src="~/Newassets/img/shortlist-icon.png" /></span>
+                                                                        </div>
+                                                                    </a>
+                                                                    <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="#" title="Remove Interviewer">
+                                                                        <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Remove Interviewer" style="background: #de4f3eb3;width:25px!important;height:25px!important;">
+                                                                            <span title="Rejected Meetings"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size: 11px;"></span><span class="fa fa-trash" style="color:#fff;font-size: 8px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
+                                                                        </div>
+                                                                    </a> *@
                                                                 </td>
                                                             </tr>
                                                         }

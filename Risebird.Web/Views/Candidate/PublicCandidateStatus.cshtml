@@ -134,8 +134,8 @@
     }
 
     /*.mob_h {
-                                          display: none !important
-                                             }*/
+                                                                  display: none !important
+                                                                     }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -1024,33 +1024,31 @@
                                                                                         </div>
                                                                                         <!---interviewer buttons-->
                                                                                         <div class="mt-10">
-                                                                                            <button class="btn btn-rating shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Rate Interviewer"
-                                                                                                    data-toggle="ajax-modal" data-target="#addComment"
-                                                                                                    data-interviewdate="@item.interviewDate"
-                                                                                                    data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction })">
-                                                                                                <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
-                                                                                            </button>
-                                                                                            @if (string.IsNullOrWhiteSpace(item.CompanyName))
+                                                                                            @* <button class="btn btn-rating shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Rate Interviewer"
+                                                                                        data-toggle="ajax-modal" data-target="#addComment"
+                                                                                        data-interviewdate="@item.interviewDate"
+                                                                                        data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = item.InterviewId, allowClientAction = allowClientAction })">
+                                                                                        <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
+                                                                                        </button> *@
+                                                                                            @if (string.IsNullOrWhiteSpace(item.CompanyName) && (ViewBag.CandidateType == CandidateTypeForClient.Scheduled.GetDescription()))
                                                                                             {
                                                                                                 <span>
                                                                                                     <button class="btn btn-secondary shadow btn-xs sharp me-1" aria-label="Suspicious Interviwer">
                                                                                                         <span onclick="javascript:SuspiciousTypeDetails('@item.InterviewId');" title="Suspicious Interviwer" class="mdc-fab__icon touch"><img src="/img/suspicious.png" / style="width:14px;position:relative;top:-1px;"></span>
                                                                                                     </button>
                                                                                                 </span>
-
                                                                                             }
-
+                                                                                            @if (!item.IsColdCandidate && (item.CurrentMeetingStatus != 4 && item.CurrentMeetingStatus != 6 && item.CurrentMeetingStatus != 7 && item.CurrentMeetingStatus != 8))
+                                                                                            {
+                                                                                                <span>
+                                                                                                    <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:20px!important;height:20px!important;background:#e3ab8391;border-color: #e3ab8391;position:relative;">
+                                                                                                        <span onclick="MarkedColdCandidate('@item.CandidateId','@item.IRFname', '@item.CandidateEmailId','@item.InterviewId','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
+                                                                                                            <img src="~/img/approve-blk.png" width="18" style="max-width: 18px!important;position: relative;top: -1.5px;left: -2px;" />
+                                                                                                        </span>
+                                                                                                    </button>
+                                                                                                </span>
+                                                                                            }
                                                                                         </div>
-                                                                                        @if (!item.IsColdCandidate)
-                                                                                        {
-                                                                                            <span>
-                                                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:20px!important;height:20px!important;background:#e3ab8391;border-color: #e3ab8391;position:relative;">
-                                                                                                    <span onclick="MarkedColdCandidate('@item.CandidateId','@item.IRFname', '@item.CandidateEmailId','@item.InterviewId','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
-                                                                                                        <img src="~/img/approve-blk.png" width="18" style="max-width: 18px!important;position: relative;top: -1.5px;left: -2px;" />
-                                                                                                    </span>
-                                                                                                </button>
-                                                                                            </span>
-                                                                                        }
                                                                                     </td>
                                                                                     <td>
                                                                                         @if (item.MailCount != 0)
