@@ -86,7 +86,7 @@
                     }
                 </div>
                 <div class="pull-right">
-                    <div>
+                    <div style="float:right">
                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
@@ -125,7 +125,10 @@
                             <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SkillChannelDetailstoExcel", "IRF", new { type = ViewBag.Type })'"></i></span>
                         }
                     </div>
+                    <div class="note-filter" style="text-align: right;width: auto;padding-top: 8px;"> Note: To visualize break-up of candidates 'Added' before 30 days, use Filter option</div>
+
                 </div>
+
             </div>
         </div>
     </div>

@@ -27,7 +27,12 @@ Create PROCEDURE [dbo].[usp_AddCandidateStatus]
           
 AS      
 BEGIN      
-
+	declare @timeNow datetime = getdate()
+	if(@Status = 14)--means any of the various meeting status'
+	Begin
+		set @timeNow = dateadd(MILLISECOND, -1500, @timeNow)
+	End
+	 
 	if(@Status=18)
 	Begin
 		if Not Exists(Select 1 from InterviewMeetings im join Userlist ul on ul.EmailId=im.candidateEmail join CandidatesMaster cm on cm.userid=ul.id join IRF on IRF.IRFId=im.IRFId where cm.id=@CandidateId and im.confirmationStatus=1 and IRF.id=@IRFId)    
@@ -35,7 +40,7 @@ BEGIN
 			If(@InterviewId is null)      
 			Begin      
 				INSERT INTO CandidateStatus (IRFId, CandidateId, AudioFileLink, Comments, [Date], [Status], [PerformedBy])      
-				VALUES (@IRFId, @CandidateId, @AudioFileLink, @Comments, GETDATE(), @Status, @PerformedBy)      
+				VALUES (@IRFId, @CandidateId, @AudioFileLink, @Comments, @timeNow, @Status, @PerformedBy)      
 			end      
       
 			Else      
@@ -86,7 +91,7 @@ BEGIN
 				if(@IsAdd1=1)      
 				begin      
 				INSERT INTO CandidateStatus (IRFId, CandidateId, AudioFileLink, Comments, [Date], [Status], [PerformedBy], InterviewId)      
-				VALUES (@IRFId, @CandidateId, @AudioFileLink, @Comments, GETDATE(), @Status, @PerformedBy, @InterviewId)      
+				VALUES (@IRFId, @CandidateId, @AudioFileLink, @Comments, @timeNow, @Status, @PerformedBy, @InterviewId)      
 			End      
       
 			End     
@@ -98,7 +103,7 @@ BEGIN
       
 	Begin      
 		INSERT INTO CandidateStatus (IRFId, CandidateId, AudioFileLink, Comments, [Date], [Status], [PerformedBy])      
-		VALUES (@IRFId, @CandidateId, @AudioFileLink, @Comments, GETDATE(), @Status, @PerformedBy)      
+		VALUES (@IRFId, @CandidateId, @AudioFileLink, @Comments, @timeNow, @Status, @PerformedBy)      
 	end      
       
 	Else      
@@ -149,13 +154,10 @@ BEGIN
 		end      
 		end      
       
-       
-      
-      
 		if(@IsAdd=1)      
 		begin      
 		INSERT INTO CandidateStatus (IRFId, CandidateId, AudioFileLink, Comments, [Date], [Status], [PerformedBy], InterviewId)      
-		VALUES (@IRFId, @CandidateId, @AudioFileLink, @Comments, GETDATE(), @Status, @PerformedBy, @InterviewId)      
+		VALUES (@IRFId, @CandidateId, @AudioFileLink, @Comments, @timeNow, @Status, @PerformedBy, @InterviewId)      
 	End      
       
 	End      
