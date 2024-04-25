@@ -4159,7 +4159,7 @@ namespace Risebird.Web.Controllers
                             {
                                 interviewers.Add(result.EmailId);
                             }
-                            if(irfOwnersAndRestrictedIrfOwner != null && irfOwnersAndRestrictedIrfOwner.FirstOrDefault().Contains("turing.com"))
+                            if (irfOwnersAndRestrictedIrfOwner != null && irfOwnersAndRestrictedIrfOwner.FirstOrDefault().Contains("turing.com"))
                             {
                                 await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), null, null, id);
                             }
@@ -5537,7 +5537,7 @@ namespace Risebird.Web.Controllers
                     {
                         return View("ProctorReport", model);
                     }
-                    else if(isClient)
+                    else if (isClient)
                     {
                         return View("ClientReport", model);
                     }
@@ -7994,6 +7994,10 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.QCPendingReport });
                     }
+                    else if (model.Pagetype == "MYQC")
+                    {
+                        return RedirectToAction("MyQualityControlledInterviews", "Interview");
+                    }
                     else
                     {
                         return RedirectToAction("PaymentSlaDetails", "Interview");
@@ -8510,14 +8514,14 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                 
-                        var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
-                        if (result)
-                        {
-                            return Json("Assigned Successfully.");
-                        }
-                        else { return Json("Sorry! Could not assign."); }
-                  
+
+                    var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
+                    if (result)
+                    {
+                        return Json("Assigned Successfully.");
+                    }
+                    else { return Json("Sorry! Could not assign."); }
+
                 }
                 else
                 {
@@ -8546,10 +8550,10 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var meetings = await _meetingService.GetMyQCInterviews(emailid);
                         // meetings = meetings.Select(x => { x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        if (TempData["SuccessErrorMessage"] != null)
+                        if (TempData["SuccessErrorMessageInterview"] != null)
                         {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
                         }
                         return View(meetings);
                     }
