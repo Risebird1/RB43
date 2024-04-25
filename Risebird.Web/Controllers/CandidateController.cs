@@ -24,8 +24,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Twilio.TwiML.Voice;
 using X.PagedList;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
+using Stream = System.IO.Stream;
+using Task = System.Threading.Tasks.Task;
 
 namespace Risebird.Web.Controllers
 {
@@ -4832,7 +4835,10 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<FileContentResult> IRFCandidateReportsExporttoExcel(int id, string IRFId)
         {
+            //ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
             ExcelPackage Ep = new ExcelPackage();
+
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Report");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Reports_" + IRFId + ".xlsx";
             try
@@ -4844,10 +4850,10 @@ namespace Risebird.Web.Controllers
                 }
                 model = model.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; return x; }).ToList();
                 var skillslist = model?.FirstOrDefault().TechSkillReportCollection.Select(x => x.SkillName).Distinct();
-                Sheet.Cells["A1:S1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:S1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:S1"].Style.WrapText = true;
-                int startColumn = 1; int endColumn = 12;
+                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 26;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
@@ -4871,6 +4877,7 @@ namespace Risebird.Web.Controllers
                 }
                 j++;
                 Sheet.Cells[1, j].Value = "Total Score";
+                Sheet.Cells[1, j+1].Value = "Communication Score";
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -4920,6 +4927,7 @@ namespace Risebird.Web.Controllers
                         }
                         j++;
                         Sheet.Cells[i, j].Value = totalskillscore / totalskillscount;
+                        Sheet.Cells[i, j +1].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
