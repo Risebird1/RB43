@@ -35,7 +35,7 @@ namespace Risebird.Business
         private readonly IClonableSkillChannelTemplateRepository _clonableSkillChannelTemplateRepository;
         //private readonly IClientRepository _clientRepository;
         private readonly IUserRepository _userRepository;
-       
+
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
             INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration,
@@ -1201,7 +1201,7 @@ namespace Risebird.Business
                     primarySkill = irf.JDTiltle.Split("|")[0];
                     string oneTimeSchedulingLink = string.Empty;
                     string oneTimeSchedulingLink1 = string.Empty;
-                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    if (calendlyLink.Contains("InterviewScheduler"))
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                         var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
@@ -1210,7 +1210,8 @@ namespace Risebird.Business
                         {
                             oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                         }
-                        oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
+                        oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + email;
+                        //oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                     }
                     else
                     {
@@ -1233,7 +1234,7 @@ namespace Risebird.Business
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;
                     _whatsapp.Header = client.Name;
-                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    if (calendlyLink.Contains("InterviewScheduler"))
                     {
                         _whatsapp.Event = "Interview Schedule";
                     }
@@ -1461,7 +1462,7 @@ namespace Risebird.Business
             try
             {
                 //update meeting status
-                var updatedMeetings = await _irfRepository.UpdateMeetingStatus(irfName,emailid);
+                var updatedMeetings = await _irfRepository.UpdateMeetingStatus(irfName, emailid);
 
                 //send mails
                 if (updatedMeetings != null && updatedMeetings.Count() != 0)
@@ -1471,7 +1472,8 @@ namespace Risebird.Business
                     {
                         await _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"), item.IRFId, irfId);
                         await _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, null, item.interviewDate.ToString("MMMM dd, yyyy"), irfId);
-                        if (emailid!= item.ClientHrContact) {
+                        if (emailid != item.ClientHrContact)
+                        {
                             List<string> ClientHrContact = new List<string>();
                             ClientHrContact.Add(item.ClientHrContact);
                             await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.candidateName, ClientHrContact, irfId, item.imid);
@@ -2071,7 +2073,7 @@ namespace Risebird.Business
                                 string mailResult = string.Empty;
                                 string oneTimeSchedulingLink = string.Empty;
                                 string oneTimeSchedulingLink1 = string.Empty;
-                                if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                                if (calendlyLink.Contains("InterviewScheduler"))
                                 {
                                     string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                                     var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
@@ -2080,7 +2082,8 @@ namespace Risebird.Business
                                     {
                                         oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
                                     }
-                                    oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
+                                    oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + candidateEmail;
+                                    //oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                                 }
                                 else
                                 {
@@ -2287,7 +2290,7 @@ namespace Risebird.Business
                                    string mailResult = string.Empty;
                                    string oneTimeSchedulingLink = string.Empty;
                                    string oneTimeSchedulingLink1 = string.Empty;
-                                   if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                                   if (calendlyLink.Contains("InterviewScheduler"))
                                    {
                                        string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                                        var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
@@ -2296,7 +2299,8 @@ namespace Risebird.Business
                                        {
                                            oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
                                        }
-                                       oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
+                                       oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + candidateEmail;
+                                       //oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                                    }
                                    else
                                    {
@@ -3296,7 +3300,7 @@ namespace Risebird.Business
                     primarySkill = irf.PrimarySkillInvite != null ? irf.PrimarySkillInvite : irf.JDTiltle.Split("|")[0];
                     string oneTimeSchedulingLink = string.Empty;
                     string oneTimeSchedulingLink1 = string.Empty;
-                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    if (calendlyLink.Contains("InterviewScheduler"))
                     {
                         string stepfirst = calendlyLink.Split("?")[calendlyLink.Split("?").Length - 1];
                         var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
@@ -3305,7 +3309,8 @@ namespace Risebird.Business
                         {
                             oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                         }
-                        oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
+                        oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + email;
+                        //oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                     }
                     else
                     {
@@ -3316,7 +3321,7 @@ namespace Risebird.Business
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;
                     _whatsapp.Header = client.Name;
-                    if (calendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                    if (calendlyLink.Contains("InterviewScheduler"))
                     {
                         _whatsapp.Event = "Interview Schedule";
                     }

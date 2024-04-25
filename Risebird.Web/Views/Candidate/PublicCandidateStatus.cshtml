@@ -134,8 +134,8 @@
     }
 
     /*.mob_h {
-                                                                  display: none !important
-                                                                     }*/
+                                                                          display: none !important
+                                                                             }*/
     .modal-backdrop {
         visibility: hidden !important;
     }
@@ -1038,7 +1038,7 @@
                                                                                                     </button>
                                                                                                 </span>
                                                                                             }
-                                                                                            @if (!item.IsColdCandidate && (item.CurrentMeetingStatus != 4 && item.CurrentMeetingStatus != 6 && item.CurrentMeetingStatus != 7 && item.CurrentMeetingStatus != 8))
+                                                                                            @if (!item.IsColdCandidate && (item.CurrentMeetingStatus != 4 && item.CurrentMeetingStatus != 6 && item.CurrentMeetingStatus != 7 && item.CurrentMeetingStatus != 8) && (item.confirmationStatus != 1 || item.CurrentMeetingStatus != 2))
                                                                                             {
                                                                                                 <span>
                                                                                                     <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:20px!important;height:20px!important;background:#e3ab8391;border-color: #e3ab8391;position:relative;">
