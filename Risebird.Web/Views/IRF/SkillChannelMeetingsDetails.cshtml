@@ -181,6 +181,11 @@
                                                                 {
                                                                 <span  id="intselmeet_8" title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_" + item.imid)" class="btn  shadow btn-xs sharp me-1 item1" style="background:#53a4f4;border-color:#53a4f4;width:25px!important;height:25px!important;transition:none;"><svg style="position:relative;top:0px;left:-1px;" fill="#fff" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                                 }*@
+                                                                    <button class="btn btn-rating shadow btn-xs sharp me-1 feedbackreportbtn" aria-label="Rate Interviewer"
+                                                                            data-toggle="ajax-modal" data-target="#addComment"
+                                                                            data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = item.imid })">
+                                                                        <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
+                                                                    </button>
                                                                     @if (ViewBag.meetingtype == "Select")
                                                                     {
                                                                         <a onclick="removeOrShortlistInterviewer(@item.imid,'Shortlisted')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Shortlist Interviewer">
@@ -317,7 +322,8 @@
         <!-- end row -->
     </div>
 </div>
-
+<div id="modal_clientComment_placeholder"></div>
+<script src="~/js/ModalFormServerValidation.js"></script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 <script src="~/js/twiliocallmaker.js"></script>
 
