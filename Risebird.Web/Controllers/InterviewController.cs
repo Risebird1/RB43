@@ -4159,7 +4159,7 @@ namespace Risebird.Web.Controllers
                             {
                                 interviewers.Add(result.EmailId);
                             }
-                            if(irfOwnersAndRestrictedIrfOwner != null && irfOwnersAndRestrictedIrfOwner.FirstOrDefault().Contains("turing.com"))
+                            if (irfOwnersAndRestrictedIrfOwner != null && irfOwnersAndRestrictedIrfOwner.FirstOrDefault().Contains("turing.com"))
                             {
                                 await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), null, null, id);
                             }
@@ -5537,7 +5537,7 @@ namespace Risebird.Web.Controllers
                     {
                         return View("ProctorReport", model);
                     }
-                    else if(isClient)
+                    else if (isClient)
                     {
                         return View("ClientReport", model);
                     }
@@ -5853,15 +5853,14 @@ namespace Risebird.Web.Controllers
                         var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
                         //var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
                         DeleteMeetingLink(result.ZoomMeetingId);
-                        if (status == 3 && candidateId == 0)
-                        {
-                            string stepfirst = result.CalendlyLink.Split("?").LastOrDefault();
-                            var olduniqueid = stepfirst.Split("=").LastOrDefault();
-                            var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
-                            oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
-                            //return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink });
-                            return Json(oneTimeSchedulingLink);
-                        }
+                        //if (status == 3 && candidateId == 0)
+                        //{
+                        //    string stepfirst = result.CalendlyLink.Split("?").LastOrDefault();
+                        //    var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                        //    var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
+                        //    oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                        //    return Json(oneTimeSchedulingLink);
+                        //}
                         return Json("Successfully status updated, " + value);
                     }
 
@@ -7785,7 +7784,8 @@ namespace Risebird.Web.Controllers
             {
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
                 var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, result.candidateEmail);
-                return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1 });
+                //return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1 });
+                return RedirectToAction("CandidateScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1, CandidateEmail = result.candidateEmail });
             }
             else
             {
@@ -7999,6 +7999,10 @@ namespace Risebird.Web.Controllers
                     else if (model.Pagetype == "QCPendingReport")
                     {
                         return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.QCPendingReport });
+                    }
+                    else if (model.Pagetype == "MYQC")
+                    {
+                        return RedirectToAction("MyQualityControlledInterviews", "Interview");
                     }
                     else
                     {
@@ -8516,14 +8520,14 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                 
-                        var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
-                        if (result)
-                        {
-                            return Json("Assigned Successfully.");
-                        }
-                        else { return Json("Sorry! Could not assign."); }
-                  
+
+                    var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
+                    if (result)
+                    {
+                        return Json("Assigned Successfully.");
+                    }
+                    else { return Json("Sorry! Could not assign."); }
+
                 }
                 else
                 {
@@ -8552,10 +8556,10 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var meetings = await _meetingService.GetMyQCInterviews(emailid);
                         // meetings = meetings.Select(x => { x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        if (TempData["SuccessErrorMessage"] != null)
+                        if (TempData["SuccessErrorMessageInterview"] != null)
                         {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
                         }
                         return View(meetings);
                     }
