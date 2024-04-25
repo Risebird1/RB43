@@ -1362,7 +1362,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 7].Value = "Skill Channel ID";
                         Sheet.Cells[1, 8].Value = "Interview Status";
                         Sheet.Cells[1, 9].Value = "Current Status";
-                        
+
                         Sheet.Cells[1, 10].Value = "Interview Date";
                         Sheet.Cells[1, 11].Value = "Client Hr";
                         Sheet.Cells[1, 12].Value = "Video Link";
@@ -1400,7 +1400,7 @@ namespace Risebird.Web.Controllers
                                 Sheet.Cells[i, 6].Value = item.ChannelOwnerEmail ?? "NA";
                                 Sheet.Cells[i, 7].Value = item.IRFName ?? "NA";
                                 Sheet.Cells[i, 8].Value = item.InterviewStatusDesc != "0" ? item.InterviewStatusDesc : "NA";
-                              //  Sheet.Cells[i, 9].Value = item.StatusValue != "0" ? item.StatusValue : "NA";
+                                //  Sheet.Cells[i, 9].Value = item.StatusValue != "0" ? item.StatusValue : "NA";
                                 if (item.StatusValue == "Meeting Status" || item.StatusValue == "Interview Status")
                                 {
                                     try
@@ -1424,7 +1424,7 @@ namespace Risebird.Web.Controllers
 
 
 
-                              //  Sheet.Cells[i, 10].Value = item.LatestComment != "0" ? item.LatestComment : "NA";
+                                //  Sheet.Cells[i, 10].Value = item.LatestComment != "0" ? item.LatestComment : "NA";
                                 Sheet.Cells[i, 10].Value = item.interviewDate != null ? item.interviewDate?.ToString() : "NA";
                                 Sheet.Cells[i, 11].Value = item.ClientHRAttemptContact != "0" ? item.ClientHRAttemptContact : "NA";
                                 if (!string.IsNullOrEmpty(item.VideoLink))
@@ -2804,9 +2804,9 @@ namespace Risebird.Web.Controllers
                                                         Phone = ((workSheet.Cells[rowIterator, 4].Value != null) && phoneValidate == true)
                                               ? ("+" + workSheet.Cells[rowIterator, 4].Value.ToString())
                                               : string.Empty,
-                                              //          WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
-                                              //? workSheet.Cells[rowIterator, 5].Value.ToString()
-                                              //: string.Empty,
+                                                        //          WhatsappNumber = workSheet.Cells[rowIterator, 5].Value != null
+                                                        //? workSheet.Cells[rowIterator, 5].Value.ToString()
+                                                        //: string.Empty,
                                                         WhatsappNumber = string.Empty,
                                                         //ClientHREmail = workSheet.Cells[rowIterator, 6].Value != null
                                                         //    ? workSheet.Cells[rowIterator, 6].Value.ToString().ToLower()
@@ -2956,7 +2956,7 @@ namespace Risebird.Web.Controllers
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                 var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                 string oneTimeSchedulingLink = string.Empty;
-                if (result.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                if (result.CalendlyLink.Contains("InterviewScheduler"))
                 {
                     string stepfirst = result.CalendlyLink.Split("?")[result.CalendlyLink.Split("?").Length];
                     var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
@@ -2965,7 +2965,8 @@ namespace Risebird.Web.Controllers
                     {
                         oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail).Result;
                     }
-                    oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
+                    oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + CandidateEmail;
+                    //oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                 }
                 else
                 {
@@ -2986,7 +2987,7 @@ namespace Risebird.Web.Controllers
                 //WhatsApp Send
                 WhatsAppVM _whatsapp = new WhatsAppVM();
                 _whatsapp.Emailid = CandidateEmail;
-                if (result.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                if (result.CalendlyLink.Contains("InterviewScheduler"))
                 {
                     _whatsapp.Event = "Interview Reschedule Send Risebird";
                 }
@@ -3005,7 +3006,7 @@ namespace Risebird.Web.Controllers
                 {
                     _whatsapp.buttonlink = !string.IsNullOrEmpty(result.CalendlyLink) ? result.CalendlyLink.Replace("https://calendly.com/", "") : "";
                 }
-                if (_whatsapp.buttonlink.Contains("InterviewScheduler/ScheduleEvent"))
+                if (_whatsapp.buttonlink.Contains("InterviewScheduler"))
                 {
                     _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
                 }
@@ -3428,7 +3429,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if(string.IsNullOrEmpty(candidateType))
+                if (string.IsNullOrEmpty(candidateType))
                 {
                     candidateType = CandidateTypeForClient.Scheduled.GetDescription();
                 }
@@ -3459,7 +3460,7 @@ namespace Risebird.Web.Controllers
                     var candidateData = new List<CandidateTimelineData>();
 
                     int dataType = 2;
-                    if(candidateType == CandidateTypeForClient.NotScheduled.GetDescription())
+                    if (candidateType == CandidateTypeForClient.NotScheduled.GetDescription())
                     {
                         dataType = 1;
                     }
@@ -3470,7 +3471,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), dataType , emailid)).ToList();
+                        candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-15), DateTime.Now.AddDays(15), dataType, emailid)).ToList();
                     }
 
                     if (candidateData == null)
@@ -5079,7 +5080,7 @@ namespace Risebird.Web.Controllers
                 }).ToList();
                 return PartialView("_GetColdCandidatePartial", data);
             }
-            
+
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
@@ -5092,9 +5093,9 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                    var data = await _candidateService.GetNotProcessedResumeByClient(emailid);
-                    return PartialView("_GetNotProcessedResumeByClientPartial", data);
-               
+                var data = await _candidateService.GetNotProcessedResumeByClient(emailid);
+                return PartialView("_GetNotProcessedResumeByClientPartial", data);
+
             }
             catch (Exception ex)
             {
