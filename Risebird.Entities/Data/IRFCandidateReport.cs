@@ -25,5 +25,7 @@ namespace Risebird.Entities.Data
         public string VideoLink { get; set; }
         public IList<TechSkillReport> TechSkillReportCollection { get; set; }
         public IList<string> SkillList { get; set; }
+        public int CommunicationalProficiency { get; set; }
+
     }
 }

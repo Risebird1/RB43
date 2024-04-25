@@ -20,7 +20,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using Twilio.TwiML.Voice;
 using X.PagedList;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
+using Stream = System.IO.Stream;
+using Task = System.Threading.Tasks.Task;
 
 namespace Risebird.Web.Controllers
 {
@@ -2952,7 +2957,7 @@ namespace Risebird.Web.Controllers
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                 var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                 string oneTimeSchedulingLink = string.Empty;
-                if (result.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                if (result.CalendlyLink.Contains("InterviewScheduler"))
                 {
                     string stepfirst = result.CalendlyLink.Split("?")[result.CalendlyLink.Split("?").Length];
                     var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
@@ -2961,7 +2966,8 @@ namespace Risebird.Web.Controllers
                     {
                         oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail).Result;
                     }
-                    oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
+                    oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + CandidateEmail;
+                    //oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                 }
                 else
                 {
@@ -2982,7 +2988,7 @@ namespace Risebird.Web.Controllers
                 //WhatsApp Send
                 WhatsAppVM _whatsapp = new WhatsAppVM();
                 _whatsapp.Emailid = CandidateEmail;
-                if (result.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
+                if (result.CalendlyLink.Contains("InterviewScheduler"))
                 {
                     _whatsapp.Event = "Interview Reschedule Send Risebird";
                 }
@@ -3001,7 +3007,7 @@ namespace Risebird.Web.Controllers
                 {
                     _whatsapp.buttonlink = !string.IsNullOrEmpty(result.CalendlyLink) ? result.CalendlyLink.Replace("https://calendly.com/", "") : "";
                 }
-                if (_whatsapp.buttonlink.Contains("InterviewScheduler/ScheduleEvent"))
+                if (_whatsapp.buttonlink.Contains("InterviewScheduler"))
                 {
                     _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
                 }
@@ -4828,7 +4834,10 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<FileContentResult> IRFCandidateReportsExporttoExcel(int id, string IRFId)
         {
+            //ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
             ExcelPackage Ep = new ExcelPackage();
+
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Report");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Candidate_Reports_" + IRFId + ".xlsx";
             try
@@ -4840,10 +4849,10 @@ namespace Risebird.Web.Controllers
                 }
                 model = model.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; return x; }).ToList();
                 var skillslist = model?.FirstOrDefault().TechSkillReportCollection.Select(x => x.SkillName).Distinct();
-                Sheet.Cells["A1:S1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:S1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:S1"].Style.WrapText = true;
-                int startColumn = 1; int endColumn = 12;
+                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:Z1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 26;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
@@ -4867,6 +4876,7 @@ namespace Risebird.Web.Controllers
                 }
                 j++;
                 Sheet.Cells[1, j].Value = "Total Score";
+                Sheet.Cells[1, j+1].Value = "Communication Score";
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -4911,6 +4921,7 @@ namespace Risebird.Web.Controllers
                         }
                         j++;
                         Sheet.Cells[i, j].Value = totalskillscore / totalskillscount;
+                        Sheet.Cells[i, j +1].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -5071,6 +5082,7 @@ namespace Risebird.Web.Controllers
                 return PartialView("_GetColdCandidatePartial", data);
 
             }
+
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
@@ -5083,9 +5095,9 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                    var data = await _candidateService.GetNotProcessedResumeByClient(emailid);
-                    return PartialView("_GetNotProcessedResumeByClientPartial", data);
-               
+                var data = await _candidateService.GetNotProcessedResumeByClient(emailid);
+                return PartialView("_GetNotProcessedResumeByClientPartial", data);
+
             }
             catch (Exception ex)
             {

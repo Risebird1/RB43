@@ -9,6 +9,8 @@ using Risebird.Repository.Interface;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
+using static System.Net.WebRequestMethods;
 
 namespace Risebird.MicroService
 {
@@ -166,7 +168,8 @@ namespace Risebird.MicroService
                         {
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
                         }
-                        oneTimeSchedulingLink = item.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                        //oneTimeSchedulingLink = item.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                        var oneTimeSchedulingLink1 = "https://portal.risebird.io/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + item.candidateEmail;
 
                         Mail _mail = new Mail
                         {
@@ -174,7 +177,7 @@ namespace Risebird.MicroService
                             CC = CCEmails,
                             Subject = $"Risebird: Due to unforeseen circumstances, If the interviewer was unable to join the interview. We apologize for the inconvenience. Kindly reschedule."
                         };
-                        var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink, item.candidateName, item.LogoLink, item.interviewMeetingId);
+                        var resultset = await _notificationHelper.ReScheduleNotificationToCandidate(_mail, oneTimeSchedulingLink1, item.candidateName, item.LogoLink, item.interviewMeetingId);
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = item.candidateEmail;
                         //if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
