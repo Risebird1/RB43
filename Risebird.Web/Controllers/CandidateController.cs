@@ -2959,22 +2959,15 @@ namespace Risebird.Web.Controllers
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(id);
                 var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(id);
                 string oneTimeSchedulingLink = string.Empty;
-                if (result.CalendlyLink.Contains("InterviewScheduler"))
+                string stepfirst = result.CalendlyLink.Split("?")[result.CalendlyLink.Split("?").Length];
+                var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
+                oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail).Result;
+                if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                 {
-                    string stepfirst = result.CalendlyLink.Split("?")[result.CalendlyLink.Split("?").Length];
-                    var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
                     oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail).Result;
-                    if (string.IsNullOrEmpty(oneTimeSchedulingLink))
-                    {
-                        oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail).Result;
-                    }
-                    oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + CandidateEmail;
-                    //oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
                 }
-                else
-                {
-                    oneTimeSchedulingLink = _calendlyHelper.GenerateOneTimeSchedulingLink(result.irfIntId).Result;
-                }
+                oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + CandidateEmail;
+                //oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
 
                 List<string> interviewers = new List<string>();
                 if (!string.IsNullOrEmpty(result.interviewer))
@@ -2990,29 +2983,12 @@ namespace Risebird.Web.Controllers
                 //WhatsApp Send
                 WhatsAppVM _whatsapp = new WhatsAppVM();
                 _whatsapp.Emailid = CandidateEmail;
-                if (result.CalendlyLink.Contains("InterviewScheduler"))
-                {
-                    _whatsapp.Event = "Interview Reschedule Send Risebird";
-                }
-                else
-                {
-                    _whatsapp.Event = "Interview Reschedule Send";
-                }
+                _whatsapp.Event = "Interview Reschedule Send Risebird";
                 _whatsapp.InterviewDate = result.interviewDate.ToString();
                 _whatsapp.Header = result.ClientName;
                 _whatsapp.MessageValue = result.JDTiltle;
-                if (!string.IsNullOrEmpty(oneTimeSchedulingLink))
-                {
-                    _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://calendly.com/", "");
-                }
-                else
-                {
-                    _whatsapp.buttonlink = !string.IsNullOrEmpty(result.CalendlyLink) ? result.CalendlyLink.Replace("https://calendly.com/", "") : "";
-                }
-                if (_whatsapp.buttonlink.Contains("InterviewScheduler"))
-                {
-                    _whatsapp.buttonlink = _whatsapp.buttonlink.Split("=").LastOrDefault().ToString();
-                }
+                _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "");
+
                 await _whatsAppHelper.WhatsAppSendCancleReScheduling(_whatsapp);
             }
             return Json(model);
@@ -4878,7 +4854,7 @@ namespace Risebird.Web.Controllers
                 }
                 j++;
                 Sheet.Cells[1, j].Value = "Total Score";
-                Sheet.Cells[1, j+1].Value = "Communication Score";
+                Sheet.Cells[1, j + 1].Value = "Communication Score";
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -4928,7 +4904,7 @@ namespace Risebird.Web.Controllers
                         }
                         j++;
                         Sheet.Cells[i, j].Value = totalskillscore / totalskillscount;
-                        Sheet.Cells[i, j +1].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
+                        Sheet.Cells[i, j + 1].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
