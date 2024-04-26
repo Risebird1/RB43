@@ -363,6 +363,8 @@ namespace Risebird.Entities.ViewModel
         public int CommunicationalProficiency { get; set; }
         public int TotalCompletedInterview { get; set; }
         public bool IsPaused {  get; set; }
+        public bool IsQC {  get; set; }
+        public string CodeSnippet {  get; set; }
     }
 
     public class VedioComments

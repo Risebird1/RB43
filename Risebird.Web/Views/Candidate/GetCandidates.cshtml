@@ -24,10 +24,10 @@
     $('#txtpageHeader').empty().html(Header);
 </script>
 
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css?v=2024" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
-<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
 @if (ViewBag.AccessType == "Public"){
     <style>
@@ -283,7 +283,7 @@
                                                    
                                                             if (item.HasEmailDroppedOrBounced == true)
                                                         {
-                                                            colorcode = "red";
+                                                                colorcode = "#fa77775e";
                                                         }
                                                             else
                                                             {
@@ -296,20 +296,45 @@
                                                             <tr id="@item.id" data-changes="1" style="background:@colorcode">
                                                                 @* <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td> *@
                                                               
-                                                                <td valign="top">
+                                                                <td valign="top" style="position:relative;">
 
                                                                     @if (item.Name != null && item.Name != "")
                                                                     {
                                                                         @if (item.Name.Length > 20)
                                                                         {
-                                                                            <div class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
+                                                                            <div class="cadName" style="margin-top:15px;">
+                                                                              @*  @if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                    <div class="absCenter">
+                                                                                <button class="infoButton">
+                                                                                    <div class="infoButton-btn">
+                                                                                        <span class="infoButton-btn-text">i</span>
+                                                                                    </div>
+                                                                                    <div class="infoButton-container">
+                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                    </div>
+                                                                                </button>
+                                                                            </div>
+
+                                                                    }  *@
+                                                                    <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
                                                                             </div>
                                                                         }
 
                                                                         else
                                                                         {
-                                                                            <div class="cadName">
+                                                                            <div class="cadName" style="margin-top:15px;">
+                                                                                  @*@if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                    <div class="absCenter">
+                                                                                <button class="infoButton">
+                                                                                    <div class="infoButton-btn">
+                                                                                        <span class="infoButton-btn-text">i</span>
+                                                                                    </div>
+                                                                                    <div class="infoButton-container">
+                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                    </div>
+                                                                                </button>
+                                                                            </div>
+                                                                    }  *@
                                                                                 <a onclick=""><span class="name-field"> @item.Name</span> </a>
                                                                             </div>
                                                                         }
@@ -333,7 +358,7 @@
                                                                         else
                                                                         {
                                                                             <div class="cadEmail">
-                                                                                <a onclick=""><span class="cname">@item.EmailId</span> </a>
+                                                                                <a onclick="" data-tooltip="@item.EmailId"><span>Emaild: @item.EmailId</span> </a>
                                                                             </div>
                                                                         }
                                                                     }
@@ -357,8 +382,10 @@
                                                                     }
                                                                  @if (item.IsColdCandidate)
                                                                     {
-                                                                        <span class="cold-mark">Cold Candidate Marked</span>
+                                                                        <span class="cold-mark-badge">Cold Candidate Marked</span>
                                                                     } 
+                                                                   
+
                                                                 </td>
                                                                
                                                                 @* @if (ViewBag.profile != "Client")
@@ -1025,7 +1052,7 @@
 
             @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
 
-            <script src="~/js/markcoldcandidate.js" asp-append-version="true"></script>
+            <script src="~/js/markcoldcandidate.js?2024"></script>
 
             <div id="importResultModal" class="modal modal-bg">
                 <!-- Modal content -->
@@ -1130,8 +1157,8 @@
 <div id="modal_clientComment_placeholder"></div>
 
 <div id="modal_candidateCommunicationDetails_placeholder"></div>
-<script src="~/js/ModalFormServerValidation.js" asp-append-version="true"></script>
-<script src="~/js/common.js" asp-append-version="true"></script>
+<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
+<script src="~/js/common.js?2024"></script>
 <script>
     var spanImport = document.getElementById("importResultPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -1491,7 +1518,7 @@
         $("#tblcallrecdetails").empty().html(html);
     }
 </script>
-<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
+<script src="~/js/TwilioCallMaker.js?v=2024"></script>
 <script>
     function replaceButtonWithResumeLink(buttonElementId, redactedResumeLink) {
         var anchor = document.createElement('a');
@@ -1685,7 +1712,31 @@
         }
     }
 </script>
+<script>
+    // JS for thumbnail presentation only
 
+let mouseMoved = false;
+const button = document.querySelector('.infoButton');
+
+const mouseMoveHandler = event => {
+    clearInterval(loop);
+    document.onmousemove = null;
+    button.classList.remove('infoButton_isActive');
+};
+
+const toggleHandler = event => {    
+    const classes = button.classList;
+    if (classes.contains('infoButton_isActive')) {
+        classes.remove('infoButton_isActive');
+    } else {
+        classes.add('infoButton_isActive');
+    }
+}
+
+document.onmousemove = mouseMoveHandler;
+
+const loop = setInterval(toggleHandler, 1000);
+</script>
 
 
 
