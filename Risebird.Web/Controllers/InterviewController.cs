@@ -7751,26 +7751,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<JsonResult> GenerateRescheuleLink(string CandidateEmailid, string uniqueid, int interviewid, int pageReturnType)
-        {
-            if (!string.IsNullOrEmpty(uniqueid))
-            {
-                var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, CandidateEmailid);
-                if (pageReturnType == 1)
-                {
-                    var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&interviewid=" + interviewid + "&type=" + 314999;
-                    return Json(SchedulingLink);
-                }
-                else
-                {
-                    var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&returnvaluetype=" + 2 + "&interviewid=" + interviewid + "&type=" + 314915;
-                    return Json(SchedulingLink);
-                }
-            }
-            return Json("");
-        }
-
         [HttpGet]
         public async Task<IActionResult> CandidateRescheduleMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
