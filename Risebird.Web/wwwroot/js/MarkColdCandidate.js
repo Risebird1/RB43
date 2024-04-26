@@ -2,7 +2,7 @@ function MarkedColdCandidate(CandidateId, IRFId, CandidateEmail, InterviewId, ir
     if (CandidateId != '') {
         $.ajax({
             url: '/Dashboard/MarkedColdCandidate',
-            data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'InterviewId': InterviewId,'irfIntId':irfIntId },
+            data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'InterviewId': InterviewId, 'irfIntId': irfIntId },
             type: "POST",
             success: function (data) {
                 Swal.fire({
@@ -22,65 +22,64 @@ function MarkedColdCandidate(CandidateId, IRFId, CandidateEmail, InterviewId, ir
 
 
 function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, scheduleUniqueid, InterviewId) {
-    if (CandidateId != '')
-    {
-   
+    if (CandidateId != '') {
 
-    swal.fire({
-        title: 'Are you sure?',
-        text: "You want to undo the 'Cold Status' that is currently marked for" + " ("+ CandidateEmail +") " + " for skill channel " +" ("+ IRFId +") ",
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Undo!',
-        cancelButtonText: "Don't",
-        preConfirm: function () {
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: '/Dashboard/UndoMarkedColdCandidate',
-                    type: 'POST',
-                    data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'irfIntId': irfIntId },
-                    success: function (data) {
-                        if (data != null && data.toLowerCase().includes('success')) {
-                            resolve(data);
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "You want to undo the 'Cold Status' that is currently marked for" + " (" + CandidateEmail + ") " + " for skill channel " + " (" + IRFId + ") ",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Undo!',
+            cancelButtonText: "Don't",
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Dashboard/UndoMarkedColdCandidate',
+                        type: 'POST',
+                        data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'irfIntId': irfIntId },
+                        success: function (data) {
+                            if (data != null && data.toLowerCase().includes('success')) {
+                                resolve(data);
+                            }
+                            else {
+                                swal.fire("Error cancelling!", "Please try again", "error");
+
+                            }
+
                         }
-                        else {
-                            swal.fire("Error cancelling!", "Please try again", "error");
+                    });
 
-                        }
-
-                    }
-                });
-
-            })
-        },
-        allowOutsideClick: false
-    })
-        .then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Cancelled!',
-                    type: 'success',
-                    html: '<p>Undo cold candidate.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-
-                    ReschuduleMeeting(InterviewId, scheduleUniqueid,CandidateEmail);
                 })
-
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Aborted!',
-                    'Meeting remains confirmed! :)',
-                    'error'
-                )
-            }
+            },
+            allowOutsideClick: false
         })
+            .then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Cancelled!',
+                        type: 'success',
+                        html: '<p>Undo cold candidate.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+
+                        ReschuduleMeeting(InterviewId, scheduleUniqueid, CandidateEmail);
+                    })
+
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Aborted!',
+                        'Meeting remains confirmed! :)',
+                        'error'
+                    )
+                }
+            })
 
 
     }
@@ -97,17 +96,16 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
-                        url: '/Interview/GenerateRescheuleLink',
+                        url: '/InterviewScheduler/GenerateCandidatescheuleLink',
                         method: 'POST',
                         data: {
                             'CandidateEmailid': candidateEmailid,
                             'interviewid': interviewid,
                             'uniqueid': uniqueid,
-                            'pageReturnType': 1
+                            'schedulertype': 2
                         },
                         success: function (result) {
-                          
-                                window.open(result, '_blank');
+                            window.open(result, '_blank');
                             resolve(result)
                         },
                         error: function () {
