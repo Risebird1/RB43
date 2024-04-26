@@ -79,6 +79,8 @@ SELECT [InterviewMeetings].id as imid
   ,ti.IsActive as IRFInterviewerActive
   ,cl.id as ClientId
   ,InterviewComments.CommunicationalProficiency
+  ,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQC
+  ,[InterviewMeetings].CodeSnippet
 FROM [dbo].[InterviewMeetings]    
 inner join     
 IRF on [InterviewMeetings].IRFId = IRF.IRFId    
@@ -91,12 +93,11 @@ join UserList ulh on irf.RisebirdHr = ulh.id
 left join UserList uli on uli.EmailId = InterviewMeetings.interviewer  
 left join InterviewerProfile ipr on ipr.UserId =uli.id  
 left join TransInterviewer ti on ti.IRFId=IRF.id and ti.UserId=uli.id  
+left join PaymentSLADetails psd on psd.Interviewid=[InterviewMeetings].id 
 WHERE    
-      [InterviewMeetings].id = @interviewId    
-    
+      [InterviewMeetings].id =@interviewId    
+   
 End
-
-
 
 GO
 
