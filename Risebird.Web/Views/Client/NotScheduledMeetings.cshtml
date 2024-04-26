@@ -32,11 +32,11 @@
     var Header = "<div>Not Scheduled Candidates</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
-<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=9" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css?v=2024" />
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
 {
     @if (HttpContextAccessor.HttpContext.Session.GetString("NNotScheduleCandidate") != null)
@@ -46,8 +46,8 @@
     else
     {
         <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-        <script src="~/Newassets/js/chardinjs.js"></script>
-        <script src="~/Newassets/js/demo.js"></script>
+        <script src="~/Newassets/js/chardinjs.js?v=2024"></script>
+        <script src="~/Newassets/js/demo.js?v=2024"></script>
         HttpContextAccessor.HttpContext.Session.SetString("NNotScheduleCandidate", "1");
 
     }
@@ -64,8 +64,8 @@
     else
     {
         <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-        <script src="~/Newassets/js/chardinjs.js"></script>
-        <script src="~/Newassets/js/demo.js"></script>
+        <script src="~/Newassets/js/chardinjs.js?v=2024"></script>
+        <script src="~/Newassets/js/demo.js?v=2024"></script>
         HttpContextAccessor.HttpContext.Session.SetString("NNotScheduleCandidate", "1");
 
     }

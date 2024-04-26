@@ -24,10 +24,10 @@
     $('#txtpageHeader').empty().html(Header);
 </script>
 
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css?v=2024" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
-<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
 @if (ViewBag.AccessType == "Public"){
     <style>
@@ -1052,7 +1052,7 @@
 
             @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
 
-            <script src="~/js/markcoldcandidate.js" asp-append-version="true"></script>
+            <script src="~/js/markcoldcandidate.js?2024"></script>
 
             <div id="importResultModal" class="modal modal-bg">
                 <!-- Modal content -->
@@ -1157,8 +1157,8 @@
 <div id="modal_clientComment_placeholder"></div>
 
 <div id="modal_candidateCommunicationDetails_placeholder"></div>
-<script src="~/js/ModalFormServerValidation.js" asp-append-version="true"></script>
-<script src="~/js/common.js" asp-append-version="true"></script>
+<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
+<script src="~/js/common.js?2024"></script>
 <script>
     var spanImport = document.getElementById("importResultPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -1518,7 +1518,7 @@
         $("#tblcallrecdetails").empty().html(html);
     }
 </script>
-<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
+<script src="~/js/TwilioCallMaker.js?v=2024"></script>
 <script>
     function replaceButtonWithResumeLink(buttonElementId, redactedResumeLink) {
         var anchor = document.createElement('a');
