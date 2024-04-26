@@ -363,6 +363,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Rate Candidate's Communication Skills(out of 10)")]
         public int CommunicationalProficiency { get; set; }
+        public string CodeSnippet { get; set; }
     }
     public class RBInterviewDetails
     {

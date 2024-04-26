@@ -283,7 +283,7 @@
                                                    
                                                             if (item.HasEmailDroppedOrBounced == true)
                                                         {
-                                                            colorcode = "red";
+                                                                colorcode = "#fa77775e";
                                                         }
                                                             else
                                                             {
@@ -296,20 +296,45 @@
                                                             <tr id="@item.id" data-changes="1" style="background:@colorcode">
                                                                 @* <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td> *@
                                                               
-                                                                <td valign="top">
+                                                                <td valign="top" style="position:relative;">
 
                                                                     @if (item.Name != null && item.Name != "")
                                                                     {
                                                                         @if (item.Name.Length > 20)
                                                                         {
-                                                                            <div class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
+                                                                            <div class="cadName" style="margin-top:15px;">
+                                                                              @*  @if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                    <div class="absCenter">
+                                                                                <button class="infoButton">
+                                                                                    <div class="infoButton-btn">
+                                                                                        <span class="infoButton-btn-text">i</span>
+                                                                                    </div>
+                                                                                    <div class="infoButton-container">
+                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                    </div>
+                                                                                </button>
+                                                                            </div>
+
+                                                                    }  *@
+                                                                    <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
                                                                             </div>
                                                                         }
 
                                                                         else
                                                                         {
-                                                                            <div class="cadName">
+                                                                            <div class="cadName" style="margin-top:15px;">
+                                                                                  @*@if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                    <div class="absCenter">
+                                                                                <button class="infoButton">
+                                                                                    <div class="infoButton-btn">
+                                                                                        <span class="infoButton-btn-text">i</span>
+                                                                                    </div>
+                                                                                    <div class="infoButton-container">
+                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                    </div>
+                                                                                </button>
+                                                                            </div>
+                                                                    }  *@
                                                                                 <a onclick=""><span class="name-field"> @item.Name</span> </a>
                                                                             </div>
                                                                         }
@@ -333,7 +358,7 @@
                                                                         else
                                                                         {
                                                                             <div class="cadEmail">
-                                                                                <a onclick=""><span class="cname">@item.EmailId</span> </a>
+                                                                                <a onclick="" data-tooltip="@item.EmailId"><span>Emaild: @item.EmailId</span> </a>
                                                                             </div>
                                                                         }
                                                                     }
@@ -357,8 +382,10 @@
                                                                     }
                                                                  @if (item.IsColdCandidate)
                                                                     {
-                                                                        <span class="cold-mark">Cold Candidate Marked</span>
+                                                                        <span class="cold-mark-badge">Cold Candidate Marked</span>
                                                                     } 
+                                                                   
+
                                                                 </td>
                                                                
                                                                 @* @if (ViewBag.profile != "Client")
@@ -1685,7 +1712,31 @@
         }
     }
 </script>
+<script>
+    // JS for thumbnail presentation only
 
+let mouseMoved = false;
+const button = document.querySelector('.infoButton');
+
+const mouseMoveHandler = event => {
+    clearInterval(loop);
+    document.onmousemove = null;
+    button.classList.remove('infoButton_isActive');
+};
+
+const toggleHandler = event => {    
+    const classes = button.classList;
+    if (classes.contains('infoButton_isActive')) {
+        classes.remove('infoButton_isActive');
+    } else {
+        classes.add('infoButton_isActive');
+    }
+}
+
+document.onmousemove = mouseMoveHandler;
+
+const loop = setInterval(toggleHandler, 1000);
+</script>
 
 
 
