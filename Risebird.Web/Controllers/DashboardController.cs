@@ -2987,39 +2987,34 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                var result = await _dashboardService.GetFutureDateInterviewSchedule(InterviewId);
+              //  var result = await _dashboardService.GetFutureDateInterviewSchedule(InterviewId);
                 var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(InterviewId);
-                if (InterviewId > 0)
-                {
-                    //Case of future date schedule interviews and send mails
-                    if (result.confirmationStatus == 1 && result.interviewDate >= DateTime.Now)
+               
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId,1);
 
+                if (data!=null)
+                {
+
+                    foreach (var item in data)
                     {
-                        List<string> interviewers = new List<string>();
-                        if (!string.IsNullOrEmpty(result.interviewer))
-                        {
-                            interviewers.Add(result.interviewer);
+                        if (item.interviewDate>DateTime.Now) {
+                            List<string> interviewers = new List<string>();
+                            if (!string.IsNullOrEmpty(item.interviewer))
+                            {
+                                interviewers.Add(item.interviewer);
+                            }
+                            var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, item.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
+                            var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
+
                         }
-                        var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
-                        var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
-
                     }
-                    else
-                    {
-                        //Case of Not update confirmationStatus=2,Cancellationsource='Cold Candidate' in store procedure
-                        InterviewId = 0;
-                    }
-                }
-                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId);
-
-                if (data == true)
-                {
                     return Json("Candidate " + "(" + CandidateEmail + ")" + " for " + IRFId + " has been marked as cold successfully");
                 }
                 else
                 {
                     return Json("Failed to mark candidate as Cold.");
                 }
+
             }
             catch (Exception ex)
             {
@@ -3027,6 +3022,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [HttpPost]
         public async Task<JsonResult> UndoMarkedColdCandidate(int CandidateId, string IRFId, string CandidateEmail, int irfIntId)
         {
             try
@@ -3035,9 +3031,9 @@ namespace Risebird.Web.Controllers
                 emailId = emailId.Replace("\"", "");
                 
           
-                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId,0);
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId,0,2);
 
-                if (data == true)
+                if (data==null ||data.Count==0)
                 {
                     return Json("Candidate " + "(" + CandidateEmail + ")" + " for " + IRFId + " has been undo as cold successfully");
                 }
