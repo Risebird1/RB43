@@ -52,7 +52,9 @@ group by ca.IRFId, ca.CandidateMasterId,cm.UserId
  (Select count(UserId) from @TemporaryCandidateTableVariable            
  where IRFId=IRF.id and CandidateLatestStatus = 'RESCHEDULE') as ReScheduledCount,        
  (Select count(UserId) from @TemporaryCandidateTableVariable            
- where IRFId=IRF.id and CandidateLatestStatus = 'PENDING') as PendingCount,      
+ where IRFId=IRF.id and CandidateLatestStatus = 'PENDING') as PendingCount,
+ (Select count(UserId) from @TemporaryCandidateTableVariable                  
+ where IRFId=IRF.id and CandidateLatestStatus = 'COLDCANDIDATE') as ColdCandidateCount,
  (select Count(im.id) from InterviewMeetings im        
  where IRFId=IRF.IRFId and confirmationStatus=1 and interviewer is null) as UnassignedInterviewsCount,      
  (select Count(im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id       

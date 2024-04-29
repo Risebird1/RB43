@@ -1064,6 +1064,7 @@ namespace Risebird.Repository
                                     AddedOnDate = dt.Rows[i]["AddedOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["AddedOnDate"].ToString()) : new DateTime(),
                                     InvitationSentOnDate = dt.Rows[i]["InvitationSentOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["InvitationSentOnDate"].ToString()) : new DateTime(),
                                     FirstScheduledOnDate = dt.Rows[i]["FirstScheduledOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["FirstScheduledOnDate"].ToString()) : new DateTime(),
+                                    completedDate = dt.Rows[i]["completedDate"] != null ? Convert.ToDateTime(dt.Rows[i]["completedDate"].ToString()) : new DateTime(),
                                     isQcDone = dt.Rows[i]["isQcDone"] != null && dt.Rows[i]["isQcDone"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["isQcDone"]) : false,
 
                                     InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,

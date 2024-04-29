@@ -5127,31 +5127,32 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 8].Value = "Invite Sent On";
                 Sheet.Cells[1, 9].Value = "Scheduled On";// note: there could be multiple schedules of a candidate. This date belongs to the first entry of scheduled for the candidate for the skill channel.
                 Sheet.Cells[1, 10].Value = "Latest Status";
+                Sheet.Cells[1, 11].Value = "Completed On";
                 
-                Sheet.Cells[1, 11].Value = "Client Hr";
-                Sheet.Cells[1, 12].Value = "Staffing Agency";
+                Sheet.Cells[1, 12].Value = "Client Hr";
+                Sheet.Cells[1, 13].Value = "Staffing Agency";
 
-                Sheet.Cells[1, 13].Value = "Interview Date";
+                Sheet.Cells[1, 14].Value = "Interview Date";
                 //Sheet.Cells[1, 14].Value = "Confirmation Status";
 
                 //Sheet.Cells[1, 15].Value = "Meeting Status";
                 //Sheet.Cells[1, 16].Value = "Interview Status";
                 
-                Sheet.Cells[1, 14].Value = "Interviewer Comment";
-                Sheet.Cells[1, 15].Value = "Video Link";
-                Sheet.Cells[1, 16].Value = "Report Link";
+                Sheet.Cells[1, 15].Value = "Interviewer Comment";
+                Sheet.Cells[1, 16].Value = "Video Link";
+                Sheet.Cells[1, 17].Value = "Report Link";
                 //Sheet.Cells[1, 17].Value = "Pb Report Link";
 
-                Sheet.Cells[1, 17].Value = "Communication Score";
+                Sheet.Cells[1, 18].Value = "Communication Score";
 
-                int j = 17;
+                int j = 18;
                 foreach (var item in skillslist)
                 {
                     j++;
                     Sheet.Cells[1, j].Value = item;
                 }
                 j++;
-                Sheet.Cells[1, j].Value = "Total Score";
+                Sheet.Cells[1, j].Value = "Tech Score";
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -5183,43 +5184,46 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
                         }
-                        Sheet.Cells[i, 11].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 12].Value = item.staffingAgency;
 
-                        Sheet.Cells[i, 13].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 11].Value = item.completedDate.HasValue ? item.completedDate.Value.ToString() : string.Empty;
+
+                        Sheet.Cells[i, 12].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 13].Value = item.staffingAgency;
+
+                        Sheet.Cells[i, 14].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 14].Value = item.InterviewerComment ?? string.Empty;
+                        Sheet.Cells[i, 15].Value = item.InterviewerComment ?? string.Empty;
                         if (!string.IsNullOrEmpty(item.VideoLink))
                         {
                             try
                             {
-                                Sheet.Cells[i, 15].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 15].Value = "Video Link";
-                                Sheet.Cells[i, 15].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 15].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 16].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 16].Value = "Video Link";
+                                Sheet.Cells[i, 16].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, 15].Value = "No Video";
+                                Sheet.Cells[i, 16].Value = "No Video";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 15].Value = "No Video";
+                            Sheet.Cells[i, 16].Value = "No Video";
                         }
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         try
                         {
-                            Sheet.Cells[i, 16].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, 16].Value = "Executive Report";
-                            Sheet.Cells[i, 16].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            Sheet.Cells[i, 17].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, 17].Value = "Executive Report";
+                            Sheet.Cells[i, 17].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 17].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
                         catch (Exception)
                         {
-                            Sheet.Cells[i, 16].Value = "No Report";
+                            Sheet.Cells[i, 17].Value = "No Report";
                         }
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
@@ -5234,9 +5238,9 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 17].Value = "No Report";
                         //}
-                        Sheet.Cells[i, 17].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
+                        Sheet.Cells[i, 18].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
 
-                        j = 17;
+                        j = 18;
                         var totalskillscore = 0.0;
                         var totalskillscount = 0;
                         foreach (var skillvalue in skillslist)
@@ -5273,15 +5277,16 @@ namespace Risebird.Web.Controllers
 
 
                         Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
-                        Sheet.Cells[i, 11].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 12].Value = item.staffingAgency;
+                        Sheet.Cells[i, 11].Value = string.Empty;
+                        Sheet.Cells[i, 12].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 13].Value = item.staffingAgency;
 
-                        Sheet.Cells[i, 13].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 14].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 14].Value = string.Empty;
                         Sheet.Cells[i, 15].Value = string.Empty;
+                        Sheet.Cells[i, 16].Value = string.Empty;
                         
 
                         i++;
@@ -5304,44 +5309,45 @@ namespace Risebird.Web.Controllers
 
 
                         Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
-                        Sheet.Cells[i, 11].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 12].Value = item.staffingAgency;
+                        Sheet.Cells[i, 11].Value = string.Empty;
+                        Sheet.Cells[i, 12].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 13].Value = item.staffingAgency;
 
-                        Sheet.Cells[i, 13].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 14].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 14].Value = item.InterviewerComment ?? string.Empty;
+                        Sheet.Cells[i, 15].Value = item.InterviewerComment ?? string.Empty;
                         if (!string.IsNullOrEmpty(item.VideoLink))
                         {
                             try
                             {
-                                Sheet.Cells[i, 15].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 15].Value = "Video Link";
-                                Sheet.Cells[i, 15].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 15].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 16].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 16].Value = "Video Link";
+                                Sheet.Cells[i, 16].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, 15].Value = "No Video";
+                                Sheet.Cells[i, 16].Value = "No Video";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 15].Value = "No Video";
+                            Sheet.Cells[i, 16].Value = "No Video";
                         }
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         try
                         {
-                            Sheet.Cells[i, 16].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, 16].Value = "Executive Report";
-                            Sheet.Cells[i, 16].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            Sheet.Cells[i, 17].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, 17].Value = "Executive Report";
+                            Sheet.Cells[i, 17].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 17].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
                         catch (Exception)
                         {
-                            Sheet.Cells[i, 16].Value = "No Report";
+                            Sheet.Cells[i, 17].Value = "No Report";
                         }
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
@@ -5376,47 +5382,49 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 9].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString() : string.Empty;
 
                         Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
-                        Sheet.Cells[i, 11].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 12].Value = item.staffingAgency;
+                        Sheet.Cells[i, 11].Value = string.Empty;
+                        Sheet.Cells[i, 12].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 13].Value = item.staffingAgency;
 
-                        Sheet.Cells[i, 13].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 14].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 14].Value = item.InterviewerComment ?? string.Empty;
-                        if (!string.IsNullOrEmpty(item.VideoLink))
-                        {
-                            try
-                            {
-                                Sheet.Cells[i, 15].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 15].Value = "Video Link";
-                                Sheet.Cells[i, 15].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 15].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 15].Value = "No Video";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 15].Value = "No Video";
-                        }
+                        Sheet.Cells[i, 15].Value = item.InterviewerComment ?? string.Empty;
+                        
+                        //if (!string.IsNullOrEmpty(item.VideoLink))
+                        //{
+                        //    try
+                        //    {
+                        //        Sheet.Cells[i, 15].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                        //        Sheet.Cells[i, 15].Value = "Video Link";
+                        //        Sheet.Cells[i, 15].Style.Font.UnderLine = true;
+                        //        Sheet.Cells[i, 15].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        //    }
+                        //    catch (Exception)
+                        //    {
+                        //        Sheet.Cells[i, 15].Value = "No Video";
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, 15].Value = "No Video";
+                        //}
 
-                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
+                        //var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
 
-                        try
-                        {
-                            Sheet.Cells[i, 16].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, 16].Value = "Executive Report";
-                            Sheet.Cells[i, 16].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                        }
-                        catch (Exception)
-                        {
-                            Sheet.Cells[i, 16].Value = "No Report";
-                        }
+                        //try
+                        //{
+                        //    Sheet.Cells[i, 16].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                        //    Sheet.Cells[i, 16].Value = "Executive Report";
+                        //    Sheet.Cells[i, 16].Style.Font.UnderLine = true;
+                        //    Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        //}
+                        //catch (Exception)
+                        //{
+                        //    Sheet.Cells[i, 16].Value = "No Report";
+                        //}
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         //try
