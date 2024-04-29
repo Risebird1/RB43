@@ -82,7 +82,8 @@
                         </button>
                         *@
 
-                         <i class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'"></i>
+                         @* <i class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'"></i> *@
+                         <i class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top" onclick="location.href='@Url.Action("CandidateDataExporttoExcel", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'"></i>
 
                         }
                         @if (ViewBag.ButtonAccess && ViewBag.AccessType != "Public")
