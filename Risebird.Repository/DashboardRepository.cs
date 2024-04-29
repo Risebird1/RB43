@@ -1669,7 +1669,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email,int InterviewId)
+        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email,int InterviewId,int type)
         {
             try
             {
@@ -1678,31 +1678,35 @@ namespace Risebird.Repository
                 dynamicParam.Add("@ColdMarkedBY",Email);
                 dynamicParam.Add("@ColdMarkedDate",DateTime.Now);
                 dynamicParam.Add("@InterviewId", InterviewId);
+                dynamicParam.Add("@type",type);
+                dynamicParam.Add("@Currentdate",DateTime.Now);
 
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
-                  var result=  await SqlMapper.QueryAsync(conChange, "Usp_ColdCandidateMarked", dynamicParam,
+                  var result=  await SqlMapper.QueryAsync<InterviewUsersDetails>(conChange, "Usp_ColdCandidateMarked", dynamicParam,
                        commandType: CommandType.StoredProcedure);
-                    return true;
+                    return result.ToList();
 
                 }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                return null;
             }
         }
-        public async Task<InterviewUsersDetails> GetFutureDateInterviewSchedule(int interviewid)
+        public async Task <List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", interviewid);
+                dynamicParameters.Add("@IRFId",IRFId);
+                dynamicParameters.Add("@CandidateEmail",CandidateEmail);
+                dynamicParameters.Add("@Currentdate",DateTime.Now);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await con.QueryAsync<InterviewUsersDetails>("usp_GetFutureDateInterviewSchedule", dynamicParameters, commandType: CommandType.StoredProcedure);
-                    return result.FirstOrDefault();
+                    return result.ToList();
                 }
             }
             catch (SqlException ex)

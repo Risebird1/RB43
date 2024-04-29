@@ -39,8 +39,9 @@ begin
  left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=c.IRFId and cs.Status=12                          
  join TransClientUser tcu on tcu.IRFId=IRF.id                        
  left join Userlist tcul on tcul.id=tcu.ClientUserId               
- join Client cl on cl.id=IRF.ClientId   
- Where tcul.EmailId=@Emailid and cs.Date is not Null and c.ProfileSource=@Emailid                       
+ join Client cl on cl.id=IRF.ClientId
+ left join ColdCandidateInfos cci on c.id=cci.FKCandidateId
+ Where tcul.EmailId=@Emailid and cs.Date is not Null and c.ProfileSource=@Emailid AND ISNULL(cci.IsColdCandidate,0) !=1                      
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
  c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
  c.CandidateMasterId,c.ProfileSource having Count(*)=1) as Cd                
@@ -71,8 +72,9 @@ begin
  left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=c.IRFId and cs.Status=12                          
  join TransClientUser tcu on tcu.IRFId=IRF.id                        
  left join Userlist tcul on tcul.id=tcu.ClientUserId               
- join Client cl on cl.id=IRF.ClientId    
- Where tcul.EmailId=@Emailid and cs.Date is not Null and c.ClientHRAttemptContact=@Emailid                       
+ join Client cl on cl.id=IRF.ClientId  
+ left join ColdCandidateInfos cci on c.id=cci.FKCandidateId
+ Where tcul.EmailId=@Emailid and cs.Date is not Null and c.ClientHRAttemptContact=@Emailid AND ISNULL(cci.IsColdCandidate,0) !=1                      
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
  c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
  c.CandidateMasterId,c.ProfileSource having Count(*)=1) as Cd          
@@ -110,8 +112,8 @@ begin
  left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                     
  left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=c.IRFId and cs.Status=12                          
  join Client cl on cl.id=IRF.ClientId
- --left join ColdCandidateInfos cci on c.id=cci.FKCandidateId
- Where cs.Date is not Null 
+ left join ColdCandidateInfos cci on c.id=cci.FKCandidateId
+ Where cs.Date is not Null AND ISNULL(cci.IsColdCandidate,0) !=1
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
  c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
  c.CandidateMasterId,c.ProfileSource having Count(*)=1) as Cd          
@@ -141,7 +143,8 @@ begin
  join TransClientUser tcu on tcu.IRFId=IRF.id                        
  left join Userlist tcul on tcul.id=tcu.ClientUserId               
  join Client cl on cl.id=IRF.ClientId 
- Where tcul.EmailId=@Emailid and cs.Date is not Null                        
+ left join ColdCandidateInfos cci on c.id=cci.FKCandidateId 
+ Where tcul.EmailId=@Emailid and cs.Date is not Null AND ISNULL(cci.IsColdCandidate,0) !=1                       
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,  
  c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,c.CandidateMasterId,  
  c.ProfileSource having Count(*)=1) as Cd                

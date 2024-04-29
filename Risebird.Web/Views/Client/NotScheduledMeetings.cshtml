@@ -483,10 +483,10 @@
                                                                                     @item.MobileNumber</span>
                                                                                    
                                                                                     <div class="mtop-5"><strong>Skill Channel ID:</strong> @item.IRFId</div>
-                                                                                    @if (item.IsColdCandidate)
+                                                                                   @*  @if (item.IsColdCandidate)
                                                                                     { 
                                                                                     <span>Cold Candidate Marked</span>
-                                                                                    }
+                                                                                    } *@
                                                                                 </td>
 
 
@@ -526,8 +526,7 @@
                                                                                 }
 
                                                                                 <td class="text-left">
-                                                                                    @if (!item.IsColdCandidate)
-                                                                                    {
+                                                                                   
                                                                                         @if (ViewBag.profile != "Client" || (ViewBag.profile == "Client" && ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription()))
                                                                                         {
                                                                                             @* <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
@@ -538,7 +537,7 @@
                                                                                             </a>
                                                                                         }
                                                                                         <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top"><span class="btn-call" style="top: -10px; position: relative;cursor:pointer;" title="Send Invite"><span class="far fa-paper-plane"></span></span></span>
-                                                                                    }
+                                                                                    
                                                                                     @*<button class="send-btn" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')">Send</button>*@
                                                                                    
                                                                                     <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Add Candidate Status">
@@ -548,8 +547,7 @@
                                                                                     <button class="mdc-fab app-fab--absolute itemques mb-40" aria-label="Candidate Status List">
                                                                                         <span onclick="GetCandidateStatusList('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16" id="IconChangeColor"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" id="mainIconPathAttribute" fill="#ffffff"></path> </svg></span>
                                                                                     </button>
-                                                                                    @if (!item.IsColdCandidate)
-                                                                                    {
+                                                                                  
                                                                                         <span>
                                                                                             <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#db6161;border-color:#db6161;position:relative;left:10px">
                                                                                                 <span onclick="MarkedColdCandidate('@item.CandidateId','@item.IRFId', '@item.candidateEmail');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
@@ -557,7 +555,7 @@
                                                                                                 </span>
                                                                                             </button>
                                                                                         </span>
-                                                                                    }
+                                                                                    
                                                                                 </td>
                                                                             </tr>
                                                                         }

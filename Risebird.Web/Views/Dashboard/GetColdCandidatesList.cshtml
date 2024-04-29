@@ -82,49 +82,60 @@
                                                         <th>Channel Owner</th>
                                                         <th>Meeting Status</th>
                                                         <th>Total Mails</th>
-                                                        @if (ViewBag.ColdCandidateValue == 1)
-                                                        {
-                                                            <th>Is Cold Candidate</th>
-                                                            <th>Cold Candidate Marked By</th>
-                                                            <th>Cold Candidate Marked Date</th>
-                                                        }
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th>Skill Channel</th>
-                                                        <th>Interview Date</th>
-                                                        <th>Candidate Email</th>
-                                                        <th>Candidate Name</th>
-                                                        <th>Mobile Number</th>
-                                                        <th>Client Name</th>
-                                                        <th>Channel Owner</th>
-                                                        <th>Meeting Status</th>
-                                                        <th>Total Mails</th>
-                                                        @if (ViewBag.ColdCandidateValue == 1)
-                                                        {
-                                                            <th>Is Cold Candidate</th>
-                                                            <th>Cold Candidate Marked By</th>
-                                                            <th>Cold Candidate Marked Date</th>
-                                                        }
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </tfoot>
-                                                <tbody>
-                                                    @foreach (var item in Model)
+                                                    @if (ViewBag.ColdCandidateValue == 1)
+                                                    { 
+                                                    <th>Is Cold Candidate</th>
+                                                    <th>Cold Candidate Marked By</th>
+                                                    <th>Cold Candidate Marked Date</th>
+                                                    }
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Skill Channel</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Mobile Number</th>
+                                                    <th>Client Name</th>
+                                                    <th>Channel Owner</th>
+                                                    <th>Meeting Status</th>
+                                                 <th>Total Mails</th>
+                                                    @if (ViewBag.ColdCandidateValue == 1)
                                                     {
-                                                        <tr>
-                                                            <td>@item.IRFId</td>
-                                                            <td>@item.interviewDate</td>
-                                                            <td>@item.candidateEmail</td>
-                                                            <td>@item.candidateName</td>
-                                                            <td>@item.MobileNumber</td>
-                                                            <td>@item.ClientName</td>
-                                                            <td>@item.ChannelOwner</td>
-                                                            <td>@item.MeetingStatusStatusDesc</td>
-                                                            <td>
-
+                                                        <th>Is Cold Candidate</th>
+                                                        <th>Cold Candidate Marked By</th>
+                                                        <th>Cold Candidate Marked Date</th>
+                                                    }
+                                                    <th>Action</th>
+                                                </tr>
+                                            </tfoot>
+                                            <tbody>
+                                                @foreach (var item in Model)  
+                                                {
+                                                    <tr>
+                                                        <td>@item.IRFId</td>
+                                                        <td>@item.interviewDate</td>
+                                                        <td>@item.candidateEmail</td>
+                                                        <td>@item.candidateName</td>
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <td>
+                                                                    <span aria-label="Click here to call the candidate">
+                                                                        <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid','@item.IRFId', 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
+                                                                    </span>@item.MobileNumber
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                        <td>@item.ClientName</td>
+                                                        <td>@item.ChannelOwner</td>
+                                                        <td>@item.MeetingStatusStatusDesc</td>
+                                                        <td>
+                                                           
                                                                 @if (item.MailCount != 0)
                                                                 {
                                                                     <div class="row">
@@ -202,12 +213,14 @@
 
     </div>
 </div>
-@await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
-<div id="modal_recipientActivity_placeholder"></div>
-<div id="modal_candidateCommunicationDetails_placeholder"></div>
-<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
-<script src="~/js/markcoldcandidate.js?v=2024" asp-append-version="true"></script>
-<script src="~/js/common.js?v=2024"></script>
+    @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
+   <div id="modal_recipientActivity_placeholder"></div>
+    <div id="modal_candidateCommunicationDetails_placeholder"></div>
+   <script src="~/js/ModalFormServerValidation.js"></script>
+    <script src="~/js/markcoldcandidate.js" asp-append-version="true"></script>
+    <script src="~/js/common.js"></script>
 
 <script>
 

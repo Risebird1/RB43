@@ -209,7 +209,25 @@
 
 </script>
 
+<script>
+    function GetCandidateStatusListByList(irfId, candidateId, irfName, candidateName) {
+        $.ajax({
+            url: '/Candidate/GetCandidateStatusListByClient',
+            data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName },
+            success: function (data) {
+                var modal = document.getElementById("statusListModal");
+                modal.style.display = "block";
+                var appendText = 'Status list for ' + candidateName;
+                $('#statusListHeading').html('');
+                $('#statusListHeading').html(appendText);
+                $('#statusListTableBody').html('');
+                $('#statusListTableBody').html(data);
 
+
+            }
+        });
+    }
+</script>
 <script>
     $(".audio-upload").on("change", ".file-upload-field", function () {
         $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));

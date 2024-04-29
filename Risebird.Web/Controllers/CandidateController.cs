@@ -5087,5 +5087,32 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        
+        [HttpGet]
+        public async Task<IActionResult> GetCandidateStatusListByClient(int irfId, int candidateId, string irfName, string candidateName)
+        {
+            try
+            {
+               
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+
+                    var model = new CandidateStatusListVM();
+                    model.CandidateStatusList = await _irfService.GetCandidatesStatusList(irfId, candidateId);
+                    model.IRFName = irfName;
+                    model.CandidateName = candidateName;
+                    model.CandidateId = candidateId;
+                    model.IRFId = irfId;
+                    model.Profile = profileName;
+                    return PartialView("StatusListPartial", model);
+               
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

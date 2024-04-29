@@ -47,7 +47,6 @@ ca.IsResumeRedactFailed,
 --si.Uniqueid as SchedulerUniqueid,
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid
 ,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail
-,cci.IsColdCandidate
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
 join UserList ul on ul.id = cm.UserId
@@ -57,7 +56,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 --left join ScheduleInterviewEvent si on (si.SkillChannel=IRF.IRFId and SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) = si.Uniqueid)
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable
 outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ca.IRFId and CandidateId = ca.CandidateMasterId order by cs.Date desc) as LastCandidateStatus
-where ca.IRFId = @IRFId and ca.ClientHRAttemptContact = @emailId) Cnd      
+where ca.IRFId = @IRFId and ca.ClientHRAttemptContact = @emailId AND ISNULL(cci.IsColdCandidate,0) !=1) Cnd      
 left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,    
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join    
 (select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered    
@@ -83,7 +82,6 @@ ca.IsResumeRedactFailed,
 --si.Uniqueid as SchedulerUniqueid,
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid
 ,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue, IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail
-,cci.IsColdCandidate
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
 join UserList ul on ul.id = cm.UserId
@@ -93,7 +91,7 @@ left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
 --left join ScheduleInterviewEvent si on si.SkillChannel=IRF.IRFId
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable
 outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ca.IRFId and CandidateId = ca.CandidateMasterId order by cs.Date desc) as LastCandidateStatus
-where ca.IRFId = @IRFId) Cnd      
+where ca.IRFId = @IRFId AND ISNULL(cci.IsColdCandidate,0) !=1) Cnd      
 left join (select im.id as imid,im.interviewDate, im.confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,    
 ic.VideoLink, im.candidateEmail, im.IRFId from InterviewMeetings im join    
 (select candidateEmail, max(interviewDate) as intereviewDate from InterviewMeetings where IRFId = @IRFName group by candidateEmail) Filtered    
