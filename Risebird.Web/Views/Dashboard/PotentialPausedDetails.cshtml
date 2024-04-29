@@ -5,9 +5,11 @@
 @using Microsoft.AspNetCore.Http
 @using Newtonsoft.Json;
 @inject IHttpContextAccessor HttpContextAccessor
-
+@{
+    ViewData["Title"] = "Potentially Pausable & Paused Skill Channel";
+}
 <script>
-    var Header = "<div>Potential Pause</div>";
+    var Header = "<div>Potentially Pause</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 

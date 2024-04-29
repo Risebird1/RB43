@@ -1248,7 +1248,7 @@ namespace Risebird.Business
                 reportModel.QOSData = (await _meetingRespository.GetZoomQOSDataByMeetingId(interviewId))?.ToList();
                 reportModel.ClientId = interviewDetails.ClientId;
                 reportModel.CommunicationalProficiency = interviewDetails.CommunicationalProficiency;
-                reportModel.IsQC = interviewDetails.IsQC;
+                reportModel.IsQCDone = interviewDetails.IsQC;
                 reportModel.CodeSnippet = interviewDetails.CodeSnippet;
                 return reportModel;
             }

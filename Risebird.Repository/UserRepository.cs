@@ -1141,13 +1141,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select WhatsappNumber,FirstName,LastName from UserList Where Emailid=@Emailid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", Emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryFirstOrDefaultAsync<UserList>(query, dynamicParameters);
-
+                    var result = await SqlMapper.QueryFirstOrDefaultAsync<UserList>(con, "usp_FetchWhatsAppNumberByEmail", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
                     return (result?.WhatsappNumber, result?.FirstName + " " + result?.LastName);
                 }
             }

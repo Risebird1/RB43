@@ -9,6 +9,9 @@ function MarkedColdCandidate(CandidateId, IRFId, CandidateEmail, InterviewId, ir
                     title: '',
                     text: data, // Use the data variable here for the message
                     width: '50%', // You can use 'px' or '%' for the width value
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    allowOutsideClick: false
                 }).then(function () {
                     location.reload(true);
                 });
@@ -22,30 +25,29 @@ function MarkedColdCandidate(CandidateId, IRFId, CandidateEmail, InterviewId, ir
 
 
 function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, scheduleUniqueid, InterviewId) {
-    if (CandidateId != '') {
-
-
-        swal.fire({
-            title: 'Are you sure?',
-            text: "You want to undo the 'Cold Status' that is currently marked for" + " (" + CandidateEmail + ") " + " for skill channel " + " (" + IRFId + ") ",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Undo!',
-            cancelButtonText: "Don't",
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        url: '/Dashboard/UndoMarkedColdCandidate',
-                        type: 'POST',
-                        data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'irfIntId': irfIntId },
-                        success: function (data) {
-                            if (data != null && data.toLowerCase().includes('success')) {
-                                resolve(data);
-                            }
-                            else {
-                                swal.fire("Error cancelling!", "Please try again", "error");
+    if (CandidateId != '')
+    {
+    swal.fire({
+        title: 'Are you sure?',
+        text: "You want to undo the 'Cold Status' that is currently marked for" + " ("+ CandidateEmail +") " + " for skill channel " +" ("+ IRFId +") ",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Undo!',
+        cancelButtonText: "Don't",
+        preConfirm: function () {
+            return new Promise(function (resolve, reject) {
+                $.ajax({
+                    url: '/Dashboard/UndoMarkedColdCandidate',
+                    type: 'POST',
+                    data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'irfIntId': irfIntId },
+                    success: function (data) {
+                        if (data != null && data.toLowerCase().includes('success')) {
+                            resolve(data);
+                        }
+                        else {
+                            swal.fire("Error cancelling!", "Please try again", "error");
 
                             }
 
@@ -68,31 +70,33 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
                         allowOutsideClick: false
                     }).then(function () {
 
-                        ReschuduleMeeting(InterviewId, scheduleUniqueid, CandidateEmail);
-                    })
-
-                }
-                else if (result.dismiss === 'cancel') {
-                    swal.fire(
-                        'Aborted!',
-                        'Meeting remains confirmed! :)',
-                        'error'
-                    )
-                }
-            })
+                    ReschuduleMeeting(InterviewId, scheduleUniqueid, IRFId, CandidateEmail);
+                    //location.reload(true);
+                })
+                
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Aborted!',
+                    'Meeting remains confirmed! :)',
+                    'error'
+                )
+            }
+           
+        })
 
 
     }
 
-    function ReschuduleMeeting(interviewid, uniqueid, candidateEmailid) {
+    function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid) {
         swal.fire({
             title: 'Are you sure?',
-            text: 'Do you really want to cancel this meeting and reschedule?',
+            text: 'Do you want to schedule this candidate?',
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Reschedule!',
+            confirmButtonText: 'Yes, Schedule!',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     $.ajax({
@@ -102,6 +106,7 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
                             'CandidateEmailid': candidateEmailid,
                             'interviewid': interviewid,
                             'uniqueid': uniqueid,
+                            'Irfid': irfid,
                             'schedulertype': 2
                         },
                         success: function (result) {
@@ -109,7 +114,7 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
                             resolve(result)
                         },
                         error: function () {
-                            swal.fire("Error rescheduling!", "Please try again", "error");
+                            swal.fire("Error scheduling!", "Please try again", "error");
                         }
                     })
                 })
@@ -117,16 +122,16 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
             allowOutsideClick: false
         }).then(function (result) {
             if (result.dismiss !== 'cancel') {
-                //location.reload(true);
-            }
-            else if (result.dismiss === 'cancel') {
+                window.location.reload(); // Reloads the page in the current tab
+            } else {
                 swal.fire(
                     'Cancelled',
-                    'reschedule cancelled! :)',
+                    'schedule cancelled! :)',
                     'error'
-                )
+                );
+                window.location.reload();
             }
-        })
+        });
     }
 
 

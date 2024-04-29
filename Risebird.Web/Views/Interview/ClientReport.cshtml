@@ -273,7 +273,7 @@
 
                                                     {
                                                         @*Turing*@
-                                                        @if (!Model.IsQC)
+                                                        @if (!Model.IsQCDone)
                                                         {
                                                             <div style="height:35px;">
                                                                 <span class="error-badge"><span class="pull-left" style="padding-left:15px;"> QC Pending</span> <i class='fa fa-clock pull-left blink' style='color: red'></i></span>
@@ -287,7 +287,7 @@
                                                     else
                                                     {
                                                         @*Turing*@
-                                                        @if (!Model.IsQC)
+                                                        @if (!Model.IsQCDone)
                                                         {
                                                             <div style="height:35px;">
                                                                 <span class="error-badge"><span class="pull-left" style="padding-left:15px;"> QC Pending</span> <i class='fa fa-clock pull-left' style='color: red'></i></span>
