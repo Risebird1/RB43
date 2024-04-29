@@ -9,14 +9,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE [dbo].usp_GetColdCandidateList  
+@startDate Datetime,
+@endDate Datetime
 As
 Begin 
 ;With CTE AS(SELECT im.candidateEmail, im.IRFId
 FROM InterviewMeetings im
 JOIN InterviewComments ic ON im.id = ic.InterviewId
 JOIN IRF ON im.IRFId = IRF.IRFId
+Where im.interviewDate BETWEEN @startDate and @endDate
 GROUP BY im.candidateEmail, im.IRFId
-HAVING COUNT(im.candidateEmail) >= 5
+HAVING COUNT(im.candidateEmail) >=3
 AND NOT EXISTS (
     SELECT 1
     FROM InterviewComments ic2

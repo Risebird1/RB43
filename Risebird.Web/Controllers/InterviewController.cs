@@ -5854,15 +5854,14 @@ namespace Risebird.Web.Controllers
                         var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
                         //var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
                         DeleteMeetingLink(result.ZoomMeetingId);
-                        if (status == 3 && candidateId == 0)
-                        {
-                            string stepfirst = result.CalendlyLink.Split("?").LastOrDefault();
-                            var olduniqueid = stepfirst.Split("=").LastOrDefault();
-                            var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
-                            oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
-                            //return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink });
-                            return Json(oneTimeSchedulingLink);
-                        }
+                        //if (status == 3 && candidateId == 0)
+                        //{
+                        //    string stepfirst = result.CalendlyLink.Split("?").LastOrDefault();
+                        //    var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                        //    var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
+                        //    oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                        //    return Json(oneTimeSchedulingLink);
+                        //}
                         return Json("Successfully status updated, " + value);
                     }
 
@@ -7759,26 +7758,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<JsonResult> GenerateRescheuleLink(string CandidateEmailid, string uniqueid, int interviewid, int pageReturnType)
-        {
-            if (!string.IsNullOrEmpty(uniqueid))
-            {
-                var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, CandidateEmailid);
-                if (pageReturnType == 1)
-                {
-                    var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&interviewid=" + interviewid + "&type=" + 314999;
-                    return Json(SchedulingLink);
-                }
-                else
-                {
-                    var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&returnvaluetype=" + 2 + "&interviewid=" + interviewid + "&type=" + 314915;
-                    return Json(SchedulingLink);
-                }
-            }
-            return Json("");
-        }
-
         [HttpGet]
         public async Task<IActionResult> CandidateRescheduleMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
@@ -7786,7 +7765,8 @@ namespace Risebird.Web.Controllers
             {
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
                 var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, result.candidateEmail);
-                return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1 });
+                //return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1 });
+                return RedirectToAction("CandidateScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1, CandidateEmail = result.candidateEmail });
             }
             else
             {
@@ -8000,6 +7980,10 @@ namespace Risebird.Web.Controllers
                     else if (model.Pagetype == "QCPendingReport")
                     {
                         return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.QCPendingReport });
+                    }
+                    else if (model.Pagetype == "MYQC")
+                    {
+                        return RedirectToAction("MyQualityControlledInterviews", "Interview");
                     }
                     else
                     {
@@ -8553,10 +8537,10 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var meetings = await _meetingService.GetMyQCInterviews(emailid);
                         // meetings = meetings.Select(x => { x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        if (TempData["SuccessErrorMessage"] != null)
+                        if (TempData["SuccessErrorMessageInterview"] != null)
                         {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
                         }
                         return View(meetings);
                     }

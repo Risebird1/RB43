@@ -42,8 +42,8 @@
         display: none
     }
 </style>
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
@@ -201,12 +201,12 @@
 
                                                                 <td class="text-center">
                                                                     <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Select",irfId=item.id})" title="Selected Meetings">
-                                                                        <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings" style="background: #27a827;">
+                                                                        <div class="btn  shadow btn-xs sharp me-1 item1" aria-label="Selected Meetings" style="background:#30a73099;">
                                                                             <span title="Selected Meetings"><span class="fa fa-user-check" style="color:#fff;font-size:11px;color:#fff;font-size: 13px;position: relative;left: -2px;"></span></span>
                                                                         </div>
                                                                     </a>
                                                                     <a target="_blank" style="position:relative;top:0px;text-decoration:none;" href="@Url.Action("SkillChannelMeetingsDetails", "IRF" , new { uniqueid = ViewBag.id , IRFName = item.IRFId,meetingtype="Reject",irfId=item.id})" title="Rejected Meetings">
-                                                                        <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings" style="background: #cb2b18;">
+                                                                        <div class="btn btn-candlist shadow btn-xs sharp me-1 item1" aria-label="Rejected Meetings" style="background: #cb2b18a1;">
                                                                             <span title="Rejected Meetings"><span class="fa fa-user" style="color:#fff;position:relative;left: -2px;top:0px;font-size:12px;"></span><span class="fa fa-times" style="color:#fff;font-size: 11px;position:relative;left: -6px;top:0px;animation:auto;"></span></span>
                                                                         </div>
                                                                     </a>
@@ -288,8 +288,8 @@
                                                                 </button>*@
                                                                     @if (item.IsDrive)
                                                                     {
-                                                                        <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Download Candidate Reports" style="background: #008000ba;">
-                                                                            <span onclick="location.href='@Url.Action("IRFCandidateReportsExporttoExcel", "Candidate",new { id=item.id,IRFId=item.IRFId})'" title="Download Candidate Reports"><svg style="color: white;position: relative;right:1px;" xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
+                                                                        <button id="skill_16" class="btn btn-success shadow btn-xs sharp me-1" aria-label="Download Candidate Reports" style="background:#42a5f5;">
+                                                                            <span onclick="location.href='@Url.Action("IRFCandidateReportsExporttoExcel", "Candidate",new { id=item.id,IRFId=item.IRFId})'" title="Download Candidate Reports"><svg style="color: white;position: relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-file-earmark-excel" viewBox="0 0 16 16"> <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z" fill="white"></path> <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" fill="white"></path> </svg></span>
                                                                         </button>
                                                                     }
                                                                 </td>
@@ -531,7 +531,7 @@
     </script>
 }
 
-<script src="~/js/FeedbackRecorder/Record.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
 <script>
     var irfId = 0;
     var irfName = '';

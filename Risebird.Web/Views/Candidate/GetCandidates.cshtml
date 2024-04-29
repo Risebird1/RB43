@@ -24,10 +24,10 @@
     $('#txtpageHeader').empty().html(Header);
 </script>
 
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css?v=2024" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
-<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=11" />
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
 @if (ViewBag.AccessType == "Public"){
     <style>
@@ -74,6 +74,17 @@
                         @*<button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick(false)" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Import Candidates</font></span>
                         </button>*@
+
+                        @if (ViewBag.AccessType != "Public")
+                        {
+                         @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
+                        </button>
+                        *@
+
+                         <i class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'"></i>
+
+                        }
                         @if (ViewBag.ButtonAccess && ViewBag.AccessType != "Public")
                         {
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -88,12 +99,7 @@
                             </button>
                         }
 
-                        @if (ViewBag.AccessType != "Public")
-                        {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("ExportCandidateList", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Candidate</font></span>
-                            </button>
-                        }
+                       
                         @if (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "Client" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin")
                         {
                             @if (ViewBag.ClientRole != "HRs")
@@ -106,14 +112,15 @@
                                 }
                             }
                         }
-                         @if (ViewBag.AccessType != "Public")
-                                {
-                        <button id="getstatus_13" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                        </button>
-                                }
+                       
+                        @if (ViewBag.AccessType != "Public")
+                        {
+                            <button id="getstatus_13" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "IRF")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                            </button>
+                        }
 
-
+                      
 
                         @*@Html.ActionLink("Back", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space", @role = "button" })*@
 
@@ -207,7 +214,7 @@
                                                             } *@
                                                             <th id="getstatus_3" style="width:7%">Resume</th>
 
-                                                            @if(ViewBag.profile == "Client")
+                                                            @if (ViewBag.profile == "Client")
                                                             {
                                                                 <th>Redacted Resume</th>
 
@@ -217,7 +224,12 @@
                                                             <th id="getstatus_5">Confirmation</th>
                                                            
                                                             <th>Interview Time</th>
-                                                             <th>Current Status</th>
+                                                            @if (ViewBag.profile != "Client")
+                                                            {
+                                                                <th>Candidate Journey</th>
+                                                                <th>Current Interview Status</th>
+
+                                                            }
                                                             <th>Communications</th>
                                                             <th> Actions </th>
                                                             @if (ViewBag.profile != "Client")
@@ -246,8 +258,15 @@
 
                                                             
                                                             <th>Interview Date</th>
-                                                            <th width="20%">Current Status</th>
+                                                            @if (ViewBag.profile != "Client")
+                                                            {
+                                                                <th width="20%">Candidate Journey</th>
+                                                                <th>Current Interview Status</th>
+
+                                                            }
                                                             <th>Communications</th>
+                                                            
+
                                                             <th> Actions </th>
                                                             @if (ViewBag.profile != "Client")
 															{
@@ -260,25 +279,62 @@
 
                                                         @foreach (var item in Model)
                                                         {
+                                                              var colorcode = "";
+                                                   
+                                                            if (item.HasEmailDroppedOrBounced == true)
+                                                        {
+                                                                colorcode = "#fa77775e";
+                                                        }
+                                                            else
+                                                            {
+                                                                colorcode = "#fff";
+                                                            }
+
+
                                                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                                            
-                                                            <tr id="@item.id" data-changes="1">
+
+                                                            <tr id="@item.id" data-changes="1" style="background:@colorcode">
                                                                 @* <td style="width:10px;" data-toggle="collapse" id="@item.id" data-target=".@item.id" class="detail-row" onclick="changeicon('@item.id')">&nbsp;</td> *@
                                                               
-                                                                <td valign="top">
+                                                                <td valign="top" style="position:relative;">
 
                                                                     @if (item.Name != null && item.Name != "")
                                                                     {
                                                                         @if (item.Name.Length > 20)
                                                                         {
-                                                                            <div class="cadName">
-                                                                                <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
+                                                                            <div class="cadName" style="margin-top:15px;">
+                                                                              @*  @if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                    <div class="absCenter">
+                                                                                <button class="infoButton">
+                                                                                    <div class="infoButton-btn">
+                                                                                        <span class="infoButton-btn-text">i</span>
+                                                                                    </div>
+                                                                                    <div class="infoButton-container">
+                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                    </div>
+                                                                                </button>
+                                                                            </div>
+
+                                                                    }  *@
+                                                                    <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
                                                                             </div>
                                                                         }
 
                                                                         else
                                                                         {
-                                                                            <div class="cadName">
+                                                                            <div class="cadName" style="margin-top:15px;">
+                                                                                  @*@if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                    <div class="absCenter">
+                                                                                <button class="infoButton">
+                                                                                    <div class="infoButton-btn">
+                                                                                        <span class="infoButton-btn-text">i</span>
+                                                                                    </div>
+                                                                                    <div class="infoButton-container">
+                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                    </div>
+                                                                                </button>
+                                                                            </div>
+                                                                    }  *@
                                                                                 <a onclick=""><span class="name-field"> @item.Name</span> </a>
                                                                             </div>
                                                                         }
@@ -302,7 +358,7 @@
                                                                         else
                                                                         {
                                                                             <div class="cadEmail">
-                                                                                <a onclick=""><span class="cname">@item.EmailId</span> </a>
+                                                                                <a onclick="" data-tooltip="@item.EmailId"><span>Emaild: @item.EmailId</span> </a>
                                                                             </div>
                                                                         }
                                                                     }
@@ -316,18 +372,20 @@
                                                                         <span style="margin: 5px 0px;    display: inline-block;">
                                                                             @if (item.Phone != null && item.Phone != string.Empty)
                                                                             {
-                                                                                <span  data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject,1)" >
+                                                                                <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject,1)">
                                                                                     <img src="~/img/calling.png" width="20" />
                                                                                 </span>
 
                                                                             }
                                                                             @item.Phone
-                                                                            </span>
+                                                                        </span>
                                                                     }
-                                                                    @if (item.IsColdCandidate)
-                                                                    { 
-                                                                        <span class="cold-mark">Cold Candidate Marked</span>
-                                                                    }
+                                                                 @if (item.IsColdCandidate)
+                                                                    {
+                                                                        <span class="cold-mark-badge">Cold Candidate Marked</span>
+                                                                    } 
+                                                                   
+
                                                                 </td>
                                                                
                                                                 @* @if (ViewBag.profile != "Client")
@@ -350,7 +408,7 @@
                                                                 {
                                                                     <td></td>
                                                                 }
-                                                                @if(ViewBag.profile == "Client")
+                                                                @if (ViewBag.profile == "Client")
                                                                 {
                                                                     @if (!string.IsNullOrEmpty(item.CodedResumeLink))
                                                                     {
@@ -372,156 +430,163 @@
                                                                             <td></td>
                                                                         }
                                                                     }
-                                                                    
+
                                                                 }
                                                                 
                                                                 <td class="text-center">@item.TotalInvites</td>
                                                                 <td class="text-center">@item.InviteConfirmation</td>
                                                                 <td>@item.interviewDate</td>
-                                                                <td class="text-center">
+                                                                @if (ViewBag.profile != "Client")
+                                                                {
+                                                                    <td class="text-center">
 
 
-                                                                     @if (item.StatusValue == "In Progress")
-                                                                        {
-                                                                            <span class="current progress" style="font-size:12px; height:19px;font-weight: 500;"> @item.StatusValue</span>
-                                                                        }
-                                                                        else if (item.StatusValue == "New")
-                                                                        {
+                                                                    @if (item.StatusValue == "In Progress")
+                                                                    {
+                                                                        <span class="current progress" style="font-size:12px; height:19px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+                                                                    else if (item.StatusValue == "New")
+                                                                    {
 
-                                                                            <span class="current new" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                        <span class="current new" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
 
-                                                                        }
+                                                                    }
 
-                                                                        else if (item.StatusValue == "Added")
-                                                                        {
-                                                                            <span class="current added" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
-                                                                        }
+                                                                    else if (item.StatusValue == "Added")
+                                                                    {
+                                                                        <span class="current added" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
 
-                                                                        else if (item.StatusValue == "Waiting For Response")
-                                                                        {
+                                                                    else if (item.StatusValue == "Waiting For Response")
+                                                                    {
 
-                                                                            <span class="current waiting" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                        <span class="current waiting" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
 
-                                                                        }
-                                                                        else if (item.StatusValue == "Scheduled")
-                                                                        {
+                                                                    }
+                                                                    else if (item.StatusValue == "Scheduled")
+                                                                    {
 
-                                                                            <span class="current scheduled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                        <span class="current scheduled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
 
-                                                                        }
-                                                                        else if (item.StatusValue == "Cancelled")
-                                                                        {
-                                                                            <span class="current cancelled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
-                                                                        }
-                                                                        else if (item.StatusValue == "No Show(Candidate)")
-                                                                        {
-                                                                            <span class="current noshowcandidate" style="font-size:12px;font-weight: 500;">@item.StatusValue</span>
-                                                                        }
+                                                                    }
+                                                                    else if (item.StatusValue == "Cancelled")
+                                                                    {
+                                                                        <span class="current cancelled" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+                                                                    else if (item.StatusValue == "No Show(Candidate)")
+                                                                    {
+                                                                        <span class="current noshowcandidate" style="font-size:12px;font-weight: 500;">@item.StatusValue</span>
+                                                                    }
 
-                                                                        else if (item.StatusValue == "Irrelevant")
-                                                                        {
-                                                                            <span class="current irrelevant" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
-                                                                        }
-                                                                        else if (item.StatusValue == "Duplicate")
-                                                                        {
-                                                                            <span style=" color: hotpink;font-weight: 500;font-size:12px">
-                                                                                @item.StatusValue
-                                                                            </span>
-                                                                        }
-                                                                        else if (item.StatusValue == "Not Interested")
-                                                                        {
-                                                                            <span style=" color: purple;font-weight: 500;font-size:12px">
-                                                                                @item.StatusValue
-                                                                            </span>
-                                                                        }
-                                                                        else if (item.StatusValue == "Got Another Offer")
-                                                                        {
-                                                                            <span style=" color: darkgreen;font-weight: 500;font-size:12px">
-                                                                                @item.StatusValue
-                                                                            </span>
-                                                                        }
-                                                                        else if (item.StatusValue == "Hold")
-                                                                        {
-                                                                            <span style="color: orangered;font-weight: 500;font-size:12px">
-                                                                                @item.StatusValue
-                                                                            </span>
-                                                                        }
-                                                                        else if (item.StatusValue == "Meeting Status")
-                                                                        {
-                                                                            <div style="color: #c572ac;font-weight: 500; padding:2px; font-size: 12px;background: #e892c652;display: inline;">
-                                                                                @if (item.LatestComment != null && item.LatestComment != "")
+                                                                    else if (item.StatusValue == "Irrelevant")
+                                                                    {
+                                                                        <span class="current irrelevant" style="font-size:12px;font-weight: 500;"> @item.StatusValue</span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Duplicate")
+                                                                    {
+                                                                        <span style=" color: hotpink;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Not Interested")
+                                                                    {
+                                                                        <span style=" color: purple;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Got Another Offer")
+                                                                    {
+                                                                        <span style=" color: darkgreen;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Hold")
+                                                                    {
+                                                                        <span style="color: orangered;font-weight: 500;font-size:12px">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Meeting Status")
+                                                                    {
+                                                                        <div style="color: #c572ac;font-weight: 500; padding:2px; font-size: 12px;background: #e892c652;display: inline;">
+                                                                            @if (item.LatestComment != null && item.LatestComment != "")
+                                                                            {
+                                                                                @if (item.LatestComment.Length > 20)
                                                                                 {
-                                                                                    @if (item.LatestComment.Length > 20)
-                                                                                    {
-                                                                                        <div class="article">
-                                                                                            <p style="margin-bottom:0px;">
-                                                                                                @item.LatestComment.Substring(0, 20)
-                                                                                            </p>
-                                                                                            <p class="moretext_@item.id moretext">
-                                                                                                @item.LatestComment.Substring(20, @item.LatestComment.Length - 20)
-                                                                                            </p>
-                                                                                        </div>
-                                                                                        <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <div class="article" style="overflow:hidden;display:inline-flex">
-                                                                                            <p>
-                                                                                                @item.LatestComment.Substring(0, @item.LatestComment.Length)
-                                                                                            </p>
-                                                                                        </div>
-                                                                                    }
-                                                                                }
-                                                                            </div>
-                                                                        }
-                                                                        else if (item.StatusValue == "Invitation Sent")
-                                                                        {
-                                                                            <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
-                                                                                @item.StatusValue
-                                                                            </span>
-                                                                        }
-                                                                        else if (item.StatusValue == "Interview Status")
-                                                                        {
-                                                                            <div style="color:#4832d4ab;font-weight: 500; padding:2px; font-size: 12px;background:#d9d6ef94;display: inline;">
-                                                                                @if (item.LatestComment != null && item.LatestComment != "")
-                                                                                {
-                                                                                    @if (item.LatestComment.Length > 20)
-                                                                                    {
-                                                                                        <div class="article">
-                                                                                            <p style="margin-bottom:0px;">
-                                                                                                @item.LatestComment.Substring(0, 20)
-                                                                                            </p>
-                                                                                            <p class="moretext_@item.id moretext">
-                                                                                                @item.LatestComment.Substring(20, @item.LatestComment.Length - 20)
-                                                                                            </p>
-                                                                                        </div>
-                                                                                        <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <div class="article" style="overflow:hidden;display:inline-flex">
-                                                                                            <p>
-                                                                                                @item.LatestComment.Substring(0, @item.LatestComment.Length)
-                                                                                            </p>
-                                                                                        </div>
-                                                                                    }
+                                                                                    <div class="article">
+                                                                                        <p style="margin-bottom:0px;">
+                                                                                            @item.LatestComment.Substring(0, 20)
+                                                                                        </p>
+                                                                                        <p class="moretext_@item.id moretext">
+                                                                                            @item.LatestComment.Substring(20, @item.LatestComment.Length - 20)
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <span> @item.StatusValue</span>
+                                                                                    <div class="article" style="overflow:hidden;display:inline-flex">
+                                                                                        <p>
+                                                                                            @item.LatestComment.Substring(0, @item.LatestComment.Length)
+                                                                                        </p>
+                                                                                    </div>
                                                                                 }
+                                                                            }
+                                                                        </div>
+                                                                    }
+                                                                    else if (item.StatusValue == "Invitation Sent")
+                                                                    {
+                                                                        <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                            @item.StatusValue
+                                                                        </span>
+                                                                    }
+                                                                    else if (item.StatusValue == "Interview Status")
+                                                                    {
+                                                                        <div style="color:#4832d4ab;font-weight: 500; padding:2px; font-size: 12px;background:#d9d6ef94;display: inline;">
+                                                                            @if (item.LatestComment != null && item.LatestComment != "")
+                                                                            {
+                                                                                @if (item.LatestComment.Length > 20)
+                                                                                {
+                                                                                    <div class="article">
+                                                                                        <p style="margin-bottom:0px;">
+                                                                                            @item.LatestComment.Substring(0, 20)
+                                                                                        </p>
+                                                                                        <p class="moretext_@item.id moretext">
+                                                                                            @item.LatestComment.Substring(20, @item.LatestComment.Length - 20)
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <a onclick="moreless('@item.id')" class="moreless-button" value="Readmore" id="read_@item.id" href="#">Read more</a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <div class="article" style="overflow:hidden;display:inline-flex">
+                                                                                        <p>
+                                                                                            @item.LatestComment.Substring(0, @item.LatestComment.Length)
+                                                                                        </p>
+                                                                                    </div>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span> @item.StatusValue</span>
+                                                                            }
 
-                                                                            </div>
+                                                                        </div>
 
                                                                         }
-                                                               </td>
+                                                                    </td>
+                                                                    <td>
+                                                                        @item.CurrentInterviewStatus
+                                                                    </td>
+                                                                }
+                                                                
                                                                 
                                                                 <td>
                                                                     @if (item.MailCount != 0)
                                                                     {
                                                                         <div class="row">
                                                                             <span class="icon-field"><i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;padding: 0px 5px 0px 10px;"></i>  Emails :</span>    <span class="icon-field">
-                                                                                <a class="icon-link" href="#!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { emailId = item.EmailId, irfId = item.IRFId, interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email})">
+                                                                                <a class="icon-link" href="#!_@item.imid" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { emailId = item.EmailId, irfId = item.IRFId, interviewId = item.imid, communicationMedium = (int)CommunicationMedium.Email })">
                                                                                     @item.MailCount
                                                                                 </a>
                                                                             </span>
@@ -533,7 +598,7 @@
                                                                             <span class="icon-field">
                                                                                 <img class="icon vc" src="~/img/voice-call.png" />  Voice Calls :
                                                                             </span>   <span class="icon-field">
-                                                                                <a class="icon-link" href="#!!_@item.imid" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { emailId = item.EmailId, irfId = item.IRFId, communicationMedium = (int)CommunicationMedium.VoiceCall})">
+                                                                                <a class="icon-link" href="#!!_@item.imid" title="Voice Calls attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { emailId = item.EmailId, irfId = item.IRFId, communicationMedium = (int)CommunicationMedium.VoiceCall })">
                                                                                     @item.CallsCount
                                                                                 </a>
                                                                             </span>
@@ -546,7 +611,7 @@
                                                                             <span class="icon-field">
                                                                                 <img class="icon" src="~/img/whatsapp.png" />   Whatsapp :
                                                                             </span>  <span class="icon-field">
-                                                                                <a class="icon-link" href="#!!!_@item.imid" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails","Candidate", new { emailId = item.EmailId, interviewId = item.imid, irfId = item.IRFId, communicationMedium = (int)CommunicationMedium.Whatsapp})">
+                                                                                <a class="icon-link" href="#!!!_@item.imid" title="Whatspp communications attempted" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { emailId = item.EmailId, interviewId = item.imid, irfId = item.IRFId, communicationMedium = (int)CommunicationMedium.Whatsapp })">
                                                                                     @item.WhatsappCount
                                                                                 </a>
                                                                             </span>
@@ -555,7 +620,7 @@
 
                                                                 </td>
 
-
+                                                                
                                                                 <td class="text-left">
 
                                                                     @if (ViewBag.profile != "Recruiter")
@@ -566,29 +631,37 @@
                                                                             if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
                                                                             {
 
-                                                                                <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
-                                                                                    <span title="Send Invite"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
-                                                                                </a>
+                                                                                @if (!item.IsColdCandidate)
+                                                                                {
+                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                                        <span title="Send Invite"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
+                                                                                    </a>
+                                                                                }
 
                                                                             }
                                                                             else
                                                                             {
-                                                                                <div id="getstatus_8" class="btn shadow btn-invite btn-xs sharp me-1 mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
-                                                                                    <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" style="position:relative;top:-1px;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                                    </span>
-                                                                                </div>
-
+                                                                                @if (!item.IsColdCandidate)
+                                                                                {
+                                                                                    <div id="getstatus_8" class="btn shadow btn-invite btn-xs sharp me-1 mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                                        <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
+                                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" style="position:relative;top:-1px;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                }
                                                                             }
                                                                         }
 
                                                                          @if (ViewBag.AccessType != "Public")  
                                                                         {
-                                                                            <a target="_blank" class="btn shadow btn-unassign btn-xs sharp me-1 item4" href="@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })" title="Cancel Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
-                                                                                <span title="Cancel Invite"><i class="fa fa-remove" style="left:2px; top:0px;font-size:14px; position: relative;"></i></span>
-                                                                            </a>
+                                                                            @if (!item.IsColdCandidate)
+                                                                            {
+                                                                                <a target="_blank" class="btn shadow btn-unassign btn-xs sharp me-1 item4" href="@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })" title="Cancel Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                                    <span title="Cancel Invite"><i class="fa fa-remove" style="left:2px; top:0px;font-size:14px; position: relative;"></i></span>
+                                                                                </a>
+                                                                            }
 
-                                                                        }
+                                                                }
 
                                                                         @if (ViewBag.profile != "Client")
                                                                         {
@@ -617,7 +690,7 @@
 
                                                                         }
 
-                                                                }
+                                                                    }
                                                                     @if (ViewBag.profile == "Admin")
                                                                     {
                                                                         <div class="btn btn-record shadow btn-xs sharp me-1" aria-label="Call Record" style="position: relative;cursor: pointer; width:23px!important;height:23px!important;">
@@ -628,7 +701,7 @@
                                                                     @if (ViewBag.AccessType != "Public")
                                                                     {
 
-                                                                         <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })" title="Edit" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                        <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })" title="Edit" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
                                                                             <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
                                                                         </a>
 
@@ -641,13 +714,14 @@
                                                                         </div>
                                                                      
                                                                     }
-
-                                                                    <div style="float:left;margin: 0px 4px 0px 0px;">  
-                                                                        <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
-                                                                            <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:-1px;font-size:13px; position: relative;"></i></span>
-                                                                        </a>
-                                                                    </div>
-
+                                                                    @if (!item.IsColdCandidate)
+                                                                    {
+                                                                        <div style="float:left;margin: 0px 4px 0px 0px;">  
+                                                                            <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
+                                                                                <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:-1px;font-size:13px; position: relative;"></i></span>
+                                                                            </a>
+                                                                        </div>
+                                                                    }
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
                                                                     {
                                                                       
@@ -669,14 +743,16 @@
                                                                                 </button>
                                                                             </a>
                                                                         </div>
-
-                                                                        <div style="float:left">
-                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:23px!important;height:23px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:3px;margin: 0px 0px 0px 3px;">
-                                                                                <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
-                                                                                    <img src="~/img/approve-blk.png" width="16" style="max-width: 16px!important;position: relative;top: -1.5px;left: -2px;" />
-                                                                                </span>
-                                                                            </button>
-                                                                        </div>
+                                                                        @if (!item.IsColdCandidate)
+                                                                        {
+                                                                            <div style="float:left">
+                                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:23px!important;height:23px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:3px;margin: 0px 0px 0px 3px;">
+                                                                                    <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
+                                                                                        <img src="~/img/approve-blk.png" width="16" style="max-width: 16px!important;position: relative;top: -1.5px;left: -2px;" />
+                                                                                    </span>
+                                                                                </button>
+                                                                            </div>
+                                                                        }
                                                                     }
 
                                                                 </td>
@@ -734,121 +810,121 @@
                                                                             {
                                                                                 <td data-tooltip="@item.ClientHRAttemptContact" class="text-center"><span class="cname">@item.ClientHRAttemptContact</span> </td>
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                        <td></td>
+                                                        }
 
 
 
-                                                                            @if (item.ProfileSource != null && item.ProfileSource.Length > 13)
-                                                                            {
-                                                                                <td data-tooltip="@item.ProfileSource" class="text-center"><span class="cname">@item.ProfileSource</span> </td>
+                                                        @if (item.ProfileSource != null && item.ProfileSource.Length > 13)
+                                                        {
+                                                        <td data-tooltip="@item.ProfileSource" class="text-center"><span class="cname">@item.ProfileSource</span> </td>
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                        <td></td>
+                                                        }
 
 
-                                                                            @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
-                                                                            {
-                                                                                <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No Coded Resume</td>
-                                                                            }
+                                                        @if (item.EncodedResumeLink != null && item.EncodedResumeLink != "")
+                                                        {
+                                                        <td> <a id="codedresumeId" target="_blank" title="Coded Resume" href=@item.EncodedResumeLink>Coded Resume</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td>No Coded Resume</td>
+                                                        }
 
-                                                                            <td>@item.Type</td>
+                                                        <td>@item.Type</td>
 
                                                                             <td>@item.Location</td>
 
-                                                                            <td>@item.WorkAuth</td>
-                                                                            <td>@item.CurrentLocation</td>
-                                                                            <td>@item.CurrentEmployer</td>
-                                                                            <td>@item.TotalExperience</td>
-                                                                            <td>@item.CurrentSalary</td>
-                                                                            <td>@item.ExpectedSalary</td>
-                                                                            <td>@item.Notice</td>
-                                                                            @if (item.confirmationStatusDesc != "0")
-                                                                            {
-                                                                                <td>@item.confirmationStatusDesc</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-                                                                            @if (item.VideoLink != null && item.VideoLink != "")
-                                                                            {
-                                                                                <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No Video</td>
-                                                                            }
-                                                                            @if (item.MeetingStatusDesc != "0")
-                                                                            {
-                                                                                <td>@item.MeetingStatusDesc</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-                                                                            @if (item.InterviewStatusDesc != "0")
-                                                                            {
-                                                                                <td>@item.InterviewStatusDesc</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
+                                                        <td>@item.WorkAuth</td>
+                                                        <td>@item.CurrentLocation</td>
+                                                        <td>@item.CurrentEmployer</td>
+                                                        <td>@item.TotalExperience</td>
+                                                        <td>@item.CurrentSalary</td>
+                                                        <td>@item.ExpectedSalary</td>
+                                                        <td>@item.Notice</td>
+                                                        @if (item.confirmationStatusDesc != "0")
+                                                        {
+                                                        <td>@item.confirmationStatusDesc</td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td></td>
+                                                        }
+                                                        @if (item.VideoLink != null && item.VideoLink != "")
+                                                        {
+                                                        <td> <a id="videoId" target="_blank" title="Video" href=@item.VideoLink>Video</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td>No Video</td>
+                                                        }
+                                                        @if (item.MeetingStatusDesc != "0")
+                                                        {
+                                                        <td>@item.MeetingStatusDesc</td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td></td>
+                                                        }
+                                                        @if (item.InterviewStatusDesc != "0")
+                                                        {
+                                                        <td>@item.InterviewStatusDesc</td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td></td>
+                                                        }
 
 
 
 
-                                                                            @if (item.interviewDate != null)
-                                                                            {
-                                                                                <td>@item.interviewDate</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-                                                                            @if (item.CostEstimate != null)
-                                                                            {
-                                                                                <td>@item.CostEstimate</td>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td></td>
-                                                                            }
-                                                                            <td>@item.HeuristicsscoreDesc</td>
-                                                                            @if (item.AvailableFullTime)
-                                                                            {
-                                                                                <td>Yes</td>
+                                                        @if (item.interviewDate != null)
+                                                        {
+                                                        <td>@item.interviewDate</td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td></td>
+                                                        }
+                                                        @if (item.CostEstimate != null)
+                                                        {
+                                                        <td>@item.CostEstimate</td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td></td>
+                                                        }
+                                                        <td>@item.HeuristicsscoreDesc</td>
+                                                        @if (item.AvailableFullTime)
+                                                        {
+                                                        <td>Yes</td>
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No</td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td>No</td>
 
 
-                                                                            }
-                                                                            @if (item.AvailableFreeLancing)
-                                                                            {
-                                                                                <td>Yes</td>
+                                                        }
+                                                        @if (item.AvailableFreeLancing)
+                                                        {
+                                                        <td>Yes</td>
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <td>No</td>
-                                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                        <td>No</td>
+                                                        }
 
-                                                                        </tr>
-                                                                    </table>
+                                                        </tr>
+                                                        </table>
 
                                                                 </td>
                                                             </tr> *@
@@ -976,7 +1052,7 @@
 
             @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
 
-            <script src="~/js/markcoldcandidate.js?v=1.1"></script>
+            <script src="~/js/markcoldcandidate.js?2024"></script>
 
             <div id="importResultModal" class="modal modal-bg">
                 <!-- Modal content -->
@@ -1081,8 +1157,8 @@
 <div id="modal_clientComment_placeholder"></div>
 
 <div id="modal_candidateCommunicationDetails_placeholder"></div>
-<script src="~/js/ModalFormServerValidation.js?v=1"></script>
-<script src="~/js/common.js"></script>
+<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
+<script src="~/js/common.js?2024"></script>
 <script>
     var spanImport = document.getElementById("importResultPopUp");
     // When the user clicks on <span> (x), close the modal
@@ -1175,10 +1251,10 @@
 
 }
 <script>
-    function CopyPublicUrl(EmailId,IRFId,type) {
+    function CopyPublicUrl(EmailId, IRFId, type) {
         $.ajax({
             url: '/Candidate/GetPublicURLCandidate',
-            data: { 'Emailid': EmailId,'IRFId' :IRFId,'type':type},
+            data: { 'Emailid': EmailId, 'IRFId': IRFId, 'type': type },
             type: 'POST',
             success: function (result) {
                 var modal = document.getElementById("PublicUrlShareModel");
@@ -1442,7 +1518,7 @@
         $("#tblcallrecdetails").empty().html(html);
     }
 </script>
-<script src="~/js/TwilioCallMaker.js"></script>
+<script src="~/js/TwilioCallMaker.js?v=2024"></script>
 <script>
     function replaceButtonWithResumeLink(buttonElementId, redactedResumeLink) {
         var anchor = document.createElement('a');
@@ -1636,7 +1712,31 @@
         }
     }
 </script>
+<script>
+    // JS for thumbnail presentation only
 
+let mouseMoved = false;
+const button = document.querySelector('.infoButton');
+
+const mouseMoveHandler = event => {
+    clearInterval(loop);
+    document.onmousemove = null;
+    button.classList.remove('infoButton_isActive');
+};
+
+const toggleHandler = event => {    
+    const classes = button.classList;
+    if (classes.contains('infoButton_isActive')) {
+        classes.remove('infoButton_isActive');
+    } else {
+        classes.add('infoButton_isActive');
+    }
+}
+
+document.onmousemove = mouseMoveHandler;
+
+const loop = setInterval(toggleHandler, 1000);
+</script>
 
 
 

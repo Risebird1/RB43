@@ -154,5 +154,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsResumeRedactFailed { get; set; }
         public string CodedResumeLink { get; set; }
         public bool IsColdCandidate { get; set; }
+        public bool HasEmailDroppedOrBounced { get; set; }
+        public string CurrentInterviewStatus { get; set; }
+
     }
 }

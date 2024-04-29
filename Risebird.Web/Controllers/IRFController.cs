@@ -3782,9 +3782,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
                     {
-                        if (await _irfService.PauseIRF(irfId, irfName))
+                        if (await _irfService.PauseIRF(irfId, irfName,emailid))
                         {
                             TempData["SuccessErrorMessage"] = "IRF has been paused Successfully!";
                             return RedirectToAction("Index");

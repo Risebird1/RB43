@@ -18,6 +18,7 @@ cm.id as CandidateMasterId,c.id as CandidateId,ulir.EmailId as ChannelOwner,ul.M
 	 when ul.LastName is null then ul.FirstName
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
 end as candidateName,ulc.EmailId ClientEmail
+,SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,LEN(IRF.CalendlyLink)) as scheduleUniqueid
 from ColdCandidateInfos cci
 join
 Candidate c on cci.FKCandidateId=c.id

@@ -1248,6 +1248,8 @@ namespace Risebird.Business
                 reportModel.QOSData = (await _meetingRespository.GetZoomQOSDataByMeetingId(interviewId))?.ToList();
                 reportModel.ClientId = interviewDetails.ClientId;
                 reportModel.CommunicationalProficiency = interviewDetails.CommunicationalProficiency;
+                reportModel.IsQC = interviewDetails.IsQC;
+                reportModel.CodeSnippet = interviewDetails.CodeSnippet;
                 return reportModel;
             }
             catch (Exception e)
@@ -1387,16 +1389,19 @@ namespace Risebird.Business
                             {
                                 statusDesc = ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription();
                             }
-                            await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, statusDesc, (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
-                            if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
+                            if (await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, statusDesc, (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId))
                             {
-                                //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
-
-                                if (reportModel.InterviewStatus.HasValue)
+                                if (reportModel.MeetingStatus.Value == (int)MeetingStatus.Completed || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedBorderLine || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedRejected || reportModel.MeetingStatus.Value == (int)MeetingStatus.DroppedSelected)
                                 {
-                                    await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
+                                    //await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus);
+
+                                    if (reportModel.InterviewStatus.HasValue)
+                                    {
+                                        await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, ((InterviewStatus)reportModel.InterviewStatus.Value).GetDescription(), (int)CandidateStatusOptions.InterviewStatus, reportModel.InterviewId);
+                                    }
                                 }
                             }
+
                         }
                         activityTrackerModel.ActivityType = (int)ActivityTypes.CreateCandidateFeedback;
                         activityTrackerModel.Particulars = "Feedback for: " + reportModel.CandidateEmail;
@@ -1422,7 +1427,7 @@ namespace Risebird.Business
                                 {
                                     statusDesc = ((MeetingStatus)reportModel.MeetingStatus.Value).GetDescription();
                                 }
-                                await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, statusDesc, (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
+                                _ = await AddCandidateStatus(emailId, reportModel.CandidateId, reportModel.IRFId, statusDesc, (int)CandidateStatusOptions.MeetingStatus, reportModel.InterviewId);
 
                             }
                         }

@@ -20,11 +20,11 @@
         ();
     var hasDistinctParticipants = Model.HasDistinctParticipants;
 }
-<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
-<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024">
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <input id="hidclientlogo" type="hidden" value="data:image/png;base64,@ViewBag.ClientLogo" />
 <input id="hidlogo" type="hidden" value="data:image/png;base64,@ViewBag.Risebirdlogo" />
 
@@ -352,8 +352,22 @@
                                                          <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
                                             }
                                              </div>
+
+                                        @if (Model.CommunicationalProficiency != 0){
+                                         <div style="padding:0px 20px 20px 20px;">
+                                            <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">2</span> Communicational Profiency: <span class="totScore"><strong style="padding-left:10px;">@Model.CommunicationalProficiency / 10</strong></span></div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                           <div style="padding:0px 20px 20px 20px;">
+                                            <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">2</span> Communicational Profiency: <span class="totScore"><strong style="padding-left:10px;">@Model.CommunicationalProficiency / 10</strong></span></div>
+                                            </div>  
+                                        }
+
+
                                              <div style="padding:0px 20px 20px 20px;">
-                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">2</span> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
+                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">3</span> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
                                                  <hr style="clear:both;margin-bottom:0px;" />
                                              </div>
 
@@ -394,7 +408,7 @@
                                          <div class="col-md-12">
 
                                              <div style="margin-top:10px;padding:80px 20px 20px 20px;">
-                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">3</span>Questions Discussed</div>
+                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">4</span>Questions Discussed</div>
                                                  <hr style="margin-bottom:8px;" />
                                                  <div class="question">
                                                 @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
@@ -554,7 +568,7 @@
 </div>
 @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 
-<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -625,7 +639,7 @@
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+<script src="~/js/ScoreChart/SetScoreChartValues.js?v=2024"></script>
 <script>
 
     function switchtoquestionVedio(questiontime) {
@@ -716,8 +730,8 @@
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
-<script src="~/js/FeedbackRecorder/Record.js"></script>
-<script src="~/js/Aadhaar.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
+<script src="~/js/Aadhaar.js?v=2024"></script>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
