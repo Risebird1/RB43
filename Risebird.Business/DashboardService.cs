@@ -952,24 +952,24 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email, int InterviewId)
+        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId,int type)
         {
             try
             {
-                await _dashboardRespository.MarkedColdCandidate(CandidateId, Email, InterviewId);
-                return true;
+               return await _dashboardRespository.MarkedColdCandidate(CandidateId, Email, InterviewId,type);
+               
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return null;
             }
         }
-        public async Task<InterviewUsersDetails> GetFutureDateInterviewSchedule(int interviewid)
+        public async Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail)
         {
             try
             {
-                return await _dashboardRespository.GetFutureDateInterviewSchedule(interviewid);
+                return await _dashboardRespository.GetFutureDateInterviewSchedule(IRFId,CandidateEmail);
             }
 
             catch (Exception e)

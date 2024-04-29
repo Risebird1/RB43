@@ -543,5 +543,17 @@ namespace Risebird.Business
             }
             return null;
         }
+        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId)
+        {
+            try
+            {
+                return await _candidateRepository.GetIRFCandidateStatsForExcelDownLoad(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
