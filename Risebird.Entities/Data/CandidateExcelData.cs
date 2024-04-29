@@ -37,6 +37,7 @@ namespace Risebird.Entities.Data
         public DateTime? InvitationSentOnDate { get; set; }
         public DateTime? FirstScheduledOnDate { get; set; }
         public DateTime? FirstScheduledOninterviewDate { get; set; }
+        public DateTime? completedDate { get; set; }
         public string CandidateType { get; set; }
         public int UserId { get; set; }
         public string staffingAgency { get; set; }
