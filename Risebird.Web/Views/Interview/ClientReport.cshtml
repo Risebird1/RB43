@@ -42,6 +42,10 @@
     input[type=number]::-webkit-inner-spin-button {
         opacity: 1
     }
+
+    #InterviewerInsightsModel {
+        z-index: 100 !important;
+    }
 </style>
 
 @if (ViewBag.PageStatus == "Public")
@@ -123,7 +127,7 @@
                             <div class="rate-wrap">
                                 <div class="rate-interview">
                                     <h1>Please watch 15 minutes of interview and rate it to know the status and other details:</h1>
-                                    <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate the Interview</button>
+                                    <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
                                 </div>
                             </div>
                         }
@@ -131,8 +135,8 @@
                         {
                             <div class="rate-wrap">
                                 <div class="rate-interview">
-                                    <h1>Please rate this interview to Generate PDF and Shareable link: </h1>
-                                    <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate the Interview</button>
+                                    <h1>Please rate this interview to Generate PDF & Shareable link: </h1>
+                                    <button onclick="ClientInterviewRating('@Model.InterviewId',@Model.Reportsnippet)"> Rate Interview</button>
                                 </div>
                             </div>
                         }
@@ -215,9 +219,7 @@
                                         else if (Model.ClientAction == "Rejected")
                                         {
                                             <span style="color: #e21c1c;width: 100%;font-size:15px;background: #f4433633;padding: 2px;display: block; position: relative;top: 0px;text-align: center;font-weight:bold;    margin-bottom: 20px;">This interview is completed by the Interviewer shortlisted by you</span>
-
                                         }
-
                                     }
                                     else
                                     {
@@ -229,7 +231,7 @@
                                     <div class="canvas_div_pdf">
                                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                         <div class="row">
-                                            <div class="col-lg-3 col-md-5">
+                                            <div class="col-lg-3 col-md-5 clientnfo">
                                                 @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                 {
                                                     <div>
@@ -275,9 +277,17 @@
                                                         @*Turing*@
                                                         @if (!Model.IsQCDone)
                                                         {
-                                                            <div style="height:35px;">
-                                                                <span class="error-badge"><span class="pull-left" style="padding-left:15px;"> QC Pending</span> <i class='fa fa-clock pull-left blink' style='color: red'></i></span>
+                                                            <div style="height:40px;"></div>
+                                                            <div class="report-tooltip" style="border:0px;display:block!important">
+                                                                <span class="error-badge">
+                                                                    <span class="pull-left" style="padding-left:15px;"> QC Pending</span>
+                                                                    <i class="fa fa-clock pull-left blink" style="color: red"></i>
+                                                                    <div class="report-tooltiptext" style="bottom:-50px;left: 150%;">
+                                                                        <p style="font-weight:500;line-height:20px;color:grey">“<b>Viewer Discretion Notice:</b> The candidate’s report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience.”</p>
+                                                                    </div>
+                                                                </span>
                                                             </div>
+
                                                         }
                                                         @*Turing*@
 
@@ -289,8 +299,15 @@
                                                         @*Turing*@
                                                         @if (!Model.IsQCDone)
                                                         {
-                                                            <div style="height:35px;">
-                                                                <span class="error-badge"><span class="pull-left" style="padding-left:15px;"> QC Pending</span> <i class='fa fa-clock pull-left' style='color: red'></i></span>
+                                                            <div style="height:40px;"></div>
+                                                            <div class="report-tooltip" style="border:0px;display:block!important">
+                                                                <span class="error-badge">
+                                                                    <span class="pull-left" style="padding-left:15px;"> QC Pending</span>
+                                                                    <i class="fa fa-clock pull-left blink" style="color: red"></i>
+                                                                    <div class="report-tooltiptext" style="bottom:-50px;left: 150%;">
+                                                                        <p style="font-weight:500;line-height:20px;color:grey">“<b>Viewer Discretion Notice:</b> The candidate’s report is currently undergoing quality checks. You may review the report based on your assessment, or await approval from the quality check team. Thank you for your patience.”</p>
+                                                                    </div>
+                                                                </span>
                                                             </div>
                                                         }
                                                         @*Turing*@
@@ -362,13 +379,9 @@
                                                         <div class="pull-left">
                                                             @* <label for="score" class="pull-left" style="line-height:5px;">Score must be (between 1 and 10):</label> *@
                                                             <div class="communication-count pull-left">  @Model.CommunicationalProficiency / 10</div>
-
                                                         </div>
-
                                                     </div>
-
                                                 }
-
 
                                                 <div class="note-skill">
                                                     <b> Note:</b> % score against every skill represents the difference between candidate's actual and required competency.
@@ -379,17 +392,13 @@
                                             <div class="col-lg-9 col-md-7">
                                                 @if (Model.MeetingStatus == 1)
                                                 {
-
                                                     <div class="row"><div class="nodata-wrapper"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
-
                                                 }
                                                 else
                                                 {
                                                     <div class="row">
-                                                        <h3><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Interview Video</h3>
-
+                                                        <h3><span class="pull-left"><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Interview Video</span><span class="pull-right report-int-codename">Interviewer: <c style="color:red;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c></span></h3>
                                                         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-
                                                             <div>
                                                                 @Html.HiddenFor(x => Model.VideoLink)
                                                                 @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
@@ -441,8 +450,6 @@
                                                                         </div>
                                                                     </div>
                                                                 }
-
-
                                                             </div>
                                                         </div>
                                                         @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
@@ -478,18 +485,11 @@
                                                                         else
                                                                         {
                                                                             <div class="article">
-
                                                                                 <p>
                                                                                     @Model.InterviewerComment.Substring(0, @Model.InterviewerComment.Length)
                                                                                 </p>
                                                                             </div>
                                                                         }
-
-
-
-
-
-
                                                                     }
                                                                     else
                                                                     {
@@ -1260,3 +1260,4 @@
     }
 
 </script>
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")

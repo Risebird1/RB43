@@ -6690,6 +6690,12 @@ input[type=search]:focus {
     position: relative;
     top: -17px;
 }
+.report-int-codename {
+    position: relative;
+    top: 4px;
+    color: green;
+    font-size: 16px;
+}
 /***** Media queries *****/
 .copy-btn {
     background: none;
@@ -8286,11 +8292,13 @@ ul.ks-cboxtags {
 }
 .rate-wrap{
     text-align:right;
+    height:40px;
 }
 .rate-interview {
     position: relative;
     top: 8px;
     padding: 0px 0px 10px 0px;
+    height:100%;
 }
 
     .rate-interview h1 {
@@ -8299,19 +8307,20 @@ ul.ks-cboxtags {
         line-height: 23px;
         color: green;
         padding-right: 10px;
-        width: 80%;
+        width: 81%;
+        text-align: left;
     }
 
     .rate-interview button, .rate-interview button:hover {
-        padding: 7px 7px;
+        padding: 7px 6px;
         position: relative;
         border: none;
         font-weight: bold;
         border-radius: 3px;
         margin: 0px;
-        top: -7px;
+        top: -35px;
         color: #fff;
-        font-size: 11px;
+        font-size: 10px;
         text-transform: uppercase;
         background: #da1111 !important;
         box-shadow: none;
@@ -9551,6 +9560,7 @@ option {
 .error-badge {
     color: #ec4141;
     padding: 3px 15px;
+    width:130px;
     text-align: center;
     background: white;
     text-decoration: none;
@@ -9564,6 +9574,7 @@ option {
     border-radius: 100px;
     position: absolute;
     left: -3px;
+    top:-35px;
 }
     .error-badge .fa {
         position: relative;
@@ -10749,12 +10760,16 @@ option {
         .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
             font-size: 11px !important;
         }
-
+        .report-int-codename {
+           font-size:13px!important;
+        }
         .interviewresponsebtn {
             font-size: 14px !important;
         }
-
-        .w60 {
+        #reportForm h3 {
+            font-size: 1.1rem;
+        }
+            .w60 {
             width: 55%;
             float: left;
         }
@@ -11177,7 +11192,20 @@ option {
             width: 100%;
             float: left;
         }
-
+        .error-badge{
+            top:-40px
+        }
+        .clientnfo .report-tooltip{
+            display:block;
+        }
+        .error-badge .report-tooltiptext {
+            bottom: -127px;
+            left: 46px;
+            width: 340px;
+        }
+        .report-int-codename {
+            font-size: 13px !important;
+        }
         .footer-nav {
             left: 0px !important;
         }

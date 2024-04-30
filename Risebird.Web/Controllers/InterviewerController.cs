@@ -3995,7 +3995,7 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region Interviewer Insights
-        public async Task<IActionResult> InterviewerInsights(string interviewer, string IrfId)
+        public async Task<IActionResult> InterviewerInsights(string interviewer, string IrfId, string type = null)
         {
             var result = await _interviewerService.GetInterviewerInsights(interviewer, IrfId);
             if (result == null)
@@ -4006,7 +4006,15 @@ namespace Risebird.Web.Controllers
             {
                 result.ResumeLink = result.ResumeLink.Replace(" ", "%20");
             }
+            result.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(result.ProfileType)).GetDescription();
+            if (result.ProfileType == "0")
+            {
+                result.ProfileType = "";
+            }
+            if (result.ProfileType?.Length > 1)
+                result.ProfileType = result.ProfileType.Substring(0, 1);
             result.IRFId = IrfId;
+            ViewBag.type = type;
             return PartialView(result);
         }
         public async Task<IActionResult> ReliabilityScoreDetails(string interviewer, string IrfId)
