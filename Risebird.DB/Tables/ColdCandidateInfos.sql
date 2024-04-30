@@ -7,6 +7,8 @@ CREATE TABLE [dbo].[ColdCandidateInfos](
 	[ColdMarkedBY] [varchar](100) NULL,
 	[ColdMarkedDate] [datetime] NULL,
 	[FKCandidateId] [int] NULL,
+    [ModifyBy] [varchar](150) NULL,
+	[ModifyOn] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -16,4 +18,27 @@ PRIMARY KEY CLUSTERED
 ALTER TABLE [dbo].[ColdCandidateInfos]  WITH CHECK ADD FOREIGN KEY([FKCandidateId])
 REFERENCES [dbo].[Candidate] ([id])
 End
+
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifyBy')
+      AND Object_ID = Object_ID(N'ColdCandidateInfos'))
+BEGIN
+    ALTER TABLE ColdCandidateInfos
+    Add ModifyBy [varchar](150) NULL		
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ModifyOn')
+      AND Object_ID = Object_ID(N'ColdCandidateInfos'))
+BEGIN
+    ALTER TABLE ColdCandidateInfos
+    Add [ModifyOn] [datetime] NULL		
+END
+END
 GO

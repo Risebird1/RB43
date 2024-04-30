@@ -70,10 +70,10 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailRepository(int campaignId);
         Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid);
         Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue);
-        Task<bool> MarkedColdCandidate(int CandidateId, string Email, int InterviewId);
+        Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type);
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type);
         Task<List<MeetingVM>> FetchTechQCDetails();
         Task<List<MeetingVM>> PotentialPausedRepository();
-        Task<InterviewUsersDetails> GetFutureDateInterviewSchedule(int interviewid);
+        Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail);
     }
 }

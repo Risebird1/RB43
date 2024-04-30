@@ -464,7 +464,7 @@
                                 </span>
 
 
-                                <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span>
+                                @* <span id="status_3"><i type="submit" class="far fa-file-excel excel-file" data-toggle="tooltip" data-placement="bottom" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("PublicCandidateStatusExporttoExcel", "Candidate",new { emailid=ViewBag.emailid})'"></i></span> *@
                             </div>
                             <div class="desktop-view pull-left">
                                 <span class="filter">
@@ -722,12 +722,12 @@
 
                                                                                     <td class="cadName text-left pl15" style="padding-top:20px;">
 
-                                                                                        <span style="position:relative;top:40px;right:100px;">
+                                                                                       @*  <span style="position:relative;top:40px;right:100px;">
                                                                                             @if (item.IsColdCandidate)
                                                                                             {
                                                                                                 <span class="cold-mark" style="position:absolute">Cold Candidate Marked</span>
                                                                                             }
-                                                                                        </span>
+                                                                                        </span> *@
                                                                                         <div class="candidate-field">
                                                                                             <span class="pull-left">
 
@@ -1187,7 +1187,7 @@
 @await Html.PartialAsync("~/Views/Interview/WhatsAppPopup.cshtml")
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 <script src="~/js/WhatsAppPopup.js"></script>
-
+<script src="~/js/markcoldcandidate.js" asp-append-version="true"></script>
 <div id="myModal" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">

@@ -277,9 +277,8 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
-
                                                     <th>Report Pending</th>
-
+                                                    <th>Cold Candidate</th>
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
@@ -317,9 +316,8 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
-
                                                     <th>Report Pending</th>
-
+                                                    <th>Cold Candidate</th>
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
@@ -412,7 +410,13 @@
                                                             </td>
 
                                                             <td> @item.PendingCount </td>
-
+                                                            <td>
+                                                                @item.ColdCandidateCount
+                                                                { @if (item.CandidateCount > 0)
+                                                                {
+                                                                    @((item.ColdCandidateCount * 100) / @item.CandidateCount)
+                                                                }% } 
+                                                            </td>
                                                             <td>
                                                                 @item.NotScheduledCount
                                                                 { @if (item.CandidateCount > 0)

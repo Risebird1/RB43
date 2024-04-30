@@ -376,6 +376,7 @@ namespace Risebird.Entities.ViewModel
         public string AffindaEmbedUrl { get; set; }
         public DateTime? AffindaEmbedUrlCreatedAt { get; set; }
         public int? urlCreationTimeElapsed { get; set; }
+        public int ColdCandidateCount { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {
