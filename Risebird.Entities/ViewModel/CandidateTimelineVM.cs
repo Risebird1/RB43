@@ -59,6 +59,7 @@ namespace Risebird.Entities.ViewModel
         public bool RedoInterview { get; set; }
         public bool IsColdCandidate { get; set; }
         public string EmailId { get; set; }
+        public bool IsQCDone { get; set; }
     }
 
     public class TimelineStatus

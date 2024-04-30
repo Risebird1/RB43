@@ -46,6 +46,7 @@ namespace Risebird.Entities.ViewModel
         public string WeakInfrastructure { get; set; }
         public string TimeManagement { get; set; }
         public string IRFId { get; set; }
+        public string ProfileType { get; set; }
     }
     public class InterviewerInsightsMarkersDetailsVM
     {

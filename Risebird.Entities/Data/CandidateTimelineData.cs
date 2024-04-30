@@ -47,5 +47,6 @@ namespace Risebird.Entities.Data
         public bool IsReportBlocked { get; set; }
         public bool RedoInterview { get; set; }
         public bool IsColdCandidate { get; set; }
+        public bool IsQCDone { get; set; }
     }
 }
