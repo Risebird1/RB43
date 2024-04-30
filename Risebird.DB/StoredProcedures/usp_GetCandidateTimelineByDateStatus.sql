@@ -193,7 +193,7 @@ if @EmailId is not null
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
  im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked 
- ,im.RedoInterview,ic.InterviewerComment, ic.VideoLink
+ ,im.RedoInterview,ic.InterviewerComment, ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -205,6 +205,7 @@ left join Userlist ulsh on ulsh.id=sh.Userid
 join InterviewComments ic on ic.Interviewid=im.id     
 left join Trans_QCFormReport tqr on tqr.interviewid=im.id
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
+left join PaymentSLADetails psd on psd.Interviewid=im.id 
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where ulsh.EmailId=@EmailId and im.interviewDate>=@startDate and im.interviewDate<=@endDate and ISNULL(cci.IsColdCandidate,0) !=1   
@@ -212,7 +213,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end
       
   End                          
  End                              
@@ -230,7 +231,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                          
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
- im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink
+ im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -242,6 +243,7 @@ left join UserList ulc on tcu.ClientUserId = ulc.id
 join InterviewComments ic on ic.Interviewid=im.id      
 left join Trans_QCFormReport tqr on tqr.interviewid=im.id
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
+left join PaymentSLADetails psd on psd.Interviewid=im.id 
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0 and ca.ClientHRAttemptContact=@EmailId      
@@ -250,7 +252,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,im.id,IRF.id,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink  
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end  
             
    End                             
   else if(@roleId=4)                            
@@ -266,7 +268,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                          
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
- im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink
+ im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId     
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -278,6 +280,7 @@ left join UserList ulc on tcu.ClientUserId = ulc.id
 join InterviewComments ic on ic.Interviewid=im.id   
 left join Trans_QCFormReport tqr on tqr.interviewid=im.id
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
+left join PaymentSLADetails psd on psd.Interviewid=im.id 
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0 and (ca.ProfileSource=@EmailId or im.staffingAgency= @EmailId)                             
@@ -286,7 +289,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink         
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end         
                             
   End          
    else if(@roleId=9)                            
@@ -302,7 +305,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                          
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
- im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink
+ im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -312,6 +315,7 @@ join CandidateStatusOptionsMst csm on csm.id=cs.Status
 join InterviewComments ic on ic.Interviewid=im.id   
 left join Trans_QCFormReport tqr on tqr.interviewid=im.id
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
+left join PaymentSLADetails psd on psd.Interviewid=im.id 
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where irf.IsDeleted=0 and irf.Clientid=@Clientid                             
 and im.interviewDate>=@startDate and im.interviewDate<=@endDate and ISNULL(cci.IsColdCandidate,0) !=1   
@@ -319,7 +323,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink         
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end         
                             
   End          
   else                              
@@ -335,9 +339,8 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     ic.MeetingStatus as CurrentMeetingStatus, im.confirmationStatus, irf.IRFId as IRFName, ca.Phone, im.interviewDate,                          
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
- im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment ,ic.VideoLink 
+ im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment ,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone 
  from InterviewMeetings im   
-    
 join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -349,6 +352,7 @@ left join UserList ulc on tcu.ClientUserId = ulc.id
 join InterviewComments ic on ic.Interviewid=im.id      
 left join Trans_QCFormReport tqr on tqr.interviewid=im.id
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
+left join PaymentSLADetails psd on psd.Interviewid=im.id 
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where ulc.EmailId = @EmailId AND ulc.IsActive=1 and irf.IsDeleted=0      
@@ -357,7 +361,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus,im.id,IRF.id, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,       
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink   
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end   
                
    End                              
  End                              
@@ -375,7 +379,7 @@ Else
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
  im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,
- im.RedoInterview,ic.InterviewerComment,ic.VideoLink
+ im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -387,6 +391,7 @@ left join UserList ulc on tcu.ClientUserId = ulc.id
 join InterviewComments ic on ic.Interviewid=im.id   
 left join Trans_QCFormReport tqr on tqr.interviewid=im.id
 left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
+left join PaymentSLADetails psd on psd.Interviewid=im.id 
 --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = irf.id  
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(irf.id, ul.Emailid) as CountTable  
 where im.interviewDate>=@startDate and im.interviewDate<=@endDate AND ISNULL(cci.IsColdCandidate,0) !=1   
@@ -394,7 +399,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer  
-    , CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink
+    , CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end
  End                     
 END                    
                                
