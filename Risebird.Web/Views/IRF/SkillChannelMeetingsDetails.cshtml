@@ -186,6 +186,12 @@
                                                                             data-url="@Url.Action("GetClientCommentsForReport", "Client", new { interviewId = item.imid })">
                                                                         <span title="Rate Interviewer"><i class="fas fa-star"></i></span>
                                                                     </button>
+                                                                    <button id="selectedcandidate_9" class="mdc-fab app-fab--absolute" aria-label="Client Feedback" title="Client Feedback">
+                                                                        <span onclick="OpenL2Model(@item.imid)" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
+
+                                                                        </span>
+                                                                    </button>
                                                                     @if (ViewBag.meetingtype == "Select")
                                                                     {
                                                                         <a onclick="removeOrShortlistInterviewer(@item.imid,'Shortlisted')" style="position:relative;top:0px;text-decoration:none;" href="#" title="Shortlist Interviewer">
@@ -217,280 +223,17 @@
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div id="myModal" class="modal client-feedback">
-            <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="filheader">
-                        <div class="filavatar">
-                            <span>
 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255, 255, 255)" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg>
-                            </span>
-                        </div>
-                        <h5 class="modal-title pull-left">Client Feedback </h5>
-                    </div>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" id="feedbackPopUp" style="cursor:pointer;">&times;</span>
-                    </button>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6 border-rv">
-                                <div class="form-group">
-                                    <label class="control-label" for="approveDropdown">Approved For Next Round</label>
-                                    <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 ">
-                                <div id="approvalComments" class="form-group">
-                                    <label class="control-label" style="display:block">Approval Comments</label>
-                                    <div>
-                                        <textarea name="appComments" class="form-control text-box single-line scrollbar" id="appComments" style="height:35px"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6 border-rv">
-                                <div class="form-group">
-                                    <label class="control-label" for="selectionDropdown" style="display:block">Final Selection</label>
-                                    <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 pr-1">
-                                <div id="selectionComments" class="form-group">
-                                    <label class="control-label" style="display:block">Final Comments</label>
-
-                                    <div>
-                                        <textarea name="selecComments" class="form-control text-box single-line scrollbar" id="selecComments" style="height:35px"></textarea>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6 border-rv ">
-                                <div class="form-group">
-
-                                    <label class="control-label" for="offerDropdown" style="display:block">Offer Status</label>
-                                    <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6 ">
-                                <div id="offerComments" class="form-group">
-                                    <label class="control-label" style="display:block">Offer Comments</label>
-
-                                    <div>
-                                        <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="height:32px"></textarea>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6 border-rv">
-                                <div class="form-group">
-
-                                    <label class="control-label" for="joiningDropdown" style="display:block">Joining Status</label>
-                                    <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div id="joiningComments" class="form-group">
-                                    <label class="control-label" style="display:block">Joining Comments</label>
-
-                                    <div>
-                                        <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="height:35px"></textarea>
-
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="">
-                            <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space pull-right" id="btnUpload" value="Save">
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
         <!-- end row -->
     </div>
 </div>
+
 <div id="modal_clientComment_placeholder"></div>
 <script src="~/js/ModalFormServerValidation.js"></script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+@await Html.PartialAsync("~/Views/Common/_L2StatusUpdate.cshtml")
 <script src="~/js/twiliocallmaker.js"></script>
 
-<script>
-    var imid = "";
-    var span = document.getElementById("feedbackPopUp");
-    var comm = '';
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
-
-</script>
-<script>
-    function ModalButtonClickjson(item) {
-        var obj = list[item];
-        ModalButtonClick(obj);
-    }
-    function ModalButtonClick(item) {
-        imid = item.imid;
-
-        // Get the modal
-        var modal = document.getElementById("myModal");
-
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-
-        //document.getElementById("IsApproved").checked = item.IsApproved;
-        document.getElementById("appComments").value = item.ApprovalComments;
-
-        document.getElementById("selecComments").value = item.FinalComments;
-
-        document.getElementById("joinComments").value = item.JoiningComments;
-
-        document.getElementById("offComments").value = item.OfferComments;
-
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getApprovalStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                }
-                $("#approveDropdown").html(s);
-                if (item.IsApproved != null) {
-                    $("#approveDropdown").val(item.IsApproved);
-                }
-                else {
-                    $("#approveDropdown").val("-1");
-
-                }
-            }
-        });
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getSelectionStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                }
-                $("#selectionDropdown").html(s);
-                if (item.IsSelected != null) {
-                    $("#selectionDropdown").val(item.IsSelected);
-                }
-                else {
-                    $("#selectionDropdown").val("-1");
-                }
-
-
-            }
-        });
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getOfferStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                }
-                $("#offerDropdown").html(s);
-                if (item.OfferStatus != null) {
-                    $("#offerDropdown").val(item.OfferStatus);
-                }
-                else {
-                    $("#offerDropdown").val("-1");
-                }
-
-            }
-        });
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getJoiningStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                }
-                $("#joiningDropdown").html(s);
-                if (item.JoiningStatus != null) {
-                    $("#joiningDropdown").val(item.JoiningStatus);
-                }
-                else {
-                    $("#joiningDropdown").val("-1");
-                }
-
-            }
-        });
-
-
-    }
-
-
-
-    function SavePopUp() {
-
-        var approvalComment = document.getElementById("appComments").value;
-        var isApproved = document.getElementById("approveDropdown").value;
-
-        var selectionComment = document.getElementById("selecComments").value;
-        var isSelected = document.getElementById("selectionDropdown").value;
-
-        var joiningComment = document.getElementById("joinComments").value;
-        var joiningStatus = document.getElementById("joiningDropdown").value;
-
-        var offerComment = document.getElementById("offComments").value;
-        var offerStatus = document.getElementById("offerDropdown").value;
-        var id = imid;
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/SaveClientFeedback",
-            data: { 'imid': id, 'isApproved': isApproved, 'approvalComment': approvalComment, 'isSelected': isSelected, 'selectionComment': selectionComment, 'joiningStatus': joiningStatus, 'joiningComment': joiningComment, 'offerStatus': offerStatus, 'offerComment': offerComment },
-            success: function (data) {
-
-                location.reload(true);
-
-            }
-        });
-    }
-
-</script>
-
-
-<script>
-    function moreless(id) {
-        $('.moretext_' + id).slideToggle();
-        if ($('#read_' + id).val() == 'Readmore') {
-            $('#read_' + id).empty().html('Read more');
-            $('#read_' + id).val('Readless');
-        } else {
-            $('#read_' + id).empty().html('Read less');
-            $('#read_' + id).val('Readmore');
-        }
-    }
-
-</script>
 <script>
     function searchResult() {
         $('#meeting').DataTable();
