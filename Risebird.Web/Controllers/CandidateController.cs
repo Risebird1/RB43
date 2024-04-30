@@ -3513,6 +3513,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.RedoInterview = firstData.RedoInterview;
                         candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
                         candidateTimeline.CandidateId = firstData.CandidateId;
+                        candidateTimeline.IsQCDone = firstData.IsQCDone;
                         //candidateTimeline.staffingAgency = firstData.staffingAgency;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 

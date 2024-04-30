@@ -59,16 +59,21 @@
     </div>
 </div>
 <script>
-    function InsightsDetails(interviewer, IrfId) {
+    function InsightsDetails(interviewer, IrfId, type, nickname) {
         $.ajax({
             url: '/Interviewer/InterviewerInsights',
-            data: { 'interviewer': interviewer, 'IrfId': IrfId },
+            data: { 'interviewer': interviewer, 'IrfId': IrfId, 'type': type },
             type: "GET",
             success: function (data) {
                 openInterviewerInsightsModel();
                 $('#divInsightsmodel').html('');
                 $('#divInsightsmodel').html(data);
-                $("#txtheaderInsights").text('( ' + interviewer + ' )');
+                if (type == "Client") {
+                    var interviewdetails = nickname + "(" + $("#ProfileType").val() + ")";
+                    $("#txtheaderInsights").text(interviewdetails);
+                } else {
+                    $("#txtheaderInsights").text('( ' + interviewer + ' )');
+                }
                 $('#hidlastlogin').text($('#LastLogin').val());
             }
         });
