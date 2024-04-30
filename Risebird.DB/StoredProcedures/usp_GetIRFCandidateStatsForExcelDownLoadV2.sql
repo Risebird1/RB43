@@ -26,12 +26,13 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  AddedOnDate datetime null,
  InvitationSentOnDate datetime null,
  FirstScheduledOnDate datetime null,
- FirstScheduledOninterviewDate datetime null
+ FirstScheduledOninterviewDate datetime null,
+ completedDate datetime null
 );           
         --@AddedOnDate datetime, @InvitationSentOnDate datetime, @FirstScheduledOnDate datetime,  @FirstScheduledOninterviewDate
 INSERT INTO @TemporaryCandidateTableVariable              
 select ca.IRFId, ca.CandidateMasterId, cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate,  ca.ResumeLink
-,Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate       
+,Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate, La.completedDate       
 from  Candidate ca         
 join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId)         
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId  
@@ -39,14 +40,14 @@ outer apply dbo.fn_CandidateLatestStatusForIrfStatsForExcel(cm.UserId, ca.IRFId,
 outer apply dbo.fn_CandidateJourneyImportantMileStoneData(cm.UserId, ca.IRFId) Journey
 where cs.[Status] = 12 and  ca.IRFId = @irfId-- cast([Date] as date) <=cast(@endDate as date) and cast([Date] as date) >= cast(@startDate as date)        
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate, ca.ResumeLink
-, Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate 
+, Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate, La.completedDate 
 
 
 ----completed
 
 select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,
 ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency,
-im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate
+im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate, tctv.completedDate
 , psd.isQcDone, irf.ClientId --177 for turing
 from @TemporaryCandidateTableVariable tctv
 join InterviewMeetings im on im.id = tctv.InterviewId
