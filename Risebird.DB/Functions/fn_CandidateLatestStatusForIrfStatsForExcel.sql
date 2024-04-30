@@ -10,7 +10,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create FUNCTION fn_CandidateLatestStatusForIrfStatsForExcel(@userId int, @irfId int, @timeNow datetime)    
+CREATE FUNCTION fn_CandidateLatestStatusForIrfStatsForExcel(@userId int, @irfId int, @timeNow datetime)    
 RETURNS @ResultTable TABLE (LatestStatus varchar(20), interviewId INT null, interviewDate datetime null, completedDate datetime null)  --varchar(20)   
 AS    
 BEGIN    
@@ -37,15 +37,27 @@ where im.candidateEmail=@candidateEmail and im.IRFId = @irfName
 order by im.interviewDate desc    
     
 declare @confirmationStatus int, @meetingStatus int, @interviewStatus int, @interviewDate datetime,   
-@interviewId int, @result varchar(20)    
+@interviewId int, @result varchar(20),@IsColdCandidate bit    
     
 set @confirmationStatus = (select top 1 confirmationStatus from @TemporaryStatus)    
 set @meetingStatus = (select top 1 MeetingStatus from @TemporaryStatus)    
 set @interviewStatus = (select top 1 InterviewStatus from @TemporaryStatus)    
 set @interviewDate = (select top 1 interviewDate from @TemporaryStatus)    
 set @interviewId = (select top 1 interviewId from @TemporaryStatus)   
+
+Select @IsColdCandidate=IsColdCandidate from ColdCandidateInfos cci join Candidate ca on ca.id=cci.FKCandidateId
+join CandidatesMaster cm on cm.id=ca.CandidateMasterId
+where cm.UserId=@userId and ca.IRFId=@irfId
+
+--Cold Candidate  
+if (@IsColdCandidate=1)      
+begin      
+  set @result = 'COLDCANDIDATE'      
+  INSERT INTO @ResultTable (LatestStatus, interviewId, interviewDate, completedDate)  
+  SELECT @result, null, null, null    
+end        
 --case no entry in interviewmeetings table    
-if not exists(select top 1 confirmationStatus from @TemporaryStatus)    
+else if not exists(select top 1 confirmationStatus from @TemporaryStatus)    
 begin    
   set @result = 'NOTSCHEDULED'    
   INSERT INTO @ResultTable (LatestStatus, interviewId, interviewDate, completedDate)  
