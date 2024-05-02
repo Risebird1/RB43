@@ -29,7 +29,7 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  FirstScheduledOninterviewDate datetime null,
  completedDate datetime null
 );           
-        --@AddedOnDate datetime, @InvitationSentOnDate datetime, @FirstScheduledOnDate datetime,  @FirstScheduledOninterviewDate
+
 INSERT INTO @TemporaryCandidateTableVariable              
 select ca.IRFId, ca.CandidateMasterId, cm.UserId, La.LatestStatus, La.interviewId, La.interviewDate,  ca.ResumeLink
 ,Journey.AddedOnDate, Journey.InvitationSentOnDate, Journey.FirstScheduledOnDate, Journey.FirstScheduledOninterviewDate, La.completedDate       
@@ -48,19 +48,17 @@ group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interview
 select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,
 ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency,
 im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate, tctv.completedDate
-, psd.isQcDone, irf.ClientId --177 for turing
+, psd.isQcDone, irf.IsDrive, ipr.NickName as InterviewerCodedName, irf.ClientId --177 for turing
 from @TemporaryCandidateTableVariable tctv
 join InterviewMeetings im on im.id = tctv.InterviewId
 join IRF on IRF.IRFId=im.IRFId 
 join InterviewComments ic on ic.InterviewId=im.id
 join UserList ul on ul.EmailId = im.candidateEmail
+left join UserList uli on uli.EmailId = im.interviewer
+left join InterviewerProfile ipr on ipr.UserId = uli.id
 left join PaymentSLADetails psd on psd.Interviewid = im.id
---join CandidatesMaster cm on cm.UserId = ul.id
---join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = irf.id)
-where CandidateLatestStatus in ('SELECTED', 'REJECTED')
-
-
---Profile Added Date, invitation sent date, scheduled date, complted date
+--where CandidateLatestStatus in ('SELECTED', 'REJECTED')
+where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%REJECTED%'
 
 select a.*, Skill.[Name] as SkillName from 
 (select ts.*, [LevelTech].[Name] as RequiredLevel from 
@@ -68,67 +66,63 @@ TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id) 
 join InterviewMeetings im on im.id=a.InterviewId
 join @TemporaryCandidateTableVariable tctv on tctv.InterviewId = im.id
 join IRF on IRF.IRFId=im.IRFId
-where CandidateLatestStatus in ('SELECTED', 'REJECTED')
+--where CandidateLatestStatus in ('SELECTED', 'REJECTED')
+where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%REJECTED%'
 
 
 ----pending
 
 select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,
 ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency,
-im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate
+im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,
+tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName
 from @TemporaryCandidateTableVariable tctv
 join InterviewMeetings im on im.id = tctv.InterviewId
 join IRF on IRF.IRFId=im.IRFId 
 join InterviewComments ic on ic.InterviewId=im.id
 join UserList ul on ul.EmailId = im.candidateEmail
---join CandidatesMaster cm on cm.UserId = ul.id
---join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = irf.id)
+left join UserList uli on uli.EmailId = im.interviewer
+left join InterviewerProfile ipr on ipr.UserId = uli.id
 where CandidateLatestStatus in ('PENDING')
 
 
 ----future scheduled
 select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, im.confirmationStatus
 , im.ClientHrContact, im.staffingAgency
---, ic.MeetingStatus,ic.InterviewStatus, ic.InterviewerComment, ic.VideoLink, ic.CommunicationalProficiency,
 , tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate
 from @TemporaryCandidateTableVariable tctv
 join InterviewMeetings im on im.id = tctv.InterviewId
 join IRF on IRF.IRFId=im.IRFId 
---join InterviewComments ic on ic.InterviewId=im.id
+
 join UserList ul on ul.EmailId = im.candidateEmail
---join CandidatesMaster cm on cm.UserId = ul.id
---join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = irf.id)
+
 where CandidateLatestStatus in ('FUTURESCHEDULE')
 
 ----rescheduled
 
 select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,
 ic.InterviewStatus, im.ClientHrContact, ic.VideoLink, im.confirmationStatus--, ic.CommunicationalProficiency, ic.InterviewerComment
-,im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate
+,im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate,
+tctv.FirstScheduledOninterviewDate, ipr.NickName as InterviewerCodedName
 from @TemporaryCandidateTableVariable tctv
 join InterviewMeetings im on im.id = tctv.InterviewId
 join IRF on IRF.IRFId=im.IRFId 
 join InterviewComments ic on ic.InterviewId=im.id
 join UserList ul on ul.EmailId = im.candidateEmail
---join CandidatesMaster cm on cm.UserId = ul.id
---join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = irf.id)
+left join UserList uli on uli.EmailId = im.interviewer
+left join InterviewerProfile ipr on ipr.UserId = uli.id
 where CandidateLatestStatus in ('RESCHEDULE')
 
 
 ----not scheduled
-select ul.id as UserId, ul.MobileNumber, IRF.JDTiltle, ul.EmailId as candidateEmail, (ul.FirstName + ' ' + ul.LastName) as candidateName, irf.IRFId  --ic.MeetingStatus,--im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, 
+select ul.id as UserId, ul.MobileNumber, IRF.JDTiltle, ul.EmailId as candidateEmail, concat(ul.FirstName, ' ', ul.LastName) as candidateName, irf.IRFId  --ic.MeetingStatus,--im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, 
 --ic.InterviewStatus, ic.InterviewerComment,  ic.VideoLink, ic.CommunicationalProficiency,--im.ClientHrContact, im.confirmationStatus, im.staffingAgency, 
 ,tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate
 from @TemporaryCandidateTableVariable tctv
---left join InterviewMeetings im on im.id = tctv.InterviewId
 join IRF on IRF.id =tctv.IRFId 
---join InterviewComments ic on ic.InterviewId=im.id
 join UserList ul on ul.id = tctv.UserId
---join CandidatesMaster cm on cm.UserId = ul.id
---join Candidate ca on (ca.CandidateMasterId = cm.id and ca.IRFId = irf.id)
 where CandidateLatestStatus in ('NOTSCHEDULED')
 
- 
 
 END
 GO
