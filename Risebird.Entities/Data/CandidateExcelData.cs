@@ -43,5 +43,8 @@ namespace Risebird.Entities.Data
         public string staffingAgency { get; set; }
         public bool? isQcDone { get; set; }
         public int ClientId { get; set; }
+        public bool IsDrive { get; set; }//if the irf is marked as a Drive
+        public string InterviewerCodedName { get; set; }
+
     }
 }
