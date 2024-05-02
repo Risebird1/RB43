@@ -24,14 +24,16 @@ DECLARE @TemporaryStatus TABLE (
 ); 
   
 INSERT INTO @TemporaryStatus        
-select cs.[Date], cs.[Status] from Candidate ca join CandidatesMaster cm on cm.id = ca.CandidateMasterId 
-join CandidateStatus cs on cs.CandidateId = cm.id where ca.IRFId = @irfId and cm.UserId =@userId   
+--select cs.[Date], cs.[Status] from Candidate ca join CandidatesMaster cm on cm.id = ca.CandidateMasterId 
+--join CandidateStatus cs on cs.CandidateId = cm.id where ca.IRFId = @irfId and cm.UserId =@userId 
+select cs.[Date], cs.[Status] from Candidate ca join CandidatesMaster cm on cm.id = ca.CandidateMasterId   
+join CandidateStatus cs on (cs.CandidateId = cm.id and cs.IRFId = ca.IRFId) where ca.IRFId = @irfId and cm.UserId = @userId--ca.CandidateMasterId = (select id from CandidatesMaster where UserId=@userId) 
   
 declare @AddedOnDate datetime, @InvitationSentOnDate datetime, @FirstScheduledOnDate datetime,  @FirstScheduledOninterviewDate datetime
   
-set @AddedOnDate = (select top 1 [DateValue] from @TemporaryStatus where [StatusValue] = 12)  
+set @AddedOnDate = (select top 1 dateadd(minute, 330, [DateValue]) from @TemporaryStatus where [StatusValue] = 12)  
 set @InvitationSentOnDate = @AddedOnDate--(select top 1 [DateValue] from @TemporaryStatus where [StatusValue] = 11 order by [DateValue])   
-set @FirstScheduledOnDate = (select top 1 [DateValue] from @TemporaryStatus where [StatusValue] = 4 order by [DateValue])  
+set @FirstScheduledOnDate = (select top 1 dateadd(minute, 330, [DateValue]) from @TemporaryStatus where [StatusValue] = 4 order by [DateValue])  
 set @FirstScheduledOninterviewDate = null--(select top 1 im.interviewDate from Candidate ca join CandidatesMaster cm on cm.id = ca.CandidateMasterId join CandidateStatus cs on cs.CandidateId = cm.id join InterviewMeetings im on im.id = cs.InterviewId where ca.IRFId = @irfId and cm.UserId = @userId and cs.[Status] = 4 order by [Date])  
 
  
