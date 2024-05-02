@@ -639,17 +639,32 @@
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" class="active" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
+                                                            <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
 
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.ColdCandidates.GetDescription())
                                                         {
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" class="active" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
+                                                            <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.NotProcessedResumes.GetDescription())
                                                         {
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" class="active" rel="tab4">Not Processed Resume</li>
+                                                            <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
+                                                        }
+                                                        else if (ViewBag.CandidateType == CandidateTypeForClient.PotentialColdCandidate.GetDescription())
+                                                        {
+                                                            <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
+                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
+                                                            <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5" class="active">Potential Cold Candidate</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                         }
                                                         else
                                                         {
@@ -658,7 +673,7 @@
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
 
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
-
+                                                            <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
 
                                                         }
 
@@ -1136,6 +1151,10 @@
                                                         <div id="tab4" class="tab_content">
                                                         </div>
                                                         <!-- #tab4 -->
+
+                                                        <div id="tab5" class="tab_content">
+                                                        </div>
+                                                        <!-- #tab5 -->
                                                     </div>
                                                     <!-- .tab_container -->
                                                 </div>
@@ -2193,6 +2212,19 @@
             success: function (data) {
                 $('#tab4').html('');
                 $('#tab4').html(data);
+            }
+        });
+    }
+
+    function PotentialColdCandidateByClient(emailid) {
+
+        $.ajax({
+            url: '/Dashboard/GetColdCandidatesByClient',
+            type: 'GET',
+            data: { 'Email': emailid },
+            success: function (data) {
+                $('#tab5').html('');
+                $('#tab5').html(data); 
             }
         });
     }
