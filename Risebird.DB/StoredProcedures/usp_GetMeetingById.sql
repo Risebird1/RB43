@@ -51,7 +51,12 @@ SELECT [InterviewMeetings].id as imid
   ,InterviewComments.ApprovalComments    
   ,InterviewComments.FinalComments    
   ,InterviewComments.IsApproved    
-  ,InterviewComments.IsSelected    
+  ,InterviewComments.IsSelected
+  ,InterviewComments.JoiningStatus
+  ,InterviewComments.OfferStatus
+  ,InterviewComments.OfferComments 
+  ,InterviewComments.JoiningComments
+  ,InterviewComments.MoveToCP
   ,IRF.id as irfIntId    
   ,IRF.IsBiometricEnabled    
   ,HRCoordinatorEmailId    

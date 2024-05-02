@@ -75,5 +75,6 @@ namespace Risebird.Repository.Interface
         Task<List<MeetingVM>> FetchTechQCDetails();
         Task<List<MeetingVM>> PotentialPausedRepository();
         Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail);
+        Task<List<MeetingVM>> GetColdCandidatesByClientRepository(string Email);
     }
 }
