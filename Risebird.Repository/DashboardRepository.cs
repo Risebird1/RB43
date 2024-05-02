@@ -1742,5 +1742,28 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<List<MeetingVM>> GetColdCandidatesByClientRepository(string Email)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                { 
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@startDate", DateTime.Now.AddMonths(-6));
+                        parameters.Add("@endDate", DateTime.Now);
+                        parameters.Add("@Email", Email);
+                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateListByClient", parameters, commandTimeout: 600,
+                            commandType: CommandType.StoredProcedure);
+                        return result.ToList();                   
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

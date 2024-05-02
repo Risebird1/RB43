@@ -304,19 +304,19 @@
                                                                         @if (item.Name.Length > 20)
                                                                         {
                                                                             <div class="cadName" style="margin-top:15px;">
-                                                                              @*  @if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                @if (item.HasEmailDroppedOrBounced == true) { 
                                                                                     <div class="absCenter">
                                                                                 <button class="infoButton">
                                                                                     <div class="infoButton-btn">
                                                                                         <span class="infoButton-btn-text">i</span>
                                                                                     </div>
                                                                                     <div class="infoButton-container">
-                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                        <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
                                                                                     </div>
                                                                                 </button>
                                                                             </div>
 
-                                                                    }  *@
+                                                                    }  
                                                                     <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
                                                                             </div>
                                                                         }
@@ -324,18 +324,18 @@
                                                                         else
                                                                         {
                                                                             <div class="cadName" style="margin-top:15px;">
-                                                                                  @*@if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                  @if (item.HasEmailDroppedOrBounced == true) { 
                                                                                     <div class="absCenter">
                                                                                 <button class="infoButton">
                                                                                     <div class="infoButton-btn">
                                                                                         <span class="infoButton-btn-text">i</span>
                                                                                     </div>
                                                                                     <div class="infoButton-container">
-                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                        <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
                                                                                     </div>
                                                                                 </button>
                                                                             </div>
-                                                                    }  *@
+                                                                    }  
                                                                                 <a onclick=""><span class="name-field"> @item.Name</span> </a>
                                                                             </div>
                                                                         }
@@ -381,10 +381,11 @@
                                                                             @item.Phone
                                                                         </span>
                                                                     }
-                                                                @*  @if (item.IsColdCandidate)
+                                                                @if(item.IsColdCandidate)
                                                                     {
-                                                                        <span class="cold-mark">Cold Candidate Marked</span>
-                                                                    }  *@
+                                                                        <span class="cold-mark" >Cold Candidate Marked</span>
+                                                                    }
+                                                                   
                                                                 </td>
                                                                
                                                                 @* @if (ViewBag.profile != "Client")
@@ -630,12 +631,12 @@
                                                                             if (!string.IsNullOrEmpty(item.ClientHRAttemptContact))
                                                                             {
 
-                                                                             
+                                                                                @if (!item.IsColdCandidate)
+                                                                                {
                                                                                     <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
                                                                                         <span title="Send Invite"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
                                                                                     </a>
-                                                                                
-
+                                                                                }
                                                                             }
                                                                             else
                                                                             {
@@ -651,11 +652,12 @@
 
                                                                          @if (ViewBag.AccessType != "Public")  
                                                                         {
-                                                                            
+                                                                            @if (!item.IsColdCandidate)
+                                                                            {
                                                                                 <a target="_blank" class="btn shadow btn-unassign btn-xs sharp me-1 item4" href="@Url.Action("CancelInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId })" title="Cancel Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
                                                                                     <span title="Cancel Invite"><i class="fa fa-remove" style="left:2px; top:0px;font-size:14px; position: relative;"></i></span>
                                                                                 </a>
-                                                                            
+                                                                            }
 
                                                                 }
 
@@ -710,13 +712,15 @@
                                                                         </div>
                                                                      
                                                                     }
-                                                                  
+                                                                    @if (!item.IsColdCandidate)
+                                                                    {
                                                                         <div style="float:left;margin: 0px 4px 0px 0px;">  
                                                                             <a target="_blank" class="btn shadow btn-schedule btn-xs sharp me-1 item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;left:3px;">
                                                                                 <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:-1px;font-size:13px; position: relative;"></i></span>
                                                                             </a>
                                                                         </div>
-                                                                    
+                                                                    }
+
                                                                     @if (item.confirmationStatus != 1 && (ViewBag.profile == "Admin" ||@*ViewBag.profile == "SeniorHR" ||*@ ViewBag.profile == "SupportAdmin"))
                                                                     {
                                                                       
@@ -742,13 +746,16 @@
                                                                             
                                                                         
                                                                     }
-                                                                    <div style="float:left">
-                                                                        <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:23px!important;height:23px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:3px;margin: 0px 0px 0px 3px;">
-                                                                            <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
-                                                                                <img src="~/img/approve-blk.png" width="16" style="max-width: 16px!important;position: relative;top: -1.5px;left: -2px;" />
-                                                                            </span>
-                                                                        </button>
-                                                                    </div>
+                                                                    @if (!item.IsColdCandidate)
+                                                                    {
+                                                                        <div style="float:left">
+                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:23px!important;height:23px!important;background:#e3ab8391;border-color:#e3ab8391;position:relative;top:3px;margin: 0px 0px 0px 3px;">
+                                                                                <span onclick="MarkedColdCandidate('@item.id','@item.IRFName', '@item.EmailId','@item.imid','@item.IRFId');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
+                                                                                    <img src="~/img/approve-blk.png" width="16" style="max-width: 16px!important;position: relative;top: -1.5px;left: -2px;" />
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    }
                                                                 </td>
                                                                 @if (ViewBag.profile != "Client")
                                                                 {

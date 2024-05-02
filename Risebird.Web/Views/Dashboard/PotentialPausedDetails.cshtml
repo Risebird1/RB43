@@ -121,7 +121,7 @@
                                                             }
                                                             else
                                                             {
-                                                                @if (ViewBag.Profile == "Admin")
+                                                                @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin" || ViewBag.Profile == "SeniorHR")
                                                                 {
                                                                   @*  <div style="width:100%;float:left;clear:both;" class="dropdown-content-menu" onclick="PauseIRF('@item.irfIntId', '@item.IRFId');" title="Pause">
                                                                         <i class='fa-solid fa-circle-pause' style='color: red'></i>Pause
@@ -146,7 +146,7 @@
                                                           
 
                                                                 <button class="btn btn-primary  shadow btn-xs sharp me-1" aria-label="Not Scheduled Candidate" style="width:25px!important;height:25px!important;">
-                                                                <span onclick="javascript:NotScheduledCandidate('@item.IRFId');" style="font-weight:400;display:flex;width:100%;transform:none;">
+                                                                    <span onclick="javascript:NotScheduledCandidate('@item.IRFId');" style="font-weight:400;display:flex;width:100%;transform:none;" title="Not Scheduled Candidate">
 
                                                                         <i class='fa fa-calendar-times-o' style="color:#fff"></i>
                                                                     </span>

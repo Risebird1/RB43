@@ -3261,5 +3261,26 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        [AllowAnonymous]
+        public async Task<IActionResult> GetColdCandidatesByClient(string Email)
+        {
+            try
+            {
+                        var data = await _dashboardService.GetColdCandidatesByClient(Email);
+                        data = data.Select(x =>
+                        {
+                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                            return x;
+                        }).ToList();
+
+                        return View(data);
+                   
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }
