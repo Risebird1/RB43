@@ -9596,6 +9596,8 @@ option {
     margin: 0;
     font-size: 14px;
     position: relative;
+    top: -38px;
+    left: -127px;
 }
 
 .infoButton-btn {
@@ -9633,9 +9635,9 @@ option {
 
 .infoButton-container-message {
     box-sizing: border-box;
-    width: 350px;
-    padding: 6px 20px;
-    font-size: 12px;
+    width: 375px;
+    padding: 6px 7px;
+    font-size: 11px;
     box-shadow: 0px 5px 5px #0000000f;
     border-radius: 4px;
     line-height: 1.3;
@@ -9644,8 +9646,8 @@ option {
     opacity: 1;
     transition: transform 200ms ease-in-out, opacity 200ms ease-in-out;
     background-color: #f5f0f0f2;
-    color: #000;
-
+    color: #4f4646;
+    font-weight: 600;
 }
 
 .infoButton:focus .infoButton-btn,
@@ -9720,6 +9722,7 @@ option {
 .left-p {
     left: 210px;
     top: 75px;
+    width:220px;
 }
 .consent-note {
     font-size: 12.2px!important;

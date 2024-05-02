@@ -57,7 +57,7 @@ else if(@confirmationStatus=1 and @interviewStatus in (2,4))
 begin    
  set @result = 'SELECTED'   
  INSERT INTO @ResultTable (LatestStatus, interviewId, interviewDate, completedDate)  
- SELECT @result, @interviewId, @interviewDate, (select top 1 [Date] from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
+ SELECT @result, @interviewId, @interviewDate, (select top 1 DATEADD(minute, 330, [Date]) from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
 end    
     
 --case for rejected    
@@ -65,7 +65,7 @@ else if(@confirmationStatus=1 and @interviewStatus in (1,3,5))
 begin    
   set @result = 'REJECTED'    
   INSERT INTO @ResultTable (LatestStatus, interviewId, interviewDate, completedDate)  
-  SELECT @result, @interviewId, @interviewDate, (select top 1 [Date] from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
+  SELECT @result, @interviewId, @interviewDate, (select top 1 DATEADD(minute, 330, [Date]) from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
 end    
     
 --case for eligibility for rescheduling    
