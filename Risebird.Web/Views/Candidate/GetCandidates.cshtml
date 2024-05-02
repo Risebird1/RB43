@@ -304,19 +304,19 @@
                                                                         @if (item.Name.Length > 20)
                                                                         {
                                                                             <div class="cadName" style="margin-top:15px;">
-                                                                              @*  @if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                @if (item.HasEmailDroppedOrBounced == true) { 
                                                                                     <div class="absCenter">
                                                                                 <button class="infoButton">
                                                                                     <div class="infoButton-btn">
                                                                                         <span class="infoButton-btn-text">i</span>
                                                                                     </div>
                                                                                     <div class="infoButton-container">
-                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                        <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
                                                                                     </div>
                                                                                 </button>
                                                                             </div>
 
-                                                                    }  *@
+                                                                    }  
                                                                     <a onclick="" data-tooltip="@item.Name"><span class="name-field"> @item.Name.Substring(0, 20)..</span> </a>
                                                                             </div>
                                                                         }
@@ -324,18 +324,18 @@
                                                                         else
                                                                         {
                                                                             <div class="cadName" style="margin-top:15px;">
-                                                                                  @*@if (item.HasEmailDroppedOrBounced == true) { 
+                                                                                  @if (item.HasEmailDroppedOrBounced == true) { 
                                                                                     <div class="absCenter">
                                                                                 <button class="infoButton">
                                                                                     <div class="infoButton-btn">
                                                                                         <span class="infoButton-btn-text">i</span>
                                                                                     </div>
                                                                                     <div class="infoButton-container">
-                                                                                        <div class="infoButton-container-message">This is a message about the thing that you need to know.</div>
+                                                                                        <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
                                                                                     </div>
                                                                                 </button>
                                                                             </div>
-                                                                    }  *@
+                                                                    }  
                                                                                 <a onclick=""><span class="name-field"> @item.Name</span> </a>
                                                                             </div>
                                                                         }
