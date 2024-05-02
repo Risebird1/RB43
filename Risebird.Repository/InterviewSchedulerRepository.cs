@@ -31,7 +31,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from ScheduleInterviewEvent where ISNull(IsSingleUse,0)!=1";
+                var query = "Select * from ScheduleInterviewEvent where ISNull(IsSingleUse,0)!=1 order by id desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await con.QueryAsync<daytimes_report>(query, null);
