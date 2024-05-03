@@ -19,6 +19,7 @@ Declare @temp as Table(
 AssessmentGroupId int
 )
 Insert into @temp select AssessmentGroupId from SecondaryAssessmentGroups where MAGId = (select id from MasterAssessmentGroup where AssessmentGroupId = @Assessmentid)
+Insert into @temp values(@Assessmentid)
 ;With CTE AS(        
 Select * from InterviewerProfile cross Apply string_split(AssessmentGroupId,','))       
 Select Distinct 'Interviewer' as [Type],CTE.UserId,CTE.AssessmentGroupId, ul.EmailId, ul.MobileNumber,ul.uniqueid,  
