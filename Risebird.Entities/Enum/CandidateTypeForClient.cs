@@ -27,6 +27,10 @@ namespace Risebird.Entities.Enum
 
         [Display(Name = "Potential Cold Candidate ")]
         [Description("Potential Cold Candidate ")]
-        PotentialColdCandidate = 5
+        PotentialColdCandidate = 5,
+
+        [Display(Name = "Reschedule Meeting")]
+        [Description("Reschedule Meeting")]
+        RescheduleMeeting = 6
     }
 }
