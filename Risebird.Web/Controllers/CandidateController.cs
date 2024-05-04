@@ -16,6 +16,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -5532,7 +5533,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetCandidateStatusListByClient(int irfId, int candidateId, string irfName, string candidateName)
         {
@@ -5559,7 +5560,35 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
+        public async Task<IActionResult> ReScheduleMeetingsByClient(string emailid)
+        {
+            try
+            {
+                int ClientId = 0;
 
+                var client = await _userRepository.GetClientUserDetails(emailid);
+                ClientId = client.ClientId;
+                ViewBag.ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
+
+                var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                meetings = meetings.Select(x =>
+                {
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+
+                DateTime StartDate = DateTime.Now.AddMonths(-2);
+                meetings = meetings.Where(t => t.dtCreatedOn >= StartDate).ToList();
+
+                return View("_ReScheduleMeetingsByClient", meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
 
     }
 }
