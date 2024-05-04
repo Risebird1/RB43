@@ -3210,7 +3210,8 @@
     $("#btn_more ").click(function (e) {
         e.stopPropagation();
         var relatedDiv = $(this).closest('.dropdown').find('.dropdown-content');
-        relatedDiv.toggle("fast");
+        relatedDiv.toggle().setAttribute("style", "display:block;top:-15px");
+        
         $('.dropdown-content').not(relatedDiv).hide('fast');
 
     });

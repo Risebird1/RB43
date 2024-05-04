@@ -41,9 +41,10 @@ JOIN IRF ON im.IRFId = IRF.IRFId where im.candidateEmail =CTE.candidateEmail and
 ,(SELECT top 1 im.id
 FROM InterviewMeetings im
 JOIN IRF ON im.IRFId = IRF.IRFId where im.candidateEmail =CTE.candidateEmail and im.IRFId=CTE.IRFId order by im.interviewDate desc) as imid
-,CountTable.MailCount,CountTable.CallsCount,CountTable.WhatsappCount
+,CountTable.MailCount,CountTable.CallsCount,CountTable.WhatsappCount,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment
 from CTE
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(CTE.irfIntId,CTE.candidateEmail) as CountTable
+outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.irfIntId and CandidateId = CTE.CandidateMasterId order by cs.Date desc) as LastCandidateStatus
 order by interviewDate desc
 End
 GO
