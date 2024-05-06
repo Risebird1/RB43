@@ -3981,7 +3981,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId,string emailid)
+        public async Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId, string emailid)
         {
             try
             {
@@ -3990,7 +3990,7 @@ namespace Risebird.Repository
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", IRFId);
                     dynamicParameters.Add("@date", DateTime.Now);
-                    dynamicParameters.Add("@emailid",emailid);
+                    dynamicParameters.Add("@emailid", emailid);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_UpdateMeetingStatus", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
                 }
@@ -8408,12 +8408,13 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid)
+        public async Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid, string type)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
+                dynamicParameters.Add("@type", type);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CallibrationCallVM>(con, "usp_GetAllCalibrationMeetingsdetailsById", dynamicParameters,

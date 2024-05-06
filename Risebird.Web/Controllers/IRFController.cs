@@ -9322,7 +9322,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = await _irfService.GetAllCalibrationMeetingsById(emailid);
+                        var model = await _irfService.GetAllCalibrationMeetingsById(emailid,"All");
                         if (type == "Completed")
                         {
                             ViewBag.Type = "Completed";
