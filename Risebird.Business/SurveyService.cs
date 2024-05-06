@@ -59,7 +59,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<SurveyVM>> GetCandidateRating(string emailid,string profileName)
+        public async Task<IEnumerable<SurveyVM>> GetCandidateRating(string emailid, string profileName)
         {
             try
             {

@@ -3,10 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -71,7 +69,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    if(model.InterviewIdList != null)
+                    if (model.InterviewIdList != null)
                     {
                         //use bulk insert
                         DataTable sentMailDt = new DataTable();
@@ -131,7 +129,7 @@ namespace Risebird.Repository
                         return true;
 
                     }
-                    
+
                 }
             }
             catch (SqlException ex)

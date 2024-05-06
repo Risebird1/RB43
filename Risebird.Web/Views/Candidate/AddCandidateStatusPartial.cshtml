@@ -189,6 +189,7 @@
     //}
 
     function GetCandidateStatusList(irfId, candidateId, irfName, candidateName) {
+  
         $.ajax({
             url: '/Candidate/GetCandidateStatusList',
             data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName },
@@ -214,6 +215,7 @@
         $.ajax({
             url: '/Candidate/GetCandidateStatusListByClient',
             data: { 'irfId': irfId, 'candidateId': candidateId, 'irfName': irfName, 'candidateName': candidateName },
+            type: "GET",
             success: function (data) {
                 var modal = document.getElementById("statusListModal");
                 modal.style.display = "block";

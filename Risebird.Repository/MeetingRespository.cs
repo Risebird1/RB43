@@ -10,10 +10,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -5407,7 +5405,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Status", status);
                 dynamicParameters.Add("@rsc", rsc);
                 dynamicParameters.Add("@timeNow", DateTime.Now);
-                dynamicParameters.Add("@idIrf", dbType: DbType.String, direction: ParameterDirection.Output);
+                dynamicParameters.Add("@interviewerEmailId", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerAvailbilityStatusForIRF", dynamicParameters,

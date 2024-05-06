@@ -265,7 +265,7 @@
                         {
                             var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
                             profileName = profileName.Trim('"');
-                            var checkclientName = string.Empty; ;
+                            var checkclientName = string.Empty; 
                             @if (@HttpContextAccessor.HttpContext.Session.GetString("clientName") != null)
                             {
                                 checkclientName = HttpContextAccessor.HttpContext.Session.GetString("clientName");
@@ -282,7 +282,7 @@
                                         }
                                         @if (profileName == "Client")
                                         {
-                                            @if (!string.IsNullOrEmpty(checkclientName) && checkclientName.Trim() == "UST US")
+                                            @if (!string.IsNullOrEmpty(checkclientName) && (checkclientName.Trim() == "UST US" || checkclientName.Trim() == "Turing"))
                                             {
                                                 <span onclick="location.href='@Url.Action("Risebirdpay", "Client")'"><span class="wallet-iconcolor" style="position:relative;top:-1px;"><i class="fas fa-wallet" style=" font-size: 15px;position: relative;top: -5px; left: -3px;"></i></span><span class="pull-left d-lg-inline-flex pad7" style="color:#fff;font-size:12px;font-weight:bold;"><span style="position:relative;top:-2px;">Penalty Wallet</span></span></span>
                                             }

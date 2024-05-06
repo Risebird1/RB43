@@ -97,7 +97,7 @@ namespace Risebird.CommonHelper
         //    var _model = new ZoomOAuthCredentials();
         //    _model.grant_type = "account_credentials";
         //    _model.account_id = "mKqPkZV2RciTWQ9tHtZyEw";
-            
+
         //    var tokenResponse = new RestClient("https://zoom.us/oauth/token");
         //    var request = new RestRequest("https://zoom.us/oauth/token", Method.Post);
         //    request.AddHeader("authorization", "Basic bW10dXFIaUdTMWlnRVBNWmhEeldNUTpSemRiNk5Yb3pJeFZRZk1UOU5aOUwzQ1NjbnZidzhCeQ==");//"v7sy3J8cAFdEJp5S"
@@ -157,5 +157,5 @@ namespace Risebird.CommonHelper
             }
         }
     }
-    
+
 }

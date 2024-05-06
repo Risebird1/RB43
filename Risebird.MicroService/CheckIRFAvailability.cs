@@ -1,23 +1,20 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Configuration;
-using RestSharp;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
-using Risebird.Repository.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
-using Risebird.CommonHelper;
 using Risebird.Entities.ViewModel;
-using Risebird.Repository;
+using Risebird.Repository.Interface;
+using System;
+using System.IO;
 using System.Text;
-using Risebird.Business.Interface;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -31,7 +28,7 @@ namespace Risebird.MicroService
         private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly IIRFRepository _irfRepository;
-        
+
         public CheckIRFAvailability(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
             IIRFService irfService, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             IEncryptionHelper encryptionHelper, IIRFRepository irfRepository)
@@ -94,7 +91,7 @@ namespace Risebird.MicroService
                                 Subject = "Current Availability (2 days) check for  " + obj.JDTitle + " Risebird Interviews"
 
                             };
-                            
+
                             var emailresult = await _notificationHelper.SendCheckIntervieweravailbility(_mail, interviewer.InterviewerName, yesbutton + "&rsc=" + source, nobutton + "&rsc=" + source, sb.ToString(), obj.FlatRate, dropMyProfileButton + "&rsc=" + source, obj.PrimarySkillInvite, obj.id, interviewer.CompanyTypeDesc, interviewer.CountryTypeDesc, interviewer.PlanTypeDesc, interviewer.SelectedDurationMin, interviewer.RejectedDurationMin);//item.PerSuccessRate
 
                             source = "wp";
@@ -105,7 +102,7 @@ namespace Risebird.MicroService
                             _whatsAppVM.Emailid = interviewer.EmailId;
                             _whatsAppVM.PrimarySkill = obj.PrimarySkillInvite;//irf.JDTiltle;
                             _whatsAppVM.PerSuccessRate = obj.FlatRate.ToString();//interviewer.PerSuccessRate.ToString();
-                                                                                 
+
                             _whatsAppVM.buttonlink = yesbutton.Replace("https://portal.risebird.io/IRF/", "");
                             _whatsAppVM.Event = "SkillChannel Interviewer Availbility";
                             await _whatsAppHelper.WhatsAppSkillChannelInterviewerAvailbility(_whatsAppVM);
@@ -118,7 +115,7 @@ namespace Risebird.MicroService
                 }
                 await _irfService.UpdateIntervieweravailbilityDetails(obj.id);
 
-                
+
 
                 log.LogInformation($"CheckIRFAvailability : C# Http Trigger finished executing at {DateTime.Now}");
 

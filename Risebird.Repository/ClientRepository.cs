@@ -1220,7 +1220,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionDetails(string type,int Clientid)
+        public async Task<IEnumerable<MoneyProtectionVM>> GetMoneyProtectionDetails(string type, int Clientid)
         {
             try
             {

@@ -11,7 +11,6 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using Risebird.Entities.Data.AffIndaModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository;
@@ -26,10 +25,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Twilio.Rest.Trunking.V1;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -388,13 +384,18 @@ namespace Risebird.Web.Controllers
                 {
                     modelList = modelList.Where(x => x.RedoInterview == true).ToList();
                 }
+                else if (type == "CancelInterviews")
+                {
+                    ViewBag.Type = "CancelInterviews";
+                    modelList = modelList.Where(x => x.RedoInterview == false && x.confirmationStatus.Trim() == ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
+                }
                 else if (type == "Interviews")
                 {
-                    modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                    modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                 }
                 else
                 {
-                    modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                    modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                 }
                 Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
@@ -3254,13 +3255,13 @@ namespace Risebird.Web.Controllers
                                 Mail _mail = new Mail
                                 {
                                     TO = model.CandidateEmail,
-                                    Subject = "Risebird: Feedback form"
+                                    Subject = "Risebird: Interview Feedback"
                                 };
                                 var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = model.CandidateEmail;
                                 _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
-                                _whatsAppVM.Event = "Feedback Remainder";
+                                _whatsAppVM.Event = "Risebird: Interview Feedback";
                                 await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
@@ -5896,6 +5897,10 @@ namespace Risebird.Web.Controllers
             {
                 return Json("Uable to process your request at this moment, kindly reach out to your respective HR.");
             }
+            else if (status == 3)
+            {
+                return Json("Uable to process your request at this moment, kindly reach out to your respective HR.");
+            }
             else
             {
                 return Json("Fail to Update Status, Please try again");
@@ -7165,6 +7170,8 @@ namespace Risebird.Web.Controllers
                 return "Fail";
             }
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> SecureReport(int interviewId, int irfId, string uniqueid, string emailid)
         {

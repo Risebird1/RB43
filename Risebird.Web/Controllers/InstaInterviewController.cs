@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
@@ -16,14 +15,12 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -42,14 +39,14 @@ namespace Risebird.Web.Controllers
         private readonly ISkillService _skillService;
         private readonly IClientService _clientService;
         private readonly IZoomHelper _zoomHelper;
-        
 
-        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger, 
-            IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, 
-            IConfiguration configuration, IInstaInterviewService instaInterviewService, 
-            IInterviewerService interviewerService, IMeetingService meetingService, 
-            IIRFRepository irfRepository, IUserService userService, 
-            IFileMimeTypeHelper fileMimeTypeHelper, ISkillService skillService, 
+
+        public InstaInterviewController(IApplicationErrorLogger applicationErrorLogger,
+            IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
+            IConfiguration configuration, IInstaInterviewService instaInterviewService,
+            IInterviewerService interviewerService, IMeetingService meetingService,
+            IIRFRepository irfRepository, IUserService userService,
+            IFileMimeTypeHelper fileMimeTypeHelper, ISkillService skillService,
             IClientService clientService, IZoomHelper zoomHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;

@@ -22,7 +22,7 @@ namespace Risebird.Entities.ViewModel
         public string uniqueid { get; set; }
 
         public int Payment { get; set; }
-        [Display(Name = "Video Enable")]
+        [Display(Name = "Video Enabled")]
         public bool VideoEnable { get; set; }
         [Display(Name = "QC Reward")]
         public bool QCReward { get; set; }

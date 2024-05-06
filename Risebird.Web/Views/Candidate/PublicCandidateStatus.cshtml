@@ -640,6 +640,7 @@
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                             <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
 
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.ColdCandidates.GetDescription())
@@ -649,6 +650,7 @@
                                                             <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.NotProcessedResumes.GetDescription())
                                                         {
@@ -657,12 +659,21 @@
                                                             <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
                                                         }
                                                         else if (ViewBag.CandidateType == CandidateTypeForClient.PotentialColdCandidate.GetDescription())
                                                         {
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                             <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5" class="active">Potential Cold Candidate</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
+                                                            <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
+                                                        }
+                                                        else if (ViewBag.CandidateType == CandidateTypeForClient.RescheduleMeeting.GetDescription())
+                                                        {
+                                                            <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
+                                                            <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')"  rel="tab4">Not Processed Resume</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6" class="active">Reschedule Meeting</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.Scheduled.GetDescription()')" rel="tab1">Scheduled Meetings</li>
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                         }
@@ -674,6 +685,7 @@
 
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
                                                             <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
 
                                                         }
 
@@ -1069,10 +1081,14 @@
                                                         <div id="tab4" class="tab_content">
                                                         </div>
                                                         <!-- #tab4 -->
-
+                                                        <h3 class="tab_drawer_heading" rel="tab5">Potential cold Candidate</h3>
                                                         <div id="tab5" class="tab_content">
                                                         </div>
                                                         <!-- #tab5 -->
+
+                                                        <div id="tab6" class="tab_content">
+                                                        </div>
+                                                        <!-- #tab6 -->
                                                     </div>
                                                     <!-- .tab_container -->
                                                 </div>
@@ -1143,7 +1159,7 @@
 @await Html.PartialAsync("~/Views/Interview/WhatsAppPopup.cshtml")
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 <script src="~/js/WhatsAppPopup.js"></script>
-<script src="~/js/markcoldcandidate.js" asp-append-version="true"></script>
+
 <div id="myModal" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
@@ -1337,7 +1353,8 @@
         </div>
     </div>
 </div>
-
+@await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 <div id="modal_recipientActivity_placeholder"></div>
 
 <div id="modal_clientComment_placeholder"></div>
@@ -1347,13 +1364,15 @@
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=2024" />
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
-<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=2024"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js" asp-append-version="true"></script>
 
-<script src="~/Newassets/js/scrollBar.js?v=2024"></script>
+<script src="~/Newassets/js/scrollBar.js" asp-append-version="true"></script>
 
-<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
+<script src="~/js/ModalFormServerValidation.js" asp-append-version="true"></script>
 
-<script src="~/js/common.js?v=2024"></script>
+<script src="~/js/common.js" asp-append-version="true"></script>
+<script src="~/js/markcoldcandidate.js" asp-append-version="true"></script>
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
 <script>
     function ChangeTab(type) {
         var currentUrl = window.location.href;
@@ -2111,23 +2130,26 @@
 </script>
 <script>
     function ColdCandidateByClient(emailid) {
+        $(".loader").show();
         $.ajax({
             url: '/Candidate/GetColdCandidatesListByClient',
             type: 'GET',
             data: { 'emailid': emailid },
             success: function (data) {
+                $(".loader").hide();
                 $('#tab3').html('');
                 $('#tab3').html(data);
             }
         });
     }
     function NotProcessedResumeByClient(emailid) {
-
+        $(".loader").show();
         $.ajax({
             url: '/Candidate/GetNotProcessedResumeByClient',
             type: 'GET',
             data: { 'emailid': emailid },
             success: function (data) {
+                $(".loader").hide();
                 $('#tab4').html('');
                 $('#tab4').html(data);
             }
@@ -2135,17 +2157,37 @@
     }
 
     function PotentialColdCandidateByClient(emailid) {
-
+        $(".loader").show();
         $.ajax({
-            url: '/Dashboard/GetColdCandidatesByClient',
+            url: '/Dashboard/GetPotentialColdCandidatesByClient',
             type: 'GET',
             data: { 'Email': emailid },
             success: function (data) {
+                $(".loader").hide();
                 $('#tab5').html('');
                 $('#tab5').html(data); 
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error(xhr.responseText);
             }
         });
     }
+
+    function RescheduleMeetingByClient(emailid) {
+        $(".loader").show();
+        $.ajax({
+            url: '/Candidate/ReScheduleMeetingsByClient',
+            type: 'GET',
+            data: { 'emailid': emailid },
+            success: function (data) {
+                $(".loader").hide();
+                $('#tab6').html('');
+                $('#tab6').html(data);
+            }
+        });
+    }
+
 </script>
 
 <script>

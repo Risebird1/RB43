@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using Org.BouncyCastle.Asn1;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -152,7 +151,7 @@ namespace Risebird.Web.Controllers
             string userEmailId = string.Empty;
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
-            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_ActivityTracker" + ".xlsx";
             try
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -203,7 +202,7 @@ namespace Risebird.Web.Controllers
 
                         if (!string.IsNullOrEmpty(item.ResourceUrl))
                         {
-                            Sheet.Cells[i, 2].Hyperlink = new Uri(item.FileUrl, UriKind.Absolute);
+                            Sheet.Cells[i, 2].Hyperlink = new Uri(item.ResourceUrl, UriKind.Absolute);
                             Sheet.Cells[i, 2].Style.Font.UnderLine = true;
                             Sheet.Cells[i, 2].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
@@ -249,7 +248,7 @@ namespace Risebird.Web.Controllers
 
         #region Page Click Details
         [HttpPost]
-        public async Task<JsonResult> CapturePageClick(string type, string currenturl, string buttonaction,int interviewid)
+        public async Task<JsonResult> CapturePageClick(string type, string currenturl, string buttonaction, int interviewid)
         {
             string emailid = string.Empty;
             if (HttpContext.Session.GetString("email") != null)

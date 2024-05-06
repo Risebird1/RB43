@@ -3,27 +3,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using RestSharp;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
-using Risebird.Repository;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static iTextSharp.text.pdf.AcroFields;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -236,7 +227,6 @@ namespace Risebird.Web.Controllers
             timeslot.Add(new TimeslotsVM { id = 23, Name = "23:00" });
             timeslot.Add(new TimeslotsVM { id = 23.5, Name = "23:30" });
             timeslot.Add(new TimeslotsVM { id = 24, Name = "24:00" });
-            timeslot.Add(new TimeslotsVM { id = 24.5, Name = "24:30" });
             model.timeslots = new SelectList(timeslot, "id", "Name");
             model.IRFList = await _interviewSchedulerservice.GetIRFList();
             var IntervalsList = new List<TimeslotsVM>();
@@ -697,7 +687,7 @@ namespace Risebird.Web.Controllers
                                     var newslot = 24 + (int)(slots / 60);
                                     foreach (var item2 in result1)
                                     {
-                                        if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                        if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
                                         {
                                             var newmin = Convert.ToInt32(slots % 60);
                                             if (newmin < 0)
@@ -717,7 +707,7 @@ namespace Risebird.Web.Controllers
                                     var newslot = (int)(slots + addontime) / 60;
                                     foreach (var item2 in result2)
                                     {
-                                        if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                        if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
                                         {
                                             var newmin = Convert.ToInt32(slots % 60);
                                             if (newmin < 0)
@@ -784,7 +774,7 @@ namespace Risebird.Web.Controllers
                                             var newslot = 24 + (int)(slots / 60);
                                             foreach (var item2 in result1)
                                             {
-                                                if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                                if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
                                                 {
                                                     var newmin = Convert.ToInt32(slots % 60);
                                                     if (newmin < 0)
@@ -808,7 +798,7 @@ namespace Risebird.Web.Controllers
                                             var newslot = (int)(slots + addontime) / 60;
                                             foreach (var item2 in result2)
                                             {
-                                                if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                                if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
                                                 {
                                                     var newmin = Convert.ToInt32(slots % 60);
                                                     if (newmin < 0)

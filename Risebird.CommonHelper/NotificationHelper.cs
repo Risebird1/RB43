@@ -10,15 +10,11 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using Twilio.TwiML.Messaging;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.CommonHelper
 {
@@ -2135,7 +2131,7 @@ namespace Risebird.CommonHelper
                 str.AppendLine("END:VCALENDAR");
                 byte[] byteArray = Encoding.ASCII.GetBytes(str.ToString());
                 MemoryStream stream = new MemoryStream(byteArray);
-                await msg.AddAttachmentAsync("invite.ics", stream);
+                await msg.AddAttachmentAsync("InterviewInvite.ics", stream);
                 //End: Attachment
                 return await SendMail(msg, null, interviewId);
             }
@@ -3213,7 +3209,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate,int irfid)
+        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate, int irfid)
         {
             try
             {

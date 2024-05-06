@@ -24,7 +24,7 @@ namespace Risebird.Entities.ViewModel
         public string ResumeLink { get; set; }
         public int? VideoConfirmation { get; set; }
         public int RedMarker { get; set; }
-		public string interviewer { get; set; }
+        public string interviewer { get; set; }
         public int TotalInterviews { get; set; }
         public string ChannelOwner { get; set; }
         public string SkillChannel { get; set; }
@@ -33,7 +33,7 @@ namespace Risebird.Entities.ViewModel
         public string CalendlyLink { get; set; }
         public string CandidateClientHR { get; set; }
         public DateTime EndDate { get; set; }
-       // public bool IsActive { get; set; }
+        // public bool IsActive { get; set; }
         public string IsAvailable { get; set; }
         public string CampaignName { get; set; }
     }

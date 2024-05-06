@@ -5,10 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
-using Org.BouncyCastle.Asn1;
 using RestSharp;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -18,7 +15,6 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -31,7 +27,6 @@ using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -873,6 +868,12 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
+
+                        if (string.IsNullOrEmpty(irfDetails.MeetingPlatform))
+                        {
+                            irfDetails.MeetingPlatform = MeetingPlatforms.Zoom;
+                        }
+
                         var domain = Request.Scheme + "://" + Request.Host.Value;
 
                         irfDetails.StartDate = DateTime.Now;
@@ -894,7 +895,7 @@ namespace Risebird.Web.Controllers
 
 
                             //call fire and forget method here to send emails and whatsapp for availability
-                            FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId, irfDetails.JDTiltle);
+                            await FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId, irfDetails.JDTiltle);
                             TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!";
                             return RedirectToAction("Index");
                         }

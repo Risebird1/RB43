@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.Entities.Enum
 {
@@ -27,6 +22,10 @@ namespace Risebird.Entities.Enum
 
         [Display(Name = "Potential Cold Candidate ")]
         [Description("Potential Cold Candidate ")]
-        PotentialColdCandidate = 5
+        PotentialColdCandidate = 5,
+
+        [Display(Name = "Reschedule Meeting")]
+        [Description("Reschedule Meeting")]
+        RescheduleMeeting = 6
     }
 }

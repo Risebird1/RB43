@@ -102,7 +102,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@token", token);
                 parameters.Add("@currentTime", DateTime.Now);//Indian Standard Time
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_AddUpdateZoomOAuthToken", parameters,

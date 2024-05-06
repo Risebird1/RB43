@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Twilio.TwiML.Voice;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
@@ -658,7 +657,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int communicationMedium, int? interviewId=null, int? irfId = null, string emailId = null)
+        public async Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int communicationMedium, int? interviewId = null, int? irfId = null, string emailId = null)
         {
             try
             {
@@ -992,7 +991,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Email", Email);
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidateByClient",parameters, commandTimeout: 600,
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidateByClient", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result.ToList();
                 }
