@@ -3829,11 +3829,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid)
+        public async Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid, string type = null)
         {
             try
             {
-                return await _irfRepository.GetAllCalibrationMeetingsById(emailid);
+                return await _irfRepository.GetAllCalibrationMeetingsById(emailid,type);
             }
             catch (Exception e)
             {

@@ -14,7 +14,8 @@ CREATE PROCEDURE [dbo].[usp_GetClonableSkillChannelDetails]
 AS  
 Begin
 
-	select csc.MeetingPlatform, csc.IsAadhaarVerificationRequired, irf.Heuristicsscore, irf.JobCountry, irf.CompanyType, asg.AssessmentGroup as AssessmentGroupName, asg.id as AssessmentGroupId 
+	select csc.MeetingPlatform, csc.IsAadhaarVerificationRequired, irf.Heuristicsscore, irf.JobCountry,
+	irf.CompanyType, asg.AssessmentGroup as AssessmentGroupName, asg.id as AssessmentGroupId 
 	from ClonableSkillChannel csc join IRF on IRF.id = csc.CreatedFromIRFId
 	join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
 	where csc.id = @id

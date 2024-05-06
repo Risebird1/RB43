@@ -223,42 +223,41 @@ namespace Risebird.Business
                 if (model.IRFRecommendations != null)
                 {
                     model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+
+                    if (model.IRFRecommendations.SeniorityLevelArray != null)
+                    {
+                        model.IRFRecommendations.SeniorityLevelId = string.Join(',', model.IRFRecommendations.SeniorityLevelArray);
+                    }
+                    if (model.IRFRecommendations.DifficultyLevelArray != null)
+                    {
+                        model.IRFRecommendations.DifficultyLevel = string.Join(',', model.IRFRecommendations.DifficultyLevelArray);
+                    }
+                    if (model.IRFRecommendations.EmploymentTypeArray != null)
+                    {
+                        model.IRFRecommendations.EmploymentType = string.Join(',', model.IRFRecommendations.EmploymentTypeArray);
+                    }
+                    if (model.IRFRecommendations.PrimarySkills != null)
+                    {
+                        var primarySkillArray = model.IRFRecommendations.PrimarySkills.Split(';');//?.ToList().ForEach(x => { x = x.Trim()}) ;
+                        var newList = new List<string>();
+
+                        foreach (var skill in primarySkillArray)
+                        {
+                            var trimmedSkill = skill.Trim();
+                            if (trimmedSkill != string.Empty)
+                            {
+                                newList.Add(trimmedSkill);
+                            }
+                        }
+                        model.IRFRecommendations.PrimarySkills = string.Join(';', newList);
+                    }
+                    if (model.IRFRecommendations.ClientArray != null)
+                    {
+                        model.IRFRecommendations.Clients = string.Join(',', model.IRFRecommendations.ClientArray);
+                    }
                 }
                 model.InterviewerCollection = model.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
                 model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection?.Where(x => x.IsSelected)?.ToList();
-
-
-                if (model.IRFRecommendations.SeniorityLevelArray != null)
-                {
-                    model.IRFRecommendations.SeniorityLevelId = string.Join(',', model.IRFRecommendations.SeniorityLevelArray);
-                }
-                if (model.IRFRecommendations.DifficultyLevelArray != null)
-                {
-                    model.IRFRecommendations.DifficultyLevel = string.Join(',', model.IRFRecommendations.DifficultyLevelArray);
-                }
-                if (model.IRFRecommendations.EmploymentTypeArray != null)
-                {
-                    model.IRFRecommendations.EmploymentType = string.Join(',', model.IRFRecommendations.EmploymentTypeArray);
-                }
-                if (model.IRFRecommendations.PrimarySkills != null)
-                {
-                    var primarySkillArray = model.IRFRecommendations.PrimarySkills.Split(';');//?.ToList().ForEach(x => { x = x.Trim()}) ;
-                    var newList = new List<string>();
-
-                    foreach (var skill in primarySkillArray)
-                    {
-                        var trimmedSkill = skill.Trim();
-                        if (trimmedSkill != string.Empty)
-                        {
-                            newList.Add(trimmedSkill);
-                        }
-                    }
-                    model.IRFRecommendations.PrimarySkills = string.Join(';', newList);
-                }
-                if (model.IRFRecommendations.ClientArray != null)
-                {
-                    model.IRFRecommendations.Clients = string.Join(',', model.IRFRecommendations.ClientArray);
-                }
 
                 model.ClonableTemplateQuestionsCollection = (IList<ClonableTemplateQuestion>)(await _irfRepository.GetQuestionsForAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value));
                 var result = await _clonableSkillChannelTemplateRepository.CreateClonableSkillChannel(model);
@@ -298,18 +297,21 @@ namespace Risebird.Business
                 //var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
                 model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
 
-
-                model.IRFRecommendations.CategoryList = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
-                if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+                if(model != null && model.IRFRecommendations != null)
                 {
-                    model.IRFRecommendations.AssessmentGroupsList = new SelectList(await _skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value), "id", "AssessmentGroup");
-                    //model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt32(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
+                    model.IRFRecommendations.CategoryList = new SelectList(await _skillService.GetAssessmentGroupCategory(), "id", "Name");
+                    if (model.IRFRecommendations.CategoryId != null && model.IRFRecommendations.CategoryId.HasValue)
+                    {
+                        model.IRFRecommendations.AssessmentGroupsList = new SelectList(await _skillService.GetAssessmentGroupsByCategory(model.IRFRecommendations.CategoryId.Value), "id", "AssessmentGroup");
+                        //model.IRFRecommendations.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupsList?.Where(x => Convert.ToInt32(x.Value) == model.IRFRecommendations.AssessmentGroupId.Value).FirstOrDefault().Text;
+                    }
                 }
+                
 
-                SetSelectListForMultiSelectRecommendationValues(model.IRFRecommendations);
+                //SetSelectListForMultiSelectRecommendationValues(model.IRFRecommendations);
 
                 IEnumerable<ClonableTemplateQuestion> transQuestions = new List<ClonableTemplateQuestion>();
-                transQuestions = await _irfRepository.GetQuestionsForAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
+                transQuestions = await _irfRepository.GetQuestionsForAssessmentGroup(Convert.ToInt16(model.AssessmentGroupId));
                 //transQuestions = (IEnumerable<ClonableTemplateQuestion>)transQuestions?.Select(x => ( x.Question, x.SkillId, x.SkillName, x.IsSelected ))?.Distinct();
                 foreach (var question in templateQuestions)
                 {
@@ -317,10 +319,12 @@ namespace Risebird.Business
                 }
 
                 IEnumerable<TransInterviewer> transInterviewer = new List<TransInterviewer>();
-                if (model.IRFRecommendations != null && model.IRFRecommendations.AssessmentGroupId > 0)
-                {
-                    transInterviewer = _irfRepository.GetInterviewersByAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
-                }
+                //if (model.IRFRecommendations != null && model.IRFRecommendations.AssessmentGroupId > 0)
+                //{
+                //    transInterviewer = _irfRepository.GetInterviewersByAssessmentGroup(model.IRFRecommendations.AssessmentGroupId.Value);
+                //}
+                transInterviewer = _irfRepository.GetInterviewersByAssessmentGroup(Convert.ToInt16(model.AssessmentGroupId));
+
                 var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
                 foreach (var interviewer in templateInterviewers)
                 {
@@ -344,6 +348,46 @@ namespace Risebird.Business
 
                 return model;
 
+                //var details = await _clonableSkillChannelTemplateRepository.GetClonableSkillChannelDetails(id);
+
+                //model.MeetingPlatform = details.MeetingPlatform;
+                //model.IsAadhaarVerificationRequired = details.IsAadhaarVerificationRequired;
+                //model.Heuristicsscore = details.Heuristicsscore;
+                //model.CompanyType = details.CompanyType;
+                ////if(details.CompanyType == "2")//Service
+                ////{
+                ////    model.CompanyType = details.CompanyType;
+
+                ////}
+                ////else
+                ////{
+                ////    model.CompanyType = "2";
+
+                ////}
+                //model.JobCountry = details.JobCountry;
+                //model.AssessmentGroupId = details.AssessmentGroupId;
+                //model.AssessmentGroupName = details.AssessmentGroupName;
+
+                //var transTechSkills = _irfRepository.GetClonableTechSkillsbyId(id);
+                ////model.IRFRecommendations = await _irfRepository.GetIRFRecommendation(id);
+
+                ////if (model.IRFRecommendations != null)
+                ////{
+                ////    model.AssessmentGroupId = model.IRFRecommendations.AssessmentGroupId?.ToString();
+                ////    model.AssessmentGroupName = model.IRFRecommendations.AssessmentGroupName;
+                ////    //model.JobCountry = model.IRFRecommendations.CountryType?.ToString();
+                ////    //model.JobLevel = (int)JobLevels.SE;
+                ////    //model.CompanyType = model.IRFRecommendations.CompanyType?.ToString();
+                ////    //model.Heuristicsscore = model.IRFRecommendations.CompetencyLevelId.HasValue ? model.IRFRecommendations.CompetencyLevelId.Value : model.Heuristicsscore;
+                ////}
+
+                ////var templateInterviewers = _irfRepository.GetClonableIRFTransInterviewer(id);
+
+                //model.InterviewerCollection = (IList<TransInterviewer>)_irfRepository.GetClonableIRFTransInterviewer(id);
+                //model.SkillCollection = (IList<TransSkill>)(transTechSkills);
+
+                //await PopulateDropDownsForSkillChannel(model, clientEmailId);
+
             }
 
             catch (Exception e)
@@ -361,41 +405,42 @@ namespace Risebird.Business
                 if (model.IRFRecommendations != null)
                 {
                     model.IRFRecommendations.Status = model.IRFRecommendations.StatusRadioValue == "true" ? true : false;
+                    if (model.IRFRecommendations.SeniorityLevelArray != null)
+                    {
+                        model.IRFRecommendations.SeniorityLevelId = string.Join(',', model.IRFRecommendations.SeniorityLevelArray);
+                    }
+                    if (model.IRFRecommendations.DifficultyLevelArray != null)
+                    {
+                        model.IRFRecommendations.DifficultyLevel = string.Join(',', model.IRFRecommendations.DifficultyLevelArray);
+                    }
+                    if (model.IRFRecommendations.EmploymentTypeArray != null)
+                    {
+                        model.IRFRecommendations.EmploymentType = string.Join(',', model.IRFRecommendations.EmploymentTypeArray);
+                    }
+                    if (model.IRFRecommendations.PrimarySkills != null)
+                    {
+                        var primarySkillArray = model.IRFRecommendations.PrimarySkills.Split(';');//?.ToList().ForEach(x => { x = x.Trim()}) ;
+                        var newList = new List<string>();
+
+                        foreach (var skill in primarySkillArray)
+                        {
+                            var trimmedSkill = skill.Trim();
+                            if (trimmedSkill != string.Empty)
+                            {
+                                newList.Add(trimmedSkill);
+                            }
+                        }
+                        model.IRFRecommendations.PrimarySkills = string.Join(';', newList);
+                    }
+                    if (model.IRFRecommendations.ClientArray != null)
+                    {
+                        model.IRFRecommendations.Clients = string.Join(',', model.IRFRecommendations.ClientArray);
+                    }
                 }
                 model.InterviewerCollection = model.InterviewerCollection?.Where(x => x.IsActive)?.ToList();
                 model.ClonableTemplateQuestionsCollection = model.ClonableTemplateQuestionsCollection?.Where(x => x.IsSelected)?.ToList();
 
-                if (model.IRFRecommendations.SeniorityLevelArray != null)
-                {
-                    model.IRFRecommendations.SeniorityLevelId = string.Join(',', model.IRFRecommendations.SeniorityLevelArray);
-                }
-                if (model.IRFRecommendations.DifficultyLevelArray != null)
-                {
-                    model.IRFRecommendations.DifficultyLevel = string.Join(',', model.IRFRecommendations.DifficultyLevelArray);
-                }
-                if (model.IRFRecommendations.EmploymentTypeArray != null)
-                {
-                    model.IRFRecommendations.EmploymentType = string.Join(',', model.IRFRecommendations.EmploymentTypeArray);
-                }
-                if (model.IRFRecommendations.PrimarySkills != null)
-                {
-                    var primarySkillArray = model.IRFRecommendations.PrimarySkills.Split(';');//?.ToList().ForEach(x => { x = x.Trim()}) ;
-                    var newList = new List<string>();
-
-                    foreach (var skill in primarySkillArray)
-                    {
-                        var trimmedSkill = skill.Trim();
-                        if (trimmedSkill != string.Empty)
-                        {
-                            newList.Add(trimmedSkill);
-                        }
-                    }
-                    model.IRFRecommendations.PrimarySkills = string.Join(';', newList);
-                }
-                if (model.IRFRecommendations.ClientArray != null)
-                {
-                    model.IRFRecommendations.Clients = string.Join(',', model.IRFRecommendations.ClientArray);
-                }
+                
                 var result = await _clonableSkillChannelTemplateRepository.UpdateClonableSkillChannel(model);
                 if (result)
                 {

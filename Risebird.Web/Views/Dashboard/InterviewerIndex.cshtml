@@ -906,13 +906,13 @@
                 GenerateclientpaiChart(data.clientRating);
             }
         });
-        // $.ajax({
-        //     url: '/DashBoard/InterviewerPendingPaymentDetails',
-        //     type: 'POST',
-        //     success: function (data) {
-        //         $("#divPendingPayment").text(data.payment + " / " + data.paidpayment);
-        //     }
-        // });
+        $.ajax({
+            url: '/DashBoard/InterviewerPendingPaymentDetails',
+            type: 'POST',
+            success: function (data) {
+                $("#divPendingPayment").text(data.payment + " / " + data.paidpayment);
+            }
+        });
     });
 </script>
 @if (!Model.IsResumePresent)
