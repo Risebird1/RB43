@@ -2972,17 +2972,18 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-              //  var result = await _dashboardService.GetFutureDateInterviewSchedule(InterviewId);
+                //  var result = await _dashboardService.GetFutureDateInterviewSchedule(InterviewId);
                 var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(InterviewId);
-               
-                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId,1);
 
-                if (data!=null)
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId, 1);
+
+                if (data != null)
                 {
 
                     foreach (var item in data)
                     {
-                        if (item.interviewDate>DateTime.Now) {
+                        if (item.interviewDate > DateTime.Now)
+                        {
                             List<string> interviewers = new List<string>();
                             if (!string.IsNullOrEmpty(item.interviewer))
                             {
@@ -3014,11 +3015,11 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                
-          
-                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId,0,2);
 
-                if (data==null ||data.Count==0)
+
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, 0, 2);
+
+                if (data == null || data.Count == 0)
                 {
                     return Json("Candidate " + "(" + CandidateEmail + ")" + " for " + IRFId + " has been undo as cold successfully");
                 }
@@ -3220,14 +3221,15 @@ namespace Risebird.Web.Controllers
                         }
                         if (type == 0)
                         {
-                            modelList = modelList.Where(x=>!x.IsPaused).ToList();
+                            modelList = modelList.Where(x => !x.IsPaused).ToList();
                             ViewBag.ColdCandidateValue = 0;
                         }
-                        else {
+                        else
+                        {
                             modelList = modelList.Where(x => x.IsPaused).ToList();
                             ViewBag.ColdCandidateValue = 1;
                         }
-                       // modelList = modelList.Select(x => { x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; return x; }).ToList();
+                        // modelList = modelList.Select(x => { x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; return x; }).ToList();
                         return View(modelList);
                     }
                     else
@@ -3252,10 +3254,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                        var data = await _dashboardService.GetColdCandidatesByClient(Email);
-
-                        return View("_GetPotentialColdCandidatesByClient", data.ToList());
-                   
+                var data = await _dashboardService.GetColdCandidatesByClient(Email);
+                return View("_GetPotentialColdCandidatesByClient", data.ToList());
             }
             catch (Exception ex)
             {
