@@ -88,200 +88,208 @@
                                                             }
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    @if(Model.IRFRecommendations != null)
+                                                    {
+                                                        <div class="col-md-6">
 
-                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Recommendation Details">Recommendation Details</label>
+                                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Recommendation Details">Recommendation Details</label>
 
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <label class="radio-inline">
-                                                            @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"@*, @checked = true*@ }) Active<br />
-                                                        </label>
-                                                        <label class="radio-inline">
-                                                            @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
-                                                        </label>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <label class="radio-inline">
+                                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "true", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;"@*, @checked = true*@ }) Active<br />
+                                                                    </label>
+                                                                    <label class="radio-inline">
+                                                                        @Html.RadioButtonFor(model => model.IRFRecommendations.StatusRadioValue, "false", new { @onchange = "RecommendationStatusChanged(this.value)", @style = "position:relative;top:3px;margin:0px 5px;" }) Inactive<br />
+                                                                    </label>
 
-                                                    </div>
-                                                </div>
-
-
+                                                                </div>
+                                                            </div>
 
 
-                                                     @*   <div class="form-group">
-                                                            @Html.CheckBoxFor(model => model.IsAadhaarVerificationRequired) @Html.LabelFor(model => model.IsAadhaarVerificationRequired)
+
+
+                                                            @*   <div class="form-group">
+                                                        @Html.CheckBoxFor(model => model.IsAadhaarVerificationRequired) @Html.LabelFor(model => model.IsAadhaarVerificationRequired)
                                                         </div>*@
-                                                    </div>
+                                                        </div>
+                                                    }
+                                                    
                                                 </div>
+                                                @if(Model.IRFRecommendations != null)
+                                                {
+                                                    <div id="recommendationFields">
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 pr-1">
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
+                                                                    </div>
+
+                                                                    @if (Model.IRFRecommendations.AssessmentGroupsList != null && Model.IRFRecommendations.AssessmentGroupsList.Count() > 0)
+                                                                    {
+                                                                        @Html.DropDownListFor(model => model.IRFRecommendations.AssessmentGroupId, Model.IRFRecommendations.AssessmentGroupsList, new { @class = "select-css form-control text-box single-line", @disabled = "disabled" })
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.EditorFor(m => m.IRFRecommendations.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
+
+                                                                    }
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
+
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 pr-1">
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
+                                                                    </div>
+                                                                    @if (Model.IRFRecommendations.CategoryId.HasValue)
+                                                                    {
+                                                                        @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line", @disabled = "disabled" @*, @onchange = "AssessmentGroupCategoryChanged(this.value)"*@})
+                                                                        @*(SelectList)ViewBag.CategoryList*@
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Category has not been specified for this Assessment Group</label>
+
+                                                                    }
+
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 pr-1">
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
+                                                                    </div>
+
+                                                                    @Html.DropDownListFor(model => model.IRFRecommendations.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "select-css form-control text-box single-line" })
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.CountryType, "", new { @id = "error_CountryType", @class = "text-danger" })
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 pr-1">
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style="padding-right:0px;" })<span class="red">*</span>
+                                                                    </div>
+                                                                    @Html.DropDownListFor(model => model.IRFRecommendations.CompanyType, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "select-css form-control text-box single-line" })
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 pr-1">
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
+                                                                    </div>
+
+                                                                    <select class="form-control" asp-for="IRFRecommendations.SeniorityLevelArray" multiple">
+                                                                        @foreach (var item in Html.GetEnumSelectList<JobLevels>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 pr-1">
+                                                                <div class="form-group">
+
+
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
+                                                                    </div>
+
+                                                                    <select class="form-control" asp-for="IRFRecommendations.DifficultyLevelArray" multiple">
+                                                                        @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.DifficultyLevel, "", new { @class = "text-danger" })
+
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+
+                                                            <div class="col-md-6 col-sm-6 pr-1">
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
+                                                                    </div>
+
+                                                                    <select class="form-control" asp-for="IRFRecommendations.EmploymentTypeArray" multiple">
+                                                                        @foreach (var item in Html.GetEnumSelectList<EmploymentTypeOptions>())
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6 pr-1">
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.PerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-bottom : -5px;padding-right:0px;" })<span class="red">*</span>
+                                                                    </div>
+                                                                    @Html.EditorFor(model => model.IRFRecommendations.PerHourRate, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
+
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.PerHourRate, "", new { @id = "error_PerHourRate", @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6 col-sm-6 pr-1">
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
+                                                                    </div>
+
+                                                                    @Html.TextBoxFor(model => model.IRFRecommendations.PrimarySkills, new { @class = "form-control text-box single-line", @placeholder = "Use ';' to distinguish separate skills. Each skill should be a maximum 20 character long.", @onblur = "validatePrimarySkill(this.value)" })
+
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.PrimarySkills, "", new { @id = "error_PrimarySkills", @class = "text-danger" })
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <div class="form-group client-dropdown">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.IRFRecommendations.Clients, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })@*<span class="red">*</span>*@
+                                                                    </div>
+
+                                                                    <select style="height:30px;display:inline-block;margin-top:6px;width:100%;" class="form-control" asp-for="IRFRecommendations.ClientArray" placeholder="Tag Client(s) you recommend this Template to." multiple">
+                                                                        @foreach (var item in Model.IRFRecommendations.ClientList)
+                                                                        {
+                                                                            <option value="@item.Value">@item.Text</option>
+                                                                        }
+                                                                    </select>
+
+                                                                    @Html.ValidationMessageFor(model => model.IRFRecommendations.Clients, "", new { @id = "error_Clients", @class = "text-danger" })
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.IRFRecommendations.id)
+                                                    </div>
+                                                }
                                                 
-                                                <div id="recommendationFields">
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6 pr-1">
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.AssessmentGroupId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
-                                                                </div>
-
-                                                                @if (Model.IRFRecommendations.AssessmentGroupsList != null && Model.IRFRecommendations.AssessmentGroupsList.Count() > 0)
-                                                                {
-                                                                    @Html.DropDownListFor(model => model.IRFRecommendations.AssessmentGroupId, Model.IRFRecommendations.AssessmentGroupsList, new { @class = "select-css form-control text-box single-line", @disabled = "disabled" })
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    @Html.EditorFor(m => m.IRFRecommendations.AssessmentGroupName, new { htmlAttributes = new { @class = "form-control text-box single-line", @readonly = "readonly" } })
-
-                                                                }
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
-
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 pr-1">
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.CategoryId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
-                                                                </div>
-                                                                @if (Model.IRFRecommendations.CategoryId.HasValue)
-                                                                {
-                                                                    @Html.DropDownListFor(model => model.IRFRecommendations.CategoryId, Model.IRFRecommendations.CategoryList, "Select", new { @class = "select-css form-control text-box single-line", @disabled = "disabled" @*, @onchange = "AssessmentGroupCategoryChanged(this.value)"*@})@*(SelectList)ViewBag.CategoryList*@
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Category has not been specified for this Assessment Group</label>
-
-                                                                }
-
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.CategoryId, "", new { @class = "text-danger" })
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6 pr-1">
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.CountryType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
-                                                                </div>
-
-                                                                @Html.DropDownListFor(model => model.IRFRecommendations.CountryType, Html.GetEnumSelectList<CountryTypeEnum>(), "Select", new { @class = "select-css form-control text-box single-line" })
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.CountryType, "", new { @id = "error_CountryType", @class = "text-danger" })
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 pr-1">
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style="padding-right:0px;" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.DropDownListFor(model => model.IRFRecommendations.CompanyType, Html.GetEnumSelectList<CompanyType>(), "Select", new { @class = "select-css form-control text-box single-line" })
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.CompanyType, "", new { @id = "error_CompanyType", @class = "text-danger" })
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6 pr-1">
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.SeniorityLevelId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
-                                                                </div>
-
-                                                                <select class="form-control" asp-for="IRFRecommendations.SeniorityLevelArray" multiple">
-                                                                    @foreach (var item in Html.GetEnumSelectList<JobLevels>())
-                                                                    {
-                                                                        <option value="@item.Value">@item.Text</option>
-                                                                    }
-                                                                </select>
-
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 pr-1">
-                                                            <div class="form-group">
-
-
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.DifficultyLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
-                                                                </div>
-
-                                                                <select class="form-control" asp-for="IRFRecommendations.DifficultyLevelArray" multiple">
-                                                                    @foreach (var item in Html.GetEnumSelectList<Heuristicsscorelevel>())
-                                                                    {
-                                                                        <option value="@item.Value">@item.Text</option>
-                                                                    }
-                                                                </select>
-
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.DifficultyLevel, "", new { @class = "text-danger" })
-
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-
-                                                        <div class="col-md-6 col-sm-6 pr-1">
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.EmploymentType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
-                                                                </div>
-
-                                                                <select class="form-control" asp-for="IRFRecommendations.EmploymentTypeArray" multiple">
-                                                                    @foreach (var item in Html.GetEnumSelectList<EmploymentTypeOptions>())
-                                                                    {
-                                                                        <option value="@item.Value">@item.Text</option>
-                                                                    }
-                                                                </select>
-
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.SeniorityLevelId, "", new { @id = "error_SeniorityLevel", @class = "text-danger" })
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6 pr-1">
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.PerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-bottom : -5px;padding-right:0px;" })<span class="red">*</span>
-                                                                </div>
-                                                                @Html.EditorFor(model => model.IRFRecommendations.PerHourRate, new { htmlAttributes = new { @class = "input-1 form-control text-box single-line" } })
-
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.PerHourRate, "", new { @id = "error_PerHourRate", @class = "text-danger" })
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6 pr-1">
-                                                            <div class="form-group">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })<span class="red">*</span>
-                                                                </div>
-
-                                                                @Html.TextBoxFor(model => model.IRFRecommendations.PrimarySkills, new { @class = "form-control text-box single-line", @placeholder = "Use ';' to distinguish separate skills. Each skill should be a maximum 20 character long.", @onblur = "validatePrimarySkill(this.value)" })
-
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.PrimarySkills, "", new { @id = "error_PrimarySkills", @class = "text-danger" })
-
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <div class="form-group client-dropdown">
-                                                                <div class="mandate">
-                                                                    @Html.LabelFor(model => model.IRFRecommendations.Clients, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="padding-right:0px;" })@*<span class="red">*</span>*@
-                                                                </div>
-
-                                                                <select style="height:30px;display:inline-block;margin-top:6px;width:100%;" class="form-control" asp-for="IRFRecommendations.ClientArray" placeholder="Tag Client(s) you recommend this Template to." multiple">
-                                                                    @foreach (var item in Model.IRFRecommendations.ClientList)
-                                                                    {
-                                                                        <option value="@item.Value">@item.Text</option>
-                                                                    }
-                                                                </select>
-
-                                                                @Html.ValidationMessageFor(model => model.IRFRecommendations.Clients, "", new { @id = "error_Clients", @class = "text-danger" })
-
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.IRFRecommendations.id)
-                                                </div>
 
                                             </div>
                                         </div>
@@ -897,9 +905,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script type="text/javascript">
-    jQuery(document).ready(function () {
+    @* jQuery(document).ready(function () {
         jQuery("#IRFRecommendations_DifficultyLevelArray, #IRFRecommendations_EmploymentTypeArray,  #IRFRecommendations_SeniorityLevelArray, #IRFRecommendations_ClientArray").select2({ multiple: true });
-    });
+    }); *@
 
 </script>
 <script type="text/javascript">
@@ -908,7 +916,7 @@
         isTemplateJoinSelectGenskillsRequired = true;
     }
     $(document).ready(function () {
-        RecommendationStatusChanged(recommendationRadioValue);
+        //RecommendationStatusChanged(recommendationRadioValue);
         $("#btnPrev").click(function () {
 
             var activeTab = $(".active").text();
@@ -965,7 +973,7 @@
             var flag = false;
             var activeTab = $(".active").text();
             if ((activeTab.trim() == "Recommendations")) {
-                flag = checkTabValidation(activeTab);
+                flag = false;//checkTabValidation(activeTab);
                 if (!flag) {
                     document.getElementById("btnPrev").style.display = "block";
                     $(".tab-menu li a").removeClass("active");
@@ -1100,7 +1108,7 @@
         var activeTab = $(".active").text();
         var flag = false;
         if (activeTab.trim() == "Recommendations") {
-            flag = checkTabValidation(activeTab);
+            flag = false;//checkTabValidation(activeTab);
             if (!flag) {
                 $(".tab-menu li a").removeClass("active");
                 $("#r" + newHeader).addClass("active");
@@ -1378,7 +1386,7 @@
 </script>
 
 <script>
-    var recommendationRadioValue = '@Model.IRFRecommendations.StatusRadioValue';
+    @* var recommendationRadioValue = *@ @* '@Model.IRFRecommendations.StatusRadioValue' *@;
     function RecommendationStatusChanged(val) {
         if (val == 'true') {
             document.getElementById("recommendationFields").style.display = "block";
