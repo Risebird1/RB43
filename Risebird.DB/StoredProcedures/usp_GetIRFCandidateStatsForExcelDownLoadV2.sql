@@ -87,15 +87,17 @@ where CandidateLatestStatus in ('PENDING')
 
 
 ----future scheduled
-select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, im.confirmationStatus
+select distinct im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, im.confirmationStatus
 , im.ClientHrContact, im.staffingAgency
-, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate
+, tctv.ResumeLink, CandidateLatestStatus,
+tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate
+, ipr.NickName as InterviewerCodedName
 from @TemporaryCandidateTableVariable tctv
 join InterviewMeetings im on im.id = tctv.InterviewId
 join IRF on IRF.IRFId=im.IRFId 
-
 join UserList ul on ul.EmailId = im.candidateEmail
-
+left join UserList uli on uli.EmailId = im.interviewer
+left join InterviewerProfile ipr on ipr.UserId = uli.id
 where CandidateLatestStatus in ('FUTURESCHEDULE')
 
 ----rescheduled
