@@ -3786,7 +3786,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
                     {
-                        if (await _irfService.PauseIRF(irfId, irfName,emailid))
+                        if (await _irfService.PauseIRF(irfId, irfName, emailid))
                         {
                             TempData["SuccessErrorMessage"] = "IRF has been paused Successfully!";
                             return RedirectToAction("Index");
@@ -9306,6 +9306,49 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var model = new List<CallibrationCallVM>();
                 return View(model);
+            }
+        }
+        [Authorize]
+        public async Task<IActionResult> CalibrationMeetingsDetails(string type)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var model = await _irfService.GetAllCalibrationMeetingsById(emailid);
+                        if (type == "Completed")
+                        {
+                            ViewBag.Type = "Completed";
+                            model = model.Where(x => x.MeetingDate < DateTime.Now).ToList();
+                        }
+                        else
+                        {
+                            ViewBag.Type = "UpComing";
+                            model = model.Where(x => x.MeetingDate >= DateTime.Now).ToList();
+                        }
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
             }
         }
         #endregion
