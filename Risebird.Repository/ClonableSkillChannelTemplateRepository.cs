@@ -123,7 +123,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(templateDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit,item.isEliminationskill);
+                        techSkillDt.Rows.Add(templateDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
                     }
 
                     DataTable interviewerDt = new DataTable();
@@ -370,7 +370,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(templateDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit,item.isEliminationskill);
+                        techSkillDt.Rows.Add(templateDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
                     }
 
                     DataTable interviewerDt = new DataTable();

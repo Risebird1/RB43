@@ -4,7 +4,6 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,7 +33,7 @@ namespace Risebird.MicroService
 
                 var unassignedInterviewMeetings = await _meetingRespository.GetUnassignedOpenInterviews();
 
-                if(unassignedInterviewMeetings != null)
+                if (unassignedInterviewMeetings != null)
                 {
                     var distinctIRF = unassignedInterviewMeetings.Select(x => x.irfIntId).Distinct();
                     foreach (var irf in distinctIRF)
@@ -59,7 +58,7 @@ namespace Risebird.MicroService
 
                     }
                 }
-                
+
                 log.LogInformation($"C# OpenInterviewsNotification executed at: {DateTime.Now}");
             }
             catch (Exception ex)

@@ -5,11 +5,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
@@ -34,7 +30,7 @@ namespace Risebird.CommonHelper
                 {
                     // Add a new worksheet to the package
                     ExcelWorksheet Sheet = package.Workbook.Worksheets.Add("All Candidate Status");
-                    
+
                     //Sheet.Cells
                     Sheet.Cells["A1:S1"].Style.Font.Bold = true;
                     Sheet.Cells["A1:S1"].Style.Font.Size = 12;

@@ -8,7 +8,7 @@ namespace Risebird.CommonHelper.Interface
     {
         void SendTelemetry(string emailId, string requestedUrl);
         //Task FetchTelemetryData();
-        Task<IEnumerable<AppInsightsPageViews>> FetchTelemetryData(); 
-            
+        Task<IEnumerable<AppInsightsPageViews>> FetchTelemetryData();
+
     }
 }

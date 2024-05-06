@@ -354,7 +354,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SupportAdmin" || profileName == "HR" || profileName == "SeniorHR")
                     {
-                        
+
                         var model = (await _mailService.GetInterviewerMailActivityForAvailabilityByIRFId(irfId, agId))?.ToList();
                         ViewBag.Name = !string.IsNullOrEmpty(irfName) ? irfName : agName;
                         return View(model);
@@ -363,7 +363,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                    
+
                 }
                 else
                 {

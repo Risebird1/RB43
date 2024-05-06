@@ -1581,11 +1581,12 @@ input[type=number] {
         border-style: solid;
         border-width: 0 10px 11px 10px;
         border-color: transparent transparent #f5f2f2 transparent;
+
     }
 
 #skill_card .card-footer .dropdown-content::before {
     top: 195px !important;
-    left: 23px;
+    left: 185px;
     border-color: transparent transparent #f5f2f2 transparent !important;
     transform: rotate(180deg) !important;
 }

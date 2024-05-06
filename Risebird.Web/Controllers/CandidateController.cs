@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -17,9 +16,9 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -34,6 +33,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Risebird.Web.Controllers
 {
+
     public class CandidateController : Controller
     {
         private readonly ICandidateService _candidateService;
@@ -4705,7 +4705,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                return Json("This id does not have access!");
+                return Json("Not valid email id!");
             }
         }
 
@@ -4851,7 +4851,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 8].Value = "Client Hr";
                 Sheet.Cells[1, 9].Value = "Skill Channel ID";
                 Sheet.Cells[1, 10].Value = "Interviewer Comment";
-                Sheet.Cells[1, 11].Value = "Video Link";
+                Sheet.Cells[1, 11].Value = "Executive URL";
                 int j = 11;
                 foreach (var item in skillslist)
                 {
@@ -4876,24 +4876,19 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 8].Value = item.ClientHrContact;
                         Sheet.Cells[i, 9].Value = item.IRFId;
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + id + "&isClient=true";
+                        try
                         {
-                            try
-                            {
-                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 11].Value = "Video Link";
-                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 11].Value = "No Video";
-                            }
+                            Sheet.Cells[i, 11].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, 11].Value = "Executive Report";
+                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
-                        else
+                        catch (Exception)
                         {
-                            Sheet.Cells[i, 11].Value = "No Video";
+                            Sheet.Cells[i, 11].Value = "No Report";
                         }
+                        
                         j = 11;
                         var totalskillscore = 0.0;
                         var totalskillscount = 0;
@@ -5069,6 +5064,7 @@ namespace Risebird.Web.Controllers
                     return x;
                 }).ToList();
                 return PartialView("_GetColdCandidatePartial", data);
+
             }
 
             catch (Exception ex)
@@ -5537,7 +5533,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetCandidateStatusListByClient(int irfId, int candidateId, string irfName, string candidateName)
         {
@@ -5564,7 +5560,35 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
+        public async Task<IActionResult> ReScheduleMeetingsByClient(string emailid)
+        {
+            try
+            {
+                int ClientId = 0;
 
+                var client = await _userRepository.GetClientUserDetails(emailid);
+                ClientId = client.ClientId;
+                ViewBag.ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
+
+                var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                meetings = meetings.Select(x =>
+                {
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+
+                DateTime StartDate = DateTime.Now.AddMonths(-2);
+                meetings = meetings.Where(t => t.dtCreatedOn >= StartDate).ToList();
+
+                return View("_ReScheduleMeetingsByClient", meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
 
     }
 }

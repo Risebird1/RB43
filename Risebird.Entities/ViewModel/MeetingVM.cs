@@ -365,6 +365,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsPaused {  get; set; }
         public bool IsQC {  get; set; }
         public string CodeSnippet {  get; set; }
+        public string LatestComment {  get; set; }
     }
 
     public class VedioComments

@@ -47,6 +47,7 @@ FROM InterviewMeetings im
 JOIN IRF ON im.IRFId = IRF.IRFId where im.candidateEmail =CTE.candidateEmail and im.IRFId=CTE.IRFId order by im.interviewDate desc) as imid
 ,cl.Name as ClientName,CountTable.MailCount
 ,cci.IsColdCandidate,cci.ColdMarkedBY,cci.ColdMarkedDate,ca.id as CandidateId,ulir.EmailId as ChannelOwner,ul.MobileNumber
+,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
 join UserList ul on ul.id = cm.UserId 
@@ -57,7 +58,8 @@ join Client cl on cl.id=IRF.ClientId
 join TransClientUser tcu on IRF.id=tcu.IRFId
 join UserList ulc on tcu.ClientUserId=ulc.id 
 OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(IRF.id,CTE.candidateEmail) as CountTable
+outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ca.IRFId and CandidateId = cm.id  order by cs.Date desc) as LastCandidateStatus
 where (cci.IsColdCandidate is null or IsColdCandidate=0) and ulc.EmailId=@Email
-order by interviewDate desc   
-END  
+order by interviewDate desc
+End  
 GO

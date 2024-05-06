@@ -1675,8 +1675,8 @@ namespace Risebird.Repository
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@FKCandidateId", CandidateId);
-                dynamicParam.Add("@ColdMarkedBY",Email);
-                dynamicParam.Add("@ColdMarkedDate",DateTime.Now);
+                dynamicParam.Add("@ColdMarkedBY", Email);
+                dynamicParam.Add("@ColdMarkedDate", DateTime.Now);
                 dynamicParam.Add("@InterviewId", InterviewId);
                 dynamicParam.Add("@type",type);
                 dynamicParam.Add("@Currentdate",DateTime.Now);

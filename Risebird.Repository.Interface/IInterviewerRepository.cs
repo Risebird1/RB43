@@ -103,9 +103,9 @@ namespace Risebird.Repository.Interface
         Task<bool> AddSuspiciousType(SuspiciousInterviewerVM model);
         Task<bool> SaveInterviewerEmploymentVerification(InterviewerProfileVM _interviewer);
         Task<bool> UpdateVideoConfirmationStatus(int status, string Emailid);
-        Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid,string IrfId);
-        Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid,string IrfId);
-        Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type,string Irfid);
+        Task<InterviewerInsightsVM> GetInterviewerInsights(string Emailid, string IrfId);
+        Task<IEnumerable<TransInterviewersReliabilityScoresVm>> GetReliabilityScoreDetails(string Emailid, string IrfId);
+        Task<IEnumerable<InterviewerInsightsMarkersDetailsVM>> GetInterviewerInsightsMarkersDetails(string Emailid, string type, string Irfid);
         Task<IEnumerable<InterviewerRedmarkers>> FecthUpcomingInterviewsRedMarkers();
         Task<bool> updateRedmarkerAcknowledge(string uniqueid);
         Task<bool> UpdateVideoKYCDetails(string videolink, string Emailid);

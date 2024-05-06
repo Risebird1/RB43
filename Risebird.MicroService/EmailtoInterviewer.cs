@@ -4,14 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.ViewModel;
-using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.MicroService
 {

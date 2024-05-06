@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;

@@ -123,7 +123,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await _templateRespository.DeleteClonableSkillChannel(ClonableSkillChannelId, ModifyedBy,action);
+                return await _templateRespository.DeleteClonableSkillChannel(ClonableSkillChannelId, ModifyedBy, action);
             }
 
             catch (Exception e)

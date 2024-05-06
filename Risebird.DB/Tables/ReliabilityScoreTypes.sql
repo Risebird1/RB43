@@ -1,6 +1,8 @@
+/****** Object:  Table [dbo].[Account]    Script Date: 04-12-2019 6.40.11 PM ******/
 IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
 WHERE TABLE_NAME = N'ReliabilityScoreTypes')
 BEGIN  
+
 CREATE TABLE [dbo].[ReliabilityScoreTypes](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](max) NULL,
@@ -14,3 +16,7 @@ CREATE TABLE [dbo].[ReliabilityScoreTypes](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 End
 GO
+
+
+
+

@@ -50,9 +50,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Unethical Practices")]
         public string UnethicalPractices { get; set; }
         [Display(Name = "Poor Communication Skills")]
-        public string PoorCommunicationSkills { get; set;}
-       [Display(Name = "Weak Infrastructure")]
-       public string WeakInfrastructure { get; set; }
+        public string PoorCommunicationSkills { get; set; }
+        [Display(Name = "Weak Infrastructure")]
+        public string WeakInfrastructure { get; set; }
 
         [Display(Name = "Time Management ")]
         public string TimeManagement { get; set; }
@@ -60,9 +60,9 @@ namespace Risebird.Entities.ViewModel
         public int? InterviewStatus { get; set; }
         public string intervieweStatusStatDesc { get; set; }
         public string candidateName { get; set; }
-        public int irfIntId {  get; set; }
-        public int InterviewId {  get; set; }
-        public bool RedoInterview {  get; set; }
+        public int irfIntId { get; set; }
+        public int InterviewId { get; set; }
+        public bool RedoInterview { get; set; }
     }
     public class SurveyCandidateInterviewer
     {

@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -911,7 +910,7 @@ namespace Risebird.Web.Controllers
                 x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                 return x;
             }).ToList();
-            
+
             ViewBag.IRFId = "0";
             return View("CandidateFeedBack", modelData);
         }

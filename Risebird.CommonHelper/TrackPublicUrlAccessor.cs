@@ -1,23 +1,14 @@
-﻿
-using Azure.Core;
-using Azure;
-using Azure.Identity;
-using Azure.Monitor.Query;
-using Azure.Monitor.Query.Models;
-using Google.Apis.Auth.OAuth2;
-using Microsoft.ApplicationInsights;
+﻿using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.Azure.ApplicationInsights.Query;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Twilio.Base;
-using Microsoft.Azure.ApplicationInsights.Query;
-using Risebird.Entities.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
@@ -84,7 +75,7 @@ namespace Risebird.CommonHelper
                     int i = 0;
                     foreach (var row in response.Body.Results)
                     {
-                        if(pageViewsDetails == null || pageViewsDetails.Count() < 1000)
+                        if (pageViewsDetails == null || pageViewsDetails.Count() < 1000)
                         {
                             var obj = new AppInsightsPageViews();
                             if (row["timestamp"] != null)
@@ -124,11 +115,11 @@ namespace Risebird.CommonHelper
                             {
                                 obj.success = Convert.ToBoolean(row["success"]);
                             }
-                            if(obj!=null)
+                            if (obj != null)
                             {
                                 //if(!pageViewsDetails.Any(x=>x.timestamp == obj.timestamp && x.name ==obj.name && x.user_AuthenticatedId == obj.user_AuthenticatedId && x.url == obj.url && x.duration == obj.duration && x.client_City == obj.client_City && x.client_IP ==obj.client_IP))
                                 //{
-                                   
+
                                 //    i++;
 
                                 //}
@@ -139,7 +130,7 @@ namespace Risebird.CommonHelper
                         }
 
                     }
-                        
+
                 }
 
                 return pageViewsDetails;

@@ -7,8 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 //using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
-using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -22,8 +20,6 @@ using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-using static iTextSharp.text.pdf.AcroFields;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -2945,23 +2941,12 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var data = await _dashboardService.GetColdCandidatesList(ColdCandidateValue);
-                        data = data.Select(x =>
-                        {
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
-                        ViewBag.ColdCandidateValue = ColdCandidateValue;
-                        //if (ColdCandidateValue == 1)
+                        //data = data.Select(x =>
                         //{
-                        // data= data.Where(x => x.IsColdCandidate == true).ToList();
-                        //    ViewBag.ColdCandidateValue = 1;
-
-                        //}
-                        //else {
-                        //    data = data.Where(x => x.IsColdCandidate != true).ToList();
-                        //    ViewBag.ColdCandidateValue = 0;
-                        //}
-
+                        //    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                        //    return x;
+                        //}).ToList();
+                        ViewBag.ColdCandidateValue = ColdCandidateValue;
                         return View(data);
                     }
                     else
@@ -3262,18 +3247,14 @@ namespace Risebird.Web.Controllers
             }
         }
         [AllowAnonymous]
-        public async Task<IActionResult> GetColdCandidatesByClient(string Email)
+        [HttpGet]
+        public async Task<IActionResult> GetPotentialColdCandidatesByClient(string Email)
         {
             try
             {
                         var data = await _dashboardService.GetColdCandidatesByClient(Email);
-                        data = data.Select(x =>
-                        {
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
 
-                        return View(data);
+                        return View("_GetPotentialColdCandidatesByClient", data.ToList());
                    
             }
             catch (Exception ex)
