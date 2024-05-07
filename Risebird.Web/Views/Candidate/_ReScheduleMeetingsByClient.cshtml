@@ -65,7 +65,9 @@
                                                             <span class="call-area">
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                 {
-                                                                    <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="15" height="15" /></span>
+                                                                    @* <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="15" height="15" /></span> *@
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span>@item.MobileNumber</span>
+                                                                
                                                                 }
                                                             </span>
                                                             @item.MobileNumber
@@ -245,10 +247,10 @@ else
                                                             <span class="call-area">
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                 {
-                                                                    <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="17" height="17" /></span>
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span>@item.MobileNumber</span>
                                                                 }
                                                             </span>
-                                                            @item.MobileNumber
+                                                           
 
                                                         </div>
                                                         @if (item.candidateEmail != null && item.candidateEmail != "")

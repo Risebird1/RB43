@@ -74,9 +74,11 @@
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
                                                                 <td>
-                                                                    <span aria-label="Click here to call the candidate">
+                                                                    @* <span aria-label="Click here to call the candidate">
                                                                         <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
-                                                                    </span>@item.MobileNumber
+                                                                    </span>@item.MobileNumber *@
+
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn btn-calling shadow btn-xs sharp me-1" style=" cursor:pointer; " title="Click here to call the candidate."><span class="fas fa-phone"></span></span>@item.MobileNumber</span>
                                                                 </td>
                                                             }
                                                             else
