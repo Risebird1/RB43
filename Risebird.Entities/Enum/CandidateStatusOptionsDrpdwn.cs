@@ -75,5 +75,17 @@ namespace Risebird.Entities.Enum
         //[Display(Name = "QC Pending")]
         //[Description("QC Pending")]
         //QCPending=19,
+
+        [Display(Name = "Not Reachable")]
+        [Description("Not Reachable")]
+        NotReachable = 20,
+
+        [Display(Name = "Wrong Number/Out of service")]
+        [Description("Wrong Number/Out of service")]
+        WrongNumber = 21,
+
+        [Display(Name = "Will schedule by themselves")]
+        [Description("Will schedule by themselves")]
+        WillSchedule = 22,
     }
 }

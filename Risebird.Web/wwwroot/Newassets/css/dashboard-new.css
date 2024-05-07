@@ -3545,7 +3545,22 @@ table.interviewertable td.cadLast {
 table.interviewertable td.cadEmail {
     max-width: 170px;
 }
-
+#EditReportModel .btn.btn-sm, .InterviewerComent .talktext .btn.btn-sm {
+    height: 30px;
+    margin: 0px 3px;
+}
+#EditReportModel .note-insert, .InterviewerComent .talktext .note-insert {
+    display: none;
+}
+.InterviewerComent .talktext .panel {
+    margin-bottom: 0px;
+}
+.InterviewerComent .talktext {
+    padding: 0px;
+}
+#EditReportModel .dropdown-toggle data-bs-original-title {
+    width: 80px;
+}
 #interviewerMemberModal {
     z-index: 1000
 }
@@ -3559,7 +3574,7 @@ table.interviewertable td.cadEmail {
     }
 #InterviewerInsightsModel .table > thead > tr > th {
     font-size: 11px!important;
-    padding: 1px 8px;
+    padding: 4px 8px;
     font-weight: normal !important;
     font-family: "Raleway", sans-serif;
 }
@@ -7450,7 +7465,18 @@ input[type=search]:focus {
     background: #f89cbf24;
     color: #94207bbd;
 }
-
+.notreachable {
+    background: #f17f096b;
+    color: #c04e32;
+}
+.wrongnumber {
+    background: #e8f4366b;
+    color: #b6a717;
+}
+.self-schedule {
+    background: #11e6c56b;
+    color: #5b73af;
+}
 .progress {
     background: #8cd38c;
     color: #fff;
