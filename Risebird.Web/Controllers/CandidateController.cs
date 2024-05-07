@@ -5323,6 +5323,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 13].Value = string.Empty;
                         Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
                         Sheet.Cells[i, 15].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
                         //Sheet.Cells[i, 13].Value = item.staffingAgency;
 
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
@@ -5330,7 +5331,7 @@ namespace Risebird.Web.Controllers
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
                         //Sheet.Cells[i, 15].Value = string.Empty;
                         //Sheet.Cells[i, 16].Value = string.Empty;
-                        
+
 
                         i++;
                     }
