@@ -15,7 +15,10 @@
     display: inline-block;
   
 }
-
+a {
+    color: #337ab7;
+    text-decoration:underline!important;
+}
 .reportdropdown-content {
     display: none;
     position: absolute;
@@ -165,7 +168,14 @@
 }
 
 #reportForm h2 {
-    font-size: 1.35rem;
+    /*  font-size: 1.35rem;*/
+    font-size: 21px!important;
+}
+#reportForm h1, #reportForm h2, #reportForm h3, #reportForm h4, #reportForm h5, #reportForm h6 {
+    margin-top: 0 !important;
+    margin-bottom: .5rem !important;
+    font-weight: 500;
+    line-height: 1.2 !important;
 }
 
 #reportForm .question ul li {
@@ -200,7 +210,8 @@
 .interview-status {
     position: absolute;
     top: -34px;
-    font-size: 1.2rem !important;
+    font-size: 19px;
+    line-height: 10px;
 }
     .interview-status span {
         font-size: 15px;
