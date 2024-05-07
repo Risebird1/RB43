@@ -362,6 +362,7 @@ namespace Risebird.Entities.ViewModel
         public int ClientId { get; set; }
 
         [Display(Name = "Rate Candidate's Communication Skills(out of 10)")]
+        [Required(ErrorMessage = "This field is required.")]
         public int CommunicationalProficiency { get; set; }
         public string CodeSnippet { get; set; }
         public bool IsQCDone { get; set; }
