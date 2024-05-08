@@ -38,7 +38,7 @@ declare @IRFId varchar(50)
 declare @CandidateEmail varchar(150)
 select @IRFId=IRFId,@CandidateEmail= candidateEmail from InterviewMeetings where id=@InterviewId 
 update InterviewMeetings set confirmationStatus=2,Cancellationsource='Cold Candidate' where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
-select interviewer,interviewDate from InterviewMeetings where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
+select interviewer,interviewDate,candidateName from InterviewMeetings where IRFID=@IRFId and candidateEmail=@CandidateEmail and Interviewdate>@Currentdate
 End
 END
 else
