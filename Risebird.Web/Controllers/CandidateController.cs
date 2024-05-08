@@ -3514,6 +3514,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
                         candidateTimeline.CandidateId = firstData.CandidateId;
                         candidateTimeline.IsQCDone = firstData.IsQCDone;
+                        candidateTimeline.zoomLink = firstData.zoomLink;
                         //candidateTimeline.staffingAgency = firstData.staffingAgency;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 

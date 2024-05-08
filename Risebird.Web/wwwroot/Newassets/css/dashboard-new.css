@@ -6351,7 +6351,7 @@ input[type=search]:focus {
 }
 .meetingTime [type="datetime-local"] {
     background-color: #ffffff !important;
-    background-size: 2s.5% !important;
+    background-size: 2.5% !important;
     height: 43px;
     border: 1px solid #ddd;
     padding: 10px;
@@ -7060,7 +7060,8 @@ input[type=search]:focus {
 .logo-cm {
     position: relative;
     top: 4px;
-    width: 9%;
+    max-width: 93px;
+    max-height: 40px;
     left: 4px;
 }
 
@@ -7696,7 +7697,7 @@ input[type=search]:focus {
 
 .user-mail {
     position: relative;
-    top: 10px;
+    top: 14px;
 }
 
 .instruction ul {
@@ -8756,7 +8757,7 @@ ul.ks-cboxtags {
 
 .interviewWrapper .button-wrapper {
     margin: 0px auto;
-    width: 420px;
+    width: 600px;
     clear: both;
 }
 
@@ -9793,6 +9794,22 @@ option {
     .show, .footer-nav:hover {
         display: block;
     }
+.client-toll-no {
+    position: absolute;
+    top: 18px;
+    z-index: 1000;
+    font-size:14px;
+    color: #fff;
+    right: 270px;
+}
+.interviewer-toll-no {
+    position: absolute;
+    top: 21px;
+    z-index: 1000;
+    font-size: 14px;
+    color: #fff;
+    right: 370px;
+}
 /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
         .rbpay .sb-scrollbar {
@@ -11275,7 +11292,17 @@ option {
             width: 100% !important;
             margin: 40px auto;
         }
-
+        .interviewWrapper .button-wrapper{
+            width:100%;
+        }
+        .interviewer-toll-no, .client-toll-no{
+            display:none;
+        }
+        .join-button {
+            float: none;
+            clear: both;
+            margin: 0px auto 30px auto;
+        }
         .msgroup, .sub-assmntgrp {
             width: 100% !important;
             margin: 0px auto;
