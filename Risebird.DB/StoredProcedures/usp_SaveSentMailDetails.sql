@@ -22,7 +22,8 @@ CREATE PROCEDURE [dbo].[usp_SaveSentMailDetails]
 @SentBy varchar(100),
 @IRFName varchar(20) = null,
 @AssessmentGroupId int = null,
-@CampaignId int = null
+@CampaignId int = null,
+@IsACS bit = null  
 AS    
 Begin  
 

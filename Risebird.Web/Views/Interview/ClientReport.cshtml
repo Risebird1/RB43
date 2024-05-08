@@ -270,11 +270,11 @@
                                                             {
                                                                 meetingcolor = "darkorange";
                                                             }
-                                                            <h2 class="interview-status"><span>Interview Status :</span> <strong style="color:@meetingcolor">@interviewtatusvalue</strong></h2>
+                                                            <div class="interview-status"><span>Interview Status :</span> <strong style="color:@meetingcolor">@interviewtatusvalue</strong></div>
                                                         }
                                                         else
                                                         {
-                                                            <h2 class="interview-status"><span>Interview Status :</span> <strong>@meestingstatusvalue</strong></h2>
+                                                            <div class="interview-status"><span>Interview Status :</span> <strong>@meestingstatusvalue</strong></div>
                                                         }
                                                     </div>
                                                 }
@@ -337,7 +337,7 @@
                                                 </div>
                                                 <h5 style="color:#179f24;font-size:15px;">@Model.interviewDate</h5>
 
-                                                <hr />
+                                                <hr style="margin-top:10px;height:0.3px!important;border-bottom:1px #dab3b321 solid" />
 
 
                                                 @if (!string.IsNullOrEmpty(Model.CodeSnippet)) 
@@ -512,10 +512,10 @@
                                                                         @if (Model.InterviewerComment.Length > 440)
                                                                         {
                                                                             <div class="article">
-                                                                                <p style="margin-bottom:0px;">
+                                                                                <p id="int-cmnt" style="margin-bottom:0px;">
                                                                                     @Model.InterviewerComment.Substring(0, 440)
                                                                                 </p>
-                                                                                <p class="moretext_@Model.id moretext">
+                                                                                <p id="read-int-cmnt" class="moretext_@Model.id moretext">
                                                                                     @Model.InterviewerComment.Substring(440, @Model.InterviewerComment.Length - 440)
                                                                                 </p>
                                                                             </div> <a onclick="moreless(@Model.id)" class="moreless-btn" value="Readmore" id="read_@Model.id" href="#">Read more</a>
@@ -523,9 +523,10 @@
                                                                         else
                                                                         {
                                                                             <div class="article">
-                                                                                <p>
+                                                                                <p id="int-cmnt">
                                                                                     @Model.InterviewerComment.Substring(0, @Model.InterviewerComment.Length)
                                                                                 </p>
+                                                                                <p id="read-int-cmnt"></p>
                                                                             </div>
                                                                         }
                                                                     }
@@ -853,9 +854,9 @@
     </div>
 </div>
 
-<div id="EditReportModel" class="modal modal-bg" style="z-index:3;overflow:auto;">
+<div id="EditReportModel" class="modal modal-bg" style="overflow:auto;">
     <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document" style="max-width:750px !important">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:680px !important">
         <div class="modal-content">
             <div class="filheader">
                 <div class="filavatar">
@@ -959,6 +960,9 @@
         }
     }
 
+    $(function () {
+        $('[aria-label="Font Family"]').css('color', 'red')
+    })
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -984,7 +988,10 @@
             document.getElementById("InterviewStatus").disabled = true;
         }
     })
-
+        $(document).ready(function () {
+        document.getElementById("int-cmnt").innerHTML = $('#int-cmnt').text();
+        document.getElementById("read-int-cmnt").innerHTML = $('#read-int-cmnt').text();
+        })
 </script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -1115,6 +1122,9 @@
 <script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
 <script src="~/js/Aadhaar.js?v=2024"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js?v=2024"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script>
     $(function () {
         $(".accordion-content:not(:first-of-type)").css("display", "none");
@@ -1282,6 +1292,13 @@
 
     });
 </script>*@
+  <link href="~/Newassets/css/summernote.min.css" rel="stylesheet" />
+  <script src="~/Newassets/js/summernote.min.js"></script>
+<script>
+             $(document).ready(function() {
+        $('#edinterviewerComment').summernote();
+    });
+    </script>
 
 
 <script>
