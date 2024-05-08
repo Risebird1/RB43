@@ -1,3 +1,4 @@
+using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -3029,6 +3030,11 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
+                if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
+                {
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
+                }
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -3228,6 +3234,8 @@ namespace Risebird.Web.Controllers
                             //    System.IO.File.Delete(outputFileName);
                             //}
                         }
+                        model.InterviewerComment = System.Web.HttpUtility.HtmlEncode(model.InterviewerComment);
+
                         if (await _meetingService.AddInterviewReport(model, emailid))
                         {
                             await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);
@@ -7598,6 +7606,8 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -8234,10 +8244,11 @@ namespace Risebird.Web.Controllers
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
+            comment = System.Web.HttpUtility.HtmlEncode(comment);
             var result = await _meetingService.UpdateInterviewReport(interviewid, comment, email);
             if (result)
             {
-                return Json("Successfully updated.");
+                return Json("Comment has been successfully updated.");
             }
             else
             {

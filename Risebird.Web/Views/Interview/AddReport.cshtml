@@ -341,7 +341,7 @@
                                     <div>
 
                                         <div class="multiple_row">
-                                            <h2 style="margin:0px;font-weight:bold;">Proxy Candidate Reporting <span style="color:#c94319;text-transform:lowercase;font-size:14px;">(this is mandatory field)</span></h2>
+                                            <h2 style="margin:0px;font-weight:bold;font-size: 1.35rem;">Proxy Candidate Reporting <span style="color:#c94319;text-transform:lowercase;font-size:14px;">(this is mandatory field)</span></h2>
                                         </div>
                                         <div class="card-wrap" style="margin-bottom:0px; padding:30px 20px 20px 20px;">
                                             <span class="heading pull-left"><span style="color:red;font-weight:bold;font-size:13px;">*</span> Please select the option  </span>
@@ -449,7 +449,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-12 col-sm-12 pull-left">
-                                                <div>
+                                                <div class="InterviewerComent">
                                                     <div class="p15">
                                                         <div class="form-group" style="margin-bottom:0px;margin-top:10px">
                                                             <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })</strong>
@@ -998,6 +998,8 @@
 
                                             <span>
                                                 <label style="font-size:16px;float: left;line-height: 45px;font-weight: bold;">Communication Skill Score:</label><label for="score" class="pull-left" style="line-height: 47px;">(Score must be between 1 and 10):</label> <input style="width:100px;float:left" asp-for="CommunicationalProficiency" required class="form-control" type="number" min="1" max="10" value="@Model.CommunicationalProficiency"><span style="position: relative;top: 10px;font-size: 17px;font-weight:bold;">/ 10</span>
+                                                @Html.ValidationMessageFor(model => model.CommunicationalProficiency, "", new { @class = "text-danger" })
+
                                             </span>
                                     </div>
                                     </div>
@@ -2382,7 +2384,10 @@
 
 <script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
 <script src="~/js/Aadhaar.js?v=2024"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js?v=2024"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script>
     ; (function () {
 
@@ -2538,9 +2543,22 @@
         }
 
     });
+
 </script>
 <script>
     $('.interviewer select option[value=2]').hide();
 
+</script>
+<link href="~/Newassets/css/summernote.min.css" rel="stylesheet" />
+<script src="~/Newassets/js/summernote.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#InterviewerComment').summernote();
+    });
+
+    $(document).ready(function () {
+        document.getElementById("InterviewerComment").innerHTML = $('#InterviewerComment').text();
+
+    })
 </script>
 @await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
