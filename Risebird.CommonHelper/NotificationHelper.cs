@@ -1261,6 +1261,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                string result = string.Empty;
                 string currentUser = string.Empty;
                 try
                 {
@@ -1279,10 +1280,17 @@ namespace Risebird.CommonHelper
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);
-                if (response.StatusCode != HttpStatusCode.Accepted)
+                if (response.StatusCode == HttpStatusCode.Accepted)
                 {
-                    return "Failed to send mail. Please check all fields and try again.";
-
+                    result = "Mail sent successfully.";
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    result = "Failed to send mail.";
+                }
+                else
+                {
+                    result = "Failed to send mail.";
                 }
                 SentMailDetails obj = new SentMailDetails();
                 IEnumerable<string> values;
@@ -1352,7 +1360,7 @@ namespace Risebird.CommonHelper
                 obj.AssessmentGroupId = assessmentGroupId;
                 obj.CampaignId = campaignId;
                 _ = await _sendGridRepository.SaveSentMailDetails(obj);
-                return "Mail sent successfully.";
+                return result;
             }
             catch (Exception ex)
             {
