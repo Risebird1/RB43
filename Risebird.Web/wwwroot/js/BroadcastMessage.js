@@ -1,4 +1,5 @@
-﻿
+﻿//const { unique } = require("jquery");
+
 $.getScript("https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js");
 
 function closeBroadcastModal() {
@@ -60,7 +61,7 @@ function closeSendmailModal() {
     tinymce.remove('#bcMessage');
     modal.style.display = "none";
 }
-function OpenSendmailModal(interviewId, clienthr, CandidateName, candidateEmail) {
+function OpenSendmailModal(interviewId, clienthr, CandidateName, candidateEmail, Irfid, uniqueid) {
     var modalBct = document.getElementById("SendmailModal");
     modalBct.style.display = "block";
 
@@ -76,6 +77,8 @@ function OpenSendmailModal(interviewId, clienthr, CandidateName, candidateEmail)
     $("#hid_needClearityinterviewId").val(interviewId);
     $("#hid_needClearityclienthr").val(clienthr);
     $("#hid_needClearitycandidateEmail").val(candidateEmail);
+    $("#hid_needClearityirfid").val(Irfid);
+    $("#hid_needClearityuniqueid").val(uniqueid);
     $("#needClearitybcSubject").val("Candidate : " + CandidateName + " : Raise request seeking clarity about the Interview");
     return;
 }
@@ -85,10 +88,12 @@ function SendNeedClearitymail() {
     var interviewId = document.getElementById("hid_needClearityinterviewId").value;
     var clienthr = document.getElementById("hid_needClearityclienthr").value;
     var candidateemail = document.getElementById("hid_needClearitycandidateEmail").value;
+    var Irfid = document.getElementById("hid_needClearityirfid").value;
+    var uniqueid = document.getElementById("hid_needClearityuniqueid").value;
     $.ajax({
         type: "POST",
         url: "/Candidate/NeedClearityMail",
-        data: { 'message': message, 'subject': subject, 'interviewId': interviewId, 'clienthr': clienthr, 'candidateemail': candidateemail },
+        data: { 'message': message, 'subject': subject, 'interviewId': interviewId, 'clienthr': clienthr, 'candidateemail': candidateemail, 'uniqueid': uniqueid, 'Irfid': Irfid },
         success: function (data) {
             swal.fire("Information shared to contact person, HR will Connect you soon.");
             closeSendmailModal();
