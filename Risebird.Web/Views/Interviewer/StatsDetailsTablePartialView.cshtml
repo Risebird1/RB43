@@ -19,7 +19,8 @@
         clientEmailId = ViewBag.ClientEmailId;
     }
 }
-<div id="tableID" class="second" style="overflow-x:scroll; max-height: 450px ">
+<div class="scrollbar" id="style-2">
+<div id="tableID" class="second">
     <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -100,13 +101,13 @@
                         <td>
                             @if (item.InterviewStatus.HasValue && item.InterviewStatus.Value == (int)InterviewStatus.Selected)
                             {
-                                <a target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = true })'>
+                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId=item.interviewId, irfId = item.irfId, IsSelected = true })'>
                                     Report
                                 </a>
                             }
                             else
                             {
-                                <a target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = false })'>
+                                    <a target="_blank" title="Report Link" href='@Url.Action("ClientReport", "Interview", new { interviewId = item.interviewId, irfId = item.irfId, IsSelected = false })'>
                                     Report
                                 </a>
                             }
@@ -146,6 +147,7 @@
 
     </table>
 
+</div>
 </div>
 <script>
     function UpdateTechQCDetails(interviewid, activestatus) {

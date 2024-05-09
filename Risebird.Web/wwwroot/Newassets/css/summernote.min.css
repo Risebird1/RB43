@@ -322,6 +322,7 @@
     .note-editor .note-editing-area {
         position: relative;
         float:left;
+        width:100%;
     }
 
         .note-editor .note-editing-area .note-editable {
