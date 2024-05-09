@@ -114,7 +114,7 @@
                                                                 @if (item.UserPassword != null && item.UserPassword != "")
                                                                 {
                                                                     <span class="secret" id="secret_@item.id" style="top:0px;">********</span>
-                                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)" style="z-index:auto"></span>
                                                                 }
                                                                 else
                                                                 {

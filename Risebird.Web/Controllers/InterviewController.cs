@@ -8248,7 +8248,7 @@ namespace Risebird.Web.Controllers
             var result = await _meetingService.UpdateInterviewReport(interviewid, comment, email);
             if (result)
             {
-                return Json("Comment has been successfully updated.");
+                return Json("Comment successfully updated.");
             }
             else
             {
