@@ -2551,9 +2551,14 @@
 </script>
 <link href="~/Newassets/css/summernote.min.css" rel="stylesheet" />
 <script src="~/Newassets/js/summernote.min.js"></script>
+
 <script>
     $(document).ready(function () {
-        $('#InterviewerComment').summernote();
+        $('#InterviewerComment').summernote({
+            placeholder: 'Type your comment...',
+            tabsize: 2,
+            height: 100
+        });
     });
 
     $(document).ready(function () {

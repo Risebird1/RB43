@@ -3556,7 +3556,7 @@ table.interviewertable td.cadEmail {
     margin-bottom: 0px;
 }
 .InterviewerComent .talktext {
-    padding: 0px;
+    padding: 0px!important;
 }
 #EditReportModel .dropdown-toggle data-bs-original-title {
     width: 80px;
