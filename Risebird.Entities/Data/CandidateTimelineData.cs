@@ -48,5 +48,6 @@ namespace Risebird.Entities.Data
         public bool RedoInterview { get; set; }
         public bool IsColdCandidate { get; set; }
         public bool IsQCDone { get; set; }
+        public string zoomLink { get; set; }
     }
 }
