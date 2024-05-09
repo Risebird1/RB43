@@ -3698,6 +3698,10 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.CallsCount = firstData.CallsCount;
                     candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
                     candidateTimeline.RedoInterview = firstData.RedoInterview;
+                    candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
+                    candidateTimeline.CandidateId = firstData.CandidateId;
+                    candidateTimeline.IsQCDone = firstData.IsQCDone;
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
 
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
@@ -5059,11 +5063,13 @@ namespace Risebird.Web.Controllers
             try
             {
                 var data = await _candidateService.GetColdCandidatesListByClient(emailid);
+                ViewBag.Email = emailid;
                 data = data.Select(x =>
                 {
                     x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                     return x;
                 }).ToList();
+
                 return PartialView("_GetColdCandidatePartial", data);
 
             }
@@ -5568,7 +5574,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 int ClientId = 0;
-
+                ViewBag.ClientEmail = emailid;
                 var client = await _userRepository.GetClientUserDetails(emailid);
                 ClientId = client.ClientId;
                 ViewBag.ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
