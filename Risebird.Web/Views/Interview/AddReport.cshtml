@@ -341,7 +341,7 @@
                                     <div>
 
                                         <div class="multiple_row">
-                                            <h2 style="margin:0px;font-weight:bold;font-size: 1.35rem;">Proxy Candidate Reporting <span style="color:#c94319;text-transform:lowercase;font-size:14px;">(this is mandatory field)</span></h2>
+                                            <h3><span>Proxy Candidate Reporting <font style="color:#c94319;text-transform:lowercase;font-size:14px;">(this is mandatory field)</font></span></h3>
                                         </div>
                                         <div class="card-wrap" style="margin-bottom:0px; padding:30px 20px 20px 20px;">
                                             <span class="heading pull-left"><span style="color:red;font-weight:bold;font-size:13px;">*</span> Please select the option  </span>
@@ -1246,7 +1246,7 @@
                                             <input class="toggle-box" id="identifier-1" type="checkbox">
                                             <label for="identifier-1">
                                                 <div class="multiple_row">
-                                                    <h2>Upload Video & Thumbnail</h2>
+                                                    <h3><span>Upload Video & Thumbnail</span></h3>
                                                 </div>
                                             </label>
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -2551,9 +2551,14 @@
 </script>
 <link href="~/Newassets/css/summernote.min.css" rel="stylesheet" />
 <script src="~/Newassets/js/summernote.min.js"></script>
+
 <script>
     $(document).ready(function () {
-        $('#InterviewerComment').summernote();
+        $('#InterviewerComment').summernote({
+            placeholder: 'Type your comment...',
+            tabsize: 2,
+            height: 100
+        });
     });
 
     $(document).ready(function () {
