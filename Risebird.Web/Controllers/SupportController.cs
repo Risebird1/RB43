@@ -449,7 +449,9 @@ namespace Risebird.Web.Controllers
                     type = "Open";
                 }
                 ViewBag.Type = type;
-                var model = await _supportService.GetRaisedIssueDetails();
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var model = await _supportService.GetRaisedIssueDetails(profileName);
                 if (type == "Open")
                 {
                     model = model.Where(x => x.Status == "Open").ToList();
