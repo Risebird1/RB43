@@ -1,0 +1,1174 @@
+﻿@model Risebird.Entities.ViewModel.SkillChannelCollectiveDetailsVM
+@using Risebird.Entities.Enum;
+
+@Html.HiddenFor(m => m.IRFId)
+@Html.HiddenFor(m => m.type)
+
+<div class="tab-content">
+    @if (Model.type == "completion")
+    {
+        <div role="tabpanel" id="completion">
+            <div>
+                <div class="table-h" id="style-2">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Assigned Tasks</th>
+                                    <th>Count</th>
+                                    <th>Status</th>
+                                    <th>Logs</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Missed Candidates</td>
+                                    <td><span class="count" onclick="TaskCompletionDetailsView('MissedCandidate')">@Model.MissedCandidate</span></td>
+                                    <td>
+                                        <label class="error-badge" for="checkbox_five">
+                                            <label class="error-badge-text" for="checkbox_five">
+                                                Completed
+                                            </label>
+                                            <span class="round">
+                                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
+                                                <label style="visibility:hidden" for="checkbox_five"></label>
+                                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" checked />
+                                                <label for="hidden_fields_five_1"></label>
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'MissedCandidates')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Probable No-show</td>
+                                    <td><span class="count btn-second-modal within-first-modal" onclick="TaskCompletionDetailsView('ProbableNoShow')">@Model.ProbableNoShowCount</span></td>
+                                    <td>
+                                        <span class="inprogress">In Progress</span>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: 2px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            @* <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span> *@
+                                            <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'ProbableNoshow')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-1px;"></i></span>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                      
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                @* <tr>
+                                    <td>Probable Noshow</td>
+                                    <td><span class="count btn-second-modal within-first-modal">0</span></td>
+                                    <td>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                In Progress
+                                            </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
+                                        
+                                        <span class="log-btn" aria-label="Candidate Status" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Candidate Status"><i class='fa fa-history' style="margin-right:5px;"></i>Status History</span>
+                                        </span>
+                                    </td>
+
+                                </tr> *@
+                                <tr>
+                                    <td> Not Processed Resumes</td>
+                                    <td><span class="count" onclick="TaskCompletionDetailsView('NotProcessedResumes')">@Model.NotProcessedResumeCount</span></td>
+                                    <td>
+                                        <label class="error-badge" for="checkbox_two">
+                                            <label class="error-badge-text" for="checkbox_two">
+                                                Completed
+                                            </label>
+                                            <span class="round">
+                                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
+                                                <label style="visibility:hidden" for="checkbox_two"></label>
+                                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_two_1" name="Checkshow" checked/>
+                                                <label for="hidden_fields_two_1"></label>
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'NotProcessedResumes')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                       
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Not scheduled candidates</td>
+                                    <td><span class="count">0</span></td>
+                                    <td>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                In Progress
+                                            </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'NotScheduledCandidates')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                       
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Rescheduled Meetings</td>
+                                    <td><span class="count">0</span></td>
+                                    <td>
+                                        <label class="error-badge" for="checkbox_four">
+                                            <label class="error-badge-text" for="checkbox_four">
+                                                Completed
+                                            </label>
+                                            <span class="round">
+                                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
+                                                <label style="visibility:hidden" for="checkbox_four"></label>
+                                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" checked />
+                                                <label for="hidden_fields_four_1"></label>
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                             
+                                <tr>
+                                    <td>Need clarity</td>
+                                    <td><span class="count" onclick="TaskCompletionDetailsView('NeedClarity')">@Model.NeedClarity</span></td>
+                                    <td>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                In Progress
+                                            </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+                                    <td>Bounced & Dropped</td>
+                                    <td><span class="count">0</span></td>
+                                    <td>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                In Progress
+                                            </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Potential cold candidates</td>
+                                    <td><span class="count">0</span></td>
+                                    <td>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                In Progress
+                                            </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                       
+
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Candidates which are not called</td>
+                                    <td><span class="count">0</span></td>
+                                    <td>
+                                        <label class="error-badge" for="checkbox_nine">
+                                            <label class="error-badge-text" for="checkbox_nine">
+                                                Completed
+                                            </label>
+                                            <span class="round">
+                                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
+                                                <label style="visibility:hidden" for="checkbox_nine"></label>
+                                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_nine_1" name="Checkshow" checked />
+                                                <label for="hidden_fields_nine_1"></label>
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-2px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Cancellation by candidate </td>
+                                    <td><span class="count">0</span></td>
+                                    <td>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                In Progress
+                                            </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Unassigned  </td>
+                                    <td><span class="count">0</span></td>
+                                    <td>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                In Progress
+                                            </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                       
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Late join </td>
+                                    <td><span class="count">0</span></td>
+                                    <td>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                In Progress
+                                            </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Panel interviewer noshow  </td>
+                                    <td><span class="count">0</span></td>
+                                    <td>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                In Progress
+                                            </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.type == "accuracy")
+    {
+        <div role="tabpanel" id="accuracy">
+            <div class="table-h" id="style-2">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Assigned Tasks</th>
+                                <th>Count</th>
+                                <th>Status</th>
+                                <th>Logs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>High selection rate</td>
+                                <td><span class="count" onclick="TaskAccuracyDetailsView('Selection')">@Model.HighSelectCount</span></td>
+                                <td>
+                                    <label class="progress-badge">
+                                        <label class="error-badge-text">
+                                            In Progress
+                                        </label>
+                                        <span class="round">
+                                            <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'HighSelectionRate')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                   
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>High rejection rate</td>
+                                <td><span class="count" onclick="TaskAccuracyDetailsView('Rejection')">@Model.HighRejectCount</span></td>
+                                <td>
+                                    <label class="progress-badge">
+                                        <label class="error-badge-text">
+                                            In Progress
+                                        </label>
+                                        <span class="round">
+                                            <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'HighRejectionRate')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                   
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Potential risk by candidate</td>
+                                <td><span class="count" onclick="TaskAccuracyDetailsView('NegativeCandidate')">@Model.HighNegCandidateRating</span></td>
+                                <td>
+                                    <label class="error-badge" for="checkbox_sixthteen">
+                                        <label class="error-badge-text" for="checkbox_sixthteen">
+                                            Completed
+                                        </label>
+                                        <span class="round">
+                                            <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_sixthteen" name="question1" data-trigger="hidden_fields_sixthteen" />
+                                            <label style="visibility:hidden" for="checkbox_sixthteen"></label>
+                                            <input type="checkbox" class="coupon_question" disabled id="hidden_fields_sixthteen_1" name="Checkshow" checked />
+                                            <label for="hidden_fields_sixthteen_1"></label>
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'PotentialRiskByCandidate')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                   
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Potential risk by client </td>
+                                <td><span class="count">0</span></td>
+                                <td>
+                                    <label class="progress-badge">
+                                        <label class="error-badge-text">
+                                            In Progress
+                                        </label>
+                                        <span class="round">
+                                            <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                 
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Redo request</td>
+                                <td><span class="count">0</span></td>
+                                <td>
+                                     <label class="progress-badge">
+                                        <label class="error-badge-text">
+                                            In Progress
+                                        </label>
+                                        <span class="round">
+                                            <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                   
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Shorter comment for select </td>
+                                <td><span class="count">0</span></td>
+                                <td>
+                                    <label class="error-badge" for="checkbox_nineteen">
+                                        <label class="error-badge-text" for="checkbox_nineteen">
+                                            Completed
+                                        </label>
+                                        <span class="round">
+                                            <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_nineteen" name="question1" data-trigger="hidden_fields_nineteen" />
+                                            <label style="visibility:hidden" for="checkbox_nineteen"></label>
+                                            <input type="checkbox" class="coupon_question" disabled id="hidden_fields_nineteen_1" name="Checkshow" checked />
+                                            <label for="hidden_fields_nineteen_1"></label>
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Shorter comment for reject</td>
+                                <td><span class="count">0</span></td>
+                                <td>
+                                    <label class="progress-badge">
+                                        <label class="error-badge-text">
+                                            In Progress
+                                        </label>
+                                        <span class="round">
+                                            <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                   
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Less question </td>
+                                <td><span class="count">0</span></td>
+                                <td>
+                                    <label class="progress-badge">
+                                        <label class="error-badge-text">
+                                            In Progress
+                                        </label>
+                                        <span class="round">
+                                            <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                   
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Short duration penalty</td>
+                                <td><span class="count">0</span></td>
+                                <td>
+                                      <label class="progress-badge">
+                                        <label class="error-badge-text">
+                                            In Progress
+                                        </label>
+                                        <span class="round">
+                                            <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                   
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Calibration call</td>
+                                @if (Model.CalibrationCall)
+                                {
+                                    <td><span>Done</span></td>
+                                }
+                                else
+                                {
+                                    <td><span>Pending</span></td>
+                                }
+                                <td>
+                                    <label class="error-badge" for="checkbox_one">
+                                        <label class="error-badge-text" for="checkbox_one">
+                                            Completed
+                                        </label>
+                                        <span class="round">
+                                            <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_one" name="question1" data-trigger="hidden_fields_eight" />
+                                            <label style="visibility:hidden" for="checkbox_one"></label>
+                                            <input type="checkbox" class="coupon_question" disabled id="hidden_fields_one_1" name="Checkshow" />
+                                            <label for="hidden_fields_one_1"></label>
+                                        </span>
+                                    </label>
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>HM page approval</td>
+                                @if (Model.DMApproved)
+                                {
+                                    <td><span>Done</span></td>
+                                }
+                                else
+                                {
+                                    <td><span>Pending</span></td>
+                                }
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.type == "speed")
+    {
+        <div role="tabpanel" id="speed">
+            <div class="table-h" id="style-2">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Assigned Tasks</th>
+                                <th>Count</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>Not scheudled candidate== Aging> 1 day</td>
+                                <td><span class="count">0</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Reschedule candidate == Aging > 2days </td>
+                                <td><span class="count">0</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Report pending > 3 hrs </td>
+                                <td><span class="count" onclick="TaskSpeedDetailsView('ReportPending')">@Model.ReportPending</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>QC Pending for selected candidate  > 12 hrs </td>
+                                <td><span class="count">0</span></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.type == "security")
+    {
+        <div role="tabpanel" id="security">
+            <div class="table-h" id="style-2">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Assigned Tasks</th>
+                                <th>Count</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Proxy marked candidates by interviewers</td>
+                                <td><span class="count" onclick="TaskSpeedDetailsView('ProxyInterview')">@Model.ProxyCount</span></td>
+                                <td>
+                                    <label class="error-badge" for="checkbox_one">
+                                        <label class="error-badge-text" for="checkbox_one">
+                                            Completed
+                                        </label>
+                                        <span class="round">
+                                            <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_one" name="question1" data-trigger="hidden_fields_eight" />
+                                            <label style="visibility:hidden" for="checkbox_one"></label>
+                                            <input type="checkbox" class="coupon_question" disabled id="hidden_fields_one_1" name="Checkshow" />
+                                            <label for="hidden_fields_one_1"></label>
+                                        </span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.type == "l2accuracy")
+    {
+        <div role="tabpanel" id="l2accuracy">
+            <div class="table-h" id="style-2">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+
+                                <th>Assigned Tasks</th>
+                                <th>Count</th>
+                                <th>Action</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Panels Shortlisted </td>
+                                <td><span class="count btn-second-modal within-first-modal">5</span></td>
+                                <td>
+                                    <label class="error-badge" for="checkbox_one">
+                                        <label class="error-badge-text" for="checkbox_one">
+                                            Completed
+                                        </label>
+                                        <span class="round">
+                                            <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_one" name="question1" data-trigger="hidden_fields_eight" />
+                                            <label style="visibility:hidden" for="checkbox_one"></label>
+
+
+                                            <input type="checkbox" class="coupon_question" disabled id="hidden_fields_one_1" name="Checkshow" />
+                                            <label for="hidden_fields_one_1"></label>
+
+
+                                        </span>
+                                    </label>
+
+
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>Panels Approved for next round </td>
+                                <td><span class="count">4</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Panels who got Final select </td>
+                                <td><span class="count">5</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Panels marked High rated by client </td>
+                                <td><span class="count">3</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Panels marked High rated by candidate > 3 </td>
+                                <td><span class="count">4</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Panels Removed  </td>
+                                <td><span class="count">3</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Panels Not Approved for next round   </td>
+                                <td><span class="count">3</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Panels who got Final reject  </td>
+                                <td><span class="count">3</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Panels marked Low  rated by client </td>
+                                <td><span class="count">3</span></td>
+                                <td></td>
+
+                            </tr>
+                            <tr>
+                                <td>Panels marked Low rated by client  </td>
+                                <td><span class="count">3</span></td>
+                                <td></td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else if (Model.type == "expenseManagement")
+    {
+        <div role="tabpanel" id="expenseManagement">
+            <div class="table-h" id="style-2">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Assigned Tasks</th>
+                                <th>Count</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Potential Pause channels</td>
+                                <td><span>No</span></td>
+                                <td>
+                                    <label class="error-badge" for="checkbox_one">
+                                        <label class="error-badge-text" for="checkbox_one">
+                                            Completed
+                                        </label>
+                                        <span class="round">
+                                            <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_one" name="question1" data-trigger="hidden_fields_eight" />
+                                            <label style="visibility:hidden" for="checkbox_one"></label>
+                                            <input type="checkbox" class="coupon_question" disabled id="hidden_fields_one_1" name="Checkshow" />
+                                            <label for="hidden_fields_one_1"></label>
+                                        </span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Recruiters with low selection rate </td>
+                                <td><span class="count btn-second-modal within-first-modal">5</span></td>
+                                <td>
+                                    <label class="error-badge" for="checkbox_one">
+                                        <label class="error-badge-text" for="checkbox_one">
+                                            Completed
+                                        </label>
+                                        <span class="round">
+                                            <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_one" name="question1" data-trigger="hidden_fields_eight" />
+                                            <label style="visibility:hidden" for="checkbox_one"></label>
+                                            <input type="checkbox" class="coupon_question" disabled id="hidden_fields_one_1" name="Checkshow" />
+                                            <label for="hidden_fields_one_1"></label>
+                                        </span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+<div id="updateStatusModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon fas fa-user-friends" style="font-size:20px;color:#fff;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="updateStatusHeading"> </h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="updateStatusPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+
+            <div class="modal-body">
+
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="form-group">
+
+                        <label class="control-labeled">
+                            Status
+                        </label>
+
+                        <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<TaskUpdateStatusOptions>()"></select>
+                    </div>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label class="control-labeled w-full">
+                        Comments
+                    </label>
+                    <input type="text" id="idComments" class="w-full" style="height:60px">
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <div class="w-full text-right">
+                    <div class="col-md-12 col-sm-12">
+                        <input type="button" onclick="SaveTaskStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div id="statusListModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-list" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="statusListHeading"></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" id="statusListPopUp" style="cursor:pointer;">&times;</span>
+            </button>
+
+            <div class="modal-body" id="statusListTableBody">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var irfStatusId;//since the property irfId already exists, hence this name
+    var statusId;
+    var StatusTabName;
+    var StatusMainTaskName;
+
+    //var candidateStatusName;
+    var spanStatusModal = document.getElementById("updateStatusPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanStatusModal.onclick = function () {
+        var modal = document.getElementById("updateStatusModal");
+        modal.style.display = "none";
+    }
+
+
+
+    function OpenTaskStatusModal(irfId, tabName, mainTaskName) {
+
+        irfStatusId = irfId;
+        //candidateStatusId = candidateId;
+        StatusTabName = tabName;
+        StatusMainTaskName = mainTaskName;
+
+        // Get the modal
+        var modal = document.getElementById("updateStatusModal");
+
+        document.getElementById("updateStatusHeading").innerHTML = "Add status for " + mainTaskName;
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+    }
+
+
+    function SaveTaskStatus() {
+        var comment = document.getElementById("idComments").value;
+        var statusValue = document.getElementById("statusDrpDwn").value;
+
+
+        var formdata = new FormData();
+        formdata.append('irfId', irfStatusId);
+        ///formdata.append('candidateId', candidateStatusId);
+        formdata.append('comment', comment);
+        // formdata.append('audio_file', audio_file);
+        formdata.append('status', statusValue);
+        formdata.append('StatusTabName', StatusTabName);
+        formdata.append('StatusMainTaskName', StatusMainTaskName);
+
+        $.ajax({
+            type: "POST",
+            url: "/Task/AddStatus",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                swal.fire(data);
+                //location.reload(true);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    var closeStatusList = document.getElementById("statusListPopUp");
+    closeStatusList.onclick = function () {
+        var modal = document.getElementById("statusListModal");
+        modal.style.display = "none";
+    }
+
+    function GetTaskStatusList(irfId, tabName, taskValue, irfName) {
+        debugger;
+        $.ajax({
+            url: '/Task/GetTaskStatusList',
+            data: { 'irfId': irfId, 'tabName': tabName, 'irfName': irfName, 'taskValue': taskValue },
+            success: function (data) {
+                var modal = document.getElementById("statusListModal");
+                modal.style.display = "block";
+                var appendText = 'Status list for ' + irfName + ' (' + taskValue + ')';
+                $('#statusListHeading').html('');
+                $('#statusListHeading').html(appendText);
+                $('#statusListTableBody').html('');
+                $('#statusListTableBody').html(data);
+
+
+            }
+        });
+    }
+
+
+</script>
+
+<script>
+    var within_first_modal = false;
+    $('.btn-second-modal').on('click', function () {
+        if ($(this).hasClass('within-first-modal')) {
+            within_first_modal = true;
+            $('#myTask').modal('hide');
+            $('#myTask').css('display', 'none');
+        }
+        $('#second-modal').modal('show');
+    });
+
+    $('.btn-second-modal-close').on('click', function () {
+        $('#second-modal').modal('hide');
+        if (within_first_modal) {
+            $('#myTask').modal('show');
+            within_first_modal = false;
+        }
+    });
+</script>
+<script>
+    var closesecondModel = document.getElementById("secondpopupclose");
+    closesecondModel.onclick = function () {
+        var modal = document.getElementById("second-modal");
+        modal.style.display = "none";
+    }
+    function TaskAccuracyDetailsView(typedetails) {
+        var irfid = $("#hidcollectiveIRFid").val();
+        var modal = document.getElementById("second-modal");
+        modal.style.display = "block";
+        $.ajax({
+            type: "POST",
+            url: '/Task/SkillChannelAccuracyDetails',
+            data: { 'irfId': irfid, 'type': typedetails },
+            success: function (data) {
+                $('#divtaskdetailsview').html('');
+                $('#divtaskdetailsview').html(data);
+            }
+        });
+    }
+    function TaskSpeedDetailsView(typedetails) {
+        var irfid = $("#hidcollectiveIRFid").val();
+        var modal = document.getElementById("second-modal");
+        modal.style.display = "block";
+        $.ajax({
+            type: "POST",
+            url: '/Task/SkillChannelSpeedDetails',
+            data: { 'irfId': irfid, 'type': typedetails },
+            success: function (data) {
+                $('#divtaskdetailsview').html('');
+                $('#divtaskdetailsview').html(data);
+            }
+        });
+    }
+    function TaskCompletionDetailsView(typedetails) {
+        var irfid = $("#hidcollectiveIRFid").val();
+        var modal = document.getElementById("second-modal");
+        modal.style.display = "block";
+        $.ajax({
+            type: "POST",
+            url: '/Task/SkillChannelCompletionDetails',
+            data: { 'irfId': irfid, 'type': typedetails },
+            success: function (data) {
+                $('#divtaskdetailsview').html('');
+                $('#divtaskdetailsview').html(data);
+            }
+        });
+    }
+</script>
+<script>
+    $(function () {
+
+        // Hide the hidden sections.
+        // Use JS to do this in case the user doesn't have JS
+        // enabled.
+        $('.hidden').hide();
+
+        // Setup an event listener for each trigger checkbox that
+        // fires when the state of the checkbox changes.
+        $('.trigger').change(function () {
+            // Get the ID of the hidden area from the data-trigger
+            // attribute.
+            var hiddenId = $(this).attr("data-trigger");
+
+            // Check to see if the checkbox is checked.
+            // If it is, show the fields and populate the input.
+            // If not, hide the fields.
+            if ($(this).is(':checked')) {
+                // Show the hidden fields.
+                $("#" + hiddenId).show();
+                $("#" + hiddenId + "_1").prop('checked', true);
+                $('.error-badge').css('border', '1px red solid')
+                CountCheckBox();
+            } else {
+                // Make sure that the hidden fields are indeed
+                // hidden.
+                $("#" + hiddenId).hide();
+
+            }
+        });
+
+    });
+</script>
