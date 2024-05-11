@@ -7760,6 +7760,8 @@ namespace Risebird.Web.Controllers
                     model.Userid = _iRFService.GetUserId(email, profileName);
 
                 }
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 await GetStatusList(model, irfId, model.Userid);
                 //if (model.Userid != 0)
                 //{
