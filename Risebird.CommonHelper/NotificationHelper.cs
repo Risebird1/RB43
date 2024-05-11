@@ -3262,7 +3262,7 @@ namespace Risebird.CommonHelper
                 StringBuilder msgBody = new StringBuilder("Dear ," + "Tech Support");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
-                msgBody.AppendLine("You have received issue " + Comment + "from"+ RequestBy);
+                msgBody.AppendLine("You have received issue " + Comment + " from "+ RequestBy);
                 msgBody.Append("\n");
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
