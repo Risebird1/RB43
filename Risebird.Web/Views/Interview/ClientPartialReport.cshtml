@@ -482,7 +482,7 @@
 
                                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                     <div class="talktext">
-                                                                        @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
+                                                                        @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new {@id = "InterviewerComment", @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
 
                                                                     </div>
                                                                 </div>
@@ -2515,6 +2515,10 @@
 
     });
 
+    $(document).ready(function () {
+        document.getElementById("InterviewerComment").innerHTML = $('#InterviewerComment').text();
+
+    })
 </script>
 
 
