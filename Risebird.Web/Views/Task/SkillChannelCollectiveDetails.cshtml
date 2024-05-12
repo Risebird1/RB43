@@ -27,7 +27,7 @@
                                     <td>
                                         <label class="error-badge" for="checkbox_five">
                                             <label class="error-badge-text" for="checkbox_five">
-                                                Completed
+                                                @(!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) ? Model.MissedCandidatesLatestStatus : "In Progress")
                                             </label>
                                             <span class="round">
                                                 <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
@@ -43,7 +43,7 @@
                                     <td>
 
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                            <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'MissedCandidates', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
                                     </td>
 
@@ -52,17 +52,24 @@
                                     <td>Probable No-show</td>
                                     <td><span class="count btn-second-modal within-first-modal" onclick="TaskCompletionDetailsView('ProbableNoShow')">@Model.ProbableNoShowCount</span></td>
                                     <td>
-                                        <span class="inprogress">In Progress</span>
-                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: 2px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                             <label class="progress-badge">
+                                                <label class="error-badge-text">
+                                                    @(!string.IsNullOrEmpty(Model.ProbableNoShowLatestStatus) ? Model.ProbableNoShowLatestStatus : "In Progress")
+                                                </label>
+                                                <span class="round">
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                </span>
+                                            </label>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                             @* <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span> *@
-                                            <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'ProbableNoshow')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-1px;"></i></span>
+                                                <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'ProbableNoshow')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
 
                                         </div>
                                     </td>
                                     <td>
                                       
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                            <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'ProbableNoshow', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
                                     </td>
 
@@ -92,7 +99,7 @@
                                     <td>
                                         <label class="error-badge" for="checkbox_two">
                                             <label class="error-badge-text" for="checkbox_two">
-                                                Completed
+                                                @(!string.IsNullOrEmpty(Model.NotProcessedResumesLatestStatus) ? Model.NotProcessedResumesLatestStatus : "In Progress")
                                             </label>
                                             <span class="round">
                                                 <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
@@ -108,7 +115,7 @@
                                     <td>
                                        
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                            <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'NotProcessedResumes', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
                                     </td>
 
@@ -390,7 +397,9 @@
                                 <td>
                                     <label class="progress-badge">
                                         <label class="error-badge-text">
-                                            In Progress
+                                            
+                                            @(!string.IsNullOrEmpty(Model.HighSelectionRateLatestStatus) ? Model.HighSelectionRateLatestStatus : "In Progress")
+
                                         </label>
                                         <span class="round">
                                             <img class="progress-badge-icon" src="~/img/progress-icon.png" />
@@ -403,7 +412,7 @@
                                 <td>
                                    
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'HighSelectionRate', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
                                 </td>
                             </tr>
@@ -413,7 +422,9 @@
                                 <td>
                                     <label class="progress-badge">
                                         <label class="error-badge-text">
-                                            In Progress
+                                            
+                                            @(!string.IsNullOrEmpty(Model.HighRejectionRateLatestStatus) ? Model.HighRejectionRateLatestStatus : "In Progress")
+
                                         </label>
                                         <span class="round">
                                             <img class="progress-badge-icon" src="~/img/progress-icon.png" />
@@ -426,7 +437,7 @@
                                 <td>
                                    
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'HighRejectionRate', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
                                 </td>
 
@@ -437,7 +448,8 @@
                                 <td>
                                     <label class="error-badge" for="checkbox_sixthteen">
                                         <label class="error-badge-text" for="checkbox_sixthteen">
-                                            Completed
+                                            @(!string.IsNullOrEmpty(Model.PotentialRiskByCandidateLatestStatus) ? Model.PotentialRiskByCandidateLatestStatus : "In Progress")
+
                                         </label>
                                         <span class="round">
                                             <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_sixthteen" name="question1" data-trigger="hidden_fields_sixthteen" />
@@ -453,7 +465,7 @@
                                 <td>
                                    
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'PotentialRiskByCandidate', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
                                 </td>
 
@@ -907,14 +919,14 @@
                 </div>
                 <h5 class="modal-title pull-left" id="updateStatusHeading"> </h5>
             </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true" id="updateStatusPopUp" style="cursor:pointer;">&times;</span>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-right:-8px;">
+                <span aria-hidden="true" id="updateStatusPopUp" style="cursor:pointer;color:#fff">&times;</span>
             </button>
 
 
             <div class="modal-body">
 
-                <div class="col-md-12 col-sm-12 ">
+                <div class="col-md-12 col-sm-12 modal-info">
                     <div class="form-group">
 
                         <label class="control-labeled">
@@ -924,36 +936,33 @@
                         <select class="select-css form-control" id="statusDrpDwn" asp-items="Html.GetEnumSelectList<TaskUpdateStatusOptions>()"></select>
                     </div>
 
-                </div>
+                    <div class="form-group">
 
+                        <label class="control-labeled w-full">
+                            Comments
+                        </label>
+                        <input type="text" id="idComments" class="w-full" style="height:80px">
 
-
-                <div class="form-group">
-
-                    <label class="control-labeled w-full">
-                        Comments
-                    </label>
-                    <input type="text" id="idComments" class="w-full" style="height:60px">
-
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <div class="w-full text-right">
-                    <div class="col-md-12 col-sm-12">
-                        <input type="button" onclick="SaveTaskStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
                     </div>
+
                 </div>
 
+                <div class="modal-footer">
+                    <div class="w-full text-right">
+                        <div class="col-md-12 col-sm-12">
+                            <input type="button" onclick="SaveTaskStatus()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                        </div>
+                    </div>
 
 
+
+                </div>
             </div>
         </div>
+
     </div>
 
 </div>
-
 
 <div id="statusListModal" class="modal modal-bg">
     <!-- Modal content -->
@@ -1033,7 +1042,18 @@
             processData: false,
             data: formdata,
             success: function (data) {
-                swal.fire(data);
+                debugger;
+                //swal.fire(data);
+                if(data)
+                {
+                    swal.fire("Successful", "Task status updated successfully", "success");
+
+                }
+                else
+                {
+                    swal.fire("Failed", "Failed to update task status", "success");
+
+                }
                 //location.reload(true);
             }
         });
@@ -1042,13 +1062,14 @@
 </script>
 
 <script>
+    debugger;
     var closeStatusList = document.getElementById("statusListPopUp");
     closeStatusList.onclick = function () {
         var modal = document.getElementById("statusListModal");
         modal.style.display = "none";
     }
 
-    function GetTaskStatusList(irfId, tabName, taskValue, irfName) {
+    function GetTaskStatusList(irfId, tabName, taskValue, irfName = null) {
         debugger;
         $.ajax({
             url: '/Task/GetTaskStatusList',

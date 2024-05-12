@@ -268,7 +268,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetStatusList(int irfId, string tabName, string taskValue, string irfName = null)
+        public async Task<IActionResult> GetTaskStatusList(int irfId, string tabName, string taskValue, string irfName = null)
         {
             try
             {

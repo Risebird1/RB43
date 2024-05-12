@@ -2084,7 +2084,21 @@ div.dataTables_wrapper div.dataTables_info {
     margin: 5px 5px;
     border: 1px #000 solid;
 }
-
+#updateStatusModal .modal-body .modal-info {
+    background: #131313!important;
+    padding: 20px;
+}
+#updateStatusModal .modal-content{
+    background:#000!important;
+ 
+}
+#idComments {
+    border: 0px !important;
+    background: #181818 !important;
+}
+#updateStatusModal .modal-body {
+    background: #131313 !important;
+}
 .chat {
     background: #000000 !important;
 }
