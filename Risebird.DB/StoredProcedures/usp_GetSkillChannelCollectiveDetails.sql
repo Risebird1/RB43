@@ -31,7 +31,30 @@ left join UserList uli on uli.id=  irf.RisebirdHr where irf.id =@irfId and im.in
 
 set @NotProcessedCandidateResume = (Select count(*) from CandidateResume where IsnUll(Isprocessed,0)=0 and IRFId = @irfId)   
 
-Select @ProbableNoShowCount as ProbableNoShowCount, @NotProcessedCandidateResume as NotProcessedResumeCount, @NeedClarity as NeedClarity
+Select @ProbableNoShowCount as ProbableNoShowCount, @NotProcessedCandidateResume as NotProcessedResumeCount, @NeedClarity as NeedClarity,
+(select top 1
+CASE
+    WHEN [Status] = 1 THEN 'In Progress'
+    WHEN [Status] = 2 THEN 'Completed'
+    ELSE 'In Progress'
+END as StatusValue
+from SkillChannelTasks where TaskValue = 'ProbableNoshow' and irfid = @irfId order by CreatedOn desc) as ProbableNoShowLatestStatus,
+(select top 1
+CASE
+    WHEN [Status] = 1 THEN 'In Progress'
+    WHEN [Status] = 2 THEN 'Completed'
+    ELSE 'In Progress'
+END as StatusValue
+from SkillChannelTasks where TaskValue = 'NotProcessedResumes' and irfid = @irfId order by CreatedOn desc) as NotProcessedResumesLatestStatus,
+(select top 1
+CASE
+    WHEN [Status] = 1 THEN 'In Progress'
+    WHEN [Status] = 2 THEN 'Completed'
+    ELSE 'In Progress'
+END as StatusValue
+from SkillChannelTasks where TaskValue = 'MissedCandidates' and irfid = @irfId order by CreatedOn desc) as MissedCandidatesLatestStatus
+
+
 end  
 else if(@type='accuracy')  
 begin  
@@ -85,7 +108,30 @@ Select @HighNegCandidateRating=Count(*) From CTE
 Select @HighSelectCount= Count(*) from @HighSelect  
 Select @HighRejectCount= Count(*) From @HighReject  
   
-Select @HighSelectCount as HighSelectCount,@HighRejectCount as HighRejectCount,@HighNegCandidateRating as HighNegCandidateRating  
+Select @HighSelectCount as HighSelectCount,@HighRejectCount as HighRejectCount,@HighNegCandidateRating as HighNegCandidateRating,
+(select top 1
+CASE
+    WHEN [Status] = 1 THEN 'In Progress'
+    WHEN [Status] = 2 THEN 'Completed'
+    ELSE 'In Progress'
+END as StatusValue
+from SkillChannelTasks where TaskValue = 'HighSelectionRate' and irfid = @irfId order by CreatedOn desc) as HighSelectionRateLatestStatus,
+(select top 1
+CASE
+    WHEN [Status] = 1 THEN 'In Progress'
+    WHEN [Status] = 2 THEN 'Completed'
+    ELSE 'In Progress'
+END as StatusValue
+from SkillChannelTasks where TaskValue = 'HighRejectionRate' and irfid = @irfId order by CreatedOn desc) as HighRejectionRateLatestStatus,
+(select top 1
+CASE
+    WHEN [Status] = 1 THEN 'In Progress'
+    WHEN [Status] = 2 THEN 'Completed'
+    ELSE 'In Progress'
+END as StatusValue
+from SkillChannelTasks where TaskValue = 'PotentialRiskByCandidate' and irfid = @irfId order by CreatedOn desc) as PotentialRiskByCandidateLatestStatus  
+
+
 end  
 else if(@type='speed')  
 begin  
