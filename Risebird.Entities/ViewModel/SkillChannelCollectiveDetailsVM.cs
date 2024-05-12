@@ -26,6 +26,14 @@ namespace Risebird.Entities.ViewModel
         public int ReportPending { get; set; }
 
         public int ProxyCount { get; set; }
+        public string IRFName { get; set; }
+        public string ProbableNoShowLatestStatus { get; set; }
+        public string NotProcessedResumesLatestStatus { get; set; }
+        public string MissedCandidatesLatestStatus { get; set; }
+
+        public string HighSelectionRateLatestStatus { get; set; }
+        public string HighRejectionRateLatestStatus { get; set; }
+        public string PotentialRiskByCandidateLatestStatus { get; set; }
     }
     public class SkillChannelTaskSpeedDetailsVM
     {

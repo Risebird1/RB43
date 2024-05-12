@@ -734,10 +734,14 @@ textarea::-webkit-scrollbar-thumb {
     border-top: 1px solid #dee2e65e !important;
 }
 
-.mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-    background: #f1f1f1;
-    color: #888 !important;
-}
+    #updateStatusModal .modal-body .modal-info {
+        background: #edf4f9b5 !important;
+        padding:20px;
+    }
+    .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
+        background: #f1f1f1;
+        color: #888 !important;
+    }
 
 
 .instainterview .form-group label.upload {

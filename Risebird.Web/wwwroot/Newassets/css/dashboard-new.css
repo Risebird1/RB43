@@ -9947,6 +9947,7 @@ option {
     color: #6ca980 !important;
     padding: 1px 0px 0px 5px !important;
     width: auto;
+    margin-right:10px;
     font-weight: normal !important;
     background: #fff !important;
     position: relative !important;
@@ -9965,9 +9966,9 @@ option {
     position: relative !important;
     left: 0px !important;
     top: 0px !important;
-    border: 1.4px #b49fda solid;
+    border: 1.4px #b49fdaa3 solid;
     border-radius: 3px;
-    margin-right: 3px;
+    margin-right: 10px;
 }
 
 .task-container .progress-badge-icon {
@@ -10047,6 +10048,12 @@ option {
     font-weight: 400;
     border-radius: 3px;
     border: 1px #ffeb3bab solid;
+}
+#updateStatusModal .modal-body {
+    padding: 0px;
+}
+#updateStatusModal .modal-footer {
+    padding: 8px 8px 0px 8px;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
@@ -15823,7 +15830,7 @@ blockquote {
     position: relative
 }
 
-button.close {
+button.close, #updateStatusModal button.close {
     width: 30px;
     height: 30px;
     margin-top: -30px;
