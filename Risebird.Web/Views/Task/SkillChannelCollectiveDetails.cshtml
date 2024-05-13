@@ -1138,37 +1138,3 @@
         });
     }
 </script>
-<script>
-    $(function () {
-
-        // Hide the hidden sections.
-        // Use JS to do this in case the user doesn't have JS
-        // enabled.
-        $('.hidden').hide();
-
-        // Setup an event listener for each trigger checkbox that
-        // fires when the state of the checkbox changes.
-        $('.trigger').change(function () {
-            // Get the ID of the hidden area from the data-trigger
-            // attribute.
-            var hiddenId = $(this).attr("data-trigger");
-
-            // Check to see if the checkbox is checked.
-            // If it is, show the fields and populate the input.
-            // If not, hide the fields.
-            if ($(this).is(':checked')) {
-                // Show the hidden fields.
-                $("#" + hiddenId).show();
-                $("#" + hiddenId + "_1").prop('checked', true);
-                $('.error-badge').css('border', '1px red solid')
-                CountCheckBox();
-            } else {
-                // Make sure that the hidden fields are indeed
-                // hidden.
-                $("#" + hiddenId).hide();
-
-            }
-        });
-
-    });
-</script>

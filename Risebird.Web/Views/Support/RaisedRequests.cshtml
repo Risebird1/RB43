@@ -114,7 +114,7 @@
                                                     @if (!string.IsNullOrWhiteSpace(item.AttachmentURL))
                                                     {
                                                         <td>
-                                                            <button onclick="openRaisedBugImagepup('@item.AttachmentURL')" class="btn btn-default"> Show issue Image</button>
+                                                            <button  onclick="openRaisedBugImagepup('@item.AttachmentURL')" style="text-shadow:none; border:0px; font-weight: 500; padding: 1px 4px; font-size: 12px; color: #fff;background: #8fb2e4;"> Show issue Image</button>
                                                              <a href="@item.AttachmentURL" target="_blank">Download issue Image</a>
                                                         </td>
                                                     }
@@ -169,12 +169,13 @@
                 <span onclick="closeRaisedBugClosepopup()" aria-hidden="true" style="cursor:pointer;">&times;</span>
             </button>
             <input type="hidden" id="txtrequestid" />
-            <div>
-                Requested By:  <label id="ShowRequestedBy"></label> Requested Date: <label id="ShowRequestedDate"></label>
+          
+            <div class="modal-body" style="color:black">
+                  <div class="col-md-12" style="padding:10px;">
+                Requested By:  <label style="color:green" id="ShowRequestedBy"></label> on <label id="ShowRequestedDate"></label>
                 
             </div>
-            <div class="modal-body" style="color:black">
-                <input type="text" placeholder="Please enter comment" id="txtRaisedBugCloseComment" class="form-control" maxlength="1000" />
+              <div>  <input type="text" placeholder="Please enter comment" id="txtRaisedBugCloseComment" class="form-control" maxlength="1000" /></div>
             </div>
             <div class="card-footer ">
                 <div class="row">

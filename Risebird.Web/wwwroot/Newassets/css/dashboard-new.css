@@ -9804,11 +9804,13 @@ option {
 }
 .interviewer-toll-no {
     position: absolute;
-    top: 21px;
+    top: -50px;
     z-index: 1000;
     font-size: 14px;
     color: #fff;
-    right: 370px;
+    left: 370px;
+    width: 260px;
+    line-height: 41px;
 }
 .task-container .modal-header {
     min-height: 16.43px;
@@ -10047,6 +10049,11 @@ option {
     font-weight: 400;
     border-radius: 3px;
     border: 1px #ffeb3bab solid;
+}
+.need-help {
+    position: relative;
+    right: -25px;
+    top: 10px;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
@@ -11005,7 +11012,7 @@ option {
                 .user.user-r .main-notification-title {
                     top: 0px !important;
                 }
-
+          
             .recommendation .dropdown-toggle::after {
                 border-top: .3em solid;
                 border-right: .3em solid transparent;
