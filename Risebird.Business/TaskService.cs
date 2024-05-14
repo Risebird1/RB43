@@ -70,7 +70,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<InterviewManagementVM>> SkillChannelCompletionDetails(int irfId, string type)
+        public async Task<IEnumerable<SkillChannelTaskCompletionDetailsVM>> SkillChannelCompletionDetails(int irfId, string type)
         {
             try
             {

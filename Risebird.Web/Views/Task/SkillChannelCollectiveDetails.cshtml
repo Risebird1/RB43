@@ -19,8 +19,8 @@
                                     <th>Status</th>
                                     <th>Logs</th>
                                 </tr>
-                                </thead>
-                                <tbody>
+                            </thead>
+                            <tbody>
                                 <tr>
                                     <td>Missed Candidates</td>
                                     <td><span class="count" onclick="TaskCompletionDetailsView('MissedCandidate')">@Model.MissedCandidate</span></td>
@@ -52,22 +52,22 @@
                                     <td>Probable No-show</td>
                                     <td><span class="count btn-second-modal within-first-modal" onclick="TaskCompletionDetailsView('ProbableNoShow')">@Model.ProbableNoShowCount</span></td>
                                     <td>
-                                             <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                    @(!string.IsNullOrEmpty(Model.ProbableNoShowLatestStatus) ? Model.ProbableNoShowLatestStatus : "In Progress")
-                                                </label>
-                                                <span class="round">
-                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
-                                                </span>
+                                        <label class="progress-badge">
+                                            <label class="error-badge-text">
+                                                @(!string.IsNullOrEmpty(Model.ProbableNoShowLatestStatus) ? Model.ProbableNoShowLatestStatus : "In Progress")
                                             </label>
+                                            <span class="round">
+                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                            </span>
+                                        </label>
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                             @* <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span> *@
-                                                <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'ProbableNoshow')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                            <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'ProbableNoshow')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
 
                                         </div>
                                     </td>
                                     <td>
-                                      
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'ProbableNoshow', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -75,24 +75,24 @@
 
                                 </tr>
                                 @* <tr>
-                                    <td>Probable Noshow</td>
-                                    <td><span class="count btn-second-modal within-first-modal">0</span></td>
-                                    <td>
-                                        <label class="progress-badge">
-                                            <label class="error-badge-text">
-                                                In Progress
-                                            </label>
-                                            <span class="round">
-                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
-                                            </span>
-                                        </label>
-                                        
-                                        <span class="log-btn" aria-label="Candidate Status" style="cursor: pointer;">
-                                            <span onclick="CandidateStatusList()" title="Candidate Status"><i class='fa fa-history' style="margin-right:5px;"></i>Status History</span>
-                                        </span>
-                                    </td>
+                            <td>Probable Noshow</td>
+                            <td><span class="count btn-second-modal within-first-modal">0</span></td>
+                            <td>
+                            <label class="progress-badge">
+                            <label class="error-badge-text">
+                            In Progress
+                            </label>
+                            <span class="round">
+                            <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                            </span>
+                            </label>
 
-                                </tr> *@
+                            <span class="log-btn" aria-label="Candidate Status" style="cursor: pointer;">
+                            <span onclick="CandidateStatusList()" title="Candidate Status"><i class='fa fa-history' style="margin-right:5px;"></i>Status History</span>
+                            </span>
+                            </td>
+
+                            </tr> *@
                                 <tr>
                                     <td> Not Processed Resumes</td>
                                     <td><span class="count" onclick="TaskCompletionDetailsView('NotProcessedResumes')">@Model.NotProcessedResumeCount</span></td>
@@ -104,7 +104,7 @@
                                             <span class="round">
                                                 <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
                                                 <label style="visibility:hidden" for="checkbox_two"></label>
-                                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_two_1" name="Checkshow" checked/>
+                                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_two_1" name="Checkshow" checked />
                                                 <label for="hidden_fields_two_1"></label>
                                             </span>
                                         </label>
@@ -113,7 +113,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                       
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'NotProcessedResumes', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -137,7 +137,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                       
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -164,14 +164,14 @@
                                         </div>
                                     </td>
                                     <td>
-                                        
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
                                     </td>
 
                                 </tr>
-                             
+
                                 <tr>
                                     <td>Need clarity</td>
                                     <td><span class="count" onclick="TaskCompletionDetailsView('NeedClarity')">@Model.NeedClarity</span></td>
@@ -189,7 +189,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -214,7 +214,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -238,7 +238,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                       
+
 
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
@@ -266,7 +266,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -290,7 +290,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -314,7 +314,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                       
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -323,22 +323,25 @@
                                 </tr>
                                 <tr>
                                     <td>Late join </td>
-                                    <td><span class="count">0</span></td>
+                                    <td><span class="count" onclick="TaskCompletionDetailsView('Latejoin')">@Model.LatejoinCount</span></td>
                                     <td>
-                                        <label class="progress-badge">
-                                            <label class="error-badge-text">
-                                                In Progress
+                                        <label class="error-badge" for="checkbox_two">
+                                            <label class="error-badge-text" for="checkbox_two">
+                                                @(!string.IsNullOrEmpty(Model.LatejoinStatus) ? Model.LatejoinStatus : "In Progress")
                                             </label>
                                             <span class="round">
-                                                <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
+                                                <label style="visibility:hidden" for="checkbox_two"></label>
+                                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_two_1" name="Checkshow" checked />
+                                                <label for="hidden_fields_two_1"></label>
                                             </span>
                                         </label>
-                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
-                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'Latejoin')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px"></i></span>
                                         </div>
                                     </td>
                                     <td>
-                                        
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -362,7 +365,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        
+
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
@@ -397,7 +400,7 @@
                                 <td>
                                     <label class="progress-badge">
                                         <label class="error-badge-text">
-                                            
+
                                             @(!string.IsNullOrEmpty(Model.HighSelectionRateLatestStatus) ? Model.HighSelectionRateLatestStatus : "In Progress")
 
                                         </label>
@@ -410,7 +413,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                   
+
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'HighSelectionRate', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -422,7 +425,7 @@
                                 <td>
                                     <label class="progress-badge">
                                         <label class="error-badge-text">
-                                            
+
                                             @(!string.IsNullOrEmpty(Model.HighRejectionRateLatestStatus) ? Model.HighRejectionRateLatestStatus : "In Progress")
 
                                         </label>
@@ -435,7 +438,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                   
+
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'HighRejectionRate', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -463,7 +466,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                   
+
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'PotentialRiskByCandidate', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -487,7 +490,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                 
+
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -498,7 +501,7 @@
                                 <td>Redo request</td>
                                 <td><span class="count">0</span></td>
                                 <td>
-                                     <label class="progress-badge">
+                                    <label class="progress-badge">
                                         <label class="error-badge-text">
                                             In Progress
                                         </label>
@@ -511,7 +514,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                   
+
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -538,7 +541,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    
+
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -562,7 +565,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                   
+
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -586,7 +589,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                   
+
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -597,7 +600,7 @@
                                 <td>Short duration penalty</td>
                                 <td><span class="count">0</span></td>
                                 <td>
-                                      <label class="progress-badge">
+                                    <label class="progress-badge">
                                         <label class="error-badge-text">
                                             In Progress
                                         </label>
@@ -610,7 +613,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                   
+
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -1044,13 +1047,11 @@
             success: function (data) {
                 debugger;
                 //swal.fire(data);
-                if(data)
-                {
+                if (data) {
                     swal.fire("Successful", "Task status updated successfully", "success");
 
                 }
-                else
-                {
+                else {
                     swal.fire("Failed", "Failed to update task status", "success");
 
                 }

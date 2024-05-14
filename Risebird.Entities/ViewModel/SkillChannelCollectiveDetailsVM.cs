@@ -20,6 +20,7 @@ namespace Risebird.Entities.ViewModel
         public int HighNegCandidateRating { get; set; }
         public int ProbableNoShowCount { get; set; }
         public int NotProcessedResumeCount { get; set; }
+        public int LatejoinCount { get; set; }
 
         public bool CalibrationCall { get; set; }
         public bool DMApproved { get; set; }
@@ -30,6 +31,7 @@ namespace Risebird.Entities.ViewModel
         public string ProbableNoShowLatestStatus { get; set; }
         public string NotProcessedResumesLatestStatus { get; set; }
         public string MissedCandidatesLatestStatus { get; set; }
+        public string LatejoinStatus { get; set; }
 
         public string HighSelectionRateLatestStatus { get; set; }
         public string HighRejectionRateLatestStatus { get; set; }
@@ -42,5 +44,31 @@ namespace Risebird.Entities.ViewModel
         public string candidateEmail { get; set; }
         public int imid { get; set; }
         public int irfIntId { get; set; }
+    }
+    public class SkillChannelTaskCompletionDetailsVM
+    {
+        public int id { get; set; }
+        public DateTime interviewDate { get; set; }
+        public int MeetingStatus { get; set; }
+        public int TotalCount { get; set; }
+        public DateTime? Joinedon { get; set; }
+        public DateTime? PerformedOn { get; set; }
+        public bool EIAssigned { get; set; }
+        public string confirmationStatus { get; set; }
+        public string MeetingStatusStatusDesc { get; set; }
+        public string interviewer { get; set; }
+        public string candidateEmail { get; set; }
+        public int irfIntId { get; set; }
+        public DateTime? FirstJoinedon { get; set; }
+        public DateTime? FirstPerformedOn { get; set; }
+        public string candidateName { get; set; }
+        public string IRFId { get; set; }
+        public string ChannelOwner { get; set; }
+        public string SchedulerUniqueid { get; set; }
+        public DateTime LastInterviewDate { get; set; }
+        public int LastMeetingStatus { get; set; }
+        public string LastMeetingStatusStatusDesc { get; set; }
+        public string JDTiltle { get; set; }
+        public int TotalLatejoin { get; set; }
     }
 }
