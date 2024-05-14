@@ -617,7 +617,10 @@ input[type='radio']:checked:after {
     border-radius: 16px;
     background: #fdcfc1;
 }
-
+#updateStatusModal .modal-body .modal-info {
+    background: #fff1d9 !important;
+    padding: 20px;
+}
 .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:active:hover, .btn-primary.active:hover, .show > .btn-primary.dropdown-toggle, .show > .btn-primary.dropdown-toggle:focus, .show > .btn-primary.dropdown-toggle:hover {
     background: #ea6e24 !important;
 }
