@@ -587,7 +587,7 @@
                     {
                         var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
                         profileName = profileName.Trim('"');
-                        @if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Interviewer" || profileName == "Client" || profileName == "SeniorHR" || profileName == "HR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "ExternalUser" || profileName == "FreemiumClient")
+                        @if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Interviewer" || profileName == "Client" || profileName == "SeniorHR" || profileName == "HR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "Recruiter" || profileName == "CuratedUser" )
                         {
                             <div class="mdc-ripple-upgraded card-title-space js-tr-window-trigger" style="cursor:pointer;margin-top:-3px" data-panel="main" data-url="@Url.Action("RaiseBugRequest", "Support")">
                                 <button class="mdc-fab app-fab--absolute need-help" aria-label="NeedAssistance">
