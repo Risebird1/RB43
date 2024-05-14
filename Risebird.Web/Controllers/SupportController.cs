@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
@@ -408,7 +409,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 
                 var model = new RaiseBugsVM();
-                if (profileName == "Interviewer" || profileName == "Client" || profileName == "Admin")
+                if (profileName == ProfileNames.Interviewer || profileName == ProfileNames.Client)
                 {
                     model.RequestType = "Operation";
                 }
@@ -448,7 +449,7 @@ namespace Risebird.Web.Controllers
             var result = await _supportService.SaveRaisedIssueDetails(model);
             if (result)
             {
-                if (profileName == "SupportAdmin" ||profileName == "SeniorHR" || profileName == "HR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "Recruiter" || profileName == "CuratedUser")
+                if (profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR || profileName == ProfileNames.HR || profileName == ProfileNames.QualityController || profileName == ProfileNames.Finance || profileName == ProfileNames.InterviewerManagement || profileName == ProfileNames.SeniorInterviewerManagement || profileName == ProfileNames.Recruiter)
                 {
                     await _notificationHelper.SendTechSupportMail(model.Comment, DateTime.Now, model.RequestedBy);
                 }
