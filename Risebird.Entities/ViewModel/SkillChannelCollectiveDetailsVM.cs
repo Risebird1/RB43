@@ -56,32 +56,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime interviewDate { get; set; }
         public int MeetingStatus { get; set; }
         public int TotalCount { get; set; }
-        public DateTime? Joinedon { get; set; }
-        public DateTime? PerformedOn { get; set; }
-        public bool EIAssigned { get; set; }
-        public string confirmationStatus { get; set; }
-        public string MeetingStatusStatusDesc { get; set; }
-        public string interviewer { get; set; }
-        public string candidateEmail { get; set; }
-        public int irfIntId { get; set; }
-        public DateTime? FirstJoinedon { get; set; }
-        public DateTime? FirstPerformedOn { get; set; }
-        public string candidateName { get; set; }
-        public string IRFId { get; set; }
-        public string ChannelOwner { get; set; }
-        public string SchedulerUniqueid { get; set; }
-        public DateTime LastInterviewDate { get; set; }
-        public int LastMeetingStatus { get; set; }
-        public string LastMeetingStatusStatusDesc { get; set; }
-        public string JDTiltle { get; set; }
-        public int TotalLatejoin { get; set; }
-    }
-    public class SkillChannelTaskCompletionDetailsVM
-    {
-        public int id { get; set; }
-        public DateTime interviewDate { get; set; }
-        public int MeetingStatus { get; set; }
-        public int TotalCount { get; set; }
+        public bool IsMeetingNotificationSent { get; set; }
+        public bool IsRescheduleNotificationSent { get; set; }
         public DateTime? Joinedon { get; set; }
         public DateTime? PerformedOn { get; set; }
         public bool EIAssigned { get; set; }

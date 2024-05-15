@@ -136,7 +136,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-        [HttpPost]
+        //[HttpPost]
         public async Task<IActionResult> SkillChannelCompletionDetails(int irfId, string type)
         {
             try
