@@ -152,8 +152,9 @@ namespace Risebird.Web.Controllers
                         var model = await _taskService.SkillChannelCompletionDetails(irfId, type);
                         if (model == null)
                         {
-                            model = new List<InterviewManagementVM>();
+                            model = new List<SkillChannelTaskCompletionDetailsVM>();
                         }
+                        model = model.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); ; x.LastMeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.LastMeetingStatus)).GetDescription(); return x; }).ToList();
                         ViewBag.AccuracyType = type;
                         return PartialView(model);
                     }
@@ -231,7 +232,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (irfId != 0 && status != 0)
                         {
-                            
+
                             bool result = await _taskService.AddTaskStatus(model);
                             //if (result)
                             //{

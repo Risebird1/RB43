@@ -14,7 +14,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<PQIDetails>> GetSkillChannelAccuracyDetails(int irfId, string type);
         Task<IEnumerable<SkillChannelTaskSpeedDetailsVM>> SkillChannelSpeedDetails(int irfId, string type);
         Task<bool> AddTaskStatus(SkillChannelTasks model);
-        Task<IEnumerable<InterviewManagementVM>> SkillChannelCompletionDetails(int irfId, string type);
+        Task<IEnumerable<SkillChannelTaskCompletionDetailsVM>> SkillChannelCompletionDetails(int irfId, string type);
         Task<IEnumerable<SkillChannelTasks>> GetTaskStatusList(int irfId, string tab, string taskValue);
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
@@ -20,8 +21,9 @@ namespace Risebird.Web.Controllers
         private readonly IDashboardService _dashboardService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly INotificationHelper _notificationHelper;
 
-        public SupportController(ISupportService supportService, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IDashboardService dashboardService, IFileMimeTypeHelper fileMimeTypeHelper, IAzureStorageHelper azureStorageHelper)
+        public SupportController(ISupportService supportService, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IDashboardService dashboardService, IFileMimeTypeHelper fileMimeTypeHelper, IAzureStorageHelper azureStorageHelper,INotificationHelper notificationHelper)
         {
             _supportService = supportService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -29,6 +31,7 @@ namespace Risebird.Web.Controllers
             _dashboardService = dashboardService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _azureStorageHelper = azureStorageHelper;
+            _notificationHelper = notificationHelper;
         }
 
         [HttpGet]
@@ -399,12 +402,20 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
+
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                
                 var model = new RaiseBugsVM();
-                model.RequestType = "Operation";
+                if (profileName == ProfileNames.Interviewer || profileName == ProfileNames.Client)
+                {
+                    model.RequestType = "Operation";
+                }
+                else {
+                    model.RequestType = "Technical";
+                }  
                 model.RequestedBy = emailId;
                 model.Requester = profileName;
                 return PartialView(model);
@@ -418,6 +429,8 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RaiseBugRequest(RaiseBugsVM model)
         {
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName.Replace("\"", "");
             if (model.Attachment != null)
             {
                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.Attachment);
@@ -436,6 +449,10 @@ namespace Risebird.Web.Controllers
             var result = await _supportService.SaveRaisedIssueDetails(model);
             if (result)
             {
+                if (profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR || profileName == ProfileNames.HR || profileName == ProfileNames.QualityController || profileName == ProfileNames.Finance || profileName == ProfileNames.InterviewerManagement || profileName == ProfileNames.SeniorInterviewerManagement || profileName == ProfileNames.Recruiter)
+                {
+                    await _notificationHelper.SendTechSupportMail(model.Comment, DateTime.Now, model.RequestedBy);
+                }
                 return Json("Request raised successfully.");
             }
             return Json("Request is not raised, Please try again.");
@@ -449,7 +466,9 @@ namespace Risebird.Web.Controllers
                     type = "Open";
                 }
                 ViewBag.Type = type;
-                var model = await _supportService.GetRaisedIssueDetails();
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var model = await _supportService.GetRaisedIssueDetails(profileName);
                 if (type == "Open")
                 {
                     model = model.Where(x => x.Status == "Open").ToList();

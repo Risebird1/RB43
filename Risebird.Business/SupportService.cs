@@ -100,11 +100,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<RaiseBugsVM>> GetRaisedIssueDetails()
+        public async Task<IEnumerable<RaiseBugsVM>> GetRaisedIssueDetails(string profileName)
         {
             try
             {
-                return await _supportRespository.GetRaisedIssueDetails();
+                return await _supportRespository.GetRaisedIssueDetails(profileName);
             }
             catch (Exception e)
             {
