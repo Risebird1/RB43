@@ -118,5 +118,6 @@ namespace Risebird.CommonHelper.Interface
         Task<string> SendCampaignLevelInterviewerAvailabilityMails(string interviewers, string yesbutton, string nobutton, string agName, int campaignId);
         Task<string> SendNotificationToClientForSelectedCandidate(string candidateEmail, string candidateName, List<string> clientUsers, string interviewDate, string irfId, string primarySkill, string status, int interviewId, string clientlogo = null);
         Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate, int irfid);
+        Task<string> SendTechSupportMail(string Comment, DateTime RequestedOn, string RequestBy);
     }
 }

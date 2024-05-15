@@ -3250,5 +3250,32 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public async Task<string> SendTechSupportMail(string Comment,DateTime RequestedOn ,string RequestBy)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Raised the issue");
+                msg.Subject = RequestBy+ "raised the issue for the date: " + RequestedOn;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("ajit_yadav@risebird.io", null));
+                StringBuilder msgBody = new StringBuilder("Dear ," + "Tech Support");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("You have received issue " + Comment + " from "+ RequestBy);
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Thank You, Team Risebird");
+
+                msg.HtmlContent = msgBody.ToString();
+
+                return await SendMail(msg);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
     }
 }

@@ -6,9 +6,14 @@
         @Html.HiddenFor(model=>model.RequestedBy)
         @Html.HiddenFor(model=>model.Requester)
         <div class="row col-md-12 col-sm-12" style="padding-bottom:2%">
-            <div class="col-md-6 col-sm-6">
+            @if (Model.Requester == "Interviewer" || Model.Requester == "Client")
+            {
+                <div class="col-md-6 col-sm-6">
+             
                 @Html.RadioButtonFor(model=>model.RequestType,"Operation") Operation
+                
             </div>
+            }
             <div class="col-md-6 col-sm-6">
                 @Html.RadioButtonFor(model=>model.RequestType,"Technical") Technical
             </div>
