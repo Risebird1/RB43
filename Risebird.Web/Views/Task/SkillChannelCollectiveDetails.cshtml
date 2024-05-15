@@ -28,27 +28,27 @@
                                         @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="missed_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         else
                                         {
                                             <div id="missed_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -67,30 +67,30 @@
                                     <td>Probable No-show</td>
                                     <td><span class="count btn-second-modal within-first-modal" onclick="TaskCompletionDetailsView('ProbableNoShow')">@Model.ProbableNoShowCount</span></td>
                                     <td>
-                                            @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="noshow_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="noshow_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -130,30 +130,30 @@
                                     <td> Not processed resumes</td>
                                     <td><span class="count" onclick="TaskCompletionDetailsView('NotProcessedResumes')">@Model.NotProcessedResumeCount</span></td>
                                     <td>
-                                            @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="notprocessed_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="notprocessed_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -172,30 +172,30 @@
                                     <td>Not scheduled candidates</td>
                                     <td><span class="count">0</span></td>
                                     <td>
-                                            @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="notscheduled_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="notscheduled_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -214,30 +214,30 @@
                                     <td>Rescheduled Meetings</td>
                                     <td><span class="count">0</span></td>
                                     <td>
-                                            @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="rescheduled_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="rescheduled_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -257,30 +257,30 @@
                                     <td>Need clarity</td>
                                     <td><span class="count" onclick="TaskCompletionDetailsView('NeedClarity')">@Model.NeedClarity</span></td>
                                     <td>
-                                            @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="clarity_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="clarity_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -300,30 +300,30 @@
                                     <td>Bounced & Dropped</td>
                                     <td><span class="count">0</span></td>
                                     <td>
-                                           @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
-                                            <div id="bounce_complete_status" class="pull-left"> 
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                            <div id="bounce_complete_status" class="pull-left">
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="bounch_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -342,30 +342,30 @@
                                     <td>Potential cold candidates</td>
                                     <td><span class="count">0</span></td>
                                     <td>
-                                             @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="cold_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="cold_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -385,30 +385,30 @@
                                     <td>Candidates which are not called</td>
                                     <td><span class="count">0</span></td>
                                     <td>
-                                            @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="notcalled_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="notcalled_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -427,30 +427,30 @@
                                     <td>Cancellation by candidate </td>
                                     <td><span class="count">0</span></td>
                                     <td>
-                                            @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="cancel_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="cancel_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -469,30 +469,30 @@
                                     <td>Unassigned  </td>
                                     <td><span class="count">0</span></td>
                                     <td>
-                                           @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="unassigned_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="unassigned_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -511,34 +511,34 @@
                                     <td>Late join </td>
                                     <td><span class="count" onclick="TaskCompletionDetailsView('Latejoin')">@Model.LatejoinCount</span></td>
                                     <td>
-                                             @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.LatejoinStatus) && Model.LatejoinStatus == "Completed")
                                         {
                                             <div id="latejoin_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="latejoin_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
-                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                            <span onclick=" OpenTaskStatusModal('@Model.IRFId','@Model.type', 'Latejoin' )" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                         </div>
                                     </td>
                                     <td>
@@ -553,30 +553,30 @@
                                     <td>Panel interviewer noshow  </td>
                                     <td><span class="count">0</span></td>
                                     <td>
-                                            @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                         {
                                             <div id="int-noshow_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                  Completed
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
-                                          else
+                                        else
                                         {
                                             <div id="int-noshow_progress_status" class="pull-left">
                                                 <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                  In Progress
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
                                                 </label>
-                                                <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
@@ -617,32 +617,32 @@
                                 <td>High selection rate</td>
                                 <td><span class="count" onclick="TaskAccuracyDetailsView('Selection')">@Model.HighSelectCount</span></td>
                                 <td>
-                                       @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="highselection_complete_status" class="pull-left">
+                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    {
+                                        <div id="highselection_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="highselection_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="highselection_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'HighSelectionRate')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -658,32 +658,32 @@
                                 <td>High rejection rate</td>
                                 <td><span class="count" onclick="TaskAccuracyDetailsView('Rejection')">@Model.HighRejectCount</span></td>
                                 <td>
-                                       @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="highrejection_complete_status" class="pull-left">
+                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    {
+                                        <div id="highrejection_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="highrejection_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="highrejection_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'HighRejectionRate')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -700,32 +700,32 @@
                                 <td>Potential risk by candidate</td>
                                 <td><span class="count" onclick="TaskAccuracyDetailsView('NegativeCandidate')">@Model.HighNegCandidateRating</span></td>
                                 <td>
-                                       @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="potentialcandidate_complete_status" class="pull-left">
+                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    {
+                                        <div id="potentialcandidate_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="potentialcandidate_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="potentialcandidate_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'PotentialRiskByCandidate')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -743,31 +743,31 @@
                                 <td><span class="count">0</span></td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="potentialclient_complete_status" class="pull-left">
+                                    {
+                                        <div id="potentialclient_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="potentialclient_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="potentialclient_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -785,31 +785,31 @@
                                 <td><span class="count">0</span></td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="redorequest_complete_status" class="pull-left">
+                                    {
+                                        <div id="redorequest_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="redorequest_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="redorequest_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -827,31 +827,31 @@
                                 <td><span class="count">0</span></td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="selectcomment_complete_status" class="pull-left">
+                                    {
+                                        <div id="selectcomment_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="selectcomment_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="selectcomment_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -869,31 +869,31 @@
                                 <td><span class="count">0</span></td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="rejectcomment_complete_status" class="pull-left">
+                                    {
+                                        <div id="rejectcomment_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="rejectcomment_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="rejectcomment_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -910,32 +910,32 @@
                                 <td>Less question </td>
                                 <td><span class="count">0</span></td>
                                 <td>
-                                     @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="lessquestion_complete_status" class="pull-left">
+                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    {
+                                        <div id="lessquestion_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="lessquestion_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="lessquestion_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -952,32 +952,32 @@
                                 <td>Short duration penalty</td>
                                 <td><span class="count">0</span></td>
                                 <td>
-                                       @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="penalty_complete_status" class="pull-left">
+                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    {
+                                        <div id="penalty_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="penalty_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="penalty_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -1001,32 +1001,32 @@
                                     <td><span>Pending</span></td>
                                 }
                                 <td>
-                                     @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                        {
-                                            <div id="calibration_complete_status" class="pull-left">
+                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    {
+                                        <div id="calibration_complete_status" class="pull-left">
                                             <label class="error-badge">
                                                 <label class="error-badge-text">
-                                                  Completed
+                                                    Completed
                                                 </label>
                                                 <span class="round">
-                                                  <img  src="~/img/complete-success.png" />
+                                                    <img src="~/img/complete-success.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
-                                          else
-                                        {
-                                            <div id="calibration_progress_status" class="pull-left">
-                                                <label class="progress-badge">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="calibration_progress_status" class="pull-left">
+                                            <label class="progress-badge">
                                                 <label class="error-badge-text">
-                                                  In Progress
+                                                    In Progress
                                                 </label>
                                                 <span class="round">
-                                                  <img class="progress-badge-icon"  src="~/img/progress-icon.png" />
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
                                                 </span>
                                             </label>
-                                            </div>
-                                        }
+                                        </div>
+                                    }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                         <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
@@ -1048,7 +1048,6 @@
                                     <td><span>Pending</span></td>
                                 }
                                 <td>
-
                                 </td>
                                 <td></td>
                             </tr>
