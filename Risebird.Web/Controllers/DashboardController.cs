@@ -105,7 +105,7 @@ namespace Risebird.Web.Controllers
                         //var channelrequest = await _dashboardService.FetchChannelRequests();
                         //model.ChannelRequest = channelrequest;
                         var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
-                        interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
+                            interviewmanagement = interviewmanagement?.OrderByDescending(x => x.interviewDate).ToList();
                         foreach (var item in interviewmanagement)
                         {
                             item.interviewDate = item.interviewDate.Date;
