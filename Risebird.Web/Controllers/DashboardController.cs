@@ -105,7 +105,7 @@ namespace Risebird.Web.Controllers
                         //var channelrequest = await _dashboardService.FetchChannelRequests();
                         //model.ChannelRequest = channelrequest;
                         var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
-                        interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
+                            interviewmanagement = interviewmanagement?.OrderByDescending(x => x.interviewDate).ToList();
                         foreach (var item in interviewmanagement)
                         {
                             item.interviewDate = item.interviewDate.Date;
@@ -2989,9 +2989,10 @@ namespace Risebird.Web.Controllers
                             {
                                 interviewers.Add(item.interviewer);
                             }
+                           
                             var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, item.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
                             var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
-
+                            await _notificationHelper.SendInterviewCancelledMailCandidate(item.candidateEmail, item.interviewDate.ToString(), item.CandidateName, irfIntId, InterviewId);
                         }
                     }
                     return Json("Candidate " + "(" + CandidateEmail + ")" + " for " + IRFId + " has been marked as cold successfully");
@@ -3255,6 +3256,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var data = await _dashboardService.GetColdCandidatesByClient(Email);
+                ViewBag.ClientEmail = Email;
                 return View("_GetPotentialColdCandidatesByClient", data.ToList());
             }
             catch (Exception ex)

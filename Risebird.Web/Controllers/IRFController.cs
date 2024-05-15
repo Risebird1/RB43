@@ -9540,5 +9540,11 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
+
+        public ActionResult Task()
+        {
+            return View();
+        }
+
     }
 }

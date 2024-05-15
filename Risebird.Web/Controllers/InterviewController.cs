@@ -5621,7 +5621,10 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 await GetStatusList(model, irfId, 0);
+
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
@@ -7469,12 +7472,16 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.Userid = _iRFService.GetUserId(email, profileName);
+              
+
                 if (model.Userid != 0)
                 {
                     await GetStatusList(model, irfId, model.Userid);
@@ -7746,6 +7753,8 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -7760,6 +7769,7 @@ namespace Risebird.Web.Controllers
                     model.Userid = _iRFService.GetUserId(email, profileName);
 
                 }
+
                 await GetStatusList(model, irfId, model.Userid);
                 //if (model.Userid != 0)
                 //{

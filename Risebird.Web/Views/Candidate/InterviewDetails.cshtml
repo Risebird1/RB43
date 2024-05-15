@@ -105,8 +105,8 @@
 
 
     /*
-     *  STYLE 1
-     */
+             *  STYLE 1
+             */
 
 
     #style-4::-webkit-scrollbar {
@@ -169,8 +169,8 @@
 </style>
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/tabs.css?v=2024" />
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
- <script src="~/Newassets/js/tabs.js?v=2024" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+<script src="~/Newassets/js/tabs.js?v=2024" type="text/javascript"></script>
 <style>
     body {
         font-size: 1.3vw !important;
@@ -323,7 +323,7 @@
                                                                         <div class="interviewresponsebtn redbtn" onclick="NotAttendMeeting(@item.Interviewid,'@ViewBag.Id',@Model.CandidateDetails.IRFId)">Not Available</div>
                                                                     </div>
                                                                     <div class="click_herebtn pull-left" onclick="captureclick('Interview availability', 'Need Clarity',@item.Interviewid)" style="margin-top:0px;">
-                                                                        <div class="interviewresponsebtn redbtn" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId')">Need Clarity</div>
+                                                                        <div class="interviewresponsebtn redbtn" onclick="OpenSendmailModal(@item.Interviewid,'@Model.CandidateDetails.ClientHRAttemptContact','@Model.CandidateDetails.Name','@Model.CandidateDetails.EmailId','@Model.CandidateDetails.IRFId','@Model.Uniqueid')">Need Clarity</div>
                                                                     </div>
                                                                 </div>
 
@@ -614,43 +614,43 @@
     @await Html.PartialAsync("~/Views/Interview/BroadcastModal.cshtml")
     @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 
-<script src="~/js/BroadcastMessage.js?v=2024"></script>
-<script src="~/js/twiliocallmaker.js?v=2024"></script>
-@if (ViewBag.Message != null)
-{
-    <script type="text/javascript">
-        $(document).ready(function () {
-            my_code();
-        });
-        function my_code() {
-            swal.fire("Successful", '@ViewBag.Message', "success");
-        }
-    </script>
-}
-<script>
-    $(document).ready(function () {
-        if ($("#txtMailstatus").val() == "Public") {
-            var modal = document.getElementById("PublicShareMail");
-            modal.style.display = "block";
-        }
-    });
-    function SubmitEmail() {
-        if ($("#txtcandidateEmailid").val().trim() != "") {
-            localStorage.setItem('PublicEmailid', $("#txtcandidateEmailid").val());
-            $.ajax({
-                type: "POST",
-                url: "/Candidate/CandidatePublicdetails",
-                data: { id: $("#hidtxtid").val(), Emailid: $("#txtcandidateEmailid").val().trim(), irfId: $("#hidtxtIRFid").val() },
-                success: function (data) {
-                    if (data == "success") {
-                        window.location = "/Candidate/VerifiedInterviewDetails?emailid=" + $("#txtcandidateEmailid").val() + "&id=" + $("#hidtxtid").val() + "&IRFid=" + $("#hidtxtIRFid").val();
-                    } else {
-                        swal.fire(data);
-                    }
-                }
+    <script src="~/js/BroadcastMessage.js?v=2024"></script>
+    <script src="~/js/twiliocallmaker.js?v=2024"></script>
+    @if (ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                my_code();
             });
-        }
+            function my_code() {
+                swal.fire("Successful", '@ViewBag.Message', "success");
+            }
+        </script>
     }
+    <script>
+        $(document).ready(function () {
+            if ($("#txtMailstatus").val() == "Public") {
+                var modal = document.getElementById("PublicShareMail");
+                modal.style.display = "block";
+            }
+        });
+        function SubmitEmail() {
+            if ($("#txtcandidateEmailid").val().trim() != "") {
+                localStorage.setItem('PublicEmailid', $("#txtcandidateEmailid").val());
+                $.ajax({
+                    type: "POST",
+                    url: "/Candidate/CandidatePublicdetails",
+                    data: { id: $("#hidtxtid").val(), Emailid: $("#txtcandidateEmailid").val().trim(), irfId: $("#hidtxtIRFid").val() },
+                    success: function (data) {
+                        if (data == "success") {
+                            window.location = "/Candidate/VerifiedInterviewDetails?emailid=" + $("#txtcandidateEmailid").val() + "&id=" + $("#hidtxtid").val() + "&IRFid=" + $("#hidtxtIRFid").val();
+                        } else {
+                            swal.fire(data);
+                        }
+                    }
+                });
+            }
+        }
 
 
         $(document).ready(function () {
@@ -695,7 +695,7 @@
                                 'interviewid': interviewid,
                                 'uniqueid': uniqueid,
                                 'Irfid': irfid,
-                                'schedulertype':1
+                                'schedulertype': 1
                             },
                             success: function (result) {
                                 location.href = result;
@@ -877,9 +877,9 @@
             $(this).siblings('.panel-heading').addClass('active');
         });
 
-  $('.panel-collapse').on('hide.bs.collapse', function () {
-    $(this).siblings('.panel-heading').removeClass('active');
-  });
-</script>
-@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
-<script src="~/js/TwilioCallMaker.js?v=2024"></script>
+        $('.panel-collapse').on('hide.bs.collapse', function () {
+            $(this).siblings('.panel-heading').removeClass('active');
+        });
+    </script>
+    @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+    <script src="~/js/TwilioCallMaker.js?v=2024"></script>
