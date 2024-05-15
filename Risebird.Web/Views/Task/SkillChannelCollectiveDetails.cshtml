@@ -467,7 +467,7 @@
                                 </tr>
                                 <tr>
                                     <td>Unassigned  </td>
-                                    <td><span class="count">@Model.UnassignedCount</span></td>
+                                    <td><span class="count" onclick="TaskCompletionDetailsView('Unassigned')">@Model.UnassignedCount</span></td>
                                     <td>
                                         @if (!string.IsNullOrEmpty(Model.UnassignedStatus) && Model.UnassignedStatus == "Completed")
                                         {
@@ -551,7 +551,7 @@
                                 </tr>
                                 <tr>
                                     <td>Panel interviewer noshow  </td>
-                                    <td><span class="count">@Model.NoShowInterviewer</span></td>
+                                    <td><span class="count" onclick="TaskCompletionDetailsView('NoShowInterviewer')">@Model.NoShowInterviewer</span></td>
                                     <td>
                                         @if (!string.IsNullOrEmpty(Model.NoShowInterviewerStatus) && Model.NoShowInterviewerStatus == "Completed")
                                         {

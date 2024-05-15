@@ -198,16 +198,10 @@ namespace Risebird.Web.Controllers
                     {
                         irfId = Convert.ToInt32(nvc["irfId"]);
                     }
-                    //if (!string.IsNullOrEmpty(nvc["candidateId"]))
-                    //{
-                    //    candidateId = Convert.ToInt32(nvc["candidateId"]);
-                    //}
-
                     if (!string.IsNullOrEmpty(nvc["status"]))
                     {
                         status = Convert.ToInt32(nvc["status"]);
                     }
-
                     if (!string.IsNullOrEmpty(nvc["comment"]))
                     {
                         comment = nvc["comment"];
@@ -232,16 +226,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (irfId != 0 && status != 0)
                         {
-
                             bool result = await _taskService.AddTaskStatus(model);
-                            //if (result)
-                            //{
-                            //    TempData["SuccessErrorMessageCandidate"] = "Task status has been saved Successfully!";
-                            //}
-                            //else
-                            //{
-                            //    TempData["SuccessErrorMessageCandidate"] = "Error saving Task status.";
-                            //}
                             return Json(result);
                         }
                         else
