@@ -584,9 +584,50 @@
                                         </div>
                                     </td>
                                     <td>
-
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                             <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'NoShowInterviewer', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>Cold Candidates</td>
+                                    <td><span class="count">@Model.ColdCandidate</span></td>
+                                    @* <td><span class="count" onclick="TaskCompletionDetailsView('ColdCandidate')">@Model.ColdCandidate</span></td> *@
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(Model.ColdCandidateStatus) && Model.ColdCandidateStatus == "Completed")
+                                        {
+                                            <div id="int-noshow_complete_status" class="pull-left">
+                                                <label class="error-badge">
+                                                    <label class="error-badge-text">
+                                                        Completed
+                                                    </label>
+                                                    <span class="round">
+                                                        <img src="~/img/complete-success.png" />
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div id="int-noshow_progress_status" class="pull-left">
+                                                <label class="progress-badge">
+                                                    <label class="error-badge-text">
+                                                        In Progress
+                                                    </label>
+                                                    <span class="round">
+                                                        <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        }
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                            <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'ColdCandidate' )" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px"></i></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                            <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'ColdCandidate', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
                                     </td>
 
