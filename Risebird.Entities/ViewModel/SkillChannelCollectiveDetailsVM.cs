@@ -21,6 +21,8 @@ namespace Risebird.Entities.ViewModel
         public int ProbableNoShowCount { get; set; }
         public int NotProcessedResumeCount { get; set; }
         public int LatejoinCount { get; set; }
+        public int UnassignedCount { get; set; }
+        public int NoShowInterviewer { get; set; }
 
         public bool CalibrationCall { get; set; }
         public bool DMApproved { get; set; }
@@ -32,6 +34,9 @@ namespace Risebird.Entities.ViewModel
         public string NotProcessedResumesLatestStatus { get; set; }
         public string MissedCandidatesLatestStatus { get; set; }
         public string LatejoinStatus { get; set; }
+        public string UnassignedStatus { get; set; }
+        public string NeedClarityStatus { get; set; }
+        public string NoShowInterviewerStatus { get; set; }
 
         public string HighSelectionRateLatestStatus { get; set; }
         public string HighRejectionRateLatestStatus { get; set; }
