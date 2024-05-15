@@ -139,7 +139,7 @@ namespace Risebird.Repository
 
             return false;
         }
-        public async Task<IEnumerable<InterviewManagementVM>> SkillChannelCompletionDetails(int irfId, string type)
+        public async Task<IEnumerable<SkillChannelTaskCompletionDetailsVM>> SkillChannelCompletionDetails(int irfId, string type)
         {
             try
             {
@@ -148,7 +148,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@type", type);
-                    var result = await SqlMapper.QueryAsync<InterviewManagementVM>(con, "usp_GetSkillChannelCompletionDetails", parameters,
+                    var result = await SqlMapper.QueryAsync<SkillChannelTaskCompletionDetailsVM>(con, "usp_GetSkillChannelCompletionDetails", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 300);
                     return result;
                 }

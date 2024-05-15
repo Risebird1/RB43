@@ -1367,6 +1367,7 @@ namespace Risebird.Web.Controllers
             {
                 model.interviewid = interviewid;
                 model.returnvaluetype = returnvaluetype;
+                model.reschedulerequest = true;
                 return View("ReScheduleEvent", model);
             }
             return View(model);
