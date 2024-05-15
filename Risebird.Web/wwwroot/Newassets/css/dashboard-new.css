@@ -11115,7 +11115,9 @@ option {
                     font-size: 15px;
                     color: #938f8f;
                 }
-
+            #InterviewerInsightsModel .modal-lg {
+                width: 97% !important;
+            }
             .calling-area {
                 background: #eee4e4;
                 font-size: 15px;
@@ -11519,7 +11521,9 @@ option {
                 width: 100%;
                 float: left;
             }
-
+            #InterviewerInsightsModel .modal-lg {
+                width:97%!important;
+            }
             .error-badge {
                 top: -40px
             }
@@ -11811,7 +11815,7 @@ option {
             .navbar-toggle {
                 top: -5px;
             }
-
+            
             .preview-section {
                 padding-top: 80px !important;
             }
