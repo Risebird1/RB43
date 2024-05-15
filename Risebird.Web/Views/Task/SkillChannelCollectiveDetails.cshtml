@@ -1536,7 +1536,7 @@
         var modal = document.getElementById("second-modal");
         modal.style.display = "block";
         $.ajax({
-            //type: "POST",
+            type: "POST",
             url: '/Task/SkillChannelCompletionDetails',
             data: { 'irfId': irfid, 'type': typedetails },
             success: function (data) {
