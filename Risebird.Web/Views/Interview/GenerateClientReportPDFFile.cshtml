@@ -339,7 +339,7 @@
                                              <hr style="clear:both;margin-bottom:0px;" />
 
                                              </div>
-                                             <div class="interviewComment" style="clear:both;height:350px;overflow:auto;padding:10px 20px 20px 20px;">
+                                             <div class="interviewComment" style="clear:both;overflow:auto;padding:10px 20px 20px 20px;">
                                                  <div style="color:#000;margin:10px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">1</span>Interviewer Comment</div>
                                                  <hr style="margin-bottom:8px;" />
                                             @if (Model.InterviewerComment != null)
@@ -378,19 +378,19 @@
                                                             </div>
                                         }
 
-
-                                             <div style="padding:0px 20px 20px 20px;">
+                                          <div class="html2pdf__page-break"></div>
+                                             <div style="padding:80px 20px 20px 20px;margin-top:10px;">
                                                  <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">4</span> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
                                                  <hr style="clear:both;margin-bottom:0px;" />
-                                             </div>
+                                           
 
-                                             <div style="padding:0px 20px 20px 20px;">
+                                             <div style="padding:0px">
                                             @if (Model.TechSkillReportCollection != null)
                                             {
                                                 @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                 {
-                                                                                                 <div style="padding-top:10px">
-                                                                                                     <p style="margin-bottom:5px;">@Model.TechSkillReportCollection[i].SkillName</p>
+                                                      <div style="padding-top:10px">
+                                                   <p style="margin-bottom:5px;">@Model.TechSkillReportCollection[i].SkillName</p>
                                                         @{
                                                             var TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                         }
@@ -399,18 +399,18 @@
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
-                                                                                                     <div class="skillBackground skill-round-xlarge skill-small">
+                                                         <div class="skillBackground skill-round-xlarge skill-small">
                                                             @if (TechSkill_Score == 0)
                                                             {
-                                                                                                                                             <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@TechSkill_Score %</span></div>
+                                                           <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@TechSkill_Score %</span></div>
                                                             }
                                                             else
                                                             {
-                                                                                                                                                         <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                           <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
 
                                                             }
-                                                                                                     </div>
-                                                                                                 </div>
+                                                            </div>
+                                                          </div>
                                                 }
                                             }
                                              </div>
@@ -420,25 +420,25 @@
 
                                          <div class="col-md-12">
 
-                                             <div style="margin-top:10px;padding:80px 20px 20px 20px;">
+                                             <div style="margin-top:10px;padding:80px 20px 20px 8px;">
                                                  <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">5</span>Questions Discussed</div>
                                                  <hr style="margin-bottom:8px;" />
                                                  <div class="question">
                                                 @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
                                                 {
-                                                                             <ul>
+                                                                             <ul style="padding:0px;margin:0px;">
                                                         @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                         {
                                                             var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                             @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
                                                             {
-                                                                                                                                                         <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer;font-size:14px;background-size:7%;background-position:5px 6px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                                                                                                         <li style="padding-left:10px;margin-left:0px;" onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer;font-size:14px;background-size:7%;background-position:5px 6px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                             }
                                                             else
                                                             {
-                                                                                                                                 <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                                                                                             <li style="padding-left:10px;margin-left:0px;" >@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                             }
-                                                                                                         <label>Rating : @valueslist</label>
+                                                                                                                 <label style="padding-left:10px;margin-left:0px;">Rating : @valueslist</label>
                                                         }
                                                                              </ul>
                                                 }
