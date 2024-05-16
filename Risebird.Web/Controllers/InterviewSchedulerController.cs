@@ -1142,10 +1142,13 @@ namespace Risebird.Web.Controllers
                     {
                         //Start: Cancel the previous meetings
                         var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime);
-                        //cancel interviewmmeting over portal
-                        DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
-                        //var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Reschedule on " + indianTime.ToString(), (int)CandidateStatusOptions.Cancelled, model.interviewid);
-                        //End: Cancel the previous meetings
+                        if (string.IsNullOrWhiteSpace(candidateuniqueid.Message))
+                        {
+                            //cancel interviewmmeting over portal
+                            DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
+                            //var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Reschedule on " + indianTime.ToString(), (int)CandidateStatusOptions.Cancelled, model.interviewid);
+                            //End: Cancel the previous meetings
+                        }
                         _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
                         string timezonevalue = string.Empty;
                         string hh = string.Empty;
