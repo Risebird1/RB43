@@ -403,6 +403,7 @@
                                                             @*<th id="myinterview_5">JD Link</th>*@
                                                             @*<th>Instructions</th>*@
                                                             <th id="myinterview_6">Resume</th>
+                                                             <th>Client</th>
                                                             @*<th>Client Instructions</th>*@
                                                             @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed)
                                                             {
@@ -427,7 +428,7 @@
                                                             <th>Candidate Details</th>
                                                             <th style="border-left: 0px !important;width:12%">Interview Date</th>
                                                             @* <th>JD-Skills</th>*@
-
+                                                            <th>Client</th>
                                                             @*<th>JD Link</th>*@
                                                             @* <th>Instructions</th>*@
                                                             <th>Resume</th>
@@ -619,7 +620,7 @@
                                                                 {
                                                                     <td>No Resume</td>
                                                                 }
-                                                              
+                                                              <td>@item.ClientName</td>
                                                            @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed){
                                                                 @if (item.ProxyvotingCount>0) { 
                                                         <td class="text-center">
@@ -807,11 +808,11 @@
                                                                         <tr>
                                                                             @if (item.JobCountry == "1")
                                                                             {
-                                                                                <td>India</td>
+                                                                                <td>Offshore</td>
                                                                             }
                                                                             else if (item.JobCountry == "2")
                                                                             {
-                                                                                <td>Outside India</td>
+                                                                                <td>Onsite</td>
                                                                             }
                                                                             else
                                                                             {
