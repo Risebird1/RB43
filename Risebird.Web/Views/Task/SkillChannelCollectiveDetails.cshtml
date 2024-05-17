@@ -982,7 +982,6 @@
                                     </div>
                                 </td>
                                 <td>
-
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
                                         <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'LessQuestions', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
@@ -1041,42 +1040,8 @@
                                 {
                                     <td><span>Pending</span></td>
                                 }
-                                <td>
-                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
-                                    {
-                                        <div id="calibration_complete_status" class="pull-left">
-                                            <label class="error-badge">
-                                                <label class="error-badge-text">
-                                                    Completed
-                                                </label>
-                                                <span class="round">
-                                                    <img src="~/img/complete-success.png" />
-                                                </span>
-                                            </label>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div id="calibration_progress_status" class="pull-left">
-                                            <label class="progress-badge">
-                                                <label class="error-badge-text">
-                                                    In Progress
-                                                </label>
-                                                <span class="round">
-                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
-                                                </span>
-                                            </label>
-                                        </div>
-                                    }
-                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
-                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
-                                    </span>
-                                </td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             <tr>
                                 <td>HM page approval</td>
@@ -1088,8 +1053,7 @@
                                 {
                                     <td><span>Pending</span></td>
                                 }
-                                <td>
-                                </td>
+                                <td></td>
                                 <td></td>
                             </tr>
                         </tbody>
@@ -1108,32 +1072,138 @@
                             <tr>
                                 <th>Assigned Tasks</th>
                                 <th>Count</th>
-                                <th>Action</th>
+                                <th>Status</th>
+                                <th>Logs</th>
                             </tr>
                         </thead>
                         <tbody>
-
                             <tr>
                                 <td>Not scheuduled candidate== Aging> 1 day</td>
                                 <td><span class="count">0</span></td>
+                                <td></td>
                                 <td></td>
 
                             </tr>
                             <tr>
                                 <td>Reschedule candidate == Aging > 2days </td>
-                                <td><span class="count">0</span></td>
-                                <td></td>
+                                <td><span class="count" onclick="TaskSpeedDetailsView('Reschedule')">@Model.RescheduleInterview</span></td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.RescheduleStatus) && Model.RescheduleStatus == "Completed")
+                                    {
+                                        <div id="lessquestion_complete_status" class="pull-left">
+                                            <label class="error-badge">
+                                                <label class="error-badge-text">
+                                                    Completed
+                                                </label>
+                                                <span class="round">
+                                                    <img src="~/img/complete-success.png" />
+                                                </span>
+                                            </label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="lessquestion_progress_status" class="pull-left">
+                                            <label class="progress-badge">
+                                                <label class="error-badge-text">
+                                                    In Progress
+                                                </label>
+                                                <span class="round">
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                </span>
+                                            </label>
+                                        </div>
+                                    }
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'Reschedule')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'Reschedule', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
 
                             </tr>
                             <tr>
                                 <td>Report pending > 3 hrs </td>
                                 <td><span class="count" onclick="TaskSpeedDetailsView('ReportPending')">@Model.ReportPending</span></td>
-                                <td></td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.ReportPendingStatus) && Model.ReportPendingStatus == "Completed")
+                                    {
+                                        <div id="lessquestion_complete_status" class="pull-left">
+                                            <label class="error-badge">
+                                                <label class="error-badge-text">
+                                                    Completed
+                                                </label>
+                                                <span class="round">
+                                                    <img src="~/img/complete-success.png" />
+                                                </span>
+                                            </label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="lessquestion_progress_status" class="pull-left">
+                                            <label class="progress-badge">
+                                                <label class="error-badge-text">
+                                                    In Progress
+                                                </label>
+                                                <span class="round">
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                </span>
+                                            </label>
+                                        </div>
+                                    }
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'ReportPending')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'ReportPending', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
                             </tr>
                             <tr>
                                 <td>QC Pending for selected candidate  > 12 hrs </td>
-                                <td><span class="count">0</span></td>
-                                <td></td>
+                                <td><span class="count" onclick="TaskSpeedDetailsView('QcPending')">@Model.QcPendingCount</span></td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.QcPendingStatus) && Model.QcPendingStatus == "Completed")
+                                    {
+                                        <div id="lessquestion_complete_status" class="pull-left">
+                                            <label class="error-badge">
+                                                <label class="error-badge-text">
+                                                    Completed
+                                                </label>
+                                                <span class="round">
+                                                    <img src="~/img/complete-success.png" />
+                                                </span>
+                                            </label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div id="lessquestion_progress_status" class="pull-left">
+                                            <label class="progress-badge">
+                                                <label class="error-badge-text">
+                                                    In Progress
+                                                </label>
+                                                <span class="round">
+                                                    <img class="progress-badge-icon" src="~/img/progress-icon.png" />
+                                                </span>
+                                            </label>
+                                        </div>
+                                    }
+                                    <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'QcPending')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'QcPending', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                    </span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -1151,7 +1221,8 @@
                             <tr>
                                 <th>Assigned Tasks</th>
                                 <th>Count</th>
-                                <th>Action</th>
+                                <th>Status</th>
+                                <th>Logs</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1171,6 +1242,7 @@
                                         </span>
                                     </label>
                                 </td>
+                                <td></td>
                             </tr>
                         </tbody>
                     </table>

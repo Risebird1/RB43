@@ -28,6 +28,9 @@ namespace Risebird.Entities.ViewModel
         public bool CalibrationCall { get; set; }
         public bool DMApproved { get; set; }
         public int ReportPending { get; set; }
+        public int RescheduleInterview { get; set; }
+        public int QcPendingCount { get; set; }
+
         public int HighNegClientRating { get; set; }
         public int RedoRequests { get; set; }
         public int LessSelectComments { get; set; }
@@ -53,6 +56,10 @@ namespace Risebird.Entities.ViewModel
         public string LessSelectCommentStatus { get; set; }
         public string LessRejectCommentStatus { get; set; }
         public string LessQuestionsStatus { get; set; }
+        
+        public string ReportPendingStatus { get; set; }
+        public string RescheduleStatus { get; set; }
+        public string QcPendingStatus { get; set; }
     }
     public class SkillChannelTaskSpeedDetailsVM
     {
@@ -61,6 +68,9 @@ namespace Risebird.Entities.ViewModel
         public string candidateEmail { get; set; }
         public int imid { get; set; }
         public int irfIntId { get; set; }
+        public string CalendlyLink { get; set; }
+        public string ResumeLink { get; set; }
+        public int CandidateId { get; set; }
     }
     public class SkillChannelTaskCompletionDetailsVM
     {

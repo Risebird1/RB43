@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -130,6 +131,7 @@ namespace Risebird.Web.Controllers
                         {
                             model = new List<SkillChannelTaskSpeedDetailsVM>();
                         }
+                        
                         ViewBag.AccuracyType = type;
                         return PartialView(model);
                     }
