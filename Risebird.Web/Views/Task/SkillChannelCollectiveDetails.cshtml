@@ -658,7 +658,7 @@
                                 <td>High selection rate</td>
                                 <td><span class="count" onclick="TaskAccuracyDetailsView('Selection')">@Model.HighSelectCount</span></td>
                                 <td>
-                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    @if (!string.IsNullOrEmpty(Model.HighSelectionRateLatestStatus) && Model.HighSelectionRateLatestStatus == "Completed")
                                     {
                                         <div id="highselection_complete_status" class="pull-left">
                                             <label class="error-badge">
@@ -699,7 +699,7 @@
                                 <td>High rejection rate</td>
                                 <td><span class="count" onclick="TaskAccuracyDetailsView('Rejection')">@Model.HighRejectCount</span></td>
                                 <td>
-                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    @if (!string.IsNullOrEmpty(Model.HighRejectionRateLatestStatus) && Model.HighRejectionRateLatestStatus == "Completed")
                                     {
                                         <div id="highrejection_complete_status" class="pull-left">
                                             <label class="error-badge">
@@ -741,7 +741,7 @@
                                 <td>Potential risk by candidate</td>
                                 <td><span class="count" onclick="TaskAccuracyDetailsView('NegativeCandidate')">@Model.HighNegCandidateRating</span></td>
                                 <td>
-                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    @if (!string.IsNullOrEmpty(Model.PotentialRiskByCandidateLatestStatus) && Model.PotentialRiskByCandidateLatestStatus == "Completed")
                                     {
                                         <div id="potentialcandidate_complete_status" class="pull-left">
                                             <label class="error-badge">
@@ -781,9 +781,9 @@
                             </tr>
                             <tr>
                                 <td>Potential risk by client </td>
-                                <td><span class="count">0</span></td>
+                                <td><span class="count" onclick="TaskAccuracyDetailsView('PotentialRiskByClient')">@Model.HighNegClientRating</span></td>
                                 <td>
-                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    @if (!string.IsNullOrEmpty(Model.PotentialRiskByClientLatestStatus) && Model.PotentialRiskByClientLatestStatus == "Completed")
                                     {
                                         <div id="potentialclient_complete_status" class="pull-left">
                                             <label class="error-badge">
@@ -810,22 +810,22 @@
                                         </div>
                                     }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
-                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'PotentialRiskByClient')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
                                 </td>
                                 <td>
 
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'PotentialRiskByClient', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
                                 </td>
 
                             </tr>
                             <tr>
                                 <td>Redo request</td>
-                                <td><span class="count">0</span></td>
+                                <td><span class="count" onclick="TaskAccuracyDetailsView('RedoRequest')">@Model.RedoRequests</span></td>
                                 <td>
-                                    @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                    @if (!string.IsNullOrEmpty(Model.RedoRequestStatus) && Model.RedoRequestStatus == "Completed")
                                     {
                                         <div id="redorequest_complete_status" class="pull-left">
                                             <label class="error-badge">
@@ -852,20 +852,20 @@
                                         </div>
                                     }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
-                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'RedoRequest')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
                                 </td>
                                 <td>
 
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'RedoRequest', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
                                 </td>
 
                             </tr>
                             <tr>
                                 <td>Shorter comment for select </td>
-                                <td><span class="count">0</span></td>
+                                <td><span class="count" onclick="TaskAccuracyDetailsView('LessSelectComment')">@Model.LessSelectComments</span></td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                     {
@@ -894,20 +894,20 @@
                                         </div>
                                     }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
-                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'LessSelectComment')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
                                 </td>
                                 <td>
 
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'LessSelectComment', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
                                 </td>
 
                             </tr>
                             <tr>
                                 <td>Shorter comment for reject</td>
-                                <td><span class="count">0</span></td>
+                                <td><span class="count" onclick="TaskAccuracyDetailsView('LessRejectComment')">@Model.LessRejectComments</span></td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                     {
@@ -936,20 +936,20 @@
                                         </div>
                                     }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
-                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'LessRejectComment')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
                                 </td>
                                 <td>
 
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'LessRejectComment', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
                                 </td>
 
                             </tr>
                             <tr>
                                 <td>Less question </td>
-                                <td><span class="count">0</span></td>
+                                <td><span class="count" onclick="TaskAccuracyDetailsView('LessQuestions')">@Model.LessQuestions</span></td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
                                     {
@@ -978,13 +978,13 @@
                                         </div>
                                     }
                                     <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top:-3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
-                                        <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                        <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'LessQuestions')" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                     </div>
                                 </td>
                                 <td>
 
                                     <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                        <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                        <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'LessQuestions', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                     </span>
                                 </td>
 

@@ -185,6 +185,29 @@ namespace Risebird.Repository
                 return null;
             }
         }
-
+        public async Task<IEnumerable<SkillChannelTaskCompletionDetailsVM>> GetSkillChannelAccuracyRedoDetails(int irfId, string type)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@type", type);
+                    var result = await SqlMapper.QueryAsync<SkillChannelTaskCompletionDetailsVM>(con, "usp_GetSkillChannelAccuracyDetails", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 300);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
