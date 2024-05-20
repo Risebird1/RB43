@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.SkillChannelTaskCompletionDetailsVM>
+
+<div class="secondtable-h" id="style-2">
+    <div class="table-responsive">
+        <table id="meeting" class="table table-bordered table-hover" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Interview Date</th>
+                    <th>Candidate</th>
+                    <th>Candidate Emailid</th>
+                    <th>Interviewer</th>
+                    <th>Created on</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Interview Date</th>
+                    <th>Candidate</th>
+                    <th>Candidate Emailid</th>
+                    <th>Interviewer</th>
+                    <th>Created on</th>
+                </tr>
+            </tfoot>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.interviewDate</td>
+                        <td>@item.candidateName</td>
+                        <td>@item.candidateEmail</td>
+                        <td>@item.interviewer</td>
+                        <td>@item.Createdon</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

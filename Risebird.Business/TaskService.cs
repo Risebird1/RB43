@@ -95,5 +95,17 @@ namespace Risebird.Business
             }
 
         }
+        public async Task<IEnumerable<SkillChannelTaskCompletionDetailsVM>> GetSkillChannelAccuracyRedoDetails(int irfId, string type)
+        {
+            try
+            {
+                return await _taskRepository.GetSkillChannelAccuracyRedoDetails(irfId, type);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

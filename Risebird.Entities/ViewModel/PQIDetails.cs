@@ -19,6 +19,7 @@
         public string JDTiltle { get; set; }
         public int NegativeRating { get; set; }
 
+        public int TotalRedoCount { get; set; }
         public int TotallessComment { get; set; }
         public int TotallessQuestions { get; set; }
         public int TotalLatejoin { get; set; }
