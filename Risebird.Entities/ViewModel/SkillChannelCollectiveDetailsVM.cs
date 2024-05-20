@@ -43,6 +43,8 @@ namespace Risebird.Entities.ViewModel
         public string HighSelectionRateLatestStatus { get; set; }
         public string HighRejectionRateLatestStatus { get; set; }
         public string PotentialRiskByCandidateLatestStatus { get; set; }
+        public int BouncedOrDroppedCount { get; set; }
+        public string BouncedOrDroppedTaskLatestStatus { get; set; }
     }
     public class SkillChannelTaskSpeedDetailsVM
     {

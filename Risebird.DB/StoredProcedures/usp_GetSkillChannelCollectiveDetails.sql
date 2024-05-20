@@ -17,7 +17,7 @@ BEGIN
 if(@type='Completion')            
 begin            
 Declare @NeedClarity int, @ProbableNoShowCount int, @NotProcessedCandidateResume int ,@MissedCandidate int,@LatejoinCount int,@UnassignedCount int,  
-@NoShowInterviewer int,@ColdCandidate int  
+@NoShowInterviewer int, @ColdCandidate int, @BouncedOrDroppedCount int  
 --Need clarity          
 Select @NeedClarity=Count(im.id) From InterviewMeetings im join IRF on IRF.IRFId=im.IRFId           
 where CandidateResponse=4 and confirmationStatus=1 and IRF.id=@irfId          
@@ -65,8 +65,23 @@ join ColdCandidateInfos cci on cci.FKCandidateId=ca.id
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId join UserList ul on ul.id=cm.UserId
 where IRF.id=@irfId and ISNULL(cci.IsColdCandidate,0)=1   
 
+
+--Bounced or Dropped
+set @BouncedOrDroppedCount = 
+(
+  select count (distinct sge.email) 
+  from SentMailDetails smd
+  join SendgridEventData sge on sge.Split_Message_Id = smd.sg_message_id
+  join UserList ul on ul.EmailId = sge.email
+  where sge.email != 'hire@risebird.io'
+  and ([event] = 'bounce' or [event] = 'dropped')
+  and smd.IRFId = @irfId
+  and ul.idProfile=23 
+)
+
+
 Select @ProbableNoShowCount as ProbableNoShowCount, @NotProcessedCandidateResume as NotProcessedResumeCount, @NeedClarity as NeedClarity,@MissedCandidate as MissedCandidate,@LatejoinCount as LatejoinCount,@UnassignedCount as UnassignedCount,  
-@NoShowInterviewer as NoShowInterviewer,@ColdCandidate as ColdCandidate,  
+@NoShowInterviewer as NoShowInterviewer,@ColdCandidate as ColdCandidate, @BouncedOrDroppedCount as BouncedOrDroppedCount, 
 (select top 1          
 CASE          
     WHEN [Status] = 1 THEN 'In Progress'          
@@ -122,7 +137,14 @@ CASE
     WHEN [Status] = 2 THEN 'Completed'          
     ELSE 'In Progress'          
 END as StatusValue          
-from SkillChannelTasks where TaskValue = 'ColdCandidate' and irfid = @irfId order by CreatedOn desc) as ColdCandidateStatus    
+from SkillChannelTasks where TaskValue = 'ColdCandidate' and irfid = @irfId order by CreatedOn desc) as ColdCandidateStatus,
+(select top 1          
+CASE          
+    WHEN [Status] = 1 THEN 'In Progress'          
+    WHEN [Status] = 2 THEN 'Completed'          
+    ELSE 'In Progress'          
+END as StatusValue          
+from SkillChannelTasks where TaskValue = 'BouncedOrDropped' and irfid = @irfId order by CreatedOn desc) as BouncedOrDroppedTaskLatestStatus    
           
           
 end            
