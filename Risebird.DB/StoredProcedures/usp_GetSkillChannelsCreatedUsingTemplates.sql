@@ -22,12 +22,12 @@ WITH CTE AS (
         WHERE ActivityType=2--activity type 2 corresponds to creation of skill channel(refer enum)
 )
 
-select irf.IRFId, irf.CreatedOn, csc.[Name] as CreatedFromTemplateName, cl.[Name] as ClientCompName, 
+select distinct irf.IRFId, irf.CreatedOn, csc.[Name] as CreatedFromTemplateName, cl.[Name] as ClientCompName, 
 ul.EmailId as RisebirdHREmail, cte.PerformedBy as CreatedBy, asg.AssessmentGroup as AssessmentGroupName
 from IRF 
 join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId
 join Client cl on cl.id = irf.ClientId
-join CTE on cte.Particulars = irf.IRFId
+left join CTE on cte.Particulars = irf.IRFId
 join UserList ul on ul.id = irf.RisebirdHr
 join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
 where CreatedFromTemplateId is not null and CreatedFromTemplateId > 0 
