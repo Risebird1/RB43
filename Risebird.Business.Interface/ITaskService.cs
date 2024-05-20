@@ -16,5 +16,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddTaskStatus(SkillChannelTasks model);
         Task<IEnumerable<SkillChannelTaskCompletionDetailsVM>> SkillChannelCompletionDetails(int irfId, string type);
         Task<IEnumerable<SkillChannelTasks>> GetTaskStatusList(int irfId, string tab, string taskValue);
+        Task<IEnumerable<SkillChannelTaskCompletionDetailsVM>> GetSkillChannelAccuracyRedoDetails(int irfId, string type);
     }
 }

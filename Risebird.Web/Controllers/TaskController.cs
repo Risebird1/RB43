@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -75,13 +76,26 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = await _taskService.GetSkillChannelAccuracyDetails(irfId, type);
-                        if (model == null)
+                        if (type == "RedoRequest")
                         {
-                            model = new List<PQIDetails>();
+                            var model = await _taskService.GetSkillChannelAccuracyRedoDetails(irfId, type);
+                            if (model == null)
+                            {
+                                model = new List<SkillChannelTaskCompletionDetailsVM>();
+                            }
+                            ViewBag.AccuracyType = type;
+                            return PartialView("_SkillChannelAccuracyRedoDetails", model);
                         }
-                        ViewBag.AccuracyType = type;
-                        return PartialView(model);
+                        else
+                        {
+                            var model = await _taskService.GetSkillChannelAccuracyDetails(irfId, type);
+                            if (model == null)
+                            {
+                                model = new List<PQIDetails>();
+                            }
+                            ViewBag.AccuracyType = type;
+                            return PartialView(model);
+                        }
                     }
                     else
                     {
@@ -117,6 +131,7 @@ namespace Risebird.Web.Controllers
                         {
                             model = new List<SkillChannelTaskSpeedDetailsVM>();
                         }
+                        
                         ViewBag.AccuracyType = type;
                         return PartialView(model);
                     }
