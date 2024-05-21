@@ -245,6 +245,78 @@
                             </div>
                         </div>
 
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="PotentialRiskByCandidate()">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon risk"><img src="~/img/risk.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Potential Risk</strong></span><span class="dashboard-smalltxt">By Candidate</span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong>
+                                                                <strong> <span style="cursor:pointer" id="ribbonPotentialRiskInterviewCount" onclick="PotentialRiskByCandidate()"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
+                                                            </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="PotentialRiskByCandidate()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="PotentialRiskByCandidate()">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon risk"><img src="~/img/risk.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Potential Risk</strong></span><span class="dashboard-smalltxt">By Candidate</span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>
+                                                                <strong> <span style="cursor:pointer" id="ribbonPotentialRiskInterviewCount_1" class="card-title" onclick="PotentialRiskByCandidate()"> @Model.NotUpdatedMeetingsObj.PotentialRiskInterviewCount </span> </strong>
+                                                            </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="PotentialRiskByCandidate()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
         </div>
       </div>
      <div>
@@ -266,6 +338,10 @@
 
       function CallibrationCallsIRFDetalis(type) {
     window.location.href = "/IRF/CalibrationMeetingsDetails?type=" + type + "&returnBack=" + 1;
+    }
+
+       function PotentialRiskByCandidate() {
+        window.location.href = "/Dashboard/PotentialRiskByCandidate";
     }
 </script>
 
@@ -322,14 +398,24 @@
                 $(".flipper3").removeClass("flipper");
             }
 
+            if (parseInt(data.potentialRiskInterviewCount) != parseInt($("#ribbonPotentialRiskInterviewCount").text())) {
+                $(".flipper5").addClass("flipper");
+            }
+            else {
+                $(".flipper5").removeClass("flipper");
+            }
 
             $("#ribbonMissedCandidateCount").text(data.missedCandidateCount);
             $("#ribbonMailCount").text(data.bounceDroppedCandidateMailCount);
             $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
 
+            $("#ribbonPotentialRiskInterviewCount").text(data.potentialRiskInterviewCount);
+
             $("#ribbonMissedCandidateCount_1").text(data.missedCandidateCount);
             $("#ribbonMailCount_1").text(data.bounceDroppedCandidateMailCount);
             $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
+
+            $("#ribbonPotentialRiskInterviewCount_1").text(data.potentialRiskInterviewCount);
 
                 $(".flipper").toggleClass("flip");
             }

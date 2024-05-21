@@ -20,6 +20,7 @@ using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -2243,7 +2244,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = await _dashboardService.GetPotentialRiskByCandidateService();
+                        var model = await _dashboardService.GetPotentialRiskByCandidateService(emailid);
                         foreach (var item in model)
                         {
                             if (item.InterviewStatus.HasValue)
@@ -2280,7 +2281,7 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var modelList = await _dashboardService.GetPotentialRiskByCandidateService();
+                var modelList = await _dashboardService.GetPotentialRiskByCandidateService(emailid);
                 foreach (var item in modelList)
                 {
 
