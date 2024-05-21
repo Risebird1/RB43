@@ -2794,15 +2794,33 @@ namespace Risebird.Business
                 {
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
-                    await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
 
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
                     activityTrackerModel.Particulars = irfDetails.IRFId;
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = "Skill channel created";
+                    try
+                    {
+                        await _activityTrackerRepository.AddActivity(activityTrackerModel);
 
-                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                    }
+
+
+                    try
+                    {
+                        await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                    }
+
                 }
                 return result;
             }
@@ -2932,7 +2950,6 @@ namespace Risebird.Business
                 {
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
-                    await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
 
 
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -2941,7 +2958,27 @@ namespace Risebird.Business
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = "Skill channel created";
 
-                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    try
+                    {
+                        await _activityTrackerRepository.AddActivity(activityTrackerModel);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                    }
+
+
+                    try
+                    {
+                        await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                    }
+
                 }
                 return result;
             }
@@ -3027,7 +3064,6 @@ namespace Risebird.Business
                 {
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
-                    await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
 
 
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -3036,7 +3072,26 @@ namespace Risebird.Business
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = "Skill channel created";
 
-                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    try
+                    {
+                        await _activityTrackerRepository.AddActivity(activityTrackerModel);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                    }
+
+                    try
+                    {
+                        await _notificationHelper.SendIRFCreatedFromTemplateNotificationToChannelOwner(channelOwner, irfDetails.IRFId, irfDetails.TemplateName, irfDetails.JDTiltle, clientName);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                    }
+
                 }
                 return result;
             }
@@ -3099,7 +3154,15 @@ namespace Risebird.Business
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = "Skill channel created";
 
-                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    try
+                    {
+                        await _activityTrackerRepository.AddActivity(activityTrackerModel);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
+                    }
                 }
                 return result;
             }

@@ -2651,18 +2651,17 @@ namespace Risebird.Web.Controllers
                     ViewBag.Type = "InterviewM";
                     interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 1 && x.PerformedOn != null).ToList();
                 }
-                else if (type == "RescheduleIM")
+                else if (type == "OnTimeIM")
+                {
+                    ViewBag.Type = "OnTimeIM";
+                    interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 0 && x.PerformedOn != null && x.Joinedon != null).ToList();
+                }
+                else
                 {
                     ViewBag.Type = "RescheduleIM";
                     interviewmanagement = interviewmanagement.Where(x => (x.IsRescheduleNotificationSent == 1 && x.MeetingStatus != 3 && x.MeetingStatus != 4 && x.MeetingStatus != 6 && x.MeetingStatus != 7 && x.MeetingStatus != 8) || (x.PerformedOn != null && (x.MeetingStatus == 1 || x.MeetingStatus == 5 || x.MeetingStatus == 9))).ToList();
                     interviewmanagement = interviewmanagement.Select(x => { x.LastMeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.LastMeetingStatus)).GetDescription(); return x; }).ToList();
-                }
-                else
-                {
-                    //ViewBag.Type = "EmergencyIM";
-                    ViewBag.Type = "OnTimeIM";
-                    interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 0 && x.PerformedOn != null && x.Joinedon != null).ToList();
-                    //interviewmanagement = interviewmanagement.Where(x => x.interviewDate.AddMinutes(29) < x.FirstPerformedOn || x.interviewDate.AddMinutes(29) < x.FirstJoinedon).ToList();
+
                 }
                 interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                 return View(interviewmanagement);
