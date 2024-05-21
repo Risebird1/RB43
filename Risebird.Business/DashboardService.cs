@@ -774,11 +774,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService()
+        public async Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.PotentialRiskByCandidate();
+                return await _dashboardRespository.PotentialRiskByCandidate(EmailId);
             }
             catch (Exception e)
             {

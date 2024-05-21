@@ -1337,12 +1337,13 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> PotentialRiskByCandidate()
+        public async Task<IEnumerable<MeetingVM>> PotentialRiskByCandidate(string EmailId)
         {
             try
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@CurrentDate", DateTime.Now);
+                dynamicParam.Add("@EmailId",EmailId);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(conChange, "usp_PotentialRiskByCandidate", dynamicParam,
