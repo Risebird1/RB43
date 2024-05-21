@@ -67,7 +67,7 @@
                                     <td>Probable No-show</td>
                                     <td><span class="count btn-second-modal within-first-modal" onclick="TaskCompletionDetailsView('ProbableNoShow')">@Model.ProbableNoShowCount</span></td>
                                     <td>
-                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.ProbableNoShowLatestStatus) && Model.ProbableNoShowLatestStatus == "Completed")
                                         {
                                             <div id="noshow_complete_status" class="pull-left">
                                                 <label class="error-badge">
@@ -93,7 +93,7 @@
                                                 </label>
                                             </div>
                                         }
-                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
+                                        <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Update Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
                                             @* <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span> *@
                                             <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'ProbableNoshow')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
 
@@ -130,7 +130,7 @@
                                     <td> Not processed resumes</td>
                                     <td><span class="count" onclick="TaskCompletionDetailsView('NotProcessedResumes')">@Model.NotProcessedResumeCount</span></td>
                                     <td>
-                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.NotProcessedResumesLatestStatus) && Model.NotProcessedResumesLatestStatus == "Completed")
                                         {
                                             <div id="notprocessed_complete_status" class="pull-left">
                                                 <label class="error-badge">
@@ -297,10 +297,10 @@
                                 </tr>
 
                                 <tr>
-                                    <td>Bounced & Dropped</td>
-                                    <td><span class="count">0</span></td>
+                                    <td>Bounced Or Dropped</td>
+                                    <td><span class="count">@Model.BouncedOrDroppedCount</span></td>
                                     <td>
-                                        @if (!string.IsNullOrEmpty(Model.MissedCandidatesLatestStatus) && Model.MissedCandidatesLatestStatus == "Completed")
+                                        @if (!string.IsNullOrEmpty(Model.BouncedOrDroppedTaskLatestStatus) && Model.BouncedOrDroppedTaskLatestStatus == "Completed")
                                         {
                                             <div id="bounce_complete_status" class="pull-left">
                                                 <label class="error-badge">
@@ -327,13 +327,12 @@
                                             </div>
                                         }
                                         <div class="btn btn-primary shadow btn-xs  me-1" aria-label="Add Candidate Status" style="top: -3px;position: relative;cursor: pointer; width:20px!important;height:20px!important;border-radius:4px;">
-                                            <span onclick="OpenStatusModal()" title="Add Candidate Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
+                                            <span onclick="OpenTaskStatusModal('@Model.IRFId','@Model.type', 'BouncedOrDropped')" title="Update Status"><i class='fa fa-plus-square' style="margin:0px;font-size:12px;position:relative;top:-2px;left:-1px;"></i></span>
                                         </div>
                                     </td>
                                     <td>
-
                                         <span class="log-btn" aria-label="Task History" style="cursor: pointer;">
-                                            <span onclick="CandidateStatusList()" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
+                                            <span onclick="GetTaskStatusList('@Model.IRFId','@Model.type', 'BouncedOrDropped', '@Model.IRFName')" title="Task History"><i class='fa fa-history' style="margin-right:5px;"></i>Task History</span>
                                         </span>
                                     </td>
 

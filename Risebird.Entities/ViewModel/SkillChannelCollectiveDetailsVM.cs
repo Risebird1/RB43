@@ -60,6 +60,8 @@ namespace Risebird.Entities.ViewModel
         public string ReportPendingStatus { get; set; }
         public string RescheduleStatus { get; set; }
         public string QcPendingStatus { get; set; }
+        public int BouncedOrDroppedCount { get; set; }
+        public string BouncedOrDroppedTaskLatestStatus { get; set; }
     }
     public class SkillChannelTaskSpeedDetailsVM
     {
