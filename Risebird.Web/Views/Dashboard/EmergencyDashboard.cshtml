@@ -1,0 +1,341 @@
+﻿@model Risebird.Entities.ViewModel.DashboardVM
+@using Risebird.Entities.Data;
+@{
+    ViewData["Title"] = "Emergency Dashboard";
+}
+
+<div class="main-panel" id="main-panel">
+    <div class="page-container
+      <div>
+<div class="page-content">
+     <div class="panel-header panel-header-sm">
+                </div>
+                <div class="page-content-wrap dashboard">
+
+        <div class="row  col-sm-12">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="panel card flipper1">
+                    <div id="survey-feedback">
+                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="MissedCandidate(1)">
+                            <div class="panel-heading" data-position="bottom">
+
+                                <div id="slotsId">
+                                    <div class="panel-body panel-body-table">
+
+                                        <div class="col-md-3 pull-left">
+                                            <span class="dashboard-icon noshow">
+                                                <img class="icons-dash" style="max-height: 95px!important;height: 110%!important;position: relative;top: -1px;left: -5px;" src="~/img/noshow.png" />
+                                            </span>
+                                        </div>
+                                        <div class="col-md-9 pull-left">
+                                            <div>
+                                                <h3 class="dashboard-cat-title"><span><strong>Missed Candidate</strong></span></h3>
+                                            </div>
+                                            <div class="dashboard-count pull-left" style="color: #74c0fc">
+                                                <span id="ribbonMissedCandidateCount" onclick="MissedCandidate()">@Model.NotUpdatedMeetingsObj.MissedCandidateCount</span>
+                                            </div>
+
+                                            <div class="pull-right">
+                                                <button onclick="MissedCandidate()" class="click-arrow" title="Detail View">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="MissedCandidate()">
+                            <div class="panel-heading" data-position="bottom">
+
+                                <div id="slotsId">
+                                    <div class="panel-body panel-body-table">
+                                        <div class="col-md-3 pull-left">
+                                            <span class="dashboard-icon noshow">
+                                                <img class="icons-dash" style="max-height: 95px!important;height: 110%!important;position: relative;top: -1px;left: -5px;" src="~/img/noshow.png" />
+                                            </span>
+                                        </div>
+                                        <div class="col-md-9 pull-left">
+                                            <div>
+                                                <h3 class="dashboard-cat-title"><span><strong>Missed Candidate</strong></span></h3>
+                                            </div>
+
+                                            <div class="dashboard-count pull-left">
+                                                <div class="header-back"></div>
+                                                <strong>
+                                                    <span id="ribbonMissedCandidateCount_1" class="card-title" onclick="MissedCandidate()">@Model.NotUpdatedMeetingsObj.MissedCandidateCount</span>
+                                                </strong>
+                                            </div>
+
+                                            <div class="pull-right">
+                                                <button onclick="MissedCandidate()" class="click-arrow" title="Detail View">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper2">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="MialsDetails('Candidate')">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon mail"><img src="~/img/mail.png"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Bounce and Dropped Mail </strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong><span id="ribbonMailCount" onclick="MialsDetails('Candidate')">@Model.NotUpdatedMeetingsObj.BounceDroppedCandidateMailCount </span> </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="111" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="MialsDetails('Candidate')">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon mail"><img src="~/img/mail.png"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Bounce and Dropped Mail</strong></span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>  <span style="cursor:pointer" id="ribbonMailCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.BounceDroppedCandidateMailCount</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="MialsDetails('Candidate')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper3">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon unassign"><img src="~/img/unassign.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Unassigned Interview</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong>  <span style="cursor:pointer" id="ribbonunassignedinterviewcount" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon unassign"><img src="~/img/unassign.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Unassigned Interview</strong></span></h3>
+                                                        </div>
+
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong> <span style="cursor:pointer" id="ribbonunassignedinterviewcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper4">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="CallibrationCallsIRFDetalis('Upcoming')">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background: #392174ba;padding:8px!important;"><img src="~/img/calibration-call.png"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Callibration Calls <span class="dashboard-smalltxt">Skill Channels</span></strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;">
+                                                            <div class="header-front"></div>
+                                                            <strong><span id="ribbonCallibrationCallIRFCount" onclick="CallibrationCallsIRFDetalis('Upcoming')" style="font-size:15px;cursor:pointer">Click here </span> </strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="111" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+        </div>
+      </div>
+     <div>
+</div>
+ </div>
+</div>
+
+<script>
+    function MissedCandidate() {
+        window.location.href = "/Dashboard/InterviewManagementDetails?pagetype=" + 1;
+    }
+
+       function MialsDetails(recipientType) {
+        window.location.href = "/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType;
+    }
+       function OpenRibbonDetails(actionstatus) {
+        window.location.href = "/Dashboard/UnassignedInterviews?actionstatus=" + actionstatus + "&returnBack=" + 1;
+    }
+
+      function CallibrationCallsIRFDetalis(type) {
+    window.location.href = "/IRF/CalibrationMeetingsDetails?type=" + type + "&returnBack=" + 1;
+    }
+</script>
+
+<script type="text/javascript">
+    var setRibbonCalledCount = 0;
+    var getDeletedZoomMeetingsCount = false;
+    $(document).ready(function () {
+        // TimeInterval();
+        setRibbon();
+    });
+
+    function TimeIntervalUrl() {
+        $.ajax({
+            type: 'GET',
+            url: '/Dashboard/EmergencyDashboard',
+            success: function () {
+                location.reload(true);
+            }
+        });
+    }
+    function TimeInterval() {
+        setInterval(TimeIntervalUrl, 90000);
+    }
+</script>
+
+<script>
+    function setRibbon() {
+        if (setRibbonCalledCount == 0) {
+            getDeletedZoomMeetingsCount = true;
+        }
+        else {
+            getDeletedZoomMeetingsCount = false;
+        }
+        $.ajax({
+            url: '/Dashboard/FetchRibbonValues',
+            data: { 'section': 0, 'getDeletedZoomMeetingsCount': getDeletedZoomMeetingsCount },
+            success: function (data) {
+                if (parseInt(data.missedCandidateCount) != parseInt($("#ribbonMissedCandidateCount").text())) {
+                    $(".flipper1").addClass("flipper");
+                }
+                else {
+                    $(".flipper1").removeClass("flipper");
+                }
+            if (parseInt(data.bounceDroppedCandidateMailCount) != parseInt($("#ribbonMailCount").text())) {
+                $(".flipper2").addClass("flipper");
+            }
+            else {
+                $(".flipper2").removeClass("flipper");
+            }
+            if (parseInt(data.unassignedInterviewsCount) != parseInt($("#ribbonunassignedinterviewcount").text())) {
+                $(".flipper3").addClass("flipper");
+            }
+            else {
+                $(".flipper3").removeClass("flipper");
+            }
+
+
+            $("#ribbonMissedCandidateCount").text(data.missedCandidateCount);
+            $("#ribbonMailCount").text(data.bounceDroppedCandidateMailCount);
+            $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
+
+            $("#ribbonMissedCandidateCount_1").text(data.missedCandidateCount);
+            $("#ribbonMailCount_1").text(data.bounceDroppedCandidateMailCount);
+            $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
+
+                $(".flipper").toggleClass("flip");
+            }
+        });
+
+
+        setTimeout(setRibbon, 60000);
+    }
+

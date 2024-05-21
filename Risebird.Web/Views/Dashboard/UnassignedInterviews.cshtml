@@ -67,9 +67,18 @@
 
                         @if (ViewBag.Actiontype == 0)
                         {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                            </button>
+                            @if (ViewBag.ReturnBack == 1 && ViewBag.actionstatus == "InterviewCount")
+                            {
+                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+                            }
                         }
                         else
                         {
@@ -125,7 +134,7 @@
                                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("UnassignedInterviews","Dashboard",new { actionstatus=ViewBag.actionstatus,actiontype=ViewBag.Actiontype})" method="post" id="form">
+                                            <form action="@Url.Action("UnassignedInterviews","Dashboard",new { actionstatus=ViewBag.actionstatus,actiontype=ViewBag.Actiontype,returnBack=ViewBag.ReturnBack})" method="post" id="form">
 
                                                 <div class="modal-body">
                                                     <div class="row">

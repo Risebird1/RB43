@@ -9309,7 +9309,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [Authorize]
-        public async Task<IActionResult> CalibrationMeetingsDetails(string type)
+        public async Task<IActionResult> CalibrationMeetingsDetails(string type,int returnBack)
         {
             try
             {
@@ -9320,6 +9320,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _irfService.GetAllCalibrationMeetingsById(emailid,"All");
