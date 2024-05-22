@@ -923,31 +923,31 @@
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountName, null, new { @class = "form-control text-box single-line" })
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountName, null, new { @class = "form-control text-box single-line", @readonly="readonly" })
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountNumber, null, new { @class = "form-control text-box single-line", @type = "number" })
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountNumber, null, new { @class = "form-control text-box single-line", @type = "number",@readonly="readonly"})
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.IFSCCode, null, new { @class = "form-control text-box single-line" })
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.IFSCCode, null, new { @class = "form-control text-box single-line",@readonly="readonly"})
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.UPIId, null, new { @class = "form-control text-box single-line" })
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.UPIId, null, new { @class = "form-control text-box single-line",@readonly="readonly"})
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line" })
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line",@readonly="readonly"})
                                     </div>
                                 </div>
                             </div>
