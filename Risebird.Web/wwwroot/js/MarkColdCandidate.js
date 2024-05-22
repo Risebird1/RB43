@@ -1,22 +1,57 @@
 function MarkedColdCandidate(CandidateId, IRFId, CandidateEmail, InterviewId, irfIntId) {
     if (CandidateId != '') {
-        $.ajax({
-            url: '/Dashboard/MarkedColdCandidate',
-            data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'InterviewId': InterviewId, 'irfIntId': irfIntId },
-            type: "POST",
-            success: function (data) {
-                Swal.fire({
-                    title: '',
-                    text: data, // Use the data variable here for the message
-                    width: '50%', // You can use 'px' or '%' for the width value
-                    showCancelButton: true,
-                    cancelButtonText: 'Cancel',
-                    allowOutsideClick: false
-                }).then(function () {
-                    location.reload(true);
-                });
-            }
-        });
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to mark cold candidate "+ " (" + CandidateEmail + ") " + " for skill channel " + " (" + IRFId + ")", 
+            width: '50%', // You can use 'px' or '%' for the width value
+            showCancelButton: true,
+            cancelButtonText: 'Cancel',
+            allowOutsideClick: false,
+            preConfirm: function ()
+            {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Dashboard/MarkedColdCandidate',
+                        data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'InterviewId': InterviewId, 'irfIntId': irfIntId },
+                        type: "POST",
+                        success: function (data) {
+                            if (data != null && data.toLowerCase().includes('success')) {
+                                resolve(data);
+                            }
+                            else {
+                                swal.fire("Error cancelling!", "Please try again", "error");
+
+                            }
+                        }
+                    });
+                })
+            },
+            allowOutsideClick: false
+        })
+            .then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Cancelled!',
+                        type: 'success',
+                        html: '<p>Cold candidate mark.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {                      
+                        location.reload(true);
+                    })
+
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Aborted!'
+                        
+                    )
+                }
+
+            })
+
     }
     else {
         swal.fire("Please Marked cold candidate.");
@@ -24,7 +59,75 @@ function MarkedColdCandidate(CandidateId, IRFId, CandidateEmail, InterviewId, ir
 }
 
 
-function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, scheduleUniqueid, InterviewId) {
+function MarkedColdCandidateForClient(CandidateId, IRFId, CandidateEmail, InterviewId, irfIntId,clientEmail,urlType) {
+    if (CandidateId != '') {
+       
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to mark cold candidate " + " (" + CandidateEmail + ") " + " for skill channel " + " (" + IRFId + ")",
+            width: '50%', // You can use 'px' or '%' for the width value
+            showCancelButton: true,
+            cancelButtonText: 'Cancel',
+            allowOutsideClick: false,
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Dashboard/MarkedColdCandidate',
+                        data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'InterviewId': InterviewId, 'irfIntId': irfIntId },
+                        type: "POST",
+                        success: function (data) {
+                            if (data != null && data.toLowerCase().includes('success')) {
+                                resolve(data);
+                            }
+                            else {
+                                swal.fire("Error cancelling!", "Please try again", "error");
+
+                            }
+                        }
+                    });
+                })
+            },
+            allowOutsideClick: false
+        })
+            .then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Cancelled!',
+                        type: 'success',
+                        html: '<p>Cold candidate mark.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        if (urlType == 1) {
+                            PotentialColdCandidateByClient(clientEmail);
+                        }
+                        else if (urlType == 2) {
+                            RescheduleMeetingByClient(clientEmail);
+                        }
+                        else {
+                        }
+                        
+                    })
+
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Aborted!'
+
+                    )
+                }
+
+            })
+
+    }
+    else {
+        swal.fire("Please Marked cold candidate.");
+    }
+}
+
+function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, scheduleUniqueid, InterviewId,ClientEmail,CurrentType) {
     if (CandidateId != '')
     {
     swal.fire({
@@ -37,7 +140,8 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
         confirmButtonText: 'Yes, Undo!',
         cancelButtonText: "Don't",
         preConfirm: function () {
-            return new Promise(function (resolve, reject) {
+            return new Promise(function (resolve, reject)
+            {
                 $.ajax({
                     url: '/Dashboard/UndoMarkedColdCandidate',
                     type: 'POST',
@@ -58,7 +162,8 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
             },
             allowOutsideClick: false
         })
-            .then(function (result) {
+        .then(function (result)
+        {
                 if (result.dismiss !== 'cancel') {
                     swal.fire({
                         title: 'Cancelled!',
@@ -70,16 +175,14 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
                         allowOutsideClick: false
                     }).then(function () {
 
-                    ReschuduleMeeting(InterviewId, scheduleUniqueid, IRFId, CandidateEmail);
+                        ReschuduleMeeting(InterviewId, scheduleUniqueid, IRFId, CandidateEmail, ClientEmail, CurrentType);
                     //location.reload(true);
                 })
                 
             }
             else if (result.dismiss === 'cancel') {
                 swal.fire(
-                    'Aborted!',
-                    'Meeting remains confirmed! :)',
-                    'error'
+                    'Aborted!'                  
                 )
             }
            
@@ -88,7 +191,7 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
 
     }
 
-    function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid) {
+    function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid, ClientEmail, CurrentType) {
         swal.fire({
             title: 'Are you sure?',
             text: 'Do you want to schedule this candidate?',
@@ -122,14 +225,26 @@ function UndoMarkedColdCandidate(CandidateId, IRFId, CandidateEmail, irfIntId, s
             allowOutsideClick: false
         }).then(function (result) {
             if (result.dismiss !== 'cancel') {
-                window.location.reload(); // Reloads the page in the current tab
+                if (CurrentType == 1) {
+                    ColdCandidateByClient(ClientEmail);
+                }
+                else {
+                    window.location.reload(); // Reloads the page in the current tab
+
+                }
             } else {
                 swal.fire(
                     'Cancelled',
                     'schedule cancelled! :)',
                     'error'
                 );
-                window.location.reload();
+                if (CurrentType == 1) {
+                    ColdCandidateByClient(ClientEmail);
+                }
+                else {
+                    window.location.reload(); // Reloads the page in the current tab
+
+                }
             }
         });
     }

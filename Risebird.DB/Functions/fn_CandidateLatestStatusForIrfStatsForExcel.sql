@@ -53,21 +53,31 @@ begin
 end    
     
 --selected condition    
-else if(@confirmationStatus=1 and @interviewStatus in (2,4))    
+else if(@confirmationStatus=1 and @interviewStatus in (2))    
 begin    
- set @result = 'SELECTED'   
+ set @result = 'STRONGLY SELECTED'   
  INSERT INTO @ResultTable (LatestStatus, interviewId, interviewDate, completedDate)  
- SELECT @result, @interviewId, @interviewDate, (select top 1 [Date] from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
+ SELECT @result, @interviewId, @interviewDate, (select top 1 DATEADD(minute, 330, [Date]) from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
 end    
-    
---case for rejected    
-else if(@confirmationStatus=1 and @interviewStatus in (1,3,5))    
+else if(@confirmationStatus=1 and @interviewStatus in (4))    
 begin    
-  set @result = 'REJECTED'    
+ set @result = 'MARGINALLY SELECTED'   
+ INSERT INTO @ResultTable (LatestStatus, interviewId, interviewDate, completedDate)  
+ SELECT @result, @interviewId, @interviewDate, (select top 1 DATEADD(minute, 330, [Date]) from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
+end
+--case for rejected    
+else if(@confirmationStatus=1 and @interviewStatus in (1,3))    --here status 1 stands for proxy, we are counting it in 'strongly rejected' for the sake of simplifying
+begin    
+  set @result = 'STRONGLY REJECTED'    
   INSERT INTO @ResultTable (LatestStatus, interviewId, interviewDate, completedDate)  
-  SELECT @result, @interviewId, @interviewDate, (select top 1 [Date] from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
-end    
-    
+  SELECT @result, @interviewId, @interviewDate, (select top 1 DATEADD(minute, 330, [Date]) from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
+end 
+else if(@confirmationStatus=1 and @interviewStatus in (5))    
+begin    
+  set @result = 'MARGINALLY REJECTED'    
+  INSERT INTO @ResultTable (LatestStatus, interviewId, interviewDate, completedDate)  
+  SELECT @result, @interviewId, @interviewDate, (select top 1 DATEADD(minute, 330, [Date]) from CandidateStatus where InterviewId = @interviewId and [Status]=14 and Comments = 'Completed' order by id desc)  
+end     
 --case for eligibility for rescheduling    
 else if(@confirmationStatus = 2 or @meetingStatus in (1,3,5,9))    
 begin    

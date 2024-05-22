@@ -227,7 +227,6 @@ namespace Risebird.Web.Controllers
             timeslot.Add(new TimeslotsVM { id = 23, Name = "23:00" });
             timeslot.Add(new TimeslotsVM { id = 23.5, Name = "23:30" });
             timeslot.Add(new TimeslotsVM { id = 24, Name = "24:00" });
-            timeslot.Add(new TimeslotsVM { id = 24.5, Name = "24:30" });
             model.timeslots = new SelectList(timeslot, "id", "Name");
             model.IRFList = await _interviewSchedulerservice.GetIRFList();
             var IntervalsList = new List<TimeslotsVM>();
@@ -688,7 +687,7 @@ namespace Risebird.Web.Controllers
                                     var newslot = 24 + (int)(slots / 60);
                                     foreach (var item2 in result1)
                                     {
-                                        if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                        if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
                                         {
                                             var newmin = Convert.ToInt32(slots % 60);
                                             if (newmin < 0)
@@ -708,7 +707,7 @@ namespace Risebird.Web.Controllers
                                     var newslot = (int)(slots + addontime) / 60;
                                     foreach (var item2 in result2)
                                     {
-                                        if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                        if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
                                         {
                                             var newmin = Convert.ToInt32(slots % 60);
                                             if (newmin < 0)
@@ -775,7 +774,7 @@ namespace Risebird.Web.Controllers
                                             var newslot = 24 + (int)(slots / 60);
                                             foreach (var item2 in result1)
                                             {
-                                                if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                                if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
                                                 {
                                                     var newmin = Convert.ToInt32(slots % 60);
                                                     if (newmin < 0)
@@ -799,7 +798,7 @@ namespace Risebird.Web.Controllers
                                             var newslot = (int)(slots + addontime) / 60;
                                             foreach (var item2 in result2)
                                             {
-                                                if (Convert.ToInt32(item2.Start) <= Convert.ToInt32(newslot) && Convert.ToInt32(item2.End) > Convert.ToInt32(newslot))
+                                                if (Convert.ToDouble(item2.Start) <= Convert.ToDouble(newslot) && Convert.ToDouble(item2.End) > Convert.ToDouble(newslot))
                                                 {
                                                     var newmin = Convert.ToInt32(slots % 60);
                                                     if (newmin < 0)
@@ -1143,10 +1142,13 @@ namespace Risebird.Web.Controllers
                     {
                         //Start: Cancel the previous meetings
                         var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime);
-                        //cancel interviewmmeting over portal
-                        DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
-                        //var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Reschedule on " + indianTime.ToString(), (int)CandidateStatusOptions.Cancelled, model.interviewid);
-                        //End: Cancel the previous meetings
+                        if (string.IsNullOrWhiteSpace(candidateuniqueid.Message))
+                        {
+                            //cancel interviewmmeting over portal
+                            DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
+                            //var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Reschedule on " + indianTime.ToString(), (int)CandidateStatusOptions.Cancelled, model.interviewid);
+                            //End: Cancel the previous meetings
+                        }
                         _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
                         string timezonevalue = string.Empty;
                         string hh = string.Empty;
@@ -1368,6 +1370,7 @@ namespace Risebird.Web.Controllers
             {
                 model.interviewid = interviewid;
                 model.returnvaluetype = returnvaluetype;
+                model.reschedulerequest = true;
                 return View("ReScheduleEvent", model);
             }
             return View(model);

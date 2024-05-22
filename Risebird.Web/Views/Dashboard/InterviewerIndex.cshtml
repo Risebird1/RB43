@@ -64,11 +64,11 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" defer rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
 
-<div id="VideoKYCAlert" style="display:none;">
+<div id="VideoKYCAlert" style="display:none;height:25px;">
     <div class="row">
 <div class="col-sm-12">
-    <div class="alert fade alert-simple alert-warning alert-dismissible text-left font__family-montserrat font__size-16 font__weight-light brk-library-rendered rendered show" role="alert" data-brk-library="component__alert">
-        <button type="button" class="close font__size-18" data-dismiss="alert" style="right:40px;">
+    <div class="alert fade alert-simple alert-warning alert-dismissible text-left font__family-montserrat font__size-16 font__weight-light brk-library-rendered rendered show" role="alert" data-brk-library="component__alert" style="margin-top:-65px;">
+        <button type="button" class="close font__size-18" data-dismiss="alert" style="right:40px;top:18px;">
             <span aria-hidden="true">
                 <i class="fa fa-times warning" style="font-size:17px;"></i>
             </span>
@@ -80,8 +80,10 @@
 
     </div>
 </div></div>
+   <div style="height:50px;position:absolute">         <div class="interviewer-toll-no"><b>SUPPORT :</b> <span style="color:#46f807;font-weight:bold">TOLL FREE <i style='font-size:15px;rotate:14deg;color:#fff' class='fa fa-phone'></i>18002578975</span></div></div>
 
 <div class="pt30">
+
     <div class="col-md-12 nopad" style="margin:0px;">
         <div class="card-header bg-w clearfix">
             <div class="col-md-12 pull-left">
@@ -94,6 +96,7 @@
 
                     <div class="mobile-view"> <h4 class="card-title"> Dashboard</h4></div>
                 </div>
+
                 <div class="pull-right">
                     <div class="">Average Interview Time:<c style="color: blue;font-weight: bold;" id="txtavgInterviewTime">@Model.AvgInterviewTime Min</c></div>
                 </div>
@@ -337,7 +340,7 @@
                                                             <div class="dashboard-count pull-left" style="padding:0px;left:0px;">
                                                                 <div class="header-front"></div>
                                                                 <div class="table-responsive">
-                                                                    <div id="divPendingPayment" style="font-size: 20px;font-weight: 600">
+                                                                    <div id="divPendingPayment" style="font-size: 18px;font-weight: 600">
                                                                         0
                                                                     </div>
                                                                 </div>
@@ -661,6 +664,9 @@
             <div class="filheader">
                 <h5 class="modal-title pull-left">Upload Resume</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeResumeModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
             <div class="modal-body" id="divresumepopup">
             </div>
         </div>
@@ -906,13 +912,13 @@
                 GenerateclientpaiChart(data.clientRating);
             }
         });
-        // $.ajax({
-        //     url: '/DashBoard/InterviewerPendingPaymentDetails',
-        //     type: 'POST',
-        //     success: function (data) {
-        //         $("#divPendingPayment").text(data.payment + " / " + data.paidpayment);
-        //     }
-        // });
+        $.ajax({
+            url: '/DashBoard/InterviewerPendingPaymentDetails',
+            type: 'POST',
+            success: function (data) {
+                $("#divPendingPayment").text(data.payment + " / " + data.paidpayment);
+            }
+        });
     });
 </script>
 @if (!Model.IsResumePresent)
@@ -1047,6 +1053,10 @@
         });
     }
 
+    function closeResumeModel() {
+        var model = document.getElementById("Resumepopup");
+        model.style.display = "none";
+    }
 </script>
 <script>
     function closePaymentSLADetailsModel() {

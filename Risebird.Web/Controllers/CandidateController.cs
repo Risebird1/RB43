@@ -16,6 +16,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -67,8 +68,8 @@ namespace Risebird.Web.Controllers
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
             IInterviewSchedulerRepository interviewSchedulerRepository, IUserRepository userRepository, IConfiguration configuration, ITrackPublicUrlAccessor trackPublicUrlAccessor,
-            IAadhaarService aadhaarService, IZoomHelper zoomHelper, 
-            IAffIndaResumeParserHelper affIndaResumeParserHelper, 
+            IAadhaarService aadhaarService, IZoomHelper zoomHelper,
+            IAffIndaResumeParserHelper affIndaResumeParserHelper,
             IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env)
         {
             _candidateService = candidateService;
@@ -3512,6 +3513,8 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.RedoInterview = firstData.RedoInterview;
                         candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
                         candidateTimeline.CandidateId = firstData.CandidateId;
+                        candidateTimeline.IsQCDone = firstData.IsQCDone;
+                        candidateTimeline.zoomLink = firstData.zoomLink;
                         //candidateTimeline.staffingAgency = firstData.staffingAgency;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -3695,6 +3698,10 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.CallsCount = firstData.CallsCount;
                     candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
                     candidateTimeline.RedoInterview = firstData.RedoInterview;
+                    candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
+                    candidateTimeline.CandidateId = firstData.CandidateId;
+                    candidateTimeline.IsQCDone = firstData.IsQCDone;
+                    candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
 
                     if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
@@ -4802,11 +4809,12 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> NeedClearityMail(string message, string subject, int interviewId, string clienthr, string candidateemail)
+        public async Task<JsonResult> NeedClearityMail(string message, string subject, int interviewId, string clienthr, string candidateemail, string uniqueid, int Irfid)
         {
             var _result = await _notificationHelper.SendCandidateNeedClerityClientNotification(message, subject, clienthr, candidateemail);
             if (_result.Contains("Mail sent successfully."))
             {
+                var results = _meetingService.UpdateCandidateMeetingsStatus(interviewId, 4, uniqueid, Irfid, 0, true);
                 return Json("Information shared to contact person, HR will Connect you soon.");
             }
             return Json("Fail");
@@ -4886,7 +4894,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 11].Value = "No Report";
                         }
-                        
+
                         j = 11;
                         var totalskillscore = 0.0;
                         var totalskillscount = 0;
@@ -5056,11 +5064,13 @@ namespace Risebird.Web.Controllers
             try
             {
                 var data = await _candidateService.GetColdCandidatesListByClient(emailid);
+                ViewBag.Email = emailid;
                 data = data.Select(x =>
                 {
                     x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                     return x;
                 }).ToList();
+
                 return PartialView("_GetColdCandidatePartial", data);
 
             }
@@ -5091,7 +5101,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<FileContentResult> CandidateDataExporttoExcel(int irfId, string irfName)
         {
-            if(_env.IsDevelopment())
+            if (_env.IsDevelopment())
             {
                 ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             }
@@ -5126,33 +5136,50 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 7].Value = "Added On";
                 Sheet.Cells[1, 8].Value = "Invite Sent On";
                 Sheet.Cells[1, 9].Value = "Scheduled On";// note: there could be multiple schedules of a candidate. This date belongs to the first entry of scheduled for the candidate for the skill channel.
-                Sheet.Cells[1, 10].Value = "Latest Status";
-                Sheet.Cells[1, 11].Value = "Completed On";
-                
-                Sheet.Cells[1, 12].Value = "Client Hr";
-                Sheet.Cells[1, 13].Value = "Staffing Agency";
+                Sheet.Cells[1, 10].Value = "Interview Date";
 
-                Sheet.Cells[1, 14].Value = "Interview Date";
+                Sheet.Cells[1, 11].Value = "Confirmation Status";
+
+                Sheet.Cells[1, 12].Value = "Meeting Status";
+
+                Sheet.Cells[1, 13].Value = "Completed On";
+
+                Sheet.Cells[1, 14].Value = "Latest Status";
+
+                Sheet.Cells[1, 15].Value = "Client Hr";
+                Sheet.Cells[1, 16].Value = "Interviewer(Encoded)";
+                //Sheet.Cells[1, 13].Value = "Staffing Agency";
+
                 //Sheet.Cells[1, 14].Value = "Confirmation Status";
 
                 //Sheet.Cells[1, 15].Value = "Meeting Status";
                 //Sheet.Cells[1, 16].Value = "Interview Status";
-                
-                Sheet.Cells[1, 15].Value = "Interviewer Comment";
-                Sheet.Cells[1, 16].Value = "Video Link";
-                Sheet.Cells[1, 17].Value = "Report Link";
+
+                Sheet.Cells[1, 17].Value = "Interviewer Comment";
+                //Sheet.Cells[1, 16].Value = "Video Link";
+                Sheet.Cells[1, 18].Value = "Report Link";
                 //Sheet.Cells[1, 17].Value = "Pb Report Link";
 
-                Sheet.Cells[1, 18].Value = "Communication Score";
+                Sheet.Cells[1, 19].Value = "Communication Score";
+                bool? isDrive = model.Where(x => x.CandidateType == CandidateSingleSourceTruthTypes.Completed)?.FirstOrDefault()?.IsDrive;
 
-                int j = 18;
-                foreach (var item in skillslist)
+                if (isDrive.HasValue && isDrive.Value)
                 {
+                    int j = 19;
+                    foreach (var item in skillslist)
+                    {
+                        j++;
+                        Sheet.Cells[1, j].Value = item;
+                    }
                     j++;
-                    Sheet.Cells[1, j].Value = item;
+                    Sheet.Cells[1, j].Value = "Tech Score";
+
                 }
-                j++;
-                Sheet.Cells[1, j].Value = "Tech Score";
+                else
+                {
+                    Sheet.Cells[1, 20].Value = "Tech Score";
+                }
+
                 int i = 2;
                 if (model.Count() > 0)
                 {
@@ -5168,62 +5195,67 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 7].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 8].Value = item.InvitationSentOnDate.HasValue ? item.InvitationSentOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 9].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 10].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
 
-                        if(item.ClientId == 177)
+                        Sheet.Cells[i, 11].Value = item.confirmationStatus ?? string.Empty;
+                        Sheet.Cells[i, 12].Value = item.MeetingStatus ?? string.Empty;
+
+                        Sheet.Cells[i, 13].Value = item.completedDate.HasValue ? item.completedDate.Value.ToString() : string.Empty;
+
+                        if (item.ClientId == 177)
                         {
-                            if(item.isQcDone.HasValue && item.isQcDone.Value == true)
+                            if (item.isQcDone.HasValue && item.isQcDone.Value == true)
                             {
-                                Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
+                                Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
                             }
                             else
                             {
-                                Sheet.Cells[i, 10].Value = "QCPending(" + item.CandidateLatestStatus + ")";
+                                Sheet.Cells[i, 14].Value = "QCPending(" + item.CandidateLatestStatus + ")";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
+                            Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
                         }
 
-                        Sheet.Cells[i, 11].Value = item.completedDate.HasValue ? item.completedDate.Value.ToString() : string.Empty;
 
-                        Sheet.Cells[i, 12].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 13].Value = item.staffingAgency;
+                        Sheet.Cells[i, 15].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
+                        //Sheet.Cells[i, 13].Value = item.staffingAgency;
 
-                        Sheet.Cells[i, 14].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 15].Value = item.InterviewerComment ?? string.Empty;
-                        if (!string.IsNullOrEmpty(item.VideoLink))
-                        {
-                            try
-                            {
-                                Sheet.Cells[i, 16].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 16].Value = "Video Link";
-                                Sheet.Cells[i, 16].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 16].Value = "No Video";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 16].Value = "No Video";
-                        }
+                        Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
+                        //if (!string.IsNullOrEmpty(item.VideoLink))
+                        //{
+                        //    try
+                        //    {
+                        //        Sheet.Cells[i, 16].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                        //        Sheet.Cells[i, 16].Value = "Video Link";
+                        //        Sheet.Cells[i, 16].Style.Font.UnderLine = true;
+                        //        Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        //    }
+                        //    catch (Exception)
+                        //    {
+                        //        Sheet.Cells[i, 16].Value = "No Video";
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, 16].Value = "No Video";
+                        //}
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         try
                         {
-                            Sheet.Cells[i, 17].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, 17].Value = "Executive Report";
-                            Sheet.Cells[i, 17].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 17].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            Sheet.Cells[i, 18].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, 18].Value = "Executive Report";
+                            Sheet.Cells[i, 18].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 18].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
                         catch (Exception)
                         {
-                            Sheet.Cells[i, 17].Value = "No Report";
+                            Sheet.Cells[i, 18].Value = "No Report";
                         }
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
@@ -5238,31 +5270,50 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 17].Value = "No Report";
                         //}
-                        Sheet.Cells[i, 18].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
-
-                        j = 18;
+                        Sheet.Cells[i, 19].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
                         var totalskillscore = 0.0;
                         var totalskillscount = 0;
-                        foreach (var skillvalue in skillslist)
+                        if (isDrive.HasValue && isDrive.Value)
                         {
-                            j++;
-                            var skilldata = item.TechSkillReportCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
-                            if (skilldata != null)
+                            int j = 19;
+
+                            foreach (var skillvalue in skillslist)
                             {
-                                totalskillscount++;
-                                totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
-                                Sheet.Cells[i, j].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
+                                j++;
+                                var skilldata = item.TechSkillReportCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
+                                if (skilldata != null)
+                                {
+                                    totalskillscount++;
+                                    totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                    Sheet.Cells[i, j].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
+                                }
                             }
+                            j++;
+                            Sheet.Cells[i, j].Value = totalskillscore / totalskillscount;
+
                         }
-                        j++;
-                        Sheet.Cells[i, j].Value = totalskillscore / totalskillscount;
+                        else
+                        {
+                            foreach (var skillvalue in skillslist)
+                            {
+
+                                var skilldata = item.TechSkillReportCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
+                                if (skilldata != null)
+                                {
+                                    totalskillscount++;
+                                    totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                }
+                            }
+                            Sheet.Cells[i, 20].Value = totalskillscore / totalskillscount;
+                        }
+
                         i++;
                     }
 
                     i++;
                     foreach (var item in model.Where(x => x.CandidateType == CandidateSingleSourceTruthTypes.FutureScheduled))
                     {
-                        
+
                         Sheet.Cells[i, 1].Value = item.candidateName;
                         Sheet.Cells[i, 2].Value = item.candidateEmail;
                         Sheet.Cells[i, 3].Value = item.MobileNumber ?? string.Empty;
@@ -5274,20 +5325,21 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 7].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 8].Value = item.InvitationSentOnDate.HasValue ? item.InvitationSentOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 9].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 10].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 11].Value = item.confirmationStatus ?? string.Empty;
+                        Sheet.Cells[i, 12].Value = string.Empty;
+                        Sheet.Cells[i, 13].Value = string.Empty;
+                        Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
+                        Sheet.Cells[i, 15].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
+                        //Sheet.Cells[i, 13].Value = item.staffingAgency;
 
-
-                        Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
-                        Sheet.Cells[i, 11].Value = string.Empty;
-                        Sheet.Cells[i, 12].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 13].Value = item.staffingAgency;
-
-                        Sheet.Cells[i, 14].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 15].Value = string.Empty;
-                        Sheet.Cells[i, 16].Value = string.Empty;
-                        
+                        //Sheet.Cells[i, 15].Value = string.Empty;
+                        //Sheet.Cells[i, 16].Value = string.Empty;
+
 
                         i++;
                     }
@@ -5307,47 +5359,51 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 8].Value = item.InvitationSentOnDate.HasValue ? item.InvitationSentOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 9].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString() : string.Empty;
 
+                        Sheet.Cells[i, 10].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
 
-                        Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
-                        Sheet.Cells[i, 11].Value = string.Empty;
-                        Sheet.Cells[i, 12].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 13].Value = item.staffingAgency;
+                        Sheet.Cells[i, 11].Value = item.confirmationStatus ?? string.Empty;
+                        Sheet.Cells[i, 12].Value = string.Empty;
 
-                        Sheet.Cells[i, 14].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 13].Value = string.Empty;
+                        Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
+                        Sheet.Cells[i, 15].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
+                        //Sheet.Cells[i, 13].Value = item.staffingAgency;
+
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 15].Value = item.InterviewerComment ?? string.Empty;
-                        if (!string.IsNullOrEmpty(item.VideoLink))
-                        {
-                            try
-                            {
-                                Sheet.Cells[i, 16].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 16].Value = "Video Link";
-                                Sheet.Cells[i, 16].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception)
-                            {
-                                Sheet.Cells[i, 16].Value = "No Video";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 16].Value = "No Video";
-                        }
+                        Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
+                        //if (!string.IsNullOrEmpty(item.VideoLink))
+                        //{
+                        //    try
+                        //    {
+                        //        Sheet.Cells[i, 16].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                        //        Sheet.Cells[i, 16].Value = "Video Link";
+                        //        Sheet.Cells[i, 16].Style.Font.UnderLine = true;
+                        //        Sheet.Cells[i, 16].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        //    }
+                        //    catch (Exception)
+                        //    {
+                        //        Sheet.Cells[i, 16].Value = "No Video";
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, 16].Value = "No Video";
+                        //}
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         try
                         {
-                            Sheet.Cells[i, 17].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, 17].Value = "Executive Report";
-                            Sheet.Cells[i, 17].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 17].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            Sheet.Cells[i, 18].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, 18].Value = "Executive Report";
+                            Sheet.Cells[i, 18].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 18].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
                         catch (Exception)
                         {
-                            Sheet.Cells[i, 17].Value = "No Report";
+                            Sheet.Cells[i, 18].Value = "No Report";
                         }
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
@@ -5380,19 +5436,24 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 7].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 8].Value = item.InvitationSentOnDate.HasValue ? item.InvitationSentOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 9].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 10].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
 
-                        Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
-                        Sheet.Cells[i, 11].Value = string.Empty;
-                        Sheet.Cells[i, 12].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 13].Value = item.staffingAgency;
+                        Sheet.Cells[i, 11].Value = item.confirmationStatus ?? string.Empty;
+                        Sheet.Cells[i, 12].Value = item.MeetingStatus ?? string.Empty;
 
-                        Sheet.Cells[i, 14].Value = item.interviewDate.HasValue ? item.interviewDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 13].Value = string.Empty;
+
+                        Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
+                        Sheet.Cells[i, 15].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
+                        //Sheet.Cells[i, 13].Value = item.staffingAgency;
+
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 15].Value = item.InterviewerComment ?? string.Empty;
-                        
+                        Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
+
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -5457,17 +5518,9 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 7].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 8].Value = item.InvitationSentOnDate.HasValue ? item.InvitationSentOnDate.Value.ToString() : string.Empty;
                         Sheet.Cells[i, 9].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString() : string.Empty;
-
-                        Sheet.Cells[i, 10].Value = item.CandidateLatestStatus;
-                        //Sheet.Cells[i, 8].Value = string.Empty;
-                        //Sheet.Cells[i, 9].Value = string.Empty;
-
-                        //Sheet.Cells[i, 10].Value = string.Empty;
-                        //Sheet.Cells[i, 11].Value = string.Empty;
-                        //Sheet.Cells[i, 12].Value = string.Empty;
-                        //Sheet.Cells[i, 13].Value = string.Empty;
-                        //Sheet.Cells[i, 14].Value = string.Empty;
-
+                        Sheet.Cells[i, 10].Value = string.Empty;
+                        Sheet.Cells[i, 11].Value = string.Empty;
+                        Sheet.Cells[i, 12].Value = item.CandidateLatestStatus;
 
                         i++;
                     }
@@ -5489,7 +5542,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetCandidateStatusListByClient(int irfId, int candidateId, string irfName, string candidateName)
         {
@@ -5516,7 +5569,35 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
+        public async Task<IActionResult> ReScheduleMeetingsByClient(string emailid)
+        {
+            try
+            {
+                int ClientId = 0;
+                ViewBag.ClientEmail = emailid;
+                var client = await _userRepository.GetClientUserDetails(emailid);
+                ClientId = client.ClientId;
+                ViewBag.ClientRole = (client.ClientId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.ClientId)).GetDescription() : string.Empty);
 
+                var meetings = await _meetingService.GetClientReScheduledMeetingList(ClientId, emailid);
+                meetings = meetings.Select(x =>
+                {
+                    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                    return x;
+                }).ToList();
+
+                DateTime StartDate = DateTime.Now.AddMonths(-2);
+                meetings = meetings.Where(t => t.dtCreatedOn >= StartDate).ToList();
+
+                return View("_ReScheduleMeetingsByClient", meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
 
     }
 }

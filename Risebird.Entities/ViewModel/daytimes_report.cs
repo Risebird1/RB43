@@ -150,6 +150,7 @@ namespace Risebird.Entities.ViewModel
         public string TimeZonesValue { get; set; }
         public int IRFId { get; set; }
         public string ZoomMeetingId { get; set; }
+        public string Message { get; set; }
     }
     public class RecommendedSlotsVM
     {

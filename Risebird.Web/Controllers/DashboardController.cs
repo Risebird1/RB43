@@ -73,7 +73,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
                         var model = new DashboardVM();
 
@@ -105,7 +105,7 @@ namespace Risebird.Web.Controllers
                         //var channelrequest = await _dashboardService.FetchChannelRequests();
                         //model.ChannelRequest = channelrequest;
                         var interviewmanagement = (IList<InterviewManagementVM>)await _dashboardService.GetInterviewManagement(Emailid);
-                        interviewmanagement = interviewmanagement.OrderByDescending(x => x.interviewDate).ToList();
+                            interviewmanagement = interviewmanagement?.OrderByDescending(x => x.interviewDate).ToList();
                         foreach (var item in interviewmanagement)
                         {
                             item.interviewDate = item.interviewDate.Date;
@@ -1915,7 +1915,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "TechSupport")
                     {
                         var model = new DashboardVM();
                         model.NotUpdatedMeetingsObj = new NotUpdatedMeetings();
@@ -2645,18 +2645,17 @@ namespace Risebird.Web.Controllers
                     ViewBag.Type = "InterviewM";
                     interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 1 && x.PerformedOn != null).ToList();
                 }
-                else if (type == "RescheduleIM")
+                else if (type == "OnTimeIM")
+                {
+                    ViewBag.Type = "OnTimeIM";
+                    interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 0 && x.PerformedOn != null && x.Joinedon != null).ToList();
+                }
+                else
                 {
                     ViewBag.Type = "RescheduleIM";
                     interviewmanagement = interviewmanagement.Where(x => (x.IsRescheduleNotificationSent == 1 && x.MeetingStatus != 3 && x.MeetingStatus != 4 && x.MeetingStatus != 6 && x.MeetingStatus != 7 && x.MeetingStatus != 8) || (x.PerformedOn != null && (x.MeetingStatus == 1 || x.MeetingStatus == 5 || x.MeetingStatus == 9))).ToList();
                     interviewmanagement = interviewmanagement.Select(x => { x.LastMeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.LastMeetingStatus)).GetDescription(); return x; }).ToList();
-                }
-                else
-                {
-                    //ViewBag.Type = "EmergencyIM";
-                    ViewBag.Type = "OnTimeIM";
-                    interviewmanagement = interviewmanagement.Where(x => x.IsMeetingNotificationSent == 0 && x.PerformedOn != null && x.Joinedon != null).ToList();
-                    //interviewmanagement = interviewmanagement.Where(x => x.interviewDate.AddMinutes(29) < x.FirstPerformedOn || x.interviewDate.AddMinutes(29) < x.FirstJoinedon).ToList();
+
                 }
                 interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                 return View(interviewmanagement);
@@ -2941,23 +2940,12 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         var data = await _dashboardService.GetColdCandidatesList(ColdCandidateValue);
-                        data = data.Select(x =>
-                        {
-                            x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                            return x;
-                        }).ToList();
-                        ViewBag.ColdCandidateValue = ColdCandidateValue;
-                        //if (ColdCandidateValue == 1)
+                        //data = data.Select(x =>
                         //{
-                        // data= data.Where(x => x.IsColdCandidate == true).ToList();
-                        //    ViewBag.ColdCandidateValue = 1;
-
-                        //}
-                        //else {
-                        //    data = data.Where(x => x.IsColdCandidate != true).ToList();
-                        //    ViewBag.ColdCandidateValue = 0;
-                        //}
-
+                        //    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                        //    return x;
+                        //}).ToList();
+                        ViewBag.ColdCandidateValue = ColdCandidateValue;
                         return View(data);
                     }
                     else
@@ -2983,25 +2971,27 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-              //  var result = await _dashboardService.GetFutureDateInterviewSchedule(InterviewId);
+                //  var result = await _dashboardService.GetFutureDateInterviewSchedule(InterviewId);
                 var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(InterviewId);
-               
-                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId,1);
 
-                if (data!=null)
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId, 1);
+
+                if (data != null)
                 {
 
                     foreach (var item in data)
                     {
-                        if (item.interviewDate>DateTime.Now) {
+                        if (item.interviewDate > DateTime.Now)
+                        {
                             List<string> interviewers = new List<string>();
                             if (!string.IsNullOrEmpty(item.interviewer))
                             {
                                 interviewers.Add(item.interviewer);
                             }
+                           
                             var emailresult = await _notificationHelper.SendInterviewCancelledMail(interviewers, item.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
                             var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(item.interviewDate.ToString(), item.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), irfIntId, InterviewId);
-
+                            await _notificationHelper.SendInterviewCancelledMailCandidate(item.candidateEmail, item.interviewDate.ToString(), item.CandidateName, irfIntId, InterviewId);
                         }
                     }
                     return Json("Candidate " + "(" + CandidateEmail + ")" + " for " + IRFId + " has been marked as cold successfully");
@@ -3025,11 +3015,11 @@ namespace Risebird.Web.Controllers
             {
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                
-          
-                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId,0,2);
 
-                if (data==null ||data.Count==0)
+
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, 0, 2);
+
+                if (data == null || data.Count == 0)
                 {
                     return Json("Candidate " + "(" + CandidateEmail + ")" + " for " + IRFId + " has been undo as cold successfully");
                 }
@@ -3231,14 +3221,15 @@ namespace Risebird.Web.Controllers
                         }
                         if (type == 0)
                         {
-                            modelList = modelList.Where(x=>!x.IsPaused).ToList();
+                            modelList = modelList.Where(x => !x.IsPaused).ToList();
                             ViewBag.ColdCandidateValue = 0;
                         }
-                        else {
+                        else
+                        {
                             modelList = modelList.Where(x => x.IsPaused).ToList();
                             ViewBag.ColdCandidateValue = 1;
                         }
-                       // modelList = modelList.Select(x => { x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; return x; }).ToList();
+                        // modelList = modelList.Select(x => { x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; return x; }).ToList();
                         return View(modelList);
                     }
                     else
@@ -3250,6 +3241,22 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetPotentialColdCandidatesByClient(string Email)
+        {
+            try
+            {
+                var data = await _dashboardService.GetColdCandidatesByClient(Email);
+                ViewBag.ClientEmail = Email;
+                return View("_GetPotentialColdCandidatesByClient", data.ToList());
             }
             catch (Exception ex)
             {

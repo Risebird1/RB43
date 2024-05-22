@@ -1066,11 +1066,13 @@ namespace Risebird.Repository
                                     FirstScheduledOnDate = dt.Rows[i]["FirstScheduledOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["FirstScheduledOnDate"].ToString()) : new DateTime(),
                                     completedDate = dt.Rows[i]["completedDate"] != null ? Convert.ToDateTime(dt.Rows[i]["completedDate"].ToString()) : new DateTime(),
                                     isQcDone = dt.Rows[i]["isQcDone"] != null && dt.Rows[i]["isQcDone"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["isQcDone"]) : false,
+                                    IsDrive = dt.Rows[i]["IsDrive"] != null && dt.Rows[i]["IsDrive"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["IsDrive"]) : false,
 
                                     InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
                                     //MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
                                     //InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
                                     CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
+                                    InterviewerCodedName = dt.Rows[i]["InterviewerCodedName"] != null ? dt.Rows[i]["InterviewerCodedName"].ToString() : null,
                                     MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
                                     ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
                                     staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,
@@ -1140,6 +1142,7 @@ namespace Risebird.Repository
                                     //MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
                                     //InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
                                     CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
+                                    InterviewerCodedName = dt.Rows[i]["InterviewerCodedName"] != null ? dt.Rows[i]["InterviewerCodedName"].ToString() : null,
                                     MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
                                     ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
                                     staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,
@@ -1180,6 +1183,7 @@ namespace Risebird.Repository
                                     //MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
                                     //InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
                                     CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
+                                    InterviewerCodedName = dt.Rows[i]["InterviewerCodedName"] != null ? dt.Rows[i]["InterviewerCodedName"].ToString() : null,
                                     MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
                                     ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
                                     staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,
@@ -1217,9 +1221,11 @@ namespace Risebird.Repository
 
 
                                     //InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
+                                    
                                     MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
                                     InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
                                     CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
+                                    InterviewerCodedName = dt.Rows[i]["InterviewerCodedName"] != null ? dt.Rows[i]["InterviewerCodedName"].ToString() : null,
                                     MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
                                     ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
                                     staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,

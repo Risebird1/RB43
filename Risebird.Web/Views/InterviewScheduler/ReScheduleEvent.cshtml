@@ -27,7 +27,7 @@
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
         /* border: 1px solid #c0c1c3c2 !important;
-                                                                                                                                                        color: #9b9393;*/
+                                                                                                                                                                        color: #9b9393;*/
         font-size: 17px;
         /* background: #e5e5e5 !important*/
     }
@@ -236,7 +236,7 @@
                         <div>
                             <div class="txttimezone-con clearfix">
                                 <div class="select">
-                                    @Html.DropDownListFor(m=>m.TimeZones,Model.TimeZonesList,new{@id="ddlselecttimezone", @onchange="setoffsettime()", @class="drop-timezone"})
+                                    @Html.DropDownListFor(m => m.TimeZones, Model.TimeZonesList, new { @id = "ddlselecttimezone", @onchange = "setoffsettime()", @class = "drop-timezone" })
                                 </div>
                             </div>
                         </div>
@@ -295,6 +295,7 @@
                                 @Html.HiddenFor(m => m.returnvaluetype)
                                 @Html.HiddenFor(m => m.isCandidateportal)
                                 @Html.HiddenFor(m => m._IRFDetails.inIRFid)
+                                @Html.HiddenFor(m => m.Resume)
                                 <h2>Enter Details</h2>
                                 <div class="form-group">
                                     <div class="mandate">
@@ -307,25 +308,25 @@
                                         @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "form-label required" })
 
                                     </div>
-                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12" })
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control col-lg-12 col-md-12 col-sm-12 col-xs-12", @readonly = "readonly" })
                                 </div>
-                                @if (!Model.reschedulerequest)
+                                @* @if (!Model.reschedulerequest)
                                 {
-                                    <div class="form-group clearfix">
-                                        <div class="resume pull-left">
-                                            @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "form-label required" })
-                                        </div>
-                                        <div class="col-md-6 pull-left">
-                                            @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @class = "required" })
-                                            @Html.ValidationMessageFor(model => model.ResumeFile,"",new {@class="text-danger"})
-                                            <span id="file-chosen"></span>
-                                        </div>
-                                    </div>
+                                <div class="form-group clearfix">
+                                <div class="resume pull-left">
+                                @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "form-label required" })
+                                </div>
+                                <div class="col-md-6 pull-left">
+                                @Html.TextBoxFor(model => model.ResumeFile, new { @id = "ResumeFile", type = "file", @accept = ".doc, .docx, .pdf, .txt", @hidden = "hidden", @class = "required" })
+                                @Html.ValidationMessageFor(model => model.ResumeFile, "", new { @class = "text-danger" })
+                                <span id="file-chosen"></span>
+                                </div>
+                                </div>
                                 }
                                 else
                                 {
-                                    @Html.HiddenFor(m=>m.Resume)
-                                }
+                                @Html.HiddenFor(m => m.Resume)
+                                } *@
                                 <div class="form-group">
                                     <div class="mandate">
                                         @Html.LabelFor(model => model.InterviewChannelId, htmlAttributes: new { @class = "form-label required" })
@@ -338,12 +339,12 @@
                                     </div>
                                     @if (Model._listhr != null && Model._listhr.Count() > 0)
                                     {
-                                        @Html.DropDownListFor(m => m.HRCoordinator,Model._listhr, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                        @Html.DropDownListFor(m => m.HRCoordinator, Model._listhr, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
                                     }
                                     else
                                     {
                                         @Html.TextBoxFor(m => m.HRCoordinator, new { @required = "required", @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 required" })
-                                        @Html.ValidationMessageFor(m => m.HRCoordinator,"",new{@class="text-danger"})
+                                        @Html.ValidationMessageFor(m => m.HRCoordinator, "", new { @class = "text-danger" })
                                     }
                                 </div>
                                 <div class="form-group">
@@ -352,7 +353,7 @@
                                     </div>
                                     @if (Model._liststaffing != null && Model._liststaffing.Count() > 0)
                                     {
-                                        @Html.DropDownListFor(m => m.StaffingAgiencies,Model._liststaffing, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
+                                        @Html.DropDownListFor(m => m.StaffingAgiencies, Model._liststaffing, new { @class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" })
                                     }
                                     else
                                     {
@@ -368,21 +369,21 @@
                                         </div>
                                         <div class="input-group">
                                             @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
-                                            @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
+                                            @Html.ValidationMessageFor(m => m.MobileNumber, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
                                 }
                                 else
                                 {
-                                    @Html.HiddenFor(m=>m.MobileNumber)
+                                    @Html.HiddenFor(m => m.MobileNumber)
                                     <div class="input-group" style="display:none">
                                         @Html.TextBoxFor(m => m.MobileNumber, new { @id = "telnumber", @type = "number", @class = "form-control required", @required = "required" })
-                                        @Html.ValidationMessageFor(m => m.MobileNumber,"",new{@class="text-danger"})
+                                        @Html.ValidationMessageFor(m => m.MobileNumber, "", new { @class = "text-danger" })
                                     </div>
                                 }
                                 <div class="clearfix"></div>
 
-                                @Html.HiddenFor(m=> m.MeetingPlatform)
+                                @Html.HiddenFor(m => m.MeetingPlatform)
                                 <div class="form-group">
                                     <input type="submit" id="btnsubmit" value="Schedule Interview" onclick="return checkvalidation();" class="mdc-button mdc-button--raised" />
                                 </div>

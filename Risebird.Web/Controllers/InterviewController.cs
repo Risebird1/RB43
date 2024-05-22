@@ -1,3 +1,4 @@
+using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
@@ -3028,6 +3030,11 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
+                if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
+                {
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
+                }
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -3227,6 +3234,8 @@ namespace Risebird.Web.Controllers
                             //    System.IO.File.Delete(outputFileName);
                             //}
                         }
+                        model.InterviewerComment = System.Web.HttpUtility.HtmlEncode(model.InterviewerComment);
+
                         if (await _meetingService.AddInterviewReport(model, emailid))
                         {
                             await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);
@@ -3516,6 +3525,22 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetL2ClientFeedback(int interviewid)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var result = await _meetingService.GetInterviewMeetingById(interviewid);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("");
             }
         }
 
@@ -5596,7 +5621,10 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 await GetStatusList(model, irfId, 0);
+
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
@@ -7444,12 +7472,16 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.Userid = _iRFService.GetUserId(email, profileName);
+              
+
                 if (model.Userid != 0)
                 {
                     await GetStatusList(model, irfId, model.Userid);
@@ -7581,6 +7613,8 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -7719,6 +7753,8 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -7733,6 +7769,7 @@ namespace Risebird.Web.Controllers
                     model.Userid = _iRFService.GetUserId(email, profileName);
 
                 }
+
                 await GetStatusList(model, irfId, model.Userid);
                 //if (model.Userid != 0)
                 //{
@@ -8217,10 +8254,11 @@ namespace Risebird.Web.Controllers
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
+            comment = System.Web.HttpUtility.HtmlEncode(comment);
             var result = await _meetingService.UpdateInterviewReport(interviewid, comment, email);
             if (result)
             {
-                return Json("Successfully updated.");
+                return Json("Comment successfully updated.");
             }
             else
             {

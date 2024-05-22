@@ -9,7 +9,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO      
                       
-CREATE PROCEDURE usp_GetIRFCandidateStatsIRFCount     
+Create PROCEDURE usp_GetIRFCandidateStatsIRFCount     
 @startDate datetime,          
 @endDate datetime,                  
 @timeNow datetime,  
@@ -46,8 +46,9 @@ select ca.IRFId, ca.CandidateMasterId, cm.UserId,
 dbo.fn_CandidateLatestStatusForIrfStats(cm.UserId, ca.IRFId, cast(@startDate as date), @timeNow)              
 from  Candidate ca               
 join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.CandidateId)               
-join CandidatesMaster cm on cm.id=ca.CandidateMasterId                
-where cs.[Status] =12 and cast([Date] as date) <=cast(@endDate as date) and cast([Date] as date) >= cast(@startDate as date)              
+join CandidatesMaster cm on cm.id=ca.CandidateMasterId  
+join @tbl_Temp tt on tt.IRFId=ca.IRFId
+--where cs.[Status] =12 and cast([Date] as date) <=cast(@endDate as date) and cast([Date] as date) >= cast(@startDate as date)              
 group by ca.IRFId, ca.CandidateMasterId,cm.UserId              
               
               
