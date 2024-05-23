@@ -398,32 +398,6 @@ else
 @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
 <script src="~/js/markcoldcandidate.js" asp-append-version="true"></script> *@
 
-<script type="text/javascript">
-    //// script for loader starts here
-    $(".dataloading").hide();
-    $("#meeting").hide();
-    var loader;
-    function ShowProgress() {
-        $(".dataloading").hide();
-        $("#meeting").hide();
-        loader = document.getElementsByClassName("loader")[0];
-        loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
-        loader.style.left = left + "px";
-    };
-    ShowProgress();
-
-    window.onload = function () {
-        setTimeout(function () {
-            loader.style.display = "none";
-            $(".dataloading").show();
-            $("#meeting").show();
-
-        }, 2000);
-    };
-</script>
 <script>
     function Sendinvite(id, IRFId, CandidateEmail) {
         $.ajax({
