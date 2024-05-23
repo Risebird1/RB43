@@ -9949,7 +9949,7 @@ option {
     color: #6ca980 !important;
     padding: 1px 0px 0px 5px !important;
     width: auto;
-    margin-right:10px;
+    margin: 0px 10px 0px 0px;
     font-weight: normal !important;
     background: #fff !important;
     position: relative !important;
@@ -9979,6 +9979,13 @@ option {
     top: -2px;
     margin: 0px 8px 0px 4px;
     height: 17px;
+}
+.task-container .complete-badge-icon {
+    width: 16px;
+    position: relative;
+    top: -2px;
+    margin: 0px 8px 0px 4px;
+    height: 15px;
 }
 .task-container .modal .count {
     background: #abceea;

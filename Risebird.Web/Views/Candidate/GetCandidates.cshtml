@@ -374,7 +374,7 @@
                                                                             @if (item.Phone != null && item.Phone != string.Empty)
                                                                             {
                                                                                 <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject,1)">
-                                                                                    <img src="~/img/calling.png" width="20" />
+                                                                                    <img src="~/img/calling.png" width="17" />
                                                                                 </span>
 
                                                                             }
@@ -508,15 +508,15 @@
                                                                     }
                                                                         else if (item.StatusValue == "Not Reachable")
                                                                         {
-                                                                        <td><span class="current notreachable" style="font-size:13px;"> @item.StatusValue</span></td>
+                                                                       <span class="current notreachable" style="font-size:13px;"> @item.StatusValue</span>
                                                                         }
                                                                         else if (item.StatusValue == "Wrong Number/Out of service")
                                                                         {
-                                                                        <td><span class="current wrongnumber" style="font-size:13px;"> @item.StatusValue</span></td>
+                                                                        <span class="current wrongnumber" style="font-size:13px;"> @item.StatusValue</span>
                                                                         }
                                                                         else if (item.StatusValue == "Will schedule by themselves")
                                                                         {
-                                                                        <td><span class="current self-schedule" style="font-size:13px;"> @item.StatusValue</span></td>
+                                                                        <span class="current self-schedule" style="font-size:13px;"> @item.StatusValue</span>
                                                                         }
                                                                     else if (item.StatusValue == "Meeting Status")
                                                                     {

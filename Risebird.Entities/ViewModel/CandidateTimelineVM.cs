@@ -62,6 +62,11 @@ namespace Risebird.Entities.ViewModel
         public bool IsQCDone { get; set; }
         public string MeetingPlatform { get; set; }
         public string zoomLink { get; set; }
+        public string StatusValue { get; set; }
+
+        public string LatestComment { get; set; }
+        public string SchedulerUniqueid { get; set; }
+  
     }
 
     public class TimelineStatus

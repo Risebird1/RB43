@@ -436,7 +436,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimelineByDateStatus", parameters,
-                        commandType: CommandType.StoredProcedure);
+                        commandType: CommandType.StoredProcedure,commandTimeout:600);
                 }
             }
             catch (SqlException ex)

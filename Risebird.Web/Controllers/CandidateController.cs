@@ -3507,6 +3507,9 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.reportcount = _datavalue;
                         candidateTimeline.Interviewer = firstData.Interviewer;
                         candidateTimeline.WhatsappCount = firstData.WhatsappCount;
+                        candidateTimeline.StatusValue = firstData.StatusValue;
+                        candidateTimeline.LatestComment = firstData.LatestComment;
+                        candidateTimeline.SchedulerUniqueid = firstData.SchedulerUniqueid;
                         candidateTimeline.MailCount = firstData.MailCount;
                         candidateTimeline.CallsCount = firstData.CallsCount;
                         candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
@@ -3694,6 +3697,9 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.Interviewer = firstData.Interviewer;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     candidateTimeline.WhatsappCount = firstData.WhatsappCount;
+                    candidateTimeline.StatusValue = firstData.StatusValue;
+                    candidateTimeline.LatestComment = firstData.LatestComment;
+                    candidateTimeline.SchedulerUniqueid = firstData.SchedulerUniqueid;
                     candidateTimeline.MailCount = firstData.MailCount;
                     candidateTimeline.CallsCount = firstData.CallsCount;
                     candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
