@@ -317,6 +317,511 @@
                             </div>
                         </div>
 
+
+                         <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper6">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskByClient')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left">
+                                                        <span class="dashboard-icon risk-client">
+                                                            <img style="max-width: 40px!important;position: relative;left: -6px;top: -2px;height: 35px!important;max-height: 67px!important;" src="~/img/risk-icon.png" />
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Potential Risk</strong></span><span class="dashboard-smalltxt">By Client</span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong>
+                                                                <strong> <span style="cursor:pointer" id="ribbonPotentialRiskByClientCount" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskByClient')"> @Model.NotUpdatedMeetingsObj.PotentialRiskByClient</span>  </strong>
+                                                            </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskByClient')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskByClient')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left">
+                                                        <span class="dashboard-icon risk-client">
+                                                            <img style="max-width: 40px!important;position: relative;left: -6px;top: -2px;height: 35px!important;max-height: 67px!important;" src="~/img/risk-icon.png" />
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Potential Risk</strong></span><span class="dashboard-smalltxt">By Client</span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>
+                                                                <strong> <span style="cursor:pointer" id="ribbonPotentialRiskByClientCount_1" class="card-title" onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskByClient')"> @Model.NotUpdatedMeetingsObj.PotentialRiskByClient</span>  </strong>
+                                                            </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.PotentialRiskByClient')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper7">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="DMApprove()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#689f38de"><i class="fa fa-thumbs-up" style="color:#fff;font-size:21px;"></i></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>DM Approve </strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong><span id="ribbonDMApproveCount" onclick="DMApprove()">@Model.NotUpdatedMeetingsObj.DMApproveCount </span> </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="111" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="DMApprove()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#689f38de"><i class="fa fa-thumbs-up" style="color:#fff;font-size:21px;"></i></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>DM Approve</strong></span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>  <span style="cursor:pointer" id="ribbonDMApproveCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.DMApproveCount</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="DMApprove()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper8">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon pending"><img src="~/img/pending.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Status Pending</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong><span style="cursor:pointer" id="ribbonunfilledmeetingstatuscount" onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')"> @Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount </span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('MeetingStatus')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon pending"><img src="~/img/pending.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Status Pending</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>  <span style="cursor:pointer" id="ribbonunfilledmeetingstatuscount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnfilledMeetingStatusCount</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.MeetingStatus')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        @*  <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper9">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon unassign"><img src="~/img/unassign.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Unassigned Interview</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong>  <span style="cursor:pointer" id="ribbonunassignedinterviewcount" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon unassign"><img src="~/img/unassign.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Unassigned Interview</strong></span></h3>
+                                                        </div>
+
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong> <span style="cursor:pointer" id="ribbonunassignedinterviewcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnassignedInterviewsCount</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.InterviewCount')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div> *@
+
+
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper10">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="ColdCandidatesDetalis()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background: #db9da9;"><img src="~/img/cold-candidate.png" style="max-height:26px!important;"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Cold Candidates</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;">
+                                                            <div class="header-front"></div>
+                                                            <strong><span id="ribbonColdCandidates" onclick="ColdCandidatesDetalis()" style="font-size:15px;cursor:pointer">Click here </span> </strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="111" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="ColdCandidatesDetalis()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background: #db9da9;"><img src="~/img/cold-candidate.png" style="max-height:26px!important;></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Cold Candidates</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;">
+                                                            <div class="header-back"></div>
+                                                            <strong><span id="ribbonColdCandidates_1" onclick="ColdCandidatesDetalis()" style="font-size:15px;">Click here </span> </strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="ColdCandidatesDetalis()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper11">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="PQIDetalis()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#a9c5ca"><img src="~/img/quality.png"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Interviewer Monitoring </strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;">
+                                                            <div class="header-front"></div>
+                                                            <strong><span onclick="PQIDetalis()" style="font-size:15px;">Click here </span> </strong>
+                                                        </div>
+                                                        <div class="pull-right">
+                                                            <button onclick="PQIDetalis()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="PQIDetalis()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#a9c5ca"><img src="~/img/quality.png"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Interviewer Monitoring</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:-5px;">
+                                                            <div class="header-back"></div>
+                                                            <strong><span style="font-size:15px;position:relative;left:10px;" onclick="PQIDetalis()" class="card-title">Click here </span> </strong>
+                                                        </div>
+                                                        <div class="pull-right">
+                                                            <button onclick="PQIDetalis()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper12">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="TechQCInterviews()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#e0b447"><img src="~/img/tech-qc.png"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Tech QC </strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong><span id="ribbonTechQcCount" onclick="TechQCInterviews()">@Model.NotUpdatedMeetingsObj.TechQCCount </span> </strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="111" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="TechQCInterviews()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#e0b447"><img src="~/img/tech-qc.png"></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Tech QC</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>  <span style="cursor:pointer" id="ribbonTechQcCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.TechQCCount</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="TechQCInterviews()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper13">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon report-pending"><img src="~/img/report-pending.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>QC Report Pending</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong><span id="ribbonQCPendingReportCount" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')"> @Model.NotUpdatedMeetingsObj.QCPendingReportCount</span>  </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon report-pending"><img src="~/img/report-pending.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>QC Report Pending</strong></span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>
+                                                                <span style="cursor:pointer" id="ribbonQCPendingReportCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.QCPendingReportCount</span>
+                                                            </strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.QCPendingReport')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
         </div>
       </div>
      <div>
@@ -342,6 +847,20 @@
 
        function PotentialRiskByCandidate() {
         window.location.href = "/Dashboard/PotentialRiskByCandidate";
+    }
+       function DMApprove() {
+        window.location.href = "/Dashboard/GetDMApproveDetails?returnBack=" + 1;
+    }
+
+      function ColdCandidatesDetalis() {
+    window.location.href = "/Dashboard/GetColdCandidatesList?returnBack=" + 1;
+    }
+
+      function PQIDetalis() {
+    window.location.href = "/Dashboard/InterviewerIRFDetails?returnBack=" + 1;
+    }
+      function TechQCInterviews() {
+        window.location.href = "/Dashboard/TechQCDetails?returnBack=" + 1;
     }
 </script>
 
@@ -405,17 +924,59 @@
                 $(".flipper5").removeClass("flipper");
             }
 
+            if (parseInt(data.potentialRiskByClient) != parseInt($("#ribbonPotentialRiskByClientCount").text())) {
+                $(".flipper6").addClass("flipper");
+            }
+            else {
+                $(".flipper6").removeClass("flipper");
+            }
+
+            if (parseInt(data.dmApproveCount) != parseInt($("#ribbonDMApproveCount").text())) {
+                $(".flipper7").addClass("flipper");
+            }
+            else {
+                $(".flipper7").removeClass("flipper");
+            }
+            if (parseInt(data.unfilledMeetingStatusCount) != parseInt($("#ribbonunfilledmeetingstatuscount").text())) {
+                $(".flipper8").addClass("flipper");
+            }
+            else {
+                $(".flipper8").removeClass("flipper");
+            }
+
+
+            if (parseInt(data.techQCCount) != parseInt($("#ribbonTechQcCount").text())) {
+                $(".flipper12").addClass("flipper");
+            }
+            else {
+                $(".flipper12").removeClass("flipper");
+            }
+            if (parseInt(data.qcPendingReportCount) != parseInt($("#ribbonQCPendingReportCount").text())) {
+                $(".flipper13").addClass("flipper");
+            }
+            else {
+                $(".flipper13").removeClass("flipper");
+            }
+
             $("#ribbonMissedCandidateCount").text(data.missedCandidateCount);
             $("#ribbonMailCount").text(data.bounceDroppedCandidateMailCount);
             $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
-
             $("#ribbonPotentialRiskInterviewCount").text(data.potentialRiskInterviewCount);
+            $("#ribbonPotentialRiskByClientCount").text(data.potentialRiskByClient);
+            $("#ribbonDMApproveCount").text(data.dmApproveCount);
+            $("#ribbonunfilledmeetingstatuscount").text(data.unfilledMeetingStatusCount);
+            $("#ribbonTechQcCount").text(data.techQCCount);
+            $("#ribbonQCPendingReportCount").text(data.qcPendingReportCount);
 
             $("#ribbonMissedCandidateCount_1").text(data.missedCandidateCount);
             $("#ribbonMailCount_1").text(data.bounceDroppedCandidateMailCount);
             $("#ribbonunassignedinterviewcount_1").text(data.unassignedInterviewsCount);
-
             $("#ribbonPotentialRiskInterviewCount_1").text(data.potentialRiskInterviewCount);
+            $("#ribbonPotentialRiskByClientCount_1").text(data.potentialRiskByClient);
+            $("#ribbonDMApproveCount_1").text(data.dmApproveCount);
+            $("#ribbonunfilledmeetingstatuscount_1").text(data.unfilledMeetingStatusCount);
+            $("#ribbonTechQcCount_1").text(data.techQCCount);
+            $("#ribbonQCPendingReportCount_1").text(data.qcPendingReportCount);
 
                 $(".flipper").toggleClass("flip");
             }
@@ -424,4 +985,4 @@
 
         setTimeout(setRibbon, 60000);
     }
-
+ </<script>

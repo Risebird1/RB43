@@ -876,11 +876,11 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<List<MeetingVM>> GetDMApproveDetails()
+        public async Task<List<MeetingVM>> GetDMApproveDetails(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.GetDMApproveDetailsRepository();
+                return await _dashboardRespository.GetDMApproveDetailsRepository(EmailId);
             }
             catch (Exception ex)
             {
@@ -901,11 +901,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null)
+        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null, string Email = null)
         {
             try
             {
-                return await _dashboardRespository.GetInterviewerIRFDetails(type, uniqueid);
+                return await _dashboardRespository.GetInterviewerIRFDetails(type, uniqueid,Email);
             }
             catch (Exception ex)
             {
@@ -925,11 +925,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<List<MeetingVM>> FetchTechQCDetails()
+        public async Task<List<MeetingVM>> FetchTechQCDetails(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.FetchTechQCDetails();
+                return await _dashboardRespository.FetchTechQCDetails(EmailId);
             }
             catch (Exception ex)
             {
@@ -938,11 +938,11 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue)
+        public async Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue,string EmailId)
         {
             try
             {
-                return (await _dashboardRespository.GetColdCandidatesRepository(ColdCandidateValue)).ToList();
+                return (await _dashboardRespository.GetColdCandidatesRepository(ColdCandidateValue,EmailId)).ToList();
             }
             catch (Exception ex)
             {

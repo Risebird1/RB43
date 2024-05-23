@@ -2854,7 +2854,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetDMApproveDetails()
+        public async Task<IActionResult> GetDMApproveDetails(int returnBack)
         {
             try
             {
@@ -2865,9 +2865,10 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = await _dashboardService.GetDMApproveDetails();
+                        var model = await _dashboardService.GetDMApproveDetails(emailid);
 
 
                         return View(model);
@@ -2933,7 +2934,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetColdCandidatesList(int ColdCandidateValue)
+        public async Task<IActionResult> GetColdCandidatesList(int ColdCandidateValue,int returnBack)
         {
             try
             {
@@ -2944,9 +2945,10 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack=returnBack;
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        var data = await _dashboardService.GetColdCandidatesList(ColdCandidateValue);
+                        var data = await _dashboardService.GetColdCandidatesList(ColdCandidateValue, emailid);
                         //data = data.Select(x =>
                         //{
                         //    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
@@ -3042,7 +3044,7 @@ namespace Risebird.Web.Controllers
             }
         }
         #region PQI
-        public async Task<IActionResult> InterviewerIRFDetails(string type)
+        public async Task<IActionResult> InterviewerIRFDetails(string type,int returnBack)
         {
             try
             {
@@ -3053,6 +3055,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         if (type == "Rejection")
@@ -3069,7 +3072,7 @@ namespace Risebird.Web.Controllers
                             type = "Selection";
                             ViewBag.Type = "Selection";
                         }
-                        var model = await _dashboardService.GetInterviewerIRFDetails(type);
+                        var model = await _dashboardService.GetInterviewerIRFDetails(type,null ,emailid);
                         return View(model);
                     }
                     else
@@ -3170,7 +3173,7 @@ namespace Risebird.Web.Controllers
             return View("InterviewerIRFDetails", model);
         }
         #endregion
-        public async Task<IActionResult> TechQCDetails()
+        public async Task<IActionResult> TechQCDetails(int ReturnBack)
         {
             try
             {
@@ -3181,9 +3184,10 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = ReturnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
-                        var modelList = await _dashboardService.FetchTechQCDetails();
+                        var modelList = await _dashboardService.FetchTechQCDetails(emailid);
                         if (modelList == null)
                         {
                             modelList = new List<MeetingVM>();
