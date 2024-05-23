@@ -417,7 +417,14 @@
 
             <div class="row">
                 <div class="col-md-12">
+                    @if (ViewBag.ProfileName == "SeniorHR")
+                    { 
+                    <div class="dashboard-view"><a onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'"><span class="dashboard-iconcolor"></span><span class="pull-left">911 Dashboard</span></a></div>
+
+                    }
+                    else { 
                     <div class="dashboard-view"><a onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'"><span class="dashboard-iconcolor"></span><span class="pull-left">911 Dashboard</span></a></div>
+                    }
                 </div>
             </div>
 

@@ -25,22 +25,48 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
   begin  
    if (@Profile = 'SeniorHR' or @Profile = 'HR')  
    begin  
-	select distinct *,IRF.Id as irfIntId  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
-	join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
-	where confirmationStatus=1 and interviewer is null and ulsh.Emailid= @Emailid and interviewDate between @StartDate and @EndDate
+		select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,cl.Name, 
+				IRF.CalendlyLink,SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
+				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup from InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId 
+				join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId 
+				left join UserList ulsh on ulsh.id=sh.Userid 
+				join UserList ul on ul.id= irf.RisebirdHr
+				join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
+				where confirmationStatus=1 and interviewer is null and ulsh.Emailid= @Emailid and interviewDate between @StartDate and @EndDate
    end  
    else  
    begin  
-    select distinct *,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id where confirmationStatus=1 and interviewer is null and interviewDate between @StartDate and @EndDate
+    select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,cl.Name,IRF.CalendlyLink,
+				SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
+				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup 
+				from InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join UserList ul on ul.id=  irf.RisebirdHr
+				join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
+				where confirmationStatus=1 and interviewer is null and interviewDate between @StartDate and @EndDate
    end  
   end  
   else  
   begin  
-   select distinct im.*,irf.*,cl.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id   
-   join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId   
+   select distinct im.*,irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId ,IRF.JDTiltle,cl.Name,
+			IRF.CalendlyLink,SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  , 
+			LEN(IRF.CalendlyLink)) as scheduleUniqueid,im.id as imid, asg.AssessmentGroup
+			from InterviewMeetings im join IRF on im.IRFId=irf.IRFId 
+			join Client cl on irf.ClientId=cl.id 
+			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
    where confirmationStatus=1 and interviewer is null and ul.EmailId=@emailID and interviewDate between @StartDate and @EndDate  
    union   
-   select distinct im.*,irf.*,cl.* from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr   
+   select distinct im.*,irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,cl.Name, 
+			IRF.CalendlyLink, SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
+			LEN(IRF.CalendlyLink)) as scheduleUniqueid,im.id as imid, asg.AssessmentGroup  from InterviewMeetings im
+			join IRF on im.IRFId=irf.IRFId 
+			join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
    where confirmationStatus=1 and interviewer is null and ul.EmailId=@emailID and interviewDate between @StartDate and @EndDate
   end  
  end  
@@ -156,15 +182,15 @@ begin
  begin  
   if (@actiontype = 0)  
   begin  
- --  if (@Profile = 'SeniorHR' or @Profile = 'HR')  
- --  begin  
-	--Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ulsh.Emailid= @Emailid
- --  end  
- --  else  
- --  begin  
+   if (@Profile = 'SeniorHR')  
+   begin  
+	Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ulsh.Emailid= @Emailid
+   end  
+   else  
+   begin  
     Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and ISNULL(im.RedoInterview,0)=0
    and interviewDate between @StartDate and @EndDate
-   --end  
+   end  
   end  
   else  
   begin  
@@ -179,15 +205,15 @@ begin
  begin  
   if (@actiontype = 0)  
   begin  
-   --if (@Profile = 'SeniorHR' or @Profile = 'HR')  
-   --begin  
-   -- Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,tq.Redflags from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and ulsh.Emailid= @Emailid
-   --end  
-   --else  
-   --begin  
+   if (@Profile = 'SeniorHR')  
+   begin  
+    Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,tq.Redflags from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and ulsh.Emailid= @Emailid
+   end  
+   else  
+   begin  
     Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,tq.PaymentComplianceCount as Redflags,IRF.id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1  
 	where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and interviewDate between @StartDate and @EndDate
-   --end  
+   end  
   end  
   else  
   begin  

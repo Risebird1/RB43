@@ -907,7 +907,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchRibbonDetailsValuesbydate", parameters,
-                        commandType: CommandType.StoredProcedure);
+                        commandType: CommandType.StoredProcedure,commandTimeout:600);
                     return result?.ToList();
                 }
             }
