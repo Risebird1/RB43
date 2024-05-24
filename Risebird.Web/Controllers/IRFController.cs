@@ -9245,7 +9245,7 @@ namespace Risebird.Web.Controllers
         #endregion 
 
         [HttpGet]
-        public async Task<IActionResult> SkillChannelsByTemplate()
+        public async Task<IActionResult> SkillChannelsByTemplate(int returnBack)
         {
             try
             {
@@ -9255,9 +9255,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
                     {
-                        var model = await _irfService.GetSkillChannelsCreatedUsingTemplates();
+                        var model = await _irfService.GetSkillChannelsCreatedUsingTemplates(emailid);
                         ViewBag.Profile = profileName;
                         return View(model);
                     }

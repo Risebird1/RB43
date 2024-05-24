@@ -42,8 +42,7 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <h4 class="card-title"> Skill Channels By Template</h4>
-                </div>
-
+                </div>              
                 <div class="pull-right">
                     <div>
                         @* <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -52,14 +51,25 @@
                         </button> *@
 
 
-                        @* <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='/Dashboard'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                        </button> *@
+                     
                     </div>
                 </div>
             </div></div>
         </div>
     </div>
+
+    @if (ViewBag.ReturnBack == 1)
+    {
+        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+        </button>
+    }
+    else
+    {
+        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+        </button>
+    }
     <div class="content  client">
         <div class="row bl-bg">
             <div class="col-md-12">

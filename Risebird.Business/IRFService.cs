@@ -3868,11 +3868,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates()
+        public async Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates(string EmailId)
         {
             try
             {
-                return await _irfRepository.GetSkillChannelsCreatedUsingTemplates();
+                return await _irfRepository.GetSkillChannelsCreatedUsingTemplates(EmailId);
             }
             catch (Exception e)
             {
