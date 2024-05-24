@@ -5548,6 +5548,7 @@ namespace Risebird.Web.Controllers
                     //model.IsInterviewer = isInterviewer;
                     //model.PreviousMeetingStatus = model.MeetingStatus;
                     //model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
                     await GetStatusList(model, irfId, 0);
                     //var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                     //var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();

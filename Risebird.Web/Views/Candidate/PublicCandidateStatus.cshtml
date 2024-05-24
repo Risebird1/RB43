@@ -684,8 +684,8 @@
                                                             <li onclick="ChangeTab('@CandidateTypeForClient.NotScheduled.GetDescription()')" @* rel="tab2" *@>Not Scheduled Meetings</li>
                                                             <li onclick="ColdCandidateByClient('@ViewBag.emailid')" rel="tab3">Cold Candidates</li>
                                                             <li onclick="NotProcessedResumeByClient('@ViewBag.emailid')" rel="tab4">Not Processed Resume</li>
-                                                            <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
-                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>
+                                                           @* <li onclick="PotentialColdCandidateByClient('@ViewBag.emailid')" rel="tab5">Potential Cold Candidate</li>
+                                                            <li onclick="RescheduleMeetingByClient('@ViewBag.emailid')" rel="tab6">Reschedule Meeting</li>*@
 
                                                         }
 
@@ -1148,6 +1148,13 @@
                                                                                                         </a>
                                                                                                     </span>
                                                                                                 }
+
+                                                                                                 @if (!item.IsColdCandidate)
+                                                                                                   {
+                                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.CandidateEmailId, endDate = item.EndDate })" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                                                 <span title="Send Invite"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
+                                                                                                  </a>
+                                                                                                    }
 
                                                                                             }
 

@@ -52,7 +52,7 @@ namespace Risebird.Entities.Data
         public string StatusValue { get; set; }
         public string LatestComment { get; set; }
         public string SchedulerUniqueid { get; set; }
-
+        public DateTime EndDate { get; set; }
     }
     }
 
