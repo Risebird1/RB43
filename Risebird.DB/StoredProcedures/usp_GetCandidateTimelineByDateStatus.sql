@@ -30,9 +30,9 @@ begin
  Union All Select distinct im.candidateEmail,irf.IRFId ,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber from InterviewMeetings im join irf on irf.IRFId=im.IRFId join Userlist ul on ul.EmailId=im.candidateEmail left join Trans_QCFormReport tqr on tqr.Interviewid=im.id where irf.ClientId=@Clientid and irf.EndDate>=GetDate() and IsNull(IsPaused,0)=0)                            
  Select ab.*,csm.StatusValue as ScheduleStatusValue,cs.Comments as ScheduleStatusComments,  
  CountTable.CallsCount, CountTable.MailCount, CountTable.WhatsappCount,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment from(    
- Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid
+ Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate
  from              
- (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid 
+ (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid, IRF.EndDate
  from CTE join      
  IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id              
  left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                          
@@ -44,10 +44,10 @@ begin
  Where tcul.EmailId=@Emailid and cs.Date is not Null and c.ProfileSource=@Emailid AND ISNULL(cci.IsColdCandidate,0) !=1                      
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
  c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
- c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) having Count(*)=1) as Cd                
+ c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)), IRF.EndDate having Count(*)=1) as Cd                
  where cd.dtCreatedOn>=@startDate and cd.dtCreatedOn<@endDate      
  group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,  
- Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid)as ab     
+ Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate)as ab     
  OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(ab.IRFId, ab.Emailid) as CountTable
  outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ab.IRFId and CandidateId = ab.CandidateMasterId  order by cs.Date desc) as LastCandidateStatus
  --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = ab.IRFId  
@@ -63,9 +63,9 @@ begin
  Union All Select distinct im.candidateEmail,irf.IRFId ,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber from InterviewMeetings im join irf on irf.IRFId=im.IRFId join Userlist ul on ul.EmailId=im.candidateEmail left join Trans_QCFormReport tqr on tqr.Interviewid=im.id where irf.ClientId=@Clientid and irf.EndDate>=GetDate() and IsNull(IsPaused,0)=0)                            
  Select ab.*,csm.StatusValue as ScheduleStatusValue,cs.Comments as ScheduleStatusComments, --D.*   
  CountTable.CallsCount, CountTable.MailCount, CountTable.WhatsappCount,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment from(    
- Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid
+ Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid, Cd.EndDate
  from              
- (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid
+ (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid, IRF.EndDate
  from CTE join      
  IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id              
  left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                     
@@ -77,11 +77,11 @@ begin
  Where tcul.EmailId=@Emailid and cs.Date is not Null and c.ClientHRAttemptContact=@Emailid AND ISNULL(cci.IsColdCandidate,0) !=1                      
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
  c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
- c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) having Count(*)=1) as Cd          
+ c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)), IRF.EndDate having Count(*)=1) as Cd          
    
  where cd.dtCreatedOn>=@startDate and cd.dtCreatedOn<@endDate      
  group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,  
- Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid)as ab     
+ Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate)as ab     
  --outer apply   
  --(  
  --select rccc.* from RisebirdCandidateCommunicationCount rccc join InterviewMeetings imr on imr.id = rccc.InterviewId  
@@ -102,10 +102,10 @@ begin
  Union All Select distinct im.candidateEmail,irf.IRFId ,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber from InterviewMeetings im join irf on irf.IRFId=im.IRFId join Userlist ul on ul.EmailId=im.candidateEmail left join Trans_QCFormReport tqr on tqr.Interviewid=im.id where irf.ClientId=@Clientid and irf.EndDate>=GetDate() and IsNull(IsPaused,0)=0)                            
  Select ab.*,csm.StatusValue as ScheduleStatusValue,cs.Comments as ScheduleStatusComments, --D.*   
  CountTable.CallsCount, CountTable.MailCount, CountTable.WhatsappCount,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment from(    
- Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid
+ Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate
 
  from              
- (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid
+ (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid, IRF.EndDate
 
  from CTE join      
  IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id              
@@ -116,10 +116,10 @@ begin
  Where cs.Date is not Null AND ISNULL(cci.IsColdCandidate,0) !=1
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
  c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
- c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) having Count(*)=1) as Cd          
+ c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)), IRF.EndDate having Count(*)=1) as Cd          
  where cd.dtCreatedOn>=@startDate and cd.dtCreatedOn<@endDate      
  group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,  
- Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid)as ab     
+ Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate)as ab     
  OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(ab.IRFId, ab.Emailid) as CountTable 
   outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ab.IRFId and CandidateId = ab.CandidateMasterId  order by cs.Date desc) as LastCandidateStatus
  join CandidateStatus cs on ab.interviewDate=cs.Date and ab.IRFId=cs.IRFId and ab.CandidateMasterId=cs.CandidateId    
@@ -134,9 +134,9 @@ begin
  Union All Select distinct im.candidateEmail,irf.IRFId ,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber from InterviewMeetings im join irf on irf.IRFId=im.IRFId join Userlist ul on ul.EmailId=im.candidateEmail left join Trans_QCFormReport tqr on tqr.Interviewid=im.id where irf.ClientId=@Clientid and irf.EndDate>=GetDate() and IsNull(IsPaused,0)=0)                            
  Select ab.*,csm.StatusValue as ScheduleStatusValue,cs.Comments as ScheduleStatusComments, --D.*,   
  CountTable.CallsCount, CountTable.MailCount, CountTable.WhatsappCount,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment from(    
- Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid
+ Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate
  from              
- (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid
+ (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid, IRF.EndDate
  from CTE join      
  IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id              
  left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                     
@@ -148,10 +148,10 @@ begin
  Where tcul.EmailId=@Emailid and cs.Date is not Null AND ISNULL(cci.IsColdCandidate,0) !=1                       
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,  
  c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,c.CandidateMasterId,  
- c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) having Count(*)=1) as Cd                
+ c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)), IRF.EndDate having Count(*)=1) as Cd                
    
  where cd.dtCreatedOn>=@startDate and cd.dtCreatedOn<@endDate      
- group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid)as ab     
+ group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate)as ab     
  --outer apply   
  --(  
  --select rccc.InterviewId, rccc.CallsCount, rccc.MailCount, rccc.WhatsappCount from RisebirdCandidateCommunicationCount rccc join InterviewMeetings imr on imr.id = rccc.InterviewId  
