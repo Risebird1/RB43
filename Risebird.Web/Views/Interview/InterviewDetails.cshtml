@@ -46,7 +46,7 @@
             </fieldset>
         </div>
     </div>
-    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question" for="checkbox_eight">
                 <label class="consent-label" for="checkbox_eight">
@@ -73,7 +73,7 @@
             </fieldset>
 
         </div>
-    </div>
+    </div>*@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question" for="checkbox_nine">
@@ -98,7 +98,7 @@
         </div>
     </div>
 
-    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    @*<div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
 
             <label class="question default-open" for="checkbox_three">
@@ -121,6 +121,9 @@
 
             <fieldset class="answer hidden show-default" id="hidden_fields_three">
                 <audio controls><source src="@Model.AudioComment">Recording</audio>
+
+
+
                 @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                 {
                 string audiofileName = string.Empty;
@@ -145,7 +148,7 @@
                 No Instructions
                 </span>
                 }
-                }*@
+                }*
                 @*   @foreach(var item in Model)
                 {
                 <div id="AudioInstruction">
@@ -175,10 +178,10 @@
 
 
                 </div>
-                } *@
+                } 
 
 
-                @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+                 @if (!string.IsNullOrEmpty(Model.AudioComment))
                 {
                 string audiofileName = string.Empty;
                 audiofileName = @Model.AudioComment.Split('/').Last();
@@ -210,11 +213,13 @@
                 {
                 <div>No Instructions</div>
                 }
-                }*@
+                }
+
+
             </fieldset>
 
         </div>
-    </div>
+    </div>*@
 
     <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
@@ -263,39 +268,6 @@
             </fieldset>
         </div>
     </div>
-
-    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-        <div class="card" style="margin-bottom:10px;">
-            <label class="question default-open" for="checkbox_four">
-                <label for="checkbox_four">
-                    <i class="fa fa-link" aria-hidden="true"></i>
-                    JOB DESCRIPTION LINK
-                </label>
-                <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
-                    <label style="visibility:hidden" for="checkbox_four"></label>
-
-
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" checked />
-                    <label for="hidden_fields_four_1"></label>
-
-                    <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
-                    <span id="hidden_fields_four_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                </span>
-            </label>
-
-            <fieldset class="answer hidden show-default" id="hidden_fields_four">
-
-                <div id="CandidateDetails"><a target="_blank" href="@Model.JDLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> JDLink</span></a></div>
-
-            </fieldset>
-
-        </div>
-    </div>
-
-
-
-
     <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question default-open" for="checkbox_six">
@@ -354,6 +326,39 @@
             </fieldset>
         </div>
     </div>
+    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+        <div class="card" style="margin-bottom:10px;">
+            <label class="question default-open" for="checkbox_four">
+                <label for="checkbox_four">
+                    <i class="fa fa-link" aria-hidden="true"></i>
+                    JOB DESCRIPTION LINK
+                </label>
+                <span class="round">
+                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
+                    <label style="visibility:hidden" for="checkbox_four"></label>
+
+
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" checked />
+                    <label for="hidden_fields_four_1"></label>
+
+                    <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                    <span id="hidden_fields_four_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                </span>
+            </label>
+
+            <fieldset class="answer hidden show-default" id="hidden_fields_four">
+
+                <div id="CandidateDetails"><a target="_blank" href="@Model.JDLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> JDLink</span></a></div>
+
+            </fieldset>
+
+        </div>
+    </div>
+
+
+
+
+    
     @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
     <div class="card" style="margin-bottom:10px;">
     <label class="question" for="checkbox_seven">
@@ -379,7 +384,7 @@
     </div>
     </div>*@
 
-    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
+    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
         <div class="card" style="margin-bottom:10px;">
             <label class="question default-open" for="checkbox_seven">
                 <label for="checkbox_seven" style="color:#de3535">
@@ -846,7 +851,7 @@
                 countcheck = countcheck + 1;
             }
         });
-        if (countcheck == 8) {
+        if (countcheck == 6) {
             $(".join-button").removeClass('disable-link')
             //enable meeting link
         }
