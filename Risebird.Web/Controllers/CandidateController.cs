@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Azure.ApplicationInsights.Query.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +20,7 @@ using Risebird.Repository.Interface;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -39,6 +41,8 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private static List<CandidateTimelineVM> _modelDetails;
+        private string amp;
+
         //private static List<Candidate> _candidateModelDetails;
         private readonly IIRFService _irfService;
         private readonly IAzureStorageHelper _azureStorageHelper;
@@ -817,7 +821,7 @@ namespace Risebird.Web.Controllers
                         {
 
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
-                            candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());
+                            //candidateList.Where(x => x.Status != null).ToList().ForEach(x => x.StatusValue = ((CandidateStatusOptions)x.Status).GetDescription());
                             candidateList.ForEach(x => { x.confirmationStatusDesc = ((ReceiveMeetingStatus)x.confirmationStatus).GetDescription(); x.MeetingStatusDesc = ((MeetingStatus)x.MeetingStatus).GetDescription(); x.InterviewStatusDesc = ((InterviewStatus)x.InterviewStatus).GetDescription(); x.HeuristicsscoreDesc = ((Heuristicsscorelevel)x.Heuristicsscore).GetDescription(); });
                         }
 
@@ -3507,6 +3511,9 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.reportcount = _datavalue;
                         candidateTimeline.Interviewer = firstData.Interviewer;
                         candidateTimeline.WhatsappCount = firstData.WhatsappCount;
+                        candidateTimeline.StatusValue = firstData.StatusValue;
+                        candidateTimeline.LatestComment = firstData.LatestComment;
+                        candidateTimeline.SchedulerUniqueid = firstData.SchedulerUniqueid;
                         candidateTimeline.MailCount = firstData.MailCount;
                         candidateTimeline.CallsCount = firstData.CallsCount;
                         candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
@@ -3694,6 +3701,9 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.Interviewer = firstData.Interviewer;
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     candidateTimeline.WhatsappCount = firstData.WhatsappCount;
+                    candidateTimeline.StatusValue = firstData.StatusValue;
+                    candidateTimeline.LatestComment = firstData.LatestComment;
+                    candidateTimeline.SchedulerUniqueid = firstData.SchedulerUniqueid;
                     candidateTimeline.MailCount = firstData.MailCount;
                     candidateTimeline.CallsCount = firstData.CallsCount;
                     candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
@@ -5161,6 +5171,7 @@ namespace Risebird.Web.Controllers
                 //Sheet.Cells[1, 17].Value = "Pb Report Link";
 
                 Sheet.Cells[1, 19].Value = "Communication Score";
+
                 bool? isDrive = model.Where(x => x.CandidateType == CandidateSingleSourceTruthTypes.Completed)?.FirstOrDefault()?.IsDrive;
 
                 if (isDrive.HasValue && isDrive.Value)
@@ -5226,6 +5237,8 @@ namespace Risebird.Web.Controllers
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
+                        item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
+
                         Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
@@ -5374,6 +5387,8 @@ namespace Risebird.Web.Controllers
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
+                        item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
+
                         Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
@@ -5452,6 +5467,8 @@ namespace Risebird.Web.Controllers
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
+                        item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
+
                         Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
 
                         //if (!string.IsNullOrEmpty(item.VideoLink))
@@ -5524,6 +5541,7 @@ namespace Risebird.Web.Controllers
 
                         i++;
                     }
+                    
 
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 }

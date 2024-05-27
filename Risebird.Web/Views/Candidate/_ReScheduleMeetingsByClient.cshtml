@@ -66,7 +66,7 @@
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                 {
                                                                     @* <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="15" height="15" /></span> *@
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span  style=" cursor:pointer; " title="Click here to call the candidate."><span class="fa fa-phone" style="color:green;rotate:45deg"></span></span>@item.MobileNumber</span>
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span style=" cursor:pointer; " title="Click here to call the candidate."><img src="/img/calling.png" width="18"></span>@item.MobileNumber</span>
                                                                 
                                                                 }
                                                             </span>
@@ -247,7 +247,7 @@ else
                                                             <span class="call-area">
                                                                 @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                 {
-                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span  style=" cursor:pointer; " title="Click here to call the candidate."><span class="fa fa-phone" style="color:green;rotate:95deg"></span></span>@item.MobileNumber</span>
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span style=" cursor:pointer; " title="Click here to call the candidate."><img src="/img/calling.png" width="17"></span>@item.MobileNumber</span>
                                                                 }
                                                             </span>
                                                            
@@ -398,32 +398,6 @@ else
 @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
 <script src="~/js/markcoldcandidate.js" asp-append-version="true"></script> *@
 
-<script type="text/javascript">
-    //// script for loader starts here
-    $(".dataloading").hide();
-    $("#meeting").hide();
-    var loader;
-    function ShowProgress() {
-        $(".dataloading").hide();
-        $("#meeting").hide();
-        loader = document.getElementsByClassName("loader")[0];
-        loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
-        loader.style.left = left + "px";
-    };
-    ShowProgress();
-
-    window.onload = function () {
-        setTimeout(function () {
-            loader.style.display = "none";
-            $(".dataloading").show();
-            $("#meeting").show();
-
-        }, 2000);
-    };
-</script>
 <script>
     function Sendinvite(id, IRFId, CandidateEmail) {
         $.ajax({
