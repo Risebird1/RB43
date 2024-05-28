@@ -55,6 +55,51 @@
     #InsightsDetailsView{
         margin-top:30px!important;
     }
+    hr {
+    display: block;
+    margin: 50px 0 -15px;
+    width: 100%;
+    height: 1px;
+    border: 0;
+    position:absolute;
+    top:15px;
+    background-color: rgba(0, 0, 0, 0.35);
+}
+    hr + h2 {
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    margin: 0;
+    padding: 5px 10px;
+    border: 1px solid #453986;
+    transform: translateX(-50%);
+    color: #453986;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-align: center;
+    text-transform: uppercase;
+    background-color: #fff;
+}
+
+hr + h2::before {
+    left: 0;
+}
+hr + h2::before, hr + h2::after {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #453986;
+    content: "";
+}
+hr + h2::after {
+    right: 0;
+}
+hr + h2 {
+    border-width: 1px 0;
+}
 </style>
 
 @if (ViewBag.PageStatus == "Public")
@@ -237,7 +282,7 @@
                                 </div>
                                 <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="reportForm">
                                     @Html.AntiForgeryToken()
-                                    <div class="canvas_div_pdf" style="padding:10px 10px 0px 10px">
+                                    <div class="canvas_div_pdf" style="padding:0px 10px 0px 10px">
                                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                         <div class="row">
                                             <div class="col-lg-3 col-md-5 clientnfo">
@@ -325,106 +370,48 @@
                                                         <h2>@Model.CandidateName</h2>
                                                     }
                                                 }
+                                                  
 
-
-                                                <div class="report-heading">
+                                                @*<div class="report-heading">
                                                     Position
                                                 </div>
 
-                                                <h4>@Model.JDTiltle</h4>
+                                                <h4>@Model.JDTiltle</h4>*@
                                                 <div class="report-heading">
                                                     Date of Interview
                                                 </div>
-                                                <h5 style="color:#179f24;font-size:15px;">@Model.interviewDate</h5>
 
-                                                <hr style="margin-top:10px;height:0.3px!important;border-bottom:1px #dab3b321 solid" />
-
-
-                                                @if (!string.IsNullOrEmpty(Model.CodeSnippet)) 
+                                                <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
+                                               
+                                                <div class="report-int-codename" style="color:green">Interviewer Coded Name: </div>
+                                                <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
+                                                  @if (!string.IsNullOrEmpty(Model.CodeSnippet))
                                                 {
-                                                    <div class="clearfix" style="margin: 20px 0px;border-bottom: 1px #ccc solid;padding-bottom: 20px;">
+                                                    <div class="clearfix" style="margin: 20px 0px;padding-bottom: 20px;">
                                                         <h3 style="border:none">
                                                             <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/code-output.png">Code Output:
                                                         </h3>
                                                         <div>
-                                                            
-                                                        <div><a style="text-decoration:none;" href="@Model.CodeSnippet" target="_blank"><span style="background: #42a5f5;color: #fff;padding: 3px 10px 6px 10px;border-radius:3px;margin:15px;text-decoration:none">Click here to view code snippet</span></a></div>
+
+                                                            <div><a style="text-decoration:none;" href="@Model.CodeSnippet" target="_blank"><span style="background: #42a5f5;color: #fff;padding: 3px 10px 6px 10px;border-radius:3px;margin:15px;text-decoration:none">Click here to view code snippet</span></a></div>
                                                         </div>
                                                     </div>
-                         
-                                             }
-                                             else{
-                                                  <div class="clearfix" style="margin: 20px 0px;border-bottom: 1px #ccc solid;padding-bottom: 20px;">
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="clearfix" style="margin: 20px 0px;padding-bottom: 20px;">
                                                         <h3 style="border:none">
                                                             <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/code-output.png">Code Output:
                                                         </h3>
                                                         <div>
-                                                            
-                                                        <div>No code snippet is available</div>
+
+                                                            <div>No code snippet is available</div>
                                                         </div>
                                                     </div>
-                                             }
-
-
-
-                                                <div class="clearfix">
-                                                    <h3>
-                                                        @* <svg width="32" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>*@<img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Tech Skill Score:
-                                                        <span class="totScore">
-                                                            @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
-                                                            {
-                                                                <strong id="totTechScore"></strong>
-                                                            }
-                                                            else
-                                                            {
-                                                                <strong id="totTechScore" style="display:none"></strong>
-                                                            }
-                                                        </span>
-                                                    </h3>
-                                                </div>
-                                                <div>
-                                                    @if (Model.TechSkillReportCollection != null)
-                                                    {
-                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
-                                                        {
-                                                            <div class="tech-skill-wrapper">
-                                                                <div style="font-weight:500;">@Model.TechSkillReportCollection[i].SkillName</div>
-                                                                @{
-                                                                    var TechSkill_Score = 0.0;
-                                                                    if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
-                                                                    {
-                                                                        TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
-                                                                    }
-                                                                }
-                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
-                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
-                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
-                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
-                                                                <div class="skillBackground skill-round-xlarge skill-small">
-                                                                    <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    }
-                                                </div>
-                                              @if (Model.CommunicationalProficiency != 0)
-                                                {
-                                                    <div style="margin-top:35px">
-                                                        <h3 class="pull-left">
-                                                            <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/communication-score.png">Communicational Skill:
-                                                        </h3>
-                                                        <div class="pull-left">
-                                                            @* <label for="score" class="pull-left" style="line-height:5px;">Score must be (between 1 and 10):</label> *@
-                                                            <div class="communication-count pull-left">  @Model.CommunicationalProficiency / 10</div>
-                                                        </div>
-                                                    </div>
-                                             }
-
-                                                <div class="note-skill">
-                                                    <b> Note:</b> % score against every skill represents the difference between candidate's actual and required competency.
-                                                </div>
-
+                                                }
+@*                                                <hr style="margin-top:10px;height:0.3px!important;border-bottom:1px #dab3b321 solid" />
+*@
                                             </div>
 
                                             <div class="col-lg-9 col-md-7">
@@ -435,8 +422,8 @@
                                                 else
                                                 {
                                                     <div class="row">
-                                                        <h3><span class="pull-left"><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Interview Video</span><span class="pull-right report-int-codename">Interviewer: <c style="color:red;text-decoration:underline;cursor:pointer" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c></span></h3>
-                                                        <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                                        <h3><span class="pull-left"><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Interview Video</span></h3>
+                                                        <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
                                                             <div>
                                                                 @Html.HiddenFor(x => Model.VideoLink)
                                                                 @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
@@ -468,7 +455,7 @@
                                                                     <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
                                                                 }
 
-                                                                @if (Model.IsTranscript && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+                                                               @* @if (Model.IsTranscript && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
                                                                 {
                                                                     <div class="transcript">
                                                                         <h3 style="padding:0px;"><svg width="30" style="color: rgb(150, 145, 145);" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 16C5 15.4477 5.44772 15 6 15H14C14.5523 15 15 15.4477 15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16Z" fill="#969191"></path> <path d="M18 11C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H10C9.44772 13 9 12.5523 9 12C9 11.4477 9.44772 11 10 11H18Z" fill="#969191"></path> <path d="M16 16C16 15.4477 16.4477 15 17 15H18C18.5523 15 19 15.4477 19 16C19 16.5523 18.5523 17 18 17H17C16.4477 17 16 16.5523 16 16Z" fill="#969191"></path> <path d="M7 11C7.55228 11 8 11.4477 8 12C8 12.5523 7.55228 13 7 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11H7Z" fill="#969191"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 3C2.34315 3 1 4.34315 1 6V18C1 19.6569 2.34315 21 4 21H20C21.6569 21 23 19.6569 23 18V6C23 4.34315 21.6569 3 20 3H4ZM20 5H4C3.44772 5 3 5.44772 3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6C21 5.44771 20.5523 5 20 5Z" fill="#969191"></path> </svg> Meeting Transcript</h3>
@@ -487,91 +474,38 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                }
+                                                                }*@
                                                             </div>
                                                         </div>
-                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
-                                                        {
-                                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                                <h3>
-                                                                    <img style="width:34px;left:-11px; top:-1px; position:relative;background: #f5f5f5;padding: 3px;" src="/img/interviewer-comment.png">Interviewer Comment
-                                                                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" && ViewBag.SecurelyShared != "True")
-                                                                    {
-                                                                        <span class="fa fa-edit" style="padding-left:0px;font-size:19px;color:blue;cursor:pointer" onclick="EditReport()"></span>
-                                                                    }
-                                                                </h3>
-                                                                <div>
-                                                                    @if (Model.FeedbackAudioLink != null)
-                                                                    {
-                                                                        <audio style="margin-bottom:10px;height:30px" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
-                                                                    }
-                                                                    @if (Model.InterviewerComment != null)
-                                                                    {
-                                                                        @Html.HiddenFor(m => m.InterviewerComment, new { @id = "hidinterviewerComment" })
 
-                                                                        @if (Model.InterviewerComment.Length > 440)
-                                                                        {
-                                                                            <div class="article">
-                                                                                <p id="int-cmnt" style="margin-bottom:0px;">
-                                                                                    @Model.InterviewerComment.Substring(0, 440)
-                                                                                </p>
-                                                                                <p id="read-int-cmnt" class="moretext_@Model.id moretext">
-                                                                                    @Model.InterviewerComment.Substring(440, @Model.InterviewerComment.Length - 440)
-                                                                                </p>
-                                                                            </div> <a onclick="moreless(@Model.id)" class="moreless-btn" value="Readmore" id="read_@Model.id" href="#">Read more</a>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <div class="article">
-                                                                                <p id="int-cmnt">
-                                                                                    @Model.InterviewerComment.Substring(0, @Model.InterviewerComment.Length)
-                                                                                </p>
-                                                                                <p id="read-int-cmnt"></p>
+                                                         @if (Model.IsTranscript && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
+                                                                {
+                                                                    <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="transcript">
+                                                                        <h3 style="padding:0px;"><svg width="30" style="color: rgb(150, 145, 145);" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 16C5 15.4477 5.44772 15 6 15H14C14.5523 15 15 15.4477 15 16C15 16.5523 14.5523 17 14 17H6C5.44772 17 5 16.5523 5 16Z" fill="#969191"></path> <path d="M18 11C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H10C9.44772 13 9 12.5523 9 12C9 11.4477 9.44772 11 10 11H18Z" fill="#969191"></path> <path d="M16 16C16 15.4477 16.4477 15 17 15H18C18.5523 15 19 15.4477 19 16C19 16.5523 18.5523 17 18 17H17C16.4477 17 16 16.5523 16 16Z" fill="#969191"></path> <path d="M7 11C7.55228 11 8 11.4477 8 12C8 12.5523 7.55228 13 7 13H6C5.44772 13 5 12.5523 5 12C5 11.4477 5.44772 11 6 11H7Z" fill="#969191"></path> <path fill-rule="evenodd" clip-rule="evenodd" d="M4 3C2.34315 3 1 4.34315 1 6V18C1 19.6569 2.34315 21 4 21H20C21.6569 21 23 19.6569 23 18V6C23 4.34315 21.6569 3 20 3H4ZM20 5H4C3.44772 5 3 5.44772 3 6V18C3 18.5523 3.44772 19 4 19H20C20.5523 19 21 18.5523 21 18V6C21 5.44771 20.5523 5 20 5Z" fill="#969191"></path> </svg> Meeting Transcript</h3>
+                                                                        <h4 class="accordion-title js-accordion-title"></h4>
+                                                                        <div class="accordion-content">
+                                                                            <p id="id_transcript" style="margin-bottom:10px;">
+
+                                                                            </p>
+                                                                            <div style="width: 100%;float:left;background: #cccccc17;padding: 5px;">
+                                                                                <div class="transcript-btn">
+
+                                                                                    <a id="idbtnPrevious" style="margin-right:10px;height:30px;pointer-events: none; opacity:0.5" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('p')"><i class="fa fa-chevron-left" aria-hidden="true"></i>  Previous</a>
+                                                                                    <a id="idbtnNext" style="height:30px;" href="javascript:void(0)" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-left" onclick="ScrollToAppropriateHighlightedText('n')"> Next  <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+
+                                                                                </div>
                                                                             </div>
-                                                                        }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                        }
+                                                                        </div>
+                                                                    </div>
+                                                                    </div>
+                                                                }
+
+                                                       
                                                     </div>
 
 
-                                                    <div class="row">
-                                                        <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Questions Discussed</h3>
-
-                                                        <div class="question">
-                                                            @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
-                                                            {
-                                                                <ul>
-                                                                    @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
-                                                                    {
-                                                                        var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
-                                                                        @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
-                                                                        {
-                                                                            <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
-                                                                        }
-                                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
-                                                                        {
-                                                                            <label>Rating : @valueslist</label>
-                                                                        }
-                                                                    }
-                                                                </ul>
-                                                            }
-                                                            else
-                                                            {
-                                                                <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
-
-                                                            }
-                                                        </div>
-                                                    </div>
+                                                  
                                                 }
                                                 <br />
                                                 @if (Model.QOSData != null && Model.QOSData.Count() > 0 && ViewBag.profile != "Client" && (!isClient.HasValue || isClient.Value == false) && (!isClientSelected.HasValue || isClientSelected.Value == false))
@@ -667,6 +601,315 @@
                                                     </div>
 
                                                 }
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span>Primary Skill:</span>@Model.JDTiltle</h2></div>
+                                            <div class="col-lg-3 col-md-5 clientnfo">
+                                                <div class="clearfix">
+                                                    <h3>
+                                                        @* <svg width="32" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none" /><path fill="#969191" d="M128,76a44,44,0,1,1-44,44A44,44,0,0,1,128,76Zm103.2-2a8,8,0,0,1-7,4,7.6,7.6,0,0,1-4-1.1l-4.6-2.7a24,24,0,0,1-7.6,4.4V84a8,8,0,0,1-16,0V78.6a24,24,0,0,1-7.6-4.4l-4.6,2.7a7.6,7.6,0,0,1-4,1.1,8,8,0,0,1-4-14.9l4.6-2.7A21.2,21.2,0,0,1,176,56a21.2,21.2,0,0,1,.4-4.4l-4.6-2.7a7.9,7.9,0,0,1-3-10.9,8.1,8.1,0,0,1,11-2.9l4.6,2.7a24,24,0,0,1,7.6-4.4V28a8,8,0,0,1,16,0v5.4a24,24,0,0,1,7.6,4.4l4.6-2.7a8.1,8.1,0,0,1,11,2.9,7.9,7.9,0,0,1-3,10.9l-4.6,2.7A21.2,21.2,0,0,1,224,56a21.2,21.2,0,0,1-.4,4.4l4.6,2.7A7.9,7.9,0,0,1,231.2,74ZM200,64a8,8,0,1,0-8-8A8,8,0,0,0,200,64Zm22.4,44.6a8,8,0,0,0-7,8.8A94.2,94.2,0,0,1,216,128a87.6,87.6,0,0,1-22.2,58.4,81.3,81.3,0,0,0-24.5-23,59.7,59.7,0,0,1-82.6,0,81.3,81.3,0,0,0-24.5,23A88,88,0,0,1,128,40a75,75,0,0,1,8.2.4,8,8,0,1,0,1.4-16c-3.1-.3-6.4-.4-9.6-.4A104,104,0,0,0,57.8,204.7l1.3,1.2a104,104,0,0,0,137.8,0l1.3-1.2A103.7,103.7,0,0,0,232,128a101.9,101.9,0,0,0-.7-12.4A8,8,0,0,0,222.4,108.6Z" /></svg>*@<img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Tech Skill Score:
+                                                        <span class="totScore">
+                                                            @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                            {
+                                                                <strong id="totTechScore"></strong>
+                                                            }
+                                                            else
+                                                            {
+                                                                <strong id="totTechScore" style="display:none"></strong>
+                                                            }
+                                                        </span>
+                                                    </h3>
+                                                </div>
+                                                <div>
+                                                    @if (Model.TechSkillReportCollection != null)
+                                                    {
+                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
+                                                        {
+                                                            <div class="tech-skill-wrapper">
+                                                                <div style="font-weight:500;">@Model.TechSkillReportCollection[i].SkillName</div>
+                                                                @{
+                                                                    var TechSkill_Score = 0.0;
+                                                                    if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                                    {
+                                                                        TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
+                                                                    }
+                                                                }
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                                <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
+                                                                <div class="skillBackground skill-round-xlarge skill-small">
+                                                                    <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                                @if (Model.CommunicationalProficiency != 0)
+                                                {
+                                                    <div style="margin-top:35px">
+                                                        <h3 class="pull-left">
+                                                            <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/communication-score.png">Communicational Skill:
+                                                        </h3>
+                                                        <div class="pull-left">
+                                                            @* <label for="score" class="pull-left" style="line-height:5px;">Score must be (between 1 and 10):</label> *@
+                                                            <div class="communication-count pull-left">  @Model.CommunicationalProficiency / 10</div>
+                                                        </div>
+                                                    </div>
+                                                }
+
+                                                <div class="note-skill">
+                                                    <b> Note:</b> % score against every skill represents the difference between candidate's actual and required competency.
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-9 col-md-7">
+                                                <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                                        <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Questions Discussed</h3>
+
+                                                        <div class="question">
+                                                            @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
+                                                            {
+                                                                <ul>
+                                                                    @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                                    {
+                                                                        var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
+                                                                        @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
+                                                                        {
+                                                                            <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                        }
+                                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                                        {
+                                                                            <label>Rating : @valueslist</label>
+                                                                        }
+                                                                    }
+                                                                </ul>
+                                                            }
+                                                            else
+                                                            {
+                                                                <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                 @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                        {
+                                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                                                <h3>
+                                                                    <img style="width:34px;left:-11px; top:-1px; position:relative;background: #f5f5f5;padding: 3px;" src="/img/interviewer-comment.png">Interviewer Comment
+                                                                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" && ViewBag.SecurelyShared != "True")
+                                                                    {
+                                                                        <span class="fa fa-edit" style="padding-left:0px;font-size:19px;color:blue;cursor:pointer" onclick="EditReport()"></span>
+                                                                    }
+                                                                </h3>
+                                                                <div>
+                                                                    @if (Model.FeedbackAudioLink != null)
+                                                                    {
+                                                                        <audio style="margin-bottom:10px;height:30px" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                                    }
+                                                                    @if (Model.InterviewerComment != null)
+                                                                    {
+                                                                        @Html.HiddenFor(m => m.InterviewerComment, new { @id = "hidinterviewerComment" })
+
+                                                                        @if (Model.InterviewerComment.Length > 440)
+                                                                        {
+                                                                            <div class="article">
+                                                                                <p id="int-cmnt" style="margin-bottom:0px;">
+                                                                                    @Model.InterviewerComment.Substring(0, 440)
+                                                                                </p>
+                                                                                <p id="read-int-cmnt" class="moretext_@Model.id moretext">
+                                                                                    @Model.InterviewerComment.Substring(440, @Model.InterviewerComment.Length - 440)
+                                                                                </p>
+                                                                            </div> <a onclick="moreless(@Model.id)" class="moreless-btn" value="Readmore" id="read_@Model.id" href="#">Read more</a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="article">
+                                                                                <p id="int-cmnt">
+                                                                                    @Model.InterviewerComment.Substring(0, @Model.InterviewerComment.Length)
+                                                                                </p>
+                                                                                <p id="read-int-cmnt"></p>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        }
+                                            </div>
+                                        </div>
+
+                                        <!--secondary skill-->
+                                           <div class="row">
+                                           <div class="col-lg-3 col-md-5 clientnfo">
+                                                <div class="clearfix">
+                                                    <h3>
+<img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Tech Skill Score:
+                                                        <span class="totScore">
+                                                                <strong id="totTechScore"></strong>
+                                                        </span>
+                                                    </h3>
+                                                </div>
+                                                <div>
+                                                            <div class="tech-skill-wrapper">
+                                                                <div style="font-weight:500;">Python Coding - problem solving	</div>
+                                                                <input data-val="true" data-val-required="The RequiredLevelId field is required." id="TechSkillReportCollection_0__RequiredLevelId" name="TechSkillReportCollection[0].RequiredLevelId" type="hidden" value="4">
+                                                                <span class="rqlevel">Evaluated at <b>Competent -3</b></span>
+                                                                <input data-val="true" data-val-required="The ActualLevelId field is required." id="TechSkillReportCollection_0__ActualLevelId" name="TechSkillReportCollection[0].ActualLevelId" type="hidden" value="3" style="border-color: red;">
+                                                                <input data-val="true" data-val-number="The field WeightageRequired must be a number." data-val-required="The WeightageRequired field is required." id="TechSkillReportCollection_0__WeightageRequired" name="TechSkillReportCollection[0].WeightageRequired" type="hidden" value="35">
+                                                                <input data-val="true" data-val-number="The field WeightageActual must be a number." data-val-required="The WeightageActual field is required." id="TechSkillReportCollection_0__WeightageActual" name="TechSkillReportCollection[0].WeightageActual" type="hidden" value="28">
+                                                                <div class="skillBackground skill-round-xlarge skill-small">
+                                                                    <div class="skill-round-xlarge skill-teal" style="width:80%"><span class="ratecount">28  / 35</span></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="tech-skill-wrapper">
+                                                                <div style="font-weight:500;">Data preprocessing	</div>
+                                                                <input data-val="true" data-val-required="The RequiredLevelId field is required." id="TechSkillReportCollection_1__RequiredLevelId" name="TechSkillReportCollection[1].RequiredLevelId" type="hidden" value="4">
+                                                                <span class="rqlevel">Evaluated at <b>Competent -3</b></span>
+                                                                <input data-val="true" data-val-required="The ActualLevelId field is required." id="TechSkillReportCollection_1__ActualLevelId" name="TechSkillReportCollection[1].ActualLevelId" type="hidden" value="3" style="border-color: red;">
+                                                                <input data-val="true" data-val-number="The field WeightageRequired must be a number." data-val-required="The WeightageRequired field is required." id="TechSkillReportCollection_1__WeightageRequired" name="TechSkillReportCollection[1].WeightageRequired" type="hidden" value="25">
+                                                                <input data-val="true" data-val-number="The field WeightageActual must be a number." data-val-required="The WeightageActual field is required." id="TechSkillReportCollection_1__WeightageActual" name="TechSkillReportCollection[1].WeightageActual" type="hidden" value="20">
+                                                                <div class="skillBackground skill-round-xlarge skill-small">
+                                                                    <div class="skill-round-xlarge skill-teal" style="width:80%"><span class="ratecount">20  / 25</span></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="tech-skill-wrapper">
+                                                                <div style="font-weight:500;">Data Wrangling	</div>
+                                                                <input data-val="true" data-val-required="The RequiredLevelId field is required." id="TechSkillReportCollection_2__RequiredLevelId" name="TechSkillReportCollection[2].RequiredLevelId" type="hidden" value="4">
+                                                                <span class="rqlevel">Evaluated at <b>Competent -3</b></span>
+                                                                <input data-val="true" data-val-required="The ActualLevelId field is required." id="TechSkillReportCollection_2__ActualLevelId" name="TechSkillReportCollection[2].ActualLevelId" type="hidden" value="2" style="border-color: red;">
+                                                                <input data-val="true" data-val-number="The field WeightageRequired must be a number." data-val-required="The WeightageRequired field is required." id="TechSkillReportCollection_2__WeightageRequired" name="TechSkillReportCollection[2].WeightageRequired" type="hidden" value="20">
+                                                                <input data-val="true" data-val-number="The field WeightageActual must be a number." data-val-required="The WeightageActual field is required." id="TechSkillReportCollection_2__WeightageActual" name="TechSkillReportCollection[2].WeightageActual" type="hidden" value="12">
+                                                                <div class="skillBackground skill-round-xlarge skill-small">
+                                                                    <div class="skill-round-xlarge skill-teal" style="width:60%"><span class="ratecount">12  / 20</span></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="tech-skill-wrapper">
+                                                                <div style="font-weight:500;">Descriptive Statistics- variance, standard deviation, modality, skewness and kurtosis	</div>
+                                                                <input data-val="true" data-val-required="The RequiredLevelId field is required." id="TechSkillReportCollection_3__RequiredLevelId" name="TechSkillReportCollection[3].RequiredLevelId" type="hidden" value="4">
+                                                                <span class="rqlevel">Evaluated at <b>Competent -3</b></span>
+                                                                <input data-val="true" data-val-required="The ActualLevelId field is required." id="TechSkillReportCollection_3__ActualLevelId" name="TechSkillReportCollection[3].ActualLevelId" type="hidden" value="3" style="border-color: red;">
+                                                                <input data-val="true" data-val-number="The field WeightageRequired must be a number." data-val-required="The WeightageRequired field is required." id="TechSkillReportCollection_3__WeightageRequired" name="TechSkillReportCollection[3].WeightageRequired" type="hidden" value="10">
+                                                                <input data-val="true" data-val-number="The field WeightageActual must be a number." data-val-required="The WeightageActual field is required." id="TechSkillReportCollection_3__WeightageActual" name="TechSkillReportCollection[3].WeightageActual" type="hidden" value="8">
+                                                                <div class="skillBackground skill-round-xlarge skill-small">
+                                                                    <div class="skill-round-xlarge skill-teal" style="width:80%"><span class="ratecount">8  / 10</span></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="tech-skill-wrapper">
+                                                                <div style="font-weight:500;">Supervised Learning, Regression, Classification	</div>
+                                                                <input data-val="true" data-val-required="The RequiredLevelId field is required." id="TechSkillReportCollection_4__RequiredLevelId" name="TechSkillReportCollection[4].RequiredLevelId" type="hidden" value="4">
+                                                                <span class="rqlevel">Evaluated at <b>Competent -3</b></span>
+                                                                <input data-val="true" data-val-required="The ActualLevelId field is required." id="TechSkillReportCollection_4__ActualLevelId" name="TechSkillReportCollection[4].ActualLevelId" type="hidden" value="3" style="border-color: red;">
+                                                                <input data-val="true" data-val-number="The field WeightageRequired must be a number." data-val-required="The WeightageRequired field is required." id="TechSkillReportCollection_4__WeightageRequired" name="TechSkillReportCollection[4].WeightageRequired" type="hidden" value="10">
+                                                                <input data-val="true" data-val-number="The field WeightageActual must be a number." data-val-required="The WeightageActual field is required." id="TechSkillReportCollection_4__WeightageActual" name="TechSkillReportCollection[4].WeightageActual" type="hidden" value="8">
+                                                                <div class="skillBackground skill-round-xlarge skill-small">
+                                                                    <div class="skill-round-xlarge skill-teal" style="width:80%"><span class="ratecount">8  / 10</span></div>
+                                                                </div>
+                                                            </div>
+                                                </div>
+                                                    <div style="margin-top:35px">
+                                                        <h3 class="pull-left">
+                                                            <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/communication-score.png">Communicational Skill:
+                                                        </h3>
+                                                        <div class="pull-left">
+                                                            <div class="communication-count pull-left">  7 / 10</div>
+                                                        </div>
+                                                    </div>
+
+                                                <div class="note-skill">
+                                                    <b> Note:</b> % score against every skill represents the difference between candidate's actual and required competency.
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-9 col-md-7">
+                                                <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                                        <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Questions Discussed</h3>
+
+                                                        <div class="question">
+                                                            @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
+                                                            {
+                                                                <ul>
+                                                                    @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                                    {
+                                                                        var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
+                                                                        @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
+                                                                        {
+                                                                            <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                        }
+                                                                        @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                                        {
+                                                                            <label>Rating : @valueslist</label>
+                                                                        }
+                                                                    }
+                                                                </ul>
+                                                            }
+                                                            else
+                                                            {
+                                                                <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                 @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                        {
+                                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                                                <h3>
+                                                                    <img style="width:34px;left:-11px; top:-1px; position:relative;background: #f5f5f5;padding: 3px;" src="/img/interviewer-comment.png">Interviewer Comment
+                                                                    @if (((Model.ReportAccepted && ViewBag.profile == "Client") || ViewBag.profile != "Client") && ViewBag.ClientDetails == "client" && ViewBag.SecurelyShared != "True")
+                                                                    {
+                                                                        <span class="fa fa-edit" style="padding-left:0px;font-size:19px;color:blue;cursor:pointer" onclick="EditReport()"></span>
+                                                                    }
+                                                                </h3>
+                                                                <div>
+                                                                    @if (Model.FeedbackAudioLink != null)
+                                                                    {
+                                                                        <audio style="margin-bottom:10px;height:30px" width="100%" src='@Model.FeedbackAudioLink' asp-append-version="true" controls></audio>
+                                                                    }
+                                                                   @* @if (Model.InterviewerComment != null)
+                                                                    {
+                                                                        @Html.HiddenFor(m => m.InterviewerComment, new { @id = "hidinterviewerComment" })
+
+                                                                        @if (Model.InterviewerComment.Length > 440)
+                                                                        {
+                                                                            <div class="article">
+                                                                                <p id="int-cmnt" style="margin-bottom:0px;">
+                                                                                    @Model.InterviewerComment.Substring(0, 440)
+                                                                                </p>
+                                                                                <p id="read-int-cmnt" class="moretext_@Model.id moretext">
+                                                                                    @Model.InterviewerComment.Substring(440, @Model.InterviewerComment.Length - 440)
+                                                                                </p>
+                                                                            </div> <a onclick="moreless(@Model.id)" class="moreless-btn" value="Readmore" id="read_@Model.id" href="#">Read more</a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="article">
+                                                                                <p id="int-cmnt">
+                                                                                    @Model.InterviewerComment.Substring(0, @Model.InterviewerComment.Length)
+                                                                                </p>
+                                                                                <p id="read-int-cmnt"></p>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                                                    }*@
+                                      <div class="article"> <p id="int-cmnt">Candidate is good with Gen AI basic and NLP basics but is not competent enough in python has on code . Candidate was not able to build up a logical approach while solving this problem . Candidate has advanced beginner experience in machine learning</p></div>
+
+                                                                </div>
+                                                            </div>
+                                                        }
                                             </div>
                                         </div>
                                         @Html.HiddenFor(m => m.IsGeneralSkillRequired)
