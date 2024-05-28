@@ -301,7 +301,7 @@
                                                             skillsetsevaluated.Add(new SelectListItem() { Value = "1", Text = "1" });
                                                             skillsetsevaluated.Add(new SelectListItem() { Value = "2", Text = "2" });
                                                         }
-                                                        @Html.DropDownListFor(model => model.SkillSetsevaluate, skillsetsevaluated, new { @class = "select-css form-control text-box single-line", @Readonly = "Readonly"/*"TechSkillChanged()"*/ })
+                                                        @Html.DropDownListFor(model => model.SkillSetsevaluate, skillsetsevaluated, new { @class = "select-css form-control text-box single-line", @disabled = "disabled"/*"TechSkillChanged()"*/ })
                                                     </div>
                                                 </div>
                                                 @* End: Multiple Skill sets*@
