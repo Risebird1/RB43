@@ -252,7 +252,7 @@ namespace Risebird.Entities.ViewModel
         public string RisebirdHREmail { get; set; }
         [DisplayName("SkillSet Evaluation Numbers")]
         [Required]
-        public string SkillSetsevaluate { get; set; }
+        public int SkillSetsevaluate { get; set; }
     }
     public class InterviewerIds
     {
