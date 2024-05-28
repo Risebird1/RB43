@@ -10075,6 +10075,21 @@ option {
 #InterviewerModal .modal-lg {
     max-width: 530px;
 }
+.next-skillShow, .next-skillHide {
+    color: rgb(194, 57, 57);
+    font-family: sans-serif;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    line-height: 45px;
+    position: relative;
+    display: block;
+    height: 43px;
+    width: 200px;
+    margin: 0px auto;
+    border: 1px solid rgb(194, 57, 57);
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
