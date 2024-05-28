@@ -885,6 +885,7 @@ namespace Risebird.Web.Controllers
                         irfDetails.CalendlyLink = _schedulinglink;
 
                         //End: Auto Generate Scheduling Link
+                        await checkSkillSetandCombine(irfDetails);
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
                             //create an index with the same name as that of this skill channel in affinda for using the search and match tool
@@ -2095,7 +2096,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.CompanyDetails = model.OldCompanyDetails;
                         }
-
+                        await checkSkillSetandCombine(model);
                         if (model.IsClone && !string.IsNullOrEmpty(model.IRFId))
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
@@ -9322,7 +9323,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = await _irfService.GetAllCalibrationMeetingsById(emailid,"All");
+                        var model = await _irfService.GetAllCalibrationMeetingsById(emailid, "All");
                         if (type == "Completed")
                         {
                             ViewBag.Type = "Completed";
@@ -9545,6 +9546,20 @@ namespace Risebird.Web.Controllers
         {
             return View();
         }
-
+        public async Task checkSkillSetandCombine(IRFVm irfDetails)
+        {
+            foreach (var item in irfDetails.SkillCollection)
+            {
+                item.SkillSet = 1;
+            }
+            if (irfDetails.SkillSetsevaluate > 1)
+            {
+                foreach (var item in irfDetails.SkillTwoCollection)
+                {
+                    item.SkillSet = 2;
+                    irfDetails.SkillCollection.Add(item);
+                }
+            }
+        }
     }
 }
