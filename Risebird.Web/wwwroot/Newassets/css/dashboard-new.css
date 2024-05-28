@@ -633,7 +633,7 @@ table tr td.relatedvideo:hover {
     height: 25px !important;
 }
 
-#SkillCollection_WeightageError {
+#SkillCollection_WeightageError, #SkillTwoCollection_WeightageError {
     color: red !important;
     margin-left: 807px;
     font-size: 12px !important;
