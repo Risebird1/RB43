@@ -814,8 +814,8 @@ hr + h2 {
                                         </div>
 
                                         <!--Start: secondary skill-->
-                                     @*   @if(Model.SkillSetsevaluate>1)
-                                        {*@
+                                      @if(Model.SkillSetsevaluate>1)
+                                        {
                                            <div class="row">
                                                <div class="next-skillShow">VIEW MORE SKILLS</div>
                                                   
@@ -890,7 +890,16 @@ hr + h2 {
                                                 }
                                                 <div class="clearfix">
                                                     <h3><img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Tech Skill Score:
-                                                        <span class="totScore"><strong id="totTechScore">75%</strong></span>
+                                                         <span class="totScore">
+                                                            @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                            {
+                                                                <strong id="totTechScore2"></strong>
+                                                            }
+                                                            else
+                                                            {
+                                                                <strong id="totTechScore2" style="display:none"></strong>
+                                                            }
+                                                        </span>
                                                     </h3>
                                                 </div>
                                                 <div>
@@ -1038,7 +1047,7 @@ hr + h2 {
                                             </div>
                                              <div class="next-skillHide">HIDE OTHER SKILLS</div>
                                         </div>
-                                       @* }*@
+                                        }
                                         <!--End: secondary skill-->
                                         @Html.HiddenFor(m => m.IsGeneralSkillRequired)
                                     </div>
