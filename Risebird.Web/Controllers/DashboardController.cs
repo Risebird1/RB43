@@ -1704,7 +1704,7 @@ namespace Risebird.Web.Controllers
         #endregion
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> UnProcessedResume(int actiontype)
+        public async Task<IActionResult> UnProcessedResume(int actiontype,int returnBack)
         {
             try
             {
@@ -1714,6 +1714,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var modelList = new List<MeetingVM>();
@@ -3292,7 +3293,7 @@ namespace Risebird.Web.Controllers
                     var Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
                     ViewBag.ProfileName = profileName;
-                    if (profileName == "SeniorHR" || profileName == "Quality Controller")
+                    if (profileName == "Admin"||profileName == "SeniorHR" || profileName == "Quality Controller")
                     {
                         var model = new DashboardVM();
                         model.NotUpdatedMeetingsObj = new NotUpdatedMeetings();

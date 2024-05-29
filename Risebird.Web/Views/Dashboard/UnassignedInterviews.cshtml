@@ -67,7 +67,7 @@
 
                         @if (ViewBag.Actiontype == 0)
                         {
-                            @if (ViewBag.ReturnBack == 1 && (ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport"))
+                            @if (ViewBag.ReturnBack == 1 && (ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "SuspeciousInterviewerCount" || ViewBag.actionstatus == "ZoomLink" || ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity" || ViewBag.actionstatus == ""))
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>

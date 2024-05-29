@@ -5,7 +5,7 @@
 }
 
 <div class="main-panel" id="main-panel">
-    <div class="page-container
+    <div class="page-container>
       <div>
 <div class="page-content">
      <div class="panel-header panel-header-sm">
@@ -13,12 +13,12 @@
                 <div class="page-content-wrap dashboard">
 
         <div class="row  col-sm-12">
-                @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="panel card flipper1">
                     <div id="survey-feedback">
-                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="MissedCandidate(1)">
+                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="MissedCandidate()">
                             <div class="panel-heading" data-position="bottom">
 
                                 <div id="slotsId">
@@ -91,7 +91,7 @@
                 </div>
             </div>
             }
-            @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
             <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper2">
@@ -151,7 +151,7 @@
                         </div>
                         }
 
-                        @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
                 {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper3">
@@ -221,7 +221,7 @@
                         </div>
                         }
 
-                        @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="panel card flipper4">
@@ -255,7 +255,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper">
@@ -330,7 +330,7 @@
                         </div>
                         }
 
-                        @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                          <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper6">
@@ -413,7 +413,7 @@
                         </div>
                         }
 
-                        @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper7">
@@ -473,7 +473,7 @@
                         </div>
                         }
 
-                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Quality Controller")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper8">
@@ -608,7 +608,7 @@
                             </div>
                         </div> *@
 
-                @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="panel card flipper10">
@@ -666,7 +666,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="panel card flipper11">
@@ -723,7 +723,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper12">
@@ -781,7 +781,7 @@
                         </div>
                         }
                       
-                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Quality Controller")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper13">
@@ -853,7 +853,7 @@
                         </div>
                         }
 
-                        @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="panel card flipper14">
@@ -925,7 +925,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="panel card flipper15">
@@ -997,7 +997,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "SeniorHR")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="panel card flipper16">
@@ -1055,7 +1055,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "Quality Controller")
+                @if (ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 { 
                 <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper17">
@@ -1124,7 +1124,9 @@
                                 </div>
                             </div>
                         </div>
-
+                        }
+                @if (ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Admin")
+                                        {
                                 <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper18">
                                     <div id="survey-feedback">
@@ -1195,7 +1197,513 @@
                             </div>
 
                         }
-        </div>
+
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                {
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper19">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="ProbableNoShow()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+
+                                                        <div class="col-md-3 pull-left">
+                                                            <span class="dashboard-icon noshow">
+                                                                <img class="icons-dash" style="max-height: 95px!important;height: 110%!important;position: relative;top: -1px;left: -5px;" src="~/img/noshow.png" />
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Probable No Show</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="color: #74c0fc">
+                                                                <span id="ribbonProbableNoShowCount" onclick="ProbableNoShow()">@Model.NotUpdatedMeetingsObj.ProbableNoShowCount</span>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="ProbableNoShow()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="ProbableNoShow()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left">
+                                                            <span class="dashboard-icon noshow">
+                                                                <img class="icons-dash" style="max-height: 95px!important;height: 110%!important;position: relative;top: -1px;left: -5px;" src="~/img/noshow.png" />
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Probable No Show</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span id="ribbonProbableNoShowCount_1" class="card-title" onclick="ProbableNoShow()">@Model.NotUpdatedMeetingsObj.ProbableNoShowCount</span>
+                                                                </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="ProbableNoShow()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                }
+
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                {
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper20">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.SuspeciousInterviewerCount')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon suspicious"><img src="~/img/suspicious-icon.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Suspicious Interviewer</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>
+                                                                    <strong> <span style="cursor:pointer" id="ribbonSuspiciousInterviewerCount" onclick="OpenRibbonDetails('@RibbonActionType.SuspeciousInterviewerCount')"> @Model.NotUpdatedMeetingsObj.SuspeciousInterviewerCount </span> </strong>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.SuspeciousInterviewerCount')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.SuspeciousInterviewerCount')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon risk"><img src="~/img/risk.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Suspicious Interviewer</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <strong> <span style="cursor:pointer" id="ribbonSuspiciousInterviewerCount_1" class="card-title" onclick="OpenRibbonDetails('@RibbonActionType.SuspeciousInterviewerCount')"> @Model.NotUpdatedMeetingsObj.SuspeciousInterviewerCount </span> </strong>
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.SuspeciousInterviewerCount')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                }
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
+                {
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper21">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsUnProcessedResume()">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon no-resume"><img src="~/img/resume.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Not Processed Resume</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong><span style="cursor:pointer" id="ribbonnotprocessedcandidateresume" onclick="OpenRibbonDetailsUnProcessedResume()">  @Model.NotUpdatedMeetingsObj.NotProcessedCandidateResume</span>  </strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetailsUnProcessedResume()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsUnProcessedResume()">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon no-resume"><img src="~/img/resume.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Not Processed Resume</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong><span style="cursor:pointer" id="ribbonnotprocessedcandidateresume_1" class="card-title">@Model.NotUpdatedMeetingsObj.NotProcessedCandidateResume</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetailsUnProcessedResume()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                 }
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Quality Controller")
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="panel card flipper22">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon zoom"><img src="~/img/zoom-icon.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Missing Zoom Link</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong> <span style="cursor:pointer" id="ribbonmissingzoomlinkcount">@Model.NotUpdatedMeetingsObj.MissingZoomLink</span></strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button class="click-arrow" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon zoom"><img src="~/img/zoom-icon.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Missing Zoom Link</strong></span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong> <span style="cursor:pointer" id="ribbonmissingzoomlinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.MissingZoomLink</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button class="click-arrow" onclick="OpenRibbonDetails('@RibbonActionType.ZoomLink')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                  }
+             @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                {
+                   <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper23">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Participant waiting</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong><span id="ribbonUnAttendedZoomLinkcount" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">@Model.NotUpdatedMeetingsObj.UnAttendedZoomLink </span> </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Participant waiting</strong></span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>  <span style="cursor:pointer" id="ribbonUnAttendedZoomLinkcount_1" class="card-title">@Model.NotUpdatedMeetingsObj.UnAttendedZoomLink</span></strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.UnAttendedZoomLink')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        @if(ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                        {
+                         <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper24">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon clarity"><img src="~/img/clarity.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Need Clarity</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong><span id="ribbonNeedClarityCount" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')"> @Model.NotUpdatedMeetingsObj.NeedClarityCount </span> </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon clarity"><img src="~/img/clarity.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Need Clarity</strong></span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>
+                                                                <span style="cursor:pointer" id="ribbonNeedClarityCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.NeedClarityCount</span>
+                                                            </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetails('@RibbonActionType.NeedClarity')" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                         @if(ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                        {
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper25">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsRaisedIssue()">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon open-issue"><img src="~/img/open-issue.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Open Issue</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-front"></div>
+                                                            <strong>
+                                                                <span style="cursor:pointer" id="ribbonOpenIssueCount" class="card-title">@Model.NotUpdatedMeetingsObj.OpenIssueCount</span>
+                                                            </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetailsRaisedIssue()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetailsRaisedIssue()">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon open-issue"><img src="~/img/open-issue.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Open Issue</strong></span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>
+                                                                <span style="cursor:pointer" id="ribbonOpenIssueCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.OpenIssueCount</span>
+                                                            </strong>
+
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="OpenRibbonDetailsRaisedIssue()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+            </div>
       </div>
      <div>
 </div>
@@ -1258,7 +1766,15 @@ function NotScheduledMeetingsCO()
     window.location.href = "/Dashboard/RedoRequest?returnBack=" + 1;
     }
 
-
+function ProbableNoShow() {
+    window.location.href = "/Interview/ProbableNoShowCandidates";
+}
+function OpenRibbonDetailsUnProcessedResume(actionstatus) {
+    window.location.href = "/Dashboard/UnProcessedResume?returnBack=" + 1;
+}
+            function OpenRibbonDetailsRaisedIssue() {
+                window.location.href = "/Support/RaisedRequests";
+            }
 </script>
 
 <script type="text/javascript">
@@ -1369,6 +1885,52 @@ function NotScheduledMeetingsCO()
                     $(".flipper18").removeClass("flipper");
                 }
 
+                  if (parseInt(data.probableNoShowCount) != parseInt($("#ribbonProbableNoShowCount").text())) {
+                    $(".flipper19").addClass("flipper");
+                }
+                else {
+                    $(".flipper19").removeClass("flipper");
+                }
+            if (parseInt(data.suspeciousInterviewerCount) != parseInt($("#ribbonSuspiciousInterviewerCount").text())) {
+                $(".flipper20").addClass("flipper");
+            }
+            else {
+                $(".flipper20").removeClass("flipper");
+            }
+
+                    if (parseInt(data.notProcessedCandidateResume) != parseInt($("#ribbonnotprocessedcandidateresume").text())) {
+                    $(".flipper21").addClass("flipper");
+                }
+                else {
+                    $(".flipper21").removeClass("flipper");
+                }
+                   if (parseInt(data.missingZoomLink) != parseInt($("#ribbonmissingzoomlinkcount").text())) {
+                    $(".flipper22").addClass("flipper");
+                }
+                else {
+                    $(".flipper22").removeClass("flipper");
+                }
+                   if (parseInt(data.missingVideoLink) != parseInt($("#ribbonmissingvideolinkcount").text())) {
+                    $(".flipper23").addClass("flipper");
+                }
+                else {
+                    $(".flipper23").removeClass("flipper");
+                }
+              if (parseInt(data.needClarityCount) != parseInt($("#ribbonNeedClarityCount").text())) {
+                    $(".flipper24").addClass("flipper");
+                }
+                else {
+                    $(".flipper24").removeClass("flipper");
+                }
+
+                        if (parseInt(data.openIssueCount) != parseInt($("#ribbonOpenIssueCount").text())) {
+                            $(".flipper25").addClass("flipper");
+                        }
+                        else {
+                            $(".flipper25").removeClass("flipper");
+                        }
+
+
             $("#ribbonMissedCandidateCount").text(data.missedCandidateCount);
             $("#ribbonMailCount").text(data.bounceDroppedCandidateMailCount);
             $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
@@ -1380,6 +1942,13 @@ function NotScheduledMeetingsCO()
             $("#ribbonQCPendingReportCount").text(data.qcPendingReportCount);
             $("#ribbonRedoRequestCount").text(data.redoRequestCount);
             $("#ribbonmissingvideolinkcount").text(data.missingVideoLink);
+            $("#ribbonProbableNoShowCount").text(data.probableNoShowCount);
+            $("#ribbonSuspiciousInterviewerCount").text(data.suspiciousInterviewerCount);
+            $("#ribbonnotprocessedcandidateresume").text(data.notProcessedCandidateResume);
+            $("#ribbonmissingzoomlinkcount").text(data.missingZoomLink);
+            $("#ribbonmissingvideolinkcount").text(data.missingVideoLink);
+            $("#ribbonNeedClarityCount").text(data.needClarityCount);
+            $("#ribbonOpenIssueCount").text(data.openIssueCount);
 
             $("#ribbonMissedCandidateCount_1").text(data.missedCandidateCount);
             $("#ribbonMailCount_1").text(data.bounceDroppedCandidateMailCount);
@@ -1391,7 +1960,14 @@ function NotScheduledMeetingsCO()
             $("#ribbonTechQcCount_1").text(data.techQCCount);
             $("#ribbonQCPendingReportCount_1").text(data.qcPendingReportCount);
             $("#ribbonRedoRequestCount_1").text(data.reoRequestCount);
-             $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
+            $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
+            $("#ribbonProbableNoShowCount_1").text(data.probableNoShowCount);
+            $("#ribbonSuspiciousInterviewerCount_1").text(data.suspiciousInterviewerCount);
+            $("#ribbonnotprocessedcandidateresume_1").text(data.notProcessedCandidateResume);
+            $("#ribbonmissingzoomlinkcount_1").text(data.missingZoomLink);
+            $("#ribbonmissingvideolinkcount_1").text(data.missingVideoLink);
+            $("#ribbonNeedClarityCount_1").text(data.needClarityCount);
+            $("#ribbonOpenIssueCount_1").text(data.openIssueCount);
 
                 $(".flipper").toggleClass("flip");
             }
