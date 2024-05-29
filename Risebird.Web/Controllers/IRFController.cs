@@ -8475,6 +8475,7 @@ namespace Risebird.Web.Controllers
                 model = await _irfService.GetEditIRF(irfid, 0, false);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
                 model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
+                await checkSkillSetandSeperate(model);
                 return View(model);
             }
             else
@@ -8492,6 +8493,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    await checkSkillSetandCombine(model);
                     foreach (var item in model.SkillCollection)
                     {
                         item.IRFId = model.id;
