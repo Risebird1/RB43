@@ -1035,7 +1035,8 @@ ul.panel-controls > li > button {
     }
 
 .scroller {
-    height: 270px;
+   /* height: 270px;*/
+   height:120px;
 }
 
 .scroller-height {

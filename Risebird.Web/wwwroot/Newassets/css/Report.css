@@ -112,7 +112,7 @@ a {
 }
 .communication-count {
     width: 60px;
-    font-size: 20px;
+    font-size: 17px;
     float: left;
     position: relative;
     top: -1px;
@@ -184,8 +184,8 @@ a {
     list-style: none;
     background-image: url(../../img/tick-mark-icon.svg);
     background-repeat: no-repeat;
-    background-position: 0px 0px;
-    background-size: 2%;
+    background-position: 3px 7px;
+    background-size: 3%;
 }
 
 #reportForm .question label {
@@ -208,10 +208,11 @@ a {
 }
 
 .interview-status {
-    position: absolute;
-    top: -34px;
+    /*    position: absolute;
+    top: -34px;*/
     font-size: 19px;
-    line-height: 10px;
+    text-align: center;
+    line-height: 30px;
 }
     .interview-status span {
         font-size: 15px;
@@ -219,9 +220,10 @@ a {
     }
 
     #reportForm video {
-        padding: 10px;
+       /* padding: 10px;*/
         width: 100%;
-        height: 300px;
+        height:285px;
+       /* height: 300px;*/
         background: #000;
     }
 
@@ -313,9 +315,11 @@ a {
     }
 
     .interview-status {
-        position: absolute;
-        top: -50px!important;
+        /*position: absolute;
+        top: -50px!important;*/
         font-size: 16px !important;
+        text-align:center;
+        line-height:30px;
     }
 }
 @media screen and (max-width: 640px) {
@@ -333,8 +337,5 @@ a {
     }
 }
     @media screen and (max-width: 360px) {
-        .interview-status {
-            position: absolute;
-            top: -18px !important;
-        }
+       
     }

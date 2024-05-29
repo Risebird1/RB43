@@ -6317,7 +6317,8 @@ input[type=search]:focus {
 
 #keycontainer {
     float: left;
-    padding: 0px 10px;
+   /* padding: 0px 10px;*/
+    padding: 0px 0px;
 }
 
     #keycontainer div {
@@ -6325,9 +6326,10 @@ input[type=search]:focus {
         background-color: red;
         padding: 1px 5px;
         border-radius: 3px;
-        margin: 3px;
+        margin: 3px 0px;
         color: #fff;
-        font-size: 14px;
+        /*font-size: 14px;*/
+        font-size: 12px;
     }
 
 .flex-w {
@@ -6708,8 +6710,9 @@ input[type=search]:focus {
 .report-int-codename {
     position: relative;
     top: 4px;
-    color: green;
+   color: #4088c2;
     font-size: 16px;
+    font-weight:500;
 }
 /***** Media queries *****/
 .copy-btn {
@@ -10071,6 +10074,21 @@ option {
 }
 #InterviewerModal .modal-lg {
     max-width: 530px;
+}
+.next-skillShow, .next-skillHide {
+    color: rgb(194, 57, 57);
+    font-family: sans-serif;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    line-height: 45px;
+    position: relative;
+    display: block;
+    height: 43px;
+    width: 200px;
+    margin: 0px auto;
+    border: 1px solid rgb(194, 57, 57);
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
