@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Aspose.Html;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Azure.ApplicationInsights.Query.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +21,7 @@ using Risebird.Repository.Interface;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -39,6 +42,8 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private static List<CandidateTimelineVM> _modelDetails;
+        private string amp;
+
         //private static List<Candidate> _candidateModelDetails;
         private readonly IIRFService _irfService;
         private readonly IAzureStorageHelper _azureStorageHelper;
@@ -5167,6 +5172,7 @@ namespace Risebird.Web.Controllers
                 //Sheet.Cells[1, 17].Value = "Pb Report Link";
 
                 Sheet.Cells[1, 19].Value = "Communication Score";
+
                 bool? isDrive = model.Where(x => x.CandidateType == CandidateSingleSourceTruthTypes.Completed)?.FirstOrDefault()?.IsDrive;
 
                 if (isDrive.HasValue && isDrive.Value)
@@ -5232,7 +5238,16 @@ namespace Risebird.Web.Controllers
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
+                        // item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
+
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, 17].Value = intComment;
+                        }
+                       
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -5380,7 +5395,16 @@ namespace Risebird.Web.Controllers
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
+
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, 17].Value = intComment;
+                        }
+
+                        //  Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -5458,7 +5482,16 @@ namespace Risebird.Web.Controllers
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
+
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, 17].Value = intComment;
+                        }
+
+                        // Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
 
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
@@ -5530,6 +5563,7 @@ namespace Risebird.Web.Controllers
 
                         i++;
                     }
+                    
 
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 }
@@ -5603,6 +5637,18 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+        public string GetContent(Aspose.Html.Dom.Node node)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var n in node.ChildNodes)
+            {
+                if (n.NodeType == Aspose.Html.Dom.Node.ELEMENT_NODE)
+                    sb.Append(GetContent(n));
+                else if (n.NodeType == Aspose.Html.Dom.Node.TEXT_NODE)
+                    sb.Append(n.NodeValue);
+            }
+            return sb.ToString();
         }
 
     }
