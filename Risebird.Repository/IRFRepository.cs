@@ -7429,10 +7429,11 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                         techSkillDt.Columns.Add("Timelimit", typeof(int));
                         techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
+                        techSkillDt.Columns.Add("SkillSet", typeof(int));
 
                         foreach (var item in techskills)
                         {
-                            techSkillDt.Rows.Add(item.IRFId, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
+                            techSkillDt.Rows.Add(item.IRFId, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
                         }
 
                         SqlCommand cmdTechSkill = new SqlCommand("usp_TechSkillBulkInsert", con);
