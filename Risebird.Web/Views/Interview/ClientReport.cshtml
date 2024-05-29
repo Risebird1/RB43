@@ -395,10 +395,29 @@ hr + h2 {
                                                 </div>
 
                                                 <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
-                                               <br/>
-                                                <div class="report-int-codename" style="color:green">Interviewer Coded Name: </div>
+                                               
+                                                <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
-                                            @* <hr style="margin-top:10px;height:0.3px!important;border-bottom:1px #dab3b321 solid" />*@
+                                                @if (Model.CommunicationalProficiency != 0)
+                                                {
+                                                            <div style="margin-top:10px">
+                                                                <h3 class="pull-left" style="font-size:16px!important;">
+                                                                    <img style="width:20px;left:-5px; top:-4px; position:relative;" src="/img/communication-score.png">Communicational Skill:
+                                                                </h3>
+                                                                <div class="pull-left">
+                                                            @* <label for="score" class="pull-left" style="line-height:5px;">Score must be (between 1 and 10):</label> *@
+                                                                    <div class="communication-count pull-left">  @Model.CommunicationalProficiency / 10</div>
+                                                                </div>
+                                                            </div>
+                                                }
+
+                                                    <div class="note-skill">
+                                                        <b> Note:</b> % score against every skill represents the difference between candidate's actual and required competency.
+                                                    </div>
+                                                
+                                                
+                                                
+                                                @* <hr style="margin-top:10px;height:0.3px!important;border-bottom:1px #dab3b321 solid" />*@
                                             </div>
 
                                             <div class="col-lg-9 col-md-7">
@@ -709,22 +728,7 @@ hr + h2 {
                                                         }
                                                     }
                                                 </div>
-                                                @if (Model.CommunicationalProficiency != 0)
-                                                {
-                                                    <div style="margin-top:35px">
-                                                        <h3 class="pull-left">
-                                                            <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/communication-score.png">Communicational Skill:
-                                                        </h3>
-                                                        <div class="pull-left">
-                                                            @* <label for="score" class="pull-left" style="line-height:5px;">Score must be (between 1 and 10):</label> *@
-                                                            <div class="communication-count pull-left">  @Model.CommunicationalProficiency / 10</div>
-                                                        </div>
-                                                    </div>
-                                                }
-
-                                                <div class="note-skill">
-                                                    <b> Note:</b> % score against every skill represents the difference between candidate's actual and required competency.
-                                                </div>
+                                               
                                             </div>
                                             <div class="col-lg-9 col-md-7">
                                                 <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
@@ -810,8 +814,8 @@ hr + h2 {
                                         </div>
 
                                         <!--Start: secondary skill-->
-                                        @if(Model.SkillSetsevaluate>1)
-                                        {
+                                     @*   @if(Model.SkillSetsevaluate>1)
+                                        {*@
                                            <div class="row">
                                                <div class="next-skillShow">VIEW MORE SKILLS</div>
                                                   
@@ -886,7 +890,7 @@ hr + h2 {
                                                 }
                                                 <div class="clearfix">
                                                     <h3><img style="width:36px;left:-5px; top:-7px; position:relative;" src="/img/techskill-score.png">Tech Skill Score:
-                                                        <span class="totScore"><strong id="totTechScore"></strong></span>
+                                                        <span class="totScore"><strong id="totTechScore">75%</strong></span>
                                                     </h3>
                                                 </div>
                                                 <div>
@@ -946,18 +950,7 @@ hr + h2 {
                                                                 </div>
                                                             </div>
                                                 </div>
-                                                    <div style="margin-top:35px">
-                                                        <h3 class="pull-left">
-                                                            <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/communication-score.png">Communicational Skill:
-                                                        </h3>
-                                                        <div class="pull-left">
-                                                            <div class="communication-count pull-left">  7 / 10</div>
-                                                        </div>
-                                                    </div>
-
-                                                <div class="note-skill">
-                                                    <b> Note:</b> % score against every skill represents the difference between candidate's actual and required competency.
-                                                </div>
+                                   
                                             </div>
                                             <div class="col-lg-9 col-md-7">
                                                 <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
@@ -1045,7 +1038,7 @@ hr + h2 {
                                             </div>
                                              <div class="next-skillHide">HIDE OTHER SKILLS</div>
                                         </div>
-                                        }
+                                       @* }*@
                                         <!--End: secondary skill-->
                                         @Html.HiddenFor(m => m.IsGeneralSkillRequired)
                                     </div>

@@ -214,17 +214,16 @@ a {
     text-align: center;
     line-height: 30px;
 }
-    .interview-status span {
-        font-size: 15px;
-        color: #868080;
-    }
+ .interview-status span {
+    font-size: 15px;
+    color: #868080;
+}
 
-    #reportForm video {
+ #reportForm video {
        /* padding: 10px;*/
-        width: 100%;
-        height:285px;
-       /* height: 300px;*/
-        background: #000;
+      width: 100%;
+      height: 300px;
+      background: #000;
     }
 
 #reportForm .rqlevel {
