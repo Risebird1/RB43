@@ -634,6 +634,7 @@ namespace Risebird.Repository
                             _resultVM.IsClientMeetingAutoCancelled = !string.IsNullOrEmpty(dt.Rows[0]["IsClientMeetingAutoCancelled"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsClientMeetingAutoCancelled"]) : false;
                             _resultVM.ClientInterviewDuration = !string.IsNullOrEmpty(dt.Rows[0]["ClientInterviewDuration"].ToString()) ? Convert.ToInt32(dt.Rows[0]["ClientInterviewDuration"]) : 0;
                             _resultVM.DMApproved = !string.IsNullOrEmpty(dt.Rows[0]["DMApproved"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["DMApproved"]) : false;
+                            _resultVM.SkillSetsevaluate = !string.IsNullOrEmpty(dt.Rows[0]["SkillSetsevaluate"].ToString()) ? Convert.ToInt32(dt.Rows[0]["SkillSetsevaluate"]) : 1;
 
                         }
                     }
@@ -658,7 +659,7 @@ namespace Risebird.Repository
                                     Timelimit = !string.IsNullOrEmpty(dt.Rows[i]["Timelimit"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Timelimit"]) : 0,
                                     SkillName = !string.IsNullOrEmpty(dt.Rows[i]["SkillName"].ToString()) ? dt.Rows[i]["SkillName"].ToString() : null,
                                     isEliminationskill = !string.IsNullOrEmpty(dt.Rows[i]["isEliminationskill"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["isEliminationskill"]) : false,
-
+                                    SkillSet = !string.IsNullOrEmpty(dt.Rows[i]["SkillSet"].ToString()) ? Convert.ToInt32(dt.Rows[i]["SkillSet"]) : 1,
                                 });
                             }
                             _resultVM.SkillCollection = (IList<TransSkill>)(transTechSkills);
@@ -1190,6 +1191,7 @@ namespace Risebird.Repository
                         techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                         techSkillDt.Columns.Add("Timelimit", typeof(int));
                         techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
+                        techSkillDt.Columns.Add("SkillSet", typeof(int));
 
                         foreach (var item in irfDetails.SkillCollection)
                         {
@@ -1201,7 +1203,7 @@ namespace Risebird.Repository
                             {
                                 item.Natureofquestion = "";
                             }
-                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
+                            techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
                         }
                     }
 
@@ -1340,6 +1342,9 @@ namespace Risebird.Repository
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.VarChar));
                     cmdCreateIRF.Parameters["@AssessmentGroupId"].Value = irfDetails.AssessmentGroupId;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@SkillSetsevaluate", SqlDbType.Int));
+                    cmdCreateIRF.Parameters["@SkillSetsevaluate"].Value = irfDetails.SkillSetsevaluate;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
                     //cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
@@ -2119,6 +2124,7 @@ namespace Risebird.Repository
                     techSkillDt.Columns.Add("Natureofquestion", typeof(string));
                     techSkillDt.Columns.Add("Timelimit", typeof(int));
                     techSkillDt.Columns.Add("isEliminationskill", typeof(bool));
+                    techSkillDt.Columns.Add("SkillSet", typeof(int));
 
                     foreach (var item in irfDetails.SkillCollection)
                     {
@@ -2130,7 +2136,7 @@ namespace Risebird.Repository
                         {
                             item.Natureofquestion = "";
                         }
-                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill);
+                        techSkillDt.Rows.Add(irfDetails.id, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet);
                     }
 
                     DataTable interviewerDt = new DataTable();
@@ -2292,6 +2298,9 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@AssessmentGroupId"].Value = irfDetails.AssessmentGroupId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@SkillSetsevaluate", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@SkillSetsevaluate"].Value = irfDetails.SkillSetsevaluate;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform;

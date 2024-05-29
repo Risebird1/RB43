@@ -1957,7 +1957,7 @@ namespace Risebird.Web.Controllers
                             model.JobCountry = "2";
                         }
                     }
-
+                    await checkSkillSetandSeperate(model);
                     model.OldJDLink = model.JDLink;
                     model.OldCompanyDetails = model.CompanyDetails;
                     model.OldJDTitle = model.JDTiltle;
@@ -9560,6 +9560,11 @@ namespace Risebird.Web.Controllers
                     irfDetails.SkillCollection.Add(item);
                 }
             }
+        }
+        public async Task checkSkillSetandSeperate(IRFVm irfDetails)
+        {
+            irfDetails.SkillTwoCollection = irfDetails.SkillCollection.Where(x => x.SkillSet == 2).ToList();
+            irfDetails.SkillCollection = irfDetails.SkillCollection.Where(x => x.SkillSet == 1).ToList();
         }
     }
 }

@@ -35,6 +35,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@PrimarySkillInvite varchar(100),  
 	@BillingOwner int,  
 	@AssessmentGroupId varchar(100),
+	@SkillSetsevaluate int,
 	@MeetingPlatform varchar(100),
 	--@IsQCRequired bit,
 	@IsJoinabilitySelectabilityRequired bit,
@@ -53,7 +54,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
-	@TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
+	@TechSkillBulkData AS [dbo].[TransTechSkill2_TableType] READONLY,
 	@InterviewerBulkData AS [dbo].[TransInterviewer_TableTypeV2] READONLY,--[dbo].[TransInterviewer_TableType]
 	@InterviewerSurchargeBulkData AS [dbo].[TransInterviewerSurcharge_TableTypeV2] READONLY, --[dbo].[TransInterviewerSurcharge_TableType]
 	@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
@@ -177,7 +178,7 @@ BEGIN
 	[IRFId] ,    
 	[LevelId],    
 	[SkillId],    
-	[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill])    
+	[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet])    
     
 	SELECT * FROM @TechSkillBulkData 
 
@@ -340,7 +341,6 @@ where ti.IsActive=0 and ti.IRFId=@id and interviewDate>@timeNow
  end catch  
   
 END 
-
 GO
 
 
