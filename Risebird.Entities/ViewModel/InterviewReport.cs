@@ -366,6 +366,7 @@ namespace Risebird.Entities.ViewModel
         public int CommunicationalProficiency { get; set; }
         public string CodeSnippet { get; set; }
         public bool IsQCDone { get; set; }
+        public int SkillSetsevaluate { get; set; }
     }
     public class RBInterviewDetails
     {

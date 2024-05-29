@@ -7,5 +7,6 @@
         public string PrimarySkill { get; set; }
         public string ISCId { get; set; }
         public bool IsGeneralSkillRequired { get; set; }
+        public int SkillSetsevaluate { get; set; }
     }
 }
