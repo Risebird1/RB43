@@ -35,7 +35,8 @@ select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.
 (select ca.id, ca.IRFId, ca.ResumeLink,ca.TotalInvites, ca.[Type], ca.[Location], ca.Skill, ca.WorkAuth, ca.CurrentLocation, ca.CurrentEmployer,    
 ca.TotalExperience, ca.CurrentSalary, ca.ExpectedSalary, ca.Notice, ca.SelectabilityComments,ca.Heuristicsscore,    
 ca.JoinabilityComments, ca.JoinabilityScore, ca.SelectabilityScore, ca.TechSkillComments, ca.SkillGeneralComments,ca.CostEstimate,    
-ca.TechSkillScore, ca.SkillGeneralScore, ca.AddedByUserId, ca.VoiceItUserId, ca.InviteDate, ca.[Status], ul.EmailId, ca.Phone,    
+ca.TechSkillScore, ca.SkillGeneralScore, ca.AddedByUserId, ca.VoiceItUserId, ca.InviteDate, ca.[Status], ul.EmailId, ca.Phone, 
+dbo.fn_candidateCurrentInterviewStatus(ul.EmailId, irf.IRFId) as CurrentInterviewStatus, dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced,
 case 
 	 when ul.LastName is null then ul.FirstName
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))
@@ -45,8 +46,8 @@ tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumbe
 ca.IsResumeRedactFailed,
 --si.Uniqueid as SchedulerUniqueid,
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid
-,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail
-,cci.IsColdCandidate
+,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,
+cci.IsColdCandidate
 from Candidate ca join IRF on ca.IRFId=IRF.id    
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id      
 join UserList ul on ul.id = cm.UserId
@@ -71,6 +72,7 @@ select Cnd.*, ims.confirmationStatus, ims.interviewDate, ims.MeetingStatus, ims.
 ca.TotalExperience, ca.CurrentSalary, ca.ExpectedSalary, ca.Notice, ca.SelectabilityComments,ca.Heuristicsscore,    
 ca.JoinabilityComments, ca.JoinabilityScore, ca.SelectabilityScore, ca.TechSkillComments, ca.SkillGeneralComments,ca.CostEstimate,    
 ca.TechSkillScore, ca.SkillGeneralScore, ca.AddedByUserId, ca.VoiceItUserId, ca.InviteDate, ca.[Status], ul.EmailId, ca.Phone,    
+dbo.fn_candidateCurrentInterviewStatus(ul.EmailId, irf.IRFId) as CurrentInterviewStatus, dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced,
 case 
 	 when ul.LastName is null then ul.FirstName
 	 else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))

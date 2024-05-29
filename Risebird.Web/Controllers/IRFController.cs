@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
@@ -28,7 +27,6 @@ using System.Threading.Tasks;
 using VirusTotalNet;
 using VirusTotalNet.ResponseCodes;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -842,13 +840,14 @@ namespace Risebird.Web.Controllers
                         }
                         if (irfDetails.JDFile != null)
                         {
+                            var filename = irfDetails.JDFile.FileName.Replace(" ", "_");
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(irfDetails.JDFile);
                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                                 || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
-                                await _azureStorageHelper.InsertBlob(irfDetails.JDFile.FileName, "resumes", irfDetails.JDFile);
+                                await _azureStorageHelper.InsertBlob(filename, "resumes", irfDetails.JDFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(irfDetails.JDFile.FileName);
+                                var blob = containerRef.GetBlockBlobReference(filename);
                                 uploadedFileURL = blob.Uri.ToString();
                                 irfDetails.JDLink = uploadedFileURL;
                             }
@@ -856,18 +855,25 @@ namespace Risebird.Web.Controllers
                         }
                         if (irfDetails.CompanyDetailFile != null)
                         {
+                            var filename = irfDetails.CompanyDetailFile.FileName.Replace(" ", "_");
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(irfDetails.CompanyDetailFile);
                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                                 || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
-                                await _azureStorageHelper.InsertBlob(irfDetails.CompanyDetailFile.FileName, "resumes", irfDetails.CompanyDetailFile);
+                                await _azureStorageHelper.InsertBlob(filename, "resumes", irfDetails.CompanyDetailFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(irfDetails.CompanyDetailFile.FileName);
+                                var blob = containerRef.GetBlockBlobReference(filename);
                                 uploadedFileURL = blob.Uri.ToString();
                                 irfDetails.CompanyDetails = uploadedFileURL;
                             }
 
                         }
+
+                        if (string.IsNullOrEmpty(irfDetails.MeetingPlatform))
+                        {
+                            irfDetails.MeetingPlatform = MeetingPlatforms.Zoom;
+                        }
+
                         var domain = Request.Scheme + "://" + Request.Host.Value;
 
                         irfDetails.StartDate = DateTime.Now;
@@ -879,6 +885,7 @@ namespace Risebird.Web.Controllers
                         irfDetails.CalendlyLink = _schedulinglink;
 
                         //End: Auto Generate Scheduling Link
+                        await checkSkillSetandCombine(irfDetails);
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
                             //create an index with the same name as that of this skill channel in affinda for using the search and match tool
@@ -889,7 +896,7 @@ namespace Risebird.Web.Controllers
 
 
                             //call fire and forget method here to send emails and whatsapp for availability
-                            FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId, irfDetails.JDTiltle);
+                            await FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId, irfDetails.JDTiltle);
                             TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!";
                             return RedirectToAction("Index");
                         }
@@ -2044,13 +2051,14 @@ namespace Risebird.Web.Controllers
                         //}
                         if (model.JDFile != null)
                         {
+                            var filename = model.JDFile.FileName.Replace(" ", "_");
                             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.JDFile);
                             if (fileMimeType == "application/msword" || fileMimeType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                                 || fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
                             {
-                                await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                                await _azureStorageHelper.InsertBlob(filename, "resumes", model.JDFile);
                                 var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                                var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                                var blob = containerRef.GetBlockBlobReference(filename);
                                 string uploadedFileURL = blob.Uri.ToString();
                                 if (uploadedFileURL == null)
                                 {
@@ -2088,7 +2096,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.CompanyDetails = model.OldCompanyDetails;
                         }
-
+                        await checkSkillSetandCombine(model);
                         if (model.IsClone && !string.IsNullOrEmpty(model.IRFId))
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
@@ -3775,9 +3783,11 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
                     {
-                        if (await _irfService.PauseIRF(irfId, irfName))
+                        if (await _irfService.PauseIRF(irfId, irfName, emailid))
                         {
                             TempData["SuccessErrorMessage"] = "IRF has been paused Successfully!";
                             return RedirectToAction("Index");
@@ -4453,6 +4463,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
+                        ViewBag.ProfileName = profileName;
                         if (TempData["SuccessErrorMessageInterviewer"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
@@ -4505,6 +4516,7 @@ namespace Risebird.Web.Controllers
                             }
                             item.PrimarySkills = PrimaryTopSkill;
                         }
+
                         return View("InterviewerEntitle", model);
                     }
                     else
@@ -9070,6 +9082,145 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        ///option to add assessment groups to a MAG                
+
+        public async Task<IActionResult> EditMAG(int assessmentGroupId, string assessmentGroupName, bool isAlreadyMasterAG)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+                        //get all assessment groups related to this assessment group and pass it to the form.
+                        //var model = new AGCampaignModel();
+                        //var model = await _irfService.GetCampaignDetailsById(campaignId);
+
+                        var model = new AGCampaignModel();
+                        model.AssessmentGroupName = assessmentGroupName;
+                        model.AssessmentGroupId = assessmentGroupId;
+                        model.IsAlreadyMasterAG = isAlreadyMasterAG;
+                        var secondaryAssessmentGroupsForMag = await _irfService.GetMAGSecondaryAssessmentGroupsById(assessmentGroupId);
+                        model.SecondaryAGListForMAG = secondaryAssessmentGroupsForMag;
+                        //var searchValue = assessmentGroupName.Trim()?.Split(" ")[0];
+                        var allAGs = (await _irfService.GetSimilarAssessmentGroups(model.AssessmentGroupName.Trim(), model.IsAlreadyMasterAG, true));//call db and search for assessmentGroups that carry a similar name.         /// the functionality of this function was later changed to get both similar and dissimilar assessment groups, differentiated from each other by a flag
+
+                        model.AssessmentGroups = (IList<AssignmentVM>)(allAGs.Where(x => x.isDirectlyTargeted).ToList());
+
+                        model.AssessmentGroups.Where(x => x.AssessmentGroup?.Trim() == model.AssessmentGroupName?.Trim()).FirstOrDefault().IsSelectedForCampaign = true;
+
+                        model.RemainingAssessmentGroups = allAGs.Where(x => !x.isDirectlyTargeted);
+                        model.RemainingAssessmentGroupsList = model.RemainingAssessmentGroups.ToList();
+
+                        model.SerializedRemainingAGList = JsonConvert.SerializeObject(model.RemainingAssessmentGroups);
+
+
+                        //I want primary assessment groups of the mag to be checked and disabled, the the remaining, that are directly targeted, to be shown with check enabled
+                        //model.CuratedData = model.CuratedData.Where(c => (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
+                        //&& (filter.CuratedGroupName.Count() > 0 ? filter.CuratedGroupName.Contains(c.CuratedGroupName) : c.CuratedGroupName == null)).ToList();
+
+
+                        foreach (var item in secondaryAssessmentGroupsForMag)
+                        {
+                            foreach (var ag in model.AssessmentGroups)
+                            {
+                                if (ag.id == item.AssessmentGroupId)
+                                {
+                                    ag.IsSelectedForCampaign = true;
+                                }
+                            }
+                        }
+
+                        var listOfAgsToBeRemoved = new List<AssignmentVM>();
+
+                        foreach (var item in secondaryAssessmentGroupsForMag)
+                        {
+                            foreach (var ag in model.RemainingAssessmentGroupsList)
+                            {
+                                if (ag.id == item.AssessmentGroupId)
+                                {
+                                    listOfAgsToBeRemoved.Add(ag);
+                                    //model.RemainingAssessmentGroupsList.Remove(ag);
+                                }
+                            }
+                        }
+                        model.RemainingAssessmentGroupsList = model.RemainingAssessmentGroupsList.Except(listOfAgsToBeRemoved).ToList();
+                        //var intersectingAGS = model.AssessmentGroups.Where(c => )
+                        model.RemainingAssessmentGroups = model.RemainingAssessmentGroupsList;
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> EditMAG(AGCampaignModel model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    {
+                        // create mag only
+                        if (await _irfService.EditMAG(model, emailid))
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = $"{model.AssessmentGroupName} successfully flagged as Master Assessment Group";
+                            return RedirectToAction("InterviewerEntitle");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = $"Failed to edit mag : {model.AssessmentGroupName}.";
+                            return RedirectToAction("InterviewerEntitle");
+                        }
+
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = $"Failed to edit mag : {model.AssessmentGroupName}.";
+                return RedirectToAction("InterviewerEntitle");
+            }
+        }
+
         //[AcceptVerbs("Post","Get")]
         [HttpPost]
         public async Task<bool> CheckAssessmentGroupAlraedyExist(string AssessmentGroupName)
@@ -9158,6 +9309,257 @@ namespace Risebird.Web.Controllers
                 return View(model);
             }
         }
+        [Authorize]
+        public async Task<IActionResult> CalibrationMeetingsDetails(string type)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var model = await _irfService.GetAllCalibrationMeetingsById(emailid, "All");
+                        if (type == "Completed")
+                        {
+                            ViewBag.Type = "Completed";
+                            model = model.Where(x => x.MeetingDate < DateTime.Now).ToList();
+                        }
+                        else
+                        {
+                            ViewBag.Type = "UpComing";
+                            model = model.Where(x => x.MeetingDate >= DateTime.Now).ToList();
+                        }
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
         #endregion
+        #region Candidate Consent Form
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadConsentFile()
+        {
+            if (Request.Form.Files.Count() > 0)
+            {
+                var irfid = Convert.ToInt32(Request.Form["irfid"].ToString());
+                string uploadedFileURL = string.Empty;
+                var model = Request.Form.Files[0];
+                string outputFileName = model.FileName.Replace(" ", "").Replace("+", "").Replace("_", "");
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
+                FileInfo fi = new FileInfo(outputFileName);
+                if (fileMimeType == "application/pdf" || fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.ms-powerpoint")
+                {
+                    //await _azureStorageHelper.InsertBlob(outputFileName, "consentforms", model);
+                    await _azureStorageHelper.InsertResumeBlob(outputFileName, "consentforms", model, fi.Extension);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("consentforms");
+                    var blob = containerRef.GetBlockBlobReference(outputFileName);
+                    uploadedFileURL = blob.Uri.ToString();
+                    var result = await _irfService.UpdateConsentFile(irfid, uploadedFileURL);
+                    return Json("Upload completed successfully.");
+                }
+                else
+                {
+                    return Json("Only PDF file is allowed.");
+                }
+            }
+            else
+            {
+                return Json("");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetConsentForm(int irfid)
+        {
+            var result = await _irfService.GetConsentFile(irfid);
+            return Json(result);
+        }
+        #endregion
+
+        #region Day Stats
+        public async Task<IActionResult> DateChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            ViewBag.IsClientLogin = isClientLogin;
+            var profileName = "Client";
+            ViewBag.profile = profileName;
+            ViewBag.PageStatus = "Public";
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            var startdate = DateTime.Now.AddDays(-7);
+            var enddate = DateTime.Now.AddDays(1);
+            if (HttpContext.Session.GetString("SkillChannelDetailsFilters") != null)
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("SkillChannelDetailsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    startdate = filter.StartDate.Value;
+                    enddate = filter.EndDate.Value;
+                }
+            }
+            var DayinterviewList = (await _irfService.GetDayStatsByClientUser(startdate, enddate, emailid))?.ToList();
+            return View(DayinterviewList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> DateChannelDetails(SkillChannelDetailsFilter filter, string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            if (filter != null)
+            {
+                HttpContext.Session.SetString("SkillChannelDetailsFilters", JsonConvert.SerializeObject(filter));
+            }
+            return RedirectToAction("DateChannelDetails", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetDateChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            try
+            {
+                HttpContext.Session.Remove("SkillChannelDetailsFilters");
+                return RedirectToAction("DateChannelDetails", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        #endregion
+        #region Code Snippet
+        [HttpGet]
+        public async Task<IActionResult> InterviewCodeSnippet(int id, int irfid)
+        {
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+            profileName = profileName?.Replace("\"", "");
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid?.Replace("\"", "");
+            TechSkillComments model = new TechSkillComments();
+            var skills = await _irfService.GetTechSkills(irfid);
+            ViewBag.Skills = new SelectList(skills, "id", "Name");
+            model.IRFId = irfid;
+            model.interviewid = id;
+            model.Profile = profileName;
+            model.CreatedBy = emailid;
+            return PartialView(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> InterviewCodeSnippet(TechSkillComments model)
+        {
+            return View();
+        }
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> UploadInterviewCodeSnippet()
+        {
+            if (Request.Form.Files.Count() > 0)
+            {
+                var interviewid = Convert.ToInt32(Request.Form["interviewid"].ToString());
+                string uploadedFileURL = string.Empty;
+                var model = Request.Form.Files[0];
+                string outputFileName = model.FileName.Replace(" ", "_");
+                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model);
+                FileInfo fi = new FileInfo(outputFileName);
+                if (fi.Extension.ToLower() == ".txt")
+                {
+                    await _azureStorageHelper.InsertResumeBlob(outputFileName, "codesnippet", model, fi.Extension.ToLower());
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("codesnippet");
+                    var blob = containerRef.GetBlockBlobReference(outputFileName);
+                    uploadedFileURL = blob.Uri.ToString();
+                    var result = await _irfService.UpdateCodeSnippetFile(interviewid, uploadedFileURL, null);
+                    return Json("Upload completed successfully.");
+                }
+                else
+                {
+                    return Json("Only Text file is allowed.");
+                }
+            }
+            else
+            {
+                return Json("");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetCodeSnippet(int interviewid)
+        {
+            var result = await _irfService.GetCodeSnippetFile(interviewid);
+            return Json(result);
+        }
+        #endregion
+        #region Manage Interview Select/Reject
+        [HttpGet]
+        public async Task<IActionResult> SkillChannelMeetingsDetails(string uniqueid, int irfId, string meetingtype, string IRFName)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid?.Replace("\"", "");
+                if (string.IsNullOrEmpty(emailid))
+                {
+                    return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+                }
+                var selectedMeeting = new List<MeetingVM>();
+                var meetings = new List<MeetingVM>();
+                meetings = await _irfService.GetIRFInterviewMeetingsForClient(irfId, "Client", emailid);
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                ViewBag.IRF = IRFName;
+                ViewBag.id = uniqueid;
+                ViewBag.IRFintId = irfId;
+                ViewBag.meetingtype = meetingtype;
+                if (meetingtype == "Select")
+                {
+                    meetings = meetings?.Where(x => (x.InterviewStatus == 2 || x.InterviewStatus == 4) && !x.RedoInterview)?.ToList();
+                }
+                else if (meetingtype == "Reject")
+                {
+                    meetings = meetings?.Where(x => x.InterviewStatus == 3 || x.InterviewStatus == 5 && !x.RedoInterview)?.ToList();
+                }
+                return View(meetings);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("PublicAllMeetings", "Candidate", new { id = uniqueid });
+            }
+        }
+        #endregion
+
+        public ActionResult Task()
+        {
+            return View();
+        }
+        public async Task checkSkillSetandCombine(IRFVm irfDetails)
+        {
+            foreach (var item in irfDetails.SkillCollection)
+            {
+                item.SkillSet = 1;
+            }
+            if (irfDetails.SkillSetsevaluate > 1)
+            {
+                foreach (var item in irfDetails.SkillTwoCollection)
+                {
+                    item.SkillSet = 2;
+                    irfDetails.SkillCollection.Add(item);
+                }
+            }
+        }
     }
 }

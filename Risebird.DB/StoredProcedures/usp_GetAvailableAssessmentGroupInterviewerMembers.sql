@@ -14,6 +14,37 @@ CREATE PROCEDURE usp_GetAvailableAssessmentGroupInterviewerMembers
 AS      
 BEGIN   
 
+DECLARE @tbl_AllAssessmentGroups TABLE (          
+		id INT        
+)
+
+if exists (select id from MasterAssessmentGroup where AssessmentGroupId = @assessmentGroupId)
+Begin
+
+	--get the list of all the assessment groups now
+	
+
+	declare @magId int
+	set @magId = (select top 1 id from MasterAssessmentGroup where AssessmentGroupId = @assessmentGroupId)
+
+	insert into @tbl_AllAssessmentGroups
+	select distinct AssessmentGroupId from SecondaryAssessmentGroups where MAGId =@magId
+	union
+	select top 1 AssessmentGroupId from MasterAssessmentGroup where id = @magId
+
+	--;With CTE AS
+	--(
+	--	Select distinct ipr.Id, UserId, AssessmentGroupId, ResumeLink, CodedResumeLink, [value] from InterviewerProfile ipr cross Apply string_split(AssessmentGroupId,',') 
+	--	join UserList ul on ul.id = ipr.UserId
+	--	where value in (select distinct id from @tbl_AllAssessmentGroups) and ul.IsActive = 1
+	--)
+	
+
+End
+Else
+Begin
+insert into @tbl_AllAssessmentGroups  values (@assessmentGroupId)
+End
 
 if(@irfId is not null and @irfId != 0)
 Begin
@@ -75,7 +106,7 @@ Begin
 		@flatRate  as FlatRate, @countryTypeDesc as CountryTypeDesc, @companyTypeDesc as CompanyTypeDesc,
 		@planTypeDesc as PlanTypeDesc, @selectedDuration as SelectedDurationMin, @rejectedDuration as RejectedDurationMin
 		From CTE join Userlist ul on CTE.Userid=ul.id       
-		where CTE.value = @assessmentGroupId and ul.IsActive=1 
+		where CTE.value in (select distinct id from @tbl_AllAssessmentGroups) and ul.IsActive=1 --= @assessmentGroupId
 	End
 	Else
 	Begin
@@ -95,7 +126,7 @@ Begin
 		From CTE 
 		join Userlist ul on CTE.Userid=ul.id 
 		left join TransInterviewer ti on ti.UserId = ul.id
-		where CTE.value = @assessmentGroupId and ul.IsActive=1 and (ti.IRFId = @irfId or ti.IRFId is null)) a
+		where CTE.value in (select distinct id from @tbl_AllAssessmentGroups) and ul.IsActive=1 and (ti.IRFId = @irfId or ti.IRFId is null)) a--@assessmentGroupId
 		group by a.EmailId, a.uniqueid, a.InterviewerName, a.AvailbilityHour, a.BasicSkill
 	End
 
@@ -114,7 +145,7 @@ Begin
 	Select distinct ul.EmailId, ul.uniqueid, (ul.FirstName+' '+ul.LastName) as InterviewerName, IsNull(DATEDIFF(SECOND, @lastSentOnAgLevel, @timeNow), 0) as AGAvailabilityCommunicationTimeElapsed, agp.AssessmentGroup as AGName        
 	From CTE join Userlist ul on CTE.Userid=ul.id  
 	join AssessmentGroup agp on agp.id = cte.value
-	where CTE.value = @assessmentGroupId and ul.IsActive=1  
+	where CTE.value in (select distinct id from @tbl_AllAssessmentGroups) and ul.IsActive=1  --= @assessmentGroupId 
 End
 
   

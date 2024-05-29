@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspose.HTML" Version="24.5.0" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="MediaToolkit" Version="1.1.0.1" />
@@ -73,6 +74,10 @@
     <None Include="wwwroot\Newassets\demo\demo.js" />
     <None Include="wwwroot\Newassets\fonts\nucleo-license.md" />
     <None Include="wwwroot\Newassets\fonts\nucleo-outline.woff2" />
+    <None Include="wwwroot\Newassets\fonts\summernote.woff2" />
+    <None Include="wwwroot\Newassets\fonts\summernote" />
+    <None Include="wwwroot\Newassets\fonts\summernote.eot" />
+    <None Include="wwwroot\Newassets\fonts\summernote.woff" />
     <None Include="wwwroot\Newassets\js\core\bootstrap.min.js" />
     <None Include="wwwroot\Newassets\js\core\jquery.min.js" />
     <None Include="wwwroot\Newassets\js\core\popper.min.js" />

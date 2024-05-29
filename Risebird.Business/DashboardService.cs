@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Business
 {
@@ -902,11 +901,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type)
+        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null)
         {
             try
             {
-                return await _dashboardRespository.GetInterviewerIRFDetails(type);
+                return await _dashboardRespository.GetInterviewerIRFDetails(type, uniqueid);
             }
             catch (Exception ex)
             {
@@ -952,24 +951,24 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<bool> MarkedColdCandidate(int CandidateId, string Email, int InterviewId)
+        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId,int type)
         {
             try
             {
-                await _dashboardRespository.MarkedColdCandidate(CandidateId,Email,InterviewId);
-                return true;
+               return await _dashboardRespository.MarkedColdCandidate(CandidateId, Email, InterviewId,type);
+               
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return null;
             }
         }
-        public async Task<InterviewUsersDetails> GetFutureDateInterviewSchedule(int interviewid)
+        public async Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail)
         {
             try
             {
-                return await _dashboardRespository.GetFutureDateInterviewSchedule(interviewid);
+                return await _dashboardRespository.GetFutureDateInterviewSchedule(IRFId,CandidateEmail);
             }
 
             catch (Exception e)
@@ -979,5 +978,30 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<List<MeetingVM>> PotentialPausedDetails()
+        {
+            try
+            {
+                return await _dashboardRespository.PotentialPausedRepository();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<List<MeetingVM>> GetColdCandidatesByClient(string Email)
+        {
+            try
+            {
+                return (await _dashboardRespository.GetColdCandidatesByClientRepository(Email)).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

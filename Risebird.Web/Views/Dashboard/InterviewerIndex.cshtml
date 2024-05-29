@@ -49,23 +49,41 @@
     $('#txtpageHeader').empty().html(Header);
 </script>
 
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/jquery.mCustomScrollbar.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome-animation/0.2.1/font-awesome-animation.min.css?v=2024" />
 
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css?v=2024" />
 @*<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />*@
 <!-- END PLUGINS -->
 <!-- START THIS PAGE PLUGINS-->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" defer rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-<div class="video-alert" id="VideoKYCAlert" style="display:none;">
-    <div>
-        <strong>Alert : </strong>Please Finish your video KYC before 25th June to continue taking interviews in Risebird platform
-     <span onclick="openVideoKYCModel()" aria-hidden="true" style="cursor:pointer;color: #227622;font-weight: bold;padding-left:3px;">Please Click here</span></div>
-</div>
+
+<div id="VideoKYCAlert" style="display:none;height:25px;">
+    <div class="row">
+<div class="col-sm-12">
+    <div class="alert fade alert-simple alert-warning alert-dismissible text-left font__family-montserrat font__size-16 font__weight-light brk-library-rendered rendered show" role="alert" data-brk-library="component__alert" style="margin-top:-65px;">
+        <button type="button" class="close font__size-18" data-dismiss="alert" style="right:40px;top:18px;">
+            <span aria-hidden="true">
+                <i class="fa fa-times warning" style="font-size:17px;"></i>
+            </span>
+            <span class="sr-only">Close</span>
+        </button>
+        <i class="start-icon fa fa-exclamation-triangle faa-flash animated"></i>
+            <strong class="font__weight-semibold">Warning!</strong> Please Finish your video KYC before 25th June to continue taking interviews in Risebird platform.     <span onclick="openVideoKYCModel()" aria-hidden="true" style="cursor:pointer;color: #227622;font-weight: bold;padding-left:3px;display:inline-block;text-shadow:none;">Please Click here</span>
+        </div>
+
+    </div>
+</div></div>
+   <div style="height:50px;position:absolute">         <div class="interviewer-toll-no"><b>SUPPORT :</b> <span style="color:#46f807;font-weight:bold">TOLL FREE <i style='font-size:15px;rotate:14deg;color:#fff' class='fa fa-phone'></i>18002578975</span></div></div>
+
 <div class="pt30">
+
     <div class="col-md-12 nopad" style="margin:0px;">
         <div class="card-header bg-w clearfix">
             <div class="col-md-12 pull-left">
@@ -78,6 +96,7 @@
 
                     <div class="mobile-view"> <h4 class="card-title"> Dashboard</h4></div>
                 </div>
+
                 <div class="pull-right">
                     <div class="">Average Interview Time:<c style="color: blue;font-weight: bold;" id="txtavgInterviewTime">@Model.AvgInterviewTime Min</c></div>
                 </div>
@@ -93,8 +112,8 @@
                 </div>
                 <div class="page-content-wrap dashboard">
                     <div class="row">
-                        <div class="row col-md-8 col-sm-12">
-                            <div class="col-md-6 col-lg-4">
+                        <div class="col-md-8 col-sm-12">
+                            <div class="col-md-6 col-lg-4 pull-left" style="padding:0px 10px;">
 
                                 <div class="panel card flipper9">
                                     <div id="survey-feedback">
@@ -103,8 +122,8 @@
 
                                                 <div id="slotsId">
                                                     <div class="panel-body panel-body-table">
-                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon open-issue"><img src="~/img/open-issue.png" /></span></div>
-                                                        <div class="col-md-9 pull-left">
+                                                        <div class="col-md-3 nopad pull-left"><span class="dashboard-icon open-issue"><img src="~/img/open-issue.png" /></span></div>
+                                                        <div class="col-md-9 nopad pull-left">
                                                             <div>
                                                                 <h3 class="dashboard-cat-title" style="line-height:44px;font-size:16px;"><span><strong>Open Interviews</strong></span></h3>
                                                             </div>
@@ -166,7 +185,7 @@
                                     </div>
                                 </div>*@
                             </div>
-                            <div class="col-md-6 col-lg-4">
+                            <div class="col-md-6 col-lg-4 pull-left" style="padding:0px 10px;">
 
                                 <div class="panel card flipper9">
                                     <div id="survey-feedback">
@@ -175,8 +194,8 @@
 
                                                 <div id="slotsId">
                                                     <div class="panel-body panel-body-table">
-                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#fbc02d"><img src="~/img/myinterview.png" /></span></div>
-                                                        <div class="col-md-9 pull-left">
+                                                        <div class="col-md-3 nopad pull-left"><span class="dashboard-icon" style="background:#fbc02d"><img src="~/img/myinterview.png" /></span></div>
+                                                        <div class="col-md-9 nopad pull-left">
                                                             <div>
                                                                 <h3 class="dashboard-cat-title" style="line-height:44px;font-size:16px;"><span><strong>My Interviews</strong></span></h3>
                                                             </div>
@@ -236,7 +255,7 @@
                                     </div>
                                 </div>*@
                             </div>
-                            <div class="col-md-6 col-lg-4">
+                            <div class="col-md-6 col-lg-4 pull-left" style="padding:0px 10px;">
                                 <div class="panel card flipper9">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer">
@@ -244,8 +263,8 @@
 
                                                 <div id="slotsId">
                                                     <div class="panel-body panel-body-table">
-                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#226f92b5"><img src="~/img/report.png" /></span></div>
-                                                        <div class="col-md-9 pull-left">
+                                                        <div class="col-md-3 nopad pull-left"><span class="dashboard-icon" style="background:#226f92b5"><img src="~/img/report.png" /></span></div>
+                                                        <div class="col-md-9 nopad pull-left">
                                                             <div>
                                                                 <h3 class="dashboard-cat-title" style="line-height:44px;font-size:16px;"><span><strong>Pending Report</strong></span></h3>
                                                             </div>
@@ -305,7 +324,7 @@
                                     </div>
                                 </div>*@
                             </div>
-                            <div class="col-md-6 col-lg-4">
+                            <div class="col-md-6 col-lg-4 pull-left" style="padding:0px 10px;">
                                 <div class="panel card flipper9">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer">
@@ -313,15 +332,15 @@
 
                                                 <div id="slotsId">
                                                     <div class="panel-body panel-body-table">
-                                                        <div class="col-md-2 pull-left"><span class="dashboard-icon" style="background:#97ba6d"><img src="~/img/payment-sla.png" /></span></div>
-                                                        <div class="col-md-10 pull-left">
+                                                        <div class="col-md-2 nopad pull-left"><span class="dashboard-icon" style="background:#97ba6d"><img src="~/img/payment-sla.png" /></span></div>
+                                                        <div class="col-md-10 nopad pull-left">
                                                             <div>
                                                                 <h3 class="dashboard-cat-title" style="font-size: 16px;padding: 8px 0px 8px 25px;line-height: 25px;"><span><strong>Payment <span style="display:block;font-size:13px;">Pending / Received</span></strong></span></h3>
                                                             </div>
                                                             <div class="dashboard-count pull-left" style="padding:0px;left:0px;">
                                                                 <div class="header-front"></div>
                                                                 <div class="table-responsive">
-                                                                    <div id="divPendingPayment" style="font-size: 20px;font-weight: 600">
+                                                                    <div id="divPendingPayment" style="font-size: 18px;font-weight: 600">
                                                                         0
                                                                     </div>
                                                                 </div>
@@ -379,7 +398,7 @@
                                     </div>
                                 </div>*@
                             </div>
-                            <div class="col-md-6 col-lg-4">
+                            <div class="col-md-6 col-lg-4 pull-left" style="padding:0px 10px;">
                                 <div class="panel card flipper9">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer">
@@ -387,8 +406,8 @@
 
                                                 <div id="slotsId">
                                                     <div class="panel-body panel-body-table">
-                                                        <div class="col-md-2 pull-left"><span class="dashboard-icon pending"><img src="~/img/coded.png" /></span></div>
-                                                        <div class="col-md-10 pull-left">
+                                                        <div class="col-md-2 nopad pull-left"><span class="dashboard-icon pending"><img src="~/img/coded.png" /></span></div>
+                                                        <div class="col-md-10 nopad pull-left">
                                                             <div>
                                                                 <h3 class="dashboard-cat-title" style="font-size: 16px;padding: 8px 0px 8px 25px;line-height:37px;"><span><strong>Coded Name </strong></span></h3>
                                                             </div>
@@ -451,7 +470,7 @@
                                     </div>
                                 </div>*@
                             </div>
-                            <div class="col-md-6 col-lg-4">
+                           @* <div class="col-md-6 col-lg-4">
                                 <div class="panel card flipper9">
                                     <div id="survey-feedback">
                                         <div class="front-card countdown__timer" style="cursor:pointer">
@@ -496,7 +515,7 @@
 
                                     </div>
                                 </div>
-                               @* <div class="panel panel-default">
+                               <div class="panel panel-default">
                                     <div id="survey-feedback">
                                         <div class="panel-heading" data-position="bottom">
                                             <div class="panel-title-box">
@@ -520,9 +539,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>*@
-                            </div>
-                            <div class="col-md-6">
+                                </div>
+                            </div>*@
+                           @* <div class="col-md-6">
                                 <div class="panel panel-default">
                                     <div id="survey-feedback">
                                         <div class="panel-heading" data-position="bottom" style="padding-bottom:15px;">
@@ -581,9 +600,9 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>*@
                         </div>
-                        <div class="col-md-4 col-sm-12">
+                        <div class="col-md-4 col-sm-12 pull-left" style="padding:0px 10px;">
                             <div class="panel panel-default">
                                 <div id="survey-feedback">
                                     <div style="background:#f1d1d17a" class="panel-heading" data-intro="<span style='font-size:16px;'>Candidate Feedback Survey </span><hr class='btop' />1. Overall Interview Rating<br/> 2. Overall Interviewer Rating<br/> 3. Scheduling Rating<br/><a href='/IRF/Index' class='btn btn-primary next-btn'>NEXT</a>" data-position="bottom">
@@ -645,6 +664,9 @@
             <div class="filheader">
                 <h5 class="modal-title pull-left">Upload Resume</h5>
             </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeResumeModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
             <div class="modal-body" id="divresumepopup">
             </div>
         </div>
@@ -830,16 +852,16 @@
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 
-<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=1"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js?v=1"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.0/morris.min.js?v=1"></script>
+<script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.js?v=2024"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js?v=2024"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.0/morris.min.js?v=2024"></script>
 
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js?v=1" defer></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js?v=2024" defer></script>
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" defer integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-<script src="~/js/plugins/moment.min.js?v=1"></script>
-<script src="~/Newassets/js/scrollBar.js"></script>
+<script src="~/js/plugins/moment.min.js?v=2024"></script>
+<script src="~/Newassets/js/scrollBar.js?v=2024"></script>
 <script>
     (function ($) {
         $(window).on("load", function () {
@@ -1031,6 +1053,10 @@
         });
     }
 
+    function closeResumeModel() {
+        var model = document.getElementById("Resumepopup");
+        model.style.display = "none";
+    }
 </script>
 <script>
     function closePaymentSLADetailsModel() {

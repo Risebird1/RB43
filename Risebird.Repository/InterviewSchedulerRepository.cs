@@ -11,6 +11,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace Risebird.Repository
 {
@@ -31,10 +32,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from ScheduleInterviewEvent where ISNull(IsSingleUse,0)!=1";
+                //var query = "Select * from ScheduleInterviewEvent where ISNull(IsSingleUse,0)!=1 order by id desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<daytimes_report>(query, null);
+                    //var result = await con.QueryAsync<daytimes_report>(query, null);
+                    var result = await SqlMapper.QueryAsync<daytimes_report>(con, "usp_GetSchedulerEventList", null,
+                        commandType: CommandType.StoredProcedure);
                     return result.ToList();
                 }
             }
@@ -434,8 +437,8 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Uniqueid", _guid.ToString());
                 dynamicParameters.Add("@Concurrency", resultset.Concurrency);
                 dynamicParameters.Add("@candidateEmail", candidateEmail);
-                //dynamicParameters.Add("@TimeSlotDays", resultset.TimeSlotDays);
-                dynamicParameters.Add("@TimeSlotDays", 2);
+                dynamicParameters.Add("@TimeSlotDays", resultset.TimeSlotDays);
+                //dynamicParameters.Add("@TimeSlotDays", 2);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var eventids = await SqlMapper.QueryAsync<int>(con, "usp_GenerateOneTimeInterviewEvent", dynamicParameters,

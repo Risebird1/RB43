@@ -8,14 +8,15 @@
 
 <meta name="viewport" content="width=device-width" />
 <title>InterviewDetails</title>
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <script>
     var Header = "<div id='myinterview_1'> Interview Details</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 
 <input type="hidden" value="@ViewBag.id" id="id" />
+<input type="hidden" value="@ViewBag.InterviewId" id="hidinterviewid" />
 
 <div class="interviewWrapper">
 
@@ -54,11 +55,38 @@
 
         </div>
     </div>
+    @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+        <div class="card" style="margin-bottom:10px;">
+            <label class="question" for="checkbox_eight">
+                <label class="consent-label" for="checkbox_eight">
+                    <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Job Consent Acknowledgement<label class="consent-note" style="text-transform:none!important">Please share the job consent to candidate during the interview and ask the candidate to go through the job consent and get it acknowledged through the video - "I am interested in this job role and I am acknowledging to continue this hiring process for turing.com</label>
+                </label>
+                <span class="round">
+                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
+                    <label style="visibility:hidden" for="checkbox_eight"></label>
 
+
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" />
+                    <label for="hidden_fields_four_1"></label>
+
+                    <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                </span>
+            </label>
+
+            <fieldset class="answer hidden" id="hidden_fields_eight">
+                @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
+                {
+                    <div id="CandidateDetails"><a target="_blank" href="@Model.ConsentFormUrl"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>
+                }
+            </fieldset>
+
+        </div>
+    </div>*@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question" for="checkbox_nine">
-                <label for="checkbox_nine">
+                <label for="checkbox_nine" class="consent-label">
                     <i class="fa fa-question-circle-o" aria-hidden="true" style="font-size:24px;position:relative;top:1px;"></i>
                     Sample Questions: <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Treat below questions as sample to understand client expectations, actual questions should be asked as per the difficulty level set</label>
                 </label>
@@ -78,12 +106,11 @@
             </fieldset>
         </div>
     </div>
-    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
 
-
+    @*<div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
 
-            <label class="question" for="checkbox_three">
+            <label class="question default-open" for="checkbox_three">
                 <label for="checkbox_three">
                     <i class="fa fa-file-audio-o" aria-hidden="true"></i>
                     Audio Instruction
@@ -93,16 +120,19 @@
                     <label style="visibility:hidden" for="checkbox_three"></label>
 
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" checked />
                     <label for="hidden_fields_three_1"></label>
-                    <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
 
                     <span id="hidden_fields_three_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                 </span>
             </label>
 
-            <fieldset class="answer hidden" id="hidden_fields_three">
+            <fieldset class="answer hidden show-default" id="hidden_fields_three">
                 <audio controls><source src="@Model.AudioComment">Recording</audio>
+
+
+
                 @* @if (!string.IsNullOrEmpty(Model.AudioComment))
                 {
                 string audiofileName = string.Empty;
@@ -127,7 +157,7 @@
                 No Instructions
                 </span>
                 }
-                }*@
+                }*
                 @*   @foreach(var item in Model)
                 {
                 <div id="AudioInstruction">
@@ -157,10 +187,10 @@
 
 
                 </div>
-                } *@
+                } 
 
 
-                @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+                 @if (!string.IsNullOrEmpty(Model.AudioComment))
                 {
                 string audiofileName = string.Empty;
                 audiofileName = @Model.AudioComment.Split('/').Last();
@@ -192,41 +222,17 @@
                 {
                 <div>No Instructions</div>
                 }
-                }*@
-            </fieldset>
+                }
 
-        </div>
-
-        <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_four">
-                <label for="checkbox_four">
-                    <i class="fa fa-link" aria-hidden="true"></i>
-                    JOB DESCRIPTION LINK
-                </label>
-                <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
-                    <label style="visibility:hidden" for="checkbox_four"></label>
-
-
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" />
-                    <label for="hidden_fields_four_1"></label>
-
-                    <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                    <span id="hidden_fields_four_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                </span>
-            </label>
-
-            <fieldset class="answer hidden" id="hidden_fields_four">
-
-                <div id="CandidateDetails"><a target="_blank" href="@Model.JDLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> JDLink</span></a></div>
 
             </fieldset>
 
         </div>
-    </div>
+    </div>*@
+
     <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_five">
+            <label class="question default-open" for="checkbox_five">
                 <label for="checkbox_five">
                     <i class="fa fa-signal" aria-hidden="true"></i>
 
@@ -237,16 +243,16 @@
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_five" name="question1" data-trigger="hidden_fields_five" />
                     <label style="visibility:hidden" for="checkbox_five"></label>
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" checked />
                     <label for="hidden_fields_five_1"></label>
-                    <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-
+              @*      <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>*@
+              <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
                     <span id="hidden_fields_five_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
 
                 </span>
             </label>
 
-            <fieldset class="answer hidden" id="hidden_fields_five">
+            <fieldset class="answer hidden  show-default" id="hidden_fields_five">
                 <div class="answer-label">
                     <div class="col-md-7 pull-left">
                         <span class="heading pull-left">Seniority</span>
@@ -270,9 +276,10 @@
                 </div>
             </fieldset>
         </div>
-
-        <div class="card" style="margin-bottom:0px;">
-            <label class="question" for="checkbox_six">
+    </div>
+    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+        <div class="card" style="margin-bottom:10px;">
+            <label class="question default-open" for="checkbox_six">
                 <label for="checkbox_six">
                     <i class="fa fa-file-text-o" aria-hidden="true"></i>
                     Format
@@ -280,13 +287,13 @@
                 <span class="round">
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_six" name="question1" data-trigger="hidden_fields_six" />
                     <label style="visibility:hidden" for="checkbox_six"></label>
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_six_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_six_1" name="Checkshow" checked />
                     <label for="hidden_fields_six_1"></label>
-                    <span id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_six_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
                     <span id="hidden_fields_six_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                 </span>
             </label>
-            <fieldset class="format answer hidden" id="hidden_fields_six">
+            <fieldset class="format answer hidden show-default" id="hidden_fields_six">
                 <div class="answer-label" style="float: left;    width: auto;">
                     <span class="heading pull-left">
                         <input type="checkbox" name="format" value="Coding" onchange="ChangeCheckBox('format')" disabled />
@@ -328,6 +335,39 @@
             </fieldset>
         </div>
     </div>
+    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+        <div class="card" style="margin-bottom:10px;">
+            <label class="question default-open" for="checkbox_four">
+                <label for="checkbox_four">
+                    <i class="fa fa-link" aria-hidden="true"></i>
+                    JOB DESCRIPTION LINK
+                </label>
+                <span class="round">
+                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_four" name="question1" data-trigger="hidden_fields_four" />
+                    <label style="visibility:hidden" for="checkbox_four"></label>
+
+
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_four_1" name="Checkshow" checked />
+                    <label for="hidden_fields_four_1"></label>
+
+                    <span id="hidden_fields_four_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                    <span id="hidden_fields_four_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                </span>
+            </label>
+
+            <fieldset class="answer hidden show-default" id="hidden_fields_four">
+
+                <div id="CandidateDetails"><a target="_blank" href="@Model.JDLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> JDLink</span></a></div>
+
+            </fieldset>
+
+        </div>
+    </div>
+
+
+
+
+    
     @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
     <div class="card" style="margin-bottom:10px;">
     <label class="question" for="checkbox_seven">
@@ -353,9 +393,9 @@
     </div>
     </div>*@
 
-    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
-        <div class="card" style="margin-bottom:20px;">
-            <label class="question" for="checkbox_seven">
+    <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
+        <div class="card" style="margin-bottom:10px;">
+            <label class="question default-open" for="checkbox_seven">
                 <label for="checkbox_seven" style="color:#de3535">
                     <svg style="color: #898484;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 512 512"><title>ionicons-v5-a</title><path d="M448,256c0-106-86-192-192-192S64,150,64,256s86,192,192,192S448,362,448,256Z" style="fill:none;stroke: #de3535;stroke-miterlimit:10;stroke-width:32px" fill="grey"></path><path d="M250.26,166.05,256,288l5.73-121.95a5.74,5.74,0,0,0-5.79-6h0A5.74,5.74,0,0,0,250.26,166.05Z" style="fill:none;stroke: #de3535;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px" fill="red"></path><path d="M256,367.91a20,20,0,1,1,20-20A20,20,0,0,1,256,367.91Z" fill="#de3535"></path></svg>
                     Candidate Proxy Alert <span style="font-size:14px; text-transform:capitalize; font-weight:normal;color: #a29c9c;"></span>
@@ -364,14 +404,14 @@
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
                     <label style="visibility:hidden" for="checkbox_seven"></label>
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" />
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" checked/>
                     <label for="hidden_fields_seven_1"></label>
 
-                    <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
                     <span id="hidden_fields_seven_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                 </span>
             </label>
-            <fieldset class="format answer hidden" id="hidden_fields_seven">
+            <fieldset class="format answer hidden show-default" id="hidden_fields_seven">
                 @*  <div style="width:100%;float:left;"> <label style="font-size:14px;"> Eyes Movement</label> </div>
                 <div class="answer-label" style="float: left;width:auto; ">
                 <span class="heading pull-left">
@@ -535,14 +575,39 @@
 
     </div>
 
-    <div class="button-wrapper" style="margin-bottom:20px;">
-        <h2 class="text-center pad10 pull-left" style="color:#a3a1a1;font-weight:bold;margin-bottom:20px;">Click here to join the meeting</h2>
+    <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;margin-bottom:90px;">
+        <div class="card" style="margin-bottom:10px;">
+            <label class="question" for="checkbox_ten">
+                <label for="checkbox_ten">
+                    <i class="fa fa-code" aria-hidden="true" style="font-size:24px;position:relative;top:1px;"></i>
+                    Candidate Code: <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Add code snippet of interview here</label>
+                </label>
+                <span class="round">
+                    <input type="checkbox" class="coupon_question trigger" id="checkbox_ten" name="question1" data-trigger="hidden_fields_ten" />
+                    <label class="edit-wrap" onclick="javascript:OpenCodeModal('@ViewBag.InterviewId','@ViewBag.id');"><i class='fa fa-edit' style='color: white'></i></label>
+                    <span id="hidden_fields_ten_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                    <span id="hidden_fields_ten_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                </span>
+            </label>
+
+            <fieldset class="answer hidden" id="hidden_fields_ten">
+                <div class="answer-label"></div>
+                <div id="divcodesnippets">
+                    @* <iframe src="https://risebirdportal.blob.core.windows.net/codesnippet/PassportVerficaiton.txt" frameborder="0"></iframe> *@
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+  <div class="footer-nav">
+      <div class="button-wrapper">
+        <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
         @if (Model.zoomLink != null && Model.zoomLink != "")
         {
             @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
         {*@
             <div>
-                <a target="_blank" id="join-button" class="join-button disable-link" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
+                <a style="position: relative;top:10px;" target="_blank" id="join-button" class="join-button disable-link" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
             </div>
             @*}*@
             @*  else
@@ -551,7 +616,12 @@
         }  *@
         }
     </div>
+    </div>
 </div>
+  
+
+
+
 
 
 <div id="InterviewerAlert" class="modal modal-bg">
@@ -578,7 +648,24 @@
         </div>
     </div>
 </div>
-
+<div id="PopupDetailsModal" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fa fa-code" style="font-size:25px;padding-left:10px;"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="changememberHeading"></h5>
+            </div>
+            <button onclick="closePopupDetailsModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" id="divpopupModel" style="padding-top:0px;">
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     function CaptureMeetingOpenTime(interviewid) {
         $.ajax({
@@ -773,7 +860,7 @@
                 countcheck = countcheck + 1;
             }
         });
-        if (countcheck == 7) {
+        if (countcheck == 6) {
             $(".join-button").removeClass('disable-link')
             //enable meeting link
         }
@@ -803,6 +890,7 @@
     $(document).ready(function () {
         GetquestionList();
         InsightsDetails('@Model.interviewer', '@Model.IRFID');
+        FetchCodesnippet();
     });
     function GetquestionList() {
         $.ajax({
@@ -837,4 +925,75 @@
 </script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/TwilioCallMaker.js"></script>
+<script src="~/js/TwilioCallMaker.js?v=2024"></script>
+<script>
+    function closePopupDetailsModal() {
+        var modal = document.getElementById("PopupDetailsModal");
+        modal.style.display = "none";
+    }
+    function openPopupDetailsModal() {
+        var modal = document.getElementById("PopupDetailsModal");
+        modal.style.display = "block";
+    }
+    function OpenCodeModal(interviewid, irfid) {
+        $("#changememberHeading").text('Code Snippet');
+        $.ajax({
+            url: '/IRF/InterviewCodeSnippet',
+            data: { id: interviewid, irfid: irfid },
+            success: function (data) {
+                openPopupDetailsModal();
+                $('#divpopupModel').html('');
+                $('#divpopupModel').html(data);
+            }
+        });
+    }
+    function FetchCodesnippet() {
+        var interviewid = $("#hidinterviewid").val();
+        $.ajax({
+            type: "POST",
+            url: '/IRF/GetCodeSnippet',
+            data: { interviewid: interviewid },
+            success: function (data) {
+                BindCodeSnippet(data);
+            }
+        });
+    }
+    function BindCodeSnippet(data) {
+        var html = '';
+        if (data != null) {
+            html += '<iframe src="' + data + '"></iframe>';
+        }
+        $("#divcodesnippets").empty().html(html);
+    }
+</script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script>
+            $(window).scroll(function(event) {
+	function footer()
+    {
+        var scroll = $(window).scrollTop(); 
+        if(scroll > 50)
+        { 
+            $(".footer-nav").fadeIn("slow").addClass("show");
+        }
+        //else
+        //{
+        //    $(".footer-nav").fadeOut("slow").removeClass("show");
+        //}
+        
+  //    clearTimeout($.data(this, 'scrollTimer'));
+  //      $.data(this, 'scrollTimer', setTimeout(function() {
+  //          if ($('.footer-nav').is(':hover')) {
+	 //       	footer();
+  //  		}
+  //          else
+  //          {
+  //          	$(".footer-nav").fadeIn("slow");
+  //          }
+		//}, 2000));
+    }
+    footer();
+});
+
+        </script>

@@ -9,8 +9,8 @@
     $('#txtpageHeader').empty().html(Header);
 </script>
 
-<link href="~/Newassets/css/irf.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
 <div class="main-panel" id="main-panel">
     <div class="pt30">
@@ -137,6 +137,18 @@
                                                     {
                                                         <td style="color: orangered;font-weight: 500;font-size:13px;"> @item.StatusValue</td>
                                                     }
+                                                    else if (item.StatusValue == "Not Reachable")
+                                                    {
+                                                        <td><span class="current notreachable" style="font-size:13px;"> @item.StatusValue</span></td>
+                                                    }
+                                                    else if (item.StatusValue == "Wrong Number/Out of service")
+                                                    {
+                                                        <td><span class="current wrongnumber" style="font-size:13px;"> @item.StatusValue</span></td>
+                                                    }
+                                                    else if (item.StatusValue == "Will schedule by themselves")
+                                                    {
+                                                        <td><span class="current self-schedule" style="font-size:13px;"> @item.StatusValue</span></td>
+                                                    }
                                                     else
                                                     {
                                                         <td style="font-size:13px;"> @item.StatusValue</td>
@@ -199,11 +211,11 @@
 
                                                         
                                                      
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            @* <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                 <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
                                                                 </span>
-                                                            </button>
+                                                            </button> *@
                                                         </td>
 
                                                         }

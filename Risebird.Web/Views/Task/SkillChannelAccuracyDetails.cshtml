@@ -1,0 +1,104 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.PQIDetails>
+@using Risebird.Entities.Data
+
+<div class="secondtable-h" id="style-2">
+    <div class="table-responsive">
+        <table id="meeting" class="table table-bordered table-hover" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Interviewer</th>
+                    <th>Completed Interview</th>
+                    @if (ViewBag.AccuracyType == "Selection")
+                    {
+                        <th>Selected Interview</th>
+                        <th>Selection Rate(%)</th>
+                    }
+                    else if (ViewBag.AccuracyType == "NegativeCandidate" || ViewBag.AccuracyType == "PotentialRiskByClient")
+                    {
+                        <th>Negative Rating Interviews</th>
+                    }
+                    else if (ViewBag.AccuracyType == "Rejection")
+                    {
+                        <th>Rejected Interview</th>
+                        <th>Rejection Rate(%)</th>
+                    }
+                    else if (ViewBag.AccuracyType == "LessSelectComment" || ViewBag.AccuracyType == "LessRejectComment")
+                    {
+                        <th>Short Comments</th>
+                    }
+                    else if (ViewBag.AccuracyType == "LessQuestions")
+                    {
+                        <th>Less Questions</th>
+                    }
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Interviewer</th>
+                    <th>Completed Interview</th>
+                    @if (ViewBag.AccuracyType == "Selection")
+                    {
+                        <th>Selected Interview</th>
+                        <th>Selection Rate(%)</th>
+                    }
+                    else if (ViewBag.AccuracyType == "NegativeCandidate" || ViewBag.AccuracyType == "PotentialRiskByClient")
+                    {
+                        <th>Negative Rating Interviews</th>
+                    }
+                    else if (ViewBag.AccuracyType == "Rejection")
+                    {
+                        <th>Rejected Interview</th>
+                        <th>Rejection Rate(%)</th>
+                    }
+                    else if (ViewBag.AccuracyType == "LessSelectComment" || ViewBag.AccuracyType == "LessRejectComment")
+                    {
+                        <th>Short Comments</th>
+                    }
+                    else if (ViewBag.AccuracyType == "LessQuestions")
+                    {
+                        <th>Less Questions</th>
+                    }
+                </tr>
+            </tfoot>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.interviewer</td>
+                        <td>@item.TotalCompletedMeetings</td>
+                        @if (ViewBag.AccuracyType == "Selection")
+                        {
+                            <td>@item.TotalSelected</td>
+                            <td>
+                                <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">
+                                    @item.selectionrate %
+                                </a>
+                            </td>
+                        }
+                        else if (ViewBag.AccuracyType == "NegativeCandidate" || ViewBag.AccuracyType == "PotentialRiskByClient")
+                        {
+                            <td>@item.NegativeRating</td>
+                        }
+                        else if (ViewBag.AccuracyType == "Rejection")
+                        {
+                            <td>@item.TotalRejected</td>
+                            <td>
+                                <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = item.id, irfName = item.IRFId, interviewerEmailId = item.interviewer})">
+                                    @item.rejectionrate %
+                                </a>
+                            </td>
+                        }
+                        else if (ViewBag.AccuracyType == "LessSelectComment" || ViewBag.AccuracyType == "LessRejectComment")
+                        {
+                            <th>@item.TotallessComment</th>
+                        }
+                        else if (ViewBag.AccuracyType == "LessQuestions")
+                        {
+                            <th>@item.TotallessQuestions</th>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

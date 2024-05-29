@@ -11,9 +11,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -212,7 +210,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<Interviewer>(
-                        con, $"select intp.UserId, intp.ResumeLink, PrimarySkill = STUFF((SELECT distinct  ', ' + Name FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b WHERE b.InterviewerProfileId = intp.Id FOR XML PATH('')), 1, 1, '') FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1 and intp.UserId= {userId}", null, commandType: Text)?.FirstOrDefault();
+                        con, $"select intp.UserId, intp.ResumeLink, intp.CompanyName, PrimarySkill = STUFF((SELECT distinct  ', ' + Name FROM (select tis.InterviewerProfileId, ski.Name from TransInterviewerSkill tis join Skill ski on tis.SkillId = ski.id ) b WHERE b.InterviewerProfileId = intp.Id FOR XML PATH('')), 1, 1, '') FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId  where intp.IsApproved=1 and intp.UserId= {userId}", null, commandType: Text)?.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
@@ -3983,7 +3981,7 @@ namespace Risebird.Repository
         }
 
 
-        public async Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId)
+        public async Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId, string emailid)
         {
             try
             {
@@ -3992,6 +3990,7 @@ namespace Risebird.Repository
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", IRFId);
                     dynamicParameters.Add("@date", DateTime.Now);
+                    dynamicParameters.Add("@emailid", emailid);
                     return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_UpdateMeetingStatus", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
                 }
@@ -5201,7 +5200,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteCandidateStatus", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteCandidateStatus", parameters,// this procedure has been temporarily dropped from production on 15th April, 2024
                         commandType: CommandType.StoredProcedure);
                     return true;
 
@@ -7780,7 +7779,7 @@ namespace Risebird.Repository
         /// </summary>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG)
+        public async Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG, bool? forEditMAG = null)
         {
             try
             {
@@ -7791,6 +7790,7 @@ namespace Risebird.Repository
                         var parameters = new DynamicParameters();
                         parameters.Add("@searchValue", searchValue.Trim());
                         parameters.Add("@isAlreadyMasterAG", isAlreadyMasterAG);
+                        parameters.Add("@forEditMAG", forEditMAG);
                         var result = await SqlMapper.QueryAsync<AssignmentVM>(con, "dbo.usp_GetSimilarAssessmentGroups", parameters, null,
                             commandType: CommandType.StoredProcedure);
                         return result;
@@ -8006,6 +8006,80 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> EditMAG(AGCampaignModel model, string loggedInUser)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable agrpsDt = new DataTable();
+                    agrpsDt.Columns.Add("AssessmentGroupId", typeof(int));
+
+                    if (model.AssessmentGroups != null && model.AssessmentGroups.Count() > 0 && model.AssessmentGroups.Any(x => x.IsSelectedForCampaign))
+                    {
+                        foreach (var item in model.AssessmentGroups.Where(x => x.IsSelectedForCampaign))
+                        {
+                            agrpsDt.Rows.Add(item.id);
+                        }
+
+                    }
+
+                    if (model.SelectedRemainingAssessmentGroups != null && model.SelectedRemainingAssessmentGroups.Count() > 0)
+                    {
+                        foreach (var id in model.SelectedRemainingAssessmentGroups)
+                        {
+                            agrpsDt.Rows.Add(id);
+                        }
+
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_EditMAG", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.Int));
+                    cmd.Parameters["@AssessmentGroupId"].Value = model.AssessmentGroupId;
+
+                    cmd.Parameters.Add(new SqlParameter("@PerformedBy", SqlDbType.VarChar));
+                    cmd.Parameters["@PerformedBy"].Value = loggedInUser;
+
+                    cmd.Parameters.Add(new SqlParameter("@timeNow", SqlDbType.DateTime));
+                    cmd.Parameters["@timeNow"].Value = DateTime.Now;
+
+
+
+                    if (agrpsDt != null && agrpsDt.Rows.Count > 0)
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@CampaignAssessmentGroupsBulkData", SqlDbType.Structured));
+                        cmd.Parameters["@CampaignAssessmentGroupsBulkData"].Value = agrpsDt;
+                    }
+
+                    con.Open();
+
+                    if (cmd.ExecuteNonQuery() != 0)
+                    {
+                        con.Close();
+                    }
+
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser)
         {
             try
@@ -8142,6 +8216,8 @@ namespace Risebird.Repository
                             _resultVM.CreatedAt = !string.IsNullOrEmpty(dt.Rows[0]["CreatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["CreatedAt"]) : new DateTime();
                             _resultVM.ModifiedBy = !string.IsNullOrEmpty(dt.Rows[0]["ModifiedBy"].ToString()) ? dt.Rows[0]["ModifiedBy"].ToString() : null;
                             _resultVM.ModifiedAt = !string.IsNullOrEmpty(dt.Rows[0]["ModifiedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[0]["ModifiedAt"]) : new DateTime();
+                            _resultVM.AssessmentGroupId = !string.IsNullOrEmpty(dt.Rows[0]["AssessmentGroupId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AssessmentGroupId"]) : 0;
+                            _resultVM.IsAlreadyMasterAG = !string.IsNullOrEmpty(dt.Rows[0]["IsAlreadyMasterAG"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAlreadyMasterAG"]) : false;
 
 
                         }
@@ -8332,12 +8408,13 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid)
+        public async Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid, string type)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
+                dynamicParameters.Add("@type", type);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CallibrationCallVM>(con, "usp_GetAllCalibrationMeetingsdetailsById", dynamicParameters,
@@ -8353,6 +8430,179 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<IEnumerable<SecondaryAssessmentGroups>> GetMAGSecondaryAssessmentGroupsById(int assessmentGroupId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@assessmentGroupId", assessmentGroupId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<SecondaryAssessmentGroups>(con, "usp_GetMAGSecondaryAssessmentGroupsById", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateConsentFile(int irfid, string uploadedFileURL)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                dynamicParameters.Add("@uploadedFileURL", uploadedFileURL);
+                dynamicParameters.Add("@CreatedOn", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateConsentForm", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+        public async Task<string> GetConsentFile(int irfid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfid", irfid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetConsentForm", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<IRF>> GetDayStatsByClientUser(DateTime startDate, DateTime endDate, string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@emailid", emailid);
+                    return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetDayStatsByClientUser", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<string> GetCodeSnippetFile(int interviewid)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetCodeSnippetFile", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> UpdateCodeSnippetFile(int interviewid, string uploadedFileURL, List<SkillComment> model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@interviewid", interviewid);
+                dynamicParameters.Add("@uploadedFileURL", uploadedFileURL);
+                dynamicParameters.Add("@CreatedOn", DateTime.Now);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync(con, "usp_UpdateCodeSnippetFile", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                //    DataTable techSkillCommentsDt = new DataTable();
+                //    techSkillCommentsDt.Columns.Add("IRFId", typeof(int));
+                //    techSkillCommentsDt.Columns.Add("Skill", typeof(int));
+                //    techSkillCommentsDt.Columns.Add("Comment", typeof(string));
+                //    techSkillCommentsDt.Columns.Add("CreatedBy", typeof(string));
+                //    foreach (var item in model)
+                //    {
+                //        techSkillCommentsDt.Rows.Add(interviewid, Convert.ToInt32(item.Skill), item.Comment, item.CreatedBy);
+                //    }
+                //    SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddIRFSampleQuestions", con);
+                //    cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
+                //    cmdAddSkillComments.Parameters.Add(new SqlParameter("@IRFSampleQuestionsBulkData", SqlDbType.Structured));
+                //    cmdAddSkillComments.Parameters["@IRFSampleQuestionsBulkData"].Value = techSkillCommentsDt;
+                //    cmdAddSkillComments.Parameters.Add(new SqlParameter("@interviewid", SqlDbType.Int));
+                //    cmdAddSkillComments.Parameters["@interviewid"].Value = interviewid;
+                //    cmdAddSkillComments.Parameters.Add(new SqlParameter("@uploadedFileURL", SqlDbType.VarChar));
+                //    cmdAddSkillComments.Parameters["@uploadedFileURL"].Value = uploadedFileURL;
+                //    cmdAddSkillComments.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime));
+                //    cmdAddSkillComments.Parameters["@CreatedOn"].Value = DateTime.Now;
+                //    con.Open();
+
+                //    if (await cmdAddSkillComments.ExecuteNonQueryAsync() != 0)
+                //    {
+                //        con.Close();
+                //    }
+                //    return true;
+                //}
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

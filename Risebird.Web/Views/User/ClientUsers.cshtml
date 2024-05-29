@@ -4,9 +4,9 @@
     ViewBag.PageHeader = "Client Users";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=6" />
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css?v=2024" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
 <div class="main-panel" id="main-panel">
 
@@ -114,7 +114,7 @@
                                                                 @if (item.UserPassword != null && item.UserPassword != "")
                                                                 {
                                                                     <span class="secret" id="secret_@item.id" style="top:0px;">********</span>
-                                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)"></span>
+                                                                    <span toggle="#password-field_@item.id" class="fa fa-fw fa-eye field-icon toggle-password" id="toggle-password_@item.id" onclick="showhidepass(@item.id)" style="z-index:auto"></span>
                                                                 }
                                                                 else
                                                                 {

@@ -1,5 +1,5 @@
 ﻿@model Risebird.Entities.ViewModel.CandidateStatusListVM
-    <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css" />
+    <link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=2024" />
     <div id="style-2" class="scrollers" style="overflow-y:auto">
 
         <div id="tableID">
@@ -95,6 +95,18 @@
                                     @item.StatusValue
                                 </td>
                             }
+                        else if (item.StatusValue == "Not Reachable")
+                        {
+                            <td><span class="current notreachable" style="font-size:13px;"> @item.StatusValue</span></td>
+                        }
+                        else if (item.StatusValue == "Wrong Number/Out of service")
+                        {
+                            <td><span class="current wrongnumber" style="font-size:13px;"> @item.StatusValue</span></td>
+                        }
+                        else if (item.StatusValue == "Will schedule by themselves")
+                        {
+                            <td><span class="current self-schedule" style="font-size:13px;"> @item.StatusValue</span></td>
+                        }
                             else
                             {
                                 <td> @item.StatusValue</td>
@@ -145,7 +157,7 @@
         </div>
 
     </div>
-    <script src="~/Newassets/js/scrollBar.js"></script>
+    <script src="~/Newassets/js/scrollBar.js?v=2024"></script>
     <script type="text/javascript">
     $(".sb-container").scrollBox();
     </script>

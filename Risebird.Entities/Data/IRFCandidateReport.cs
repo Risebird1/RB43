@@ -1,9 +1,6 @@
 ﻿using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.Entities.Data
 {
@@ -28,5 +25,7 @@ namespace Risebird.Entities.Data
         public string VideoLink { get; set; }
         public IList<TechSkillReport> TechSkillReportCollection { get; set; }
         public IList<string> SkillList { get; set; }
+        public int CommunicationalProficiency { get; set; }
+
     }
 }

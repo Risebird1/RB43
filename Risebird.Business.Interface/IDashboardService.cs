@@ -69,11 +69,13 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<MeetingVM>> GetDMApproveDetails();
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailDetails(int campaignId);
-        Task<List<PQIDetails>> GetInterviewerIRFDetails(string type);
+        Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null);
         Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue);
-        Task<bool> MarkedColdCandidate(int CandidateId, string Email, int InterviewId);
+        Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type);
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type);
         Task<List<MeetingVM>> FetchTechQCDetails();
-        Task<InterviewUsersDetails> GetFutureDateInterviewSchedule(int interviewid);
+        Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail);
+        Task<List<MeetingVM>> PotentialPausedDetails();
+        Task<List<MeetingVM>> GetColdCandidatesByClient(string Email);
     }
 }

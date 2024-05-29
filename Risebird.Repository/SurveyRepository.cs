@@ -10,7 +10,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using static Dapper.SqlMapper;
 
 namespace Risebird.Repository
 {
@@ -94,7 +93,7 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<IEnumerable<SurveyVM>> GetCandidateRating(string emailid,string profileName)
+        public async Task<IEnumerable<SurveyVM>> GetCandidateRating(string emailid, string profileName)
         {
             try
             {
@@ -139,8 +138,8 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@CreatedOn",DateTime.Now);
-                parameters.Add("@Rating",model.Rating);
+                parameters.Add("@CreatedOn", DateTime.Now);
+                parameters.Add("@Rating", model.Rating);
                 parameters.Add("@CandidateInteractionQuality", model.CandidateInteractionQuality);
                 parameters.Add("@LimitedHandoncoding", model.LimitedHandoncoding);
                 parameters.Add("@UnethicalPractices", model.UnethicalPractices);

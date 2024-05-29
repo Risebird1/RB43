@@ -14,7 +14,7 @@
     var Header = "<a  style='line-height:50px;'><span>Interview Report</span></a>";
     $('#txtpageHeader').empty().html(Header);
 </script>
-<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <style>
     .mob_h {
         display: none;
@@ -103,12 +103,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--     Fonts and icons     -->
 
-<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <!--<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />-->
 
 <input type="hidden" value="@ViewBag.ClientDetails" id="hidPagestatus" />
-<link href="~/newassets/css/report.css" rel="stylesheet" />
+<link href="~/newassets/css/report.css?v=2024" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
 
     <div class="mt50 col-md-12">
@@ -482,7 +482,7 @@
 
                                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                     <div class="talktext">
-                                                                        @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
+                                                                        @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new {@id = "InterviewerComment", @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
 
                                                                     </div>
                                                                 </div>
@@ -531,7 +531,7 @@
 
                                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                     <div class="talktext">
-                                                                        @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
+                                                                        @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new {@id = "InterviewerComment",  @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
 
                                                                     </div>
                                                                 </div>
@@ -1573,7 +1573,7 @@
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-<script src="~/js/Aadhaar.js"></script>
+<script src="~/js/Aadhaar.js?v=2024"></script>
 <script>
     var imid = "";
     var span = document.getElementById("approvePopUp");
@@ -2517,13 +2517,30 @@
 
 </script>
 
+<link href="~/Newassets/css/summernote.min.css" rel="stylesheet" />
+<script src="~/Newassets/js/summernote.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#InterviewerComment').summernote({
+            placeholder: 'Type your comment...',
+            tabsize: 2,
+            height: 100
+        });
+    });
+
+    $(document).ready(function () {
+        document.getElementById("InterviewerComment").innerHTML = $('#InterviewerComment').text();
+
+    })
+</script>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
-<script src="~/js/FeedbackRecorder/Record.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
 @*<script>
     if ($("#hidPagestatus").val() == "client") {
         setTimeout(openpopUpRating, 30000);

@@ -76,13 +76,13 @@
                                             <a href='/Dashboard/Index' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
                                         }
                                     }
-                                        <a onclick="" data-tooltip="To visualize older data, please apply filter" data-placement="right">
-                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="right" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                                <div class="mdc-button__ripple"></div>
-                                            </button>
-                                        </a>
-                                    
+                                    <a onclick="" data-tooltip="To visualize older data, please apply filter" data-placement="right">
+                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="right" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                            <div class="mdc-button__ripple"></div>
+                                        </button>
+                                    </a>
+
                                 </div>
                             </div>
                         </div>
@@ -163,7 +163,7 @@
                                                 <tr>
                                                     <th>Interview Date</th>
                                                     <th>Interviewer Joinedon</th>
-                                                     <th>Candidate Joinedon</th>
+                                                    <th>Candidate Joinedon</th>
                                                     <th>Interviewer</th>
                                                     <th>Candidate Email</th>
                                                     <th>Client</th>
@@ -185,9 +185,9 @@
                                                 <tr>
                                                     <th>Interview Date</th>
                                                     <th>Interviewer Joinedon</th>
-                                                     <th>Candidate Joinedon</th>
+                                                    <th>Candidate Joinedon</th>
                                                     <th>Interviewer</th>
-                                                    <th>Candidate Email</th>
+                                                   <th>Candidate Email</th>
                                                     <th>Client</th>
                                                     @if (ViewBag.Type != "OnTimeIM")
                                                     {
@@ -208,30 +208,29 @@
                                                 {
                                                     <tr>
                                                         <td>@item.interviewDate</td>
-                                                        <td class="intime-on"><div style="float:left">@item.Joinedon </div>
+                                                        <td class="intime-on">
+                                                            <div style="float:left">@item.Joinedon </div>
                                                             @if (item.Joinedon != null)
                                                             {
                                                                 <a class="infos" href="#"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.Joinedon</p></span></a>
                                                             }
                                                         </td>
-                                                        
-                                                         <td class="ctime-on"><div style="float:left">@item.PerformedOn </div>
+                                                        <td class="ctime-on">
+                                                            <div style="float:left">@item.PerformedOn </div>
                                                             @if (item.PerformedOn != null)
                                                             {
                                                                 <a class="infos" href="#"><span class="candtime"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @item.FirstPerformedOn</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @item.PerformedOn</p></span></a>
                                                             }
                                                         </td>
-
                                                         <td>
                                                             @if (item.interviewer != null)
                                                             {
-                                                              <i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.interviewer
+                                                                <i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.interviewer
                                                             }
                                                         </td>
                                                         <td>
                                                             @if (item.candidateEmail != null)
                                                             {
-
                                                                 <i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail
                                                             }
                                                         </td>
@@ -241,7 +240,6 @@
                                                             @if (item.EIAssigned)
                                                             {
                                                                 <td style="color:forestgreen;font-weight:500;"><i class="fa fa-check" style="color: #4CAF50;font-size:15px;position:relative;top:2px;padding-right: 5px;"></i>Yes</td>
-
                                                             }
                                                             else
                                                             {
@@ -256,34 +254,28 @@
                                                         }
                                                         else if (item.MeetingStatusStatusDesc == "Completed")
                                                         {
-
                                                             <td>
                                                                 <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
                                                             </td>
                                                         }
                                                         else if (item.MeetingStatusStatusDesc == "Scheduled")
                                                         {
-
                                                             <td>
                                                                 <span class="status mscheduled">@item.MeetingStatusStatusDesc</span>
                                                             </td>
                                                         }
-
                                                         else if (item.MeetingStatusStatusDesc == "Dropped")
                                                         {
-
                                                             <td>
                                                                 <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
                                                             </td>
                                                         }
                                                         else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
                                                         {
-
                                                             <td>
                                                                 <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
                                                             </td>
                                                         }
-
                                                         else if (item.MeetingStatusStatusDesc == "No Show(Interviewer)")
                                                         {
 
@@ -291,20 +283,15 @@
                                                                 <span class="status mnoshow-int">@item.MeetingStatusStatusDesc</span>
                                                             </td>
                                                         }
-                                                            else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
+                                                        else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
                                                         {
-
                                                             <td>
                                                                 <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
                                                             </td>
                                                         }
-
-
-
                                                         else
                                                         {
                                                             <td> <span class="status">@item.MeetingStatusStatusDesc</span></td>
-
                                                         }
                                                         @if (item.TotalCount >= 2 && item.IsMeetingNotificationSent == 1 && item.Joinedon != null && item.PerformedOn != null && item.IsRescheduleNotificationSent == 0)
                                                         {
@@ -348,7 +335,7 @@
                                                         {
                                                             <td></td>
                                                         }
-                                                          @if (ViewBag.Type == "RescheduleIM")
+                                                        @if (ViewBag.Type == "RescheduleIM")
                                                         {
 
                                                             <td>@item.LastInterviewDate</td>
@@ -401,27 +388,27 @@
                                                         }
                                                         <td>
                                                             <a style="text-decoration:none" target="_blank" href="@Url.Action("ClientReport", "Interview" , new { interviewId=item.id, irfId=item.irfIntId})">
-                                                                  
+
                                                                 <div class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="width:25px!important;height:25px!important;">
-                                                                              <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;margin: 10px 0px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
-                                                                  </div>
+                                                                    <span title="Client Interview Report" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-6px;margin: 10px 0px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                </div>
 
                                                             </a>
-                                                           
-                                                              @*  <span class="icon-field">
-                                                                    <a class="icon-link" href="#!_@item.id" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.id, communicationMedium = (int)CommunicationMedium.Email })">
-                                                                       <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;padding: 0px 10px;"></i>
-                                                                    </a>
-                                                                </span>*@
+
+                                                            @*  <span class="icon-field">
+                                                        <a class="icon-link" href="#!_@item.id" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.id, communicationMedium = (int)CommunicationMedium.Email })">
+                                                        <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:2px;padding: 0px 10px;"></i>
+                                                        </a>
+                                                        </span>*@
 
 
                                                             <a class="icon-link" href="#!_@item.id" title="Emails Sent/Delivered" style="cursor:pointer" data-toggle="ajax-modal-CommunicationDetails" data-bs-target="#modalCommunicationDetails" data-url="@Url.Action("GetCommunicationDetails", "Candidate", new { interviewId = item.id, communicationMedium = (int)CommunicationMedium.Email })">
                                                                 <div class="btn btn-primary shadow btn-xs sharp me-1" aria-label="Client Interview Report" style="width:25px!important;height:25px!important; border: 1px #ffeb3bc2 solid!important; background: #fcee698c!important;">
-                                                                <span title="Email"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:1px;padding: 0px;left:-1px;"></i></span>
-                                                                  </div>
-                                                                  </a>
+                                                                    <span title="Email"> <i class="fa fa-envelope" style="color: #F9A825;font-size:15px;position:relative;top:1px;padding: 0px;left:-1px;"></i></span>
+                                                                </div>
+                                                            </a>
 
-                                                               
+
                                                         </td>
                                                     </tr>
                                                 }
@@ -437,12 +424,12 @@
         </div>
     </div>
 </div>
-<script src="~/js/common.js"></script>
+<script src="~/js/common.js?v=2024"></script>
 <div id="modal_recipientActivity_placeholder"></div>
 
 <div id="modal_candidateCommunicationDetails_placeholder"></div>
 
-<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
 
 <script>
     function searchResult() {
@@ -533,8 +520,8 @@
         }
     });
     function ResetFilter() {
-        var pagetype=$("#hidpagetype").val();
-        window.location.href = "/DashBoard/ResetEmergencyInterviewDetailsfilters?pagetype="+pagetype;
+        var pagetype = $("#hidpagetype").val();
+        window.location.href = "/DashBoard/ResetEmergencyInterviewDetailsfilters?pagetype=" + pagetype;
     }
     function ApplySessionFilter() {
         var strtDte = '@strtDte';
@@ -544,7 +531,7 @@
         $('input[name=EndDate]').val(endDte);
         var form = $("#form").serialize();
     }
-    function Changeurldetails(type, interviewdate,pagetype) {
-        window.location.href = "/Dashboard/EmergencyInterviewDetails?type=" + type + "&interviewdate=" + interviewdate+"&pagetype="+pagetype;
+    function Changeurldetails(type, interviewdate, pagetype) {
+        window.location.href = "/Dashboard/EmergencyInterviewDetails?type=" + type + "&interviewdate=" + interviewdate + "&pagetype=" + pagetype;
     }
 </script>

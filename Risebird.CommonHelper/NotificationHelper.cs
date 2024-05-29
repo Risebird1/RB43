@@ -10,15 +10,11 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using Twilio.TwiML.Messaging;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.CommonHelper
 {
@@ -1265,6 +1261,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                string result = string.Empty;
                 string currentUser = string.Empty;
                 try
                 {
@@ -1283,10 +1280,17 @@ namespace Risebird.CommonHelper
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);
-                if (response.StatusCode != HttpStatusCode.Accepted)
+                if (response.StatusCode == HttpStatusCode.Accepted)
                 {
-                    return "Failed to send mail. Please check all fields and try again.";
-
+                    result = "Mail sent successfully.";
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    result = "Failed to send mail.";
+                }
+                else
+                {
+                    result = "Failed to send mail.";
                 }
                 SentMailDetails obj = new SentMailDetails();
                 IEnumerable<string> values;
@@ -1356,7 +1360,7 @@ namespace Risebird.CommonHelper
                 obj.AssessmentGroupId = assessmentGroupId;
                 obj.CampaignId = campaignId;
                 _ = await _sendGridRepository.SaveSentMailDetails(obj);
-                return "Mail sent successfully.";
+                return result;
             }
             catch (Exception ex)
             {
@@ -2135,7 +2139,7 @@ namespace Risebird.CommonHelper
                 str.AppendLine("END:VCALENDAR");
                 byte[] byteArray = Encoding.ASCII.GetBytes(str.ToString());
                 MemoryStream stream = new MemoryStream(byteArray);
-                await msg.AddAttachmentAsync("invite.ics", stream);
+                await msg.AddAttachmentAsync("InterviewInvite.ics", stream);
                 //End: Attachment
                 return await SendMail(msg, null, interviewId);
             }
@@ -3213,7 +3217,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate,int irfid)
+        public async Task<string> SendCalibrationMeetingNotification(Mail model, string url, DateTime meetingdate, int irfid)
         {
             try
             {
@@ -3239,6 +3243,33 @@ namespace Risebird.CommonHelper
                 string msgBody = string.Format(rawEmail, parameters);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg, irfid);
+            }
+            catch (Exception)
+            {
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+        public async Task<string> SendTechSupportMail(string Comment,DateTime RequestedOn ,string RequestBy)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Raised the issue");
+                msg.Subject = RequestBy+ "raised the issue for the date: " + RequestedOn;
+
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("ajit_yadav@risebird.io", null));
+                StringBuilder msgBody = new StringBuilder("Dear ," + "Tech Support");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("You have received issue " + Comment + " from "+ RequestBy);
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Thank You, Team Risebird");
+
+                msg.HtmlContent = msgBody.ToString();
+
+                return await SendMail(msg);
             }
             catch (Exception)
             {

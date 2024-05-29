@@ -51,6 +51,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [TimeZonesValue][varchar] (200),
     [Surcharge][int],
     [SurchargeComment][varchar] (500),
+    [CodeSnippet][varchar] (200),
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -367,6 +368,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add SurchargeComment varchar(500)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CodeSnippet')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add CodeSnippet varchar(200)
 END
 
 END

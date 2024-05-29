@@ -189,6 +189,8 @@ builder.Services.AddScoped<IGoogleEventHelper, GoogleEventHelper>();
 builder.Services.AddScoped<IAffIndaResumeParserHelper, AffIndaResumeParserHelper>();
 builder.Services.AddScoped<IEncryptionHelper, EncryptionHelper>();
 builder.Services.AddScoped<IExcelHelper, ExcelHelper>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
 
 var app = builder.Build();
@@ -365,6 +367,7 @@ app.UseCsp(builder =>
     builder.Frame
            .AllowSelf()
            .Allow("https://wchat.freshchat.com/")
+           .Allow("https://risebirdportal.blob.core.windows.net/")
            .Allow("https://calendly.com/")
            .Allow("https://cdn.tiny.cloud/1/no-api-key/")
            .Allow("https://app.shuftipro.com/")

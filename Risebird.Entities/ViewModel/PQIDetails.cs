@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Risebird.Entities.ViewModel
+﻿namespace Risebird.Entities.ViewModel
 {
     public class PQIDetails
     {
@@ -25,8 +19,10 @@ namespace Risebird.Entities.ViewModel
         public string JDTiltle { get; set; }
         public int NegativeRating { get; set; }
 
+        public int TotalRedoCount { get; set; }
         public int TotallessComment { get; set; }
         public int TotallessQuestions { get; set; }
         public int TotalLatejoin { get; set; }
+        public string NickName { get; set; }
     }
 }

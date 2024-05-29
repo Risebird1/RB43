@@ -15,7 +15,10 @@ body {
     color: #837f84 !important;
     font-size: 14px;
 }
-
+#updateStatusModal .modal-body .modal-info {
+    background: #f2f2f2 !important;
+    padding: 20px;
+}
 .expiry [type="date"] {
     background: #dddddf url(../img/grey-calendar-icon.png) 97% 50% no-repeat !important;
     background-size: 7% !important;

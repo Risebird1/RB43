@@ -20,11 +20,11 @@
         ();
     var hasDistinctParticipants = Model.HasDistinctParticipants;
 }
-<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
-<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024">
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <input id="hidclientlogo" type="hidden" value="data:image/png;base64,@ViewBag.ClientLogo" />
 <input id="hidlogo" type="hidden" value="data:image/png;base64,@ViewBag.Risebirdlogo" />
 
@@ -140,7 +140,6 @@
             height: 100%;
         }
 
-     
     </style>
     <script>
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
@@ -210,87 +209,87 @@
                                          <div style="background:#000;padding:60px 20px 20px 20px;">
                                              <div style="clear:both">
                                                  <div class="pull-left">
-                                                @if (Model.resumeLink != null && Model.resumeLink != "")
-                                                {
-                        <div style="font-size:16px; font-weight:bold;color:#fff;">Candidate </div>
-                                                              <div>   <a style="color:#fff;float:left" id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5 style="font-size:17px; font-weight:normal;color:#e6e3e3">@Model.CandidateName</h5></a>
-                                                               <span style="float:left;color:#fff;height:20px;margin:0px 10px 0px 20px;"> | </span><span style="float:left">
+                                                    @if (Model.resumeLink != null && Model.resumeLink != "")
+                                                    {
+                                        <div style="font-size:16px; font-weight:bold;color:#fff;">Candidate </div>
+                                                                              <div>   <a style="color:#fff;float:left" id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", " %20")><h5 style="font-size:17px; font-weight:normal;color:#e6e3e3">@Model.CandidateName</h5></a>
+                                                                               <span style="float:left;color:#fff;height:20px;margin:0px 10px 0px 20px;"> | </span><span style="float:left">
 
-                                                            @{
-                                                                var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
-                                                                var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
-                                                            }
-                                                            @if (Model.MeetingStatus == 4)
-                                                            {
-                                                                var meetingcolor = "";
-                                                                @if (Model.InterviewStatus == 2)
-                                                                {
-                                                                    meetingcolor = "#26b726";
+                                                                @{
+                                                                    var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
+                                                                    var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
                                                                 }
-                                                                else if (Model.InterviewStatus == 3)
+                                                                @if (Model.MeetingStatus == 4)
                                                                 {
-                                                                    meetingcolor = "red";
+                                                                    var meetingcolor = "";
+                                                                    @if (Model.InterviewStatus == 2)
+                                                                    {
+                                                                        meetingcolor = "#26b726";
+                                                                    }
+                                                                    else if (Model.InterviewStatus == 3)
+                                                                    {
+                                                                        meetingcolor = "red";
+                                                                    }
+
+
+                                                                                                <div style="font-size:16px;float:right text-align:left;float:left font-weight:bold; padding:0px 10px; font-weight:bold;"><span style="color:@meetingcolor">@interviewtatusvalue</span></div>
                                                                 }
-                                                                                        
+                                                                else
 
-                                                                <div style="font-size:16px;float:right text-align:left;float:left font-weight:bold; padding:0px 10px; font-weight:bold;"><span style="color:@meetingcolor">@interviewtatusvalue</span></div>
-                                                            }
-                                                            else
-
-                                                            {
-                     
-                                                                
-                                                                <div style="font-size:16px; text-align:right; font-weight:bold;color:#e6e3e3;padding:0px 10px;font-weight:bold;">@meestingstatusvalue</div>
-
-
-
-                                                            }
-                                                              </span>
-                                                              </div>
-
-
-                                                }
-                                                else
-                                                {
-                                                             <div style="font-size:15px; font-weight:bold;color:#fff">Candidate</div>
-                                                                    <div>  <h2 style="font-size:17px; font-weight:normal;color:#e6e3e3;float:left">@Model.CandidateName</h2>
-                                                                             <span style="float:left;color:#fff;height:20px;margin:0px 10px 0px 20px;"> | </span>
-                                                                                     <span style="float:left">
-                                                            @{
-                                                                var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
-                                                                var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
-                                                            }
-                                                            @if (Model.MeetingStatus == 4)
-                                                            {
-                                                                var meetingcolor = "";
-                                                                @if (Model.InterviewStatus == 2)
                                                                 {
-                                                                    meetingcolor = "#26b726";
+
+
+                                                                                                <div style="font-size:16px; text-align:right; font-weight:bold;color:#e6e3e3;padding:0px 10px;font-weight:bold;">@meestingstatusvalue</div>
+
+
+
                                                                 }
-                                                                else if (Model.InterviewStatus == 3)
+                                                                              </span>
+                                                                              </div>
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                                             <div style="font-size:15px; font-weight:bold;color:#fff">Candidate</div>
+                                                                                    <div>  <h2 style="font-size:17px; font-weight:normal;color:#e6e3e3;float:left">@Model.CandidateName</h2>
+                                                                                             <span style="float:left;color:#fff;height:20px;margin:0px 10px 0px 20px;"> | </span>
+                                                                                                     <span style="float:left">
+                                                                @{
+                                                                    var meestingstatusvalue = Model.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(Model.MeetingStatus)).GetDescription() : string.Empty;
+                                                                    var interviewtatusvalue = Model.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(Model.InterviewStatus)).GetDescription() : string.Empty;
+                                                                }
+                                                                @if (Model.MeetingStatus == 4)
                                                                 {
-                                                                    meetingcolor = "red";
+                                                                    var meetingcolor = "";
+                                                                    @if (Model.InterviewStatus == 2)
+                                                                    {
+                                                                        meetingcolor = "#26b726";
+                                                                    }
+                                                                    else if (Model.InterviewStatus == 3)
+                                                                    {
+                                                                        meetingcolor = "red";
+                                                                    }
+                                                                                                                                             <div style="font-size:16px;float:right text-align:left;float:left font-weight:bold; padding:0px 10px; font-weight:bold;"><span style="color:@meetingcolor">@interviewtatusvalue</span></div>
                                                                 }
-                                                                                                             <div style="font-size:16px;float:right text-align:left;float:left font-weight:bold; padding:0px 10px; font-weight:bold;"><span style="color:@meetingcolor">@interviewtatusvalue</span></div>
-                                                            }
-                                                            else
+                                                                else
 
-                                                            {
-                                                                                                                    <div style="font-size:16px; text-align:right; font-weight:bold;color:#e6e3e3;padding:0px 10px;font-weight:bold;">@meestingstatusvalue</div>
+                                                                {
+                                                                                                                                                    <div style="font-size:16px; text-align:right; font-weight:bold;color:#e6e3e3;padding:0px 10px;font-weight:bold;">@meestingstatusvalue</div>
 
 
 
-                                                            }
-                                                                              </span></div>
-                                                }
+                                                                }
+                                                                                              </span></div>
+                                                    }
                                                 <div style="clear:both"></div>
-                                                @Html.HiddenFor(m => m.CandidateName)
+                                                    @Html.HiddenFor(m => m.CandidateName)
                                                 <div style="font-size:15px; font-weight:bold;color:#fff">Position</div>
                                                      <div style="font-size:17px; font-weight:normal;color:#e6e3e3">@Model.JDTiltle</div>
-                                                     
+
                                                  </div>
                                                  <div class="pull-right">
-                                                    
+
                                                       <div style="clear:both;margin-top:10px;">
                                                          <div  style="font-weight:bold;font-size:15px;text-align:right;  color:#fff;">
                                                             Interview Date
@@ -301,7 +300,7 @@
                                                         @if (Model.MeetingStatus == 1)
                                                         {
 
-                                                             <div class="row"><div class="nodata-wrapper-pdf"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
+                                                                             <div class="row"><div class="nodata-wrapper-pdf"><p class="nodata-img"><img src="../../img/nodata.png"></p></div></div>
 
                                                         }
                                                         else
@@ -310,20 +309,20 @@
                                                             @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                             {
 
-                                                                                 <div style="float:left;border:1px #fff solid;padding:3px 10px; text-align:center;margin-top:10px;"> <a style="color:#fff;font-weight:bold;text-decoration:none;" href="@Model.VideoLink"><img style="width:25px;padding:3px;margin-right:5px;" src="/img/watch-video.png"> Interview Video</a></div>
+                                                                                                                 <div style="float:left;border:1px #fff solid;padding:3px 10px; text-align:center;margin-top:10px;"> <a style="color:#fff;font-weight:bold;text-decoration:none;" href="@Model.VideoLink"><img style="width:25px;padding:3px;margin-right:5px;" src="/img/watch-video.png"> Interview Video</a></div>
 
 
                                                             }
 
                                                             else
                                                             {
-                                                                         <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
+                                                                                                         <p class="nodata"><img src="../../img/novideo.png" /><span>No Video Found</span></p>
                                                             }
                                                             @if (Model.IsTranscript && ViewBag.profile == "Client" && !string.IsNullOrEmpty(Model.AudioTranscriptFileLink))
                                                             {
                                                                 @if (Model.AudioTranscriptFileLink != null && Url.Content(Model.AudioTranscriptFileLink) != null)
                                                                 {
-                                                                                        <div style="float:left;border:1px #fff solid;padding:3px 10px; text-align:center;margin-top:10px;"> <a style="color:#fff;font-weight:bold;text-decoration:none;" href="@Model.AudioTranscriptFileLink"><img style="width:25px;padding:3px;margin-right:5px;" src="/img/wataudio.png">Interview Audio Transcript</a></div>
+                                                                                                                                        <div style="float:left;border:1px #fff solid;padding:3px 10px; text-align:center;margin-top:10px;"> <a style="color:#fff;font-weight:bold;text-decoration:none;" href="@Model.AudioTranscriptFileLink"><img style="width:25px;padding:3px;margin-right:5px;" src="/img/wataudio.png">Interview Audio Transcript</a></div>
                                                                 }
 
                                                             }
@@ -331,59 +330,87 @@
 
                                                         }
                                              </div>
-                                                    
+
                                                  </div>
                                              </div>
 
 
 
                                              <hr style="clear:both;margin-bottom:0px;" />
-                                           
+
                                              </div>
-                                             <div class="interviewComment" style="clear:both;height:350px;overflow:auto;padding:10px 20px 20px 20px;">
+                                             <div class="interviewComment" style="clear:both;overflow:auto;padding:10px 20px 20px 20px;">
                                                  <div style="color:#000;margin:10px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">1</span>Interviewer Comment</div>
                                                  <hr style="margin-bottom:8px;" />
                                             @if (Model.InterviewerComment != null)
                                             {
-                                                         <div style="font-size:14px;">@Model.InterviewerComment</div>
+                                                                         <div style="font-size:14px;"> <p id="int-cmnt">@Model.InterviewerComment</p></div>
                                             }
                                             else
                                             {
-                                                         <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                                                         <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
                                             }
                                              </div>
-                                             <div style="padding:0px 20px 20px 20px;">
-                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">2</span> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
-                                                 <hr style="clear:both;margin-bottom:0px;" />
-                                             </div>
+                                        @if (!string.IsNullOrEmpty(Model.CodeSnippet))
+                                        {
+                                                            <div style="padding:0px 20px 20px 20px;">
+                                                            <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">2</span> Code Output:<a style="text-decoration:none;" href="@Model.CodeSnippet" target="_blank"><span style="background: #000;font-size:14px;font-weight:normal;color: #fff;padding: 3px 6px 6px 6px;border-radius:0px;margin:15px;text-decoration:none">Click here to view code snippet</span></a></div>
+                                                            </div>
 
-                                             <div style="padding:0px 20px 20px 20px;">
+                                        }
+                                        else
+                                        {
+                                                             <div style="padding:0px 20px 20px 20px;">
+                                                            <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">2</span> Code Output: <span style="color: #868080; font-weight:500;font-size:16px;">No code snippet is available</span></div>
+                                                            </div>
+                                        }
+
+                                        @if (Model.CommunicationalProficiency != 0)
+                                        {
+                                                         <div style="padding:0px 20px 20px 20px;">
+                                                            <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">3</span> Communicational Skill: <span class="totScore"><strong style="padding-left:10px;">@Model.CommunicationalProficiency / 10</strong></span></div>
+                                                            </div>
+                                        }
+                                        else
+                                        {
+                                                           <div style="padding:0px 20px 20px 20px;">
+                                                            <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">3</span> Communicational Skill: <span class="totScore"><strong style="padding-left:10px;">@Model.CommunicationalProficiency / 10</strong></span></div>
+                                                            </div>
+                                        }
+
+                                          <div class="html2pdf__page-break"></div>
+                                             <div style="padding:80px 20px 20px 20px;margin-top:10px;">
+                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">4</span> Tech Skill Score: <span class="totScore"><strong id="totTechScore"></strong></span></div>
+                                                 <hr style="clear:both;margin-bottom:0px;" />
+                                           
+
+                                             <div style="padding:0px">
                                             @if (Model.TechSkillReportCollection != null)
                                             {
                                                 @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
                                                 {
-                                                                 <div style="padding-top:10px">
-                                                                     <p style="margin-bottom:5px;">@Model.TechSkillReportCollection[i].SkillName</p>
+                                                      <div style="padding-top:10px">
+                                                   <p style="margin-bottom:5px;">@Model.TechSkillReportCollection[i].SkillName</p>
                                                         @{
                                                             var TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                         }
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                     <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                                                     <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
-                                                                     <div class="skillBackground skill-round-xlarge skill-small">
+                                                         <div class="skillBackground skill-round-xlarge skill-small">
                                                             @if (TechSkill_Score == 0)
                                                             {
-                                                                                             <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@TechSkill_Score %</span></div>
+                                                           <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@TechSkill_Score %</span></div>
                                                             }
                                                             else
                                                             {
-                                                                                                         <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                           <div class="skill-center skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
 
                                                             }
-                                                                     </div>
-                                                                 </div>
+                                                            </div>
+                                                          </div>
                                                 }
                                             }
                                              </div>
@@ -393,31 +420,31 @@
 
                                          <div class="col-md-12">
 
-                                             <div style="margin-top:10px;padding:80px 20px 20px 20px;">
-                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">3</span>Questions Discussed</div>
+                                             <div style="margin-top:10px;padding:80px 20px 20px 8px;">
+                                                 <div style="color:#000;margin:0px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">5</span>Questions Discussed</div>
                                                  <hr style="margin-bottom:8px;" />
                                                  <div class="question">
                                                 @if (Model.QuestionsCollection != null && Model.QuestionsCollection.Count() != 0)
                                                 {
-                                                             <ul>
+                                                                             <ul style="padding:0px;margin:0px;">
                                                         @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                         {
                                                             var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                             @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
                                                             {
-                                                                                                         <li onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer;font-size:14px;background-size:7%;background-position:5px 6px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                                                                                                         <li style="padding-left:10px;margin-left:0px;" onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer;font-size:14px;background-size:7%;background-position:5px 6px;">@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                             }
                                                             else
                                                             {
-                                                                                 <li>@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
+                                                                                                                                             <li style="padding-left:10px;margin-left:0px;" >@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                             }
-                                                                         <label>Rating : @valueslist</label>
+                                                                                                                 <label style="padding-left:10px;margin-left:0px;">Rating : @valueslist</label>
                                                         }
-                                                             </ul>
+                                                                             </ul>
                                                 }
                                                 else
                                                 {
-                                                             <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
+                                                                             <p class="nodata"><img src="../../img/no-question.png" /><span>No Question Found</span></p>
 
                                                 }
                                                  </div>
@@ -554,7 +581,7 @@
 </div>
 @await Html.PartialAsync("~/Views/Common/SecureReport.cshtml")
 
-<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -619,13 +646,13 @@
         if (hasDistinctParticipants != null && hasDistinctParticipants.toLowerCase() == 'false') {
             document.getElementById("InterviewStatus").disabled = true;
         }
-    })
 
+    })
 </script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
 <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+<script src="~/js/ScoreChart/SetScoreChartValues.js?v=2024"></script>
 <script>
 
     function switchtoquestionVedio(questiontime) {
@@ -706,8 +733,8 @@
         }
     }
     window.onload = function () {
+        document.getElementById("int-cmnt").innerHTML = $('#int-cmnt').text();
         getPDF();
-        
     }
 </script>
 
@@ -716,8 +743,8 @@
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
-<script src="~/js/FeedbackRecorder/Record.js"></script>
-<script src="~/js/Aadhaar.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
+<script src="~/js/Aadhaar.js?v=2024"></script>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
@@ -735,7 +762,7 @@
             .from(element)
             .set({
                 margin: [-4, -2, -4, -2], //top, left, buttom, right,
-                padding:[20, 40, 20, 40],
+                padding: [20, 40, 20, 40],
                 filename: filename,
                 image: { type: 'jpeg', quality: .95 },
                 html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
@@ -745,10 +772,7 @@
             })
             .toPdf()
             .get('pdf').then(function (pdf) {
-
                 var totalPages = pdf.internal.getNumberOfPages();
-
-
                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     pdf.setFontSize(10);
@@ -756,9 +780,7 @@
                     pdf.addImage(imgData, "PNG", 175, 3, 25, 8);
                     pdf.addImage(imgData1, "PNG", 5, 3, 25, 10);
                     pdf.text('© 2023 Arhat Talent Solutions Pvt Ltd.:' + i + '/' + totalPages + '', pdf.internal.pageSize.getWidth() - 85, pdf.internal.pageSize.getHeight() - 8);
-
                 }
-
             }).save();
         timeout(5000);
     }

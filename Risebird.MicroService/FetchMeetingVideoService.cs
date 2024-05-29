@@ -1,17 +1,17 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using RestSharp;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
-using RestSharp;
-using Newtonsoft.Json;
-using Risebird.Entities.Data;
-using System.Net.Http;
+using System;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Risebird.MicroService
 {
@@ -122,7 +122,6 @@ namespace Risebird.MicroService
                                     }
                                 }
                             }
-                            var transcriptSasUrl = "";
                             if (!string.IsNullOrEmpty(videoSasUrl))
                             {
                                 //insert the SAS URL of the video, transcript and video duration in the database table

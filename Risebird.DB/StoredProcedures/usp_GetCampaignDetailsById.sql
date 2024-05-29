@@ -14,8 +14,16 @@ AS
 BEGIN 
 
 --campaign table
-select agc.id, agc.CampaignName, agc.CreatedAt, agc.CreatedBy, agc.ModifiedAt, agc.ModifiedBy, ag.AssessmentGroup as AssessmentGroupName from AGCampaigns agc
+select agc.id, agc.CampaignName, agc.CreatedAt, agc.CreatedBy, agc.ModifiedAt, agc.ModifiedBy, 
+ag.AssessmentGroup as AssessmentGroupName, 
+CASE
+        WHEN mag.id is null THEN 0
+        WHEN mag.id > 0 THEN 1
+        ELSE 0
+END AS IsAlreadyMasterAG
+from AGCampaigns agc
 join AssessmentGroup ag on ag.id = agc.AssessmentGroupId
+left join MasterAssessmentGroup mag on mag.AssessmentGroupId = agc.AssessmentGroupId
 where agc.id =@campaignId
      
 --campaign target assessment groups table 

@@ -18,6 +18,6 @@ join [ClientUser] cu on cu.ClientId=IRF.ClientId
 inner join [dbo].[UserList] ul on cu.UserId = ul.id    
 inner join [dbo].[Client] cl on cu.ClientId= cl.id    
 inner join [ClientRole] cr on cu.RoleId= cr.id    
-where ul.IsActive =1 and cu.RoleId!=9 and im.interviewDate>=DATEADD(Day,-7, Getdate()) and im.interviewDate<=DATEADD(Day,7, Getdate()) 
+where ul.IsActive =1 and cu.RoleId!=9 and im.interviewDate>=DATEADD(Day,-7, Getdate()) and im.interviewDate<=DATEADD(Day,7, Getdate()) and cu.IsEmailNotification =1
 END
 GO

@@ -31,10 +31,10 @@
     var Header = "<div>Reschedule Meetings</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
-<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=1234" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css?v=2024" />
 
 <div class="main-panel" id="main-panel">
     <div class="jumbotrons">
@@ -621,7 +621,7 @@
                                                                                             <span onclick="GetCandidateStatusList('@item.imid','@item.CandidateMasterId', '@item.IRFId', '@item.candidateName')" title="Candidate Status List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16" id="IconChangeColor"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" id="mainIconPathAttribute" fill="#ffffff"></path> </svg></span>
                                                                                     </button>*@
                                                                                         <span>
-                                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#db6161;border-color:#db6161;position:relative;">
+                                                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#f4c781;border-color:#f4c781;position:relative;">
                                                                                                 <span onclick="MarkedColdCandidate('@item.CandidateId','@item.IRFId', '@item.candidateEmail','@item.Interviewid','@item.imid');" title="Mark Cold Candidate" class="mdc-fab__icon touch">
                                                                                                     <img src="~/img/approve-blk.png" width="18" style="max-width: 18px!important;position: relative;top: -1.5px;left: -2px;" />
                                                                                                 </span>
@@ -657,7 +657,7 @@
 <!-- end row -->
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
-<script src="~/js/markcoldcandidate.js"></script>
+<script src="~/js/markcoldcandidate.js?v=2024"></script>
 @*<div id="myCallModal" class="modal  modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
@@ -931,7 +931,7 @@
         else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
     });
 </script>
-<script src="~/js/twiliocallmaker.js"></script>
+<script src="~/js/twiliocallmaker.js?v=2024"></script>
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"Client\"")
 {
@@ -942,8 +942,8 @@
     else
     {
         <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
-        <script src="~/Newassets/js/chardinjs.js"></script>
-        <script src="~/Newassets/js/demo.js"></script>
+        <script src="~/Newassets/js/chardinjs.js?v=2024"></script>
+        <script src="~/Newassets/js/demo.js?v=2024"></script>
         HttpContextAccessor.HttpContext.Session.SetString("NReschedule", "1");
 
     }
@@ -960,63 +960,15 @@
     else
     {
         @*<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>*@
-        <script src="~/Newassets/js/chardinjs.js"></script>
-        <script src="~/Newassets/js/demo.js"></script>
+        <script src="~/Newassets/js/chardinjs.js?v=2024"></script>
+        <script src="~/Newassets/js/demo.js?v=2024"></script>
         HttpContextAccessor.HttpContext.Session.SetString("NReschedule", "1");
 
     }
 }
-<script src="~/js/filtervalidation.js"></script>
+<script src="~/js/filtervalidation.js?v=2024"></script>
 <loading></loading>
 
-
-<script>
-    function ReschuduleMeeting(interviewid, uniqueid, irfid, candidateEmailid) {
-        swal.fire({
-            title: 'Are you sure?',
-            text: 'Do you really want to cancel this meeting and reschedule?',
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Reschedule!',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        url: '/Interview/GenerateRescheuleLink',
-                        method: 'POST',
-                        data: {
-                            'CandidateEmailid': candidateEmailid,
-                            'interviewid': interviewid,
-                            'uniqueid': uniqueid,
-                            'Irfid': irfid
-                        },
-                        success: function (result) {
-                            location.href = result;
-                            //window.open(result, '_blank');
-                            resolve(result)
-                        },
-                        error: function () {
-                            swal.fire("Error rescheduling!", "Please try again", "error");
-                        }
-                    })
-                })
-            },
-            allowOutsideClick: false
-        }).then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                //location.reload(true);
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Cancelled',
-                    'reschedule cancelled! :)',
-                    'error'
-                )
-            }
-        })
-    }
-</script>
 <style>
     .swal2-popup #swal2-content {
     text-align: center;

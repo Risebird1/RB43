@@ -17,11 +17,11 @@
     var currentMeetingStatus = Model.MeetingStatus.HasValue ? Model.MeetingStatus.Value : 0;
     var currentInterviewStatus = Model.InterviewStatus.HasValue ? Model.InterviewStatus.Value : 0;
 }
-<link href="~/Newassets/css/interview.css?v=6" rel="stylesheet" />
-<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=987654" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=987654" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="~/newassets/css/rbtooltip.css" rel="stylesheet" />
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024">
+<link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 
 @if (ViewBag.PageStatus == "Public")
 {
@@ -68,7 +68,7 @@
         document.getElementById('theme').href = '../Newassets/css/blue-theme.css';
     </script>
 }
-<link href="~/newassets/css/report.css" rel="stylesheet" />
+<link href="~/newassets/css/report.css?v=2024" rel="stylesheet" />
 <div id="main-panel" style="display:none">
     <div class="loader text-center">
         <img src="~/Newassets/img/lazyload.gif" />
@@ -102,8 +102,8 @@
             <nav class="navbar navbar-expand-lg navbar-transparent btn-primary  navbar-absolute top-panel" style="height:53px;">
                 <div class="pull-left">
                     <div class="navbar-wrapper w-full">
-                        <div id="txtpageHeader" class="navbar-brand" style=" line-height:50px!important;">
-                            <img style="position:relative;top:0px;width: 30%;" src="data:image/png;base64,@ViewBag.Risebirdlogo" />
+                        <div id="txtpageHeader" class="clientlogoarea" style="position:absolute;left:30px; top:10px;">
+                            <img src="data:image/png;base64,@ViewBag.Risebirdlogo" />
                         </div>
                     </div>
 
@@ -208,16 +208,28 @@
                                             <div class="col-md-12 col-sm-12 pull-left">
                                                 <div>
                                                     <div class="p15">
-                                                        <div class="form-group" style="margin-bottom:0px;margin-top:10px">
+                                                       @* <div class="form-group" style="margin-bottom:0px;margin-top:10px">
                                                             <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })</strong>
                                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                 <div class="talktext">
-                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true", @onpaste = "return false" })
+                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "InterviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters",  @onpaste = "return false" })
                                                                     <div id="words"></div>
                                                                 </div>
                                                             </div>
 
-                                                        </div>
+                                                        </div>*@
+                                                         <div class="interviewComment" style="clear:both;height:350px;overflow:auto;padding:10px 20px 20px 20px;">
+                                                 <div style="color:#000;margin:10px 0px 10px 0px;font-weight:600;font-size:17px;"><span style="color:#fff;background:#000;padding:3px 10px; text-align:center;margin-right:10px;">1</span>Interviewer Comment</div>
+                                                 <hr style="margin-bottom:8px;" />
+                                            @if (Model.InterviewerComment != null)
+                                            {
+                                                         <div style="font-size:14px;"> <p id="int-cmnt">@Model.InterviewerComment</p></div>
+                                            }
+                                            else
+                                            {
+                                                         <p class="nodata"><img src="../../img/no-comment.png" /><span>No Comment Found</span></p>
+                                            }
+                                             </div>
                                                         <div class="form-group" style="margin-bottom:0px;">
                                                             <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:12px; font-size:12px"></label>
                                                         </div>
@@ -555,7 +567,7 @@
 
 </div>
 
-<script src="~/js/ModalFormServerValidation.js"></script>
+<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
 <script>
     function dropDwnToolTips(id) {
         if (id.value == 0) {
@@ -586,8 +598,12 @@
         if (hasDistinctParticipants != null && hasDistinctParticipants.toLowerCase() == 'false') {
             document.getElementById("InterviewStatus").disabled = true;
         }
+        
     })
+         $(document).ready(function () {
+        document.getElementById("int-cmnt").innerHTML = $('#int-cmnt').text();
 
+        })
 </script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -627,7 +643,7 @@
     }
 </script>
 
-<script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
+<script src="~/js/ScoreChart/SetScoreChartValues.js?v=2024"></script>
 <script>
     $(document).ready(function () {
         //shorter/better attempt
@@ -690,8 +706,8 @@
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
-<script src="~/js/FeedbackRecorder/Record.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js"></script>
+<script src="~/js/FeedbackRecorder/Record.js?v=2024"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js?v=2024"></script>
 <script>
     function getPDF() {
         var d = new Date();
@@ -709,4 +725,6 @@
         setTimeout('', index);
         window.setTimeout(function () { window.close(); }, 5000);
     }
+
 </script>
+

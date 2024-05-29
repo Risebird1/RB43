@@ -46,5 +46,13 @@ namespace Risebird.Entities.Data
         public int WhatsappCount { get; set; }
         public bool IsReportBlocked { get; set; }
         public bool RedoInterview { get; set; }
+        public bool IsColdCandidate { get; set; }
+        public bool IsQCDone { get; set; }
+        public string zoomLink { get; set; }
+        public string StatusValue { get; set; }
+        public string LatestComment { get; set; }
+        public string SchedulerUniqueid { get; set; }
+        public DateTime EndDate { get; set; }
     }
-}
+    }
+

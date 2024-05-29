@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Risebird.Entities.Data
+﻿namespace Risebird.Entities.Data
 {
     public class PoorQOSZoomData
     {
- //       [id][int] IDENTITY(1,1) NOT NULL,
+        //       [id][int] IDENTITY(1,1) NOT NULL,
 
- //   [ZoomMeetingId] [varchar] (200) NOT NULL,
+        //   [ZoomMeetingId] [varchar] (200) NOT NULL,
 
- //   [participantEmail] [varchar] (100) NULL,
-	//[qosType][varchar] (50) NULL,
-	//[jitter][varchar] (15) NULL,
-	//[quality][varchar] (15) NULL,
-	//[quality_score][varchar] (15) NULL,
-	//[latency][varchar] (15) NULL,
-	//[avg_loss][varchar] (15) NULL,
-	//[max_loss][varchar] (15) NULL,
+        //   [participantEmail] [varchar] (100) NULL,
+        //[qosType][varchar] (50) NULL,
+        //[jitter][varchar] (15) NULL,
+        //[quality][varchar] (15) NULL,
+        //[quality_score][varchar] (15) NULL,
+        //[latency][varchar] (15) NULL,
+        //[avg_loss][varchar] (15) NULL,
+        //[max_loss][varchar] (15) NULL,
 
         public int id { get; set; }
         public string ZoomMeetingId { get; set; }

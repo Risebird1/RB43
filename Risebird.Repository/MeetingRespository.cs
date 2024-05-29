@@ -10,10 +10,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -1343,6 +1341,7 @@ namespace Risebird.Repository
                     parameters.Add("@VideoDuration", reportDetails.VideoDuration);
                     parameters.Add("@PerformedBy", loggedInEmailId);
                     parameters.Add("@PerformedAt", DateTime.Now);
+                    parameters.Add("@CommunicationalProficiency", reportDetails.CommunicationalProficiency);
 
                     DynamicParameters parametersPoints = new DynamicParameters();
 
@@ -1657,7 +1656,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRFId, JDTiltle, IsGeneralSkillRequired from IRF where id = @id";
+                var query = "Select IRFId, JDTiltle, IsGeneralSkillRequired,SkillSetsevaluate from IRF where id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -5014,12 +5013,13 @@ namespace Risebird.Repository
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
-                //var query = "Select IRF.IRFId,JDTiltle,CalendlyLink from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE())";
-                var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id,IRF.IsPaused, cl.ShowInterviewInstructions,IRF.IsDrive  from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner join Client cl on cl.id = irf.ClientId Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE()) order by CreatedOn desc";
+                //var query = "Select IRF.IRFId,JDTiltle,CalendlyLink,uli.EmailId as BillingOwner,JDLink,IRF.id,IRF.IsPaused, cl.ShowInterviewInstructions,IRF.IsDrive  from IRF join TransClientUser tcu join Userlist ul on ul.id=tcu.ClientUserid on tcu.IRFId=IRF.id left join UserList uli on uli.id=BillingOwner join Client cl on cl.id = irf.ClientId Where ul.Emailid=@Emailid and IsDeleted=0 and EndDate>DateAdd(mi,330,GETDATE()) order by CreatedOn desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<SchedulingLinkVM>(query, dynamicParameters);
-                    return (List<SchedulingLinkVM>)results;
+                    //var results = await con.QueryAsync<SchedulingLinkVM>(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync<SchedulingLinkVM>(con, "usp_FetchIRFSchedulingLinksDetails", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return (List<SchedulingLinkVM>)result;
                 }
             }
             catch (SqlException ex)
@@ -5405,7 +5405,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@Status", status);
                 dynamicParameters.Add("@rsc", rsc);
                 dynamicParameters.Add("@timeNow", DateTime.Now);
-                dynamicParameters.Add("@idIrf", dbType: DbType.String, direction: ParameterDirection.Output);
+                dynamicParameters.Add("@interviewerEmailId", dbType: DbType.String, direction: ParameterDirection.Output, size: 5215585);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerAvailbilityStatusForIRF", dynamicParameters,

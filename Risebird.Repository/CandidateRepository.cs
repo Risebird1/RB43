@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
+using Twilio.TwiML.Voice;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Repository
@@ -246,11 +246,12 @@ namespace Risebird.Repository
                     resumeListDt.Columns.Add("ResumeLink", typeof(string));
                     resumeListDt.Columns.Add("AddedBy", typeof(int));
                     resumeListDt.Columns.Add("AddedOn", typeof(DateTime));
+                    resumeListDt.Columns.Add("ClientHREmailId", typeof(string));
 
 
                     foreach (var item in resumeList)
                     {
-                        resumeListDt.Rows.Add(item.IRFId, item.ResumeLink, item.AddedBy, DateTime.Now);
+                        resumeListDt.Rows.Add(item.IRFId, item.ResumeLink, item.AddedBy, DateTime.Now, item.ClientHREmailId);
                     }
 
                     SqlCommand cmdJoinability = new SqlCommand("usp_CandidateResumeBulkInsert", con);
@@ -435,7 +436,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<CandidateTimelineData>(con, "usp_GetCandidateTimelineByDateStatus", parameters,
-                        commandType: CommandType.StoredProcedure);
+                        commandType: CommandType.StoredProcedure,commandTimeout:600);
                 }
             }
             catch (SqlException ex)
@@ -656,12 +657,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int interviewId, int communicationMedium)
+        public async Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int communicationMedium, int? interviewId = null, int? irfId = null, string emailId = null)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@interviewId", interviewId);
+                dynamicParameters.Add("@irfId", irfId);
+                dynamicParameters.Add("@emailId", emailId);
                 dynamicParameters.Add("@CommunicationMedium", ((CommunicationMedium)communicationMedium).GetDescription());
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -907,7 +910,8 @@ namespace Risebird.Repository
                                     MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
                                     ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
                                     VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
-                                    confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null
+                                    confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
+                                    CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0
                                 });
                             }
                             _resultVM = listMeetings;
@@ -987,7 +991,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Email", Email);
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidateByClient",parameters, commandTimeout: 600,
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidateByClient", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result.ToList();
                 }
@@ -1015,6 +1019,273 @@ namespace Risebird.Repository
 
             }
             catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var _resultVM = new List<CandidateExcelData>();
+                    var skillLists = new List<string>();
+                    DataSet dataset = new DataSet();
+                    SqlDataAdapter adapter = new SqlDataAdapter();
+                    adapter.SelectCommand = new SqlCommand("usp_GetIRFCandidateStatsForExcelDownLoadV2", con);//usp_GetIRFCandidateStatsForExcelDownLoad
+                    adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    adapter.SelectCommand.CommandTimeout = 600;
+                    adapter.SelectCommand.Parameters.AddWithValue("@irfId", irfId);
+                    adapter.SelectCommand.Parameters.AddWithValue("@timeNow", DateTime.Now);
+                    adapter.Fill(dataset);
+                    DataTable dt = new DataTable();
+                    if (dataset.Tables.Count > 0)
+                    {
+                        dt = dataset.Tables[0];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            //_resultVM.Meetings = new List<MeetingVM>();
+                            var listCandidates = new List<CandidateExcelData>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listCandidates.Add(new CandidateExcelData
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    ClientId = !string.IsNullOrEmpty(dt.Rows[i]["ClientId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["ClientId"]) : 0,
+                                    candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
+                                    candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
+                                    interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
+                                    IRFId = dt.Rows[i]["IRFId"] != null ? dt.Rows[i]["IRFId"].ToString() : null,
+                                    JDTiltle = dt.Rows[i]["JDTiltle"] != null ? dt.Rows[i]["JDTiltle"].ToString() : null,
+                                    AddedOnDate = dt.Rows[i]["AddedOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["AddedOnDate"].ToString()) : new DateTime(),
+                                    InvitationSentOnDate = dt.Rows[i]["InvitationSentOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["InvitationSentOnDate"].ToString()) : new DateTime(),
+                                    FirstScheduledOnDate = dt.Rows[i]["FirstScheduledOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["FirstScheduledOnDate"].ToString()) : new DateTime(),
+                                    completedDate = dt.Rows[i]["completedDate"] != null ? Convert.ToDateTime(dt.Rows[i]["completedDate"].ToString()) : new DateTime(),
+                                    isQcDone = dt.Rows[i]["isQcDone"] != null && dt.Rows[i]["isQcDone"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["isQcDone"]) : false,
+                                    IsDrive = dt.Rows[i]["IsDrive"] != null && dt.Rows[i]["IsDrive"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["IsDrive"]) : false,
+
+                                    InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
+                                    //MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
+                                    //InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
+                                    CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
+                                    InterviewerCodedName = dt.Rows[i]["InterviewerCodedName"] != null ? dt.Rows[i]["InterviewerCodedName"].ToString() : null,
+                                    MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
+                                    ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
+                                    staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,
+                                    ResumeLink = dt.Rows[i]["ResumeLink"] != null ? dt.Rows[i]["ResumeLink"].ToString() : null,
+                                    VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
+                                    confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
+                                    CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+                                    CandidateType = CandidateSingleSourceTruthTypes.Completed
+                                });
+                            }
+                            _resultVM = listCandidates;
+                        }
+                    }
+                    if (dataset.Tables.Count > 1)
+                    {
+                        dt = dataset.Tables[1];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            var interviewid = 0;
+                            string skill = string.Empty;
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                interviewid = !string.IsNullOrEmpty(dt.Rows[i]["InterviewId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewId"]) : 0;
+                                skill = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : null;
+                                if (_resultVM.Where(x => x.id == interviewid).Count() > 0)
+                                {
+                                    _resultVM.Where(x => x.id == interviewid).FirstOrDefault().TechSkillReportCollection.Add(new TechSkillReport
+                                    {
+                                        WeightageActual = (float)(!string.IsNullOrEmpty(dt.Rows[i]["WeightageActual"].ToString()) ? Convert.ToDecimal(dt.Rows[i]["WeightageActual"]) : 0),
+                                        WeightageRequired = (float)(!string.IsNullOrEmpty(dt.Rows[i]["WeightageRequired"].ToString()) ? Convert.ToDecimal(dt.Rows[i]["WeightageRequired"]) : 0),
+                                        SkillName = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : null,
+                                        InterviewId = !string.IsNullOrEmpty(dt.Rows[i]["InterviewId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewId"]) : 0
+                                    });
+                                    if (!skillLists.Contains(skill))
+                                    {
+                                        skillLists.Add(skill);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (_resultVM.Count() > 0)
+                        _resultVM.FirstOrDefault().SkillList = skillLists;
+
+                    if (dataset.Tables.Count > 2)
+                    {
+                        dt = dataset.Tables[2];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            //_resultVM.Meetings = new List<MeetingVM>();
+                            var listCandidates = new List<CandidateExcelData>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listCandidates.Add(new CandidateExcelData
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
+                                    candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
+                                    interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
+                                    IRFId = dt.Rows[i]["IRFId"] != null ? dt.Rows[i]["IRFId"].ToString() : null,
+                                    JDTiltle = dt.Rows[i]["JDTiltle"] != null ? dt.Rows[i]["JDTiltle"].ToString() : null,
+                                    AddedOnDate = dt.Rows[i]["AddedOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["AddedOnDate"].ToString()) : new DateTime(),
+                                    InvitationSentOnDate = dt.Rows[i]["InvitationSentOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["InvitationSentOnDate"].ToString()) : new DateTime(),
+                                    FirstScheduledOnDate = dt.Rows[i]["FirstScheduledOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["FirstScheduledOnDate"].ToString()) : new DateTime(),
+
+                                    InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
+                                    //MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
+                                    //InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
+                                    CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
+                                    InterviewerCodedName = dt.Rows[i]["InterviewerCodedName"] != null ? dt.Rows[i]["InterviewerCodedName"].ToString() : null,
+                                    MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
+                                    ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
+                                    staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,
+                                    ResumeLink = dt.Rows[i]["ResumeLink"] != null ? dt.Rows[i]["ResumeLink"].ToString() : null,
+                                    VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
+                                    confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
+                                    CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+                                    CandidateType = CandidateSingleSourceTruthTypes.Pending
+                                });
+                            }
+                            _resultVM.AddRange(listCandidates);
+                        }
+                    }
+
+                    if (dataset.Tables.Count > 3)
+                    {
+                        dt = dataset.Tables[3];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            //_resultVM.Meetings = new List<MeetingVM>();
+                            var listCandidates = new List<CandidateExcelData>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listCandidates.Add(new CandidateExcelData
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
+                                    candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
+                                    interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
+                                    IRFId = dt.Rows[i]["IRFId"] != null ? dt.Rows[i]["IRFId"].ToString() : null,
+                                    JDTiltle = dt.Rows[i]["JDTiltle"] != null ? dt.Rows[i]["JDTiltle"].ToString() : null,
+
+                                    AddedOnDate = dt.Rows[i]["AddedOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["AddedOnDate"].ToString()) : new DateTime(),
+                                    InvitationSentOnDate = dt.Rows[i]["InvitationSentOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["InvitationSentOnDate"].ToString()) : new DateTime(),
+                                    FirstScheduledOnDate = dt.Rows[i]["FirstScheduledOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["FirstScheduledOnDate"].ToString()) : new DateTime(),
+
+                                    //InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
+                                    //MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
+                                    //InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
+                                    CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
+                                    InterviewerCodedName = dt.Rows[i]["InterviewerCodedName"] != null ? dt.Rows[i]["InterviewerCodedName"].ToString() : null,
+                                    MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
+                                    ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
+                                    staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,
+                                    ResumeLink = dt.Rows[i]["ResumeLink"] != null ? dt.Rows[i]["ResumeLink"].ToString() : null,
+                                    //VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
+                                    confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
+                                    //CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+                                    CandidateType = CandidateSingleSourceTruthTypes.FutureScheduled
+                                });
+                            }
+                            _resultVM.AddRange(listCandidates);
+                        }
+                    }
+                    if (dataset.Tables.Count > 4)
+                    {
+                        dt = dataset.Tables[4];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            //_resultVM.Meetings = new List<MeetingVM>();
+                            var listCandidates = new List<CandidateExcelData>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listCandidates.Add(new CandidateExcelData
+                                {
+                                    id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
+                                    candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
+                                    interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
+                                    IRFId = dt.Rows[i]["IRFId"] != null ? dt.Rows[i]["IRFId"].ToString() : null,
+                                    JDTiltle = dt.Rows[i]["JDTiltle"] != null ? dt.Rows[i]["JDTiltle"].ToString() : null,
+                                    
+                                    AddedOnDate = dt.Rows[i]["AddedOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["AddedOnDate"].ToString()) : new DateTime(),
+                                    InvitationSentOnDate = dt.Rows[i]["InvitationSentOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["InvitationSentOnDate"].ToString()) : new DateTime(),
+                                    FirstScheduledOnDate = dt.Rows[i]["FirstScheduledOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["FirstScheduledOnDate"].ToString()) : new DateTime(),
+
+
+                                    //InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
+                                    
+                                    MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
+                                    InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
+                                    CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
+                                    InterviewerCodedName = dt.Rows[i]["InterviewerCodedName"] != null ? dt.Rows[i]["InterviewerCodedName"].ToString() : null,
+                                    MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
+                                    ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
+                                    staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,
+                                    ResumeLink = dt.Rows[i]["ResumeLink"] != null ? dt.Rows[i]["ResumeLink"].ToString() : null,
+                                    VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
+                                    confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
+                                    //CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+                                    CandidateType = CandidateSingleSourceTruthTypes.Reschedule
+                                });
+                            }
+                            _resultVM.AddRange(listCandidates);
+                        }
+                    }
+                    if (dataset.Tables.Count > 5)
+                    {
+                        dt = dataset.Tables[5];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            //_resultVM.Meetings = new List<MeetingVM>();
+                            var listCandidates = new List<CandidateExcelData>();
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                listCandidates.Add(new CandidateExcelData
+                                {
+                                    //id = !string.IsNullOrEmpty(dt.Rows[i]["id"].ToString()) ? Convert.ToInt32(dt.Rows[i]["id"]) : 0,
+                                    candidateName = dt.Rows[i]["candidateName"] != null ? dt.Rows[i]["candidateName"].ToString() : null,
+                                    candidateEmail = dt.Rows[i]["candidateEmail"] != null ? dt.Rows[i]["candidateEmail"].ToString() : null,
+                                    //interviewDate = dt.Rows[i]["interviewDate"] != null ? Convert.ToDateTime(dt.Rows[i]["interviewDate"].ToString()) : new DateTime(),
+                                    IRFId = dt.Rows[i]["IRFId"] != null ? dt.Rows[i]["IRFId"].ToString() : null,
+                                    JDTiltle = dt.Rows[i]["JDTiltle"] != null ? dt.Rows[i]["JDTiltle"].ToString() : null,
+                                    AddedOnDate = dt.Rows[i]["AddedOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["AddedOnDate"].ToString()) : new DateTime(),
+                                    InvitationSentOnDate = dt.Rows[i]["InvitationSentOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["InvitationSentOnDate"].ToString()) : new DateTime(),
+                                    //FirstScheduledOnDate = dt.Rows[i]["FirstScheduledOnDate"] != null ? Convert.ToDateTime(dt.Rows[i]["FirstScheduledOnDate"].ToString()) : new DateTime(),
+
+
+                                    //InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
+                                    //MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
+                                    //InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
+                                    CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
+                                    MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
+                                    //ClientHrContact = dt.Rows[i]["ClientHrContact"] != null ? dt.Rows[i]["ClientHrContact"].ToString() : null,
+                                    //staffingAgency = dt.Rows[i]["staffingAgency"] != null ? dt.Rows[i]["staffingAgency"].ToString() : null,
+                                    ResumeLink = dt.Rows[i]["ResumeLink"] != null ? dt.Rows[i]["ResumeLink"].ToString() : null,
+                                    //VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
+                                    //confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
+                                    //CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+                                    CandidateType = CandidateSingleSourceTruthTypes.NotScheduled
+                                });
+                            }
+                            _resultVM.AddRange(listCandidates);
+                        }
+                    }
+                    return _resultVM;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }

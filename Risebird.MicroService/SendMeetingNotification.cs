@@ -9,6 +9,8 @@ using Risebird.Repository.Interface;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
+using static System.Net.WebRequestMethods;
 
 namespace Risebird.MicroService
 {
@@ -166,7 +168,8 @@ namespace Risebird.MicroService
                         {
                             oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, item.candidateEmail).Result;
                         }
-                        oneTimeSchedulingLink = item.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                        //oneTimeSchedulingLink = item.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                        oneTimeSchedulingLink = "https://portal.risebird.io/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + item.candidateEmail;
 
                         Mail _mail = new Mail
                         {
@@ -179,13 +182,15 @@ namespace Risebird.MicroService
                         _whatsapp.Emailid = item.candidateEmail;
                         //if (item.CalendlyLink.Contains("InterviewScheduler/ScheduleEvent"))
                         //{
-                            _whatsapp.Event = "Interview Reschedule Risebird";
+                        _whatsapp.Event = "Interview Reschedule Risebird";
                         //}
                         //else
                         //{
                         //    _whatsapp.Event = "Interview Reschedule";
                         //}
-                        _whatsapp.buttonlink = oneTimeSchedulingLink.Split("=").LastOrDefault().ToString();
+                        oneTimeSchedulingLink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "").ToString();
+                        _whatsapp.buttonlink = oneTimeSchedulingLink;
+                        //_whatsapp.buttonlink = oneTimeSchedulingLink.Split("=").LastOrDefault().ToString();
                         _whatsapp.irfId = item.irfId;
                         _ = await _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
                     }

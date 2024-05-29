@@ -11,8 +11,8 @@
     var Header = "<a href='/Interviewer/Index'>Interviewers</a>&nbsp;/&nbsp;Add Interviewer";
     $('#txtpageHeader').empty().html(Header);
 </script>
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=7" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=8" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
 
 <div class="main-panel" id="main-panel">
@@ -34,7 +34,7 @@
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
-                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_evmobile", @class = "form-control text-box single-line",@maxlenght="10" } })
+                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_evmobile", @class = "form-control text-box single-line", @maxlenght = "10" } })
                                     </div>
                                     <div class="form-group">
                                         <div class="mandate">
@@ -96,7 +96,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text",@required="required" } })
+                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text", @required = "required" } })
                                             @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
                                         </div>
                                         <div class="form-group dob">
@@ -127,9 +127,9 @@
 
                                             @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]
-                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                     {   new SelectListItem { Text = "No", Value = "false" },
                                         new SelectListItem { Text = "Yes", Value = "true"} },
-                                        new { id = "drp_IsLeadINtr", @class = "select-css form-control text-box single-line" })
+                                                     new { id = "drp_IsLeadINtr", @class = "select-css form-control text-box single-line" })
                                             @Html.ValidationMessageFor(model => model.IsLeadInterviewer, "", new { @class = "text-danger" })
                                         </div>
                                         <div class="form-group">
@@ -200,9 +200,9 @@
                                             </div>
                                             @*@Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { id = "txt_IsActive", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
                                             @Html.DropDownListFor(model => model.IsActive, new[]
-                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                     {   new SelectListItem { Text = "No", Value = "false" },
                                         new SelectListItem { Text = "Yes", Value = "true"} },
-                                        new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+                                                     new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                             @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                         </div>
                                         <div class="form-group">
@@ -223,7 +223,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             </div>
-                                            @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text",@readonly="readonly" } })
+                                            @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text", @readonly = "readonly" } })
                                         </div>
                                         <div class="form-group">
                                             <div class="mandate">
@@ -238,9 +238,9 @@
                                             </div>
                                             @*@Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { id = "txt_IsApproved", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
                                             @Html.DropDownListFor(model => model.IsApproved, new[]
-                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                     {   new SelectListItem { Text = "No", Value = "false" },
                                         new SelectListItem { Text = "Yes", Value = "true"} },
-                                        new { id = "drp_IsAppr", @class = "select-css form-control text-box single-line" })
+                                                     new { id = "drp_IsAppr", @class = "select-css form-control text-box single-line" })
 
                                             @Html.ValidationMessageFor(model => model.IsApproved, "", new { @class = "text-danger" })
                                         </div>
@@ -482,10 +482,10 @@
                                                                     @Html.CheckBox(("InterviewerEducationDetails[0].AnyGap"), new { @class = "mdc-checkbox__native-control" })
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                     viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -541,10 +541,10 @@
                                                                     @Html.CheckBox(("InterviewerProjectsDetails[0].IsPrimarySkillUsed"), new { @class = "mdc-checkbox__native-control" })
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                     viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -559,10 +559,10 @@
                                                                     @Html.CheckBox(("InterviewerProjectsDetails[0].IsCommercialProject"), new { @class = "mdc-checkbox__native-control" })
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                     viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -626,10 +626,10 @@
                                                                     @Html.CheckBox("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays", new { @class = "mdc-checkbox__native-control form-control text-box single-line" })
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                     viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                          fill="none"
-                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -1281,36 +1281,34 @@
     //}
 </script>
 <script>
-    function VerifyEVandNext() 
-    {
- 
-            var mobilenumber = $("#txt_evmobile").val();
-            var candidateEmailid = $("#txt_evEmailId").val();
-            if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
-                $.ajax({
-                    url: '/Aadhaar/EvVerification',
-                    type: 'POST',
-                    data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
-                    success: function (result) {
-                        if (result.message == null) {
-                            document.getElementById("divEVverification").style.display = "none";
-                            document.getElementById("divEVverified").style.display = "block";
-                            $("#txt_MobileNumber").val(result.mobileNumber);
-                            $("#txt_EmailId").val(result.candidateEmail);
-                            $("#CompanyName").val(result.companyName);
-                            $("#isVerified").val(result.isVerified);
-                            $("#IsEmployed").val(result.isemployed);
-                            $("#DOB").val(result.dob);
-                        } else {
-                            swal.fire(result.message);
-                        }
+    function VerifyEVandNext() {
+        var mobilenumber = $("#txt_evmobile").val();
+        var candidateEmailid = $("#txt_evEmailId").val();
+        if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
+            $.ajax({
+                url: '/Aadhaar/EvVerification',
+                type: 'POST',
+                data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
+                success: function (result) {
+                    if (result.message == null) {
+                        document.getElementById("divEVverification").style.display = "none";
+                        document.getElementById("divEVverified").style.display = "block";
+                        $("#txt_MobileNumber").val(result.mobileNumber);
+                        $("#txt_EmailId").val(result.candidateEmail);
+                        $("#CompanyName").val(result.companyName);
+                        $("#isVerified").val(result.isVerified);
+                        $("#IsEmployed").val(result.isemployed);
+                        $("#DOB").val(result.dob);
+                    } else {
+                        swal.fire(result.message);
                     }
-                });
+                }
+            });
 
-            } else {
-                swal.fire("Please enter Mobile Number and Email Address.");
-            }
-   
+        } else {
+            swal.fire("Please enter Mobile Number and Email Address.");
+        }
+
     }
 </script>
 <script>
@@ -1319,9 +1317,8 @@
         $.ajax({
             url: '/Interviewer/GetInterviwerExists',
             type: 'POST',
-            data: {'interviewer': interviewer },
-            success: function (result) 
-            {
+            data: { 'interviewer': interviewer },
+            success: function (result) {
                 if (result) {
                     swal.fire(result);
                 }
@@ -1329,25 +1326,29 @@
                     var mobilenumber = $("#txt_evmobile").val();
                     var candidateEmailid = $("#txt_evEmailId").val();
                     if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
-                        $.ajax({
-                            url: '/Aadhaar/EvVerification',
-                            type: 'POST',
-                            data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
-                            success: function (result) {
-                                if (result.message == null) {
-                                    document.getElementById("divEVverification").style.display = "none";
-                                    document.getElementById("divEVverified").style.display = "block";
-                                    $("#txt_MobileNumber").val(result.mobileNumber);
-                                    $("#txt_EmailId").val(result.candidateEmail);
-                                    $("#CompanyName").val(result.companyName);
-                                    $("#isVerified").val(result.isVerified);
-                                    $("#IsEmployed").val(result.isemployed);
-                                    $("#DOB").val(result.dob);
-                                } else {
-                                    swal.fire(result.message);
+                        if (mobilenumber.trim().length == 10) {
+                            $.ajax({
+                                url: '/Aadhaar/EvVerification',
+                                type: 'POST',
+                                data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
+                                success: function (result) {
+                                    if (result.message == null) {
+                                        document.getElementById("divEVverification").style.display = "none";
+                                        document.getElementById("divEVverified").style.display = "block";
+                                        $("#txt_MobileNumber").val(result.mobileNumber);
+                                        $("#txt_EmailId").val(result.candidateEmail);
+                                        $("#CompanyName").val(result.companyName);
+                                        $("#isVerified").val(result.isVerified);
+                                        $("#IsEmployed").val(result.isemployed);
+                                        $("#DOB").val(result.dob);
+                                    } else {
+                                        swal.fire(result.message);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            swal.fire("Please enter valid 10 digit Mobile Number.");
+                        }
 
                     } else {
                         swal.fire("Please enter Mobile Number and Email Address.");

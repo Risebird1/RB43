@@ -3,6 +3,7 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
@@ -10,7 +11,7 @@
     ViewBag.PageHeader = "Skill Channel Stats";
     if (ViewBag.PageStatus == "Public")
     {
-        Layout = "~/Views/Shared/_PublicLayout.cshtml";
+        Layout = "~/Views/Shared/_PublicLayout2.cshtml";
     }
     else
     {
@@ -49,9 +50,16 @@
 
 </style>
 
-<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=234567" />
-
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/123941/stacktable.js"></script>
+<script>
+    $('table').stacktable();
+</script>
 <div class="main-panel" id="main-panel">
 
     <div class="pt30">
@@ -76,10 +84,18 @@
                             <div class="feedback-tab-ac" onclick="Changeurldetails('IRF')"><strong>Skill Channel</strong></div>
                         }
                     }
+                    else if (ViewBag.PageStatus == "Public")
+                    {
+                        @if (ViewBag.Type == "IRF")
+                        {
+                            <div class="feedback-tab" onclick="ChangeChanneldetails('DayStats','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Day Stats</strong></div>
+                            <div class="feedback-tab-ac" onclick="ChangeChanneldetails('IRF','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Skill Channel</strong></div>
+                        }
+                    }
                 </div>
                 <div class="pull-right">
-                    <div>
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <div style="float:right">
+                        <button type="button" class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded card-title-space" data-toggle="modal" data-target="#filterModal">
                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                             <div class="mdc-button__ripple"></div>
                         </button>
@@ -117,7 +133,10 @@
                             <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SkillChannelDetailstoExcel", "IRF", new { type = ViewBag.Type })'"></i></span>
                         }
                     </div>
+                    <div class="note-filter" style="text-align: right;width: auto;padding-top: 8px;"> Note: To visualize break-up of candidates 'Added' before 30 days, use Filter option</div>
+
                 </div>
+
             </div>
         </div>
     </div>
@@ -142,7 +161,7 @@
                                                 </div>
                                                 <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
                                             </div>
-                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             @if (ViewBag.PageStatus == "Public" || ViewBag.IsClientLogin == true)
@@ -235,22 +254,22 @@
                                     </div>
 
                                 </div>
-                                <div>
-                                    <div id="tableID" class="second" style="overflow-x:scroll">
+                                <div class="scrollbar int-table" id="style-2">
+                                    <div id="tableID" class="second">
                                         <table id="irfTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
-                                                        <th>Created On</th>
+                                                        @* <th>Created On</th>
 
-                                                        <th>Client</th>
-                                                        <th>Billing Owner</th>
-                                                        <th>Status</th>
+                                                    <th>Client</th>
+                                                    <th>Billing Owner</th>*@
+
 
                                                     }
-                                                    
+
                                                     <th>Risebird Channel Owner</th>
 
                                                     @if (ViewBag.Type == "ChannelOwner")
@@ -266,12 +285,12 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
-
                                                     <th>Report Pending</th>
-
+                                                    <th>Cold Candidate</th>
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
+                                                    <th>Status</th>
                                                     @if (ViewBag.profile == "Client" || ((ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement") && ViewBag.Type != "ChannelOwner"))
                                                     {
                                                         <th>Action</th>
@@ -283,11 +302,11 @@
                                                     @if (ViewBag.Type != "ChannelOwner")
                                                     {
                                                         <th>Skill Channel</th>
-                                                        <th>Created On</th>
+                                                        @*  <th>Created On</th>
 
-                                                        <th>Client</th>
-                                                        <th>Billing Owner</th>
-                                                        <th>Status</th>
+                                                    <th>Client</th>
+                                                    <th>Billing Owner</th>*@
+
                                                     }
 
                                                     <th>Risebird Channel Owner</th>
@@ -305,12 +324,12 @@
                                                     <th>Completed Interviews</th>
                                                     <th>Selected Interviews</th>
                                                     <th>Rejected Interviews</th>
-
                                                     <th>Report Pending</th>
-
+                                                    <th>Cold Candidate</th>
                                                     <th>Not Scheduled Count</th>
                                                     <th>Rescheduled Count</th>
                                                     <th>Future Scheduled Count</th>
+                                                    <th>Status</th>
                                                     @if (ViewBag.profile == "Client" || ((ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement") && ViewBag.Type != "ChannelOwner"))
                                                     {
                                                         <th>Action</th>
@@ -327,11 +346,11 @@
                                                             @if (ViewBag.Type != "ChannelOwner")
                                                             {
                                                                 <td>@item.IRFId</td>
-                                                                <td>@item.CreatedOn</td>
+                                                                @* <td>@item.CreatedOn</td>
 
-                                                                <td>@item.ClientCompName</td>
-                                                                <td>@item.BillingOwnerEmailId</td>
-                                                                <td>@item.IRFStatus</td>
+                                                    <td>@item.ClientCompName</td>
+                                                    <td>@item.BillingOwnerEmailId</td>*@
+
                                                             }
 
                                                             <td> @item.RisebirdHREmail </td>
@@ -399,7 +418,13 @@
                                                             </td>
 
                                                             <td> @item.PendingCount </td>
-
+                                                            <td>
+                                                                @item.ColdCandidateCount
+                                                                { @if (item.CandidateCount > 0)
+                                                                {
+                                                                    @((item.ColdCandidateCount * 100) / @item.CandidateCount)
+                                                                }% }
+                                                            </td>
                                                             <td>
                                                                 @item.NotScheduledCount
                                                                 { @if (item.CandidateCount > 0)
@@ -421,6 +446,7 @@
                                                                     @((item.FutureScheduledMeetings * 100) / @item.CandidateCount)
                                                                 }% }
                                                             </td>
+                                                            <td>@item.IRFStatus</td>
                                                             @if (ViewBag.profile == "Client")
                                                             {
                                                                 <td>
@@ -449,23 +475,29 @@
 
                                                                         <a href="@Url.Action("ClientHRStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
                                                                             @*<span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})'"></a></svg></span>*@
-                                                                            <span title="Client HR Stats" class="mdc-fab__icon material-icons"><svg fill="#00000" height="16" width="16" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 297 297"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="m110.549,98.768c27.231,0 49.384-22.154 49.384-49.384 0.001-27.231-22.153-49.384-49.384-49.384s-49.384,22.153-49.384,49.384c0,27.231 22.154,49.384 49.384,49.384z"></path> <path d="m226.823,185.307c-30.794,0-55.846,25.053-55.846,55.846 0,30.794 25.053,55.846 55.846,55.846s55.846-25.053 55.846-55.846c0-30.793-25.052-55.846-55.846-55.846zm34.017,44.247l-36.494,36.494c-1.836,1.835-4.241,2.753-6.647,2.753-2.406,0-4.811-0.918-6.647-2.753l-18.247-18.247c-3.671-3.671-3.671-9.623 0-13.294 3.672-3.67 9.622-3.67 13.294,0l11.6,11.601 29.847-29.848c3.672-3.67 9.622-3.67 13.294,0 3.671,3.671 3.671,9.623-5.68434e-14,13.294z"></path> <path d="m206.751,172.72v-8.713c0-18.793-12.077-35.457-29.935-41.307l-.083-.027-26.121-4.325c-2.223-0.684-4.599,0.493-5.398,2.686l-29.638,81.319c-1.71,4.691-8.345,4.691-10.055,0l-29.638-81.319c-0.646-1.771-2.317-2.881-4.108-2.881-0.425,0-27.41,4.514-27.41,4.514-18.005,6-30.035,22.691-30.035,41.565v67.664c0,10.14 8.22,18.36 18.36,18.36h123.405c-0.382-2.984-0.601-6.017-0.601-9.103 0.001-32.361 21.671-59.74 51.257-68.433z"></path> <path d="m121.487,113.395c-1.157-1.26-2.848-1.895-4.558-1.895h-12.759c-1.711,0-3.402,0.634-4.558,1.895-1.791,1.951-2.051,4.769-0.779,6.972l6.82,10.282-3.193,26.934 6.287,16.725c0.613,1.682 2.992,1.682 3.605,0l6.287-16.725-3.193-26.934 6.82-10.282c1.272-2.203 1.012-5.021-0.779-6.972z"></path> </g> </g></svg></span>
+                                                                            <span title="Client HR Stats" class="mdc-fab__icon material-icons"><svg fill="#FFF" height="16" width="16" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 297 297"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="m110.549,98.768c27.231,0 49.384-22.154 49.384-49.384 0.001-27.231-22.153-49.384-49.384-49.384s-49.384,22.153-49.384,49.384c0,27.231 22.154,49.384 49.384,49.384z"></path> <path d="m226.823,185.307c-30.794,0-55.846,25.053-55.846,55.846 0,30.794 25.053,55.846 55.846,55.846s55.846-25.053 55.846-55.846c0-30.793-25.052-55.846-55.846-55.846zm34.017,44.247l-36.494,36.494c-1.836,1.835-4.241,2.753-6.647,2.753-2.406,0-4.811-0.918-6.647-2.753l-18.247-18.247c-3.671-3.671-3.671-9.623 0-13.294 3.672-3.67 9.622-3.67 13.294,0l11.6,11.601 29.847-29.848c3.672-3.67 9.622-3.67 13.294,0 3.671,3.671 3.671,9.623-5.68434e-14,13.294z"></path> <path d="m206.751,172.72v-8.713c0-18.793-12.077-35.457-29.935-41.307l-.083-.027-26.121-4.325c-2.223-0.684-4.599,0.493-5.398,2.686l-29.638,81.319c-1.71,4.691-8.345,4.691-10.055,0l-29.638-81.319c-0.646-1.771-2.317-2.881-4.108-2.881-0.425,0-27.41,4.514-27.41,4.514-18.005,6-30.035,22.691-30.035,41.565v67.664c0,10.14 8.22,18.36 18.36,18.36h123.405c-0.382-2.984-0.601-6.017-0.601-9.103 0.001-32.361 21.671-59.74 51.257-68.433z"></path> <path d="m121.487,113.395c-1.157-1.26-2.848-1.895-4.558-1.895h-12.759c-1.711,0-3.402,0.634-4.558,1.895-1.791,1.951-2.051,4.769-0.779,6.972l6.82,10.282-3.193,26.934 6.287,16.725c0.613,1.682 2.992,1.682 3.605,0l6.287-16.725-3.193-26.934 6.82-10.282c1.272-2.203 1.012-5.021-0.779-6.972z"></path> </g> </g></svg></span>
                                                                         </a>
 
                                                                     </button>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Upload Resume">
-                                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId');" title="Upload Resume" class="mdc-fab__icon material-icons">
-                                                                            <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16"> <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" fill="white"></path> <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" fill="white"></path> </svg>
-                                                                        </span>
-                                                                    </button>
-                                                                    <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                        <span onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                                    </button>
+                                                                    @* <button class="mdc-fab app-fab--absolute" aria-label="Upload Resume">
+                                                        <span onclick="javascript:OpenUploadResumeModal('@item.id', '@item.IRFId');" title="Upload Resume" class="mdc-fab__icon material-icons">
+                                                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16"> <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" fill="white"></path> <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" fill="white"></path> </svg>
+                                                        </span>
+                                                        </button>
+                                                        <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                        <span onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>*@
                                                                 </td>
                                                             }
                                                             else if ((ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SeniorInterviewerManagement") && ViewBag.Type != "ChannelOwner")
                                                             {
                                                                 <td>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Task" style="position: relative;">
+                                                                        <span onclick="javascript:openTask('@item.id', '@item.IRFId');" title="task">
+                                                                            <img width="18" src="~/img/to-do-task.png" style="position:relative;top:-1px;"/>
+                                                                        </span>
+                                                                    </button>
+
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Edit HM Instruction" style="position: relative;">
                                                                         <span onclick="javascript:openHMLink('@item.id');" title="Edit HM Instruction">
                                                                             <svg style="color: white;position: relative;left: 5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16">
@@ -477,8 +509,10 @@
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Share HM Instruction URL">
                                                                         <span onclick="javascript:CopyHMInstructionsLink('@item.id', '@item.IRFId');" title="Share HM Instruction URL">
                                                                             <svg style="color: white;position:relative;left:4px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z" fill="white"></path> </svg>
-                                                                      <svg style="color: white;position: relative; left: -3px;
-    fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 16 16"> <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" fill="white"></path> </svg>
+                                                                            <svg style="color: white;position: relative; left: -3px;
+    fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 16 16">
+                                                                                <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" fill="white"></path>
+                                                                            </svg>
                                                                         </span>
                                                                     </button>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats">
@@ -511,7 +545,7 @@
                                                                     </button>
                                                                     <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                                         <span onclick="javascript:EditIRF('@item.id', '@item.CreatedFromTemplateId');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                                    </button><br/>
+                                                                    </button><br />
                                                                     <button id="skill_21" class="mdc-fab app-fab--absolute" aria-label="Interviewing Members">
                                                                         <span onclick="javascript:getIRFMembers('@item.id', '@item.IRFId');" title="Interviewing Members" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z" /></svg></span>
                                                                     </button>
@@ -535,9 +569,9 @@
                                                                             <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
                                                                         </button>
                                                                     </a>
-                                                                </td>      
+                                                                </td>
                                                             }
-                                                           
+
                                                         </tr>
                                                     }
                                                 }
@@ -668,10 +702,61 @@
     </div>
 </div>
 
+
+
+
+
+
+
+
+<!-- Contents of first window -->
+<div class="task-container">
+    <div id="myTask" class="modal modal-bg">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Tasks</h4>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" id="taskModalClose" style="cursor:pointer;">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" onclick="FetchDataInfo('completion')" class="active"><a role="tab" data-toggle="tab">Completion rate </a></li>
+                        <li role="presentation" onclick="FetchDataInfo('accuracy')"><a role="tab" data-toggle="tab">Accuracy rate</a></li>
+                        <li role="presentation" onclick="FetchDataInfo('speed')"><a role="tab" data-toggle="tab">Speed </a></li>
+                        <li role="presentation" onclick="FetchDataInfo('security')"><a role="tab" data-toggle="tab">Security</a></li>
+                        <li role="presentation" onclick="FetchDataInfo('l2accuracy')"><a role="tab" data-toggle="tab">L2 accuracy</a></li>
+                        <li role="presentation" onclick="FetchDataInfo('expenseManagement')"><a role="tab" data-toggle="tab">Expense Management</a></li>
+                    </ul>
+                    <input type="hidden" id="hidcollectiveIRFid" />
+                    <input type="hidden" id="hidcollectiveIRFName" />
+                    <!-- Tab panes -->
+                    <div id="memberTableBody2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="second-modal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">View Details Task</h4>
+                    <button type="button" class="btn-second-modal-close close"><span aria-hidden="true" id="secondpopupclose">&times;</span></button>
+
+                </div>
+                <div class="modal-body" id="divtaskdetailsview">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @await Html.PartialAsync("~/Views/Common/_HMInstructionURL.cshtml")
 @await Html.PartialAsync("~/Views/Candidate/UploadResumePartial.cshtml")
 
-<script src="~/js/checkintervieweravailabilitybymail.js"></script>
+<script src="~/js/checkintervieweravailabilitybymail.js?v=2024"></script>
 
 <script>
     var closeMember = document.getElementById("interviewerStatsPopUp");
@@ -993,6 +1078,13 @@
     function Changeurldetails(type) {
         window.location.href = "/IRF/SkillChannelDetails?type=" + type;
     }
+    function ChangeChanneldetails(type, emailid, uniqueid, isclient) {
+        if (type == "DayStats") {
+            window.location.href = "/IRF/DateChannelDetails?emailid=" + emailid + "&isClientLogin=" + isclient + "&uniqueid=" + uniqueid;
+        } else {
+            window.location.href = "/IRF/PublicSkillChannelDetails?emailid=" + emailid + "&isClientLogin=" + isclient + "&uniqueid=" + uniqueid;
+        }
+    }
 </script>
 <script>
     function PlayIRF(irfId, irfName) {
@@ -1199,8 +1291,8 @@ else
         var url = '/Candidate/GetCandidates?id=' + id + '&irfName=' + IRFid;
         window.location.href = url;
     };
-    </script>
-    <script>
+</script>
+<script>
 
     function EditIRF(id, templateId) {
         if ('@ViewBag.profile' == 'Client' && templateId != null && templateId > 0) {
@@ -1224,9 +1316,9 @@ else
         }
 
     };
-    </script>
+</script>
 
-    <script>
+<script>
     // var closeMember = document.getElementById("membersPopUp");
     function closeMember() {
         var modal = document.getElementById("interviewerMemberModal");
@@ -1252,7 +1344,48 @@ else
         }
     }
 
-    </script>
-@*<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
-<script src="~/js/filtervalidation.js"></script>
+</script>
+<script>
+    function openTask(irfId, irfName) {
+        // Get the modal
+        var modal = document.getElementById("myTask");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        $("#hidcollectiveIRFid").val(irfId);
+        $("#hidcollectiveIRFName").val(irfId);
+        FetchDataInfo('completion');
+    }
 
+    var closeTaskModel = document.getElementById("taskModalClose");
+    closeTaskModel.onclick = function () {
+        var modal = document.getElementById("myTask");
+        modal.style.display = "none";
+    }
+    function FetchDataInfo(type) {
+        var irfid = $("#hidcollectiveIRFid").val();
+        $.ajax({
+            url: '/Task/SkillChannelCollectiveDetails',
+            data: { 'irfId': irfid, 'type': type },
+            success: function (data) {
+                $('#memberTableBody2').html('');
+                $('#memberTableBody2').html(data);
+            }
+        });
+    }
+</script>
+
+@*<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
+<script src="~/js/filtervalidation.js?v=2024"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+
+<script>
+
+    $(".nav-tabs li.active").next('li').find('a').tab('show');
+
+
+    $(".nav-tabs li.active").prev('li').find('a').tab('show');
+
+
+</script>

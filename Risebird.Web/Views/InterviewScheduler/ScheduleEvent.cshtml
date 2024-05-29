@@ -12,7 +12,9 @@
         font-weight: bold;
         color: red;
     }
-
+    .hid-prevmonth{
+        opacity:0!important;
+    }
     #calenderRecoTimeslot {
         margin-top: 0px;
         height: 320px;
@@ -88,9 +90,6 @@
         height: 52px;
         margin-bottom: 8px;
         color: var(--primary-color, rgb(0, 107, 255));
-        /* border: 1px solid #c0c1c3c2 !important;
-                                font-size: 17px;
-                                /* background: #e5e5e5 !important*/
     }
 
         .button span {
@@ -156,8 +155,8 @@
     }
 </style>
 
-<link href="~/css/Calender.css" rel="stylesheet" />
-<script type="text/javascript" src="//code.jquery.com/jquery-2.1.3.js"></script>
+<link href="~/css/Calender.css?v=2024" rel="stylesheet" />
+<script type="text/javascript" src="//code.jquery.com/jquery-2.1.3.js?v=2024"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.7/js/intlTelInput.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.6/css/intlTelInput.css" rel="stylesheet" />
 <style>
@@ -530,7 +529,7 @@
         </div>
     </div>
 </div>
-<script src="~/js/InterviewCalender.js"></script>
+<script src="~/js/InterviewCalender.js?v=2024"></script>
 <script>
     var rs = 0;
     $(document).ready(function () {
@@ -555,6 +554,13 @@
                 if (relativemonth == comparemonth && relativeyear == compareyear)
                     document.getElementsByClassName("currMonth")[todayDay - 1].setAttribute("style", "background-color:#cae2fb73!important;color:#56a9ff!important;font-weight: bold;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;color:#fff; padding:0px 5px;");
                 //document.getElementById("current-day").setAttribute("style", "background-color:#ffffff!important;font-weight:normal;color:black!important;opacity: 1 !important;border-radius: 50%;width:44px;height:44px;padding:0px 5px;");
+                if ($('#calender td').attr('style') == 'background-color: rgb(27, 25, 205); opacity: 0.6; color: rgba(255, 255, 255, 0.4); cursor: default;'){
+                   $('#calender td').removeAttr('style')
+                    $('#calender td').addClass('hid-prevmonth');
+                    $('.currMonth').removeClass('hid-prevmonth');
+                }
+
+            
             }
         }
     }

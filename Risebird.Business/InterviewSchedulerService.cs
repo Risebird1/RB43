@@ -378,19 +378,21 @@ namespace Risebird.Business
             try
             {
                 var result = await _interviewSchedulerRepository.UpdateReSchedulingInterview(interviewid, newinterviewdate);
-                if(result != null)
+                if (result != null)
                 {
-                    //get candidateId and irfId
-                    var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(interviewid);
-
-                    //add candidate status as cancelled here
-                    if(candidate != null && candidate.CandidateMasterId>0 && candidate.IRFId > 0)
+                    //return message if not cancelled and message is null in case of cancel interview
+                    if (string.IsNullOrWhiteSpace(result.Message))
                     {
-                        await _irfService.AddCandidateStatus("System", candidate.CandidateMasterId, candidate.IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, interviewid);
+                        //get candidateId and irfId
+                        var candidate = await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(interviewid);
+                        //add candidate status as cancelled here
+                        if (candidate != null && candidate.CandidateMasterId > 0 && candidate.IRFId > 0)
+                        {
+                            await _irfService.AddCandidateStatus("System", candidate.CandidateMasterId, candidate.IRFId, "Candidate Cancelled", (int)CandidateStatusOptions.Cancelled, interviewid);
+                        }
                     }
-
                 }
-                return result; 
+                return result;
             }
             catch (Exception ex)
             {
@@ -427,6 +429,18 @@ namespace Risebird.Business
             try
             {
                 return await _interviewSchedulerRepository.SaveCalibrationCallDetail(meetinglink, irfid, meetingdate, Emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> GenerateOneTimeEvent(string olduniqueid, string candidateEmail)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, candidateEmail);
             }
             catch (Exception ex)
             {

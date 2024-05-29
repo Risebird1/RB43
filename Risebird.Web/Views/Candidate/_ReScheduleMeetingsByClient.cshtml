@@ -1,0 +1,562 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@using Risebird.CommonHelper
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = null;
+    ViewData["Title"] = "Reschedule Meetings ";
+}
+<script>
+    var Header = "<div>Reschedule Meetings</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+@if (ViewBag.ClientRole == ClientRoleEnum.RestrictedIRFowner.GetDescription())
+{
+    <div id="reschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of ReScheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Schedule Meeting button to schedule meeting & Call button to Call the Candidate.<br/><a id='toggleHelp' href='javascript:void;' class='btn btn-primary staffclose-btn'>CLOSE</a>" data-position="top">
+        <div class="dataloading">
+            <div class="toolbar">
+                <div id="tableID">
+                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="clearfix"></div>
+                        <div class="col-sm-12 nopad">
+                            <div class="table-responsive int-table">
+                                <div class="notschedulemeeting">
+                                    <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Skill Channel</th>
+                                                <th>Candidate Details</th>
+                                                <th id='start'>Interview Date</th>
+                                                <th>Status</th>
+                                                <th style="border-left: 0px !important;">JD Title</th>
+                                                <th>Resume</th>
+                                                <th>Client HR</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Skill Channel</th>
+                                                <th>Candidate Detail</th>
+                                                <th id='start'>Interview Date</th>
+                                                <th>Status</th>
+                                                <th style="border-left: 0px !important;">JD Title</th>
+
+                                                <th>Resume</th>
+                                                <th class="candidate-hr">Client HR</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr data-changes="1">
+                                                    <td>@item.IRFId</td>
+                                                    <td class="candidate-details">
+                                                        @if (item.candidateName != null && item.candidateName != "")
+                                                        {
+                                                            <div class="mtop-5 name-field">@item.candidateName</div>
+                                                        }
+                                                        <div>
+                                                            <span class="call-area">
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
+                                                                    @* <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber','@item.candidateEmail', null, '@item.IRFId', 'Candidate')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="15" height="15" /></span> *@
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span style=" cursor:pointer; " title="Click here to call the candidate."><img src="/img/calling.png" width="18"></span>@item.MobileNumber</span>
+                                                                
+                                                                }
+                                                            </span>
+                                                            @item.MobileNumber
+
+                                                        </div>
+                                                        @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                        {
+                                                            @if (item.candidateEmail.Length > 10)
+                                                            {
+                                                                <a onclick="" data-tooltip="@item.candidateEmail"><span class="hrname hremail"><i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail</span></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a onclick=""> @item.candidateEmail </a>
+                                                            }
+
+                                                        }
+
+
+                                                    </td>
+
+                                                    <td>@item.dtCreatedOn</td>
+
+                                                    @if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                    {
+                                                        <td>
+                                                            <span class="status mpending">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+                                                    else if (item.MeetingStatusStatusDesc == "Completed")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+                                                    else if (item.confirmationStatus == "2")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mcancel">Cancelled</span>
+                                                        </td>
+                                                    }
+
+                                                    else if (item.MeetingStatusStatusDesc == "Dropped")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+                                                    else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+
+                                                    else if (item.MeetingStatusStatusDesc == "No Show(Interviewer)")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mnoshow-int">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td> <span class="status mdropped">@item.MeetingStatusStatusDesc</span></td>
+
+                                                    }
+
+                                                    <td class="candidate-details">
+                                                        @if (item.JDTiltle != null && item.JDTiltle != "")
+                                                        {
+                                                            <div class="mtop-5">@item.JDTiltle</div>
+                                                        }
+                                                    </td>
+
+                                                    @if (!string.IsNullOrEmpty(item.resumeLink))
+                                                    {
+                                                        <td><a target="_blank" href=@item.resumeLink><img style="position:relative;left:-1px;" src="/img/resume-icon.png" width="21"> Resume</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    <td class="candidate-hr">
+                                                        @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                        {
+                                                            @if (item.ClientHrContact.Length > 13)
+                                                            {
+                                                                <a onclick="" data-tooltip="@item.ClientHrContact"><span class="hrname"> @item.ClientHrContact</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a onclick=""> @item.ClientHrContact </a>
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td class="text-left">
+
+
+                                                        <a target="_blank" class="mdc-fab app-fab--absolute item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.EmailId })" title="Schedule Meeting" style="top: 3px;position: relative;cursor: pointer;">
+                                                            <span title="ReSchedule Meeting" class="mdc-fab__icon material-icons"><i class="fas fa-calendar-alt" aria-hidden="true" style="font-size:16px;"></i></span>
+                                                        </a>
+
+
+                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top" style="cursor: pointer;width:25px!important;height:25px!important;background:#8ac2f0!important;border-color: #8ac2f0"><span class="btn-call" style="top: -7px; position: relative;cursor:pointer" title="Send Invite"><span class="far fa-paper-plane"></span></span></span>
+
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div id="notschedule_table" data-intro="<span style='font-size:16px;'>Overview the summary of ReScheduled Meeting details:</span><hr class='btop' />1. Jd Title<br/> 2. Candidate Details (Name, Email, Skill Channel Id) <br/> 3. Resume <br/>4. Client HR  <br/>5. Click on Schedule Meeting button to schedule meeting & Call button to Call the Candidate.<br/><a href='/CommonPool/Index' class='btn btn-primary ntschnext-btn'>NEXT</a>" data-position="top">
+        <div class="dataloading">
+            <div class="toolbar">
+                <div id="tableID">
+                    <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="clearfix"></div>
+                        <div class="col-sm-12 nopad">
+                            <div class="table-responsive int-table">
+                                <div class="notschedulemeeting">
+                                    <table id="meeting" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Skill Channel</th>
+                                                <th>Candidate Detail</th>
+                                                <th id='start'>Interview Date</th>
+                                                <th>Status</th>
+                                                <th style="border-left: 0px !important;">JD Title</th>
+                                                <th>Resume</th>
+                                                <th>Client HR</th>
+                                                <th>Channel Owner</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Skill Channel</th>
+                                                <th>Candidate Detail</th>
+                                                <th id='start'>Interview Date</th>
+                                                <th>Status</th>
+                                                <th style="border-left: 0px !important;">JD Title</th>
+                                                <th>Resume</th>
+                                                <th class="candidate-hr">Client HR</th>
+                                                <th>Channel Owner</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr data-changes="1">
+                                                    <td>@item.IRFId</td>
+                                                    <td class="candidate-details">
+                                                        @if (item.candidateName != null && item.candidateName != "")
+                                                        {
+                                                            <div class="mtop-5 name-field">@item.candidateName</div>
+                                                        }
+                                                        <div>
+                                                            <span class="call-area">
+                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                                {
+                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="ModalButtonClick('@item.candidateName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span style=" cursor:pointer; " title="Click here to call the candidate."><img src="/img/calling.png" width="17"></span>@item.MobileNumber</span>
+                                                                }
+                                                            </span>
+                                                           
+
+                                                        </div>
+                                                        @if (item.candidateEmail != null && item.candidateEmail != "")
+                                                        {
+                                                            @if (item.candidateEmail.Length > 10)
+                                                            {
+                                                                <a onclick="" data-tooltip="@item.candidateEmail"><span class="hrname hremail"><i class="fa fa-envelope" style="color:#ffa000bd;font-size:15px;position:relative;top:2px;"></i> @item.candidateEmail</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a onclick=""> @item.candidateEmail </a>
+                                                            }
+
+                                                        }
+
+
+                                                    </td>
+                                                    <td>@item.dtCreatedOn</td>
+
+                                                    @if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                    {
+                                                        <td>
+                                                            <span class="status mpending">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+                                                    else if (item.MeetingStatusStatusDesc == "Completed")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+                                                    else if (item.confirmationStatus == "2")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mcancel">Cancelled</span>
+                                                        </td>
+                                                    }
+
+                                                    else if (item.MeetingStatusStatusDesc == "Dropped")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+                                                    else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+
+                                                    else if (item.MeetingStatusStatusDesc == "No Show(Interviewer)")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mnoshow-int">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+                                                    else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
+                                                    {
+
+                                                        <td>
+                                                            <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
+                                                        </td>
+                                                    }
+
+                                                    else
+                                                    {
+                                                        <td> <span class="status">@item.MeetingStatusStatusDesc</span></td>
+
+                                                    }
+
+                                                    <td class="candidate-details">
+                                                        @if (item.JDTiltle != null && item.JDTiltle != "")
+                                                        {
+                                                            <div class="mtop-5">@item.JDTiltle</div>
+                                                        }
+                                                    </td>
+
+                                                    @if (!string.IsNullOrEmpty(item.resumeLink))
+                                                    {
+                                                        <td><a target="_blank" href=@item.resumeLink> <img style="position:relative;left:-1px;" src="/img/resume-icon.png" width="21"> Resume</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    <td class="candidate-hr">
+                                                        @if (item.ClientHrContact != null && item.ClientHrContact != "")
+                                                        {
+                                                            @if (item.ClientHrContact.Length > 13)
+                                                            {
+                                                                <a onclick="" data-tooltip="@item.ClientHrContact"><span class="hrname"> @item.ClientHrContact</span> </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a onclick=""> @item.ClientHrContact </a>
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td>@item.ChannelOwner</td>
+
+                                                    <td class="text-left">
+
+                                                        @if (ViewBag.ClientRole != ClientRoleEnum.RestrictedIRFowner.GetDescription())
+                                                        {
+                                                            <a target="_blank" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.CalendlyLink.Split("=").LastOrDefault(), CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top:1px;position: relative;cursor: pointer;text-decoration:none">
+                                                                <div class="btn btn-candlist shadow btn-xs sharp me-1" style="width:25px!important;height:25px!important;background:#76b39c;border-color:#76b39c">
+                                                                    <span title="ReSchedule Meeting"><i class="fas fa-calendar-alt" style="color:#fff;font-size:11px;position:relative;top:-2px;" aria-hidden="true"></i></span>
+                                                                </div>
+                                                            </a>
+
+                                                        }
+
+                                                        <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.imid,'@item.IRFId','@item.candidateEmail')" data-original-title="Tooltip on top" style="cursor: pointer;width:25px!important;height:25px!important;">
+                                                            <span class="btn btn-candlist shadow btn-xs sharp me-1 " style="cursor: pointer;width:25px!important;height:25px!important;background:#8ac2f0!important;border-color: #8ac2f0" title="Send Invite"><span class="fas fa-send" style="color:#fff;font-size:11px;position:relative;top:-2px;"></span></span>
+                                                        </span>
+                                                        <span>
+                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1 " aria-label="Mark Cold Candidate" style="width:25px!important;height:25px!important;background:#f4c781;border-color:#f4c781;position:relative;">
+                                                                <span onclick="MarkedColdCandidateForClient('@item.CandidateId','@item.IRFId', '@item.candidateEmail','@item.Interviewid','@item.imid','@ViewBag.ClientEmail',2);" title="Mark Cold Candidate" class="mdc-fab__icon touch">
+                                                                    <img src="~/img/approve-blk.png" width="18" style="max-width: 18px!important;position: relative;top: -1.5px;left: -2px;" />
+                                                                </span>
+                                                            </button>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@* @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+@await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
+<script src="~/js/markcoldcandidate.js" asp-append-version="true"></script> *@
+
+<script>
+    function Sendinvite(id, IRFId, CandidateEmail) {
+        $.ajax({
+            url: '/Client/SendInviteForClient',
+            type: 'POST',
+            data: { 'irfId': id, 'IRFName': IRFId, 'emailId': CandidateEmail },
+            success: function (data) {
+                swal.fire(data);
+            }
+        });
+    }
+    function searchResult() {
+        $('#meeting').DataTable();
+    }
+    function RefreshSearch() {
+        $('#meeting').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 2000);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+
+    function applyDataTable() {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            order: [],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            "fnInitComplete": function () {
+
+                $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+                $(".dataTables_filter").keyup(function (e) {
+                    if ($(this).val() != "") {
+                        $("#x").show();
+                    }
+                    else { $("#x").show(); }
+                });
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+        });
+    });
+</script>
+
+
+<script>
+    var start = document.getElementById('start');
+    start.focus();
+
+    function dotheneedful(sibling) {
+        if (sibling != null) {
+            start.focus();
+            start.style.backgroundColor = '';
+            start.style.color = '';
+            sibling.focus();
+            start = sibling;
+        }
+    }
+
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+        e = e || window.event;
+        if (e.keyCode == '38') {
+            // up arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.previousElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '40') {
+            // down arrow
+            var idx = start.cellIndex;
+            var nextrow = start.parentElement.nextElementSibling;
+            if (nextrow != null) {
+                var sibling = nextrow.cells[idx];
+                dotheneedful(sibling);
+            }
+        } else if (e.keyCode == '37') {
+            // left arrow
+            var sibling = start.previousElementSibling;
+            dotheneedful(sibling);
+        } else if (e.keyCode == '39') {
+            // right arrow
+            var sibling = start.nextElementSibling;
+            dotheneedful(sibling);
+        }
+    }
+</script>
+
+<script>
+
+
+
+    $('#meeting tbody').on('click', 'td.detail-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('show');
+        }
+        else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('show');
+        }
+    });
+
+
+</script>
+<script>
+    $(".candidateName").each(function () {
+        if ($(this).text().length > 20) {
+            $(this).text($(this).text().substr(0, 20) + "..")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
+
+
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+
+
+    $(".candidateSkill").each(function () {
+        if ($(this).text().length > 13) {
+            $(this).text($(this).text().substr(0, 13) + "..")
+
+            $('[role="data-tooltip"]').css("visibility", "visible");
+
+        }
+
+
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+    $(".candidateEmail").each(function () {
+        if ($(this).text().length > 22) {
+            $(this).text($(this).text().substr(0, 22) + "..")
+            $('[role="data-tooltip"]').css("visibility", "visible");
+        }
+        else { $('[role="data-tooltip"]').css("visibility", "hidden"); }
+    });
+</script>
+@* <script src="~/js/twiliocallmaker.js?v=2024"></script> *@
+

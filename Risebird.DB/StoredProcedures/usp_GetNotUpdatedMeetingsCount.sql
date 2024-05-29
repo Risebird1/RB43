@@ -66,7 +66,7 @@ where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.
 declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where  confirmationStatus=1 and CandidateResponse=4  
  and interviewdate>=@currentdate and ulsh.Emailid= @Emailid)    
     
-declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Open')    
+declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Open' and Requester in('Interviewer','Client'))    
     
 declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=2 and Cancellationsource like'%Reschedule%' and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))    
@@ -141,10 +141,23 @@ select @UnassignedInterviewsCount as UnassignedInterviewsCount, @UnfilledMeeting
 @DMApproveCount as DMApproveCount,  
 @MissedCandidateCount as MissedCandidateCount,
 @TechQCCount as TechQCCount
-END            
+END   
+ELSE IF(@Role='TechSupport')
+BEGIN 
+set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open' and Requester not in('Interviewer','Client') and RequestType not in('Operation')) 
+select @OpenIssueCount as OpenIssueCount
+END
 ELSE            
-BEGIN      
-    
+BEGIN   
+
+ IF(@Role='Admin')
+BEGIN 
+set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open') 
+END
+Else
+Begin
+set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open' and Requester in('Interviewer','Client')) 
+End
 set @UnassignedInterviewsCount  = (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )    
     
 set @UnfilledMeetingStatusCount = (select Count(im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 )    
@@ -170,7 +183,7 @@ and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate
     
 set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where  confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate)    
     
-set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open')    
+   
     
 set @RescheduleInterviewMeetingCount= (select Count(im.id) from InterviewMeetings im  where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))    
     

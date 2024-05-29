@@ -349,7 +349,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> DeleteClonableSkillChannel(int ClonableSkillChannelId,string ModifyedBy,int action)
+        public async Task<bool> DeleteClonableSkillChannel(int ClonableSkillChannelId, string ModifyedBy, int action)
         {
             try
             {

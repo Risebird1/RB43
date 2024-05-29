@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
@@ -22,10 +21,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Twilio.Rest.Trunking.V1;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -3995,7 +3991,7 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region Interviewer Insights
-        public async Task<IActionResult> InterviewerInsights(string interviewer, string IrfId)
+        public async Task<IActionResult> InterviewerInsights(string interviewer, string IrfId, string type = null)
         {
             var result = await _interviewerService.GetInterviewerInsights(interviewer, IrfId);
             if (result == null)
@@ -4006,7 +4002,15 @@ namespace Risebird.Web.Controllers
             {
                 result.ResumeLink = result.ResumeLink.Replace(" ", "%20");
             }
+            result.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(result.ProfileType)).GetDescription();
+            if (result.ProfileType == "0")
+            {
+                result.ProfileType = "";
+            }
+            if (result.ProfileType?.Length > 1)
+                result.ProfileType = result.ProfileType.Substring(0, 1);
             result.IRFId = IrfId;
+            ViewBag.type = type;
             return PartialView(result);
         }
         public async Task<IActionResult> ReliabilityScoreDetails(string interviewer, string IrfId)
@@ -4014,7 +4018,7 @@ namespace Risebird.Web.Controllers
             var result = await _interviewerService.GetReliabilityScoreDetails(interviewer, IrfId);
             return PartialView(result);
         }
-        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type,string Irfid)
+        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type, string Irfid)
         {
             ViewBag.Type = type;
             var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer, type, Irfid);

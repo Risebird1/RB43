@@ -143,9 +143,9 @@ namespace Risebird.Entities.ViewModel
         public string ChannelOwnerEmail { get; set; }
         public string ChannelOwnerMobile { get; set; }
         public string ClientHRAttemptContactMobile { get; set; }
-        public int CandidateResumeId {get; set;}// id from CandidateResume table
-        public string AddedByEmailId { get; set;}// id from CandidateResume table
-        public string SchedulerUniqueid { get; set;}
+        public int CandidateResumeId { get; set; }// id from CandidateResume table
+        public string AddedByEmailId { get; set; }// id from CandidateResume table
+        public string SchedulerUniqueid { get; set; }
         public int InterviewId { get; set; }
         public int MailCount { get; set; }
         public int CallsCount { get; set; }
@@ -154,5 +154,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsResumeRedactFailed { get; set; }
         public string CodedResumeLink { get; set; }
         public bool IsColdCandidate { get; set; }
+        public bool HasEmailDroppedOrBounced { get; set; }
+        public string CurrentInterviewStatus { get; set; }
+
     }
 }

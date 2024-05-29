@@ -15,7 +15,10 @@
     display: inline-block;
   
 }
-
+a {
+    color: #337ab7;
+    text-decoration:underline!important;
+}
 .reportdropdown-content {
     display: none;
     position: absolute;
@@ -107,6 +110,24 @@
     width:50px;
     display:block;
 }
+.communication-count {
+    width: 60px;
+    font-size: 17px;
+    float: left;
+    position: relative;
+    top: -1px;
+    right: -20px;
+    font-weight: bold;
+    color:#000;
+}
+.score-input {
+    background: none;
+    border: 0px;
+    width: 25px;
+    outline:none;
+    font-weight: 600;
+    text-align: center;
+}
 .skill-round-xlarge {
     border-radius: 3px;
     height:13px;
@@ -136,9 +157,10 @@
 }
 
 #reportForm h3 {
-    font-size: 1.3rem;
+    font-size: 18px;
+    font-weight: 600;
     border-bottom: 1px #ccccccad dotted;
-    padding: 10px 10px 5px 10px;
+    padding: 0px 0px 5px 0px;
 }
 
 #reportForm h4 {
@@ -146,7 +168,14 @@
 }
 
 #reportForm h2 {
-    font-size: 1.35rem;
+    /*  font-size: 1.35rem;*/
+    font-size: 21px!important;
+}
+#reportForm h1, #reportForm h2, #reportForm h3, #reportForm h4, #reportForm h5, #reportForm h6 {
+    margin-top: 0 !important;
+    margin-bottom: .5rem !important;
+    font-weight: 500;
+    line-height: 1.2 !important;
 }
 
 #reportForm .question ul li {
@@ -155,8 +184,8 @@
     list-style: none;
     background-image: url(../../img/tick-mark-icon.svg);
     background-repeat: no-repeat;
-    background-position: 0px 0px;
-    background-size: 2%;
+    background-position: 3px 7px;
+    background-size: 3%;
 }
 
 #reportForm .question label {
@@ -179,9 +208,11 @@
 }
 
 .interview-status {
-    position: absolute;
-    top: -38px;
-    font-size: 1.2rem!important;
+    /*    position: absolute;
+    top: -34px;*/
+    font-size: 19px;
+    text-align: center;
+    line-height: 30px;
 }
     .interview-status span {
         font-size: 15px;
@@ -189,9 +220,10 @@
     }
 
     #reportForm video {
-        padding: 10px;
+       /* padding: 10px;*/
         width: 100%;
-        height: 300px;
+        height:285px;
+       /* height: 300px;*/
         background: #000;
     }
 
@@ -240,8 +272,10 @@
     }
 
 .note-skill {
-    margin: 30px 0px;
+    margin: 0px 0px;
     color: #454547b0;
+    display:inline-block;
+    text-align:left;
 }
 
 .int-heading {
@@ -281,9 +315,11 @@
     }
 
     .interview-status {
-        position: absolute;
-        top: -50px!important;
+        /*position: absolute;
+        top: -50px!important;*/
         font-size: 16px !important;
+        text-align:center;
+        line-height:30px;
     }
 }
 @media screen and (max-width: 640px) {
@@ -301,8 +337,5 @@
     }
 }
     @media screen and (max-width: 360px) {
-        .interview-status {
-            position: absolute;
-            top: -18px !important;
-        }
+       
     }

@@ -1,3 +1,4 @@
+using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using Risebird.Entities.Data.AffIndaModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
@@ -25,10 +26,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Twilio.Rest.Trunking.V1;
 using X.PagedList;
-using static iTextSharp.text.pdf.AcroFields;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 namespace Risebird.Web.Controllers
 {
@@ -387,13 +385,18 @@ namespace Risebird.Web.Controllers
                 {
                     modelList = modelList.Where(x => x.RedoInterview == true).ToList();
                 }
+                else if (type == "CancelInterviews")
+                {
+                    ViewBag.Type = "CancelInterviews";
+                    modelList = modelList.Where(x => x.RedoInterview == false && x.confirmationStatus.Trim() == ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
+                }
                 else if (type == "Interviews")
                 {
-                    modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                    modelList = modelList.Where(x => string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                 }
                 else
                 {
-                    modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false).ToList();
+                    modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                 }
                 Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
@@ -3027,6 +3030,11 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
+                if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
+                {
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
+                }
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -3226,6 +3234,8 @@ namespace Risebird.Web.Controllers
                             //    System.IO.File.Delete(outputFileName);
                             //}
                         }
+                        model.InterviewerComment = System.Web.HttpUtility.HtmlEncode(model.InterviewerComment);
+
                         if (await _meetingService.AddInterviewReport(model, emailid))
                         {
                             await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);
@@ -3243,7 +3253,7 @@ namespace Risebird.Web.Controllers
                                 //    TO = maillist,
                                 //    Subject = "Insta Report URL of " + model.CandidateName + " - " + model.PrimarySkill
                                 //};
-                                if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus)
+                                if ((model.InterviewStatus == 2 || model.InterviewStatus == 4) && model.OldInterviewStatus != model.InterviewStatus && model.ClientId != 177)
                                 {
                                     await _notificationHelper.SendNotificationToClientForSelectedCandidate(model.CandidateEmail, model.CandidateName, clientlist, model.interviewDate, model.IRFName, model.JDTiltle, ((InterviewStatus)model.InterviewStatus).GetDescription(), model.InterviewId);
                                 }
@@ -3253,13 +3263,13 @@ namespace Risebird.Web.Controllers
                                 Mail _mail = new Mail
                                 {
                                     TO = model.CandidateEmail,
-                                    Subject = "Risebird: Feedback form"
+                                    Subject = "Risebird: Interview Feedback"
                                 };
                                 var emailsend = await _notificationHelper.SurveyNotification(_mail, currenturl);
                                 WhatsAppVM _whatsAppVM = new WhatsAppVM();
                                 _whatsAppVM.Emailid = model.CandidateEmail;
                                 _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
-                                _whatsAppVM.Event = "Feedback Remainder";
+                                _whatsAppVM.Event = "Risebird: Interview Feedback";
                                 await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
@@ -3515,6 +3525,22 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetL2ClientFeedback(int interviewid)
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var result = await _meetingService.GetInterviewMeetingById(interviewid);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("");
             }
         }
 
@@ -4159,7 +4185,14 @@ namespace Risebird.Web.Controllers
                             {
                                 interviewers.Add(result.EmailId);
                             }
-                            await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), null, id);
+                            if (irfOwnersAndRestrictedIrfOwner != null && irfOwnersAndRestrictedIrfOwner.FirstOrDefault().Contains("turing.com"))
+                            {
+                                await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), null, null, id);
+                            }
+                            else
+                            {
+                                await _notificationHelper.SendInterviewCancelledMail(interviewers, result.interviewDate.ToString(), irfOwnersAndRestrictedIrfOwner?.ToList(), null, id);
+                            }
                             //TempData["SuccessErrorMessage"] = "Interview cancelled successfully";
                             return Json(new { url = Url.Action("CandidateInterviews", "Interview") });
                         }
@@ -5497,7 +5530,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                bool isInterviewer = false;
+                //bool isInterviewer = false;
                 ViewBag.IRFID = irfId;
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 if (model != null)
@@ -5512,22 +5545,28 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.IsClient = isClient;
                     ViewBag.IsClientSelected = isClientSelected;
-                    model.IsInterviewer = isInterviewer;
-                    model.PreviousMeetingStatus = model.MeetingStatus;
-                    model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                    //model.IsInterviewer = isInterviewer;
+                    //model.PreviousMeetingStatus = model.MeetingStatus;
+                    //model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
                     await GetStatusList(model, irfId, 0);
-                    var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
-                    var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
-                    if (menus != null)
-                    {
-                        menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
-                        HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
-                    }
+                    //var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
+                    //var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
+                    //if (menus != null)
+                    //{
+                    //    menus = menus.Where(x => x.functionName != "Support" && x.functionName != "Common Pool" && x.functionName != "Risetube").ToList();
+                    //    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                    //}
                     ViewBag.PageStatus = "PublicExternal";
-                    ViewBag.PageReport = "";
+                    //ViewBag.PageReport = "";
+                    ViewBag.PageReport = "PublicExternal";
                     if (model.IsProctor)
                     {
                         return View("ProctorReport", model);
+                    }
+                    else if (isClient)
+                    {
+                        return View("ClientReport", model);
                     }
                     else
                     {
@@ -5583,7 +5622,10 @@ namespace Risebird.Web.Controllers
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 await GetStatusList(model, irfId, 0);
+
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 var menuData = await _userService.GetMenuBasedOnUserEmailld("ExternalUser");
                 var menus = menuData.GroupBy(p => p.functionName).Select(g => g.First()).ToList();
@@ -5841,15 +5883,14 @@ namespace Risebird.Web.Controllers
                         var emailresult1 = await _notificationHelper.SendInterviewCancelledMailClient(result.interviewDate.ToString(), result.CandidateName, irfOwnersAndRestrictedIrfOwner?.ToList(), Irfid, meetingid);
                         //var emailresult2 = await _notificationHelper.SendInterviewCancelledMailCandidateWithSchedulingLink(result.candidateEmail, result.interviewDate.ToString(), result.CandidateName, result.CalendlyLink, Irfid, meetingid);
                         DeleteMeetingLink(result.ZoomMeetingId);
-                        if (status == 3 && candidateId == 0)
-                        {
-                            string stepfirst = result.CalendlyLink.Split("?").LastOrDefault();
-                            var olduniqueid = stepfirst.Split("=").LastOrDefault();
-                            var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
-                            oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
-                            //return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink });
-                            return Json(oneTimeSchedulingLink);
-                        }
+                        //if (status == 3 && candidateId == 0)
+                        //{
+                        //    string stepfirst = result.CalendlyLink.Split("?").LastOrDefault();
+                        //    var olduniqueid = stepfirst.Split("=").LastOrDefault();
+                        //    var oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, result.candidateEmail).Result;
+                        //    oneTimeSchedulingLink = result.CalendlyLink.Split("?").FirstOrDefault() + "?id=" + oneTimeSchedulingLink;
+                        //    return Json(oneTimeSchedulingLink);
+                        //}
                         return Json("Successfully status updated, " + value);
                     }
 
@@ -5863,6 +5904,10 @@ namespace Risebird.Web.Controllers
                 {
                     return Json("Status update failed. Please try again!");
                 }
+            }
+            else if (status == 3)
+            {
+                return Json("Uable to process your request at this moment, kindly reach out to your respective HR.");
             }
             else if (status == 3)
             {
@@ -7137,6 +7182,8 @@ namespace Risebird.Web.Controllers
                 return "Fail";
             }
         }
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> SecureReport(int interviewId, int irfId, string uniqueid, string emailid)
         {
@@ -7426,12 +7473,16 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.Userid = _iRFService.GetUserId(email, profileName);
+              
+
                 if (model.Userid != 0)
                 {
                     await GetStatusList(model, irfId, model.Userid);
@@ -7563,6 +7614,8 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -7701,6 +7754,8 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -7715,6 +7770,7 @@ namespace Risebird.Web.Controllers
                     model.Userid = _iRFService.GetUserId(email, profileName);
 
                 }
+
                 await GetStatusList(model, irfId, model.Userid);
                 //if (model.Userid != 0)
                 //{
@@ -7740,26 +7796,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<JsonResult> GenerateRescheuleLink(string CandidateEmailid, string uniqueid, int interviewid, int pageReturnType)
-        {
-            if (!string.IsNullOrEmpty(uniqueid))
-            {
-                var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, CandidateEmailid);
-                if (pageReturnType == 1)
-                {
-                    var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&interviewid=" + interviewid + "&type=" + 314999;
-                    return Json(SchedulingLink);
-                }
-                else
-                {
-                    var SchedulingLink = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink + "&returnvaluetype=" + 2 + "&interviewid=" + interviewid + "&type=" + 314915;
-                    return Json(SchedulingLink);
-                }
-            }
-            return Json("");
-        }
-
         [HttpGet]
         public async Task<IActionResult> CandidateRescheduleMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId)
         {
@@ -7767,7 +7803,8 @@ namespace Risebird.Web.Controllers
             {
                 var result = await _candidateService.FetchChannelOwnerandInterviewer(meetingid);
                 var oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(uniqueid, result.candidateEmail);
-                return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1 });
+                //return RedirectToAction("ScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1 });
+                return RedirectToAction("CandidateScheduleEvent", "InterviewScheduler", new { id = oneTimeSchedulingLink, interviewid = meetingid, type = 314915, returnvaluetype = 1, CandidateEmail = result.candidateEmail });
             }
             else
             {
@@ -7981,6 +8018,10 @@ namespace Risebird.Web.Controllers
                     else if (model.Pagetype == "QCPendingReport")
                     {
                         return RedirectToAction("UnassignedInterviews", "DashBoard", new { actionstatus = RibbonActionType.QCPendingReport });
+                    }
+                    else if (model.Pagetype == "MYQC")
+                    {
+                        return RedirectToAction("MyQualityControlledInterviews", "Interview");
                     }
                     else
                     {
@@ -8214,10 +8255,11 @@ namespace Risebird.Web.Controllers
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
+            comment = System.Web.HttpUtility.HtmlEncode(comment);
             var result = await _meetingService.UpdateInterviewReport(interviewid, comment, email);
             if (result)
             {
-                return Json("Successfully updated.");
+                return Json("Comment successfully updated.");
             }
             else
             {
@@ -8498,14 +8540,14 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                 
-                        var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
-                        if (result)
-                        {
-                            return Json("Assigned Successfully.");
-                        }
-                        else { return Json("Sorry! Could not assign."); }
-                  
+
+                    var result = await _meetingService.AssignYourSelfForMyQCInterviws(emailid, id);
+                    if (result)
+                    {
+                        return Json("Assigned Successfully.");
+                    }
+                    else { return Json("Sorry! Could not assign."); }
+
                 }
                 else
                 {
@@ -8534,10 +8576,10 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var meetings = await _meetingService.GetMyQCInterviews(emailid);
                         // meetings = meetings.Select(x => { x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        if (TempData["SuccessErrorMessage"] != null)
+                        if (TempData["SuccessErrorMessageInterview"] != null)
                         {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
                         }
                         return View(meetings);
                     }

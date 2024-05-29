@@ -1,17 +1,13 @@
+using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using RestSharp;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using RestSharp;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
-using Risebird.Entities.Enum;
-using Risebird.Repository.Interface;
-using Twilio.Jwt.AccessToken;
 
 namespace Risebird.MicroService
 {
@@ -22,7 +18,7 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
         private readonly IZoomHelper _zoomHelper;
-        
+
 
         public DeleteZoomMeetings(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, IZoomHelper zoomHelper)
         {
@@ -33,7 +29,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("DeleteZoomMeetings")]
-        public async Task Run([TimerTrigger("0 0 */3 * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 */3 * * *")] TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"DeleteZoomMeetings : C# Timer trigger function started executing at: {DateTime.Now}");
 

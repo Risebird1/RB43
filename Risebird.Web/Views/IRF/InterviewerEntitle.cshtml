@@ -10,9 +10,9 @@
 }
 @using X.PagedList.Mvc.Core;
 
-<link href="~/Newassets/css/select2.css" defer rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/irf.css?v=8" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=7" />
+<link href="~/Newassets/css/select2.css?v=2024" defer rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/irf.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 <div class="main-panel" id="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -90,6 +90,10 @@
                                                    <span  onclick="EditAssessment(@item.id)" title="Edit"><span class="fas fa-edit" style="left:2px;top:1px;position: relative;font-size:13px;"></span></span>
                                                   </button>
 
+                                                        <a href="javascript:void(0);" id="mpopupLink">
+                                                            <button class="btn btn-upload shadow btn-xs sharp me-1" aria-label="Add Interviewers" style="width:25px!important;height:25px!important;position:relative; background: #5dbaec!important; border: 1px #5dbaec!important;">
+                                                            <span  title="Add Interviewers"><span class="fa fa-user-plus" style="left:0px;top:1px;position: relative;font-size:13px;"></span></span>
+                                                         </button></a>
 
                                                  <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewers List" style="width:25px!important;height:25px!important;position:relative; background: #7e97bab3!important; border: 1px #7e97bab3!important;">
                                                    <span onclick="javascript:getIRFMembers('@item.id');" title="Interviewers List"><span class="fas fa-user" style="left:-2px;top:1px;position: relative;font-size:12px;"></span><span class="fas fa-list" style="left:-1px;top:-2px;position: relative;font-size: 7px;"></span></span>
@@ -131,12 +135,23 @@
                                                         </svg>
                                                     </span>
                                                 </button>
-                                                    <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { agId = item.id, agName = item.AssessmentGroup})" title="Interviewer Mail Activity">
+                                                <a style="text-decoration:none" target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { agId = item.id, agName = item.AssessmentGroup})" title="Interviewer Mail Activity">
                                                         <button class="btn shadow btn-xs sharp me-1" aria-label="Interviewer Mail Activity For Availability" style="background:#f0b24973!important;border: 1px #f0b24973!important;width:25px!important;height:25px!important;position:relative;">
                                                             <span title="Interviewer Mail Activity For Availability" class="mdc-fab__icon material-icons"><svg style="position:relative;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 512 512"><title>Interviewer Mail Activity</title><rect x="48" y="96" width="416" height="320" rx="40" ry="40" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></rect><polyline points="112 160 256 272 400 160" style="fill:none;stroke:#fff;stroke-linecap:round;stroke-linejoin:round;stroke-width:32px"></polyline></svg></span>
                                                         </button>
                                                 </a>
-                                                @* @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR")
+
+                                                @if ((ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin") && item.IsMasterAG.HasValue && item.IsMasterAG.Value == true)
+                                                {
+                                                    <button class="btn shadow btn-xs sharp me-1" aria-label="Edit MAG" style="background:#76adcd73!important;border: 1px #76adcd73!important;width:25px!important;height:25px!important;position:relative;">
+                                                                <span onclick="location.href='@Url.Action("EditMAG", "IRF", new { assessmentGroupId = item.id, assessmentGroupName = item.AssessmentGroup, isAlreadyMasterAG = item.IsMasterAG})'" title="Edit MAG" style="text-decoration:none" >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+                                                                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z" />
+                                                            </svg>
+                                                        </span>
+                                                    </button>
+                                                }
+                                                        @* @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR" || ViewBag.ProfileName == "SeniorHR")
                                                 {
                                                     <a target="_blank" href="@Url.Action("GetInterviewerMailActivityForAvailability", "Mail" , new { agId = item.id, agName = item.AssessmentGroup})" title="Client Interview Report">
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Mail Activity For Availability" style="position:relative;top:3px;">
@@ -346,7 +361,48 @@
         </div>
     </div>
 </div>
+<div id="InterviewerModal" class="modal modal-bg">
 
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="publicsharing-icon  fas fa-user-friends" style="font-size:24px;"></span>
+                </div>
+                <h5 class="modal-title pull-left">Interviewer Details</h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" onclick="closeInterviewerModal()" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body">
+
+                <div class="col-md-12">
+                    <label style="padding:20px 0px 15px 15px" class="label-field desp-label col-md-3 text-left pull-left" for="Please Enter Your Email">Name:</label>
+                    <div class="col-md-9 pull-left" style="margin:15px 0px">
+                        <input type="text" class="form-control" value="" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label style="padding:10px 0px 15px 15px" class="label-field desp-label col-md-3 text-left pull-left" for="Please Enter Your Email">Email Id:</label>
+                    <div class="col-md-9 pull-left" style="margin:0px 0px 15px 0px">
+                        <input type="text" class="form-control" value="" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label style="padding:10px 0px 15px 15px" class="label-field desp-label col-md-3 text-left pull-left" for="Please Enter Your Email">Phone no:</label>
+                    <div class="col-md-9 pull-left" style="margin:0px 0px 15px 0px">
+                        <input type="number" class="form-control" value="" />
+                    </div>
+                </div>
+                <div class="mt-10 text-right">
+
+                    <input type="button" onclick="Submit()" id="btnSubmit" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" value="Submit">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="modal_SME_placeholder"></div>
 
 <script src="~/js/ModalFormServerValidation.js"></script>
@@ -412,9 +468,17 @@
         }
         return false;
     }
+    //function AddInterviewer() {
+    //    debugger;
+    //    alert('tezt')
+    //    var modal = document.getElementById("InterviewerModal");
+    //    modal.style.display = "show";
+    //}
+  
+
 </script>
-<script src="~/js/checkintervieweravailabilitybymail.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script src="~/js/checkintervieweravailabilitybymail.js?v=2024"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v=2024" defer></script>
 <script type="text/javascript">
     jQuery(document).ready(function () {
         jQuery("#select").select2({ multiple: true });
@@ -614,4 +678,22 @@
         $('.action-btn').toggle("fast");
         $('.the-arrow.-right').toggleClass("newarrow");
     }
+    function closeInterviewerModal() {
+        var modal = document.getElementById("InterviewerModal");
+        modal.style.display = "none";
+    }
+</script>
+<script>
+    var mpopup = document.getElementById('InterviewerModal');
+
+    // Select trigger link
+    var mpLink = document.getElementById("mpopupLink");
+
+    // Select close action element
+    var close = document.getElementsByClassName("close")[0];
+
+    // Open modal once the link is clicked
+    mpLink.onclick = function () {
+        mpopup.style.display = "block";
+    };
 </script>

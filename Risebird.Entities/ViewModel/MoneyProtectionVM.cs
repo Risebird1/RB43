@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -24,6 +20,6 @@ namespace Risebird.Entities.ViewModel
         public int PerInterviewRate { get; set; }
         public int Interviewid { get; set; }
         public int PaymentComplianceCount { get; set; }
-        public string ClientHrContact{ get; set; }
+        public string ClientHrContact { get; set; }
     }
 }

@@ -357,9 +357,15 @@ namespace Risebird.Entities.ViewModel
         public bool IsColdCandidate {  get; set; }
         public string ColdMarkedBY { get; set;}
         public DateTime? ColdMarkedDate { get; set;}
-        public DateTime? RescheduleDate { get; set;}
-       
+        public int TotalCandidate { get; set; }
 
+        public DateTime? RescheduleDate { get; set;}
+        public int CommunicationalProficiency { get; set; }
+        public int TotalCompletedInterview { get; set; }
+        public bool IsPaused {  get; set; }
+        public bool IsQC {  get; set; }
+        public string CodeSnippet {  get; set; }
+        public string LatestComment {  get; set; }
     }
 
     public class VedioComments

@@ -80,7 +80,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransRecruiter> GetTransRecruiter(int id);
         IEnumerable<InterviewVM> GetUpComingInterviewList();
         IEnumerable<IRFVm> GetUpComingIRFList();
-        Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId);
+        Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId, string emailid);
         IEnumerable<TransClientUser> GetTransClientUserRole(int id);
         IEnumerable<MeetingVM> GetIRFInterviewMeetingsCountData(int id);
         //bool AddPausedMeetings(int irfId, int meetingId);
@@ -225,7 +225,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
         Task<bool> ApproveDM(int id, string emailid);
         Task<bool> UpdateAffindaIndexFlag(string irfId, bool isIndexCreated);
-        Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG = false);
+        Task<IEnumerable<AssignmentVM>> GetSimilarAssessmentGroups(string searchValue, bool isAlreadyMasterAG = false, bool? forEditMAG = null);
         Task<IEnumerable<IRFVm>> GetSkillChannelsForAssessmentGroups(List<int> assessmentGroups);
         bool CreateCampaign(AGCampaignModel model, string loggedInUser, out int campaignId);
         bool AddSkillChannelsForCampaign(AGCampaignModel model, string loggedInUser);
@@ -238,6 +238,13 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates();
         Task<Candidate> GetCandidateIdAndIrfIdByMeetingId(int interviewId);
         Task<IEnumerable<CallibrationCallVM>> GetCalibrationCallDetails(int irfid);
-        Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid);
+        Task<IEnumerable<CallibrationCallVM>> GetAllCalibrationMeetingsById(string emailid, string type);
+        Task<IEnumerable<SecondaryAssessmentGroups>> GetMAGSecondaryAssessmentGroupsById(int assessmentGroupId);
+        Task<bool> EditMAG(AGCampaignModel model, string loggedInUser);
+        Task<bool> UpdateConsentFile(int irfid, string uploadedFileURL);
+        Task<string> GetConsentFile(int irfid);
+        Task<IEnumerable<IRF>> GetDayStatsByClientUser(DateTime startDate, DateTime endDate, string emailid);
+        Task<string> GetCodeSnippetFile(int interviewid);
+        Task<bool> UpdateCodeSnippetFile(int interviewid, string uploadedFileURL, List<SkillComment> model);
     }
 }

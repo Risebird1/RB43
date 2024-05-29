@@ -1,22 +1,16 @@
-﻿using System;
+﻿using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Risebird.Business.Interface;
-using Risebird.CommonHelper;
-using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
-using Risebird.Entities.Data.AffIndaModels;
-using Risebird.Entities.Enum;
-using Risebird.Entities.ViewModel;
-using Risebird.Repository.Interface;
 
 namespace Risebird.MicroService
 {
@@ -30,7 +24,7 @@ namespace Risebird.MicroService
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
 
-        
+
         public RedactResumes(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
             IInterviewerRepository interviewerRepository,
             ISASUrlHelper sasUrlHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper)
@@ -70,7 +64,7 @@ namespace Risebird.MicroService
                             string uploadedCodedResumeLink = string.Empty;
                             using (Stream myStream = myWebClient.GetStreamAsync(redactedResumeLink).Result)
                             {
-                                var fileName = !string.IsNullOrEmpty(item.FirstName) ? item.FirstName.Replace(" ", "_"): string.Empty;
+                                var fileName = !string.IsNullOrEmpty(item.FirstName) ? item.FirstName.Replace(" ", "_") : string.Empty;
                                 long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                                 fileName = fileName + "_redacted" + "_" + unixTime.ToString();
                                 try
@@ -105,7 +99,7 @@ namespace Risebird.MicroService
                         }
                         else//parsing was tried, but failed due to some reason, in that case, we wont parse the resume again
                         {
-                            interviewerList.Add(new InterviewerProfileVM { id = item.id, IsResumeRedactAttempted = true, IsResumeRedactFailed = true});
+                            interviewerList.Add(new InterviewerProfileVM { id = item.id, IsResumeRedactAttempted = true, IsResumeRedactFailed = true });
                         }
                     }
                     catch (Exception ex)

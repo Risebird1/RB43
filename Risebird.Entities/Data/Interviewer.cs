@@ -23,6 +23,7 @@ namespace Risebird.Entities.Data
         public string AssessmentGroupId { get; set; }
         public bool IsLeadInterviewer { get; set; }
         public string NickName { get; set; }
+        public string CompanyName { get; set; }
     }
     public class InterviewerDetails
     {

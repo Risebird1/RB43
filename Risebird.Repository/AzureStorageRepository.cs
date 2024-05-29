@@ -1,20 +1,19 @@
 ﻿
 using Dapper;
 using Microsoft.Extensions.Configuration;
-using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
-using System;
-using System.Data.SqlClient;
-using System.Data;
-using System.Threading.Tasks;
 using Risebird.Repository.Interface;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 
 namespace Risebird.Repository
 {
-    public class AzureStorageRepository: IAzureStorageRepository
+    public class AzureStorageRepository : IAzureStorageRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
@@ -37,13 +36,13 @@ namespace Risebird.Repository
                     foreach (var container in model.BlobContainers)
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@Container",container.Name);
+                        parameters.Add("@Container", container.Name);
                         parameters.Add("@MemorySpace", container.Size);
                         //parameters.Add("@Price", container.Price);
                         parameters.Add("@CreatedAt", DateTime.Now);
                         await SqlMapper.QueryAsync(con, "usp_SaveAzureStoreDetails", parameters,
                                 commandType: CommandType.StoredProcedure);
-                       
+
                     }
                     return true;
                 }

@@ -360,6 +360,13 @@ namespace Risebird.Entities.ViewModel
         public bool IRFInterviewerActive { get; set; }
         public List<ZoomVideoQOSVM> QOSData { get; set; }
         public int ClientId { get; set; }
+
+        [Display(Name = "Rate Candidate's Communication Skills(out of 10)")]
+        [Required(ErrorMessage = "This field is required.")]
+        public int CommunicationalProficiency { get; set; }
+        public string CodeSnippet { get; set; }
+        public bool IsQCDone { get; set; }
+        public int SkillSetsevaluate { get; set; }
     }
     public class RBInterviewDetails
     {
@@ -414,6 +421,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsPaused { get; set; }
         public bool ShowInterviewInstructions { get; set; }
         public bool IsDrive { get; set; }
+        public bool DMApproved { get; set; }
+        public bool CalibrationMeetingdone { get; set; }
     }
     public class RBInterviewerPayoutDetails
     {

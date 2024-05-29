@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 //using Microsoft.Azure.Management.Media;
 //using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +8,6 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using Risebird.CommonHelper.Interface;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -401,7 +399,7 @@ namespace Risebird.CommonHelper
 
         }
 
-        public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFileStream = null, Stream transcriptStream  = null, string contentType = null)
+        public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFileStream = null, Stream transcriptStream = null, string contentType = null)
         {
             CloudBlockBlob blob;
             blob = GetCloudBlockBlobClient(containerName, filename);
@@ -412,7 +410,7 @@ namespace Risebird.CommonHelper
             }
             else if (blobFileStream != null)
             {
-                if(!string.IsNullOrEmpty(contentType))
+                if (!string.IsNullOrEmpty(contentType))
                 {
                     blob.Properties.ContentType = contentType;
 
@@ -425,7 +423,7 @@ namespace Risebird.CommonHelper
                 await blob.UploadFromStreamAsync(blobFileStream);
 
             }
-            else if(transcriptStream != null)
+            else if (transcriptStream != null)
             {
                 blob.Properties.ContentType = "text/plain";
                 await blob.UploadFromStreamAsync(transcriptStream);

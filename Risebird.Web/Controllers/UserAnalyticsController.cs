@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
-using Risebird.Repository.Interface;
 using System;
 using System.Threading.Tasks;
 
@@ -12,7 +9,7 @@ namespace Risebird.Web.Controllers
 {
     public class UserAnalyticsController : Controller
     {
-        
+
         private readonly ITrackPublicUrlAccessor _trackPublicUrlAccessor;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 

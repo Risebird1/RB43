@@ -27,7 +27,7 @@ namespace Risebird.Business.Interface
         Task<string> FetchCandidateResumeById(int id);
         Task<string> FetchBillingownerById(int id);
         Task<InterviewUsersDetails> FetchChannelOwnerByInterviewid(int interviewid);
-        Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int interviewId, int communicationMedium);
+        Task<IEnumerable<CandidateCommunicationDetailsVM>> GetCandidateCommunicationDetails(int communicationMedium, int? interviewId = null, int? irfId = null, string emailId = null);
         Task<CandidateIRFDetailsVM> GetIRFDetailsForCandidate(string emailId, int irfId);
         Task<int> GetuniqueCandidateByEmailId(string emailId, string id);
         Task<string> GetCandidateUniqueId(string emailId);
@@ -36,5 +36,6 @@ namespace Risebird.Business.Interface
         Task<bool> SaveCandidateCodedResume(Candidate model);
         Task<List<MeetingVM>> GetColdCandidatesListByClient(string Email);
         Task<List<CandidateResume>> GetNotProcessedResumeByClient(string Email);
+        Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId);
     }
 }

@@ -39,7 +39,7 @@ BEGIN
 	declare @Enumerator table (id int)
 	insert into @Enumerator    
 	select id from TechSkillComments     
-	where irfId = @irfId and UserId = @initialInterviewer
+	where irfId = @irfId and UserId = @initialInterviewerUserId
 
 	while exists (select 1 from @Enumerator)    
 	begin    
