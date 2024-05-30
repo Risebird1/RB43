@@ -367,6 +367,12 @@ namespace Risebird.Entities.ViewModel
         public string CodeSnippet { get; set; }
         public bool IsQCDone { get; set; }
         public int SkillSetsevaluate { get; set; }
+        public int? InterviewStatusTwo { get; set; }
+        public int? MeetingStatusTwo { get; set; }
+        [Display(Name = "Interviewer Comment")]
+        public string InterviewerCommentTwo { get; set; }
+        public IList<QuestionsDiscussed> QuestionsCollectionTwo { get; set; }
+        public IList<TechSkillReport> TechSkillReportCollectionTwo { get; set; }
     }
     public class RBInterviewDetails
     {
