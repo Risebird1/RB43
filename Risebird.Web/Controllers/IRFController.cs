@@ -8773,8 +8773,12 @@ namespace Risebird.Web.Controllers
                         var allAGs = (await _irfService.GetSimilarAssessmentGroups(assessmentGroupName.Trim(), isAlreadyMasterAG));//call db and search for assessmentGroups that carry a similar name.         /// the functionality of this function was later changed to get both similar and dissimilar assessment groups, differentiated from each other by a flag
 
                         model.AssessmentGroups = (IList<AssignmentVM>)(allAGs.Where(x => x.isDirectlyTargeted).ToList());
-                        model.AssessmentGroups.Where(x => x.AssessmentGroup == assessmentGroupName).FirstOrDefault().IsSelectedForCampaign = true;
+                        var asg = model.AssessmentGroups.Where(x => x.AssessmentGroup == assessmentGroupName)?.FirstOrDefault();
+                        if(asg != null)
+                        {
+                            model.AssessmentGroups.Where(x => x == asg).FirstOrDefault().IsSelectedForCampaign = true;
 
+                        }
                         model.RemainingAssessmentGroups = allAGs.Where(x => !x.isDirectlyTargeted);
 
                         model.SerializedRemainingAGList = JsonConvert.SerializeObject(model.RemainingAssessmentGroups);
