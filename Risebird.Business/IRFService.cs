@@ -759,12 +759,13 @@ namespace Risebird.Business
                 {
                     foreach (var oldSkill in model.OldSkillCollection)
                     {
-                        if (!model.SkillCollection.Select(s => s.SkillId).Any(x => x == oldSkill.SkillId))
+                        if (!model.SkillCollection.Select(s => s.SkillId).Any(x => x == oldSkill.SkillId && x == oldSkill.SkillSet))
                         {
                             removedTechSkills.Add(new RemovedTechSkillsFromIRF
                             {
                                 IRFId = model.id,
-                                SkillId = oldSkill.SkillId
+                                SkillId = oldSkill.SkillId,
+                                SkillSet = oldSkill.SkillSet
                             });
                         }
                     }
@@ -3896,7 +3897,7 @@ namespace Risebird.Business
         {
             try
             {
-                return await _irfRepository.GetAllCalibrationMeetingsById(emailid,type);
+                return await _irfRepository.GetAllCalibrationMeetingsById(emailid, type);
             }
             catch (Exception e)
             {
