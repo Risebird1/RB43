@@ -14,7 +14,7 @@ GO
     
 CREATE PROCEDURE [dbo].[usp_TechSkillBulkInsert]    
 (    
-      @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY    
+      @TechSkillBulkData AS [dbo].[TransTechSkill2_TableType] READONLY    
 )    
 AS    
 BEGIN    
@@ -26,7 +26,7 @@ INSERT INTO [dbo].[TransTechSkill](
  [IRFId] ,    
  [LevelId],    
  [SkillId],    
- [Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill])    
+ [Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet])    
     
 SELECT * FROM @TechSkillBulkData    
     

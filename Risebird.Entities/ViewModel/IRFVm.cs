@@ -16,6 +16,7 @@ namespace Risebird.Entities.ViewModel
             EmergencyInterviewerCollection = new List<TransEmergencyInterviewer>();
             QualityController = new List<TransQualityController>();
             SkillCollection = new List<TransSkill>();
+            SkillTwoCollection = new List<TransSkill>();
         }
         public int id { get; set; }
 
@@ -93,6 +94,7 @@ namespace Risebird.Entities.ViewModel
 
         public SelectList JobLevelList { get; set; }
         public IList<TransSkill> SkillCollection { get; set; }
+        public IList<TransSkill> SkillTwoCollection { get; set; }
         public IList<TransSkillGeneral> SkillGeneral { get; set; }
         public IList<TransJoinability> Joinability { get; set; }
         public IList<TransSelectability> Selectability { get; set; }
@@ -248,6 +250,9 @@ namespace Risebird.Entities.ViewModel
         public int? urlCreationTimeElapsed { get; set; }
         public bool IsSelectedForCampaign { get; set; }
         public string RisebirdHREmail { get; set; }
+        [DisplayName("SkillSet Evaluation Numbers")]
+        [Required]
+        public int SkillSetsevaluate { get; set; }
     }
     public class InterviewerIds
     {

@@ -4,5 +4,6 @@
     {
         public int IRFId { get; set; }
         public int SkillId { get; set; }
+        public int SkillSet { get; set; }
     }
 }

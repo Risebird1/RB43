@@ -13,6 +13,7 @@
         public string Natureofquestion { get; set; }
         public int Timelimit { get; set; }
         public bool isEliminationskill { get; set; }
+        public int SkillSet { get; set; }
     }
     public class TransSkillGeneral
     {

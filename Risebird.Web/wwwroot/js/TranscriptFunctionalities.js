@@ -18,7 +18,7 @@ function GetMeetingAudioText(imid, transcriptUrl = null) {
                     if (data.keywordsFound != null && data.keywordsFound != '') {
                        
                     }
-                    var innerText = '<div class="clearfix"><label class="matchtxt" style="color:#1ca396;padding:0px;font-size:17px;float:left">Suspicious Keywords Match Found:</label><span id="key" class="matcnum" style="foat:left"><h1  style="color:red;display:none;">' + data.keywordsFound + '</h1><div id=keycontainer></div></span></div><br>  <div class="matchdiv"><div style="overflow-y:scroll;white-space:break-spaces;font-size:14px;" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
+                    var innerText = '<div class="clearfix"><label class="matchtxt" style="color:#1ca396;padding:0px;font-size:17px;float:left">Suspicious Keywords Match Found:</label><span id="key" class="matcnum" style="float:left"><h1  style="color:red;display:none;">' + data.keywordsFound + '</h1><div id=keycontainer></div></span></div><div class="matchdiv"><div style="overflow-y:scroll;white-space:break-spaces;font-size:14px;" class="scroller" id="style-2">' + data.convertedText + '</div></div>'
                     totalHighlightedWords = data.total;
                     transcriptElement.innerHTML = innerText;
                     const h1 = document.querySelector('h1');

@@ -1250,6 +1250,7 @@ namespace Risebird.Business
                 reportModel.CommunicationalProficiency = interviewDetails.CommunicationalProficiency;
                 reportModel.IsQCDone = interviewDetails.IsQC;
                 reportModel.CodeSnippet = interviewDetails.CodeSnippet;
+                reportModel.SkillSetsevaluate = irfDetails.SkillSetsevaluate;
                 return reportModel;
             }
             catch (Exception e)
