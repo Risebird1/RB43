@@ -9039,8 +9039,8 @@ option {
     border: 0px !important;
 }
 .strict-note {
-    color: red;
-    font-size:13px;
+    color: #c94319;
+    font-size: 13px;
     margin: 10px 0px;
     text-transform: none;
     display: inline;
@@ -10097,10 +10097,16 @@ option {
     width: 32.2%;
     float: left;
 }
-.addreport .int-form-group-half {
+.addreport .int-form-group-status {
     position: relative;
     margin: 0px 5px 0px 5px;
-    width: 48.5%;
+    width: 29.2%;
+    float: left
+}
+.addreport .int-form-group-comment{
+    position: relative;
+    margin: 0px;
+    width: 69.5%;
     float: left
 }
     .addreport .int-form-group input {
@@ -10114,14 +10120,14 @@ option {
         transition: border-color 0.3s ease;
     }
 
-    .addreport .int-form-group label {
-        position: absolute;
-        left: 12px;
-        top: 12px;
-        font-size: 14px;
-        color: #777;
-        transition: top 0.3s ease, font-size 0.3s ease, color 0.3s ease;
-    }
+.addreport .int-form-group label, .addreport .int-form-group-status label, .addreport .int-form-group-comment label {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    font-size: 12px !important;
+    color: #777;
+    transition: top 0.3s ease, font-size 0.3s ease, color 0.3s ease;
+}
 
     .addreport .int-form-group input:focus {
         border-color: #007bff;
@@ -10130,14 +10136,16 @@ option {
     }
 
         .addreport .int-form-group input:focus + label,
-        .addreport .int-form-group input:not(:placeholder-shown) + label {
-            top: -6px;
-            font-size: 12px;
+        .addreport .int-form-group input:not(:placeholder-shown) + label, .placeholder-label, .addreport .int-form-group-status input:focus + label,
+        .addreport .int-form-group-status input:not(:placeholder-shown) + label, .addreport .int-form-group-comment input:focus + label,
+        .addreport .int-form-group-comment input:not(:placeholder-shown) + label {
+            top: -6px !important;
+            font-size: 12px !important;
             color: #7c8085;
             background-color: #ffffff;
-            padding: 0 4px;
+            padding: 0 4px !important;
             border-radius: 4px;
-            left: 8px;
+            left: 8px !important;
         }
 .addreport .custom-select-dropdown select {
     width: 175px;
@@ -10154,6 +10162,42 @@ option {
 .addreport .report-tooltiptext {
     bottom: -60px;
     left: 80px;
+}
+.addreport .select-css {
+    line-height: 25px;
+    padding: 10px;
+    font-weight: 500 !important;
+    height: 44px;
+    color: #888;
+    border: 1.5px solid #ccc !important;
+    box-shadow: none !important;
+    border-radius: 4px;
+    font-size:13px;
+
+}
+.addreport .int-form-group-comment .note-editor .note-toolbar {
+    margin: 0;
+    padding: 10px 0 10px 5px;
+}
+.addreport table{
+    box-shadow:none!important;
+}
+    .addreport table thead {
+        background: #9c999942;
+    }
+        .addreport table thead th {
+            font-size: 14px !important;
+            color: #777;
+            font-weight: 600 !important;
+        }
+
+.addreport #QuestionsTable [readonly] {
+    color: #888 !important;
+    font-size: 13px;
+    border: 1.5px #ccc solid !important;
+}
+.addreport #QuestionsTable [readonly]:hover {
+    cursor: not-allowed;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {

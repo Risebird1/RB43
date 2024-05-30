@@ -262,7 +262,7 @@
               <div class="int-form-group">
                 @Html.TextBoxFor(m => m.JDTiltle, new { @readonly = "readonly",@placeholder="" })
 
-              @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "" })
+              @Html.LabelFor(model => model.JDTiltle)
 
             </div>
 
@@ -323,38 +323,37 @@
                                                         <label for="checkbox_two">
                                                             <i class="fa fa-user" aria-hidden="true"></i>
                                                             REPORT DETAILS 
-                                                             <div class="report-tooltip" style="border:0px;margin-right:10px;">
+                                                             <span class="report-tooltip" style="border:0px;margin-right:10px;">
                                                         <svg style="color:#888;position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16"> <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="#ccc"></path> </svg>
-                                                        <div class="report-tooltiptext">
+                                                        <span class="report-tooltiptext">
                                                             <p style="font-weight:bold;line-height:20px;">For candidate assessment, consider the following soft-thresholding approach:</p>
 
                                                             <p><span style="text-transform:none;position: static;font-weight: bold;color: #17b826;">Strongly Selected:</span> Candidates whose score exceeds 85%.</p>
                                                              <p><span style="text-transform:none;position: static;font-weight: bold;color: #2ceb3e;">Marginal Selected:</span> Candidates whose score falls within 70-85%.</p>
                                                             <p><span style="text-transform:none;position: static;font-weight: bold;color: #f48562;">Marginal Rejected:</span> Candidates whose score falls within 60-70%.</p>
                                                             <p><span style="text-transform:none;position: static;font-weight: bold;color: #ec5425;">Strongly Rejected:</span> Candidates whose score falls below 60%.</p>
-                                                        </div>
-                                                    </div>  
-                                                    <div class="strict-note"> Do not select average candidates, unless explicitly informed to you. Also, make sure the interview status you mark for the candidate aligns with your comments and overall rating. Customer may apply a penalty ranging from 10-100% in case of discrepancy.</div>
+                                                        </span>
+                                                    </span>  
+                                                    <span class="strict-note"> Do not select average candidates, unless explicitly informed to you. Also, make sure the interview status you mark for the candidate aligns with your comments and overall rating. Customer may apply a penalty ranging from 10-100% in case of discrepancy.</span>
 
                                                         </label>
 
                                                     </label>
                                                     <fieldset class="answer">
-                                                    <div class="int-form-group-half">
+                                                    
                                                     @if (ViewBag.PageStatus != "PublicExternal") {
-                                            <div>
-                                                <div>
+                                           <div class="int-form-group-status">
                                                     <div class="form-group">
                                                         @Html.HiddenFor(m => m.PreviousMeetingStatus)
-                                                        @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                        @if (ViewBag.profile != "Interviewer")
-                                                        {
-                                                            <span> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })</span>
+                                                        @Html.LabelFor(model => model.MeetingStatusList)
+                                                        @if (ViewBag.profile != "Interviewer"){
+                                                     
+                                                            <span> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled",@placeholder="", @onchange = "MeetingStatusChanged(this.value)" })</span>
                                                         }
 
                                                         else
                                                         {
-                                                            <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })</span>
+                                                              <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled",@placeholder="", @onchange = "MeetingStatusChanged(this.value)" })</span>
 
                                                         }
                                                         @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
@@ -363,35 +362,26 @@
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <label class="text-danger" id="meetingStatus_Error" style="color: red;margin-left: 12px;font-size: 12px"></label>
                                                     </div>
-                                                </div>
+                                            
 
-                                            </div>
-
-                                            <div>
-
-                                                <div>
+                                            
                                                     <div class="form-group">
-                                                        @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                       @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "placeholder-label" })
 
-                                                        @*@Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })*@
-                                                        @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                        @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled",@placeholder="" })
                                                         @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                                     </div>
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:12px; font-size:12px"></label>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12 col-sm-12 pull-left">
+                                             </div>
+                                            <div class="int-form-group-comment">
                                                 <div class="InterviewerComent">
                                                     <div class="p15">
-                                                        <div class="form-group" style="margin-bottom:0px;margin-top:10px">
-                                                            <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })</strong>
-                                                            <div class="strict-note">
-                                                                Strictly avoid in Comments - grammatical errors, generic comments,
-                                                                short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.
-                                                                otherwise, Customer may apply penalty from 10-100%
-                                                            </div>
+                                                        <div class="form-group" style="margin-bottom:0px;">
+                                                           
+                                                             <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "placeholder-label",@style="z-index:1000" })</strong>
+
                                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                 <div class="talktext">
                                                                     @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
@@ -401,9 +391,13 @@
                                                             </div>
 
                                                         </div>
-                                                        <div class="form-group" style="margin-bottom:0px;">
+                                                                    <div class="form-group" style="margin:-15px  0px 25px 0px;">
                                                             <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:12px; font-size:12px"></label>
                                                         </div>
+                                                         <div class="strict-note" style="display:inline-table;color: red;line-height:18px;margin-top:5px!important;">
+                                                        Strictly avoid in Comments - grammatical errors, generic comments,
+                                                        short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.otherwise, Customer may apply penalty from 10-100%
+ </div>
 
                                                     </div>
                                                 </div>
@@ -411,37 +405,36 @@
                                         }
                                         else
                                         {
-                                            <div class="row">
-                                                <div class="col-md-6 col-sm-6 border-rv">
+                                            <div class="int-form-group-status">
+                                              
                                                     <div class="form-group">
                                                         @Html.HiddenFor(m => m.PreviousMeetingStatus)
-                                                        @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                        @Html.LabelFor(model => model.MeetingStatusList)
 
-                                                        @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled", @onchange = "MeetingStatusChanged(this.value)" })
+                                                        @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled",@placeholder="", @onchange = "MeetingStatusChanged(this.value)" })
                                                         @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                                     </div>
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <label class="text-danger" id="meetingStatus_Error" style="color: red;margin-left: 12px;font-size: 12px"></label>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
+                                               
+                                              
                                                     <div class="form-group">
-                                                        @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                        @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "placeholder-label" })
 
                                                         @*@Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })*@
-                                                        @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
+                                                        @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled",@placeholder="" })
                                                         @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                                     </div>
                                                     <div class="form-group" style="margin-bottom:0px;">
                                                         <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:12px; font-size:12px"></label>
                                                     </div>
-                                                </div>
+                                               
                                             </div>
-                                            <div class="col-md-12 col-sm-12 pull-left">
-                                                <div>
-                                                    <div>
+                                            <div class="int-form-group-comment">
+                                               
                                                         <div class="form-group" style="margin-bottom:0px;">
-                                                            @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "textarealabel col-md-12 col-sm-12 " })
+                                                            @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "placeholder-label",@style="z-index:1000" })
                                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                 <div class="talktext">
                                                                     @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters" })
@@ -450,19 +443,129 @@
                                                             </div>
 
                                                         </div>
-                                                        <div class="form-group" style="margin-bottom:0px;">
+                                                        <div class="form-group" style="margin:-15px  0px 25px 0px;">
                                                             <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:-12px; font-size:12px"></label>
                                                         </div>
 
-                                                    </div>
-                                                </div>
+                                                  
                                             </div>
                                         }
-                                                </div>
+                                               
                                                  </fieldset>
 
                                                 </div>
                                          <!--report end--->
+                                         <!--question start--->
+                                         <div class="card" style="margin-bottom:10px;">
+
+                                                    <label class="question" for="checkbox_two">
+                                                        <label for="checkbox_two">
+                                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                                            QUESTIONS DISCUSSED
+                                                        <span class="strict-note">&nbsp;&nbsp;Strictly Avoid Irrelevant, Theoretical/Abstract ques - What is this/that and same questions to all candidates. Do follow the standard of the Mandatory questions, if provided by the clients. Else, Customer may apply penalty from 10-100%</span>
+                                                        </label>
+                                                       
+                                                    </label>
+                                                    <fieldset class="answer" >
+                                                    <div class="table-responsive-sm interviewreport">
+                                                <table class="table table-bordered mbn" id="QuestionsTable" style="border-top: 1px #f8f7f7 solid !important;border-bottom:1px #f8f7f7 solid !important;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="50%">Questions</th>
+                                                            <th width="20%">SkillName</th>
+                                                            <th width="10%">Rating</th>
+                                                            @* <th width="10%">Time(In Seconds)</th>*@
+                                                            <th width="10%" class="action text-center">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
+                                                        {
+                                                            <tr style="background:#fff">
+                                                                <td>
+                                                                    @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
+                                                                    {
+                                                                        <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank"><input type="text" class="select-css form-control text-box single-line" /></a>
+                                                                    }
+                                                                    else
+                                                                    {
+
+                                                                        @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                    }
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBox("QuestionsCollection[0].SkillName", null, new {  @readonly = "readonly" })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+
+                                                                </td>
+
+                                                               @* <td>
+                                                                    <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="60" max="5000">
+                                                                </td>*@
+
+                                                                <td class="action text-center">
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                            {
+                                                                <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
+                                                                    <td>
+
+                                                                        @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
+                                                                        {
+                                                                            @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            var newList = new List<SelectListItem>();
+                                                                            newList.Add(new SelectListItem() { Value = Model.QuestionsCollection[i].Comment, Text = Model.QuestionsCollection[i].Comment });
+                                                                            @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
+
+                                                                        }
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+                                                                    </td>
+
+                                                                  @*  <td>
+
+                                                                        @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
+
+                                                                    </td>*@
+
+                                                                    <td class="action text-center ">
+                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <label class="text-danger" id="QuestionsCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                            <label class="text-danger" id="QuestionsCollection_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                 </fieldset>
+
+                                                </div>
+                                         <!--question end-->
+
+
     </div>
     </div>
     </div>
@@ -686,7 +789,6 @@
                                                     <div class="form-group">
                                                         @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                        @*@Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })*@
                                                         @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css form-control webkitEnabled" })
                                                         @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                                     </div>
@@ -1832,7 +1934,7 @@
         var meetingStatus = document.getElementById('MeetingStatus').value;
         if (meetingStatus == null || meetingStatus == '') {
             document.getElementById('InterviewerComment').disabled = true;
-            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
+            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status  to add comments here.";
 
             //interview status check
             //document.getElementById("InterviewStatus").value = '';
@@ -2334,7 +2436,7 @@
 
             document.getElementById('InterviewerComment').value = '';
             document.getElementById('InterviewerComment').disabled = true;
-            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status above to add comments here.";
+            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status to add comments here.";
 
         }
         if (value != 2) {
