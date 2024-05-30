@@ -27,6 +27,7 @@ namespace Risebird.MicroService
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly IIRFService _irfService;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly IValidationHelper _validationHelper;
 
         //private readonly string ContainerName;
         //private readonly string SASConnectionString;
@@ -34,7 +35,7 @@ namespace Risebird.MicroService
         public ResumeParserJob(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
             IMeetingRespository meetingRespository, ICandidateRepository candidateRepository,
             ISASUrlHelper sasUrlHelper, IIRFService irfService,
-            IAffIndaResumeParserHelper affIndaResumeParserHelper)
+            IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -45,6 +46,7 @@ namespace Risebird.MicroService
             _candidateRepository = candidateRepository;
             _irfService = irfService;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
+            _validationHelper = validationHelper;
             //ContainerName = _configuration["SASURLSettings:ContainerName"];
             //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
 
@@ -104,6 +106,12 @@ namespace Risebird.MicroService
                                 {
                                     candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
                                     //candidate.EmailId.Replace(":%20", "").Replace("-%20", "");
+                                }
+                                if(_validationHelper.ValidateEmailAddress(candidate.EmailId))
+                                {
+                                    //mark it as cant be processed in the database
+                                    candidateResumeList.Add(new CandidateResume { id = resume.id, IsResumeParsed = true, IsProcessed = false, IsResumeParsingFailed = false, IsEmailMissing = false });
+                                    continue;
                                 }
 
                             }
