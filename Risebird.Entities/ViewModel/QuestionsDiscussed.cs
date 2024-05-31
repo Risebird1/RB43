@@ -11,7 +11,7 @@
         public string QuestionStatus { get; set; }
         public string VideoLink { get; set; }
         public int Priority { get; set; }
-
+        public int SkillSet { get; set; }
 
     }
 }

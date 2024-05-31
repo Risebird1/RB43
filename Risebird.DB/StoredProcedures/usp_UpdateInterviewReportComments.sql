@@ -22,7 +22,10 @@ CREATE PROCEDURE [dbo].[usp_UpdateInterviewReportComments](
   @VideoDuration int = null,
   @PerformedBy varchar(100),
   @PerformedAt datetime,
-  @CommunicationalProficiency int)  
+  @CommunicationalProficiency int,
+  @InterviewStatusTwo int,
+  @MeetingStatusTwo int,
+  @InterviewerCommentTwo varchar(max))  
 AS    
 Begin Try    
   BEGIN TRAN UpdateUser     
@@ -108,12 +111,24 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
        )  
   
      END  
-  
-       
-          
-    END    
-  
-    
+  END    
+  Declare @SkillSetsevalute int 
+  Select @SkillSetsevalute=SkillSetsevaluate From IRF join InterviewMeetings im on im.IRFId=IRF.IRFId where im.id=@interviewId
+  if(@SkillSetsevalute>1)
+  begin
+  IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId) 
+  begin
+  Update InterviewCommentsExtension set interviewStatus = @InterviewStatusTwo ,    
+        interviewerComment =  ISNULL(@InterviewerCommentTwo,@InterviewerCommentTwo),    
+        MeetingStatus = @MeetingStatusTwo
+		WHERE interviewId = @InterviewId
+  end
+  else
+  begin
+  Insert into InterviewCommentsExtension (Interviewid,InterviewStatus,MeetingStatus,InterviewerComment) 
+  values(@InterviewId,@InterviewStatusTwo,@MeetingStatusTwo,@InterviewerCommentTwo)
+  end
+  end  
   END  
        
  Commit TRAN UpdateUser;    

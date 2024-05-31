@@ -2645,9 +2645,13 @@
         function checkSkillsetsActive(){
             if ($("#SkillSetsevaluate").val() == 1){
                 document.getElementById("secondSkillSets").style.display = "none";
-            }else{
-                document.getElementById("secondSkillSets").style.display = "block";
+                document.getElementById("Heuristicsscore").value = '';
             }
+            else{
+                document.getElementById("secondSkillSets").style.display = "block";
+                document.getElementById("Heuristicsscore").value = '6';
+            }
+
         }
         function BindSkillsAndRateAndResume(id, data, rateElementId = null, rate = null, resumeLink = null) {
             var num = id.match(/(\d+)/);
