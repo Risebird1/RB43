@@ -994,10 +994,10 @@
                                                                         @if (Model.InterviewerCommentTwo.Length > 440)
                                                                         {
                                                                             <div class="article">
-                                                                                <p id="int-cmnt" style="margin-bottom:0px;">
+                                                                                <p id="int-cmntTwo" style="margin-bottom:0px;">
                                                                                     @Model.InterviewerCommentTwo.Substring(0, 440)
                                                                                 </p>
-                                                                                <p id="read-int-cmnt" class="moretext_1001 moretext">
+                                                                                <p id="read-int-cmntTwo" class="moretext_1001 moretext">
                                                                                     @Model.InterviewerCommentTwo.Substring(440, @Model.InterviewerCommentTwo.Length - 440)
                                                                                 </p>
                                                                             </div> <a onclick="moreless(1001)" class="moreless-btn" value="Readmore" id="read_1001" href="#">Read more</a>
@@ -1005,10 +1005,10 @@
                                                                         else
                                                                         {
                                                                             <div class="article">
-                                                                                <p id="int-cmnt">
+                                                                                <p id="int-cmntTwo">
                                                                                     @Model.InterviewerCommentTwo.Substring(0, @Model.InterviewerCommentTwo.Length)
                                                                                 </p>
-                                                                                <p id="read-int-cmnt"></p>
+                                                                                <p id="read-int-cmntTwo"></p>
                                                                             </div>
                                                                         }
                                                                     }
@@ -1347,6 +1347,8 @@
         $(document).ready(function () {
         document.getElementById("int-cmnt").innerHTML = $('#int-cmnt').text();
         document.getElementById("read-int-cmnt").innerHTML = $('#read-int-cmnt').text();
+        document.getElementById("int-cmntTwo").innerHTML = $('#int-cmntTwo').text();
+        document.getElementById("read-int-cmntTwo").innerHTML = $('#read-int-cmntTwo').text();
         })
 </script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
