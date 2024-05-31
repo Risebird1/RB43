@@ -10089,7 +10089,11 @@ option {
     height: 43px;
     width: 200px;
     margin: 0px auto;
+    font-size:13px;
     border: 1px solid rgb(194, 57, 57);
+}
+.addreport .nextbtn{
+    width:350px;
 }
 .addreport .int-form-group {
     position: relative;
@@ -10185,19 +10189,64 @@ option {
     .addreport table thead {
         background: #9c999942;
     }
-        .addreport table thead th {
-            font-size: 14px !important;
-            color: #777;
-            font-weight: 600 !important;
-        }
+#reportForm .addreport #QuestionsTable.table-bordered th, #reportForm .addreport #SkillTable.table-bordered th, #reportForm .addreport #QuestionsTableTwo.table-bordered th, #reportForm .addreport #SkillTableTwo.table-bordered th {
+    font-size: 13px !important;
+    color: #777;
+    font-weight: 600 !important;
+}
 
-.addreport #QuestionsTable [readonly] {
+.addreport #QuestionsTable [readonly], .addreport #SkillTable [readonly], .addreport #QuestionsTableTwo [readonly], .addreport #SkillTableTwo [readonly] {
     color: #888 !important;
     font-size: 13px;
+    font-weight: normal !important;
     border: 1.5px #ccc solid !important;
 }
-.addreport #QuestionsTable [readonly]:hover {
-    cursor: not-allowed;
+    .addreport #QuestionsTable [readonly]:hover, .addreport #SkillTable [readonly]:hover {
+        cursor: not-allowed;
+    }
+.addreport .techinfocontainer .tooltipquestion{
+    margin-left:5px;
+}
+.addreport .techinfocontainer .tooltipquestion:hover .tooltiptext {
+    top: -87px !important;
+    left: -50px !important;
+}
+#reportForm .addreport .question label {
+    margin: 4px 10px;
+}
+.addreport .wrap-padding {
+    padding: 0px 0px 0px 10px;
+}
+.addreport .wrap-nopadding {
+    padding: 0px;
+}
+.addreport .videoConplayer {
+    margin-bottom: 0px!important;
+    padding: 10px 10px 0px 10px;
+    box-shadow: none !important;
+    height: 325px;
+}
+.addreport #startRecButton, .addreport #stopRecButton, .addreport #cancelRecButton {
+    width: 65px!important;
+    background-size: 35px!important;
+    height: 40px!important;
+    margin-top:5px;
+
+}
+.addreport .audio-wrapper{
+    width:280px;
+    display:block;
+}
+
+.addreport .audio-file {
+    width: 100% !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+.addreport #playUploadedAudioTwo .table > thead > tr > th {
+    padding: 5px 4px;
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
@@ -11658,6 +11707,16 @@ option {
                 width: 100%;
                 float: left;
             }
+            .addreport .wrap-padding {
+                padding: 0px 0px 0px 0px!important;
+            }
+
+            .addreport .wrap-nopadding {
+                padding: 0px!important;
+            }
+            .addreport .nextbtn {
+                width: 100%;
+            }
             #InterviewerInsightsModel .modal-lg {
                 width:97%!important;
             }
@@ -12116,9 +12175,7 @@ option {
                 padding: 0px !important;
             }
 
-            .mobpad {
-                padding: 0px !important;
-            }
+            
 
             .navbar {
                 padding-top: 0;
