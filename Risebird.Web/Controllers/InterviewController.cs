@@ -7473,7 +7473,7 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
-                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
 
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
@@ -7481,7 +7481,7 @@ namespace Risebird.Web.Controllers
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.Userid = _iRFService.GetUserId(email, profileName);
-              
+
 
                 if (model.Userid != 0)
                 {
@@ -7603,6 +7603,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                await ReportSkillSetandSeperate(model);
                 if (model == null)
                 {
                     if (isAdminHR)
@@ -8637,6 +8638,14 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        public async Task ReportSkillSetandSeperate(InterviewReport model)
+        {
+            model.QuestionsCollectionTwo = model.QuestionsCollection.Where(x => x.SkillSet == 2).ToList();
+            model.QuestionsCollection = model.QuestionsCollection.Where(x => x.SkillSet != 2).ToList();
+            model.TechSkillTwoReportCollection = model.TechSkillReportCollection.Where(x => x.SkillSet == 2).ToList();
+            model.TechSkillReportCollection = model.TechSkillReportCollection.Where(x => x.SkillSet != 2).ToList();
         }
     }
 }

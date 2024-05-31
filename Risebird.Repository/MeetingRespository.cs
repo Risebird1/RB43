@@ -1614,7 +1614,7 @@ namespace Risebird.Repository
             try
             {
                 // var query = "Select * from QuestionsDiscussed where InterviewId = @id";
-                var query = "Select  qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority from QuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment and vc.Interviewid =@id where qd.Interviewid= @id";
+                var query = "Select  qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority,qd.SkillSet from QuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment and vc.Interviewid =@id where qd.Interviewid= @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
