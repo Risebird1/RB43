@@ -8639,7 +8639,35 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-
+        public async Task ReportSkillSetandCombine(InterviewReport model)
+        {
+            //Questions discussed 
+            foreach (var item in model.QuestionsCollection)
+            {
+                item.SkillSet = 1;
+            }
+            if (model.SkillSetsevaluate > 1)
+            {
+                foreach (var item in model.QuestionsCollectionTwo)
+                {
+                    item.SkillSet = 2;
+                    model.QuestionsCollection.Add(item);
+                }
+            }
+            //Tech Skills
+            foreach (var item in model.TechSkillReportCollection)
+            {
+                item.SkillSet = 1;
+            }
+            if (model.SkillSetsevaluate > 1)
+            {
+                foreach (var item in model.TechSkillTwoReportCollection)
+                {
+                    item.SkillSet = 2;
+                    model.TechSkillReportCollection.Add(item);
+                }
+            }
+        }
         public async Task ReportSkillSetandSeperate(InterviewReport model)
         {
             model.QuestionsCollectionTwo = model.QuestionsCollection.Where(x => x.SkillSet == 2).ToList();
