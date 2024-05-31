@@ -580,7 +580,7 @@ namespace Risebird.Web.Controllers
                             var intComment = GetContent(document);
                             Sheet.Cells[i, 22].Value = intComment;
                         }
-                       
+
                         Sheet.Cells[i, 23].Value = item.staffingAgency;
                         Sheet.Cells[i, 24].Value = item.interviewDuration;
                         Sheet.Cells[i, 25].Value = item.joiningTime;
@@ -3028,6 +3028,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                await ReportSkillSetandSeperate(model);
                 if (model == null)
                 {
                     if (isAdminHR)
@@ -3244,7 +3245,7 @@ namespace Risebird.Web.Controllers
                             //}
                         }
                         model.InterviewerComment = System.Web.HttpUtility.HtmlEncode(model.InterviewerComment);
-
+                        await ReportSkillSetandCombine(model);
                         if (await _meetingService.AddInterviewReport(model, emailid))
                         {
                             await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);

@@ -56,32 +56,32 @@
         </div>
     </div>
     @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-        <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_eight">
-                <label class="consent-label" for="checkbox_eight">
-                    <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Job Consent Acknowledgement<label class="consent-note" style="text-transform:none!important">Please share the job consent to candidate during the interview and ask the candidate to go through the job consent and get it acknowledged through the video - "I am interested in this job role and I am acknowledging to continue this hiring process for turing.com</label>
-                </label>
-                <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
-                    <label style="visibility:hidden" for="checkbox_eight"></label>
+    <div class="card" style="margin-bottom:10px;">
+    <label class="question" for="checkbox_eight">
+    <label class="consent-label" for="checkbox_eight">
+    <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Job Consent Acknowledgement<label class="consent-note" style="text-transform:none!important">Please share the job consent to candidate during the interview and ask the candidate to go through the job consent and get it acknowledged through the video - "I am interested in this job role and I am acknowledging to continue this hiring process for turing.com</label>
+    </label>
+    <span class="round">
+    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
+    <label style="visibility:hidden" for="checkbox_eight"></label>
 
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" />
-                    <label for="hidden_fields_four_1"></label>
+    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" />
+    <label for="hidden_fields_four_1"></label>
 
-                    <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                    <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                </span>
-            </label>
+    <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+    <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+    </span>
+    </label>
 
-            <fieldset class="answer hidden" id="hidden_fields_eight">
-                @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
-                {
-                    <div id="CandidateDetails"><a target="_blank" href="@Model.ConsentFormUrl"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>
-                }
-            </fieldset>
+    <fieldset class="answer hidden" id="hidden_fields_eight">
+    @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
+    {
+    <div id="CandidateDetails"><a target="_blank" href="@Model.ConsentFormUrl"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>
+    }
+    </fieldset>
 
-        </div>
+    </div>
     </div>*@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
@@ -108,126 +108,126 @@
     </div>
 
     @*<div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-        <div class="card" style="margin-bottom:10px;">
+    <div class="card" style="margin-bottom:10px;">
 
-            <label class="question default-open" for="checkbox_three">
-                <label for="checkbox_three">
-                    <i class="fa fa-file-audio-o" aria-hidden="true"></i>
-                    Audio Instruction
-                </label>
-                <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
-                    <label style="visibility:hidden" for="checkbox_three"></label>
-
-
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" checked />
-                    <label for="hidden_fields_three_1"></label>
-                    <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
-
-                    <span id="hidden_fields_three_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
-                </span>
-            </label>
-
-            <fieldset class="answer hidden show-default" id="hidden_fields_three">
-                <audio controls><source src="@Model.AudioComment">Recording</audio>
+    <label class="question default-open" for="checkbox_three">
+    <label for="checkbox_three">
+    <i class="fa fa-file-audio-o" aria-hidden="true"></i>
+    Audio Instruction
+    </label>
+    <span class="round">
+    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_three" name="question1" data-trigger="hidden_fields_three" />
+    <label style="visibility:hidden" for="checkbox_three"></label>
 
 
+    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_three_1" name="Checkshow" checked />
+    <label for="hidden_fields_three_1"></label>
+    <span id="hidden_fields_three_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
 
-                @* @if (!string.IsNullOrEmpty(Model.AudioComment))
-                {
-                string audiofileName = string.Empty;
-                audiofileName = Model.AudioComment.Split('/').Last();
-                if (audiofileName?.Length >= 25)
-                {
-                audiofileName = audiofileName.Substring(0, 24) + "...";
-                }
-                <span> <a href='@Model.AudioComment' asp-append-version="true" download>@audiofileName</a></span>
-                }
-                else
-                {
-                @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
-                {
-                <span>
-                <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")>Instructions</a>
-                </span>
-                }
-                else
-                {
-                <span>
-                No Instructions
-                </span>
-                }
-                }*
-                @*   @foreach(var item in Model)
-                {
-                <div id="AudioInstruction">
+    <span id="hidden_fields_three_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+    </span>
+    </label>
 
-                @if (!string.IsNullOrEmpty(item.AudioComment))
-                {
-                string audiofileName = string.Empty;
-                audiofileName = item.AudioComment.Split('/').Last();
-                if (audiofileName?.Length >= 25)
-                {
-                audiofileName = audiofileName.Substring(0, 24) + "...";
-                }
-                <div><a href='@item.AudioComment' asp-append-version="true" download>@audiofileName</a></div>
-                }
-                else
-                {
-                @if (item.CompanyDetails != null && item.CompanyDetails != "")
-                {
-                <div>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", "%20")>Instructions</a></div>
-                }
-                else
-                {
-                <div> No Instructions</div>
-                }
-                }
+    <fieldset class="answer hidden show-default" id="hidden_fields_three">
+    <audio controls><source src="@Model.AudioComment">Recording</audio>
 
 
 
-                </div>
-                } 
+    @* @if (!string.IsNullOrEmpty(Model.AudioComment))
+    {
+    string audiofileName = string.Empty;
+    audiofileName = Model.AudioComment.Split('/').Last();
+    if (audiofileName?.Length >= 25)
+    {
+    audiofileName = audiofileName.Substring(0, 24) + "...";
+    }
+    <span> <a href='@Model.AudioComment' asp-append-version="true" download>@audiofileName</a></span>
+    }
+    else
+    {
+    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
+    {
+    <span>
+    <a id="companylinkId" target="_blank" title="Company Instructions" href=@Model.CompanyDetails.Replace(" ", "%20")>Instructions</a>
+    </span>
+    }
+    else
+    {
+    <span>
+    No Instructions
+    </span>
+    }
+    }*
+    @*   @foreach(var item in Model)
+    {
+    <div id="AudioInstruction">
+
+    @if (!string.IsNullOrEmpty(item.AudioComment))
+    {
+    string audiofileName = string.Empty;
+    audiofileName = item.AudioComment.Split('/').Last();
+    if (audiofileName?.Length >= 25)
+    {
+    audiofileName = audiofileName.Substring(0, 24) + "...";
+    }
+    <div><a href='@item.AudioComment' asp-append-version="true" download>@audiofileName</a></div>
+    }
+    else
+    {
+    @if (item.CompanyDetails != null && item.CompanyDetails != "")
+    {
+    <div>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails.Replace(" ", "%20")>Instructions</a></div>
+    }
+    else
+    {
+    <div> No Instructions</div>
+    }
+    }
 
 
-                 @if (!string.IsNullOrEmpty(Model.AudioComment))
-                {
-                string audiofileName = string.Empty;
-                audiofileName = @Model.AudioComment.Split('/').Last();
-                if (audiofileName?.Length >= 50)
-                {
-                audiofileName = audiofileName.Substring(0, 50) + "...";
-                }
-                <div>
-                <div> <audio controls style="height:40px;margin-top:10px;">
-                <source src="@Url.Content(Model.AudioComment)" type="audio/ogg">
-                </audio>
-                </div>
-                <div style="margin: 10px;color: steelblue;">  @audiofileName</div>
-                </div>
-                }
-                else
-                {
-                @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
-                {
-                <div>
-                <audio controls>
-                <source src="@Url.Content(Model.CompanyDetails.Replace(" ", " %20"))" type="audio/ogg">
 
-                </audio>
-                Instructions
-                </div>
-                }
-                else
-                {
-                <div>No Instructions</div>
-                }
-                }
+    </div>
+    }
 
 
-            </fieldset>
+    @if (!string.IsNullOrEmpty(Model.AudioComment))
+    {
+    string audiofileName = string.Empty;
+    audiofileName = @Model.AudioComment.Split('/').Last();
+    if (audiofileName?.Length >= 50)
+    {
+    audiofileName = audiofileName.Substring(0, 50) + "...";
+    }
+    <div>
+    <div> <audio controls style="height:40px;margin-top:10px;">
+    <source src="@Url.Content(Model.AudioComment)" type="audio/ogg">
+    </audio>
+    </div>
+    <div style="margin: 10px;color: steelblue;">  @audiofileName</div>
+    </div>
+    }
+    else
+    {
+    @if (Model.CompanyDetails != null && Model.CompanyDetails != "")
+    {
+    <div>
+    <audio controls>
+    <source src="@Url.Content(Model.CompanyDetails.Replace(" ", " %20"))" type="audio/ogg">
 
-        </div>
+    </audio>
+    Instructions
+    </div>
+    }
+    else
+    {
+    <div>No Instructions</div>
+    }
+    }
+
+
+    </fieldset>
+
+    </div>
     </div>*@
 
     <div class="col-md-6 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
@@ -245,8 +245,8 @@
 
                     <input type="checkbox" class="coupon_question" disabled id="hidden_fields_five_1" name="Checkshow" checked />
                     <label for="hidden_fields_five_1"></label>
-              @*      <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>*@
-              <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                    @*      <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>*@
+                    <span id="hidden_fields_five_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
                     <span id="hidden_fields_five_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
 
                 </span>
@@ -367,7 +367,7 @@
 
 
 
-    
+
     @*<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px">
     <div class="card" style="margin-bottom:10px;">
     <label class="question" for="checkbox_seven">
@@ -404,7 +404,7 @@
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_seven" name="question1" data-trigger="hidden_fields_seven" />
                     <label style="visibility:hidden" for="checkbox_seven"></label>
 
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" checked/>
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_seven_1" name="Checkshow" checked />
                     <label for="hidden_fields_seven_1"></label>
 
                     <span id="hidden_fields_seven_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
@@ -599,26 +599,26 @@
         </div>
     </div>
 
-  <div class="footer-nav">
-      <div class="button-wrapper">
-        <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
-        @if (Model.zoomLink != null && Model.zoomLink != "")
-        {
-            @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
-        {*@
-            <div>
-                <a style="position: relative;top:10px;" target="_blank" id="join-button" class="join-button disable-link" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
-            </div>
-            @*}*@
-            @*  else
-        {
-        <div>Before 10 min only</div>
-        }  *@
-        }
-    </div>
+    <div class="footer-nav">
+        <div class="button-wrapper">
+            <h2 class="text-center pad10 pull-left" style="color:#fff;font-weight:bold;margin: 10px 0px;font-size:16px;">Click on above sections to get the zoom meeting link</h2>
+            @if (Model.zoomLink != null && Model.zoomLink != "")
+            {
+                @*  @if (Model.interviewDate.AddMinutes(-10) <= DateTime.Now && Model.interviewDate.AddMinutes(60) >= DateTime.Now)
+            {*@
+                <div>
+                    <a style="position: relative;top:10px;" target="_blank" id="join-button" class="join-button disable-link" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join now</a>
+                </div>
+                @*}*@
+                @*  else
+            {
+            <div>Before 10 min only</div>
+            }  *@
+            }
+        </div>
     </div>
 </div>
-  
+
 
 
 
@@ -693,7 +693,7 @@
             url: "/IRF/DeliveryHeadSkillDetails",
             data: { id: id },
             success: function (data) {
-                bindSkillData(data);
+                bindSkillData(data.colectionone,data.colectiontwo);
             }
         });
         var interviewId = @ViewBag.InterviewId;
@@ -719,7 +719,7 @@
         //    }
         //});
     });
-    function bindSkillData(data) {
+    function bindSkillData(data,result) {
         var html = '';
         html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
         html += '  <thead>';
@@ -745,6 +745,33 @@
         }
         html += '</tbody>';
         html += ' </table></div>';
+        if(result!=null && result.length>0)
+        {
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="20%" class="table_heading">Exprience<span class="red">*</span></th>';
+        html += '  <th width="40%" class="table_heading">Skill Name<span class="red">*</span></th>';
+        html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+        html += '  <th width="10%" class="table_heading">Skills Info <span class="red">*</span></th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < result.length; i++) {
+            html += '   <tr>';
+            html += '  <td>' + result[i].levelName + '</td>';
+            html += '  <td>' + result[i].skillName + '</td>';
+            html += '  <td>' + result[i].weightage + '</td>';
+            if (result[i].isEliminationskill == true) {
+                html += '  <td style="color:red">Elimination Skill</td>';
+            } else {
+                html += '  <td></td>';
+            }
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        }
         $("#techskills").empty().html(html);
     }
 </script>
@@ -967,33 +994,33 @@
     }
 </script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script>
-            $(window).scroll(function(event) {
-	function footer()
-    {
-        var scroll = $(window).scrollTop(); 
-        if(scroll > 50)
-        { 
-            $(".footer-nav").fadeIn("slow").addClass("show");
-        }
-        //else
-        //{
-        //    $(".footer-nav").fadeOut("slow").removeClass("show");
-        //}
-        
-  //    clearTimeout($.data(this, 'scrollTimer'));
-  //      $.data(this, 'scrollTimer', setTimeout(function() {
-  //          if ($('.footer-nav').is(':hover')) {
-	 //       	footer();
-  //  		}
-  //          else
-  //          {
-  //          	$(".footer-nav").fadeIn("slow");
-  //          }
-		//}, 2000));
-    }
-    footer();
-});
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+                $(window).scroll(function(event) {
+        function footer()
+        {
+            var scroll = $(window).scrollTop();
+            if(scroll > 50)
+            {
+                $(".footer-nav").fadeIn("slow").addClass("show");
+            }
+            //else
+            //{
+            //    $(".footer-nav").fadeOut("slow").removeClass("show");
+            //}
 
-        </script>
+      //    clearTimeout($.data(this, 'scrollTimer'));
+      //      $.data(this, 'scrollTimer', setTimeout(function() {
+      //          if ($('.footer-nav').is(':hover')) {
+         //       	footer();
+      //  		}
+      //          else
+      //          {
+      //          	$(".footer-nav").fadeIn("slow");
+      //          }
+            //}, 2000));
+        }
+        footer();
+    });
+
+</script>

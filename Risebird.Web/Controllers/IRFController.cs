@@ -8724,7 +8724,9 @@ namespace Risebird.Web.Controllers
                 item.LevelName = level.Where(x => x.id == item.LevelId).Select(x => x.Name).FirstOrDefault();
                 item.SkillName = Skillset.Where(x => x.id == item.SkillId).Select(x => x.Name).FirstOrDefault();
             }
-            return Json(transTechSkills);
+            var colectionone = transTechSkills.Where(x => x.SkillSet != 2).ToList();
+            var colectiontwo = transTechSkills.Where(x => x.SkillSet == 2).ToList(); //Other Skill
+            return Json(new { colectionone = colectionone, colectiontwo = colectiontwo });
         }
         [HttpPost]
         public async Task<JsonResult> ApproveDM(int id)
@@ -8777,7 +8779,7 @@ namespace Risebird.Web.Controllers
 
                         model.AssessmentGroups = (IList<AssignmentVM>)(allAGs.Where(x => x.isDirectlyTargeted).ToList());
                         var asg = model.AssessmentGroups.Where(x => x.AssessmentGroup == assessmentGroupName)?.FirstOrDefault();
-                        if(asg != null)
+                        if (asg != null)
                         {
                             model.AssessmentGroups.Where(x => x == asg).FirstOrDefault().IsSelectedForCampaign = true;
 
