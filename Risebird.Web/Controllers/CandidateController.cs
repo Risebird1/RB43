@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Aspose.Html;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -4047,7 +4048,15 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 11].Value = "No Report";
                         }
-                        Sheet.Cells[i, 12].Value = item.InterviewerComment;
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
+
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, 12].Value = intComment;
+                        }
+                      //  Sheet.Cells[i, 12].Value = item.InterviewerComment;
                         if (!string.IsNullOrEmpty(item.VideoLink))
                         {
                             try
@@ -5237,9 +5246,16 @@ namespace Risebird.Web.Controllers
                         //Sheet.Cells[i, 14].Value = item.confirmationStatus ?? string.Empty;
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
+                        // item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
 
-                        Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, 17].Value = intComment;
+                        }
+                       
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -5387,9 +5403,16 @@ namespace Risebird.Web.Controllers
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
 
-                        Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, 17].Value = intComment;
+                        }
+
+                        //  Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -5467,9 +5490,16 @@ namespace Risebird.Web.Controllers
 
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
-                        item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
 
-                        Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, 17].Value = intComment;
+                        }
+
+                        // Sheet.Cells[i, 17].Value = item.InterviewerComment ?? string.Empty;
 
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
@@ -5615,6 +5645,18 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+        public string GetContent(Aspose.Html.Dom.Node node)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var n in node.ChildNodes)
+            {
+                if (n.NodeType == Aspose.Html.Dom.Node.ELEMENT_NODE)
+                    sb.Append(GetContent(n));
+                else if (n.NodeType == Aspose.Html.Dom.Node.TEXT_NODE)
+                    sb.Append(n.NodeValue);
+            }
+            return sb.ToString();
         }
 
     }

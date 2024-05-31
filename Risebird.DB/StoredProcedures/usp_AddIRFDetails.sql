@@ -36,6 +36,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @PrimarySkillInvite varchar(100),        
 @BillingOwner int,     
 @AssessmentGroupId varchar(100),
+@SkillSetsevaluate int,
 --@IsQCRequired bit,
 @IsJoinabilitySelectabilityRequired bit,
 @IsGeneralSkillRequired bit,
@@ -50,7 +51,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,
 @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
-@TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,
+@TechSkillBulkData AS [dbo].[TransTechSkill2_TableType] READONLY,
 @InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,
 @EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
@@ -103,6 +104,7 @@ Begin
 				   ,[IsMeetingNotificationSend]
 				   ,[IsNewSkillChannel]
 				   ,[FlatRate]
+				   ,[SkillSetsevaluate]
 				   )
 				   --,[InterviewDuration]
 				   --,[IsFixedInterviewduration]
@@ -141,7 +143,8 @@ Begin
 				   @IsMeetingAutoCancelled,
 				   @IsMeetingNotificationSend,
 				   @IsNewSkillChannel,
-				   @FlatRate
+				   @FlatRate,
+				   @SkillSetsevaluate
 				   )
 				   --@InterviewDuration,
 				   --@IsFixedInterviewduration,
@@ -186,9 +189,9 @@ Begin
 					[IRFId] ,    
 					[LevelId],    
 					[SkillId],    
-					[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill])    
+					[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet])    
     
-					SELECT @idIrf, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit,tsbd.isEliminationskill FROM @TechSkillBulkData tsbd
+					SELECT @idIrf, tsbd.LevelId, tsbd.SkillId, tsbd.Weightage, tsbd.Concepts, tsbd.Natureofquestion, tsbd.Timelimit,tsbd.isEliminationskill,tsbd.SkillSet FROM @TechSkillBulkData tsbd
 					--interviewers
 
 					INSERT INTO [dbo].[TransInterviewer](  
