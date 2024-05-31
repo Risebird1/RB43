@@ -1105,7 +1105,8 @@ namespace Risebird.Business
                             WeightageRequired = item.Weightage,
                             Concepts = item.Concepts,
                             Timelimit = item.Timelimit,
-                            Natureofquestion = item.Natureofquestion
+                            Natureofquestion = item.Natureofquestion,
+                            SkillSet = item.SkillSet
                         };
 
                         techSkillList.Add(obj);
@@ -1285,7 +1286,8 @@ namespace Risebird.Business
                         WeightageRequired = item.Weightage,
                         Concepts = item.Concepts,
                         Timelimit = item.Timelimit,
-                        Natureofquestion = item.Natureofquestion
+                        Natureofquestion = item.Natureofquestion,
+                        SkillSet = item.SkillSet
                     };
 
                     techSkillList.Add(obj);
@@ -1298,7 +1300,7 @@ namespace Risebird.Business
                 model.TechSkillReportCollection = techReportCollection;
                 foreach (var item in techReportCollection ?? new List<TechSkillReport>())
                 {
-                    var techdetails = techSkillsDetails.Where(x => x.SkillId == item.SkillId).FirstOrDefault();
+                    var techdetails = techSkillsDetails.Where(x => x.SkillId == item.SkillId && x.SkillSet == item.SkillSet).FirstOrDefault();
                     if (techdetails != null)
                     {
                         item.Concepts = techdetails.Concepts;
