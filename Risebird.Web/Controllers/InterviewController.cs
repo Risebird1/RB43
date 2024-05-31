@@ -580,7 +580,7 @@ namespace Risebird.Web.Controllers
                             var intComment = GetContent(document);
                             Sheet.Cells[i, 22].Value = intComment;
                         }
-                       
+
                         Sheet.Cells[i, 23].Value = item.staffingAgency;
                         Sheet.Cells[i, 24].Value = item.interviewDuration;
                         Sheet.Cells[i, 25].Value = item.joiningTime;
@@ -3028,6 +3028,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                await ReportSkillSetandSeperate(model);
                 if (model == null)
                 {
                     if (isAdminHR)
@@ -3244,7 +3245,7 @@ namespace Risebird.Web.Controllers
                             //}
                         }
                         model.InterviewerComment = System.Web.HttpUtility.HtmlEncode(model.InterviewerComment);
-
+                        await ReportSkillSetandCombine(model);
                         if (await _meetingService.AddInterviewReport(model, emailid))
                         {
                             await _meetingService.AddTransReliabilityScoresSelectAndRejectService(model.InterviewId);
@@ -7482,7 +7483,7 @@ namespace Risebird.Web.Controllers
                     }
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
-                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
 
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
@@ -7490,7 +7491,7 @@ namespace Risebird.Web.Controllers
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.Userid = _iRFService.GetUserId(email, profileName);
-              
+
 
                 if (model.Userid != 0)
                 {
@@ -7612,6 +7613,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                await ReportSkillSetandSeperate(model);
                 if (model == null)
                 {
                     if (isAdminHR)
@@ -8658,6 +8660,42 @@ namespace Risebird.Web.Controllers
                     sb.Append(n.NodeValue);
             }
             return sb.ToString();
+        }
+        public async Task ReportSkillSetandCombine(InterviewReport model)
+        {
+            //Questions discussed 
+            foreach (var item in model.QuestionsCollection)
+            {
+                item.SkillSet = 1;
+            }
+            if (model.SkillSetsevaluate > 1)
+            {
+                foreach (var item in model.QuestionsCollectionTwo)
+                {
+                    item.SkillSet = 2;
+                    model.QuestionsCollection.Add(item);
+                }
+            }
+            //Tech Skills
+            foreach (var item in model.TechSkillReportCollection)
+            {
+                item.SkillSet = 1;
+            }
+            if (model.SkillSetsevaluate > 1)
+            {
+                foreach (var item in model.TechSkillTwoReportCollection)
+                {
+                    item.SkillSet = 2;
+                    model.TechSkillReportCollection.Add(item);
+                }
+            }
+        }
+        public async Task ReportSkillSetandSeperate(InterviewReport model)
+        {
+            model.QuestionsCollectionTwo = model.QuestionsCollection.Where(x => x.SkillSet == 2).ToList();
+            model.QuestionsCollection = model.QuestionsCollection.Where(x => x.SkillSet != 2).ToList();
+            model.TechSkillTwoReportCollection = model.TechSkillReportCollection.Where(x => x.SkillSet == 2).ToList();
+            model.TechSkillReportCollection = model.TechSkillReportCollection.Where(x => x.SkillSet != 2).ToList();
         }
     }
 }

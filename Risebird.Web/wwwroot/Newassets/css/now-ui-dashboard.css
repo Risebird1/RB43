@@ -11305,7 +11305,19 @@ svg {
     font-size: 12px;
     font-weight: bold;
 }
-
+.addreport .click {
+    color: #fff !important;
+    text-decoration: none !important;
+    text-transform: uppercase !important;
+    font-size: 12px;
+    font-weight: bold;
+    background: #53a5f5;
+    padding: 5px 5px;
+    border-radius: 3px;
+    position: relative;
+    top: 4px;
+    right: 15px;
+}
 #dupmeeting_filter input {
     outline: none;
 }

@@ -2181,7 +2181,7 @@ div.dataTables_wrapper div.dataTables_info {
     color: #9a9a9a !important;
 }
 
-#QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable.table-bordered td {
+#QuestionsTable.table-bordered td, #SkillTable.table-bordered td, #QuestionsTableTwo.table-bordered td, #SkillTableTwo.table-bordered td #SkillGeneralTable.table-bordered td, #JoinabilityTable.table-bordered td, #SelectabilityTable.table-bordered td {
     border-right: 1px solid #444444 !important;
     border-left: 0px solid #444444 !important;
     border-top: 1px solid #444444 !important;
