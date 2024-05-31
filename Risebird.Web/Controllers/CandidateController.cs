@@ -4048,7 +4048,15 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 11].Value = "No Report";
                         }
-                        Sheet.Cells[i, 12].Value = item.InterviewerComment;
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
+
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, 12].Value = intComment;
+                        }
+                      //  Sheet.Cells[i, 12].Value = item.InterviewerComment;
                         if (!string.IsNullOrEmpty(item.VideoLink))
                         {
                             try
