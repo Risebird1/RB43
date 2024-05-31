@@ -881,10 +881,11 @@ namespace Risebird.Web.Controllers
 
                         //Start: Auto Generate Scheduling Link 
 
-                        var _schedulinglink = AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF");
+                        var _schedulinglink = await AutoGenerateSchedulingLink(irfDetails.StartDate, irfDetails.IRFId, irfDetails.JDTiltle + "_Scheduling", "AddIRF");
                         irfDetails.CalendlyLink = _schedulinglink;
 
                         //End: Auto Generate Scheduling Link
+                        await checkSkillSetandCombine(irfDetails);
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
                             //create an index with the same name as that of this skill channel in affinda for using the search and match tool
@@ -1956,7 +1957,7 @@ namespace Risebird.Web.Controllers
                             model.JobCountry = "2";
                         }
                     }
-
+                    await checkSkillSetandSeperate(model);
                     model.OldJDLink = model.JDLink;
                     model.OldCompanyDetails = model.CompanyDetails;
                     model.OldJDTitle = model.JDTiltle;
@@ -2095,7 +2096,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.CompanyDetails = model.OldCompanyDetails;
                         }
-
+                        await checkSkillSetandCombine(model);
                         if (model.IsClone && !string.IsNullOrEmpty(model.IRFId))
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
@@ -2107,7 +2108,7 @@ namespace Risebird.Web.Controllers
                             //Start: Auto Generate Scheduling Link 
                             if (string.IsNullOrEmpty(model.CalendlyLink))
                             {
-                                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "EditIRF");
+                                var _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "EditIRF");
                                 model.CalendlyLink = _schedulinglink;
                             }
                             //End: Auto Generate Scheduling Link
@@ -6573,7 +6574,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string source, string meetingPlatform = null)
+        public async Task<string> AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string source, string meetingPlatform = null)
         {
             var model_Second = new List<daytimes_second>();
             var sun = new List<perdaytime>();
@@ -6600,8 +6601,8 @@ namespace Risebird.Web.Controllers
             model_report.TimeSlotDays = 6;
             model_report.MeetingPlatform = meetingPlatform;
             model_report.sourcevalue = source;
-            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report).Result;
-            var model = _interviewSchedulerservice.FetchEventById(eventid).Result;
+            var eventid = await _interviewSchedulerservice.AutoCreateEvent(model_report);
+            var model = await _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
             {
                 var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;
@@ -7181,7 +7182,7 @@ namespace Risebird.Web.Controllers
                         model.StartDate = DateTime.Now;
                         model.EndDate = DateTime.Now.AddMonths(3);
 
-                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "Create", model.MeetingPlatform);
+                        string _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "Create", model.MeetingPlatform);
 
                         model.CalendlyLink = _schedulinglink;
                         var result = await _irfService.CreateSkillChannelFromTemplate(model, emailId, profileName);
@@ -7295,7 +7296,7 @@ namespace Risebird.Web.Controllers
 
                     //model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
 
-                    string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLink", model.MeetingPlatform);
+                    string _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLink", model.MeetingPlatform);
 
                     model.CalendlyLink = _schedulinglink;
                     var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, "Client");
@@ -7396,7 +7397,7 @@ namespace Risebird.Web.Controllers
 
                         //model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
 
-                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLinkelse", model.MeetingPlatform);
+                        string _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLinkelse", model.MeetingPlatform);
 
                         model.CalendlyLink = _schedulinglink;
                         var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, profileName);
@@ -7575,7 +7576,7 @@ namespace Risebird.Web.Controllers
 
                     //model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
 
-                    string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", model.MeetingPlatform);
+                    string _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", model.MeetingPlatform);
 
                     model.CalendlyLink = _schedulinglink;
                     var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(model, emailId, "Client");
@@ -7674,7 +7675,7 @@ namespace Risebird.Web.Controllers
 
                         //model.MeetingPlatform = await _clonableSkillChannelTemplateService.GetClonableSkillChannelMeetingPlatformById(model.CreatedFromTemplateId);
 
-                        string _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", model.MeetingPlatform);
+                        string _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "CreateInterviewLinkV1", model.MeetingPlatform);
 
                         model.CalendlyLink = _schedulinglink;
                         var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(model, emailId, profileName);
@@ -7783,7 +7784,7 @@ namespace Risebird.Web.Controllers
 
                         if (model.JDTiltle != model.OldJDTitle)
                         {
-                            var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "Edit");
+                            var _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling", "Edit");
                             model.CalendlyLink = _schedulinglink;
                         }
 
@@ -8474,6 +8475,7 @@ namespace Risebird.Web.Controllers
                 model = await _irfService.GetEditIRF(irfid, 0, false);
                 model.AudioComment = _irfService.FetchIRFAudioLink(irfid);
                 model.InterviewerCollection = model.InterviewerCollection.Where(x => x.IsActive).ToList();
+                await checkSkillSetandSeperate(model);
                 return View(model);
             }
             else
@@ -8491,6 +8493,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    await checkSkillSetandCombine(model);
                     foreach (var item in model.SkillCollection)
                     {
                         item.IRFId = model.id;
@@ -9328,7 +9331,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = await _irfService.GetAllCalibrationMeetingsById(emailid,"All");
+                        var model = await _irfService.GetAllCalibrationMeetingsById(emailid, "All");
                         if (type == "Completed")
                         {
                             ViewBag.Type = "Completed";
@@ -9551,6 +9554,25 @@ namespace Risebird.Web.Controllers
         {
             return View();
         }
-
+        public async Task checkSkillSetandCombine(IRFVm irfDetails)
+        {
+            foreach (var item in irfDetails.SkillCollection)
+            {
+                item.SkillSet = 1;
+            }
+            if (irfDetails.SkillSetsevaluate > 1)
+            {
+                foreach (var item in irfDetails.SkillTwoCollection)
+                {
+                    item.SkillSet = 2;
+                    irfDetails.SkillCollection.Add(item);
+                }
+            }
+        }
+        public async Task checkSkillSetandSeperate(IRFVm irfDetails)
+        {
+            irfDetails.SkillTwoCollection = irfDetails.SkillCollection.Where(x => x.SkillSet == 2).ToList();
+            irfDetails.SkillCollection = irfDetails.SkillCollection.Where(x => x.SkillSet == 1).ToList();
+        }
     }
 }

@@ -1,3 +1,4 @@
+using Aspose.Html;
 using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -571,7 +572,15 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 20].Value = "NA";
                         }
                         Sheet.Cells[i, 21].Value = item.IsEmergency ? "Yes" : "No";
-                        Sheet.Cells[i, 22].Value = item.InterviewerComment;
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
+
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, 22].Value = intComment;
+                        }
+                       
                         Sheet.Cells[i, 23].Value = item.staffingAgency;
                         Sheet.Cells[i, 24].Value = item.interviewDuration;
                         Sheet.Cells[i, 25].Value = item.joiningTime;
@@ -8637,6 +8646,18 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+        public string GetContent(Aspose.Html.Dom.Node node)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var n in node.ChildNodes)
+            {
+                if (n.NodeType == Aspose.Html.Dom.Node.ELEMENT_NODE)
+                    sb.Append(GetContent(n));
+                else if (n.NodeType == Aspose.Html.Dom.Node.TEXT_NODE)
+                    sb.Append(n.NodeValue);
+            }
+            return sb.ToString();
         }
     }
 }

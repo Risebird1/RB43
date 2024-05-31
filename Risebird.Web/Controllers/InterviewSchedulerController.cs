@@ -298,6 +298,7 @@ namespace Risebird.Web.Controllers
                     }
                     model.TimeZonesList = items;
                     model.schedulertype = result.FirstOrDefault().schedulertype;
+                    model.SkillSetsevaluate = result.FirstOrDefault().SkillSetsevaluate;
                     //Check if Candidate details is present for IRF
                     if (result.FirstOrDefault().IsSingleUse)
                     {
@@ -484,7 +485,7 @@ namespace Risebird.Web.Controllers
                     var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
                     if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
-                        zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime);
+                        zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime, model.SkillSetsevaluate);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                         if (zoomLink == null)
                         {
@@ -950,7 +951,7 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region Create Zoom Meeting
-        public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime)
+        public async Task<InstaZoomMeetingResponse> CreateZoomMeeting(string CandidateName, string Role, DateTime indianTime, int SkillSets)
         {
             InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
             _zoommetingobject.topic = CandidateName + "| " + Role + "| Video Interview";
@@ -963,16 +964,20 @@ namespace Risebird.Web.Controllers
             {
                 return null;
             }
-            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
+            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime, SkillSets);
             zoomlink.accountemail = accountEmail;
             var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;
         }
 
-        private InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
+        private InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime, int SkillSets)
         {
             _zoommetingobject.type = 2;
             _zoommetingobject.duration = 60;
+            if (SkillSets > 1)
+            {
+                _zoommetingobject.duration = 90;
+            }
             _zoommetingobject.timezone = "Asia/Calcutta";
             _zoommetingobject.settings.host_video = true;
             _zoommetingobject.settings.participant_video = true;
@@ -1107,7 +1112,7 @@ namespace Risebird.Web.Controllers
                     var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
                     if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
-                        zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime);
+                        zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime, model.SkillSetsevaluate);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                         if (zoomLink == null)
                         {
@@ -1329,6 +1334,7 @@ namespace Risebird.Web.Controllers
                     }
                     model.TimeZonesList = items;
                     model.schedulertype = result.FirstOrDefault().schedulertype;
+                    model.SkillSetsevaluate = result.FirstOrDefault().SkillSetsevaluate;
                     //Get Candidate Information for Skill channel
                     var _candidatedetails = await _interviewSchedulerservice.CheckCandidateDetailsByEmail(model.InterviewChannelId, CandidateEmail);
                     if (_candidatedetails != null)
@@ -1505,7 +1511,7 @@ namespace Risebird.Web.Controllers
                     var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
                     if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
-                        zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime);
+                        zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime, model.SkillSetsevaluate);
                         //meetingLink = await CreateZoomMeeting(model.Name, JDTitle.Result, indianTime);
                         if (zoomLink == null)
                         {
@@ -1699,7 +1705,7 @@ namespace Risebird.Web.Controllers
             {
                 return null;
             }
-            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
+            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime, 1);
             zoomlink.accountemail = accountEmail;
             var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;
