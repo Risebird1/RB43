@@ -20,5 +20,6 @@ namespace Risebird.Entities.ViewModel
         public string Natureofquestion { get; set; }
         [Display(Name = "Time Limit")]
         public int Timelimit { get; set; }
+        public int SkillSet { get; set; }
     }
 }
