@@ -13,7 +13,7 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_TechSkillReportBulkInsert]
 (
-      @TechSkillReportBulkData AS [dbo].[TechSkillReport_TableType] READONLY
+      @TechSkillReportBulkData AS [dbo].[TechSkillReportV2_TableType] READONLY
 )
 AS
 BEGIN
@@ -28,7 +28,8 @@ INSERT INTO [dbo].[TechSkillReport](
 	[ActualLevelId],
 	[WeightageRequired],
 	[WeightageActual],
-	[TechComments])
+	[TechComments],
+	[SkillSet])
 
 SELECT * FROM @TechSkillReportBulkData
 
