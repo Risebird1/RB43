@@ -8692,8 +8692,8 @@ namespace Risebird.Web.Controllers
         }
         public async Task ReportSkillSetandSeperate(InterviewReport model)
         {
-            model.QuestionsCollectionTwo = model.QuestionsCollection.Where(x => x.SkillSet == 2).ToList();
-            model.QuestionsCollection = model.QuestionsCollection.Where(x => x.SkillSet != 2).ToList();
+            model.QuestionsCollectionTwo = model.QuestionsCollection?.Where(x => x.SkillSet == 2).ToList();
+            model.QuestionsCollection = model.QuestionsCollection?.Where(x => x.SkillSet != 2).ToList();
             model.TechSkillTwoReportCollection = model.TechSkillReportCollection.Where(x => x.SkillSet == 2).ToList();
             model.TechSkillReportCollection = model.TechSkillReportCollection.Where(x => x.SkillSet != 2).ToList();
         }
