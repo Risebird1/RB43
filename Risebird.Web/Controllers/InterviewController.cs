@@ -5635,7 +5635,8 @@ namespace Risebird.Web.Controllers
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-
+                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                model.InterviewerComment = output;
                 await GetStatusList(model, irfId, 0);
 
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
@@ -7486,7 +7487,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-
+                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                model.InterviewerComment = output;
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -7628,7 +7630,8 @@ namespace Risebird.Web.Controllers
                     }
                 }
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-
+                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                model.InterviewerComment = output;
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -7768,7 +7771,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-
+                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                model.InterviewerComment = output;
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
