@@ -217,13 +217,14 @@ if (profile != null && profile != "Admin" && type != 'add') {
        if (planType == 6) {
              //multistack planType is selected
             document.getElementById("SkillSetsevaluate").value = '2';
-            document.getElementById("SkillSetsevaluate").disabled = true;
+            //document.getElementById("SkillSetsevaluate").disabled = true;
+            document.getElementById("secondSkillSets").style.display = "block";
        }
        else
        {
            document.getElementById("SkillSetsevaluate").value = '1';
-           document.getElementById("SkillSetsevaluate").disabled = false;
-
+           //document.getElementById("SkillSetsevaluate").disabled = false;
+           document.getElementById("secondSkillSets").style.display = "none";
        }
 
     }
