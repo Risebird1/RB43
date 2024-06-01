@@ -1070,7 +1070,7 @@
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                @if (Model.QuestionsCollectionTwo == null || Model.QuestionsCollectionTwo.Count() == 0)
+                                                                                @if (Model.QuestionsTwoCollection == null || Model.QuestionsTwoCollection.Count() == 0)
                                                                                 {
                                                                                     <tr style="background:#fff">
                                                                                         <td>
@@ -1081,16 +1081,16 @@
                                                                                             else
                                                                                             {
 
-                                                                                                @Html.DropDownList("QuestionsCollectionTwo[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)" })
+                                                                                                @Html.DropDownList("QuestionsTwoCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)" })
                                                                                             }
 
                                                                                         </td>
                                                                                         <td>
-                                                                                            @Html.TextBox("QuestionsCollectionTwo[0].SkillName", null, new { @readonly = "readonly" })
+                                                                                            @Html.TextBox("QuestionsTwoCollection[0].SkillName", null, new { @readonly = "readonly" })
 
                                                                                         </td>
                                                                                         <td>
-                                                                                            @Html.DropDownList("QuestionsCollectionTwo[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+                                                                                            @Html.DropDownList("QuestionsTwoCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
 
                                                                                         </td>
 
@@ -1100,36 +1100,36 @@
 
                                                                                         <td class="action text-center">
                                                                                             <span id="btnPlus" onclick="AddRowTwo()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollectionTwo', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsTwoCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                                                         </td>
                                                                                     </tr>
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    for (int i = 0; i < Model.QuestionsCollectionTwo.Count(); i++)
+                                                                                    for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
                                                                                     {
                                                                                         <tr style="cursor:pointer">
                                                                                             <td>
 
-                                                                                                @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollectionTwo[i].Comment))
+                                                                                                @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsTwoCollection[i].Comment))
                                                                                                 {
-                                                                                                    @Html.DropDownListFor(m => m.QuestionsCollectionTwo[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                    @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 }
                                                                                                 else
                                                                                                 {
                                                                                                     var newList = new List<SelectListItem>();
-                                                                                                    newList.Add(new SelectListItem() { Value = Model.QuestionsCollectionTwo[i].Comment, Text = Model.QuestionsCollectionTwo[i].Comment });
-                                                                                                    @Html.DropDownListFor(m => m.QuestionsCollectionTwo[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                    newList.Add(new SelectListItem() { Value = Model.QuestionsTwoCollection[i].Comment, Text = Model.QuestionsTwoCollection[i].Comment });
+                                                                                                    @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                 }
 
                                                                                             </td>
                                                                                             <td>
-                                                                                                @Html.TextBoxFor(m => m.QuestionsCollectionTwo[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
+                                                                                                @Html.TextBoxFor(m => m.QuestionsTwoCollection[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
                                                                                             </td>
                                                                                             <td>
-                                                                                                @Html.DropDownListFor(m => m.QuestionsCollectionTwo[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+                                                                                                @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
                                                                                             </td>
 
                                                                                             @*  <td>
@@ -1140,7 +1140,7 @@
 
                                                                                             <td class="action text-center ">
                                                                                                 <span id="btnPlus" onclick="AddRowTwo()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollectionTwo', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsTwoCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                                             </td>
                                                                                         </tr>
                                                                                     }
@@ -1149,8 +1149,8 @@
                                                                             </tbody>
                                                                         </table>
                                                                     </div>
-                                                                    <label class="text-danger" id="QuestionsCollectionTwo_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
-                                                                    <label class="text-danger" id="QuestionsCollectionTwo_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                                    <label class="text-danger" id="QuestionsTwoCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                                    <label class="text-danger" id="QuestionsTwoCollection_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
                                                                 </fieldset>
 
                                                             </div>
@@ -1899,7 +1899,7 @@
             var num = id.match(/(\d+)/);
 
             var index = num[0];//id.charAt(20);
-            var skillElementid = 'QuestionsCollectionTwo_' + index + '__SkillName';
+            var skillElementid = 'QuestionsTwoCollection_' + index + '__SkillName';
 
             var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
             var skillName = '';

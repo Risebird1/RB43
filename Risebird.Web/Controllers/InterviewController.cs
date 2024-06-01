@@ -8670,7 +8670,7 @@ namespace Risebird.Web.Controllers
             }
             if (model.SkillSetsevaluate > 1)
             {
-                foreach (var item in model.QuestionsCollectionTwo)
+                foreach (var item in model.QuestionsTwoCollection)
                 {
                     item.SkillSet = 2;
                     model.QuestionsCollection.Add(item);
@@ -8692,7 +8692,7 @@ namespace Risebird.Web.Controllers
         }
         public async Task ReportSkillSetandSeperate(InterviewReport model)
         {
-            model.QuestionsCollectionTwo = model.QuestionsCollection?.Where(x => x.SkillSet == 2).ToList();
+            model.QuestionsTwoCollection = model.QuestionsCollection?.Where(x => x.SkillSet == 2).ToList();
             model.QuestionsCollection = model.QuestionsCollection?.Where(x => x.SkillSet != 2).ToList();
             model.TechSkillTwoReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet == 2).ToList();
             model.TechSkillReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet != 2).ToList();
