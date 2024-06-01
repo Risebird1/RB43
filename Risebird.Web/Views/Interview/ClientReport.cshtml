@@ -945,19 +945,19 @@
                                                             <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Questions Discussed</h3>
 
                                                             <div class="question">
-                                                                @if (Model.QuestionsCollectionTwo != null && Model.QuestionsCollectionTwo.Count() != 0)
+                                                                @if (Model.QuestionsTwoCollection != null && Model.QuestionsTwoCollection.Count() != 0)
                                                                 {
                                                                     <ul>
-                                                                        @for (int i = 0; i < Model.QuestionsCollectionTwo.Count(); i++)
+                                                                        @for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
                                                                         {
-                                                                            var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollectionTwo[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
-                                                                            @if (Model.QuestionsCollectionTwo[i].Timing != null && Model.QuestionsCollectionTwo[i].Timing > 0)
+                                                                            var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsTwoCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
+                                                                            @if (Model.QuestionsTwoCollection[i].Timing != null && Model.QuestionsTwoCollection[i].Timing > 0)
                                                                             {
-                                                                                <li onclick="switchtoquestionVedio(@Model.QuestionsCollectionTwo[i].Timing)" style="cursor:pointer">@Model.QuestionsCollectionTwo[i].Comment [@Model.QuestionsCollectionTwo[i].SkillName]</li>
+                                                                                <li onclick="switchtoquestionVedio(@Model.QuestionsTwoCollection[i].Timing)" style="cursor:pointer">@Model.QuestionsTwoCollection[i].Comment [@Model.QuestionsTwoCollection[i].SkillName]</li>
                                                                             }
                                                                             else
                                                                             {
-                                                                                <li>@Model.QuestionsCollectionTwo[i].Comment [@Model.QuestionsCollectionTwo[i].SkillName]</li>
+                                                                                <li>@Model.QuestionsTwoCollection[i].Comment [@Model.QuestionsTwoCollection[i].SkillName]</li>
                                                                             }
                                                                             @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                                             {
