@@ -466,10 +466,42 @@
                                                         </table>
                                                         <label class="text-danger" id="TechSkills_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
                                                     </div>
+                                                    @if (ViewBag.PageStatus != "PublicExternal")
+                                                {
+                                           
+                                            }
                                                 </fieldset>
 
                                             </div>
+                                            
                                             <!--tech skill end-->
+                                            <!--tech score start-->
+                                          @if (ViewBag.PageStatus != "PublicExternal")
+                                            {
+                                            <div class="card" style="margin-bottom:10px;">
+
+                                            <label class="question" for="checkbox_two">
+                                            <label for="checkbox_two">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            TECH SKILL SCORE <span class="totScore"><strong id="totTechScore"></strong></span>
+                                            </label>
+
+                                            </label>
+                                            <fieldset class="answer" style="display:none">
+                                            <div class="chart-box">
+                                            <div>
+                                            <div id="canvasDiv">
+
+
+                                            <canvas id="scoreChart" width="980" height="250"></canvas>
+                                            </div>
+                                            </div>
+                                            </div>
+                                            </fieldset>
+
+                                            </div>
+                                            }
+                                            <!--tech score start-->
                                             <!--report start-->
                                             <div class="card" style="margin-bottom:10px;">
 
@@ -540,7 +572,7 @@
 
                                                                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                             <div class="talktext">
-                                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
+                                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
                                                                                 <span id='remainingC'></span>
                                                                                 <div id="words"></div>
                                                                             </div>
@@ -842,8 +874,8 @@
                                             }
                                             <!--question end-->
                                             <!--tech score start-->
-                                            @if (ViewBag.PageStatus != "PublicExternal")
-                                                @* {
+                                            @*@if (ViewBag.PageStatus != "PublicExternal")
+                                                {
                                             <div class="card" style="margin-bottom:10px;">
 
                                             <label class="question" for="checkbox_two">
@@ -870,7 +902,7 @@
                                                 <!--tech score start-->
 
                                                 <!--Other skill set start-->
-                                                @if (Model.SkillSetsevaluate > 1)
+                                              @if (Model.SkillSetsevaluate > 1)
                                                 {
                                                     <div class="next-skillShow nextbtn">FILL THE SECTION BELOW FOR OTHER SKILLS</div>
                                                     <div id="next-skill" style="display:none">
@@ -954,6 +986,33 @@
 
                                                         </div>
                                                         <!--tech skill end-->
+                                                         <!--tech score start-->
+                                           @if (ViewBag.PageStatus != "PublicExternal")
+                                                {
+                                            <div class="card" style="margin-bottom:10px;">
+
+                                            <label class="question" for="checkbox_two">
+                                            <label for="checkbox_two">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            TECH SKILL SCORE <span class="totScore"><strong id="totTechScore2"></strong></span>
+                                            </label>
+
+                                            </label>
+                                            <fieldset class="answer" style="display:none">
+                                            <div class="chart-box">
+                                            <div>
+                                            <div id="canvasDiv">
+
+
+                                            <canvas id="scoreChart" width="980" height="250"></canvas>
+                                            </div>
+                                            </div>
+                                            </div>
+                                            </fieldset>
+
+                                            </div>
+                                            }
+                                                <!--tech score start-->
                                                         <!--report start-->
                                                         <div class="card" style="margin-bottom:10px;">
 
@@ -1019,7 +1078,7 @@
 
                                                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                                         <div class="talktext">
-                                                                                            @Html.TextAreaFor(m => m.InterviewerCommentTwo, new { htmlAttributes = new { @id = "interviewerCommentTwo", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
+                                                                                            @Html.TextAreaFor(m => m.InterviewerCommentTwo, new { htmlAttributes = new { @id = "interviewerCommentTwo", @class = "text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
                                                                                             <span id='remainingCTwo'></span>
                                                                                             <div id="wordsTwo"></div>
                                                                                         </div>
@@ -1070,7 +1129,7 @@
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                @if (Model.QuestionsCollectionTwo == null || Model.QuestionsCollectionTwo.Count() == 0)
+                                                                                @if (Model.QuestionsTwoCollection == null || Model.QuestionsTwoCollection.Count() == 0)
                                                                                 {
                                                                                     <tr style="background:#fff">
                                                                                         <td>
@@ -1081,16 +1140,16 @@
                                                                                             else
                                                                                             {
 
-                                                                                                @Html.DropDownList("QuestionsCollectionTwo[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)" })
+                                                                                                @Html.DropDownList("QuestionsTwoCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)" })
                                                                                             }
 
                                                                                         </td>
                                                                                         <td>
-                                                                                            @Html.TextBox("QuestionsCollectionTwo[0].SkillName", null, new { @readonly = "readonly" })
+                                                                                            @Html.TextBox("QuestionsTwoCollection[0].SkillName", null, new { @readonly = "readonly" })
 
                                                                                         </td>
                                                                                         <td>
-                                                                                            @Html.DropDownList("QuestionsCollectionTwo[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+                                                                                            @Html.DropDownList("QuestionsTwoCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
 
                                                                                         </td>
 
@@ -1100,36 +1159,36 @@
 
                                                                                         <td class="action text-center">
                                                                                             <span id="btnPlus" onclick="AddRowTwo()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollectionTwo', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsTwoCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
                                                                                         </td>
                                                                                     </tr>
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    for (int i = 0; i < Model.QuestionsCollectionTwo.Count(); i++)
+                                                                                    for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
                                                                                     {
                                                                                         <tr style="cursor:pointer">
                                                                                             <td>
 
-                                                                                                @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollectionTwo[i].Comment))
+                                                                                                @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsTwoCollection[i].Comment))
                                                                                                 {
-                                                                                                    @Html.DropDownListFor(m => m.QuestionsCollectionTwo[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                    @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
                                                                                                 }
                                                                                                 else
                                                                                                 {
                                                                                                     var newList = new List<SelectListItem>();
-                                                                                                    newList.Add(new SelectListItem() { Value = Model.QuestionsCollectionTwo[i].Comment, Text = Model.QuestionsCollectionTwo[i].Comment });
-                                                                                                    @Html.DropDownListFor(m => m.QuestionsCollectionTwo[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                    newList.Add(new SelectListItem() { Value = Model.QuestionsTwoCollection[i].Comment, Text = Model.QuestionsTwoCollection[i].Comment });
+                                                                                                    @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                 }
 
                                                                                             </td>
                                                                                             <td>
-                                                                                                @Html.TextBoxFor(m => m.QuestionsCollectionTwo[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
+                                                                                                @Html.TextBoxFor(m => m.QuestionsTwoCollection[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
                                                                                             </td>
                                                                                             <td>
-                                                                                                @Html.DropDownListFor(m => m.QuestionsCollectionTwo[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+                                                                                                @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
                                                                                             </td>
 
                                                                                             @*  <td>
@@ -1140,7 +1199,7 @@
 
                                                                                             <td class="action text-center ">
                                                                                                 <span id="btnPlus" onclick="AddRowTwo()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollectionTwo', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsTwoCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
                                                                                             </td>
                                                                                         </tr>
                                                                                     }
@@ -1149,8 +1208,8 @@
                                                                             </tbody>
                                                                         </table>
                                                                     </div>
-                                                                    <label class="text-danger" id="QuestionsCollectionTwo_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
-                                                                    <label class="text-danger" id="QuestionsCollectionTwo_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                                    <label class="text-danger" id="QuestionsTwoCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                                    <label class="text-danger" id="QuestionsTwoCollection_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
                                                                 </fieldset>
 
                                                             </div>
@@ -1160,7 +1219,7 @@
 
                                                     </div>
                                                     <div class="next-skillHide" style="display:none">HIDE OTHER SKILL</div>
-                                                }
+                                               }
                                             <!--Other skill set end-->
 
                                         </div>
@@ -1723,7 +1782,7 @@
             }
 
             SetTechReportChart('TechSkillReportCollection');
-
+        SetTechTwoReportCalculation('TechSkillTwoReportCollection');
             var average = 0;
             if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
                 average = totalCount / 4;
@@ -1736,7 +1795,24 @@
             $("#OverallScore").val(average);
 
         });
+    function SetTechTwoReportCalculation(techCollectionIdStartsWith) {
+        var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
+        var techItems = $(idSelector);
+        var totalTechSkillScore = 0;
+        if (techItems != null) {
+            var techItemsLength = 0;
+            techItemsLength = techItems.length;
+            for (i = 0; i < techItemsLength; i++) {
+                var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
+                var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
 
+                if (actualWeightage != null && actualWeightage != '') {
+                    totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
+                }
+            }
+            document.getElementById("totTechScore2").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+        }
+    }
         function AddRow() {
 
             var $ttc = $("#QuestionsTable").find("tbody tr:last");
@@ -1899,7 +1975,7 @@
             var num = id.match(/(\d+)/);
 
             var index = num[0];//id.charAt(20);
-            var skillElementid = 'QuestionsCollectionTwo_' + index + '__SkillName';
+            var skillElementid = 'QuestionsTwoCollection_' + index + '__SkillName';
 
             var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
             var skillName = '';
@@ -2575,32 +2651,20 @@
 
 </script>
 @*<link href="~/Newassets/css/summernote.min.css" rel="stylesheet" />
-<script src="~/Newassets/js/summernote.min.js"></script>
+<script src="~/Newassets/js/summernote.min.js"></script>*@
 
 <script>
-    $(document).ready(function () {
-        $('#InterviewerComment').summernote({
-            placeholder: 'Type your comment...',
-            tabsize: 2,
-            height: 100
-        });
-    });*@
+   
 
     $(document).ready(function () {
-        document.getElementById("interviewerComment").innerHTML = $('#interviewerComment').text();
+        document.getElementById("interviewerComment").innerHTML = $('#InterviewerComment').text();
 
     })
 
-       $(document).ready(function () {
-        $('#InterviewerCommentTwo').summernote({
-            placeholder: 'Type your comment...',
-            tabsize: 2,
-            height: 100
-        });
-    });
+    
 
     $(document).ready(function () {
-        document.getElementById("InterviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
+        document.getElementById("interviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
 
     })
 </script>

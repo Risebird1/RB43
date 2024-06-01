@@ -3043,6 +3043,8 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
                 {
                     model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+                    string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                    model.InterviewerComment = output;
 
                 }
                 if (profileName == "Client")
@@ -5633,7 +5635,8 @@ namespace Risebird.Web.Controllers
                 model.IsInterviewer = isInterviewer;
                 model.PreviousMeetingStatus = model.MeetingStatus;
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-
+                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                model.InterviewerComment = output;
                 await GetStatusList(model, irfId, 0);
 
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
@@ -7484,7 +7487,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-
+                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                model.InterviewerComment = output;
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -7626,7 +7630,8 @@ namespace Risebird.Web.Controllers
                     }
                 }
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-
+                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                model.InterviewerComment = output;
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -7766,7 +7771,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
                 model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-
+                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                model.InterviewerComment = output;
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 model.IsQC = isQC;
@@ -8670,7 +8676,7 @@ namespace Risebird.Web.Controllers
             }
             if (model.SkillSetsevaluate > 1)
             {
-                foreach (var item in model.QuestionsCollectionTwo)
+                foreach (var item in model.QuestionsTwoCollection)
                 {
                     item.SkillSet = 2;
                     model.QuestionsCollection.Add(item);
@@ -8692,7 +8698,7 @@ namespace Risebird.Web.Controllers
         }
         public async Task ReportSkillSetandSeperate(InterviewReport model)
         {
-            model.QuestionsCollectionTwo = model.QuestionsCollection?.Where(x => x.SkillSet == 2).ToList();
+            model.QuestionsTwoCollection = model.QuestionsCollection?.Where(x => x.SkillSet == 2).ToList();
             model.QuestionsCollection = model.QuestionsCollection?.Where(x => x.SkillSet != 2).ToList();
             model.TechSkillTwoReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet == 2).ToList();
             model.TechSkillReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet != 2).ToList();

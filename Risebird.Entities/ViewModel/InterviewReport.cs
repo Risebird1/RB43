@@ -371,7 +371,7 @@ namespace Risebird.Entities.ViewModel
         public int? MeetingStatusTwo { get; set; }
         [Display(Name = "Interviewer Comment")]
         public string InterviewerCommentTwo { get; set; }
-        public IList<QuestionsDiscussed> QuestionsCollectionTwo { get; set; }
+        public IList<QuestionsDiscussed> QuestionsTwoCollection { get; set; }
         public IList<TechSkillReport> TechSkillTwoReportCollection { get; set; }
     }
     public class RBInterviewDetails
