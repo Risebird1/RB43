@@ -284,7 +284,6 @@ namespace Risebird.Web.Controllers
         public async Task<FileContentResult> InterviewsExporttoExcel(string type)
         {
             string userEmailId = string.Empty;
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
