@@ -2072,7 +2072,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountEmail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId, string jdLink = null, string clientLogoLink = null, string companyLink = null)
+        public async Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountEmail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId, int? SkillSetsevaluate, string jdLink = null, string clientLogoLink = null, string companyLink = null)
         {
             try
             {
@@ -2125,7 +2125,14 @@ namespace Risebird.CommonHelper
                 str.AppendLine("BEGIN:VEVENT");
                 str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset)));
                 str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
-                str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(60)));
+                if (SkillSetsevaluate > 1)
+                {
+                    str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(90)));
+                }
+                else
+                {
+                    str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(60)));
+                }
                 str.AppendLine("LOCATION:" + join_url);
                 str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
                 str.AppendLine(string.Format("SUMMARY:{0}", msg.Subject));
@@ -3250,19 +3257,19 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<string> SendTechSupportMail(string Comment,DateTime RequestedOn ,string RequestBy)
+        public async Task<string> SendTechSupportMail(string Comment, DateTime RequestedOn, string RequestBy)
         {
             try
             {
                 var msg = new SendGridMessage();
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Raised the issue");
-                msg.Subject = RequestBy+ "raised the issue for the date: " + RequestedOn;
+                msg.Subject = RequestBy + "raised the issue for the date: " + RequestedOn;
 
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress("ajit_yadav@risebird.io", null));
                 StringBuilder msgBody = new StringBuilder("Dear ," + "Tech Support");
                 msgBody.Append("\n");
                 msgBody.Append("\n");
-                msgBody.AppendLine("You have received issue " + Comment + " from "+ RequestBy);
+                msgBody.AppendLine("You have received issue " + Comment + " from " + RequestBy);
                 msgBody.Append("\n");
                 msgBody.Append("\n");
                 msgBody.AppendLine("Thank You, Team Risebird");
