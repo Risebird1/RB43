@@ -466,10 +466,42 @@
                                                         </table>
                                                         <label class="text-danger" id="TechSkills_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
                                                     </div>
+                                                    @if (ViewBag.PageStatus != "PublicExternal")
+                                                {
+                                           
+                                            }
                                                 </fieldset>
 
                                             </div>
+                                            
                                             <!--tech skill end-->
+                                            <!--tech score start-->
+                                          @if (ViewBag.PageStatus != "PublicExternal")
+                                            {
+                                            <div class="card" style="margin-bottom:10px;">
+
+                                            <label class="question" for="checkbox_two">
+                                            <label for="checkbox_two">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            TECH SKILL SCORE <span class="totScore"><strong id="totTechScore"></strong></span>
+                                            </label>
+
+                                            </label>
+                                            <fieldset class="answer" style="display:none">
+                                            <div class="chart-box">
+                                            <div>
+                                            <div id="canvasDiv">
+
+
+                                            <canvas id="scoreChart" width="980" height="250"></canvas>
+                                            </div>
+                                            </div>
+                                            </div>
+                                            </fieldset>
+
+                                            </div>
+                                            }
+                                            <!--tech score start-->
                                             <!--report start-->
                                             <div class="card" style="margin-bottom:10px;">
 
@@ -540,7 +572,7 @@
 
                                                                         <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                             <div class="talktext">
-                                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
+                                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
                                                                                 <span id='remainingC'></span>
                                                                                 <div id="words"></div>
                                                                             </div>
@@ -842,8 +874,8 @@
                                             }
                                             <!--question end-->
                                             <!--tech score start-->
-                                            @if (ViewBag.PageStatus != "PublicExternal")
-                                                @* {
+                                            @*@if (ViewBag.PageStatus != "PublicExternal")
+                                                {
                                             <div class="card" style="margin-bottom:10px;">
 
                                             <label class="question" for="checkbox_two">
@@ -870,7 +902,7 @@
                                                 <!--tech score start-->
 
                                                 <!--Other skill set start-->
-                                                @if (Model.SkillSetsevaluate > 1)
+                                              @if (Model.SkillSetsevaluate > 1)
                                                 {
                                                     <div class="next-skillShow nextbtn">FILL THE SECTION BELOW FOR OTHER SKILLS</div>
                                                     <div id="next-skill" style="display:none">
@@ -954,6 +986,33 @@
 
                                                         </div>
                                                         <!--tech skill end-->
+                                                         <!--tech score start-->
+                                           @if (ViewBag.PageStatus != "PublicExternal")
+                                                {
+                                            <div class="card" style="margin-bottom:10px;">
+
+                                            <label class="question" for="checkbox_two">
+                                            <label for="checkbox_two">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            TECH SKILL SCORE <span class="totScore"><strong id="totTechScore2"></strong></span>
+                                            </label>
+
+                                            </label>
+                                            <fieldset class="answer" style="display:none">
+                                            <div class="chart-box">
+                                            <div>
+                                            <div id="canvasDiv">
+
+
+                                            <canvas id="scoreChart" width="980" height="250"></canvas>
+                                            </div>
+                                            </div>
+                                            </div>
+                                            </fieldset>
+
+                                            </div>
+                                            }
+                                                <!--tech score start-->
                                                         <!--report start-->
                                                         <div class="card" style="margin-bottom:10px;">
 
@@ -1019,7 +1078,7 @@
 
                                                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                                         <div class="talktext">
-                                                                                            @Html.TextAreaFor(m => m.InterviewerCommentTwo, new { htmlAttributes = new { @id = "interviewerCommentTwo", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
+                                                                                            @Html.TextAreaFor(m => m.InterviewerCommentTwo, new { htmlAttributes = new { @id = "interviewerCommentTwo", @class = "text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
                                                                                             <span id='remainingCTwo'></span>
                                                                                             <div id="wordsTwo"></div>
                                                                                         </div>
@@ -1160,7 +1219,7 @@
 
                                                     </div>
                                                     <div class="next-skillHide" style="display:none">HIDE OTHER SKILL</div>
-                                                }
+                                               }
                                             <!--Other skill set end-->
 
                                         </div>
@@ -1723,7 +1782,7 @@
             }
 
             SetTechReportChart('TechSkillReportCollection');
-
+        SetTechTwoReportCalculation('TechSkillTwoReportCollection');
             var average = 0;
             if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
                 average = totalCount / 4;
@@ -1736,7 +1795,24 @@
             $("#OverallScore").val(average);
 
         });
+    function SetTechTwoReportCalculation(techCollectionIdStartsWith) {
+        var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
+        var techItems = $(idSelector);
+        var totalTechSkillScore = 0;
+        if (techItems != null) {
+            var techItemsLength = 0;
+            techItemsLength = techItems.length;
+            for (i = 0; i < techItemsLength; i++) {
+                var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
+                var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
 
+                if (actualWeightage != null && actualWeightage != '') {
+                    totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
+                }
+            }
+            document.getElementById("totTechScore2").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+        }
+    }
         function AddRow() {
 
             var $ttc = $("#QuestionsTable").find("tbody tr:last");
@@ -2588,7 +2664,7 @@
     
 
     $(document).ready(function () {
-        document.getElementById("InterviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
+        document.getElementById("interviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
 
     })
 </script>
