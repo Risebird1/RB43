@@ -3043,6 +3043,8 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
                 {
                     model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+                    string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                    model.InterviewerComment = output;
 
                 }
                 if (profileName == "Client")
