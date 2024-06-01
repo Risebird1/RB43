@@ -2575,29 +2575,17 @@
 
 </script>
 @*<link href="~/Newassets/css/summernote.min.css" rel="stylesheet" />
-<script src="~/Newassets/js/summernote.min.js"></script>
+<script src="~/Newassets/js/summernote.min.js"></script>*@
 
 <script>
-    $(document).ready(function () {
-        $('#InterviewerComment').summernote({
-            placeholder: 'Type your comment...',
-            tabsize: 2,
-            height: 100
-        });
-    });*@
+   
 
     $(document).ready(function () {
         document.getElementById("interviewerComment").innerHTML = $('#interviewerComment').text();
 
     })
 
-       $(document).ready(function () {
-        $('#InterviewerCommentTwo').summernote({
-            placeholder: 'Type your comment...',
-            tabsize: 2,
-            height: 100
-        });
-    });
+    
 
     $(document).ready(function () {
         document.getElementById("InterviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
