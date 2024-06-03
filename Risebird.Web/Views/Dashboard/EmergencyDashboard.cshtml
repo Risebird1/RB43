@@ -11,9 +11,18 @@
      <div class="panel-header panel-header-sm">
                 </div>
                 <div class="page-content-wrap dashboard">
+                    <div class="row">
+                        <div class="col-md-12 text-center" style="margin: 0px 20px 20px 0px;border-bottom: 1px #e2d2d2 solid">
+                            <a href="/IRF/InterviewerEntitle" target="_blank">
+                                <span type="button" class="assessmentgrp-btn">
+                                    <span class="fa fa-plus-clone"><font style="font-size:12px; font-family: Roboto, sans-serif;">Assessment Group Details</font></span>
+                                </span>
+                            </a>
 
+                        </div>
+                    </div>
         <div class="row  col-sm-12">
-                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance")
                 {
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="panel card flipper1">
@@ -255,7 +264,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                @if (ViewBag.ProfileName == "SseniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper">
@@ -413,7 +422,7 @@
                         </div>
                         }
 
-                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance")
                 {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper7">
@@ -723,7 +732,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin"|| ViewBag.ProfileName == "Quality Controller")
                 {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper12">
@@ -985,7 +994,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                @if (ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
                 { 
                 <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper17">
@@ -1777,7 +1786,7 @@
                         </div>
                     </div>
                 }
-                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "SeniorHR")
                         {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper27">
@@ -1847,6 +1856,562 @@
                             </div>
                         </div>
                         }
+                        @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                        {
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper28">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="BlackListCompany()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon blacklist"><img class="icons-dash" src="~/img/blacklist.png" style="width:33px!important;position:relative;left:0px;" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Blacklisted Company</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
+                                                            <span id="ribbonBlackListCompanyCount" onclick="BlackListCompany()">@Model.NotUpdatedMeetingsObj.BlackListCompanyCount</span>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="BlackListCompany()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="BlackListCompany()">
+                                        <div class="panel-heading" data-position="bottom">
+
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon blacklist"><img class="icons-dash" src="~/img/blacklist.png" style="width:33px!important;position:relative;left:0px;" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Blacklisted Company</strong></span></h3>
+                                                        </div>
+
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>
+                                                                <span id="ribbonBlackListCompanyCount_1" class="card-title" onclick="BlackListCompany()">@Model.NotUpdatedMeetingsObj.BlackListCompanyCount</span>
+                                                            </strong>
+                                                        </div>
+
+                                                        <div class="pull-right">
+                                                            <button onclick="BlackListCompany()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "Quality Controller")
+                        {
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="panel card flipper29">
+                                <div id="survey-feedback">
+                                    <div class="front-card countdown__timer" style="cursor:pointer" onclick="PaymentSlacompliance()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon payment"><img src="~/img/payment-sla.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Payment Compliance</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left" style="color: #74c0fc">
+                                                            <span id="ribbonPaymentSlacomplianceCount">@Model.NotUpdatedMeetingsObj.PaymentSlacomplianceCount</span>
+                                                        </div>
+                                                        <div class="pull-right">
+                                                            <button onclick="PaymentSlacompliance()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="back-card countdown__timer" style="cursor:pointer" onclick="PaymentSlacompliance()">
+                                        <div class="panel-heading" data-position="bottom">
+                                            <div id="slotsId">
+                                                <div class="panel-body panel-body-table">
+                                                    <div class="col-md-3 pull-left"><span class="dashboard-icon blacklist"><img class="icons-dash" src="~/img/payment-sla.png" /></span></div>
+                                                    <div class="col-md-9 pull-left">
+                                                        <div>
+                                                            <h3 class="dashboard-cat-title"><span><strong>Payment Compliance</strong></span></h3>
+                                                        </div>
+                                                        <div class="dashboard-count pull-left">
+                                                            <div class="header-back"></div>
+                                                            <strong>
+                                                                <span id="ribbonPaymentSlacomplianceCount_1" class="card-title" onclick="PaymentSlacompliance()">@Model.NotUpdatedMeetingsObj.PaymentSlacomplianceCount</span>
+                                                            </strong>
+                                                        </div>
+                                                        <div class="pull-right">
+                                                            <button onclick="PaymentSlacompliance()" class="click-arrow" title="Detail View">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                {
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper30">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewerChurn')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+
+                                                        <div class="col-md-3 pull-left"><span><img src="~/img/churn.png" style="max-width:55px;" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Interviewer Churn Data</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="color: #74c0fc">
+                                                                <span id="ribbonInterviewerChurnCount" onclick="OpenRibbonDetails('@RibbonActionType.InterviewerChurn')">@Model.NotUpdatedMeetingsObj.InterviewerChurnCount</span>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.InterviewerChurn')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenRibbonDetails('@RibbonActionType.InterviewerChurn')">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon cancel"><img class="icons-dash" src="~/img/cancel-int.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Interviewer Churn Data</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>
+                                                                    <span id="ribbonInterviewerChurnCount_1" class="card-title" onclick="OpenRibbonDetails('@RibbonActionType.CancelledInterview')">@Model.NotUpdatedMeetingsObj.InterviewerChurnCount</span>
+                                                                </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenRibbonDetails('@RibbonActionType.InterviewerChurn')" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                }
+
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                {
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper31">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="HighRiskInterviewers()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon risk-int"><img src="~/img/risk-interviewer.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>High Risk Interviews</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong>  <span style="cursor:pointer" id="ribbonHighRiskInterviewersCount" class="card-title">@Model.NotUpdatedMeetingsObj.HighRiskInterviewers</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="HighRiskInterviewers()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="HighRiskInterviewers()">
+                                            <div class="panel-heading" data-position="bottom">
+
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon risk-int"><img src="~/img/risk-interviewer.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>High Risk Interviews</strong></span></h3>
+                                                            </div>
+
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong> <span style="cursor:pointer" id="ribbonunHighRiskInterviewersCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.HighRiskInterviewers</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="HighRiskInterviewers()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                }
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
+                {
+
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper32">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="OpenCandidateWaiting()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Candidate waiting</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonCandidatewaitingCount" onclick="OpenCandidateWaiting()">@Model.NotUpdatedMeetingsObj.CandidatewaitingCount </span> </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenCandidateWaiting()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="OpenCandidateWaiting()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Candidate waiting</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>  <span style="cursor:pointer" id="ribbonCandidatewaitingCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.CandidatewaitingCount</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="OpenCandidateWaiting()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                }
+
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Quality Controller")
+                {
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper33">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="ProxyReport()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon proxy-report"><img src="~/img/proxy-icon.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Proxy Report</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonProxyCount" onclick="ProxyReport()">@Model.NotUpdatedMeetingsObj.ProxyCount </span> </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="ProxyReport()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="ProxyReport()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Proxy Report</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>  <span style="cursor:pointer" id="ribbonProxyCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.ProxyCount</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="ProxyReport()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                }
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                {
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper34">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="Campaign()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#c6a9c6"><i class="fas fa-bullhorn" style="color:#fff;font-size:21px;"></i></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Campaign </strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonCampaignCount" onclick="Campaign()" style="font-size:15px;">Click here </span> </strong>
+                                                            </div>
+                                                            <div class="pull-right">
+                                                                <button onclick="Campaign()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="Campaign()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#c6a9c6"><i class="fas fa-bullhorn" style="color:#fff;font-size:21px;"></i></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Campaign</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:-5px;">
+                                                                <div class="header-back"></div>
+                                                                <strong><span style="font-size:15px;position:relative;left:10px;" onclick="Campaign()" class="card-title">Click here </span> </strong>
+                                                            </div>
+                                                            <div class="pull-right">
+                                                                <button onclick="Campaign()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                }
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                {
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper35">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="PLIDetalis()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#18c38e;padding:8px;"><img src="~/img/pli.png"></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>PLI </strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonPLICount" onclick="PLIDetalis()" style="font-size:15px;">Click here </span> </strong>
+                                                            </div>
+                                                            <div class="pull-right">
+                                                                <button onclick="PLIDetalis()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="PLIDetalis()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background:#18c38e;padding:8px;"><img src="~/img/pli.png"></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>PLI</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:-5px;">
+                                                                <div class="header-back"></div>
+                                                                <strong><span style="font-size:15px;position:relative;left:10px;" onclick="PLIDetalis()" class="card-title">Click here </span> </strong>
+                                                            </div>
+                                                            <div class="pull-right">
+                                                                <button onclick="PLIDetalis()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
+                    }
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")
+                {
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper36">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="PotentialPauseIRFDetalis(0)">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background: #eb6340d9;"><img src="~/img/pause-skill.png" style="max-width:100px!important;position:relative;left:-14px;"></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Paused & Pausable <span class="dashboard-smalltxt">Skill Channels</span></strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonPotentialPauseIRFCount" onclick="PotentialPauseIRFDetalis(0)" style="font-size:15px;cursor:pointer">Click here </span> </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="111" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="PotentialPauseIRFDetalis(0)">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon" style="background: #eb6340d9;"><img src="~/img/pause-skill.png" style="max-width:100px!important;position:relative;left:-14px;"></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Paused & Pausable <span class="dashboard-smalltxt">Skill Channels</span></strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;">
+                                                                <div class="header-back"></div>
+                                                                <strong><span id="ribbonPotentialPauseIRFCount" onclick="PotentialPauseIRFDetalis(0)" style="font-size:15px;">Click here </span> </strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="PotentialPauseIRFDetalis(0)" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
+              }
             </div>
       </div>
      <div>
@@ -1916,6 +2481,30 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
                 window.location.href = "/Support/RaisedRequests?returnBack=" + 1;
             }
 
+            function BlackListCompany() {
+                window.location.href = "/Dashboard/BlackListCompany?returnBack=" + 1;
+            }
+            function PaymentSlacompliance() {
+                window.location.href = "/Interview/PaymentSlaDetails?returnBack=" + 1;
+            }
+            function HighRiskInterviewers() {
+                window.location.href = "/Dashboard/HighRiskInterviewers?returnBack=" + 1;
+            }
+            function OpenCandidateWaiting() {
+                window.location.href = "/Dashboard/Participantwaiting?returnBack=" + 1;
+            }
+            function ProxyReport() {
+                window.location.href = "/Dashboard/ProxyReport?returnBack=" + 1;
+            }
+            function Campaign() {
+                window.location.href = "/IRF/Campaigns?returnBack=" + 1;
+            }
+            function PLIDetalis() {
+                window.location.href = "/Dashboard/InterviewerIRFLogisticDetails?returnBack=" + 1;
+            }
+            function PotentialPauseIRFDetalis(type) {
+                window.location.href = "/Dashboard/PotentialPausedDetails?type=" + type + "&returnBack=" + 1;
+            }
 </script>
 
 <script type="text/javascript">
@@ -2019,14 +2608,14 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
                     $(".flipper17").removeClass("flipper");
                 }
 
-                   if (parseInt(data.missingVideoLink) != parseInt($("#ribbonmissingvideolinkcount").text())) {
+                if (parseInt(data.missingVideoLink) != parseInt($("#ribbonmissingvideolinkcount").text())) {
                     $(".flipper18").addClass("flipper");
                 }
                 else {
                     $(".flipper18").removeClass("flipper");
                 }
 
-                  if (parseInt(data.probableNoShowCount) != parseInt($("#ribbonProbableNoShowCount").text())) {
+                if (parseInt(data.probableNoShowCount) != parseInt($("#ribbonProbableNoShowCount").text())) {
                     $(".flipper19").addClass("flipper");
                 }
                 else {
@@ -2039,10 +2628,10 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
                 $(".flipper20").removeClass("flipper");
             }
 
-                    if (parseInt(data.notProcessedCandidateResume) != parseInt($("#ribbonnotprocessedcandidateresume").text())) {
+            if (parseInt(data.notProcessedCandidateResume) != parseInt($("#ribbonnotprocessedcandidateresume").text())) {
                     $(".flipper21").addClass("flipper");
                 }
-                else {
+            else {
                     $(".flipper21").removeClass("flipper");
                 }
                    if (parseInt(data.missingZoomLink) != parseInt($("#ribbonmissingzoomlinkcount").text())) {
@@ -2076,7 +2665,49 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
                         else {
                             $(".flipper26").removeClass("flipper");
                         }
+                        if (parseInt(data.cancelledInterviewCount) != parseInt($("#ribbonCancelledInterviewsCount").text())) {
+                            $(".flipper27").addClass("flipper");
+                        }
+                        else {
+                            $(".flipper27").removeClass("flipper");
+                        }
+                        if (parseInt(data.blackListCompanyCount) != parseInt($("#ribbonBlackListCompanyCount").text())) {
+                            $(".flipper28").addClass("flipper");
+                        }
+                        else {
+                            $(".flipper28").removeClass("flipper");
+                        }
 
+                        if (parseInt(data.paymentSlacomplianceCount) != parseInt($("#ribbonPaymentSlacomplianceCount").text())) {
+                            $(".flipper29").addClass("flipper");
+                        }
+                        else {
+                            $(".flipper29").removeClass("flipper");
+                        }
+                        if (parseInt(data.interviewerChurnCount) != parseInt($("#ribbonInterviewerChurnCount").text())) {
+                            $(".flipper30").addClass("flipper");
+                        }
+                        else {
+                            $(".flipper30").removeClass("flipper");
+                        }
+                        if (parseInt(data.highRiskInterviewers) != parseInt($("#ribbonHighRiskInterviewersCount").text())) {
+                            $(".flipper31").addClass("flipper");
+                        }
+                        else {
+                            $(".flipper31").removeClass("flipper");
+                        }
+                        if (parseInt(data.candidatewaitingCount) != parseInt($("#ribbonCandidatewaitingCount").text())) {
+                            $(".flipper32").addClass("flipper");
+                        }
+                        else {
+                            $(".flipper32").removeClass("flipper");
+                        }
+                        if (parseInt(data.proxyCount) != parseInt($("#ribbonProxyCount").text())) {
+                            $(".flipper33").addClass("flipper");
+                        }
+                        else {
+                            $(".flipper33").removeClass("flipper");
+                        }
             $("#ribbonMissedCandidateCount").text(data.missedCandidateCount);
             $("#ribbonMailCount").text(data.bounceDroppedCandidateMailCount);
             $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
@@ -2096,6 +2727,13 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
             $("#ribbonNeedClarityCount").text(data.needClarityCount);
             $("#ribbonOpenIssueCount").text(data.openIssueCount);
                         $("#ribbonReScheduleCount").text(data.rescheduleInterviewMeetingCount);
+                        $("#ribbonCancelledInterviewsCount").text(data.cancelledInterviewCount);
+                        $("#ribbonBlackListCompanyCount").text(data.blackListCompanyCount);
+                        $("#ribbonPaymentSlacomplianceCount").text(data.paymentSlacomplianceCount);
+                        $("#ribbonInterviewerChurnCount").text(data.interviewerChurnCount);
+                        $("#ribbonHighRiskInterviewersCount").text(data.highRiskInterviewers);
+                        $("#ribbonCandidatewaitingCount").text(data.candidatewaitingCount);
+                        $("#ribbonProxyCount").text(data.proxyCount);
 
             $("#ribbonMissedCandidateCount_1").text(data.missedCandidateCount);
             $("#ribbonMailCount_1").text(data.bounceDroppedCandidateMailCount);
@@ -2116,6 +2754,13 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
             $("#ribbonNeedClarityCount_1").text(data.needClarityCount);
             $("#ribbonOpenIssueCount_1").text(data.openIssueCount);
                         $("#ribbonReScheduleCount_1").text(data.rescheduleInterviewMeetingCount);
+                        $("#ribbonCancelledInterviewsCount_1").text(data.cancelledInterviewCount);
+                        $("#ribbonBlackListCompanyCount_1").text(data.blackListCompanyCount);
+                        $("#ribbonPaymentSlacomplianceCount_1").text(data.paymentSlacomplianceCount);
+                        $("#ribbonInterviewerChurnCount_1").text(data.interviewerChurnCount);
+                        $("#ribbonunHighRiskInterviewersCount_1").text(data.highRiskInterviewers);
+                        $("#ribbonCandidatewaitingCount_1").text(data.interviewerVideoKYC);
+                        $("#ribbonProxyCount_1").text(data.proxyCount);
 
                 $(".flipper").toggleClass("flip");
             }

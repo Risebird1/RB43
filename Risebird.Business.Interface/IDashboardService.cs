@@ -55,12 +55,12 @@ namespace Risebird.Business.Interface
         Task<QCFormVM> GetRedFlagsQCReportService(int Interviewid);
         Task<bool> UndoSuspiciousInterviewerService(int InterviewerProfileId);
         Task<bool> ApprovedRedoInterviewsService(int InterviewId, string modifyBy, DateTime modifyDate);
-        Task<IEnumerable<MeetingVM>> GetRedoRequestService();
+        Task<IEnumerable<MeetingVM>> GetRedoRequestService(string EmailId);
         Task<IEnumerable<InterviewerRedmarkers>> GetHighRiskInterviewersService();
         Task<bool> AddRedoInterviewsService(int InterviewId, string Type);
         Task<bool> MoveToUnassignService(int meetingId);
         Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService(string EmailId);
-        Task<List<MeetingVM>> FetchParticipantwaitingDetails();
+        Task<List<MeetingVM>> FetchParticipantwaitingDetails(string EmailId);
         Task<IEnumerable<InterviewerVideoKYCVM>> GeInterviewerVideoKYC();
         Task<bool> UpdateInterviewerVideoKYC(int id, string type);
         Task<IEnumerable<ProctoringReport>> GetProxyReport();

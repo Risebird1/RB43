@@ -1272,13 +1272,14 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetRedoRrquest()
+        public async Task<IEnumerable<MeetingVM>> GetRedoRrquest(string EmailId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", EmailId);
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_ShowRedoRequestLit", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -1357,13 +1358,15 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails()
+        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails(string EmailId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchParticipantwaitingDetails", null,
+                    DynamicParameters dynamicParam = new DynamicParameters();
+                    dynamicParam.Add("@EmailId", EmailId);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchParticipantwaitingDetails", dynamicParam,
                         commandType: CommandType.StoredProcedure);
                     return result?.ToList();
                 }

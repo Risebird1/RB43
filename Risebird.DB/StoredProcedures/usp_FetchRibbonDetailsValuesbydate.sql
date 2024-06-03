@@ -334,6 +334,38 @@ begin
 			select distinct im.*,irf.*,cl.*,ic.*,ul.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id left join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr where confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate and ul.EmailId=@emailID and interviewDate between @StartDate and @EndDate
 		end
 	end
+		else If(@actionstatus ='CancelledInterviewCount')
+	begin
+		if (@actiontype = 0)
+		begin
+			if (@Profile = 'SeniorHR' or @Profile = 'HR')
+			begin
+				select distinct im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId from InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
+				join UserList ul on ul.id=  irf.RisebirdHr 
+				where  confirmationStatus=2 and  interviewDate between @StartDate and @EndDate and ul.EmailId=@emailID and im.RedoInterview=0
+			end
+			else
+			begin
+				select distinct im.*, cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId from InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join UserList ul on ul.id=  irf.RisebirdHr
+				where confirmationStatus=2 and  interviewDate between @StartDate and @EndDate and im.RedoInterview=0
+			end
+		end
+		else
+		begin
+			select distinct im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			where confirmationStatus=2 and  interviewDate between @StartDate and @EndDate and ul.EmailId=@emailID and im.RedoInterview=0
+			union 
+			select distinct im.*,cl.Name as Client,ul.EmailId as BillingOwner,IRF.id as irfIntId  from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join Userlist ul on ul.id=irf.RisebirdHr 
+			join UserList ulc on ulc.id=  irf.RisebirdHr
+			where confirmationStatus=2 and  interviewDate between @StartDate and @EndDate and ul.EmailId=@emailID and im.RedoInterview=0
+		end
+	end
 
 END
 GO

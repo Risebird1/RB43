@@ -721,11 +721,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetRedoRequestService()
+        public async Task<IEnumerable<MeetingVM>> GetRedoRequestService(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.GetRedoRrquest();
+                return await _dashboardRespository.GetRedoRrquest(EmailId);
             }
             catch (Exception e)
             {
@@ -786,11 +786,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails()
+        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.FetchParticipantwaitingDetails();
+                return await _dashboardRespository.FetchParticipantwaitingDetails(EmailId);
             }
             catch (Exception ex)
             {

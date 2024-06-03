@@ -30,7 +30,7 @@ or (pg.PerformedOn is not null and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or 
 
 declare @TechQCCount int =(Select count(id) from TechQualityDetails where isActive=1)
 
-if(@Role='SeniorHR')--or @Role='SupportAdmin'              
+if(@Role='SeniorHR' or @Role = 'HR')--or @Role='SupportAdmin'              
 BEGIN      
 declare @UnassignedInterviewsCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
  left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )    
@@ -62,7 +62,8 @@ declare @NotProcessedCandidateResume int = (Select count(cr.id) from CandidateRe
  left join UserList ulsh on ulsh.id=sh.Userid where IsnUll(cr.Isprocessed,0)=0 and ulsh.Emailid= @Emailid)    
     
 declare @QCPendingReportCount int = (Select Count(distinct im.id)  from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join IRF on IRF.IRFId=im.IRFId        
-join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id
+join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id 
+  
 left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1         
 where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ulsh.Emailid= @Emailid)    
       
@@ -121,7 +122,11 @@ declare @PotentialRiskByClient int=(select Count(ccfr.id) from  ClientCommentsFo
  declare @interviewerChurnCount int=(select COUNT(Id) from InterviewerProfile where Isavailable in (3,4))    
     
 declare @PaymentSlacomplianceCount int=(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)    
-declare @RedoRequestCount int=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id where ISNULL(Approved,0)=0 and ISNULL(Rejected,0)=0)    
+declare @RedoRequestCount int=(Select COUNT(ri.id)   from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id  
+inner join IRF on im.IRFId=irf.IRFId  
+left join UserList ulc on im.candidateEmail= ulc.EmailId   
+left join UserList ulco on ulco.id=irf.RisebirdHr
+where ISNULL(Approved,0)=0 and  ISNULL(Rejected,0)=0 and ulco.EmailId=@EmailId)    
 declare @HighRiskInterviewers int=(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)    
 declare @InterviewerVideoKYC int=(Select COUNT(ip.id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where isnull(ip.IsVideoApproved,0)=0 and ul.IsActive=1 and ip.VideoLink is not null)  
 declare @ProxyCount int=(Select COUNT(pr.id) from ProxyReport pr   
