@@ -11,17 +11,21 @@
      <div class="panel-header panel-header-sm">
                 </div>
                 <div class="page-content-wrap dashboard">
-                    <div class="row">
-                        <div class="col-md-12 text-center" style="margin: 0px 20px 20px 0px;border-bottom: 1px #e2d2d2 solid">
-                            <a href="/IRF/InterviewerEntitle" target="_blank">
-                                <span type="button" class="assessmentgrp-btn">
-                                    <span class="fa fa-plus-clone"><font style="font-size:12px; font-family: Roboto, sans-serif;">Assessment Group Details</font></span>
-                                </span>
-                            </a>
 
-                        </div>
+            @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+            {
+                <div class="row">
+                    <div class="col-md-12 text-center" style="margin: 0px 20px 20px 0px;border-bottom: 1px #e2d2d2 solid">
+                        <a href="/IRF/InterviewerEntitle" target="_blank">
+                            <span type="button" class="assessmentgrp-btn">
+                                <span class="fa fa-plus-clone"><font style="font-size:12px; font-family: Roboto, sans-serif;">Assessment Group Details</font></span>
+                            </span>
+                        </a>
+
                     </div>
-        <div class="row  col-sm-12">
+                </div>
+            }
+            <div class="row  col-sm-12">
                 @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance")
                 {
             <div class="col-lg-3 col-md-4 col-sm-6">
@@ -264,7 +268,7 @@
                     </div>
                 }
 
-                @if (ViewBag.ProfileName == "SseniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
+                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin")
                 {
                 <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper">
@@ -1216,7 +1220,7 @@
                             </div>
                 }
 
-                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "SeniorHR")
                 {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="panel card flipper20">
@@ -1642,7 +1646,7 @@
                             </div>
                         </div>
                         }
-                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "SeniorHR")
                         {
                         <div class="col-lg-3 col-md-4 col-sm-6">
                             <div class="panel card flipper26">
@@ -2421,7 +2425,7 @@
 
 <script>
     function MissedCandidate() {
-        window.location.href = "/Dashboard/InterviewManagementDetails?pagetype=" + 1;
+                window.location.href = "/Dashboard/InterviewManagementDetails?returnBack=" + 1;
     }
 
        function MialsDetails(recipientType) {

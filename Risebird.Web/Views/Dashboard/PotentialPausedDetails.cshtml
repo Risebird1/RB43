@@ -38,14 +38,14 @@
                 <div>
                     @if (ViewBag.ColdCandidateValue == 0)
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails(0)"><strong>Potentially Pausable Skill Channel</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails(1)"><strong>Paused Skill Channel</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails(0,'@ViewBag.ReturnBack')"><strong>Potentially Pausable Skill Channel</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails(1,'@ViewBag.ReturnBack')"><strong>Paused Skill Channel</strong></div>
 
                     }
                     else if (ViewBag.ColdCandidateValue == 1)
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails(0)"><strong>Potentially Pausable Skill Channel</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails(1)"><strong>Paused Skill Channel</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails(0,'@ViewBag.ReturnBack')"><strong>Potentially Pausable Skill Channel</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails(1,'@ViewBag.ReturnBack')"><strong>Paused Skill Channel</strong></div>
 
                     }
 
@@ -311,8 +311,8 @@
         window.location.href = "/IRF/NotScheduledCandidate?IRFId=" + IRFId;
     }
 
-    function Changeurldetails(type) {
-        window.location.href = "/Dashboard/PotentialPausedDetails?type=" + type;
+    function Changeurldetails(type,returnBack) {
+        window.location.href = "/Dashboard/PotentialPausedDetails?type=" + type + "&returnBack=" + 1;
     }
 </script>
 

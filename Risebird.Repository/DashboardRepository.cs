@@ -1596,13 +1596,14 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type)
+        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId)
         {
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@type", type);
                 parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<PQIDetails>(con, "usp_PLIInfoDetails", parameters,
@@ -1732,13 +1733,15 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<List<MeetingVM>> PotentialPausedRepository()
+        public async Task<List<MeetingVM>> PotentialPausedRepository(string EmailId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetPotentialPauseChannel", null,
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@EmailId ", EmailId);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetPotentialPauseChannel", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     return result?.ToList();
                 }

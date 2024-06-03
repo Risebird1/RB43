@@ -13,6 +13,9 @@ Create PROCEDURE [dbo].[usp_GetNotUpdatedMeetingsCount]
 @currentdate datetime,        
 @Emailid varchar(150)          
 AS                                    
+@currentdate datetime,        
+@Emailid varchar(150)          
+AS                                    
 Begin    
 Declare @Role varchar(150)              
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid           

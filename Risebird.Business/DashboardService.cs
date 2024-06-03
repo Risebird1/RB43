@@ -913,11 +913,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type)
+        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId)
         {
             try
             {
-                return await _dashboardRespository.InterviewerIRFLogisticDetails(type);
+                return await _dashboardRespository.InterviewerIRFLogisticDetails(type,EmailId);
             }
             catch (Exception ex)
             {
@@ -978,11 +978,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<List<MeetingVM>> PotentialPausedDetails()
+        public async Task<List<MeetingVM>> PotentialPausedDetails(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.PotentialPausedRepository();
+                return await _dashboardRespository.PotentialPausedRepository(EmailId);
             }
             catch (Exception ex)
             {
