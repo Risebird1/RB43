@@ -1151,9 +1151,13 @@
 
                                                                                                  @if (!item.IsColdCandidate)
                                                                                                    {
-                                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.CandidateEmailId, endDate = item.EndDate })" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                                                @*     <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { irfId = item.IRFId,IRFName = item.IRFname,emailId = item.CandidateEmailId,endDate = item.EndDate})" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
                                                                                                  <span title="Send Invite"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
-                                                                                                  </a>
+                                                                                                       
+                                                                                             </a> *@
+                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
+                                                                                                        <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send" style="color:#fff;font-size:11px;position:relative;top:-2px;"></span></span>
+                                                                                                    </span>
                                                                                                     }
 
                                                                                             }
