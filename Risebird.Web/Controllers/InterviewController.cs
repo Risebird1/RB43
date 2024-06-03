@@ -3057,7 +3057,7 @@ namespace Risebird.Web.Controllers
                 {
                     model.IsQCRequired = false;
                 }
-                if (model.QuestionsCollection == null)
+                if (model.QuestionsCollection == null && model.QuestionsTwoCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
                 }
@@ -3067,7 +3067,11 @@ namespace Risebird.Web.Controllers
                     {
                         question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
                     }
-                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                    foreach (var question in model.QuestionsTwoCollection)
+                    {
+                        question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+                    }
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count() + model.QuestionsTwoCollection?.Count();
                 }
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
