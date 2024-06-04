@@ -176,7 +176,18 @@ if (profile != null && profile != "Admin" && type != 'add') {
                 }
                 //surchargeMin = 101;
             }
+            else if (planType == "6")//Advanced
+            {
+                if (companyType == "1")//Product based company
+                {
+                    surchargeMax = 200;
 
+                }
+                else {
+                    surchargeMax = 300;
+                }
+                //surchargeMin = 101;
+            }
             var surchargeList = $('[id^="InterviewerCollection"][id$="Surcharge"]');
             for (i = 0; i < surchargeList.length; i++) {
                 $("#" + surchargeList[i].id).attr({
@@ -198,6 +209,23 @@ if (profile != null && profile != "Admin" && type != 'add') {
     if(type == 'add')
     {
        document.getElementById('FlatRate').value = interviewerRate;
+
+    }
+    if(type == 'add' && planType != null)// this means plantype is the dropdown that has been changed
+    {
+        //set the value of skill sets drop-down to two and disable it
+       if (planType == 6) {
+             //multistack planType is selected
+            document.getElementById("SkillSetsevaluate").value = '2';
+            //document.getElementById("SkillSetsevaluate").disabled = true;
+            document.getElementById("secondSkillSets").style.display = "block";
+       }
+       else
+       {
+           document.getElementById("SkillSetsevaluate").value = '1';
+           //document.getElementById("SkillSetsevaluate").disabled = false;
+           document.getElementById("secondSkillSets").style.display = "none";
+       }
 
     }
     

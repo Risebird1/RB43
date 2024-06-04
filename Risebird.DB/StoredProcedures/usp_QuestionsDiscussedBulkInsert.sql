@@ -9,11 +9,9 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
 CREATE PROCEDURE [dbo].[usp_QuestionsDiscussedBulkInsert]
 (
-      @QuestionsDiscussedBulkData AS [dbo].[QuestionsDiscussed_TableType] READONLY
+      @QuestionsDiscussedBulkData AS [dbo].[QuestionsDiscussedV2_TableType] READONLY
 )
 AS
 
@@ -27,7 +25,8 @@ INSERT INTO [dbo].[QuestionsDiscussed](
 	[Comment],
 	[RatingId],
 	[Timing],
-	[SkillName])
+	[SkillName],
+	[SkillSet])
 	
 
 SELECT * FROM @QuestionsDiscussedBulkData

@@ -1342,6 +1342,13 @@ namespace Risebird.Repository
                     parameters.Add("@PerformedBy", loggedInEmailId);
                     parameters.Add("@PerformedAt", DateTime.Now);
                     parameters.Add("@CommunicationalProficiency", reportDetails.CommunicationalProficiency);
+                    parameters.Add("@InterviewStatusTwo", reportDetails.InterviewStatusTwo);
+                    parameters.Add("@MeetingStatusTwo", reportDetails.MeetingStatusTwo);
+                    if (string.IsNullOrWhiteSpace(reportDetails.InterviewerCommentTwo))
+                    {
+                        reportDetails.InterviewerCommentTwo = "";
+                    }
+                    parameters.Add("@InterviewerCommentTwo", reportDetails.InterviewerCommentTwo);
 
                     DynamicParameters parametersPoints = new DynamicParameters();
 
@@ -1390,10 +1397,11 @@ namespace Risebird.Repository
                         techReportDt.Columns.Add("WeightageRequired", typeof(int));
                         techReportDt.Columns.Add("WeightageActual", typeof(int));
                         techReportDt.Columns.Add("TechComments", typeof(string));
+                        techReportDt.Columns.Add("SkillSet", typeof(int));
 
                         foreach (var item in reportDetails.TechSkillReportCollection)
                         {
-                            techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.TechComments);
+                            techReportDt.Rows.Add(reportDetails.InterviewId, item.RequiredLevelId, item.SkillId, item.ActualLevelId, item.WeightageRequired, item.WeightageActual, item.TechComments, item.SkillSet);
                         }
 
                         SqlCommand cmdTechReport = new SqlCommand("usp_TechSkillReportBulkInsert", con)
@@ -1445,13 +1453,14 @@ namespace Risebird.Repository
                         questionsDt.Columns.Add("RatingId", typeof(int));
                         questionsDt.Columns.Add("Timing", typeof(int));
                         questionsDt.Columns.Add("SkillName", typeof(string));
+                        questionsDt.Columns.Add("SkillSet", typeof(int));
 
 
                         foreach (var item in reportDetails.QuestionsCollection)
                         {
                             if (!string.IsNullOrEmpty(item.Comment) && !string.IsNullOrEmpty(item.SkillName))
                             {
-                                questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName);
+                                questionsDt.Rows.Add(reportDetails.InterviewId, item.Comment, item.RatingId, item.Timing, item.SkillName, item.SkillSet);
                             }
                         }
 
@@ -1614,7 +1623,7 @@ namespace Risebird.Repository
             try
             {
                 // var query = "Select * from QuestionsDiscussed where InterviewId = @id";
-                var query = "Select  qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority from QuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment and vc.Interviewid =@id where qd.Interviewid= @id";
+                var query = "Select  qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority,qd.SkillSet from QuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment and vc.Interviewid =@id where qd.Interviewid= @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

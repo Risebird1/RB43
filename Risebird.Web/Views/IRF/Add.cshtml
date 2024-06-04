@@ -1687,18 +1687,23 @@
             var message = "";
             var newflag = false;
             var table = document.getElementById("InterviewerTable");
-            var rowCount = table.rows.length;
-            for (var i = 0; i < rowCount; i++) {
-                if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "") {
-                    if (message == "") {
-                        message = "Per Interviewer Rate should not be blank";
-                    } else {
-                        message = message + ",Per Interviewer Rate should not be blank";
+            if(table  !=null)
+            {
+                var rowCount = table.rows.length;
+                for (var i = 0; i < rowCount; i++) {
+                    if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "") {
+                        if (message == "") {
+                            message = "Per Interviewer Rate should not be blank";
+                        } 
+                        else {
+                            message = message + ",Per Interviewer Rate should not be blank";
+                        }
+                        newflag = true;
+                        break;
                     }
-                    newflag = true;
-                    break;
                 }
             }
+            
     @*var emetable = document.getElementById("EmergencyInterviewerTable");
             var emerowCount = emetable.rows.length;
             for (var i = 0; i < emerowCount; i++) {
@@ -1727,42 +1732,6 @@
             }*@
             if (newflag == true) {
                 alert(message);
-                return false;
-            }
-            if (inCorrectCount == 0) {
-                // check interviewers list InterviewerCollection_  UserId
-                var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
-                for (i = 0; i < drpdowns.length; i++) {
-
-                    var interviewId = $("#" + drpdowns[i].id).val();
-                    if (interviewId == '') {
-                        //noInterviewer
-                        document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all interviewer entries.";
-                        //document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
-
-                        return false;
-                    }
-                }
-                document.getElementById("noInterviewer").innerHTML = "";
-                //document.getElementById("noInterviewerDown").innerHTML = "";
-                $("#btnUpload").attr("disabled", "disabled");
-                return true;
-            }
-            else {
-                var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
-                for (i = 0; i < drpdowns.length; i++) {
-
-                    var interviewId = $("#" + drpdowns[i].id).val();
-                    if (interviewId == '') {
-                        //noInterviewer
-                        document.getElementById("noInterviewer").innerHTML = "Please select an Interviewer for all Interviewer entries.";
-                        //document.getElementById("noInterviewerDown").innerHTML = "Please select an Interviewer for all interviewer entries.";
-                        break;
-
-                    }
-                    document.getElementById("noInterviewer").innerHTML = "";
-                    //document.getElementById("noInterviewerDown").innerHTML = "";
-                }
                 return false;
             }
             if ($("#AssessmentGroupId").val() == "") {
@@ -2061,7 +2030,6 @@
 
         function AddRow() {
             //document.getElementById("btnUpload").disabled = false;
-
             var table = document.getElementById("SkillTable");
             var rowCount = table.rows.length;
             //if (rowCount == 6) {
@@ -2645,9 +2613,13 @@
         function checkSkillsetsActive(){
             if ($("#SkillSetsevaluate").val() == 1){
                 document.getElementById("secondSkillSets").style.display = "none";
-            }else{
-                document.getElementById("secondSkillSets").style.display = "block";
+                document.getElementById("Heuristicsscore").value = '';
             }
+            else{
+                document.getElementById("secondSkillSets").style.display = "block";
+                document.getElementById("Heuristicsscore").value = '6';
+            }
+
         }
         function BindSkillsAndRateAndResume(id, data, rateElementId = null, rate = null, resumeLink = null) {
             var num = id.match(/(\d+)/);
