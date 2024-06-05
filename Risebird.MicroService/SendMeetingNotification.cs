@@ -71,6 +71,7 @@ namespace Risebird.MicroService
                             _whatsAppVM.UserName = item.candidateName;
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(item.zoomlink) ? item.zoomlink.Replace("https://us02web.zoom.us/", "") : "";
                             _whatsAppVM.Event = "Interviewer Waiting";
+                            _whatsAppVM.InterviewId = item.interviewMeetingId;
                             _whatsAppVM.irfId = item.irfId;
                             _ = await _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
                             if (!string.IsNullOrEmpty(item.ClientHrContact))
@@ -110,6 +111,7 @@ namespace Risebird.MicroService
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                             _whatsAppVM.UserName = item.candidateName;
                             _whatsAppVM.Event = "Candidate Waiting";
+                            _whatsAppVM.InterviewId = item.interviewMeetingId;
                             _whatsAppVM.irfId = item.irfId;
                             _ = await _whatsAppHelper.WhatsAppSendInterviewWaiting(_whatsAppVM);
                         }
@@ -130,6 +132,7 @@ namespace Risebird.MicroService
                         _whatsAppVM.buttonlink = !string.IsNullOrEmpty(linkurl) ? linkurl.Replace("https://portal.risebird.io/", "") : "";
                         _whatsAppVM.UserName = item.candidateName;
                         _whatsAppVM.Event = "Emergency Notification";
+                        _whatsAppVM.InterviewId = item.interviewMeetingId;
                         _whatsAppVM.irfId = item.irfId;
                         _ = await _whatsAppHelper.WhatsAppSendEInterviewer(_whatsAppVM);
 
@@ -145,6 +148,7 @@ namespace Risebird.MicroService
                         _whatsAppVMC.Emailid = item.candidateEmail;
                         _whatsAppVMC.UserName = item.candidateName;
                         _whatsAppVMC.Event = "Apology Notification";
+                        _whatsAppVM.InterviewId = item.interviewMeetingId;
                         _whatsAppVM.irfId = item.irfId;
                         _ = await _whatsAppHelper.WhatsAppSendApology(_whatsAppVMC);
                     }
@@ -190,6 +194,7 @@ namespace Risebird.MicroService
                         //}
                         oneTimeSchedulingLink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "").ToString();
                         _whatsapp.buttonlink = oneTimeSchedulingLink;
+                        _whatsapp.InterviewId = item.interviewMeetingId;
                         //_whatsapp.buttonlink = oneTimeSchedulingLink.Split("=").LastOrDefault().ToString();
                         _whatsapp.irfId = item.irfId;
                         _ = await _whatsAppHelper.WhatsAppSendReScheduling(_whatsapp);
