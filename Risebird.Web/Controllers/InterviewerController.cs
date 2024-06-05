@@ -3947,6 +3947,7 @@ namespace Risebird.Web.Controllers
                         _whatsAppVM.MessageValue = item.Total.ToString();
                         _whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
                         _whatsAppVM.Event = "Interviewer Common Interview";
+                        _whatsAppVM.irfId = irfId.HasValue ? irfId.Value : 0;
                         await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
                     }
                     catch (Exception ex)

@@ -46,6 +46,12 @@ begin try
 			End
 		End
 		
+		if((@irfIntId is null or @irfIntId = 0) and (@interviewIdComputed is not null and @interviewIdComputed != 0))
+		begin
+
+		set @irfIntId = (select top 1 id from IRF where IRFId = (select IRFId from InterviewMeetings where id = @interviewIdComputed))
+
+		end
 
 		Insert into SentWhatsAppMessageDetails(Recipient, CountryCode, WhatsappNumber,	[Message], ButtonLink, [Event],	IRFId, InterviewId,	InterviewDate, Header, CreatedAt, SentBy)  
 		values(@Recipient, @CountryCode, @WhatsappNumber, @Message, @ButtonLink, @Event, @irfIntId, @interviewIdComputed, @computedInterviewDate, @Header, @CreatedAt, @SentBy)  
