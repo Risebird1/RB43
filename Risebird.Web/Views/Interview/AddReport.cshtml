@@ -2261,7 +2261,7 @@
                 var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
                 if (meetingStatusValueTwo == 4 || meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8) {
                     var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
-                    if (questionItemsTwo == null && questionItemsTwo.length < 5) {
+                    if (questionItemsTwo == null || questionItemsTwo.length < 5) {
                         alert('A minimum of 5 questions should be added for other Skill set.');
                         return false;
                     }
