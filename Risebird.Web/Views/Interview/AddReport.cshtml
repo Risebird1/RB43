@@ -1431,10 +1431,10 @@
             @*    function closeQuestionCollectionNotification() {
     document.getElementById("QuestionNotificationModelPopup").style.display = "none";
     } *@
-                                                        function OpenQuestionCollectionNotification() {
-                                                             document.getElementById("QuestionNotificationModelPopup").style.display = "block";
-                                                        }
-                                                        OpenQuestionCollectionNotification();
+                                                                        function OpenQuestionCollectionNotification() {
+                                                                             document.getElementById("QuestionNotificationModelPopup").style.display = "block";
+                                                                        }
+                                                                        OpenQuestionCollectionNotification();
         </script>
     }
 }
@@ -2135,7 +2135,7 @@
         }
         function CheckInterviewerComments() {
             var flag=true;
-            int counter=0;
+            var counter=0;
             var meetingStatusValue = document.getElementById("MeetingStatus").value;
             var interviewStatusValue = document.getElementById("InterviewStatus").value;
             if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4 || interviewStatusValue == 3 || interviewStatusValue == 5) {
@@ -2202,7 +2202,7 @@
         function CheckQuestions() {
             var meetingStatusValue = document.getElementById("MeetingStatus").value;
             var interviewStatusValue = document.getElementById("InterviewStatus").value;
-            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4) {
+            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4 || interviewStatusValue == 5) {
                 var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
                 for (i = 0; i < questionItems.length; i++) {
                     var temp = $("#QuestionsCollection_" + i + "__Comment").val();
@@ -2217,7 +2217,7 @@
             if($("#SkillSetsevaluate").val()>1){
                 var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
                 var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
-                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo== 3 || interviewStatusValueTwo == 4) {
+                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo== 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
                     var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
                     for (i = 0; i < questionItemsTwo.length; i++) {
                         var temp = $("#QuestionsTwoCollection_" + i + "__Comment").val();
@@ -2237,8 +2237,8 @@
             var meetingStatusValue = document.getElementById("MeetingStatus").value;
             if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
                 var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
-                @* if (questionItems != null && questionItems.length >= 5) {
-                    
+    @* if (questionItems != null && questionItems.length >= 5) {
+
                 }
                 else {
                     alert('A minimum of 5 questions should be added.');
@@ -2319,7 +2319,7 @@
         function CheckTechSkills() {
             var meetingStatusValue = document.getElementById("MeetingStatus").value;
             var interviewStatusValue = document.getElementById("InterviewStatus").value;
-            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4) {
+            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4 || interviewStatusValue == 5) {
                 var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
                 for (i = 0; i < questionItems.length; i++) {
                     var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
@@ -2334,7 +2334,7 @@
             if($("#SkillSetsevaluate").val()>1){
                 var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
                 var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
-                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4) {
+                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
                     var questionItemsTwo = $('[id^="TechSkillTwoReportCollection"][id$="ActualLevelId"]');
                     for (i = 0; i < questionItemsTwo.length; i++) {
                         var temp = $("#TechSkillTwoReportCollection_" + i + "__ActualLevelId").val();
@@ -2345,33 +2345,20 @@
                         }
                     }
                 }
-                document.getElementById('TechSkillsTwo_CommentError').innerHTML = ""; 
+                document.getElementById('TechSkillsTwo_CommentError').innerHTML = "";
             }
             return true;
         }
         $(document).ready(function () {
-            //Perform Ajax request.
             var count = '@ViewBag.QuestionsDiscussedCount';
-            //Get Question Skills
-
             if (count == null || parseInt(count) == 0) {
                 var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
                 var skillName = questionSkillMappingArray[0].skillName;
                 $("#QuestionsCollection_0__SkillName").val(skillName);
-
-    @*var val = $("#QuestionsCollection_0__Comment").val();
-                    $.ajax({
-                    type: "GET",
-                    url: "/IRF/GetTechSkillofSkillChannelByQuestion",
-                    data: { 'question': val, 'irfId' : '@Model.IRFId' },
-                    success: function (data) {
-                    $("#QuestionsCollection_0__SkillName").val(data);
-                    }
-                    });*@
-
-                                                                                                                                                                                                                        }
-
-
+                if($("#SkillSetsevaluate").val()>1){
+                   $("#QuestionsTwoCollection_0__SkillName").val(skillName);
+                }
+            }
         });
         function Proxyvalidation() {
             if ($('#isProxy').val() == "yes" || $('#isProxy').val() == "no") {
