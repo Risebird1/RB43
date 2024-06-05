@@ -7738,6 +7738,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 ViewBag.profile = profileName;
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                await ReportSkillSetandSeperate(model);
                 string Logo = string.Empty;
                 if (!string.IsNullOrWhiteSpace(model.LogoUrl))
                 {
