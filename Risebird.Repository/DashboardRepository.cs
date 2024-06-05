@@ -1497,7 +1497,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null, string emailid = null)
         {
             try
             {
@@ -1505,7 +1505,9 @@ namespace Risebird.Repository
                 parameters.Add("@recipientType", recipientType);
                 parameters.Add("@startDate", startDate);
                 parameters.Add("@endDate", endDate);
+                parameters.Add("@startDate", DateTime.Now.AddDays(-10));
                 parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@EmailId", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetEmailRecipientsActivityBounceDropped", parameters, commandTimeout: 600,
@@ -1773,6 +1775,27 @@ namespace Risebird.Repository
                         return result.ToList();                   
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<InterviewManagementVM>> GetAllInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", interviewstartdate);
+                    parameters.Add("@enddate", interviewenddate);
+                    var result = await SqlMapper.QueryAsync<InterviewManagementVM>(con, "usp_AllEmergencyInterviewsDetails", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result;
+                }
             }
             catch (SqlException ex)
             {

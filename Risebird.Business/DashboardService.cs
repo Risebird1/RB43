@@ -863,11 +863,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null,string emailid=null)
         {
             try
             {
-                return await _dashboardRespository.GetEmailRecipientsDetails(recipientType, startDate, endDate);
+                return await _dashboardRespository.GetEmailRecipientsDetails(recipientType, startDate, endDate,emailid);
             }
             catch (Exception ex)
             {
@@ -1002,6 +1002,19 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<IEnumerable<InterviewManagementVM>> GetAllInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate)
+        {
+            try
+            {
+                return await _dashboardRespository.GetAllInterviewManagementDetails(interviewstartdate, interviewenddate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }

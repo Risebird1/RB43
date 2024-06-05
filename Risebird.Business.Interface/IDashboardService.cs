@@ -66,7 +66,7 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<ProctoringReport>> GetProxyReport();
         Task<ProctoringReport> GetProxyReportCountDetails(int id);
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate, string Emailid);
-        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null);
+        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null,string emailid=null);
         Task<List<MeetingVM>> GetDMApproveDetails(string EmailId);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailDetails(int campaignId);
         Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null,string Email=null);
@@ -77,5 +77,6 @@ namespace Risebird.Business.Interface
         Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail);
         Task<List<MeetingVM>> PotentialPausedDetails(string EmailId);
         Task<List<MeetingVM>> GetColdCandidatesByClient(string Email);
+        Task<IEnumerable<InterviewManagementVM>> GetAllInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate);
     }
 }

@@ -2413,10 +2413,127 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                
+                            </div>               
               }
-            </div>
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+              {
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper37">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="InterviewerVideoKYC()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon videokyc"><img src="~/img/video-kyc.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Interviewer Video KYC</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonInterviewerVideoKYCCount" onclick="InterviewerVideoKYC()">@Model.NotUpdatedMeetingsObj.InterviewerVideoKYC </span> </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="InterviewerVideoKYC()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="InterviewerVideoKYC()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>Interviewer Video KYC</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>  <span style="cursor:pointer" id="ribbonInterviewerVideoKYCCount_1" class="card-title">@Model.NotUpdatedMeetingsObj.InterviewerVideoKYC</span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="InterviewerVideoKYC()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+              }
+                @if (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "Finance")
+                {
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="panel card flipper37">
+                                    <div id="survey-feedback">
+                                        <div class="front-card countdown__timer" style="cursor:pointer" onclick="AllEmergencyInterview()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon videokyc"><img src="~/img/video-kyc.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>All Emergency Interview</strong></span></h3>
+                                                            </div>
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-front"></div>
+                                                                <strong><span id="ribbonAllEmergencyInterviewCount" onclick="AllEmergencyInterview()"></span> </strong>
+
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="AllEmergencyInterview()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="back-card countdown__timer" style="cursor:pointer" onclick="AllEmergencyInterview()">
+                                            <div class="panel-heading" data-position="bottom">
+                                                <div id="slotsId">
+                                                    <div class="panel-body panel-body-table">
+                                                        <div class="col-md-3 pull-left"><span class="dashboard-icon waiting"><img src="~/img/waiting.png" /></span></div>
+                                                        <div class="col-md-9 pull-left">
+                                                            <div>
+                                                                <h3 class="dashboard-cat-title"><span><strong>All Emergency Interview</strong></span></h3>
+                                                            </div>
+
+                                                            <div class="dashboard-count pull-left">
+                                                                <div class="header-back"></div>
+                                                                <strong>  <span style="cursor:pointer" id="ribbonAllEmergencyInterviewCount_1" class="card-title"></span></strong>
+                                                            </div>
+
+                                                            <div class="pull-right">
+                                                                <button onclick="AllEmergencyInterview()" class="click-arrow" title="Detail View">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" /></svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                }
+          </div>
       </div>
      <div>
 </div>
@@ -2448,7 +2565,7 @@
     }
 
        function PotentialRiskByCandidate() {
-        window.location.href = "/Dashboard/PotentialRiskByCandidate";
+                window.location.href = "/Dashboard/PotentialRiskByCandidate?returnBack=" + 1;
     }
        function DMApprove() {
         window.location.href = "/Dashboard/GetDMApproveDetails?returnBack=" + 1;
@@ -2476,7 +2593,7 @@ function NotScheduledMeetingsCO()
     }
 
 function ProbableNoShow() {
-    window.location.href = "/Interview/ProbableNoShowCandidates";
+                window.location.href = "/Interview/ProbableNoShowCandidates?returnBack=" + 1;
 }
 function OpenRibbonDetailsUnProcessedResume(actionstatus) {
     window.location.href = "/Dashboard/UnProcessedResume?returnBack=" + 1;
@@ -2509,6 +2626,13 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
             function PotentialPauseIRFDetalis(type) {
                 window.location.href = "/Dashboard/PotentialPausedDetails?type=" + type + "&returnBack=" + 1;
             }
+            function InterviewerVideoKYC() {
+                window.location.href = "/Dashboard/InterviewerVideoKYC?returnBack=" + 1;
+            }
+    function AllEmergencyInterview() {
+                window.location.href = "/Dashboard/AllEmergencyInterviewDetails";
+    }
+
 </script>
 
 <script type="text/javascript">
@@ -2712,6 +2836,13 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
                         else {
                             $(".flipper33").removeClass("flipper");
                         }
+                        if (parseInt(data.interviewerVideoKYC) != parseInt($("#ribbonInterviewerVideoKYCCount").text())) {
+                            $(".flipper37").addClass("flipper");
+                        }
+                        else {
+                            $(".flipper37").removeClass("flipper");
+                        }
+
             $("#ribbonMissedCandidateCount").text(data.missedCandidateCount);
             $("#ribbonMailCount").text(data.bounceDroppedCandidateMailCount);
             $("#ribbonunassignedinterviewcount").text(data.unassignedInterviewsCount);
@@ -2738,6 +2869,7 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
                         $("#ribbonHighRiskInterviewersCount").text(data.highRiskInterviewers);
                         $("#ribbonCandidatewaitingCount").text(data.candidatewaitingCount);
                         $("#ribbonProxyCount").text(data.proxyCount);
+                        $("#ribbonInterviewerVideoKYCCount").text(data.interviewerVideoKYC);
 
             $("#ribbonMissedCandidateCount_1").text(data.missedCandidateCount);
             $("#ribbonMailCount_1").text(data.bounceDroppedCandidateMailCount);
@@ -2765,6 +2897,7 @@ function OpenRibbonDetailsUnProcessedResume(actionstatus) {
                         $("#ribbonunHighRiskInterviewersCount_1").text(data.highRiskInterviewers);
                         $("#ribbonCandidatewaitingCount_1").text(data.interviewerVideoKYC);
                         $("#ribbonProxyCount_1").text(data.proxyCount);
+                        $("#ribbonInterviewerVideoKYCCount_1").text(data.candidatewaitingCount);
 
                 $(".flipper").toggleClass("flip");
             }

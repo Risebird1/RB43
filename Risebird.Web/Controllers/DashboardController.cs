@@ -1460,14 +1460,14 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ResetUnassignedInterviewsFilter(string actionstatus)
+        public async Task<IActionResult> ResetUnassignedInterviewsFilter(string actionstatus,int returnBack )
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("UnassignedInterviewsFilters");
-                    return RedirectToAction("UnassignedInterviews", new { actionstatus = actionstatus });
+                    return RedirectToAction("UnassignedInterviews", new { actionstatus = actionstatus, returnBack= returnBack });
                 }
                 else
                 {
@@ -2237,7 +2237,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> PotentialRiskByCandidate()
+        public async Task<IActionResult> PotentialRiskByCandidate(int returnBack)
         {
             try
             {
@@ -2248,6 +2248,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _dashboardService.GetPotentialRiskByCandidateService(emailid);
@@ -2397,7 +2398,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InterviewerVideoKYC()
+        public async Task<IActionResult> InterviewerVideoKYC(int returnBack)
         {
             try
             {
@@ -2408,6 +2409,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _dashboardService.GeInterviewerVideoKYC();
@@ -2733,7 +2735,7 @@ namespace Risebird.Web.Controllers
         #endregion
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(string recipientType)
+        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(string recipientType,int returnBack)
         {
             try
             {
@@ -2744,6 +2746,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         IEnumerable<MailRecipientActivityDetailsVM> recipients = null;
@@ -2753,7 +2756,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<MailActivityFilter>(HttpContext.Session.GetString("MailActivityFilters"));
 
                             recipientType = filter.RecipientType;
-                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType, filter.StartDate, filter.EndDate);
+                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType, filter.StartDate, filter.EndDate,emailid);
 
                             filter.SkillChannel = filter.SkillChannel == null ? filter.SkillChannel = recipients.Select(x => x.SkillChannelName).ToArray() : filter.SkillChannel = filter.SkillChannel;
                             filter.SentBy = filter.SentBy == null ? filter.SentBy = recipients.Select(x => x.SentBy).ToArray() : filter.SentBy = filter.SentBy;
@@ -2773,7 +2776,7 @@ namespace Risebird.Web.Controllers
                                 recipientType = "Candidate";
                             }
 
-                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType);
+                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType,null,null,emailid);
                         }
 
                         ViewBag.recipientType = recipientType;
@@ -2800,7 +2803,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(MailActivityFilter filter, string recipientType)
+        public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(MailActivityFilter filter, string recipientType,int returnBack)
         {
             try
             {
@@ -2811,6 +2814,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
 
@@ -2841,14 +2845,14 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ResetRecipientActivityDetails()
+        public async Task<IActionResult> ResetRecipientActivityDetails(int returnBack)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("MailActivityFilters");
-                    return RedirectToAction("GetEmailRecipientsBounceAndDropped");
+                    return RedirectToAction("GetEmailRecipientsBounceAndDropped", new { returnBack= returnBack });
                 }
                 else
                 {
@@ -3342,7 +3346,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if (profileName == "SeniorHR")
+                    if (profileName == "SeniorHR" || profileName == "Admin" || profileName == "SupportAdmin")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
@@ -3584,6 +3588,93 @@ namespace Risebird.Web.Controllers
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> AllEmergencyInterviewDetails()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                    DateTime startdate = DateTime.Now.AddMonths(-1);
+                    DateTime enddate = DateTime.Now;
+
+                    if (HttpContext.Session.GetString("EmergencyInterviewDetailsfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("EmergencyInterviewDetailsfilters"));
+                        startdate = Convert.ToDateTime(filter.StartDate);
+                        enddate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                    }
+                    var interviewmanagement = await _dashboardService.GetAllInterviewManagementDetails(startdate, enddate);
+
+                    interviewmanagement = interviewmanagement.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.MeetingStatusStatusDesc = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
+                    return View(interviewmanagement);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> AllEmergencyInterviewDetails(MyInterviewFilter filter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("EmergencyInterviewDetailsfilters", JsonConvert.SerializeObject(filter));
+                    }
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    return RedirectToAction("AllEmergencyInterviewDetails");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> AllResetEmergencyInterviewDetailsfilters(string pagetype)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("EmergencyInterviewDetailsfilters");
+                    return RedirectToAction("AllEmergencyInterviewDetails");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("AllEmergencyInterviewDetails");
             }
         }
     }
