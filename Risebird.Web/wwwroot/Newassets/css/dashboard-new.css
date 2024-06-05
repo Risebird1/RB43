@@ -8645,7 +8645,7 @@ ul.ks-cboxtags {
 
 .interviewWrapper {
     position: relative;
-    width: 1000px;
+    width: 1100px;
     left: 40px;
     display: block;
     margin: 10px auto 30px auto;
@@ -10248,2726 +10248,2824 @@ option {
 .addreport #playUploadedAudioTwo .table > thead > tr > th {
     padding: 5px 4px;
 }
-/***** Media queries *****/
-@media only screen and (min-width: 1920px) {
-    .rbpay .sb-scrollbar {
-                position: absolute;
-                right: -6px !important;
-            }
+#reportForm .addreport .talk-bubble textarea {
+    border: 1.5px solid #ccc !important;
+}
+.skill-divider hr {
+    display: block;
+    margin: 50px 0 -15px;
+    width: 100%;
+    height: 1px;
+    border: 0;
+    position: absolute;
+    top: 15px;
+    background-color: rgba(0, 0, 0, 0.35);
+}
 
-            .top-h {
-                height: auto !important;
-            }
+    .skill-divider hr + h2 {
+        display: inline-block;
+        position: relative;
+        left: 50%;
+        margin: 0;
+        padding: 5px 10px;
+        border: 1px solid #453986;
+        transform: translateX(-50%);
+        color: #453986;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.32em;
+        text-align: center;
+        text-transform: uppercase;
+        background-color: #fff;
+    }
 
-            .staffclose-btn {
-                border-radius: 5px !important;
-                font-size: 12px !important;
-                background-color: #42A5F6 !important;
-                position: absolute !important;
-                bottom: 132px !important;
-                right: -660% !important;
-            }
-
-            [data-id="candidatetimeline"] .allmeetingnext-btn {
-                right: -653% !important;
-                bottom: 135px !important;
-            }
-
-            [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
-                right: -400% !important;
-                bottom: 138px !important;
-            }
-
-            [data-id="candidatefeedback_table"] .allmeetingnext-btn {
-                bottom: 90px !important;
-                right: -653% !important;
-            }
-
-            .next-btn {
-                position: absolute !important;
-                right: -230% !important;
-                bottom: 827% !important;
-            }
-
-            .allmeetingnext-btn {
-                bottom: 96px !important;
-                right: -705% !important;
-            }
-
-            .skillnext-btn {
-                bottom: 62px !important;
-                right: -48% !important;
-            }
-
-            .skillnext-btn {
-                bottom: 130px !important;
-                right: 0% !important;
-            }
-
-            .risetubenext-btn {
-                bottom: 60px !important;
-                right: -200% !important;
-            }
-
-            .tabCon .tab-menu ul li a {
-                font-size: 17px !important;
-                padding: 10px 12px;
-            }
-
-            .ntschnext-btn {
-                bottom: 130px !important;
-                right: -655% !important;
-            }
-
-            .staffntschnext-btn {
-                bottom: 130px !important;
-                right: -655% !important;
-            }
-
-            .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
-                right: 16px !important;
-            }
-
-            .tab-menu ul li:nth-child(3) .skillcount {
-                right: 25px !important;
-            }
-
-            .tab-menu ul li:nth-child(4) .skillcount {
-                right: 22px !important;
-            }
-
-            .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
-                right: 25px !important;
-            }
-
-            .tab-menu ul li:nth-child(5) .skillcount {
-                right: 4px !important;
-            }
-
-            .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
-                right: 6px !important;
-            }
-
-            .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
-                right: 4px !important;
-            }
-
-            .tab-menu ul li:nth-child(6) .skillcount {
-                right: 0px !important;
-            }
-
-            .tab-menu ul li:nth-child(7) .skillcount {
-                right: 22px !important;
-            }
-
-            .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
-                right: 12px !important;
-            }
-
-            .tab-menu ul li:nth-child(8) .skillcount {
-                right: 18px !important;
-            }
-
-            .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
-                right: 5px !important;
-            }
-
-            .tab-menu ul li:nth-child(9) .skillcount {
-                right: 32px !important;
-            }
-
-            .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
-                right: 16px !important;
-            }
-
-            .tab-menu ul li:nth-child(10) .skillcount {
-                right: 0px !important;
-            }
-
-            .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
-                right: 8px !important;
-            }
-
-            .tab-menu ul li:nth-child(11) .skillcount {
-                right: 11px !important;
-            }
-
-            .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
-                right: 10px !important;
-            }
+        .skill-divider hr + h2::before {
+            left: 0;
         }
 
-        @media only screen and (max-width: 1920px) {
-            .top-h {
-                height: auto;
-            }
-
-            .allmeeting .candidate-details {
-                width: 25%
-            }
-
-            .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
-                width: 22%
-            }
-
-            .selectedmeeting .candidate-client {
-                width: 22%
-            }
-
-            .rejectedmeeting .candidate-client {
-                width: 22%
-            }
-
-            .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
-                width: 30%
-            }
-
-            .tab-teaser {
-                max-width: 100%
-            }
-
-            [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
-                right: -400% !important;
-                bottom: 138px !important;
-            }
-
-            [data-id="candidatetimeline"] .allmeetingnext-btn {
-                right: -458% !important;
-                bottom: 138px !important;
-            }
-
-            .candidate-hr .hrname {
-                width: 250px !important
-            }
-
-            .hrname, .chrname {
-                width: 290px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                top: 7px;
-                position: relative;
-            }
-
-            .notschedulemeeting .candidate-hr .hrname {
-                width: 190px !important
-            }
-
-            .notschedulemeeting .candidate-hr .chrname {
-                width: 200px !important
-            }
+        .skill-divider hr + h2::before, .skill-divider hr + h2::after {
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #453986;
+            content: "";
         }
 
-        @media only screen and (max-width: 1400px) {
-            /* table.journey td.cadName, table.journey td.cadEmail {
+        .skill-divider hr + h2::after {
+            right: 0;
+        }
+
+    .skill-divider hr + h2 {
+        border-width: 1px 0;
+    }
+
+#IRFSkillModel .report-tooltiptext::after {
+    top: 40%;
+    left: -4%;
+    margin-left: -5px;
+    border-width: 12px;
+}
+#IRFSkillModel .report-tooltiptext {
+    font-size: 14px;
+    bottom: -210%;
+    font-weight: normal;
+    left: 85px;
+}
+.interviewWrapper .report-tooltiptext {
+    bottom: -100%;
+    font-weight: normal;
+    left: 100px;
+}
+    .interviewWrapper .report-tooltiptext::after {
+    top: 45%;
+    left: -3%;
+    margin-left: -5px;
+    border-width: 10px;
+}
+#techskill-note {
+    top: 17px;
+    left: 145px;
+    width: 20px;
+    height: 26px;
+    position:absolute;
+}
+    #techskill-note .report-tooltip svg{
+        top:0px!important;
+    }
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
+            position: absolute;
+            right: -6px !important;
+        }
+
+        .top-h {
+            height: auto !important;
+        }
+
+        .staffclose-btn {
+            border-radius: 5px !important;
+            font-size: 12px !important;
+            background-color: #42A5F6 !important;
+            position: absolute !important;
+            bottom: 132px !important;
+            right: -660% !important;
+        }
+
+        [data-id="candidatetimeline"] .allmeetingnext-btn {
+            right: -653% !important;
+            bottom: 135px !important;
+        }
+
+        [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+            right: -400% !important;
+            bottom: 138px !important;
+        }
+
+        [data-id="candidatefeedback_table"] .allmeetingnext-btn {
+            bottom: 90px !important;
+            right: -653% !important;
+        }
+
+        .next-btn {
+            position: absolute !important;
+            right: -230% !important;
+            bottom: 827% !important;
+        }
+
+        .allmeetingnext-btn {
+            bottom: 96px !important;
+            right: -705% !important;
+        }
+
+        .skillnext-btn {
+            bottom: 62px !important;
+            right: -48% !important;
+        }
+
+        .skillnext-btn {
+            bottom: 130px !important;
+            right: 0% !important;
+        }
+
+        .risetubenext-btn {
+            bottom: 60px !important;
+            right: -200% !important;
+        }
+
+        .tabCon .tab-menu ul li a {
+            font-size: 17px !important;
+            padding: 10px 12px;
+        }
+
+        .ntschnext-btn {
+            bottom: 130px !important;
+            right: -655% !important;
+        }
+
+        .staffntschnext-btn {
+            bottom: 130px !important;
+            right: -655% !important;
+        }
+
+        .tab-menu ul li:nth-child(3) a.active ~ .skillcount {
+            right: 16px !important;
+        }
+
+        .tab-menu ul li:nth-child(3) .skillcount {
+            right: 25px !important;
+        }
+
+        .tab-menu ul li:nth-child(4) .skillcount {
+            right: 22px !important;
+        }
+
+        .tab-menu ul li:nth-child(4) a.active ~ .skillcount {
+            right: 25px !important;
+        }
+
+        .tab-menu ul li:nth-child(5) .skillcount {
+            right: 4px !important;
+        }
+
+        .tab-menu ul li:nth-child(5) a.active ~ .skillcount {
+            right: 6px !important;
+        }
+
+        .tab-menu ul li:nth-child(6) a.active ~ .skillcount {
+            right: 4px !important;
+        }
+
+        .tab-menu ul li:nth-child(6) .skillcount {
+            right: 0px !important;
+        }
+
+        .tab-menu ul li:nth-child(7) .skillcount {
+            right: 22px !important;
+        }
+
+        .tab-menu ul li:nth-child(7) a.active ~ .skillcount {
+            right: 12px !important;
+        }
+
+        .tab-menu ul li:nth-child(8) .skillcount {
+            right: 18px !important;
+        }
+
+        .tab-menu ul li:nth-child(8) a.active ~ .skillcount {
+            right: 5px !important;
+        }
+
+        .tab-menu ul li:nth-child(9) .skillcount {
+            right: 32px !important;
+        }
+
+        .tab-menu ul li:nth-child(9) a.active ~ .skillcount {
+            right: 16px !important;
+        }
+
+        .tab-menu ul li:nth-child(10) .skillcount {
+            right: 0px !important;
+        }
+
+        .tab-menu ul li:nth-child(10) a.active ~ .skillcount {
+            right: 8px !important;
+        }
+
+        .tab-menu ul li:nth-child(11) .skillcount {
+            right: 11px !important;
+        }
+
+        .tab-menu ul li:nth-child(11) a.active ~ .skillcount {
+            right: 10px !important;
+        }
+    }
+
+    @media only screen and (max-width: 1920px) {
+        .top-h {
+            height: auto;
+        }
+
+        .allmeeting .candidate-details {
+            width: 25%
+        }
+
+        .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
+            width: 22%
+        }
+
+        .selectedmeeting .candidate-client {
+            width: 22%
+        }
+
+        .rejectedmeeting .candidate-client {
+            width: 22%
+        }
+
+        .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
+            width: 30%
+        }
+
+        .tab-teaser {
+            max-width: 100%
+        }
+
+        [data-id="staffagency_candidatetimeline"] .allmeetingnext-btn {
+            right: -400% !important;
+            bottom: 138px !important;
+        }
+
+        [data-id="candidatetimeline"] .allmeetingnext-btn {
+            right: -458% !important;
+            bottom: 138px !important;
+        }
+
+        .candidate-hr .hrname {
+            width: 250px !important
+        }
+
+        .hrname, .chrname {
+            width: 290px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .notschedulemeeting .candidate-hr .hrname {
+            width: 190px !important
+        }
+
+        .notschedulemeeting .candidate-hr .chrname {
+            width: 200px !important
+        }
+    }
+
+    @media only screen and (max-width: 1400px) {
+        /* table.journey td.cadName, table.journey td.cadEmail {
         max-width: 120px;
     }*/
-            .single-video-left .video-title [data-tooltip] {
-                top: 15px;
-            }
-
-            .single-video-left .join-time {
-                width: 125px;
-            }
-
-            .video-title .candidate {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-            }
-
-            .laptop-view {
-                display: block !important;
-                height: 5px;
-            }
-
-            .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
-                width: 36%
-            }
-
-            .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
-                width: 18%
-            }
-
-            .selectedmeeting .candidate-details {
-                width: 30%
-            }
-
-            .instanext-btn {
-                right: -270% !important;
-            }
-
-            .skillnext-btn {
-                bottom: 66px !important;
-                right: -70% !important;
-            }
-
-            .cjd {
-                width: 100px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                top: 7px;
-                position: relative;
-            }
-
-            .rbpay .modal .form-control {
-                height: 40px;
-                border: 0px;
-                border-radius: 2px;
-                margin-bottom: 10px;
-            }
-
-                .rbpay .modal .form-control.invoicecomment {
-                    height: 79px;
-                }
-
-            .rbpay .border-rv {
-                border-right: 1px dotted #ccc;
-            }
-
-            table .journey td.cadSkill {
-                max-width: 150px;
-            }
-
-            .candidate table.journey td.cadEmail {
-                /* max-width: 133px;*/
-            }
-
-            .intEmail {
-                width: 90px !important;
-            }
-
-            .intName {
-                width: 58px !important;
-            }
-
-            .rbpay .sb-scrollbar {
-                position: absolute;
-                right: 0px !important;
-            }
-
-            .notschedulemeeting .candidate-hr .hrname {
-                width: 230px !important
-            }
-
-            .notschedulemeeting .candidate-hr .chrname {
-                width: 230px !important
-            }
-
-            .candidate-hr .hrname {
-                width: 250px !important
-            }
-
-            .candidate-hr {
-                width: 25% !important;
-            }
-
-            .hrname {
-                width: 290px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                top: 7px;
-                position: relative;
-            }
-
-            .hremail {
-                width: 260px !important
-            }
-
-            .join-time {
-                width: 150px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-            }
-
-            .info-detail {
-                font-size: 14px !important;
-                position: relative;
-                top: -24px;
-                right: -10px
-            }
-
-            .commonpool .join-time {
-                width: 95px !important;
-                top: 0px !important;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-            }
-
-            .single-video-left .join-time {
-                top: -1px !important;
-            }
-
-            .allmeeting .table > tbody > tr > td {
-                padding: 5px 5px !important;
-            }
-
-            .allmeeting .cname {
-                width: 127px;
-            }
-
-            .clname {
-                width: 197px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                top: 7px;
-                position: relative;
-            }
-
-            .skillname {
-                width: 170px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                top: 7px;
-                position: relative;
-            }
-
-            .cname {
-                width: 170px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                top: 7px;
-                position: relative;
-            }
-
-            .rejectedmeeting .s_cname {
-                width: 225px;
-            }
-
-            .selectedmeeting .s_cname {
-                width: 220px;
-            }
-
-            .s_cname {
-                width: 236px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                top: 7px;
-                position: relative;
-            }
+        .single-video-left .video-title [data-tooltip] {
+            top: 15px;
         }
 
+        .single-video-left .join-time {
+            width: 125px;
+        }
 
-        @media only screen and (max-width: 1024px) {
-            .top-h {
-                height: 60px !important;
+        .video-title .candidate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+
+        .laptop-view {
+            display: block !important;
+            height: 5px;
+        }
+
+        .allmeeting .candidate-details, .rejectedmeeting .candidate-details, .notschedulemeeting .candidate-details {
+            width: 36%
+        }
+
+        .allmeeting .candidate-client, .notschedulemeeting .candidate-skill {
+            width: 18%
+        }
+
+        .selectedmeeting .candidate-details {
+            width: 30%
+        }
+
+        .instanext-btn {
+            right: -270% !important;
+        }
+
+        .skillnext-btn {
+            bottom: 66px !important;
+            right: -70% !important;
+        }
+
+        .cjd {
+            width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .rbpay .modal .form-control {
+            height: 40px;
+            border: 0px;
+            border-radius: 2px;
+            margin-bottom: 10px;
+        }
+
+            .rbpay .modal .form-control.invoicecomment {
+                height: 79px;
             }
 
-            .interviewresponsebtn {
-                font-size: 16px !important;
+        .rbpay .border-rv {
+            border-right: 1px dotted #ccc;
+        }
+
+        table .journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            /* max-width: 133px;*/
+        }
+
+        .intEmail {
+            width: 90px !important;
+        }
+
+        .intName {
+            width: 58px !important;
+        }
+
+        .rbpay .sb-scrollbar {
+            position: absolute;
+            right: 0px !important;
+        }
+
+        .notschedulemeeting .candidate-hr .hrname {
+            width: 230px !important
+        }
+
+        .notschedulemeeting .candidate-hr .chrname {
+            width: 230px !important
+        }
+
+        .candidate-hr .hrname {
+            width: 250px !important
+        }
+
+        .candidate-hr {
+            width: 25% !important;
+        }
+
+        .hrname {
+            width: 290px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .hremail {
+            width: 260px !important
+        }
+
+        .join-time {
+            width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+
+        .info-detail {
+            font-size: 14px !important;
+            position: relative;
+            top: -24px;
+            right: -10px
+        }
+
+        .commonpool .join-time {
+            width: 95px !important;
+            top: 0px !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+
+        .single-video-left .join-time {
+            top: -1px !important;
+        }
+
+        .allmeeting .table > tbody > tr > td {
+            padding: 5px 5px !important;
+        }
+
+        .allmeeting .cname {
+            width: 127px;
+        }
+
+        .clname {
+            width: 197px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .skillname {
+            width: 170px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .cname {
+            width: 170px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+
+        .rejectedmeeting .s_cname {
+            width: 225px;
+        }
+
+        .selectedmeeting .s_cname {
+            width: 220px;
+        }
+
+        .s_cname {
+            width: 236px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            top: 7px;
+            position: relative;
+        }
+    }
+
+
+    @media only screen and (max-width: 1024px) {
+        .top-h {
+            height: 60px !important;
+        }
+
+        .interviewresponsebtn {
+            font-size: 16px !important;
+        }
+
+        .interviewWrapper {
+            width: 100%;
+            left: 0px;
+        }
+
+        .campaignForm {
+            width: 100% !important;
+            margin: 30px 0px 0px 0px !important;
+        }
+
+        .calling-area {
+            background: #eee4e4;
+            font-size: 15px;
+            padding: 10px 10px !important;
+            color: #cb2c2c;
+            text-align: left !important;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 285px !important;
+            height: 160px !important;
+        }
+
+        .select-selected {
+            padding: 6px 6px !important;
+        }
+
+        #calenderTimeslot, #calenderRecoTimeslot {
+            width: 180px !important;
+            height: auto !important;
+        }
+
+        .support .divider-rm {
+            position: relative;
+            left: -75px;
+            top: 2px;
+        }
+
+        #calender h4 {
+            font-size: 19px !important;
+        }
+
+        .calendar-con table {
+            width: 100% !important;
+        }
+
+        .txttimezone-con {
+            background: #dbdbdb8c;
+            width: 100% !important;
+            display: block !important;
+            margin: 10px auto 20px auto !important;
+        }
+
+        body.sidebar-mini .top-panel {
+            padding: 0px 10px 0px 10px !important;
+            margin-bottom: 0px !important;
+        }
+
+        #tblbodyCandidate .action {
+            max-width: 100% !important;
+        }
+
+        .no-interview img {
+            margin: 10px auto 10px auto !important;
+            display: block;
+            width: 150px !important;
+        }
+
+        .tab-menu ul li:nth-child(3) .skillcount {
+            right: 1px !important;
+        }
+
+        .tab-menu ul li:nth-child(4) .skillcount {
+            right: -1px !important;
+        }
+
+        .tab-menu ul li:nth-child(5) .skillcount {
+            right: -11px !important;
+        }
+
+        .tab-menu ul li:nth-child(6) .skillcount {
+            right: -15px !important;
+        }
+
+        .tab-menu ul li:nth-child(8) .skillcount {
+            right: -6px !important;
+        }
+
+        .tab-menu ul li:nth-child(9) .skillcount {
+            right: 9px !important;
+        }
+
+        .tab-menu ul li:last-child .skillcount {
+            right: -10px !important;
+        }
+
+        .razorpay_details {
+            width: 60% !important;
+        }
+
+        .s_cname {
+            width: 165px !important;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+            padding-bottom: 10px;
+        }
+
+        .hrname {
+            top: 2px !important;
+            position: relative !important;
+            line-height: 100% !important;
+        }
+
+        .clname, .skillname {
+            width: 170px !important;
+        }
+
+        .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
+            width: 100% !important;
+            display: block;
+            white-space: initial;
+        }
+
+            .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
+                line-height: 15px;
             }
 
-            .interviewWrapper {
-                width: 100%;
-                left: 0px;
+        .candidate-hr .hrname {
+            width: 205px !important
+        }
+
+        #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+            color: red !important;
+            margin-left: 0 !important;
+            font-size: 12px !important;
+            width: 100%;
+            position: relative;
+            text-align: right;
+        }
+
+        .tabCon .tab-menu ul li a {
+            font-size: 11px !important;
+            padding: 10px 0px;
+        }
+
+        .user.user-r .main-notification-title {
+            padding-top: 0px !important;
+            position: relative;
+            right: -39px;
+            top: -52px !important;
+        }
+
+        .user .main-notification-title {
+            padding-top: 0px !important;
+            position: relative;
+            right: -6px;
+            top: -46px !important;
+        }
+
+        .user.user-r {
+            right: 60px !important;
+        }
+
+        .user {
+            position: absolute;
+            top: 54px;
+            right: 160px !important;
+        }
+
+            .user .user-menu {
+                top: -17px !important;
+                left: auto;
+                right: -17px !important;
             }
 
-            .campaignForm {
-                width: 100% !important;
-                margin: 30px 0px 0px 0px !important;
-            }
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 25px !important;
+            height: 25px !important;
+            margin: 0px 0px 0px 30px;
+            right: -60px !important;
+            border-radius: 100%;
+            left: -10px;
+            top: -78px !important;
+            float: right;
+        }
 
-            .calling-area {
-                background: #eee4e4;
-                font-size: 15px;
-                padding: 10px 10px !important;
-                color: #cb2c2c;
-                text-align: left !important;
-            }
+        .nav-open .navbar {
+            left: 260px;
+        }
 
-            #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-                width: 285px !important;
-                height: 160px !important;
-            }
-
-            .select-selected {
-                padding: 6px 6px !important;
-            }
-
-            #calenderTimeslot, #calenderRecoTimeslot {
-                width: 180px !important;
-                height: auto !important;
-            }
-
-            .support .divider-rm {
-                position: relative;
-                left: -75px;
-                top: 2px;
-            }
-
-            #calender h4 {
-                font-size: 19px !important;
-            }
-
-            .calendar-con table {
-                width: 100% !important;
-            }
-
-            .txttimezone-con {
-                background: #dbdbdb8c;
-                width: 100% !important;
-                display: block !important;
-                margin: 10px auto 20px auto !important;
-            }
-
-            body.sidebar-mini .top-panel {
-                padding: 0px 10px 0px 10px !important;
-                margin-bottom: 0px !important;
-            }
-
-            #tblbodyCandidate .action {
-                max-width: 100% !important;
-            }
-
-            .no-interview img {
-                margin: 10px auto 10px auto !important;
-                display: block;
-                width: 150px !important;
-            }
-
-            .tab-menu ul li:nth-child(3) .skillcount {
-                right: 1px !important;
-            }
-
-            .tab-menu ul li:nth-child(4) .skillcount {
-                right: -1px !important;
-            }
-
-            .tab-menu ul li:nth-child(5) .skillcount {
-                right: -11px !important;
-            }
-
-            .tab-menu ul li:nth-child(6) .skillcount {
-                right: -15px !important;
-            }
-
-            .tab-menu ul li:nth-child(8) .skillcount {
-                right: -6px !important;
-            }
-
-            .tab-menu ul li:nth-child(9) .skillcount {
-                right: 9px !important;
-            }
-
-            .tab-menu ul li:last-child .skillcount {
-                right: -10px !important;
-            }
-
-            .razorpay_details {
-                width: 60% !important;
-            }
-
-            .s_cname {
-                width: 165px !important;
-            }
-
-            .table-responsive {
-                overflow-x: auto;
-                min-height: .01%;
-                padding-bottom: 10px;
-            }
-
-            .hrname {
-                top: 2px !important;
-                position: relative !important;
-                line-height: 100% !important;
-            }
-
-            .clname, .skillname {
-                width: 170px !important;
-            }
-
-            .allmeeting .candidate-details, .selectedmeeting .candidate-details, .rejectedmeeting .candidate-details {
-                width: 100% !important;
-                display: block;
-                white-space: initial;
-            }
-
-                .allmeeting .candidate-details div.mtop-5, .selectedmeeting .candidate-details div.mtop-5, .rejectedmeeting .candidate-details div.mtop-5 {
-                    line-height: 15px;
-                }
-
-            .candidate-hr .hrname {
-                width: 205px !important
-            }
-
-            #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-                color: red !important;
-                margin-left: 0 !important;
-                font-size: 12px !important;
-                width: 100%;
-                position: relative;
-                text-align: right;
-            }
-
-            .tabCon .tab-menu ul li a {
-                font-size: 11px !important;
-                padding: 10px 0px;
-            }
-
-            .user.user-r .main-notification-title {
-                padding-top: 0px !important;
-                position: relative;
-                right: -39px;
-                top: -52px !important;
-            }
-
-            .user .main-notification-title {
-                padding-top: 0px !important;
-                position: relative;
-                right: -6px;
-                top: -46px !important;
-            }
-
-            .user.user-r {
-                right: 60px !important;
-            }
-
-            .user {
-                position: absolute;
-                top: 54px;
-                right: 160px !important;
-            }
-
-                .user .user-menu {
-                    top: -17px !important;
-                    left: auto;
-                    right: -17px !important;
-                }
-
-            .main-img-user {
-                display: block;
-                position: relative;
-                width: 25px !important;
-                height: 25px !important;
-                margin: 0px 0px 0px 30px;
-                right: -60px !important;
-                border-radius: 100%;
-                left: -10px;
-                top: -78px !important;
-                float: right;
-            }
-
-            .nav-open .navbar {
-                left: 260px;
-            }
-
-            /* .top-panel {
+        /* .top-panel {
         padding: 0px 0px 0px 0px !important;
     }*/
 
-            .page-container .page-sidebar {
+        .page-container .page-sidebar {
+            position: relative;
+            float: left;
+            width: 100%;
+        }
+
+            .page-container .page-sidebar.scroll {
                 position: relative;
-                float: left;
+            }
+
+        .page-container .page-content {
+            margin-left: 0px;
+        }
+
+            .page-container .page-content .content-frame .content-frame-left,
+            .page-container .page-content .content-frame .content-frame-right {
                 width: 100%;
+                display: none;
             }
 
-                .page-container .page-sidebar.scroll {
-                    position: relative;
-                }
-
-            .page-container .page-content {
+            .page-container .page-content .content-frame .content-frame-body {
                 margin-left: 0px;
+                margin-right: 0px;
             }
 
-                .page-container .page-content .content-frame .content-frame-left,
-                .page-container .page-content .content-frame .content-frame-right {
-                    width: 100%;
-                    display: none;
-                }
-
-                .page-container .page-content .content-frame .content-frame-body {
-                    margin-left: 0px;
+                .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
                     margin-right: 0px;
                 }
 
-                    .page-container .page-content .content-frame .content-frame-body.content-frame-body-left {
-                        margin-right: 0px;
-                    }
-
-                .page-container .page-content .content-frame .content-frame-left-toggle,
-                .page-container .page-content .content-frame .content-frame-right-toggle {
-                    display: inline-block;
-                }
-
-            .page-container.page-navigation-toggled .page-content {
-                margin-left: 0px;
+            .page-container .page-content .content-frame .content-frame-left-toggle,
+            .page-container .page-content .content-frame .content-frame-right-toggle {
+                display: inline-block;
             }
 
-            .page-container.page-mode-rtl .page-content {
-                margin-right: 0px;
-            }
-
-            .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
-                padding-right: 0px;
-                position: relative;
-            }
-
-            .page-container.page-navigation-top-fixed .page-content {
-                padding-top: 0px;
-            }
-
-            table.journey td.cadName, table.journey td.cadEmail {
-                max-width: 200px;
-            }
-
-            .candidate table.journey td.cadEmail {
-                max-width: 160px;
-            }
-
-            table.journey td.cadSkill {
-                max-width: 150px;
-            }
-
-            .selected-priority table.journey td.cadName {
-                max-width: 250px;
-            }
-
-            .selected-priority table.journey td.cadSkill {
-                max-width: 235px;
-            }
-
-            .selected-priority .journey td.interview-com {
-                max-width: 300px;
-            }
-
-            .selected-priority table.journey td.interviewdate {
-                max-width: 160px;
-            }
-
-            .x-navigation {
-                max-height: 50px;
-                overflow: hidden;
-                background: #1b1e24;
-            }
-
-                .x-navigation.x-navigation-panel {
-                    height: 50px;
-                    max-height: auto;
-                    overflow: visible;
-                }
-
-                    .x-navigation.x-navigation-panel li.xn-icon-button {
-                        width: 50px;
-                    }
-
-                    .x-navigation.x-navigation-panel li.xn-search {
-                        width: auto;
-                    }
-
-                .x-navigation .xn-search input {
-                    width: 100%;
-                }
-
-                .x-navigation.x-navigation-open {
-                    max-height: 1200px;
-                    overflow: visible;
-                }
-
-                .x-navigation .x-navigation-control {
-                    display: block;
-                }
-
-            .x-navigation-minimize {
-                display: none !important;
-            }
-
-            .x-navigation-horizontal > li > ul ul,
-            .x-navigation-horizontal > li > ul.xn-drop-left ul {
-                position: relative;
-                left: auto;
-                right: auto;
-                margin-left: 0px;
-                margin-right: 0px;
-                -moz-box-shadow: none;
-                -webkit-box-shadow: none;
-                box-shadow: none;
-            }
-
-                .x-navigation-horizontal > li > ul ul:after {
-                    display: none;
-                }
-            /* XNAV PANEL */
-            .x-navigation li > .panel {
-                width: 250px;
-            }
-            /* END XNAV PANEL */
-            /* list icons */
-            .icons-list li {
-                width: 100%;
-            }
-            /* END list icons */
-            /* Gallery */
-            .gallery .gallery-item {
-                width: 50%;
-            }
-            /* End Gallery */
-            /* Timeline */
-            .timeline .timeline-item .timeline-item-content {
-                width: 90%;
-            }
-
-                .timeline .timeline-item .timeline-item-content:before,
-                .timeline .timeline-item .timeline-item-content:after {
-                    left: 90%;
-                }
-
-            .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
-            .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
-                right: 90%;
-            }
-            /* END Timeline */
-            /* Error */
-            .error-container {
-                width: 100%;
-            }
-            /* End Error */
-            /* Settings */
-            .theme-settings {
-                display: none;
-            }
-            /* End Settings */
-            .post-image {
-                width: 300px;
-            }
-
-
-            .dashboard-cat-title {
-                left: 12px !important;
-                font-size: 12px !important;
-            }
-
-            .content-wrappers {
-                width: 100%;
-                padding: 0px 20px !important;
-            }
-
-            .int-left-pannel {
-                width: 50%;
-                margin: 0px 20px 0px 0px !important;
-                float: left;
-            }
-
-            .meeting-link {
-                font-size: 18px !important;
-            }
-
-            .content-wrappers .meeting-link .click_herebtn {
-                padding: 14px 50px;
-                margin-left: 35px !important;
-                font-size: 14px !important;
-            }
-
-            .click_herebtn {
-                font-size: 12px;
-            }
-
-            .time-txt {
-                font-size: 14px;
-            }
-
-            .click_herebtn {
-                margin: 10px 1px 0px 5px !important;
-                font-size: 12px !important;
-            }
+        .page-container.page-navigation-toggled .page-content {
+            margin-left: 0px;
         }
 
-        @media (min-width: 992px) and (max-width: 1199px) {
-            table.journey td.cadName, table.journey td.cadEmail {
-                max-width: 200px;
-            }
-
-            table.journey td.cadSkill {
-                max-width: 150px;
-            }
-
-            .candidate table.journey td.cadEmail {
-                max-width: 160px;
-            }
-
-            .selected-priority table.journey td.cadName {
-                max-width: 250px;
-            }
-
-            .selected-priority table.journey td.cadSkill {
-                max-width: 235px;
-            }
-
-            .selected-priority table.journey td.interviewdate {
-                max-width: 160px;
-            }
-
-
-            .selected-priority .journey td.interview-com, .journey td.interview-com {
-                max-width: 300px;
-            }
+        .page-container.page-mode-rtl .page-content {
+            margin-right: 0px;
         }
 
-        @media only screen and (max-width:991px) {
-            .tabCon .tab-main-box {
-                padding: 20px 10px;
-                margin-bottom: 10px;
+        .page-container.page-navigation-top-fixed .x-navigation.x-navigation-horizontal {
+            padding-right: 0px;
+            position: relative;
+        }
+
+        .page-container.page-navigation-top-fixed .page-content {
+            padding-top: 0px;
+        }
+
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
+
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
+
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
+
+        .selected-priority .journey td.interview-com {
+            max-width: 300px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
+
+        .x-navigation {
+            max-height: 50px;
+            overflow: hidden;
+            background: #1b1e24;
+        }
+
+            .x-navigation.x-navigation-panel {
+                height: 50px;
+                max-height: auto;
+                overflow: visible;
             }
 
-            .calibration-btn {
-                top: 3px !important;
-                right: 18px;
-            }
-
-            .calibrationbtn-mob {
-                padding-right: 31px !important;
-            }
-
-            .nodata {
-                text-align: center;
-                font-size: 17px !important;
-            }
-
-                .nodata img {
-                    width: 26px !important;
+                .x-navigation.x-navigation-panel li.xn-icon-button {
+                    width: 50px;
                 }
 
+                .x-navigation.x-navigation-panel li.xn-search {
+                    width: auto;
+                }
 
-
-            .logo-cm {
-                position: relative;
-                top: -1px;
-                width: 11% !important;
-                left: 10px;
-            }
-
-            .support .divider-rm {
-                display: none;
-            }
-
-            .mob_h {
-                width: 63% !important
-            }
-
-            .single-video {
-                margin-bottom: 0px !important;
-            }
-
-            #calenderTimeslot, #calenderRecoTimeslot {
-                width: 190px !important;
-            }
-
-            .tabCon .tabs {
-                display: none;
-            }
-
-            .calendar-con {
-                padding: 40px 0px 0px 0px !important;
-            }
-
-            #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-                width: 350px !important;
-                height: 200px !important;
-            }
-
-            #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-                color: red !important;
-                margin-left: 0 !important;
-                font-size: 12px !important;
+            .x-navigation .xn-search input {
                 width: 100%;
-                position: relative;
-                text-align: right;
             }
 
-            .user {
-                top: -2px !important;
-                right: 160px !important;
+            .x-navigation.x-navigation-open {
+                max-height: 1200px;
+                overflow: visible;
             }
 
-                .user.user-r .main-img-user {
-                    top: -27px !important;
-                    right: -65px;
-                }
-
-                .user.user-r .main-notification-title {
-                    top: 0px !important;
-                }
-          
-            .recommendation .dropdown-toggle::after {
-                border-top: .3em solid;
-                border-right: .3em solid transparent;
-                border-bottom: 0;
-                border-left: .3em solid transparent;
-            }
-
-            .navbar .container-fluid {
-                height: 100%;
-            }
-
-            .user.user-r {
-                top: 4px !important;
-            }
-
-
-
-            .main-img-user {
+            .x-navigation .x-navigation-control {
                 display: block;
-                position: relative;
-                width: 20px;
-                height: 20px;
-                margin: 0px 0px 0px 30px;
-                top: -73px !important;
-                border-radius: 100%;
-                left: -10px;
-                float: right;
             }
 
-            .recommendation .multiselect.dropdown-toggle:after {
-                left: 1% !important;
+        .x-navigation-minimize {
+            display: none !important;
+        }
+
+        .x-navigation-horizontal > li > ul ul,
+        .x-navigation-horizontal > li > ul.xn-drop-left ul {
+            position: relative;
+            left: auto;
+            right: auto;
+            margin-left: 0px;
+            margin-right: 0px;
+            -moz-box-shadow: none;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+            .x-navigation-horizontal > li > ul ul:after {
+                display: none;
             }
+        /* XNAV PANEL */
+        .x-navigation li > .panel {
+            width: 250px;
+        }
+        /* END XNAV PANEL */
+        /* list icons */
+        .icons-list li {
+            width: 100%;
+        }
+        /* END list icons */
+        /* Gallery */
+        .gallery .gallery-item {
+            width: 50%;
+        }
+        /* End Gallery */
+        /* Timeline */
+        .timeline .timeline-item .timeline-item-content {
+            width: 90%;
+        }
+
+            .timeline .timeline-item .timeline-item-content:before,
+            .timeline .timeline-item .timeline-item-content:after {
+                left: 90%;
+            }
+
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:before,
+        .timeline .timeline-item.timeline-item-right .timeline-item-content:after {
+            right: 90%;
+        }
+        /* END Timeline */
+        /* Error */
+        .error-container {
+            width: 100%;
+        }
+        /* End Error */
+        /* Settings */
+        .theme-settings {
+            display: none;
+        }
+        /* End Settings */
+        .post-image {
+            width: 300px;
         }
 
 
-        @media (min-width: 768px) and (max-width: 991px) {
-            .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-                font-size: 11px !important;
-            }
+        .dashboard-cat-title {
+            left: 12px !important;
+            font-size: 12px !important;
+        }
 
-            .report-int-codename {
-                font-size: 13px !important;
-            }
+        .content-wrappers {
+            width: 100%;
+            padding: 0px 20px !important;
+        }
 
-            .interviewresponsebtn {
-                font-size: 14px !important;
-            }
+        .int-left-pannel {
+            width: 50%;
+            margin: 0px 20px 0px 0px !important;
+            float: left;
+        }
 
-            #reportForm h3 {
-                font-size: 1.1rem;
-            }
+        .meeting-link {
+            font-size: 18px !important;
+        }
 
-            .w60 {
-                width: 55%;
-                float: left;
-            }
+        .content-wrappers .meeting-link .click_herebtn {
+            padding: 14px 50px;
+            margin-left: 35px !important;
+            font-size: 14px !important;
+        }
 
-            .w40 {
-                width: 45%;
-                float: right;
-            }
+        .click_herebtn {
+            font-size: 12px;
+        }
 
-            .left-p {
-                right: 274px !important;
-                top: 68px !important;
-            }
+        .time-txt {
+            font-size: 14px;
+        }
 
-            #calenderTimeslot, #calenderRecoTimeslot {
-                left: 20px;
-            }
+        .click_herebtn {
+            margin: 10px 1px 0px 5px !important;
+            font-size: 12px !important;
+        }
+    }
 
-            .interview-tab .left-div {
-                float: none !important;
-                text-align: center !important;
-            }
+    @media (min-width: 992px) and (max-width: 1199px) {
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
 
-            .no-interview img {
-                margin: 10px auto 10px auto !important;
-                display: block;
-                width: 120px !important;
-            }
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
 
-            .calling-area span {
-                text-align: left !important;
-            }
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
 
-            .interview-status {
-                position: absolute !important;
-                top: -56px !important;
-            }
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
 
-                .interview-status span {
-                    font-size: 15px;
-                    color: #938f8f;
-                }
-            #InterviewerInsightsModel .modal-lg {
-                width: 97% !important;
-            }
-            .calling-area {
-                background: #eee4e4;
-                font-size: 15px;
-                padding: 10px 10px !important;
-                color: #cb2c2c;
-                text-align: left !important;
-            }
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
 
-            .footer-nav {
-                left: 0px !important;
-            }
-
-            .meeting-link {
-                font-size: 16px;
-            }
-
-            .event .calendar-con {
-                min-width: 90% !important;
-                max-width: 90% !important;
-                margin: 40px auto 40px auto;
-                padding: 20px 20px !important;
-            }
-
-            .candidate .journey td.cadEmail {
-                width: 130px !important;
-            }
-
-            .filter-note {
-                right: 15%
-            }
-
-            .calling-area {
-                padding: 20px 10px !important;
-            }
-
-                .calling-area span {
-                    display: none;
-                }
-
-            .tabCon .tab_drawer_heading {
-                background-color: #ececec;
-                color: #5a5757cc;
-                border-bottom: 1px solid #ccc;
-                margin: 0 0 5px 0;
-                padding: 5px 20px;
-                display: block;
-                font-size: 15px;
-                border-radius: 8px;
-                cursor: pointer;
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-            }
-
-            table.journey td.cadName, table.journey td.cadEmail {
-                max-width: 200px;
-            }
-
-            .user-r .user {
-                position: absolute;
-                top: 4px !important;
-                right: 71px !important;
-            }
-
-            .nav-open .navbar {
-                left: 260px;
-            }
-
-            .candidate table.journey td.cadEmail {
-                max-width: 160px;
-            }
-
-            table.journey td.cadSkill {
-                max-width: 150px;
-            }
-
-            .selected-priority table.journey td.cadName {
-                max-width: 250px;
-            }
-
-            .selected-priority table.journey td.cadSkill {
-                max-width: 235px;
-            }
-
-            .selected-priority table.journey td.interviewdate {
-                max-width: 160px;
-            }
-
-            .selected-priority table.journey td.interviewdate {
-                max-width: 270px;
-            }
-
-            #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-                position: absolute;
-                left: 30px !important;
-            }
-
-            .task-container .modal-dialog {
-                width: 100% !important;
-                margin: 10px;
-                max-width: calc(100% - 20px) !important;
-            }
-
-
-            .task-container .table-h {
-                height: 200px !important;
-                overflow-y: scroll !important;
-            }
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
         }
 
 
+        .selected-priority .journey td.interview-com, .journey td.interview-com {
+            max-width: 300px;
+        }
+    }
 
-        @media only screen and (max-width: 768px) {
-            [class^='col-xs-'],
-            [class^='col-sm-'],
-            [class^='col-md-'],
-            [class^='col-lg-'] {
-                margin-bottom: 10px;
-            }
+    @media only screen and (max-width:991px) {
+        .tabCon .tab-main-box {
+            padding: 20px 10px;
+            margin-bottom: 10px;
+        }
 
-            .topheader-header .filter {
-                position: relative !important;
-                right: -186px !important;
-                top: -40px;
-            }
+        .calibration-btn {
+            top: 3px !important;
+            right: 18px;
+        }
 
-            .topheader-header #status_3 {
-                position: relative !important;
-                right: -190px !important;
-                top: -41px;
-            }
+        .calibrationbtn-mob {
+            padding-right: 31px !important;
+        }
 
-            .topheader-header {
-                right: 28px;
-            }
+        .nodata {
+            text-align: center;
+            font-size: 17px !important;
+        }
 
-            .logo-cm {
-                position: relative;
-                top: 4px !important;
-                left: 10px !important;
-            }
-
-            #userProfileForm .tab-menu ul li a {
-                font-size: 15px;
-            }
-
-            #calender {
-                padding-left: 25px !important;
-            }
-
-            #btnStart, #btnStop {
-                left: -135px !important;
-            }
-
-            .videoContainer video {
-                height: 208px !important;
-            }
-
-            .videoContainer {
-                height: 200px !important;
-            }
-
-            .candidate-tab .card-block {
-                max-width: 160px;
-            }
-
-            .videoContainer {
-                width: 270px;
-                height: 280px;
-            }
-
-            .time-btn {
-                width: 110px !important;
-            }
-
-            .calendar-con table {
-                width: 300px !important;
-            }
-
-            #calenderTimeslot, #calenderRecoTimeslot {
-                margin-top: 40px;
-                height: 320px;
-                overflow-y: auto;
-                overflow-x: hidden;
-                width: 155px !important;
-            }
-
-            .edit_request [class*="pl-"] {
-                padding-left: 13px !important;
-            }
-            /* LOGIN */
-            .login-container {
-                padding: 0px 10px;
-            }
-
-                .login-container .login-box {
-                    padding-top: 10px;
-                    width: 100%;
-                }
-            /* END LOGIN */
-            /* TOCIFY */
-            .tocify {
-                display: none;
-            }
-            /* END TOCIFY */
-
-            .recommendation .multiselect.dropdown-toggle:after {
-                left: 1% !important;
-            }
-
-            .edit_request {
-                width: 100% !important;
-                float: left;
-                padding: 0px !important;
-            }
-
-            .next-btn {
-                bottom: 735% !important;
-                right: 0% !important;
+            .nodata img {
+                width: 26px !important;
             }
 
 
-            .mc-button-area.text-left .mdc-button {
-                margin-top: 2px;
-                margin-bottom: 5px;
-            }
 
-            .tab_drawer_heading {
-                background-color: #ececec;
-                color: #5a5757cc;
-                border-bottom: 1px solid #ccc;
-                margin: 0 0 5px 0;
-                padding: 5px 20px;
-                display: block;
-                font-size: 15px;
-                border-radius: 8px;
-                cursor: pointer;
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-            }
-            /* TIMELINE */
-            .timeline.timeline-right:before {
-                left: 60px;
-            }
+        .logo-cm {
+            position: relative;
+            top: -1px;
+            width: 11% !important;
+            left: 10px;
+        }
 
-            .timeline.timeline-right .timeline-item {
-                padding-left: 110px;
-            }
+        .support .divider-rm {
+            display: none;
+        }
 
-                .timeline.timeline-right .timeline-item.timeline-main {
-                    width: 60px;
-                }
+        .mob_h {
+            width: 63% !important
+        }
 
-                .timeline.timeline-right .timeline-item .timeline-item-icon {
-                    left: 40px;
-                }
+        .single-video {
+            margin-bottom: 0px !important;
+        }
 
-                .timeline.timeline-right .timeline-item .timeline-item-info {
-                    top: 45px;
-                    width: 70px;
-                    left: 25px;
-                    padding: 7px 0px;
-                }
-            /* END TIMELINE */
-            .post-image {
-                width: 100%;
-            }
+        #calenderTimeslot, #calenderRecoTimeslot {
+            width: 190px !important;
+        }
 
-            .razorpay_details {
-                width: 41% !important;
-            }
+        .tabCon .tabs {
+            display: none;
+        }
 
-            .user.user-r {
-                top: 4px;
-                right: -259px !important;
-            }
+        .calendar-con {
+            padding: 40px 0px 0px 0px !important;
+        }
 
-            .main-notification-title span {
-                top: 0px !important
-            }
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 350px !important;
+            height: 200px !important;
+        }
 
-            #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-                position: absolute;
-                left: 40px !important;
-            }
+        #SkillCollection_WeightageError, #SkillGeneral_WeightageError, #Joinability_WeightageError, #Selectability_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+            color: red !important;
+            margin-left: 0 !important;
+            font-size: 12px !important;
+            width: 100%;
+            position: relative;
+            text-align: right;
+        }
 
-            #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-                width: 270px !important;
-                height: 164px !important;
-            }
-
-            .instainterview .multiple_row > h2, #reportForm .multiple_row > h3 {
-                top: 10px !important;
-            }
-
-            .divider-lm {
-                display: none;
-            }
-
-            .navbar .navbar-brand {
-                font-size: 10px;
-            }
-
-            .topbar-item {
-                top: 3px !important;
-                position: relative;
-                right: 0px !important;
-            }
+        .user {
+            top: -2px !important;
+            right: 160px !important;
+        }
 
             .user.user-r .main-img-user {
-                top: -34px !important;
+                top: -27px !important;
+                right: -65px;
             }
 
-            .tabCon .tab-main-box {
-                padding: 20px 10px;
+            .user.user-r .main-notification-title {
+                top: 0px !important;
             }
 
-            .tab-main-box .col-md-4.col-sm-4 {
-                padding-right: 5px !important;
-                padding-left: 5px !important;
-            }
+        .recommendation .dropdown-toggle::after {
+            border-top: .3em solid;
+            border-right: .3em solid transparent;
+            border-bottom: 0;
+            border-left: .3em solid transparent;
+        }
 
-            .tab-box label {
-                padding: 0px 0px 0px 5px !important;
-                font-size: 12px !important;
-            }
+        .navbar .container-fluid {
+            height: 100%;
+        }
 
-            .tab-main-box .mdc-radio {
-                width: 13px !important;
-                height: 13px !important;
-            }
-
-            .tab-box .form-group {
-                margin-bottom: 0px !important;
-            }
-
-            #CalendlyLinkDiv {
-                position: relative;
-                top: -6px;
-            }
-
-            .left-pannel {
-                width: 100%;
-                float: left;
-            }
-
-            .right-pannel {
-                width: 100%;
-                float: left;
-            }
-
-            .schedule-img {
-                width: 180px;
-                position: absolute;
-                top: -10px;
-                right: 200px;
-                opacity: 0.20;
-            }
-
-            .interviewresponsebtn {
-                padding: 7px 39px;
-                margin: 0px 0px 20px 0px;
-            }
-
-            .content-wrappers {
-                width: 100%;
-                padding: 0px 30px !important;
-            }
-
-                .content-wrappers .meeting-link .click_herebtn {
-                    padding: 14px 41px;
-                }
-
-            .click_herebtn {
-                margin: 10px 3px 0px 3px !important;
-                font-size: 15px !important;
-            }
-
-            .task-container .modal-dialog {
-                width: 100% !important;
-                margin: 10px;
-                max-width: calc(100% - 20px) !important;
-            }
-
-            .task-container .table-h {
-                height: 200px !important;
-                overflow-y: scroll !important;
-            }
+        .user.user-r {
+            top: 4px !important;
         }
 
 
-        @media only screen and (max-width: 767px) {
-            #clientduser li {
+
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 20px;
+            height: 20px;
+            margin: 0px 0px 0px 30px;
+            top: -73px !important;
+            border-radius: 100%;
+            left: -10px;
+            float: right;
+        }
+
+        .recommendation .multiselect.dropdown-toggle:after {
+            left: 1% !important;
+        }
+    }
+
+
+    @media (min-width: 768px) and (max-width: 991px) {
+        .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+            font-size: 11px !important;
+        }
+
+        .report-int-codename {
+            font-size: 13px !important;
+        }
+
+        .interviewresponsebtn {
+            font-size: 14px !important;
+        }
+
+        #reportForm h3 {
+            font-size: 1.1rem;
+        }
+
+        .w60 {
+            width: 55%;
+            float: left;
+        }
+
+        .w40 {
+            width: 45%;
+            float: right;
+        }
+
+        .left-p {
+            right: 274px !important;
+            top: 68px !important;
+        }
+
+        #calenderTimeslot, #calenderRecoTimeslot {
+            left: 20px;
+        }
+
+        .interview-tab .left-div {
+            float: none !important;
+            text-align: center !important;
+        }
+
+        .no-interview img {
+            margin: 10px auto 10px auto !important;
+            display: block;
+            width: 120px !important;
+        }
+
+        .calling-area span {
+            text-align: left !important;
+        }
+
+        .interview-status {
+            position: absolute !important;
+            top: -56px !important;
+        }
+
+            .interview-status span {
+                font-size: 15px;
+                color: #938f8f;
+            }
+
+        #InterviewerInsightsModel .modal-lg {
+            width: 97% !important;
+        }
+
+        .calling-area {
+            background: #eee4e4;
+            font-size: 15px;
+            padding: 10px 10px !important;
+            color: #cb2c2c;
+            text-align: left !important;
+        }
+
+        .footer-nav {
+            left: 0px !important;
+        }
+
+        .meeting-link {
+            font-size: 16px;
+        }
+
+        .event .calendar-con {
+            min-width: 90% !important;
+            max-width: 90% !important;
+            margin: 40px auto 40px auto;
+            padding: 20px 20px !important;
+        }
+
+        .candidate .journey td.cadEmail {
+            width: 130px !important;
+        }
+
+        .filter-note {
+            right: 15%
+        }
+
+        .calling-area {
+            padding: 20px 10px !important;
+        }
+
+            .calling-area span {
+                display: none;
+            }
+
+        .tabCon .tab_drawer_heading {
+            background-color: #ececec;
+            color: #5a5757cc;
+            border-bottom: 1px solid #ccc;
+            margin: 0 0 5px 0;
+            padding: 5px 20px;
+            display: block;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        table.journey td.cadName, table.journey td.cadEmail {
+            max-width: 200px;
+        }
+
+        .user-r .user {
+            position: absolute;
+            top: 4px !important;
+            right: 71px !important;
+        }
+
+        .nav-open .navbar {
+            left: 260px;
+        }
+
+        .candidate table.journey td.cadEmail {
+            max-width: 160px;
+        }
+
+        table.journey td.cadSkill {
+            max-width: 150px;
+        }
+
+        .selected-priority table.journey td.cadName {
+            max-width: 250px;
+        }
+
+        .selected-priority table.journey td.cadSkill {
+            max-width: 235px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 160px;
+        }
+
+        .selected-priority table.journey td.interviewdate {
+            max-width: 270px;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            position: absolute;
+            left: 30px !important;
+        }
+
+        .task-container .modal-dialog {
+            width: 100% !important;
+            margin: 10px;
+            max-width: calc(100% - 20px) !important;
+        }
+
+
+        .task-container .table-h {
+            height: 200px !important;
+            overflow-y: scroll !important;
+        }
+    }
+
+
+
+    @media only screen and (max-width: 768px) {
+        [class^='col-xs-'],
+        [class^='col-sm-'],
+        [class^='col-md-'],
+        [class^='col-lg-'] {
+            margin-bottom: 10px;
+        }
+
+        .topheader-header .filter {
+            position: relative !important;
+            right: -186px !important;
+            top: -40px;
+        }
+
+        .topheader-header #status_3 {
+            position: relative !important;
+            right: -190px !important;
+            top: -41px;
+        }
+
+        .topheader-header {
+            right: 28px;
+        }
+
+        .logo-cm {
+            position: relative;
+            top: 4px !important;
+            left: 10px !important;
+        }
+
+        #userProfileForm .tab-menu ul li a {
+            font-size: 15px;
+        }
+
+        #calender {
+            padding-left: 25px !important;
+        }
+
+        #btnStart, #btnStop {
+            left: -135px !important;
+        }
+
+        .videoContainer video {
+            height: 208px !important;
+        }
+
+        .videoContainer {
+            height: 200px !important;
+        }
+
+        .candidate-tab .card-block {
+            max-width: 160px;
+        }
+
+        .videoContainer {
+            width: 270px;
+            height: 280px;
+        }
+
+        .time-btn {
+            width: 110px !important;
+        }
+
+        .calendar-con table {
+            width: 300px !important;
+        }
+
+        #calenderTimeslot, #calenderRecoTimeslot {
+            margin-top: 40px;
+            height: 320px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            width: 155px !important;
+        }
+
+        .edit_request [class*="pl-"] {
+            padding-left: 13px !important;
+        }
+        /* LOGIN */
+        .login-container {
+            padding: 0px 10px;
+        }
+
+            .login-container .login-box {
+                padding-top: 10px;
                 width: 100%;
-                float: left;
             }
-            .addreport .wrap-padding {
-                padding: 0px 0px 0px 0px!important;
+        /* END LOGIN */
+        /* TOCIFY */
+        .tocify {
+            display: none;
+        }
+        /* END TOCIFY */
+
+        .recommendation .multiselect.dropdown-toggle:after {
+            left: 1% !important;
+        }
+
+        .edit_request {
+            width: 100% !important;
+            float: left;
+            padding: 0px !important;
+        }
+
+        .next-btn {
+            bottom: 735% !important;
+            right: 0% !important;
+        }
+
+
+        .mc-button-area.text-left .mdc-button {
+            margin-top: 2px;
+            margin-bottom: 5px;
+        }
+
+        .tab_drawer_heading {
+            background-color: #ececec;
+            color: #5a5757cc;
+            border-bottom: 1px solid #ccc;
+            margin: 0 0 5px 0;
+            padding: 5px 20px;
+            display: block;
+            font-size: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /* TIMELINE */
+        .timeline.timeline-right:before {
+            left: 60px;
+        }
+
+        .timeline.timeline-right .timeline-item {
+            padding-left: 110px;
+        }
+
+            .timeline.timeline-right .timeline-item.timeline-main {
+                width: 60px;
             }
 
-            .addreport .wrap-nopadding {
-                padding: 0px!important;
-            }
-            .addreport .nextbtn {
-                width: 100%;
-            }
-            #InterviewerInsightsModel .modal-lg {
-                width:97%!important;
-            }
-            .error-badge {
-                top: -40px
+            .timeline.timeline-right .timeline-item .timeline-item-icon {
+                left: 40px;
             }
 
-            .clientnfo .report-tooltip {
-                display: block;
+            .timeline.timeline-right .timeline-item .timeline-item-info {
+                top: 45px;
+                width: 70px;
+                left: 25px;
+                padding: 7px 0px;
+            }
+        /* END TIMELINE */
+        .post-image {
+            width: 100%;
+        }
+
+        .razorpay_details {
+            width: 41% !important;
+        }
+
+        .user.user-r {
+            top: 4px;
+            right: -259px !important;
+        }
+
+        .main-notification-title span {
+            top: 0px !important
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            position: absolute;
+            left: 40px !important;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 270px !important;
+            height: 164px !important;
+        }
+
+        .instainterview .multiple_row > h2, #reportForm .multiple_row > h3 {
+            top: 10px !important;
+        }
+
+        .divider-lm {
+            display: none;
+        }
+
+        .navbar .navbar-brand {
+            font-size: 10px;
+        }
+
+        .topbar-item {
+            top: 3px !important;
+            position: relative;
+            right: 0px !important;
+        }
+
+        .user.user-r .main-img-user {
+            top: -34px !important;
+        }
+
+        .tabCon .tab-main-box {
+            padding: 20px 10px;
+        }
+
+        .tab-main-box .col-md-4.col-sm-4 {
+            padding-right: 5px !important;
+            padding-left: 5px !important;
+        }
+
+        .tab-box label {
+            padding: 0px 0px 0px 5px !important;
+            font-size: 12px !important;
+        }
+
+        .tab-main-box .mdc-radio {
+            width: 13px !important;
+            height: 13px !important;
+        }
+
+        .tab-box .form-group {
+            margin-bottom: 0px !important;
+        }
+
+        #CalendlyLinkDiv {
+            position: relative;
+            top: -6px;
+        }
+
+        .left-pannel {
+            width: 100%;
+            float: left;
+        }
+
+        .right-pannel {
+            width: 100%;
+            float: left;
+        }
+
+        .schedule-img {
+            width: 180px;
+            position: absolute;
+            top: -10px;
+            right: 200px;
+            opacity: 0.20;
+        }
+
+        .interviewresponsebtn {
+            padding: 7px 39px;
+            margin: 0px 0px 20px 0px;
+        }
+
+        .content-wrappers {
+            width: 100%;
+            padding: 0px 30px !important;
+        }
+
+            .content-wrappers .meeting-link .click_herebtn {
+                padding: 14px 41px;
             }
 
-            .error-badge .report-tooltiptext {
-                bottom: -127px;
-                left: 46px;
-                width: 340px;
-            }
+        .click_herebtn {
+            margin: 10px 3px 0px 3px !important;
+            font-size: 15px !important;
+        }
 
-            .report-int-codename {
-                font-size: 13px !important;
-            }
+        .task-container .modal-dialog {
+            width: 100% !important;
+            margin: 10px;
+            max-width: calc(100% - 20px) !important;
+        }
 
-            .footer-nav {
-                left: 0px !important;
-            }
+        .task-container .table-h {
+            height: 200px !important;
+            overflow-y: scroll !important;
+        }
+    }
 
-            .mob-ht {
-                margin-bottom: 0px !important;
-                height: 10px !important;
-            }
 
-            .mob-backbtn {
-                position: absolute;
-                top: -27px;
-                right: 0px;
-            }
+    @media only screen and (max-width: 767px) {
+        #clientduser li {
+            width: 100%;
+            float: left;
+        }
 
-            .mob-top {
-                margin-top: 60px !important;
-            }
+        .addreport .wrap-padding {
+            padding: 0px 0px 0px 0px !important;
+        }
 
-            .padresume {
-                padding-left: 0px !important;
-                margin-bottom: 15px !important;
-            }
+        .addreport .wrap-nopadding {
+            padding: 0px !important;
+        }
 
-            .consent .filextension {
-                padding: 0px !important
-            }
+        .addreport .nextbtn {
+            width: 100%;
+        }
 
-            .calendar-wrapper {
-                top: 60px;
-            }
+        #InterviewerInsightsModel .modal-lg {
+            width: 97% !important;
+        }
 
-            .submitconsent-btn {
-                width: 100%;
-            }
+        .error-badge {
+            top: -40px
+        }
+
+        .clientnfo .report-tooltip {
+            display: block;
+        }
+
+        .error-badge .report-tooltiptext {
+            bottom: -127px;
+            left: 46px;
+            width: 340px;
+        }
+
+        .report-int-codename {
+            font-size: 13px !important;
+        }
+
+        .footer-nav {
+            left: 0px !important;
+        }
+
+        .mob-ht {
+            margin-bottom: 0px !important;
+            height: 10px !important;
+        }
+
+        .mob-backbtn {
+            position: absolute;
+            top: -27px;
+            right: 0px;
+        }
+
+        .mob-top {
+            margin-top: 60px !important;
+        }
+
+        .padresume {
+            padding-left: 0px !important;
+            margin-bottom: 15px !important;
+        }
+
+        .consent .filextension {
+            padding: 0px !important
+        }
+
+        .calendar-wrapper {
+            top: 60px;
+        }
+
+        .submitconsent-btn {
+            width: 100%;
+        }
 
         .campaignName {
             width: 100% !important;
             margin: 40px auto;
         }
-        .interviewWrapper .button-wrapper{
-            width:100%;
+
+        .interviewWrapper .button-wrapper {
+            width: 100%;
         }
-        .interviewer-toll-no, .client-toll-no{
-            display:none;
+
+        .interviewer-toll-no, .client-toll-no {
+            display: none;
         }
+
         .join-button {
             float: none;
             clear: both;
             margin: 0px auto 30px auto;
         }
+
         .msgroup, .sub-assmntgrp {
             width: 100% !important;
             margin: 0px auto;
         }
 
-            .int-left-pannel .scrollbar {
-                overflow: auto;
-            }
-
-            .input__label {
-                line-height: 27px;
-                color: #7e7f82 !important;
-                font-size: 16px !important;
-                padding: 0px !important;
-            }
-
-            .campaignForm {
-                width: calc(100% - 30px) !important;
-                margin: 90px 10px 20px 15px !important;
-                padding: 10px;
-            }
-
-            .toggle-title {
-                width: 100% !important;
-            }
-
-            .interviewWrapper .heading-txt {
-                line-height: 25px;
-                position: relative;
-                top: -10px;
-            }
-
-            .interviewresponsebtn {
-                margin-bottom: 20px;
-                padding: 7px 20px !important;
-                font-size: 14px !important;
-            }
-
-            .consent .form {
-                width: 100%;
-                margin: 0px;
-                float: left;
-            }
-
-            .calling-area {
-                font-size: 13.5px !important;
-                padding: 20px 10px !important;
-            }
-
-                .calling-area span {
-                    display: none;
-                }
-
-            .content-wrappers {
-                padding: 0px !important;
-            }
-
-            .assessmentgrp-btn {
-                float: none;
-            }
-
-            .risebirdPay-con {
-                width: calc(100% - 0%);
-            }
-
-            .mobile-view-cl {
-                position: absolute !important;
-                right: 15px;
-            }
-
-                .mobile-view-cl .call-wrap {
-                    top: 1px;
-                    left: -4px;
-                }
-
-            .commonpool .available {
-                margin: 0px 0px 9px 0px;
-            }
-
-            .scrollbar {
-                overflow: hidden;
-            }
-
-            .template-top {
-                margin-top: 80px;
-            }
-
-            #reportForm video {
-                width: calc(100% - 4px) !important;
-                padding: 0px !important;
-            }
-
-            .generate-pdf {
-                position: relative !important;
-                left: 17px !important;
-            }
-
-            #userProfileForm .avatar-upload {
-                margin: 0px auto !important;
-            }
-
-            .irf-radiowrap {
-                padding: 0px 5px 0px 5px;
-                float: left;
-            }
-
-            #clientduser li:nth-child(5) .dtr-title {
-                float: left;
-            }
-
-            #clientduser li:nth-child(5) .dtr-data {
-                float: left;
-            }
-
-            #btnStart, #btnStop {
-                left: 150px;
-            }
-
-            #actionwrap .action-btn {
-                margin: 0px !important;
-            }
-
-            #actionwrap.flex-w {
-                display: flow !important;
-            }
-
-            .action-btn {
-                width: 100px;
-                margin: 0px auto;
-            }
-
-            .animated-arrow > .main {
-                top: 0px !important;
-                left: -98px !important;
-            }
-
-            .candidate .journey td.cadEmail {
-                width: 130px !important;
-            }
-
-            .scheduling .action {
-                position: inherit;
-            }
-
-            .custom-select {
-                font-size: 12px !important;
-            }
-
-            .select-selected {
-                padding: 6px 0px !important;
-            }
-
-            #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-                width: 350px !important;
-                height: 200px !important;
-            }
-
-            .event .calendar-con table {
-                width: 100% !important;
-                float: right;
-            }
-
-            .txttimezone-con {
-                position: initial;
-                left: 6px !important;
-                background: #dbdbdb8c;
-                width: 100% !important;
-                border-radius: 200px;
-                text-align: center;
-                color: #686363;
-                padding: 10px 0px 0px 10px;
-                margin: 0px auto !important;
-                display: block !important;
-            }
-
-            #calender table {
-                width: 100% !important;
-            }
-
-            #calender {
-                border: 0px !important;
-            }
-
-            .support svg {
-                position: relative;
-                left: 10px;
-                width: 16px;
-                top: -4px;
-            }
-
-            .mob-txt .clientName {
-                width: 211px;
-            }
-
-            .mob-img {
-                width: 15%;
-                float: left;
-            }
-
-            .mob-txt {
-                width: 85%;
-                float: left;
-            }
-
-            .mob-mb-0 {
-                margin-bottom: 0px;
-            }
-
-            .interviewer_2 {
-                width: 335px;
-                float: left;
-                display: block;
-            }
-
-            .searchCon.mb-10, .mb-10 {
-                margin-bottom: 10px !important;
-            }
-
-            .interviewerMemberModal
-            .navbar-toggle {
-                top: -5px;
-            }
-            
-            .preview-section {
-                padding-top: 80px !important;
-            }
-
-            .preview-txt {
-                padding-left: 0px !important;
-            }
-
-                .preview-txt span {
-                    color: #706a6a;
-                    font-size: 15px;
-                }
-
-            #btnSave {
-                left: 0px !important;
-            }
-
-            .jd .skillname {
-                width: 100% !important;
-                text-align: center;
-            }
-
-            .jd .card-header-buttons.action.text-right {
-                text-align: center !important;
-            }
-
-            .canvas_div_pdf .card-body {
-                padding: 0px !important;
-            }
-
-            #tblbodyCandidate .action {
-                max-width: 100% !important;
-            }
-
-            .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
-                border: 0;
-                border-radius: 30px !important;
-                transition: all .3s;
-                padding: 0px 0px;
-                margin: 0px 1px !important;
-                min-width: 20px !important;
-                text-align: center;
-                height: 22px !important;
-                line-height: 24px;
-                color: #2c2c2c;
-                cursor: pointer;
-                font-size: 14px;
-                text-transform: uppercase;
-                background: transparent;
-                outline: none;
-            }
-
-            #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
-                padding-right: 10px !important;
-                padding-left: 10px !important;
-            }
-
-            #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
-                display: none !important;
-            }
-
-            .mob_canvas-height {
-                height: 400px;
-            }
-
-            #SkillTable select.form-control {
-                width: auto !important;
-            }
-
-            #InterviewerTable .form-control {
-                width: 200px !important;
-            }
-
-            .recommendation .multiselect.dropdown-toggle:after {
-                left: 1% !important;
-            }
-
-            .page-container .page-content .page-content-wrap {
-                float: left;
-                width: 100%;
-                margin-top: -10px !important;
-                padding: 0px 15px;
-                font-family: 'Open Sans', sans-serif;
-            }
-
-            #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
-                color: red !important;
-                margin-left: 0 !important;
-                font-size: 12px !important;
-                width: 100%;
-                position: relative;
-                text-align: right;
-            }
-
-            .mob_h {
-                height: 2px;
-                width: auto;
-            }
-
-
-            .myinterview_modal .btn-group {
-                width: 100% !important;
-            }
-
-            .tabCon .tabs {
+        .int-left-pannel .scrollbar {
+            overflow: auto;
+        }
+
+        .input__label {
+            line-height: 27px;
+            color: #7e7f82 !important;
+            font-size: 16px !important;
+            padding: 0px !important;
+        }
+
+        .campaignForm {
+            width: calc(100% - 30px) !important;
+            margin: 90px 10px 20px 15px !important;
+            padding: 10px;
+        }
+
+        .toggle-title {
+            width: 100% !important;
+        }
+
+        .interviewWrapper .heading-txt {
+            line-height: 25px;
+            position: relative;
+            top: -10px;
+        }
+
+        .interviewresponsebtn {
+            margin-bottom: 20px;
+            padding: 7px 20px !important;
+            font-size: 14px !important;
+        }
+
+        .consent .form {
+            width: 100%;
+            margin: 0px;
+            float: left;
+        }
+
+        .calling-area {
+            font-size: 13.5px !important;
+            padding: 20px 10px !important;
+        }
+
+            .calling-area span {
                 display: none;
             }
 
-            .main-notification-title {
-                right: 9px !important;
-                padding-top: 0px !important;
-                position: relative;
-                top: 2px;
+        .content-wrappers {
+            padding: 0px !important;
+        }
+
+        .assessmentgrp-btn {
+            float: none;
+        }
+
+        .risebirdPay-con {
+            width: calc(100% - 0%);
+        }
+
+        .mobile-view-cl {
+            position: absolute !important;
+            right: 15px;
+        }
+
+            .mobile-view-cl .call-wrap {
+                top: 1px;
+                left: -4px;
             }
 
-            .user.user-r .main-notification-title {
-                top: 0px !important;
-            }
+        .commonpool .available {
+            margin: 0px 0px 9px 0px;
+        }
 
-            .user.user-r {
-                top: -28px !important;
-                left: -42px !important;
-            }
+        .scrollbar {
+            overflow: hidden;
+        }
 
-            .user {
-                position: relative !important;
-                top: 52px;
-                right: 0px !important;
-                left: 0px !important;
-            }
+        .template-top {
+            margin-top: 80px;
+        }
 
-            #txtpageHeader {
-                display: none;
-            }
+        #reportForm video {
+            width: calc(100% - 4px) !important;
+            padding: 0px !important;
+        }
 
-            .note-meeting {
-                width: 54%;
-                left: 30px;
-                position: absolute;
-                top: 12px !important;
+        .generate-pdf {
+            position: relative !important;
+            left: 17px !important;
+        }
+
+        #userProfileForm .avatar-upload {
+            margin: 0px auto !important;
+        }
+
+        .irf-radiowrap {
+            padding: 0px 5px 0px 5px;
+            float: left;
+        }
+
+        #clientduser li:nth-child(5) .dtr-title {
+            float: left;
+        }
+
+        #clientduser li:nth-child(5) .dtr-data {
+            float: left;
+        }
+
+        #btnStart, #btnStop {
+            left: 150px;
+        }
+
+        #actionwrap .action-btn {
+            margin: 0px !important;
+        }
+
+        #actionwrap.flex-w {
+            display: flow !important;
+        }
+
+        .action-btn {
+            width: 100px;
+            margin: 0px auto;
+        }
+
+        .animated-arrow > .main {
+            top: 0px !important;
+            left: -98px !important;
+        }
+
+        .candidate .journey td.cadEmail {
+            width: 130px !important;
+        }
+
+        .scheduling .action {
+            position: inherit;
+        }
+
+        .custom-select {
+            font-size: 12px !important;
+        }
+
+        .select-selected {
+            padding: 6px 0px !important;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 350px !important;
+            height: 200px !important;
+        }
+
+        .event .calendar-con table {
+            width: 100% !important;
+            float: right;
+        }
+
+        .txttimezone-con {
+            position: initial;
+            left: 6px !important;
+            background: #dbdbdb8c;
+            width: 100% !important;
+            border-radius: 200px;
+            text-align: center;
+            color: #686363;
+            padding: 10px 0px 0px 10px;
+            margin: 0px auto !important;
+            display: block !important;
+        }
+
+        #calender table {
+            width: 100% !important;
+        }
+
+        #calender {
+            border: 0px !important;
+        }
+
+        .support svg {
+            position: relative;
+            left: 10px;
+            width: 16px;
+            top: -4px;
+        }
+
+        .mob-txt .clientName {
+            width: 211px;
+        }
+
+        .mob-img {
+            width: 15%;
+            float: left;
+        }
+
+        .mob-txt {
+            width: 85%;
+            float: left;
+        }
+
+        .mob-mb-0 {
+            margin-bottom: 0px;
+        }
+
+        .interviewer_2 {
+            width: 335px;
+            float: left;
+            display: block;
+        }
+
+        .searchCon.mb-10, .mb-10 {
+            margin-bottom: 10px !important;
+        }
+
+        .interviewerMemberModal
+        .navbar-toggle {
+            top: -5px;
+        }
+
+        .preview-section {
+            padding-top: 80px !important;
+        }
+
+        .preview-txt {
+            padding-left: 0px !important;
+        }
+
+            .preview-txt span {
+                color: #706a6a;
                 font-size: 15px;
             }
 
-            .nav-open .navbar {
-                left: 260px;
+        #btnSave {
+            left: 0px !important;
+        }
+
+        .jd .skillname {
+            width: 100% !important;
+            text-align: center;
+        }
+
+        .jd .card-header-buttons.action.text-right {
+            text-align: center !important;
+        }
+
+        .canvas_div_pdf .card-body {
+            padding: 0px !important;
+        }
+
+        #tblbodyCandidate .action {
+            max-width: 100% !important;
+        }
+
+        .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
+            border: 0;
+            border-radius: 30px !important;
+            transition: all .3s;
+            padding: 0px 0px;
+            margin: 0px 1px !important;
+            min-width: 20px !important;
+            text-align: center;
+            height: 22px !important;
+            line-height: 24px;
+            color: #2c2c2c;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase;
+            background: transparent;
+            outline: none;
+        }
+
+        #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+            padding-right: 10px !important;
+            padding-left: 10px !important;
+        }
+
+        #chardin-mask, .chardinjs-helper-layer, .chardinjs-tooltip {
+            display: none !important;
+        }
+
+        .mob_canvas-height {
+            height: 400px;
+        }
+
+        #SkillTable select.form-control {
+            width: auto !important;
+        }
+
+        #InterviewerTable .form-control {
+            width: 200px !important;
+        }
+
+        .recommendation .multiselect.dropdown-toggle:after {
+            left: 1% !important;
+        }
+
+        .page-container .page-content .page-content-wrap {
+            float: left;
+            width: 100%;
+            margin-top: -10px !important;
+            padding: 0px 15px;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        #Selectability_WeightageError, #SkillCollection_WeightageError, #Joinability_WeightageError, #SkillGeneral_WeightageError, #error_client, #noInterviewer, #qcInterviewer, #emInterviewer {
+            color: red !important;
+            margin-left: 0 !important;
+            font-size: 12px !important;
+            width: 100%;
+            position: relative;
+            text-align: right;
+        }
+
+        .mob_h {
+            height: 2px;
+            width: auto;
+        }
+
+
+        .myinterview_modal .btn-group {
+            width: 100% !important;
+        }
+
+        .tabCon .tabs {
+            display: none;
+        }
+
+        .main-notification-title {
+            right: 9px !important;
+            padding-top: 0px !important;
+            position: relative;
+            top: 2px;
+        }
+
+        .user.user-r .main-notification-title {
+            top: 0px !important;
+        }
+
+        .user.user-r {
+            top: -28px !important;
+            left: -42px !important;
+        }
+
+        .user {
+            position: relative !important;
+            top: 52px;
+            right: 0px !important;
+            left: 0px !important;
+        }
+
+        #txtpageHeader {
+            display: none;
+        }
+
+        .note-meeting {
+            width: 54%;
+            left: 30px;
+            position: absolute;
+            top: 12px !important;
+            font-size: 15px;
+        }
+
+        .nav-open .navbar {
+            left: 260px;
+        }
+
+        .top-panel {
+            padding: 0px 5px !important
+        }
+
+        .timer {
+            font-size: 15px !important;
+        }
+
+        .rbpay .modal-dialog {
+            max-width: 100% !important
+        }
+
+        .mobpad {
+            padding: 0px !important;
+        }
+
+
+
+        .navbar {
+            padding-top: 0;
+        }
+
+            .navbar.navbar-no-bg {
+                background: #333;
+                background: rgba(51, 51, 51, 0.9);
             }
 
-            .top-panel {
-                padding: 0px 5px !important
+        .navbar-brand {
+            height: 60px;
+            margin-left: 0px;
+        }
+
+        .navbar-collapse {
+            border: 0;
+        }
+
+        .navbar-toggle {
+            margin-top: 12px !important;
+        }
+
+        .top-content {
+            padding: 40px 0 110px 0;
+        }
+
+        .user-r .user-menu {
+            top: -15px;
+            left: auto;
+            right: -19px;
+        }
+
+
+        .dashboard-icon {
+            margin: 0px auto !important;
+            float: none !important;
+            position: relative !important;
+            left: 0px !important;
+        }
+
+        .click-arrow {
+            position: relative !important;
+            top: 8px !important;
+            left: -10px !important;
+        }
+
+        .dashboard-cat-title {
+            position: relative;
+            top: 0px !important;
+            text-align: center !important;
+        }
+
+        .fixed-header {
+            width: calc(100% - 30px);
+        }
+
+        .candidatename-sla {
+            float: none;
+            margin: 0px;
+        }
+
+        .public-url div.dataTables_wrapper div.dataTables_filter {
+            text-align: right;
+            position: absolute;
+            left: 193px;
+            top: -34px;
+        }
+
+        .public-url #candidateTable_length {
+            top: 17px;
+            position: relative;
+            display: block;
+        }
+
+        .feedbackcontainer {
+            width: 100%;
+        }
+
+            .feedbackcontainer .accordion-heading a {
+                width: 100%;
+                height: auto;
+                justify-content: center;
             }
 
-            .timer {
+            .feedbackcontainer .w-auto {
+                width: 100% !important;
+            }
+
+        .redobtn {
+            float: none;
+            top: -51px;
+        }
+
+        .redo-text {
+            top: -51px;
+            line-height: 31px;
+        }
+
+        .submit-feedback {
+            position: fixed;
+            bottom: 0px;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .content-wrappers .meeting-link .click_herebtn {
+            padding: 10px 20px;
+            position: relative;
+            margin-left: 40px !important;
+        }
+
+        .meeting-link {
+            font-size: 16px !important;
+        }
+
+        .candidate-tab .tab-block .step {
+            display: none;
+        }
+
+        .candidate-tab .tab-block .card-block {
+            width: 31.3% !important;
+            float: left !important;
+            margin: 0px 5px !important;
+            height: 65px !important;
+        }
+
+            .candidate-tab .tab-block .card-block h1 {
+                padding-left: 0px !important;
+                text-align: center;
+            }
+
+        .videoContainer {
+            width: 100%;
+            left: 0px;
+        }
+
+        #btncamara, #btnoffcamara {
+            left: -335px;
+        }
+
+        .rules {
+            left: 0px;
+            top: 80px;
+        }
+
+        .about-int {
+            padding: 0px 10px 0px 0px;
+        }
+
+        #timer-clock {
+            margin-top: 8px;
+            width: 100px;
+            height: 76px;
+            position: relative;
+            left: 0px;
+            top: -20px;
+            float: right;
+        }
+
+        .left-pannel, .right-pannel, .int-left-pannel, .int-right-pannel {
+            width: 100%;
+            float: left;
+            margin: 0px !important;
+        }
+
+        .candidate-tab .w40 {
+            width: 100%;
+            float: left;
+            text-align: left;
+        }
+
+        .candidate-tab .w60 {
+            width: 100%;
+            float: left;
+        }
+
+        .schedule-img {
+            display: none;
+        }
+
+        .time-txt {
+            font-size: 13px;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        .candidate-tab .card-block h1 {
+            font-size: 13px !important;
+            background: url(../../img/interview.svg) -20px 37px no-repeat !important;
+        }
+        #techskill-note .report-tooltip {
+            display:block!important;
+        }
+            .report-tooltip {
+            display: none !important;
+        }
+
+        .calibration-btn {
+            top: -12px !important;
+            right: 200px !important;
+        }
+
+        .footer-nav .button-wrapper h2 {
+            font-size: 19px !important;
+        }
+
+        .consent-label {
+            width: 80% !important;
+        }
+
+        .consent-note {
+            padding: 0px !important;
+        }
+
+        #entitleTable.dataTable > tbody > tr > td:first-child {
+            padding-right: 95px !important;
+        }
+
+        .candidate-timeline.public-url .nopad {
+            padding: 0px !important;
+        }
+
+        .content.client .mdc-card-wrapper__text-section {
+            padding: 0px !important;
+        }
+
+        .topheader-header #status_3 {
+            position: relative !important;
+            right: 356px !important;
+            top: -2px;
+        }
+
+        .candidate-tab .tab-block .card-block {
+            width: 30.3% !important;
+            float: left !important;
+        }
+
+        .campaignForm .msgroup .assessment-name {
+            width: 87% !important;
+        }
+
+        .interviewresponsebtn {
+            padding: 7px 10px !important;
+        }
+
+        .interview-tab .left-div {
+            float: none !important;
+            text-align: center !important;
+        }
+
+        #btnStop, #btnStart {
+            left: -12px !important;
+        }
+
+        .videoContainer video {
+            height: 310px !important;
+        }
+
+        .videoContainer {
+            height: 305px !important;
+        }
+
+        .public-url #candidateTable_length {
+            left: -22px;
+            position: relative;
+        }
+
+        .candidate-tab .tabcontent p {
+            font-size: 14px;
+        }
+
+        .public-url div.dataTables_wrapper div.dataTables_filter {
+            text-align: right;
+            position: absolute;
+            left: 104px;
+            top: 31px;
+        }
+
+        .public-url #candidateTable_length {
+            top: 9px;
+        }
+
+        .sharp.btn-xs {
+            width: 2.1rem;
+            height: 2.1rem;
+            min-width: 2.1rem;
+            min-height: 2.1rem;
+        }
+
+        .pad7 {
+            padding: 0px !important;
+        }
+
+        .note-filter {
+            font-size: 13px !important;
+            padding: 5px 0px !important;
+        }
+
+        .logo-cm {
+            position: relative;
+            top: -1px !important;
+            width: 23% !important;
+            left: 10px !important;
+        }
+
+        #scoreChart tspan {
+            font-size: 11.5px;
+        }
+
+        .custom-select {
+            line-height: 17px !important;
+        }
+
+        .txttimezone-con {
+            width: 300px !important;
+            min-height: 30px;
+        }
+
+        .currMonth {
+            padding: 0px 12px !important;
+        }
+
+        #calender table {
+            border-collapse: separate;
+            border-spacing: 4px 9px !important;
+        }
+
+        #calender {
+            width: 100% !important;
+        }
+
+        #calenderTimeslot, #calenderRecoTimeslot {
+            width: 120px !important;
+        }
+
+        .time-btn {
+            width: 95px !important;
+            left: 9px !important;
+        }
+
+        #calender {
+            width: 325px !important;
+            padding-left: 10px !important;
+        }
+
+        .filter-note {
+            width: 100% !important;
+            float: left;
+            color: #2a9e2a;
+            padding-top: 4px;
+            position: absolute;
+            right: 20% !important;
+            top: 34px !important;
+            line-height: 16px;
+        }
+
+        .note-meeting {
+            left: 7px !important;
+            position: absolute;
+            top: -5px !important;
+            font-size: 15px;
+            width: 100% !important;
+        }
+
+        .popup-text {
+            right: 60px !important;
+            top: 24px !important;
+            font-size: 16px !important;
+        }
+
+        .single-video-left h1 .mdc-button {
+            height: 30px !important;
+        }
+
+        .single-video-left .join-time {
+            top: 8px !important;
+        }
+
+        .mob_canvas-height {
+            height: 300px;
+        }
+
+        .overall-rate {
+            position: absolute;
+            right: 25px;
+            top: -26px;
+            color: #7eb38e;
+            font-weight: normal;
+        }
+
+        .main-notification-title {
+            right: 9px !important;
+            padding-top: 0px !important;
+            position: relative;
+            top: 2px;
+        }
+
+        .user-r .user-menu {
+            top: -15px;
+            left: auto;
+            right: -19px;
+        }
+
+        .click-arrow {
+            position: relative !important;
+            top: 10px !important;
+            left: -10px !important;
+        }
+
+        .dashboard-cat-title {
+            position: relative;
+            top: 0px !important;
+            text-align: center !important;
+        }
+
+        .topheader-link-wrap {
+            width: 100%;
+            font-size: 10px;
+            margin: 0px !important;
+            padding: 0px 9px !important;
+            text-align: left;
+        }
+
+        .topheader-link {
+            width: 23px;
+            height: 23px;
+        }
+
+        .video-alert {
+            left: 0px !important;
+            font-size: 12px !important;
+            line-height: 14px !important;
+        }
+
+        .time-txt {
+            font-size: 12px;
+        }
+
+        .meeting-link {
+            font-size: 14px !important;
+            margin: 10px 0px 0px 0px !important;
+        }
+
+        .content-wrappers .meeting-link .click_herebtn {
+            padding: 13px 14px;
+            font-size: 11px !important;
+            margin-left: 10px !important;
+            position: relative;
+            left: 15px;
+        }
+
+
+        .dashboard-icon {
+            margin: 0px auto !important;
+            float: none !important;
+            position: relative !important;
+            left: 0px !important;
+        }
+    }
+
+    @media only screen and (max-width: 415px) {
+        .toggle-title {
+            padding: 10px 0px !important;
+        }
+
+            .toggle-title h3 {
                 font-size: 15px !important;
             }
 
-            .rbpay .modal-dialog {
-                max-width: 100% !important
-            }
-
-            .mobpad {
-                padding: 0px !important;
-            }
-
-            
-
-            .navbar {
-                padding-top: 0;
-            }
-
-                .navbar.navbar-no-bg {
-                    background: #333;
-                    background: rgba(51, 51, 51, 0.9);
-                }
-
-            .navbar-brand {
-                height: 60px;
-                margin-left: 0px;
-            }
-
-            .navbar-collapse {
-                border: 0;
-            }
-
-            .navbar-toggle {
-                margin-top: 12px !important;
-            }
-
-            .top-content {
-                padding: 40px 0 110px 0;
-            }
-
-            .user-r .user-menu {
-                top: -15px;
-                left: auto;
-                right: -19px;
-            }
-
-
-            .dashboard-icon {
-                margin: 0px auto !important;
-                float: none !important;
-                position: relative !important;
-                left: 0px !important;
-            }
-
-            .click-arrow {
-                position: relative !important;
-                top: 8px !important;
-                left: -10px !important;
-            }
-
-            .dashboard-cat-title {
-                position: relative;
-                top: 0px !important;
-                text-align: center !important;
-            }
-
-            .fixed-header {
-                width: calc(100% - 30px);
-            }
-
-            .candidatename-sla {
-                float: none;
-                margin: 0px;
-            }
-
-            .public-url div.dataTables_wrapper div.dataTables_filter {
-                text-align: right;
+            .toggle-title i {
                 position: absolute;
-                left: 193px;
-                top: -34px;
+                right: -4px !important;
+                font-size: 1.5em !important;
+                top: 13px !important;
             }
 
-            .public-url #candidateTable_length {
-                top: 17px;
-                position: relative;
-                display: block;
-            }
-
-            .feedbackcontainer {
-                width: 100%;
-            }
-
-                .feedbackcontainer .accordion-heading a {
-                    width: 100%;
-                    height: auto;
-                    justify-content: center;
-                }
-
-                .feedbackcontainer .w-auto {
-                    width: 100% !important;
-                }
-
-            .redobtn {
-                float: none;
-                top: -51px;
-            }
-
-            .redo-text {
-                top: -51px;
-                line-height: 31px;
-            }
-
-            .submit-feedback {
-                position: fixed;
-                bottom: 0px;
-                width: 100%;
-                z-index: 1000;
-            }
-
-            .content-wrappers .meeting-link .click_herebtn {
-                padding: 10px 20px;
-                position: relative;
-                margin-left: 40px !important;
-            }
-
-            .meeting-link {
-                font-size: 16px !important;
-            }
-
-            .candidate-tab .tab-block .step {
-                display: none;
-            }
-
-            .candidate-tab .tab-block .card-block {
-                width: 31.3% !important;
-                float: left !important;
-                margin: 0px 5px !important;
-                height: 65px !important;
-            }
-
-                .candidate-tab .tab-block .card-block h1 {
-                    padding-left: 0px !important;
-                    text-align: center;
-                }
-
-            .videoContainer {
-                width: 100%;
-                left: 0px;
-            }
-
-            #btncamara, #btnoffcamara {
-                left: -335px;
-            }
-
-            .rules {
-                left: 0px;
-                top: 80px;
-            }
-
-            .about-int {
-                padding: 0px 10px 0px 0px;
-            }
-
-            #timer-clock {
-                margin-top: 8px;
-                width: 100px;
-                height: 76px;
-                position: relative;
-                left: 0px;
-                top: -20px;
-                float: right;
-            }
-
-            .left-pannel, .right-pannel, .int-left-pannel, .int-right-pannel {
-                width: 100%;
-                float: left;
-                margin: 0px !important;
-            }
-
-            .candidate-tab .w40 {
-                width: 100%;
-                float: left;
-                text-align: left;
-            }
-
-            .candidate-tab .w60 {
-                width: 100%;
-                float: left;
-            }
-
-            .schedule-img {
-                display: none;
-            }
-
-            .time-txt {
-                font-size: 13px;
-            }
+        .popup-text {
+            display: none !important;
         }
 
-        @media only screen and (max-width: 480px) {
-            .candidate-tab .card-block h1 {
-                font-size: 13px !important;
-                background: url(../../img/interview.svg) -20px 37px no-repeat !important;
-            }
+        #calenderTimeslot, #calenderRecoTimeslot {
+            width: 100% !important;
+            margin-top: 0px !important;
+        }
 
-            .report-tooltip {
-                display: none !important;
-            }
+        #scoreChart tspan {
+            font-size: 11px;
+        }
 
-            .calibration-btn {
-                top: -12px !important;
-                right: 200px !important;
-            }
+        .time-btn {
+            width: 100% !important;
+        }
 
-            .footer-nav .button-wrapper h2 {
-                font-size: 19px !important;
-            }
+        .filter-note {
+            width: 252px;
+            right: 30% !important;
+            top: 40px !important;
+            line-height: 16px;
+        }
 
-            .consent-label {
-                width: 80% !important;
-            }
+        h1, h2 {
+            font-size: 32px;
+        }
 
-            .consent-note {
-                padding: 0px !important;
-            }
+        .interview-status {
+            position: absolute;
+            top: -16px !important;
+            font-size: 14px !important;
+        }
 
-            #entitleTable.dataTable > tbody > tr > td:first-child {
-                padding-right: 95px !important;
-            }
+        .f1 {
+            padding-bottom: 20px;
+        }
 
-            .candidate-timeline.public-url .nopad {
-                padding: 0px !important;
-            }
+        .f1-buttons button {
+            margin-bottom: 5px;
+        }
 
-            .content.client .mdc-card-wrapper__text-section {
-                padding: 0px !important;
-            }
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 310px !important;
+            height: 180px !important;
+            left: 7px !important;
+        }
 
-            .topheader-header #status_3 {
-                position: relative !important;
-                right: 356px !important;
-                top: -2px;
-            }
+        .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
+            font-size: 14px;
+        }
 
-            .candidate-tab .tab-block .card-block {
-                width: 30.3% !important;
-                float: left !important;
-            }
+        .candidate-tab .card-block {
+            height: 150px !important;
+            width: 30% !important;
+            margin: 10px 6px !important;
+        }
 
-            .campaignForm .msgroup .assessment-name {
-                width: 87% !important;
-            }
+        .step {
+            width: 40px !important;
+            height: 20px !important;
+            font-size: 13px !important;
+        }
 
-            .interviewresponsebtn {
-                padding: 7px 10px !important;
-            }
 
-            .interview-tab .left-div {
-                float: none !important;
-                text-align: center !important;
-            }
+        .dashboard-cat-title {
+            position: relative;
+            top: 0px;
+            text-align: center;
+        }
 
-            #btnStop, #btnStart {
-                left: -12px !important;
-            }
+        .dashboard-count {
+            margin: 0px auto;
+            position: relative;
+            left: 80px;
+        }
+    }
+
+    @media only screen and (max-width: 380px) {
+        .scheduling .action {
+            position: absolute;
+            top: 6px;
+            right: 95px;
+        }
+
+        .topheader-header .filter {
+            position: relative !important;
+            right: -135px !important;
+        }
+
+        .topheader-header #status_3 {
+            position: relative !important;
+            right: 238px !important;
+            top: -3px;
+        }
+
+        .click_herebtn {
+            top: 0px !important;
+            color: #fff !important;
+        }
+
+        .candidate-tab .card-block h1 {
+            font-size: 11px !important;
+        }
+
+        #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
+            margin-bottom: 10px;
+        }
+
+        .filter-note {
+            width: 210px !important;
+            right: 40% !important;
+            top: 40px !important;
+            line-height: 16px;
+        }
+
+        .support {
+            position: absolute;
+            left: auto;
+            right: 25px !important;
+            top: 12px !important;
+        }
+
+        .logo-cm {
+            position: relative;
+            top: 3px;
+            left: 10px;
+        }
+
+        .dashboard-cat-title {
+            position: relative !important;
+            top: 0px !important;
+            text-align: center !important;
+        }
+
+        .dashboard-count {
+            position: relative !important;
+            left: 80px !important;
+            text-align: center !important;
+        }
+
+        .feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label {
+            font-size: 12px;
+        }
+
+        .feedbackcontainer ul.ks-cboxtags li label {
+            font-size: 12px;
+        }
+
+        .page__title {
+            font-size: 13px;
+        }
+
+        .page {
+            top: 0px;
+            left: 0px;
+        }
+
+        .content-wrappers .meeting-link .click_herebtn {
+            margin: 10px 0px 35px 0px !important;
+            display: block;
+            font-size: 14px !important;
+            width: 100%;
+            padding: 8px;
+            left: 0px;
+        }
+
+        .time-txt {
+            top: -23px !important;
+            font-size: 14px !important;
+        }
+
+        .candidate-tab .pipe {
+            display: none !important;
+        }
+
+        .meeting-link {
+            top: 0px;
+            font-size: 16px !important;
+        }
+
+        .interviewresponsebtn {
+            padding: 7px 15px;
+            margin: 10px 0px 10px 0px;
+            width: 141px;
+        }
+    }
+
+    @media only screen and (max-width: 360px) {
+        .logo-cm {
+            position: relative;
+            top: 4px !important;
+            left: 10px !important;
+        }
+
+        .footer-nav .button-wrapper h2 {
+            font-size: 15px !important;
+        }
+
+        .drop-box {
+            width: 100%;
+            margin: 10px 5px;
+        }
+
+        .right-div {
+            float: right;
+            width: 100%;
+            text-align: center;
+        }
+
+        .drop-btn {
+            width: 235px !important;
+        }
+
+        .content-wrappers .right-div .meeting-link .click_herebtn {
+            margin: 10px auto !important;
+            width: 295px;
+        }
+
+        ul.ks-cboxtags li label {
+            font-size: 9.5px;
+        }
+
+        #scoreChart tspan {
+            font-size: 9.3px;
+        }
+
+        #calenderTimeslot, #calenderRecoTimeslot {
+            left: 0px !important;
+        }
+
+        .videoContainer {
+            height: 215px !important;
+        }
 
             .videoContainer video {
-                height: 310px !important;
+                height: 220px !important;
             }
 
-            .videoContainer {
-                height: 305px !important;
-            }
-
-            .public-url #candidateTable_length {
-                left: -22px;
-                position: relative;
-            }
-
-            .candidate-tab .tabcontent p {
-                font-size: 14px;
-            }
-
-            .public-url div.dataTables_wrapper div.dataTables_filter {
-                text-align: right;
-                position: absolute;
-                left: 104px;
-                top: 31px;
-            }
-
-            .public-url #candidateTable_length {
-                top: 9px;
-            }
-
-            .sharp.btn-xs {
-                width: 2.1rem;
-                height: 2.1rem;
-                min-width: 2.1rem;
-                min-height: 2.1rem;
-            }
-
-            .pad7 {
-                padding: 0px !important;
-            }
-
-            .note-filter {
-                font-size: 13px !important;
-                padding: 5px 0px !important;
-            }
-
-            .logo-cm {
-                position: relative;
-                top: -1px !important;
-                width: 23% !important;
-                left: 10px !important;
-            }
-
-            #scoreChart tspan {
-                font-size: 11.5px;
-            }
-
-            .custom-select {
-                line-height: 17px !important;
-            }
-
-            .txttimezone-con {
-                width: 300px !important;
-                min-height: 30px;
-            }
-
-            .currMonth {
-                padding: 0px 12px !important;
-            }
-
-            #calender table {
-                border-collapse: separate;
-                border-spacing: 4px 9px !important;
-            }
-
-            #calender {
-                width: 100% !important;
-            }
-
-            #calenderTimeslot, #calenderRecoTimeslot {
-                width: 120px !important;
-            }
-
-            .time-btn {
-                width: 95px !important;
-                left: 9px !important;
-            }
-
-            #calender {
-                width: 325px !important;
-                padding-left: 10px !important;
-            }
-
-            .filter-note {
-                width: 100% !important;
-                float: left;
-                color: #2a9e2a;
-                padding-top: 4px;
-                position: absolute;
-                right: 20% !important;
-                top: 34px !important;
-                line-height: 16px;
-            }
-
-            .note-meeting {
-                left: 7px !important;
-                position: absolute;
-                top: -5px !important;
-                font-size: 15px;
-                width: 100% !important;
-            }
-
-            .popup-text {
-                right: 60px !important;
-                top: 24px !important;
-                font-size: 16px !important;
-            }
-
-            .single-video-left h1 .mdc-button {
-                height: 30px !important;
-            }
-
-            .single-video-left .join-time {
-                top: 8px !important;
-            }
-
-            .mob_canvas-height {
-                height: 300px;
-            }
-
-            .overall-rate {
-                position: absolute;
-                right: 25px;
-                top: -26px;
-                color: #7eb38e;
-                font-weight: normal;
-            }
-
-            .main-notification-title {
-                right: 9px !important;
-                padding-top: 0px !important;
-                position: relative;
-                top: 2px;
-            }
-
-            .user-r .user-menu {
-                top: -15px;
-                left: auto;
-                right: -19px;
-            }
-
-            .click-arrow {
-                position: relative !important;
-                top: 10px !important;
-                left: -10px !important;
-            }
-
-            .dashboard-cat-title {
-                position: relative;
-                top: 0px !important;
-                text-align: center !important;
-            }
-
-            .topheader-link-wrap {
-                width: 100%;
-                font-size: 10px;
-                margin: 0px !important;
-                padding: 0px 9px !important;
-                text-align: left;
-            }
-
-            .topheader-link {
-                width: 23px;
-                height: 23px;
-            }
-
-            .video-alert {
-                left: 0px !important;
-                font-size: 12px !important;
-                line-height: 14px !important;
-            }
-
-            .time-txt {
-                font-size: 12px;
-            }
-
-            .meeting-link {
-                font-size: 14px !important;
-                margin: 10px 0px 0px 0px !important;
-            }
-
-            .content-wrappers .meeting-link .click_herebtn {
-                padding: 13px 14px;
-                font-size: 11px !important;
-                margin-left: 10px !important;
-                position: relative;
-                left: 15px;
-            }
-
-
-            .dashboard-icon {
-                margin: 0px auto !important;
-                float: none !important;
-                position: relative !important;
-                left: 0px !important;
-            }
+        .note-meeting {
+            width: 100% !important;
+            top: -11px !important;
+            font-size: 13px !important;
         }
 
-        @media only screen and (max-width: 415px) {
-            .toggle-title {
-                padding: 10px 0px !important;
-            }
-
-                .toggle-title h3 {
-                    font-size: 15px !important;
-                }
-
-                .toggle-title i {
-                    position: absolute;
-                    right: -4px !important;
-                    font-size: 1.5em !important;
-                    top: 13px !important;
-                }
-
-            .popup-text {
-                display: none !important;
-            }
-
-            #calenderTimeslot, #calenderRecoTimeslot {
-                width: 100% !important;
-                margin-top: 0px !important;
-            }
-
-            #scoreChart tspan {
-                font-size: 11px;
-            }
-
-            .time-btn {
-                width: 100% !important;
-            }
-
-            .filter-note {
-                width: 252px;
-                right: 30% !important;
-                top: 40px !important;
-                line-height: 16px;
-            }
-
-            h1, h2 {
-                font-size: 32px;
-            }
-
-            .interview-status {
-                position: absolute;
-                top: -16px !important;
-                font-size: 14px !important;
-            }
-
-            .f1 {
-                padding-bottom: 20px;
-            }
-
-            .f1-buttons button {
-                margin-bottom: 5px;
-            }
-
-            #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-                width: 310px !important;
-                height: 180px !important;
-                left: 7px !important;
-            }
-
-            .instainterview .multiple_row > h2 span, #reportForm .multiple_row > h3 span, .multiple_row > h2, #reportForm .multiple_row > h3 {
-                font-size: 14px;
-            }
-
-            .candidate-tab .card-block {
-                height: 150px !important;
-                width: 30% !important;
-                margin: 10px 6px !important;
-            }
-
-            .step {
-                width: 40px !important;
-                height: 20px !important;
-                font-size: 13px !important;
-            }
-
-
-            .dashboard-cat-title {
-                position: relative;
-                top: 0px;
-                text-align: center;
-            }
-
-            .dashboard-count {
-                margin: 0px auto;
-                position: relative;
-                left: 80px;
-            }
+        .single-video-left h1 .mdc-button {
+            height: 30px !important;
         }
 
-        @media only screen and (max-width: 380px) {
-            .scheduling .action {
-                position: absolute;
-                top: 6px;
-                right: 95px;
-            }
-
-            .topheader-header .filter {
-                position: relative !important;
-                right: -135px !important;
-            }
-
-            .topheader-header #status_3 {
-                position: relative !important;
-                right: 238px !important;
-                top: -3px;
-            }
-
-            .click_herebtn {
-                top: 0px !important;
-                color: #fff !important;
-            }
-
-            .candidate-tab .card-block h1 {
-                font-size: 11px !important;
-            }
-
-            #allinterview_2 .mdc-button, #selectedcandidate_2 .mdc-button {
-                margin-bottom: 10px;
-            }
-
-            .filter-note {
-                width: 210px !important;
-                right: 40% !important;
-                top: 40px !important;
-                line-height: 16px;
-            }
-
-            .support {
-                position: absolute;
-                left: auto;
-                right: 25px !important;
-                top: 12px !important;
-            }
-
-            .logo-cm {
-                position: relative;
-                top: 3px;
-                left: 10px;
-            }
-
-            .dashboard-cat-title {
-                position: relative !important;
-                top: 0px !important;
-                text-align: center !important;
-            }
-
-            .dashboard-count {
-                position: relative !important;
-                left: 80px !important;
-                text-align: center !important;
-            }
-
-            .feedbackcontainer ul.ks-cboxtags li input[type="checkbox"]:checked + label {
-                font-size: 12px;
-            }
-
-            .feedbackcontainer ul.ks-cboxtags li label {
-                font-size: 12px;
-            }
-
-            .page__title {
-                font-size: 13px;
-            }
-
-            .page {
-                top: 0px;
-                left: 0px;
-            }
-
-            .content-wrappers .meeting-link .click_herebtn {
-                margin: 10px 0px 35px 0px !important;
-                display: block;
-                font-size: 14px !important;
-                width: 100%;
-                padding: 8px;
-                left: 0px;
-            }
-
-            .time-txt {
-                top: -23px !important;
-                font-size: 14px !important;
-            }
-
-            .candidate-tab .pipe {
-                display: none !important;
-            }
-
-            .meeting-link {
-                top: 0px;
-                font-size: 16px !important;
-            }
-
-            .interviewresponsebtn {
-                padding: 7px 15px;
-                margin: 10px 0px 10px 0px;
-                width: 141px;
-            }
+        #btnStop, #btnStart {
+            left: -130px !important;
         }
 
-        @media only screen and (max-width: 360px) {
-            .logo-cm {
-                position: relative;
-                top: 4px !important;
-                left: 10px !important;
-            }
-
-            .footer-nav .button-wrapper h2 {
-                font-size: 15px !important;
-            }
-
-            .drop-box {
-                width: 100%;
-                margin: 10px 5px;
-            }
-
-            .right-div {
-                float: right;
-                width: 100%;
-                text-align: center;
-            }
-
-            .drop-btn {
-                width: 235px !important;
-            }
-
-            .content-wrappers .right-div .meeting-link .click_herebtn {
-                margin: 10px auto !important;
-                width: 295px;
-            }
-
-            ul.ks-cboxtags li label {
-                font-size: 9.5px;
-            }
-
-            #scoreChart tspan {
-                font-size: 9.3px;
-            }
-
-            #calenderTimeslot, #calenderRecoTimeslot {
-                left: 0px !important;
-            }
-
-            .videoContainer {
-                height: 215px !important;
-            }
-
-                .videoContainer video {
-                    height: 220px !important;
-                }
-
-            .note-meeting {
-                width: 100% !important;
-                top: -11px !important;
-                font-size: 13px !important;
-            }
-
-            .single-video-left h1 .mdc-button {
-                height: 30px !important;
-            }
-
-            #btnStop, #btnStart {
-                left: -130px !important;
-            }
-
-            .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
-                font-size: 11px !important;
-            }
-
-            #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
-                padding-right: 5px !important;
-                padding-left: 5px !important;
-            }
-
-            #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
-                width: 285px !important;
-                height: 160px !important;
-                left: 7px !important;
-            }
-
-            .support {
-                position: absolute;
-                left: auto;
-            }
-
-            .main-img-user {
-                display: block;
-                position: relative;
-                width: 20px !important;
-                height: 20px !important;
-                margin: 0px 0px 0px 30px;
-                top: -43px !important;
-                border-radius: 100%;
-                left: -145px !important;
-                float: right;
-            }
-
-            .main-notification-title {
-                padding-top: 0px !important;
-                position: relative;
-                right: 9px !important;
-                top: -19px !important;
-                width: 100%;
-                text-align: center !important;
-                margin: 0px;
-                padding: 0px;
-            }
-
-            .user {
-                left: -110px !important;
-                top: 14px !important;
-                width: 100%;
-            }
-
-            .click-arrow {
-                position: relative !important;
-                top: 8px !important;
-                left: -25px !important;
-            }
-
-            .videoPreviewContainer {
-                width: 300px !important;
-                position: relative !important;
-                left: -23px !important;
-            }
+        .pagination .page-item .page-link, .pagination-container > ul > li a, .pagination > .active > span {
+            font-size: 11px !important;
         }
-        /* EOF BUTTONS */
-        /* FORM ELEMENTS */
-        .fa, .fas, .far {
+
+        #skill_card .col-lg-4.col-md-6.col-sm-6.col-xs-6 {
+            padding-right: 5px !important;
+            padding-left: 5px !important;
+        }
+
+        #meetingsCountId .canvasjs-chart-canvas, #interviewers .canvasjs-chart-canvas {
+            width: 285px !important;
+            height: 160px !important;
+            left: 7px !important;
+        }
+
+        .support {
+            position: absolute;
+            left: auto;
+        }
+
+        .main-img-user {
+            display: block;
+            position: relative;
+            width: 20px !important;
+            height: 20px !important;
+            margin: 0px 0px 0px 30px;
+            top: -43px !important;
+            border-radius: 100%;
+            left: -145px !important;
+            float: right;
+        }
+
+        .main-notification-title {
+            padding-top: 0px !important;
+            position: relative;
+            right: 9px !important;
+            top: -19px !important;
+            width: 100%;
+            text-align: center !important;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .user {
+            left: -110px !important;
+            top: 14px !important;
+            width: 100%;
+        }
+
+        .click-arrow {
+            position: relative !important;
+            top: 8px !important;
+            left: -25px !important;
+        }
+
+        .videoPreviewContainer {
+            width: 300px !important;
+            position: relative !important;
+            left: -23px !important;
+        }
+    }
+    /* EOF BUTTONS */
+    /* FORM ELEMENTS */
+    .fa, .fas, .far {
     font-family: "Font Awesome 5 Pro";
     font-weight: 500;
 }

@@ -2998,7 +2998,7 @@ namespace Risebird.Web.Controllers
                 _whatsapp.Header = result.ClientName;
                 _whatsapp.MessageValue = result.JDTiltle;
                 _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "");
-
+                _whatsapp.InterviewId = id;
                 await _whatsAppHelper.WhatsAppSendCancleReScheduling(_whatsapp);
             }
             return Json(model);

@@ -3286,6 +3286,8 @@ namespace Risebird.Web.Controllers
                                 _whatsAppVM.Emailid = model.CandidateEmail;
                                 _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
                                 _whatsAppVM.Event = "Risebird: Interview Feedback";
+                                _whatsAppVM.irfId = model.IRFId;
+                                _whatsAppVM.InterviewId = model.InterviewId;
                                 await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
                             }
                             TempData["SuccessErrorMessageInterview"] = "Report has been saved Successfully!";
@@ -5165,6 +5167,8 @@ namespace Risebird.Web.Controllers
             _whatsAppVM.Emailid = CandidateEmail;
             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
             _whatsAppVM.Event = "Feedback Remainder";
+            _whatsAppVM.InterviewId = interviewid;
+
             await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
             if (emailsend == "Mail has been sent Successfully!")
             {

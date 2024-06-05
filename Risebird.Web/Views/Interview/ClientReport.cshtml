@@ -59,55 +59,7 @@
         margin-top: 30px !important;
     }
 
-    hr {
-        display: block;
-        margin: 50px 0 -15px;
-        width: 100%;
-        height: 1px;
-        border: 0;
-        position: absolute;
-        top: 15px;
-        background-color: rgba(0, 0, 0, 0.35);
-    }
-
-        hr + h2 {
-            display: inline-block;
-            position: relative;
-            left: 50%;
-            margin: 0;
-            padding: 5px 10px;
-            border: 1px solid #453986;
-            transform: translateX(-50%);
-            color: #453986;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.32em;
-            text-align: center;
-            text-transform: uppercase;
-            background-color: #fff;
-        }
-
-            hr + h2::before {
-                left: 0;
-            }
-
-            hr + h2::before, hr + h2::after {
-                display: block;
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 1px;
-                background: #453986;
-                content: "";
-            }
-
-            hr + h2::after {
-                right: 0;
-            }
-
-        hr + h2 {
-            border-width: 1px 0;
-        }
+  
 
     #next-skill {
         display: none;
@@ -303,7 +255,7 @@
                                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                         <div class="row">
                                             <div class="col-lg-3 col-md-5 clientnfo">
-                                                @*                                                @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                            @*@if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                             {
                                             <div>
 
@@ -340,7 +292,8 @@
                                             }
                                             </div>
                                             }
-                                            *@                                                @if (ViewBag.profile != "Interviewer")
+                                            *@ 
+                                            @if (ViewBag.profile != "Interviewer")
                                                 {
                                                     @if (Model.resumeLink != null && Model.resumeLink != "")
 
@@ -629,7 +582,7 @@
                                         </div>
                                         <br />
                                         <div class="row">
-                                            <div class="col-lg-12 col-md-12"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span style="text-transform:none!important">Primary Skill:</span>@Model.JDTiltle</h2></div>
+                                            <div class="col-lg-12 col-md-12 skill-divider"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span style="text-transform:none!important">Primary Skill:</span> @Model.JDTiltle</h2></div>
                                             <div class="col-lg-12 col-md-12">
                                                 @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                 {
@@ -829,7 +782,7 @@
                                                 <div class="next-skillShow">VIEW MORE SKILLS</div>
 
                                                 <div id="next-skill">
-                                                    <div class="col-lg-12 col-md-12"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span style="text-transform:none!important">Other Skills:</span></h2></div>
+                                                    <div class="col-lg-12 col-md-12 skill-divider"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span style="text-transform:none!important">Other Skills: </span></h2></div>
                                                     <div class="col-lg-12 col-md-12">
                                                         @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                         {
