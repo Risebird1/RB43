@@ -124,6 +124,7 @@ namespace Risebird.Entities.Data
         public string logolink { get; set; }
         public string CandidateCodedResumeLink { get; set; }//Candidate's redacted resume link
         public string ConsentFormUrl { get; set; }
+        public int SkillSetsevaluate { get; set; }
 
     }
 }

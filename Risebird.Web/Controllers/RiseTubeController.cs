@@ -3188,6 +3188,7 @@ namespace Risebird.Web.Controllers
                 _whatsAppVM.InterviewDate = resultset.interviewDate.ToString();
                 _whatsAppVM.UserName = resultset.CandidateName;
                 _whatsAppVM.MessageValue = rating.ToString();
+                _whatsAppVM.InterviewId = imid;
                 await _whatsAppHelper.WhatsAppSendRatingNotification(_whatsAppVM);
                 return Json(result);
             }

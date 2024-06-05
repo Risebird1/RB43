@@ -230,11 +230,11 @@
 
                                     <div class="addreport">
                                         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-                                            <div class="card" style="margin-bottom:0px;">
-                                                <div class="videoConplayer">
+                                            
                                                     @Html.HiddenFor(x => Model.VideoLink)
                                                     @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                                     {
+                                                        
                                                         int appendTime = 0;
                                                         if (Model.ThumbnailTimeSeconds == 0)
                                                         {
@@ -252,20 +252,24 @@
                                                         {
                                                             appendTime = Model.ThumbnailTimeSeconds;
                                                         }
-                                                        var src = Model.VideoLink + "#t=" + appendTime.ToString();
+                                                var src = Model.VideoLink + "#t=" + appendTime.ToString();
+                                                <div class="card" style="margin-bottom:0px;">
+                                                    <div class="videoConplayer">
+                                                        
                                                         <video width="600" controls="controls" preload="metadata" class="vjs-tech">
                                                             <source src='@Model.VideoLink' type="video/mp4">
                                                         </video>
-
+                                                    </div>
+                                                </div>
                                                         @*@if(ViewBag.PageReport == "Insta")
                                                     {
                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                     <label style="width:100%; text-align:center">Note : If the video duration is less than 10 mins, its the shorter version of the entire Interview.</label>
                                                     </div>
                                                     }*@
+                                                      
                                                     }
-                                                </div>
-                                            </div>
+                                             
                                             <div class="card" style="margin-bottom:10px;">
 
                                                 <label class="question" for="checkbox_two">
@@ -394,6 +398,99 @@
 
                                             </div>
                                             <!--proxy communication end-->
+                                            <!--report start-->
+                                            <div class="card" style="margin-bottom:10px;">
+
+                                                <label class="question" for="checkbox_two">
+                                                    <label for="checkbox_two">
+                                                        <i class="fa fa-user" aria-hidden="true"></i>
+                                                        REPORT DETAILS
+                                                        <span class="report-tooltip" style="border:0px;margin-right:10px;">
+                                                            <svg style="color:#888;position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16"> <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="#ccc"></path> </svg>
+                                                            <span class="report-tooltiptext">
+                                                                <p style="font-weight:bold;line-height:20px;">For candidate assessment, consider the following soft-thresholding approach:</p>
+
+                                                                <p><span style="text-transform:none;position: static;font-weight: bold;color: #17b826;">Strongly Selected:</span> Candidates whose score exceeds 85%.</p>
+                                                                <p><span style="text-transform:none;position: static;font-weight: bold;color: #2ceb3e;">Marginal Selected:</span> Candidates whose score falls within 70-85%.</p>
+                                                                <p><span style="text-transform:none;position: static;font-weight: bold;color: #f48562;">Marginal Rejected:</span> Candidates whose score falls within 60-70%.</p>
+                                                                <p><span style="text-transform:none;position: static;font-weight: bold;color: #ec5425;">Strongly Rejected:</span> Candidates whose score falls below 60%.</p>
+                                                            </span>
+                                                        </span>
+                                                        <span class="strict-note"> Do not select average candidates, unless explicitly informed to you. Also, make sure the interview status you mark for the candidate aligns with your comments and overall rating. Customer may apply a penalty ranging from 10-100% in case of discrepancy.</span>
+
+                                                    </label>
+
+                                                </label>
+                                                <fieldset class="answer">
+
+                                                    @if (ViewBag.PageStatus != "PublicExternal")
+                                                    {
+                                                        <div class="int-form-group-status">
+                                                            <div class="form-group">
+
+                                                                @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "placeholder-label" })
+                                                                @if (ViewBag.profile != "Interviewer")
+                                                                {
+
+                                                                    <span> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusChanged(this.value)" })</span>
+                                                                }
+
+                                                                else
+                                                                {
+                                                                    <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusChanged(this.value)" })</span>
+
+                                                                }
+                                                                @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+
+                                                            </div>
+                                                            <div class="form-group" style="margin-bottom:0px;">
+                                                                <label class="text-danger" id="meetingStatus_Error" style="color: red;margin-left: 12px;font-size: 12px"></label>
+                                                            </div>
+
+
+
+                                                            <div class="form-group">
+                                                                @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "placeholder-label" })
+
+                                                                @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled", @placeholder = "" })
+                                                                @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="form-group" style="margin-bottom:0px;">
+                                                                <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:12px; font-size:12px"></label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="int-form-group-comment">
+                                                            <div class="InterviewerComent">
+                                                                <div class="p15">
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+
+                                                                        <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "placeholder-label", @style = "z-index:1000" })</strong>
+
+                                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                            <div class="talktext">
+                                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
+                                                                                <span id='remainingC'></span>
+                                                                                <div id="words"></div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="form-group" style="margin:-15px  0px 25px 0px;">
+                                                                        <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:12px; font-size:12px"></label>
+                                                                    </div>
+                                                                    <div class="strict-note" style="display:inline-table;color: red;line-height:18px;margin-top:5px!important;">
+                                                                        Strictly avoid in Comments - grammatical errors, generic comments,
+                                                                        short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.otherwise, Customer may apply penalty from 10-100%
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                </fieldset>
+
+                                            </div>
+                                            <!--report end--->
                                             <!--tech skill start-->
                                             <div class="card" style="margin-bottom:10px;">
 
@@ -503,99 +600,7 @@
                                             </div>
                                             }
                                             <!--tech score start-->
-                                            <!--report start-->
-                                            <div class="card" style="margin-bottom:10px;">
-
-                                                <label class="question" for="checkbox_two">
-                                                    <label for="checkbox_two">
-                                                        <i class="fa fa-user" aria-hidden="true"></i>
-                                                        REPORT DETAILS
-                                                        <span class="report-tooltip" style="border:0px;margin-right:10px;">
-                                                            <svg style="color:#888;position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16"> <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="#ccc"></path> </svg>
-                                                            <span class="report-tooltiptext">
-                                                                <p style="font-weight:bold;line-height:20px;">For candidate assessment, consider the following soft-thresholding approach:</p>
-
-                                                                <p><span style="text-transform:none;position: static;font-weight: bold;color: #17b826;">Strongly Selected:</span> Candidates whose score exceeds 85%.</p>
-                                                                <p><span style="text-transform:none;position: static;font-weight: bold;color: #2ceb3e;">Marginal Selected:</span> Candidates whose score falls within 70-85%.</p>
-                                                                <p><span style="text-transform:none;position: static;font-weight: bold;color: #f48562;">Marginal Rejected:</span> Candidates whose score falls within 60-70%.</p>
-                                                                <p><span style="text-transform:none;position: static;font-weight: bold;color: #ec5425;">Strongly Rejected:</span> Candidates whose score falls below 60%.</p>
-                                                            </span>
-                                                        </span>
-                                                        <span class="strict-note"> Do not select average candidates, unless explicitly informed to you. Also, make sure the interview status you mark for the candidate aligns with your comments and overall rating. Customer may apply a penalty ranging from 10-100% in case of discrepancy.</span>
-
-                                                    </label>
-
-                                                </label>
-                                                <fieldset class="answer">
-
-                                                    @if (ViewBag.PageStatus != "PublicExternal")
-                                                    {
-                                                        <div class="int-form-group-status">
-                                                            <div class="form-group">
-
-                                                                @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "placeholder-label" })
-                                                                @if (ViewBag.profile != "Interviewer")
-                                                                {
-
-                                                                    <span> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusChanged(this.value)" })</span>
-                                                                }
-
-                                                                else
-                                                                {
-                                                                    <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatus, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusChanged(this.value)" })</span>
-
-                                                                }
-                                                                @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
-
-                                                            </div>
-                                                            <div class="form-group" style="margin-bottom:0px;">
-                                                                <label class="text-danger" id="meetingStatus_Error" style="color: red;margin-left: 12px;font-size: 12px"></label>
-                                                            </div>
-
-
-
-                                                            <div class="form-group">
-                                                                @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "placeholder-label" })
-
-                                                                @Html.DropDownListFor(x => Model.InterviewStatus, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled", @placeholder = "" })
-                                                                @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
-                                                            </div>
-                                                            <div class="form-group" style="margin-bottom:0px;">
-                                                                <label class="text-danger" id="interviewStatus_Error" style="color:red; margin-left:12px; font-size:12px"></label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="int-form-group-comment">
-                                                            <div class="InterviewerComent">
-                                                                <div class="p15">
-                                                                    <div class="form-group" style="margin-bottom:0px;">
-
-                                                                        <strong>@Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "placeholder-label", @style = "z-index:1000" })</strong>
-
-                                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                            <div class="talktext">
-                                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @id = "interviewerComment", @class = "form-control text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
-                                                                                <span id='remainingC'></span>
-                                                                                <div id="words"></div>
-                                                                            </div>
-                                                                        </div>
-
-                                                                    </div>
-                                                                    <div class="form-group" style="margin:-15px  0px 25px 0px;">
-                                                                        <label class="text-danger" id="interviewerComment_Error" style="color:red; margin-left:12px; font-size:12px"></label>
-                                                                    </div>
-                                                                    <div class="strict-note" style="display:inline-table;color: red;line-height:18px;margin-top:5px!important;">
-                                                                        Strictly avoid in Comments - grammatical errors, generic comments,
-                                                                        short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.otherwise, Customer may apply penalty from 10-100%
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    }
-
-                                                </fieldset>
-
-                                            </div>
-                                            <!--report end--->
+                                        
                                             <!--feedback record audio & upload video start-->
                                             @* <div class="col-md-6 wrap-nopadding">
                                             <div class="card" style="margin-bottom:10px;">
@@ -907,8 +912,98 @@
                                                 {
                                                     <div class="next-skillShow nextbtn">FILL THE SECTION BELOW FOR OTHER SKILLS</div>
                                                     <div id="next-skill" style="display:none">
-                                                        <!--tech skill start-->
+                                                      
                                                         <h1 style="font-size:18px;padding:10px;display:block;">OTHER SKILL</h1>
+                                                    <!--report start-->
+                                                    <div class="card" style="margin-bottom:10px;">
+
+                                                        <label class="question" for="checkbox_two">
+                                                            <label for="checkbox_two">
+                                                                <i class="fa fa-user" aria-hidden="true"></i>
+                                                                REPORT DETAILS
+                                                                <span class="report-tooltip" style="border:0px;margin-right:10px;">
+                                                                    <svg style="color:#888;position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16"> <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="#ccc"></path> </svg>
+                                                                    <span class="report-tooltiptext">
+                                                                        <p style="font-weight:bold;line-height:20px;">For candidate assessment, consider the following soft-thresholding approach:</p>
+
+                                                                        <p><span style="text-transform:none;position: static;font-weight: bold;color: #17b826;">Strongly Selected:</span> Candidates whose score exceeds 85%.</p>
+                                                                        <p><span style="text-transform:none;position: static;font-weight: bold;color: #2ceb3e;">Marginal Selected:</span> Candidates whose score falls within 70-85%.</p>
+                                                                        <p><span style="text-transform:none;position: static;font-weight: bold;color: #f48562;">Marginal Rejected:</span> Candidates whose score falls within 60-70%.</p>
+                                                                        <p><span style="text-transform:none;position: static;font-weight: bold;color: #ec5425;">Strongly Rejected:</span> Candidates whose score falls below 60%.</p>
+                                                                    </span>
+                                                                </span>
+                                                                <span class="strict-note"> Do not select average candidates, unless explicitly informed to you. Also, make sure the interview status you mark for the candidate aligns with your comments and overall rating. Customer may apply a penalty ranging from 10-100% in case of discrepancy.</span>
+
+                                                            </label>
+
+                                                        </label>
+                                                        <fieldset class="answer">
+
+                                                            @if (ViewBag.PageStatus != "PublicExternal")
+                                                            {
+                                                                <div class="int-form-group-status">
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "placeholder-label" })
+                                                                        @if (ViewBag.profile != "Interviewer")
+                                                                        {
+                                                                            <span> @Html.DropDownListFor(x => Model.MeetingStatusTwo, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusTwoChanged(this.value)" })</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatusTwo, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusTwoChanged(this.value)" })</span>
+                                                                        }
+                                                                        @Html.ValidationMessageFor(model => model.MeetingStatusTwo, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        <label class="text-danger" id="meetingStatusTwo_Error" style="color: red;margin-left: 12px;font-size: 12px"></label>
+                                                                    </div>
+
+
+
+                                                                    <div class="form-group">
+                                                                        @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "placeholder-label" })
+
+                                                                        @Html.DropDownListFor(x => Model.InterviewStatusTwo, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled", @placeholder = "" })
+                                                                        @Html.ValidationMessageFor(model => model.InterviewStatusTwo, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                                        <label class="text-danger" id="interviewStatusTwo_Error" style="color:red; margin-left:12px; font-size:12px"></label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="int-form-group-comment">
+                                                                    <div class="InterviewerComent">
+                                                                        <div class="p15">
+                                                                            <div class="form-group" style="margin-bottom:0px;">
+
+                                                                                <strong>@Html.LabelFor(model => model.InterviewerCommentTwo, htmlAttributes: new { @class = "placeholder-label", @style = "z-index:1000" })</strong>
+
+                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                    <div class="talktext">
+                                                                                        @Html.TextAreaFor(m => m.InterviewerCommentTwo, new { htmlAttributes = new { @id = "interviewerCommentTwo", @class = "text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
+                                                                                        <span id='remainingCTwo'></span>
+                                                                                        <div id="wordsTwo"></div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                            <div class="form-group" style="margin:-15px  0px 25px 0px;">
+                                                                                <label class="text-danger" id="interviewerCommentTwo_Error" style="color:red; margin-left:12px; font-size:12px"></label>
+                                                                            </div>
+                                                                            <div class="strict-note" style="display:inline-table;color: red;line-height:18px;margin-top:5px!important;">
+                                                                                Strictly avoid in Comments - grammatical errors, generic comments,
+                                                                                short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.otherwise, Customer may apply penalty from 10-100%
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+
+
+                                                        </fieldset>
+
+                                                    </div>
+                                                    <!--report end--->
+                                                    <!--tech skill start-->
                                                         <div class="card" style="margin-bottom:10px;">
                                                             <label class="question" for="checkbox_two">
                                                                 <label for="checkbox_two">
@@ -1014,95 +1109,7 @@
                                             </div>
                                             }
                                                 <!--tech score start-->
-                                                        <!--report start-->
-                                                        <div class="card" style="margin-bottom:10px;">
-
-                                                            <label class="question" for="checkbox_two">
-                                                                <label for="checkbox_two">
-                                                                    <i class="fa fa-user" aria-hidden="true"></i>
-                                                                    REPORT DETAILS
-                                                                    <span class="report-tooltip" style="border:0px;margin-right:10px;">
-                                                                        <svg style="color:#888;position:relative;top:-2px;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16"> <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="#ccc"></path> </svg>
-                                                                        <span class="report-tooltiptext">
-                                                                            <p style="font-weight:bold;line-height:20px;">For candidate assessment, consider the following soft-thresholding approach:</p>
-
-                                                                            <p><span style="text-transform:none;position: static;font-weight: bold;color: #17b826;">Strongly Selected:</span> Candidates whose score exceeds 85%.</p>
-                                                                            <p><span style="text-transform:none;position: static;font-weight: bold;color: #2ceb3e;">Marginal Selected:</span> Candidates whose score falls within 70-85%.</p>
-                                                                            <p><span style="text-transform:none;position: static;font-weight: bold;color: #f48562;">Marginal Rejected:</span> Candidates whose score falls within 60-70%.</p>
-                                                                            <p><span style="text-transform:none;position: static;font-weight: bold;color: #ec5425;">Strongly Rejected:</span> Candidates whose score falls below 60%.</p>
-                                                                        </span>
-                                                                    </span>
-                                                                    <span class="strict-note"> Do not select average candidates, unless explicitly informed to you. Also, make sure the interview status you mark for the candidate aligns with your comments and overall rating. Customer may apply a penalty ranging from 10-100% in case of discrepancy.</span>
-
-                                                                </label>
-
-                                                            </label>
-                                                            <fieldset class="answer">
-
-                                                                @if (ViewBag.PageStatus != "PublicExternal")
-                                                                {
-                                                                    <div class="int-form-group-status">
-                                                                        <div class="form-group">
-                                                                            @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "placeholder-label" })
-                                                                            @if (ViewBag.profile != "Interviewer")
-                                                                            {
-                                                                                <span> @Html.DropDownListFor(x => Model.MeetingStatusTwo, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusTwoChanged(this.value)" })</span>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <span class="interviewer"> @Html.DropDownListFor(x => Model.MeetingStatusTwo, meetingStatusList, "Select Status", htmlAttributes: new { @class = "select-css webkitEnabled", @placeholder = "", @onchange = "MeetingStatusTwoChanged(this.value)" })</span>
-                                                                            }
-                                                                            @Html.ValidationMessageFor(model => model.MeetingStatusTwo, "", new { @class = "text-danger" })
-                                                                        </div>
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            <label class="text-danger" id="meetingStatusTwo_Error" style="color: red;margin-left: 12px;font-size: 12px"></label>
-                                                                        </div>
-
-
-
-                                                                        <div class="form-group">
-                                                                            @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "placeholder-label" })
-
-                                                                            @Html.DropDownListFor(x => Model.InterviewStatusTwo, interviewStatusList, "Select Status", htmlAttributes: new { @class = "select-css  webkitEnabled", @placeholder = "" })
-                                                                            @Html.ValidationMessageFor(model => model.InterviewStatusTwo, "", new { @class = "text-danger" })
-                                                                        </div>
-                                                                        <div class="form-group" style="margin-bottom:0px;">
-                                                                            <label class="text-danger" id="interviewStatusTwo_Error" style="color:red; margin-left:12px; font-size:12px"></label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="int-form-group-comment">
-                                                                        <div class="InterviewerComent">
-                                                                            <div class="p15">
-                                                                                <div class="form-group" style="margin-bottom:0px;">
-
-                                                                                    <strong>@Html.LabelFor(model => model.InterviewerCommentTwo, htmlAttributes: new { @class = "placeholder-label", @style = "z-index:1000" })</strong>
-
-                                                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                                        <div class="talktext">
-                                                                                            @Html.TextAreaFor(m => m.InterviewerCommentTwo, new { htmlAttributes = new { @id = "interviewerCommentTwo", @class = "text-box single-line  scrollbar" }, @style = "height: 160px;padding:20px; width:100%", @placeholder = "Interviewer Comments here, minimum 250 characters", @spellcheck = "true" })
-                                                                                            <span id='remainingCTwo'></span>
-                                                                                            <div id="wordsTwo"></div>
-                                                                                        </div>
-                                                                                    </div>
-
-                                                                                </div>
-                                                                                <div class="form-group" style="margin:-15px  0px 25px 0px;">
-                                                                                    <label class="text-danger" id="interviewerCommentTwo_Error" style="color:red; margin-left:12px; font-size:12px"></label>
-                                                                                </div>
-                                                                                <div class="strict-note" style="display:inline-table;color: red;line-height:18px;margin-top:5px!important;">
-                                                                                    Strictly avoid in Comments - grammatical errors, generic comments,
-                                                                                    short comments, HR related observations,irrelevant points, observation that is not aligned to score rubric.otherwise, Customer may apply penalty from 10-100%
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                }
-
-
-                                                            </fieldset>
-
-                                                        </div>
-                                                        <!--report end--->
+                                                      
                                                         <!--question start--->
                                                         @if (ViewBag.PageReport != "Insta")
                                                         {
@@ -2658,14 +2665,14 @@
    
 
     $(document).ready(function () {
-        document.getElementById("interviewerComment").innerHTML = $('#InterviewerComment').text();
+        document.getElementById("InterviewerComment").innerHTML = $('#InterviewerComment').text();
 
     })
 
     
 
     $(document).ready(function () {
-        document.getElementById("interviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
+        document.getElementById("InterviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
 
     })
 </script>
