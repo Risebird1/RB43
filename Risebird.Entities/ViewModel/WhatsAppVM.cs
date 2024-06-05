@@ -19,6 +19,7 @@ namespace Risebird.Entities.ViewModel
         public int irfId { get; set; }
         public string PerSuccessRate { get; set; }
         public string Interviewduration { get; set; }
+        public int InterviewId { get; set; }
 
     }
     public class WhatsAppVMResponse
@@ -35,6 +36,7 @@ namespace Risebird.Entities.ViewModel
         public string CandidateName { get; set; }
         public string ClientName { get; set; }
         public string JobTitle { get; set; }
+        public int IRFId { get; set; }
     }
     public class InterviewUsersDetails
     {

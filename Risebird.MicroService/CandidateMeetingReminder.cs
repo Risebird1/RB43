@@ -87,6 +87,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(dashboardLink) ? dashboardLink.Replace("https://portal.risebird.io/Candidate/InterviewDetails", "") : "";
                             _whatsAppVM.Event = "Candidate Dashboard Reminder";
+                            _whatsAppVM.irfId = item.Irfid;
+                            _whatsAppVM.InterviewId = item.Interviewid;
                             await _whatsAppHelper.WhatsAppSendCandidateDashboardReminder(_whatsAppVM);
                         }
                         else
@@ -99,6 +101,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                             _whatsAppVM.MessageValue = item.ClientName;
                             _whatsAppVM.timezone = timeZoneValue;
+                            _whatsAppVM.irfId = item.Irfid;
+                            _whatsAppVM.InterviewId = item.Interviewid;
                             await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                         }
                         //Send Call, WhatsApp and mail
@@ -122,6 +126,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(dashboardLink) ? dashboardLink.Replace("https://portal.risebird.io/Candidate/InterviewDetails", "") : "";
                             _whatsAppVM.Event = "Candidate Dashboard Reminder";
+                            _whatsAppVM.irfId = item.Irfid;
+                            _whatsAppVM.InterviewId = item.Interviewid;
                             await _whatsAppHelper.WhatsAppSendCandidateDashboardReminder(_whatsAppVM);
                         }
                         else
@@ -135,6 +141,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                             _whatsAppVM.MessageValue = item.ClientName;
                             _whatsAppVM.timezone = timeZoneValue;
+                            _whatsAppVM.irfId = item.Irfid;
+                            _whatsAppVM.InterviewId = item.Interviewid;
                             await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                             //With Yes/No Button
                         }
@@ -155,6 +163,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
                             _whatsAppVM.buttonlink = !string.IsNullOrEmpty(dashboardLink) ? dashboardLink.Replace("https://portal.risebird.io/Candidate/InterviewDetails", "") : "";
                             _whatsAppVM.Event = "Candidate Dashboard Reminder";
+                            _whatsAppVM.irfId = item.Irfid;
+                            _whatsAppVM.InterviewId = item.Interviewid;
                             await _whatsAppHelper.WhatsAppSendCandidateDashboardReminder(_whatsAppVM);
                         }
                         else
@@ -168,6 +178,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
                             _whatsAppVM.MessageValue = item.ClientName;
                             _whatsAppVM.timezone = timeZoneValue;
+                            _whatsAppVM.irfId = item.Irfid;
+                            _whatsAppVM.InterviewId = item.Interviewid;
                             await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
                             //With Yes/No Button
                         }
