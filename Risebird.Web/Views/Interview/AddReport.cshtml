@@ -215,7 +215,7 @@
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
                         <div class="heading-txt text-center">
-                            
+
 
                             <span style="font-weight:normal; color: #8b8bcd;font-size: 18px; line-height: 36px;">Candidate's Interview Feedback</span>
                         </div>
@@ -565,39 +565,39 @@
                                                         <label class="text-danger" id="TechSkills_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
                                                     </div>
                                                     @if (ViewBag.PageStatus != "PublicExternal")
-                                                {
-                                           
-                                            }
+                                                    {
+
+                                                    }
                                                 </fieldset>
 
                                             </div>
-                                            
+
                                             <!--tech skill end-->
                                             <!--tech score start-->
-                                          @if (ViewBag.PageStatus != "PublicExternal")
+                                            @if (ViewBag.PageStatus != "PublicExternal")
                                             {
-                                            <div class="card" style="margin-bottom:10px;">
+                                                <div class="card" style="margin-bottom:10px;">
 
-                                            <label class="question" for="checkbox_two">
-                                            <label for="checkbox_two">
-                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                            TECH SKILL SCORE <span class="totScore"><strong id="totTechScore"></strong></span>
-                                            </label>
+                                                    <label class="question" for="checkbox_two">
+                                                        <label for="checkbox_two">
+                                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                                            TECH SKILL SCORE <span class="totScore"><strong id="totTechScore"></strong></span>
+                                                        </label>
 
-                                            </label>
-                                            <fieldset class="answer" style="display:none">
-                                            <div class="chart-box">
-                                            <div>
-                                            <div id="canvasDiv">
+                                                    </label>
+                                                    <fieldset class="answer" style="display:none">
+                                                        <div class="chart-box">
+                                                            <div>
+                                                                <div id="canvasDiv">
 
 
-                                            <canvas id="scoreChart" width="980" height="250"></canvas>
-                                            </div>
-                                            </div>
-                                            </div>
-                                            </fieldset>
+                                                                    <canvas id="scoreChart" width="980" height="250"></canvas>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
 
-                                            </div>
+                                                </div>
                                             }
                                             <!--tech score start-->
                                         
@@ -881,7 +881,7 @@
                                             <!--question end-->
                                             <!--tech score start-->
                                             @*@if (ViewBag.PageStatus != "PublicExternal")
-                                                {
+                                            {
                                             <div class="card" style="margin-bottom:10px;">
 
                                             <label class="question" for="checkbox_two">
@@ -1010,101 +1010,101 @@
                                                                     <i class="fa fa-user" aria-hidden="true"></i>
                                                                     TECH SKILL REPORT   <span class="strict-note">&nbsp;&nbsp;Strictly Avoid writing questions/comments that are not linked to desired score rubric. Kindly ask Scenario based questions and Coding is mandatory in all Technical interviews. . otherwise, Customer may apply penalty from 10-100%.</span>
 
+                                                            </label>
+
+                                                        </label>
+                                                        <fieldset class="answer">
+                                                            @if (ViewBag.profile == "Interviewer")
+                                                            {
+
+                                                                <p>  Note: If the candidate is on the range of values, then take the lower experience category only, for example if the candidate has 3 years of experience, then take 1 - 3 years only.</p>
+                                                            }
+                                                            <div class="table-responsive-sm">
+                                                                <table class="table table-bordered mbn" id="SkillTableTwo" style="border-top: 1px #f8f7f7 solid !important;border-bottom:1px #f8f7f7 solid !important;">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th width="10%">Required Level</th>
+                                                                            <th width="40%">Skill Name</th>
+                                                                            <th width="30%">Actual Level</th>
+                                                                            <th width="5%">Required Weightage</th>
+                                                                            <th width="5%">Actual Weightage</th>
+                                                                        </tr>
+                                                                    </thead>
+
+
+                                                                    <tbody>
+                                                                        @if (Model.TechSkillTwoReportCollection != null)
+                                                                        {
+                                                                            @for (int i = 0; i < Model.TechSkillTwoReportCollection.Count(); i++)
+                                                                            {
+                                                                                <tr style="background:#fff">
+
+                                                                                    <td>
+                                                                                        @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].RequiredLevel, new { @class = "text-box single-line", @style = "width:150px", @readonly = "readonly" })
+
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div class="techinfocontainer">
+                                                                                            @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:285px", @readonly = "readonly" })
+                                                                                            <i class="fa fa-info-circle techinfoicon tooltipquestion">
+                                                                                                <span class="tooltiptext">
+                                                                                                    <p>Concepts: @Model.TechSkillTwoReportCollection[i].Concepts</p>
+                                                                                                    <p>Natureofquestion: @Model.TechSkillTwoReportCollection[i].Natureofquestion</p>
+                                                                                                    <p>Timelimit: @Model.TechSkillTwoReportCollection[i].Timelimit</p>
+                                                                                                </span>
+                                                                                            </i>
+                                                                                        </div>
+                                                                                    </td>
+
+                                                                                    <td>
+                                                                                        @Html.DropDownListFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateTwoOverAll(this.id, this.value)" })
+
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired, new { @class = "text-box single-line", @style = "width:100px", @readonly = "readonly" })
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].WeightageActual, new { @class = "text-box single-line", @style = "width:100px", @readonly = "readonly" })
+                                                                                    </td>
+                                                                                    @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].RequiredLevelId)
+                                                                                    @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].SkillId)
+                                                                                </tr>
+                                                                                @* <tr>
+                                                                    <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "text-box single-line", @placeholder = "Characters limit 25 to 250.", maxlength = "250", @style = "font-weight: bold !important;" })</td>
+                                                                    </tr>*@
+                                                                            }
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                                <label class="text-danger" id="TechSkillsTwo_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                            </div>
+                                                        </fieldset>
+
+                                                    </div>
+                                                    <!--tech skill end-->
+                                                    <!--tech score start-->
+                                                    @if (ViewBag.PageStatus != "PublicExternal")
+                                                    {
+                                                        <div class="card" style="margin-bottom:10px;">
+
+                                                            <label class="question" for="checkbox_two">
+                                                                <label for="checkbox_two">
+                                                                    <i class="fa fa-user" aria-hidden="true"></i>
+                                                                    TECH SKILL SCORE <span class="totScore"><strong id="totTechScore2"></strong></span>
                                                                 </label>
 
                                                             </label>
-                                                            <fieldset class="answer">
-                                                                @if (ViewBag.profile == "Interviewer")
-                                                                {
-
-                                                                    <p>  Note: If the candidate is on the range of values, then take the lower experience category only, for example if the candidate has 3 years of experience, then take 1 - 3 years only.</p>
-                                                                }
-                                                                <div class="table-responsive-sm">
-                                                                    <table class="table table-bordered mbn" id="SkillTableTwo" style="border-top: 1px #f8f7f7 solid !important;border-bottom:1px #f8f7f7 solid !important;">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th width="10%">Required Level</th>
-                                                                                <th width="40%">Skill Name</th>
-                                                                                <th width="30%">Actual Level</th>
-                                                                                <th width="5%">Required Weightage</th>
-                                                                                <th width="5%">Actual Weightage</th>
-                                                                            </tr>
-                                                                        </thead>
+                                                            <fieldset class="answer" style="display:none">
+                                                                <div class="chart-box">
+                                                                    <div>
+                                                                        <div id="canvasDiv">
 
 
-                                                                        <tbody>
-                                                                            @if (Model.TechSkillTwoReportCollection != null)
-                                                                            {
-                                                                                @for (int i = 0; i < Model.TechSkillTwoReportCollection.Count(); i++)
-                                                                                {
-                                                                                    <tr style="background:#fff">
-
-                                                                                        <td>
-                                                                                            @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].RequiredLevel, new { @class = "text-box single-line", @style = "width:150px", @readonly = "readonly" })
-
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            <div class="techinfocontainer">
-                                                                                                @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:285px", @readonly = "readonly" })
-                                                                                                <i class="fa fa-info-circle techinfoicon tooltipquestion">
-                                                                                                    <span class="tooltiptext">
-                                                                                                        <p>Concepts: @Model.TechSkillTwoReportCollection[i].Concepts</p>
-                                                                                                        <p>Natureofquestion: @Model.TechSkillTwoReportCollection[i].Natureofquestion</p>
-                                                                                                        <p>Timelimit: @Model.TechSkillTwoReportCollection[i].Timelimit</p>
-                                                                                                    </span>
-                                                                                                </i>
-                                                                                            </div>
-                                                                                        </td>
-
-                                                                                        <td>
-                                                                                            @Html.DropDownListFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, "Select", new { @class = "select-css", @style = "width:190px", @onchange = "CalculateTwoOverAll(this.id, this.value)" })
-
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired, new { @class = "text-box single-line", @style = "width:100px", @readonly = "readonly" })
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].WeightageActual, new { @class = "text-box single-line", @style = "width:100px", @readonly = "readonly" })
-                                                                                        </td>
-                                                                                        @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].RequiredLevelId)
-                                                                                        @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].SkillId)
-                                                                                    </tr>
-                                                                                    @* <tr>
-                                                                    <td colspan="5">@Html.TextBoxFor(m => m.TechSkillReportCollection[i].TechComments, new { @class = "text-box single-line", @placeholder = "Characters limit 25 to 250.", maxlength = "250", @style = "font-weight: bold !important;" })</td>
-                                                                    </tr>*@
-                                                                                }
-                                                                            }
-                                                                        </tbody>
-                                                                    </table>
-                                                                    <label class="text-danger" id="TechSkillsTwo_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                                            <canvas id="scoreChart" width="980" height="250"></canvas>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </fieldset>
-
-                                                        </div>
-                                                        <!--tech skill end-->
-                                                         <!--tech score start-->
-                                           @if (ViewBag.PageStatus != "PublicExternal")
-                                                {
-                                            <div class="card" style="margin-bottom:10px;">
-
-                                            <label class="question" for="checkbox_two">
-                                            <label for="checkbox_two">
-                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                            TECH SKILL SCORE <span class="totScore"><strong id="totTechScore2"></strong></span>
-                                            </label>
-
-                                            </label>
-                                            <fieldset class="answer" style="display:none">
-                                            <div class="chart-box">
-                                            <div>
-                                            <div id="canvasDiv">
-
-
-                                            <canvas id="scoreChart" width="980" height="250"></canvas>
-                                            </div>
-                                            </div>
-                                            </div>
-                                            </fieldset>
 
                                             </div>
                                             }
@@ -1114,115 +1114,115 @@
                                                         @if (ViewBag.PageReport != "Insta")
                                                         {
 
-                                                            <div class="card" style="margin-bottom:10px;">
+                                                        <div class="card" style="margin-bottom:10px;">
 
-                                                                <label class="question" for="checkbox_two">
-                                                                    <label for="checkbox_two">
-                                                                        <i class="fa fa-user" aria-hidden="true"></i>
-                                                                        QUESTIONS DISCUSSED
-                                                                        <span class="strict-note">&nbsp;&nbsp;Strictly Avoid Irrelevant, Theoretical/Abstract ques - What is this/that and same questions to all candidates. Do follow the standard of the Mandatory questions, if provided by the clients. Else, Customer may apply penalty from 10-100%</span>
-                                                                    </label>
-
+                                                            <label class="question" for="checkbox_two">
+                                                                <label for="checkbox_two">
+                                                                    <i class="fa fa-user" aria-hidden="true"></i>
+                                                                    QUESTIONS DISCUSSED
+                                                                    <span class="strict-note">&nbsp;&nbsp;Strictly Avoid Irrelevant, Theoretical/Abstract ques - What is this/that and same questions to all candidates. Do follow the standard of the Mandatory questions, if provided by the clients. Else, Customer may apply penalty from 10-100%</span>
                                                                 </label>
-                                                                <fieldset class="answer">
-                                                                    <div class="table-responsive-sm interviewreport">
-                                                                        <table class="table table-bordered mbn" id="QuestionsTableTwo" style="border-top: 1px #f8f7f7 solid !important;border-bottom:1px #f8f7f7 solid !important;">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th width="50%">Questions</th>
-                                                                                    <th width="20%">Skill Name</th>
-                                                                                    <th width="20%">Rating</th>
-                                                                                    @* <th width="10%">Time(In Seconds)</th>*@
-                                                                                    <th width="10%" class="action text-center">Action</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                @if (Model.QuestionsTwoCollection == null || Model.QuestionsTwoCollection.Count() == 0)
-                                                                                {
-                                                                                    <tr style="background:#fff">
-                                                                                        <td>
-                                                                                            @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
-                                                                                            {
-                                                                                                <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank"><input type="text" class="select-css  text-box single-line" /></a>
-                                                                                            }
-                                                                                            else
-                                                                                            {
 
-                                                                                                @Html.DropDownList("QuestionsTwoCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)" })
-                                                                                            }
+                                                            </label>
+                                                            <fieldset class="answer">
+                                                                <div class="table-responsive-sm interviewreport">
+                                                                    <table class="table table-bordered mbn" id="QuestionsTableTwo" style="border-top: 1px #f8f7f7 solid !important;border-bottom:1px #f8f7f7 solid !important;">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th width="50%">Questions</th>
+                                                                                <th width="20%">Skill Name</th>
+                                                                                <th width="20%">Rating</th>
+                                                                                @* <th width="10%">Time(In Seconds)</th>*@
+                                                                                <th width="10%" class="action text-center">Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @if (Model.QuestionsTwoCollection == null || Model.QuestionsTwoCollection.Count() == 0)
+                                                                            {
+                                                                                <tr style="background:#fff">
+                                                                                    <td>
+                                                                                        @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
+                                                                                        {
+                                                                                            <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank"><input type="text" class="select-css  text-box single-line" /></a>
+                                                                                        }
+                                                                                        else
+                                                                                        {
 
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            @Html.TextBox("QuestionsTwoCollection[0].SkillName", null, new { @readonly = "readonly" })
+                                                                                            @Html.DropDownList("QuestionsTwoCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)" })
+                                                                                        }
 
-                                                                                        </td>
-                                                                                        <td>
-                                                                                            @Html.DropDownList("QuestionsTwoCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @Html.TextBox("QuestionsTwoCollection[0].SkillName", null, new { @readonly = "readonly" })
 
-                                                                                        </td>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        @Html.DropDownList("QuestionsTwoCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
 
-                                                                                        @* <td>
+                                                                                    </td>
+
+                                                                                    @* <td>
                                                                         <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="60" max="5000">
                                                                         </td>*@
 
-                                                                                        <td class="action text-center">
-                                                                                            <span id="btnPlus" onclick="AddRowTwo()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsTwoCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                    <td class="action text-center">
+                                                                                        <span id="btnPlus" onclick="AddRowTwo()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsTwoCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
+                                                                                {
+                                                                                    <tr style="cursor:pointer">
+                                                                                        <td>
+
+                                                                                            @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsTwoCollection[i].Comment))
+                                                                                            {
+                                                                                                @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                var newList = new List<SelectListItem>();
+                                                                                                newList.Add(new SelectListItem() { Value = Model.QuestionsTwoCollection[i].Comment, Text = Model.QuestionsTwoCollection[i].Comment });
+                                                                                                @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
+
+                                                                                            }
 
                                                                                         </td>
-                                                                                    </tr>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
-                                                                                    {
-                                                                                        <tr style="cursor:pointer">
-                                                                                            <td>
+                                                                                        <td>
+                                                                                            @Html.TextBoxFor(m => m.QuestionsTwoCollection[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
+                                                                                        </td>
 
-                                                                                                @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsTwoCollection[i].Comment))
-                                                                                                {
-                                                                                                    @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    var newList = new List<SelectListItem>();
-                                                                                                    newList.Add(new SelectListItem() { Value = Model.QuestionsTwoCollection[i].Comment, Text = Model.QuestionsTwoCollection[i].Comment });
-                                                                                                    @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
-
-                                                                                                }
-
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                @Html.TextBoxFor(m => m.QuestionsTwoCollection[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
-                                                                                            </td>
-                                                                                            <td>
-                                                                                                @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "select-css" })
-                                                                                            </td>
-
-                                                                                            @*  <td>
+                                                                                        @*  <td>
 
                                                                         @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "60", @max = "5000" } })
 
                                                                         </td>*@
 
-                                                                                            <td class="action text-center ">
-                                                                                                <span id="btnPlus" onclick="AddRowTwo()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsTwoCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    }
+                                                                                        <td class="action text-center ">
+                                                                                            <span id="btnPlus" onclick="AddRowTwo()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsTwoCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                        </td>
+                                                                                    </tr>
                                                                                 }
+                                                                            }
 
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                    <label class="text-danger" id="QuestionsTwoCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
-                                                                    <label class="text-danger" id="QuestionsTwoCollection_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
-                                                                </fieldset>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                                <label class="text-danger" id="QuestionsTwoCollection_TimingError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                                <label class="text-danger" id="QuestionsTwoCollection_CommentError" style="color:red; margin-left:433px; font-size:16px"></label>
+                                                            </fieldset>
 
-                                                            </div>
-                                                        }
-                                                        <!--question end-->
+                                                        </div>
+                                                    }
+                                                    <!--question end-->
 
 
                                                     </div>
@@ -1440,10 +1440,10 @@
             @*    function closeQuestionCollectionNotification() {
     document.getElementById("QuestionNotificationModelPopup").style.display = "none";
     } *@
-                                                function OpenQuestionCollectionNotification() {
-                                                     document.getElementById("QuestionNotificationModelPopup").style.display = "block";
-                                                }
-                                                OpenQuestionCollectionNotification();
+                                                                        function OpenQuestionCollectionNotification() {
+                                                                             document.getElementById("QuestionNotificationModelPopup").style.display = "block";
+                                                                        }
+                                                                        OpenQuestionCollectionNotification();
         </script>
     }
 }
@@ -2143,43 +2143,42 @@
 
         }
         function CheckInterviewerComments() {
-            //var interviewStatusElem = document.getElementById("InterviewStatus");
+            var flag=true;
+            var counter=0;
             var meetingStatusValue = document.getElementById("MeetingStatus").value;
             var interviewStatusValue = document.getElementById("InterviewStatus").value;
             if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4 || interviewStatusValue == 3 || interviewStatusValue == 5) {
-    @*var comments = document.getElementById("InterviewerComment").value;
-                    if (comments.length >= 250) {
-                    document.getElementById("interviewerComment_Error").innerHTML = "";
-                    return true;
-                    }
-                    else {
-                    //interviewerComment_Error
-                    document.getElementById("InterviewerComment").focus();
-                    document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of 250 characters.";
-                    return false;
-                    }*@
-                                                                                                                                       return CheckLength(250);
+                flag= CheckLength(250);
+                if(!flag){
+                    counter=counter+1;
+                }
             }
             else if (interviewStatusValue == 1) {
-                return CheckLength(50);
+                flag= CheckLength(50);
+                if(!flag){
+                    counter=counter+1;
+                }
             }
-            else
-                return true;
-            //if (interviewStatusElem.value == 2|| interviewStatusElem.value == 4) {
-            //    var comments = document.getElementById("InterviewerComment").value;
-            //    if (comments.length >= 250) {
-            //        document.getElementById("interviewerComment_Error").innerHTML = "";
-            //        return true;
-            //    }
-            //    else {
-            //        //interviewerComment_Error
-            //        document.getElementById("InterviewerComment").focus();
-            //        document.getElementById("interviewerComment_Error").innerHTML="Kindly enter a minimum of 250 characters.";
-            //        return false;
-            //    }
-            //}
-            //else
-            //    return true;
+           if($("#SkillSetsevaluate").val()>1){
+              var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
+                var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
+                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 5) {
+                    flag= CheckLength(250);
+                    if(!flag){
+                        counter=counter+1;
+                    }
+                }
+                else if (interviewStatusValue == 1) {
+                    flag= CheckLength(50);
+                    if(!flag){
+                        counter=counter+1;
+                    }
+                }
+           }
+           if(counter>0){
+               return false;
+           }
+            return true;
         }
 
         function CheckQuestionsTiming() {
@@ -2210,11 +2209,9 @@
         }
 
         function CheckQuestions() {
-
-            //var meetingStatusElem = document.getElementById("MeetingStatus");
             var meetingStatusValue = document.getElementById("MeetingStatus").value;
             var interviewStatusValue = document.getElementById("InterviewStatus").value;
-            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4) {
+            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4 || interviewStatusValue == 5) {
                 var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
                 for (i = 0; i < questionItems.length; i++) {
                     var temp = $("#QuestionsCollection_" + i + "__Comment").val();
@@ -2225,40 +2222,53 @@
                     }
                 }
             }
-
-            //if (value != null && meetingStatusElem.value == 4) {
-            //    var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
-            //    for (i = 0; i < questionItems.length; i++) {
-            //        var temp = $("#QuestionsCollection_" + i + "__Comment").val();
-            //        if (temp == null || temp == '') {
-            //            document.getElementById('QuestionsCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
-            //            document.getElementById('QuestionsCollection_CommentError').focus();
-            //            return false;
-            //        }
-            //    }
-            //}
             document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
+            if($("#SkillSetsevaluate").val()>1){
+                var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
+                var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
+                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo== 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
+                    var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
+                    for (i = 0; i < questionItemsTwo.length; i++) {
+                        var temp = $("#QuestionsTwoCollection_" + i + "__Comment").val();
+                        if (temp == null || temp == '') {
+                            document.getElementById('QuestionsTwoCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
+                            document.getElementById('QuestionsTwoCollection_CommentError').focus();
+                            return false;
+                        }
+                    }
+                }
+                document.getElementById('QuestionsTwoCollection_CommentError').innerHTML = "";
+            }
             return true;
         }
 
         function CheckQuestionsCount() {
             var meetingStatusValue = document.getElementById("MeetingStatus").value;
             if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
-
                 var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
-                if (questionItems != null && questionItems.length >= 5) {
-                    return true;
+    @* if (questionItems != null && questionItems.length >= 5) {
+
                 }
                 else {
                     alert('A minimum of 5 questions should be added.');
                     return false;
+                } *@
+                if (questionItems == null || questionItems.length < 5) {
+                    alert('A minimum of 5 questions should be added.');
+                    return false;
                 }
             }
-            else {
-                return true;
+            if($("#SkillSetsevaluate").val()>1){
+                var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
+                if (meetingStatusValueTwo == 4 || meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8) {
+                    var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
+                    if (questionItemsTwo == null || questionItemsTwo.length < 5) {
+                        alert('A minimum of 5 questions should be added for other Skill set.');
+                        return false;
+                    }
+                }
             }
-
-
+             return true;
         }
 
 
@@ -2271,10 +2281,19 @@
             }
             else {
                 document.getElementById("meetingStatus_Error").innerHTML = "";
-                return true;
-
             }
-
+            if($("#SkillSetsevaluate").val()>1){
+                var meetingStatusElemTwo = document.getElementById("MeetingStatusTwo");
+                if (meetingStatusElem.valueTwo == 2 || (meetingStatusElemTwo.value == null || meetingStatusElemTwo.value == '')) {
+                    document.getElementById("meetingStatusTwo_Error").innerHTML = "Kindly change the Meeting Status to an appropriate value.";
+                    meetingStatusElemTwo.focus();
+                    return false;
+                }
+                else {
+                    document.getElementById("meetingStatusTwo_Error").innerHTML = "";
+                }
+            }
+            return true;
         }
 
         function CheckInterviewStatus() {
@@ -2289,58 +2308,66 @@
                 else {
                     document.getElementById("interviewStatus_Error").innerHTML = '';
                 }
-
+            }
+            if($("#SkillSetsevaluate").val()>1){
+                var meetingStatusElemTwo = document.getElementById("MeetingStatusTwo");
+                if (meetingStatusElemTwo.value == 4) {
+                    var interviewStatusElemTwo = document.getElementById("InterviewStatusTwo");
+                    if (interviewStatusElemTwo.value == null || interviewStatusElemTwo.value == '') {
+                        document.getElementById("interviewStatusTwo_Error").innerHTML = "Kindly change the Interview Status to an appropriate value.";
+                        interviewStatusElemTwo.focus();
+                        return false;
+                    }
+                    else {
+                        document.getElementById("interviewStatusTwo_Error").innerHTML = '';
+                    }
+                }
             }
             return true;
         }
         function CheckTechSkills() {
             var meetingStatusValue = document.getElementById("MeetingStatus").value;
             var interviewStatusValue = document.getElementById("InterviewStatus").value;
-            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4) {
+            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4 || interviewStatusValue == 5) {
                 var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
                 for (i = 0; i < questionItems.length; i++) {
                     var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
-                    //  var techcomment = $("#TechSkillReportCollection_" + i + "__TechComments").val();
                     if (temp == null || temp == '') {
                         document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
                         document.getElementById('TechSkills_CommentError').focus();
                         return false;
                     }
-    @*if (techcomment != null && techcomment != '') {
-                        if (techcomment.length < 25) {
-                        document.getElementById("TechSkillReportCollection_" + i + "__TechComments").focus();
-                        document.getElementById("TechSkills_CommentError").innerHTML = "Kindly enter a minimum of 25 characters.";
-                        return false;
-                        }
-                        }*@
-                        }
+                }
             }
             document.getElementById('TechSkills_CommentError').innerHTML = "";
+            if($("#SkillSetsevaluate").val()>1){
+                var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
+                var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
+                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
+                    var questionItemsTwo = $('[id^="TechSkillTwoReportCollection"][id$="ActualLevelId"]');
+                    for (i = 0; i < questionItemsTwo.length; i++) {
+                        var temp = $("#TechSkillTwoReportCollection_" + i + "__ActualLevelId").val();
+                        if (temp == null || temp == '') {
+                            document.getElementById('TechSkillsTwo_CommentError').innerHTML = "Please select Actual Level for all the added rows."
+                            document.getElementById('TechSkillsTwo_CommentError').focus();
+                            return false;
+                        }
+                    }
+                }
+                document.getElementById('TechSkillsTwo_CommentError').innerHTML = "";
+            }
             return true;
         }
         $(document).ready(function () {
-            //Perform Ajax request.
             var count = '@ViewBag.QuestionsDiscussedCount';
-            //Get Question Skills
-
             if (count == null || parseInt(count) == 0) {
                 var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
                 var skillName = questionSkillMappingArray[0].skillName;
                 $("#QuestionsCollection_0__SkillName").val(skillName);
-
-    @*var val = $("#QuestionsCollection_0__Comment").val();
-                    $.ajax({
-                    type: "GET",
-                    url: "/IRF/GetTechSkillofSkillChannelByQuestion",
-                    data: { 'question': val, 'irfId' : '@Model.IRFId' },
-                    success: function (data) {
-                    $("#QuestionsCollection_0__SkillName").val(data);
-                    }
-                    });*@
-
-                                                                                                                                                                                                                        }
-
-
+                if($("#SkillSetsevaluate").val()>1){
+                   $("#QuestionsTwoCollection_0__SkillName").val(skillName);
+                }
+            }
         });
         function Proxyvalidation() {
             if ($('#isProxy').val() == "yes" || $('#isProxy').val() == "no") {
@@ -2663,17 +2690,17 @@
 <script src="~/Newassets/js/summernote.min.js"></script>*@
 
 <script>
-   
+
 
     $(document).ready(function () {
-        document.getElementById("interviewerComment").innerHTML = $('#InterviewerComment').text();
+        document.getElementById("InterviewerComment").innerHTML = $('#InterviewerComment').text();
 
     })
 
-    
+
 
     $(document).ready(function () {
-        document.getElementById("interviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
+        document.getElementById("InterviewerCommentTwo").innerHTML = $('#InterviewerCommentTwo').text();
 
     })
 </script>

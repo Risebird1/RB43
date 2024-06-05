@@ -40,7 +40,7 @@ namespace Risebird.MicroService
             {
                 var Emails = new List<CandidateDetailsForWhatsApp>();
                 var str = _connection;
-                var query = "Select im.id,im.interviewer as ClientName,im.interviewDate,im.candidateEmail,RTRIM(IsNull(ul.FirstName,'')+' '+IsNull(ul.LastName,'')) as CandidateName From InterviewComments ic join InterviewMeetings im left join Userlist ul on ul.EmailId=im.candidateEmail on im.id=ic.InterviewId where ic.MeetingStatus=2 and im.confirmationStatus=1 and interviewDate<=@timeH and interviewDate>=@timeL";
+                var query = "Select im.id,im.interviewer as ClientName,im.interviewDate,im.candidateEmail, RTRIM(IsNull(ul.FirstName,'')+' '+IsNull(ul.LastName,'')) as CandidateName, irf.id as IRFId From InterviewComments ic join InterviewMeetings im on im.id=ic.InterviewId left join Userlist ul on ul.EmailId=im.candidateEmail join IRF on irf.irfId = im.IRFId where ic.MeetingStatus=2 and im.confirmationStatus=1 and interviewDate<=@timeH and interviewDate>=@timeL";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now.AddMinutes(-125));
                 dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(-115));
@@ -59,6 +59,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.InterviewDate = item.interviewDate.ToString();
                             _whatsAppVM.Event = "Interviewer Feedback Remainder";
                             _whatsAppVM.MessageValue = item.CandidateName;
+                            _whatsAppVM.InterviewId = item.id;
+                            _whatsAppVM.irfId = item.IRFId;
                             await _whatsAppHelper.WhatsAppSendInterviewerFeedbackRemainder(_whatsAppVM);
                         }
                     }
