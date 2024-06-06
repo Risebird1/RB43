@@ -73,15 +73,15 @@
                             <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;">Payment History</font>
                         </span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:2px;">
                         <span class="fa fa-file" data-toggle="tooltip" data-placement="top" onclick="openmyinvoiceModel()" data-original-title="Tooltip on top">
                             <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;">Generate Invoice</font>
                         </span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:3px;float:right">
                         <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;padding-left:3px;">Advance Payment</font></span>
                     </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right">
                         @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>*@
                         <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ExportFNDetails()" data-original-title="Tooltip on top">
                             <font style="font-family: Roboto, sans-serif;font-size: 12px;padding-left: 3px;"> Export Excel</font>
@@ -94,7 +94,7 @@
                             <span id="trigger-update-search" class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
                         </div>
                     </div>
-                    <div class="dashboard-view"><a onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'"><span class="dashboard-iconcolor"></span><span class="pull-left">New Dashboard</span></a></div>
+                    <div class="dashboard-view" style="float:left;margin:10px 40px;"><a onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'"><span class="dashboard-iconcolor"></span><span class="pull-left">New Dashboard</span></a></div>
                     <div>
                     </div>
                 </div>

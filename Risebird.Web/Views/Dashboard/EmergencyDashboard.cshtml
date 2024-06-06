@@ -5,8 +5,8 @@
 }
 
 <div class="main-panel" id="main-panel">
-    <div class="page-container>
-      <div>
+    <div class="page-container">
+     
 <div class="page-content">
      <div class="panel-header panel-header-sm">
                 </div>
@@ -881,11 +881,13 @@
                                                 <div class="col-md-3 pull-left"><span class="dashboard-icon report-pending"><img src="~/img/report-pending.png" /></span></div>
                                                 <div class="col-md-9 pull-left">
                                                     <div>
-                                                        <h3 class="dashboard-cat-title"><span><strong>Not Schedule</strong></span></h3>
+                                                        <h3 class="dashboard-cat-title"><span><strong>Not Scheduled</strong></span></h3>
                                                     </div>
-                                                    <div class="dashboard-count pull-left">
+                                                    <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;font-size:15px;">
                                                         <div class="header-front"></div>
-                                                        <strong><span id="ribbonNotScheduledMeetingsCOCount" onclick="NotScheduledMeetingsCO()"></span>  </strong>
+                                                        
+
+                                                        <strong><span id="ribbonNotScheduledMeetingsCOCount" onclick="NotScheduledMeetingsCO()" style="font-size:15px;cursor:pointer"></span>Click here</strong>
 
                                                     </div>
 
@@ -2488,9 +2490,9 @@
                                                             <div>
                                                                 <h3 class="dashboard-cat-title"><span><strong>All Emergency Interview</strong></span></h3>
                                                             </div>
-                                                            <div class="dashboard-count pull-left">
+                                                            <div class="dashboard-count pull-left" style="padding:6px;position:relative;left:0px;font-size:15px;">
                                                                 <div class="header-front"></div>
-                                                                <strong><span id="ribbonAllEmergencyInterviewCount" onclick="AllEmergencyInterview()"></span> </strong>
+                                                                <strong><span id="ribbonAllEmergencyInterviewCount" onclick="AllEmergencyInterview()" style="font-size:15px;cursor:pointer"></span>Click here</strong>
 
                                                             </div>
 
@@ -2539,7 +2541,8 @@
 </div>
  </div>
 </div>
-
+</div>
+</div>
 <script>
     function MissedCandidate() {
                 window.location.href = "/Dashboard/InterviewManagementDetails?returnBack=" + 1;
