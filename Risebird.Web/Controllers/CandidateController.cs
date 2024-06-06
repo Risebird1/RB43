@@ -2098,7 +2098,7 @@ namespace Risebird.Web.Controllers
                             bool result = await _irfService.AddCandidateStatus(model);
                             if (result)
                             {
-                                TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
+                               TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
                             }
                             else
                             {
