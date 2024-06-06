@@ -10341,6 +10341,7 @@ option {
  #techskill-note .report-tooltip svg {
         top: 0px !important;
    }
+
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
         .rbpay .sb-scrollbar {
