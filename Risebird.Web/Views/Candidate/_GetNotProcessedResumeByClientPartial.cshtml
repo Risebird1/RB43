@@ -48,9 +48,13 @@
                                                             <td><a href="@item.ResumeLink" >Resume</a></td>
                                                             <td>
                                                                 @if (item.IsEmailMissing.HasValue && item.IsEmailMissing.Value)
-                                                            {
-                                                               <spam>Yes</spam>
-                                                            }
+                                                                {
+                                                                    <span>Yes</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span></span>
+                                                                }
                                                             </td>
                                                             <td>@item.AddedOn</td>
                                                            
