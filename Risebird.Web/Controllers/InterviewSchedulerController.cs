@@ -519,6 +519,7 @@ namespace Risebird.Web.Controllers
                     if (result)
                     {
                         _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
+                        await _interviewSchedulerservice.CheckFutureCancelInterview(model.InterviewChannelId, indianTime, model.Email);
                         string timezonevalue = string.Empty;
                         string hh = string.Empty;
                         var valuecheck = (-model.offset / 60);
@@ -1155,6 +1156,7 @@ namespace Risebird.Web.Controllers
                             //End: Cancel the previous meetings
                         }
                         _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
+                        await _interviewSchedulerservice.CheckFutureCancelInterview(model.InterviewChannelId, indianTime, model.Email);
                         string timezonevalue = string.Empty;
                         string hh = string.Empty;
                         var valuecheck = (-model.offset / 60);
@@ -1545,6 +1547,7 @@ namespace Risebird.Web.Controllers
                     if (result)
                     {
                         _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
+                        await _interviewSchedulerservice.CheckFutureCancelInterview(model.InterviewChannelId, indianTime, model.Email);
                         string timezonevalue = string.Empty;
                         string hh = string.Empty;
                         var valuecheck = (-model.offset / 60);

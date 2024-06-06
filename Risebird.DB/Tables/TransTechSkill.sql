@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[TransTechSkill](
 	[Natureofquestion] [varchar](50) NULL,
 	[Timelimit] [int] NULL,
 	[isEliminationskill] [bit] NULL,
+	[SkillSet] [int] NULL,
  CONSTRAINT [PK_TransTechSkill] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

@@ -66,6 +66,15 @@ BEGIN
     ALTER TABLE InterviewMeetingsHistory
     Add TimeZonesValue varchar(200)
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsDeleted')
+      AND Object_ID = Object_ID(N'InterviewMeetingsHistory'))
+BEGIN
+    ALTER TABLE InterviewMeetingsHistory
+    Add IsDeleted bit
+END
 
 End
 
