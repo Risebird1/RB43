@@ -61,13 +61,6 @@
 
   
 
-    #next-skill {
-        display: none;
-    }
-
-    .next-skillHide {
-        display: none;
-    }
 
 </style>
 
@@ -596,7 +589,7 @@
                                                         {
                                                             var meetingcolor = "";
 
-                                                            @if (Model.InterviewStatus == 2)
+                                                            @if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
                                                             {
                                                                 meetingcolor = "green";
                                                             }
@@ -779,7 +772,7 @@
                                         @if (Model.SkillSetsevaluate > 1)
                                         {
                                             <div class="row">
-                                                <div class="next-skillShow">VIEW MORE SKILLS</div>
+                                                
 
                                                 <div id="next-skill">
                                                     <div class="col-lg-12 col-md-12 skill-divider"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span style="text-transform:none!important">Other Skills: </span></h2></div>
@@ -975,6 +968,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="next-skillHide">HIDE OTHER SKILLS</div>
+                                                <div class="next-skillShow" style="display:none">VIEW MORE SKILLS</div>
                                             </div>
                                         }
                                         <!--End: secondary skill-->
@@ -1647,15 +1641,16 @@
 </script>
 
 <script>
-        $('.next-skillShow').click(function() {
-        $('#next-skill').show(0);
-        $('.next-skillShow').hide(0);
-        $('.next-skillHide').show(0);
-    });
+ 
     $('.next-skillHide').click(function() {
         $('#next-skill').hide(0);
         $('.next-skillShow').show(0);
         $('.next-skillHide').hide(0);
+    });
+         $('.next-skillShow').click(function() {
+        $('#next-skill').show(0);
+        $('.next-skillShow').hide(0);
+        $('.next-skillHide').show(0);
     });
 </script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")

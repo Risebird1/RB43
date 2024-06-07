@@ -448,5 +448,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<bool> CheckFutureCancelInterview(string IRFId, DateTime interviewdate, string CandidateEmailid)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.CheckFutureCancelInterview(IRFId, interviewdate, CandidateEmailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
