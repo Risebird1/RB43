@@ -29,6 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Twilio.TwiML.Voice;
+using Twilio.Types;
 using X.PagedList;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 using Stream = System.IO.Stream;
