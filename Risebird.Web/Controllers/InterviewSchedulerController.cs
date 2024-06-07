@@ -704,7 +704,7 @@ namespace Risebird.Web.Controllers
                                         }
                                     }
                                 }
-                                else if (offset < 0 && (slots / 60) > 24)
+                                else if (offset < 0 && (slots / 60) >= 24)
                                 {
                                     var newslot = (int)(slots + addontime) / 60;
                                     foreach (var item2 in result2)
@@ -795,7 +795,7 @@ namespace Risebird.Web.Controllers
                                                 }
                                             }
                                         }
-                                        else if (offset < 0 && (slots / 60) > 24)
+                                        else if (offset < 0 && (slots / 60) >= 24)
                                         {
                                             var newslot = (int)(slots + addontime) / 60;
                                             foreach (var item2 in result2)
