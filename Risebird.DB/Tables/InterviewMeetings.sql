@@ -52,6 +52,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [Surcharge][int],
     [SurchargeComment][varchar] (500),
     [CodeSnippet][varchar] (200),
+    [IsDeleted][bit],
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -377,6 +378,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add CodeSnippet varchar(200)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsDeleted')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add IsDeleted bit
 END
 
 END

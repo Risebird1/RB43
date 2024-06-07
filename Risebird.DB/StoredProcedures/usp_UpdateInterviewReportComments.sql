@@ -116,7 +116,7 @@ Select @NickName=ISNULL(ip.NickName,'') from InterviewMeetings im join UserList 
   Select @SkillSetsevalute=SkillSetsevaluate From IRF join InterviewMeetings im on im.IRFId=IRF.IRFId where im.id=@interviewId
   if(@SkillSetsevalute>1)
   begin
-  IF EXISTS(SELECT 1 FROM InterviewComments where interviewId= @InterviewId) 
+  IF EXISTS(SELECT 1 FROM InterviewCommentsExtension where interviewId= @InterviewId) 
   begin
   Update InterviewCommentsExtension set interviewStatus = @InterviewStatusTwo ,    
         interviewerComment =  ISNULL(@InterviewerCommentTwo,@InterviewerCommentTwo),    
