@@ -910,8 +910,8 @@
                                                 <!--Other skill set start-->
                                               @if (Model.SkillSetsevaluate > 1)
                                                 {
-                                                    <div class="next-skillShow nextbtn">FILL THE SECTION BELOW FOR OTHER SKILLS</div>
-                                                    <div id="next-skill" style="display:none">
+                                                 
+                                                    <div id="next-skill">
                                                       
                                                         <h1 style="font-size:18px;padding:10px;display:block;">OTHER SKILL</h1>
                                                     <!--report start-->
@@ -1225,9 +1225,10 @@
                                                     <!--question end-->
 
 
-                                                </div>
-                                                <div class="next-skillHide" style="display:none">HIDE OTHER SKILL</div>
-                                            }
+                                                    </div>
+                                                    <div class="next-skillHide">HIDE OTHER SKILL</div>
+                                                <div class="next-skillShow" style="display:none">VIEW OTHER SKILLS</div>
+                                               }
                                             <!--Other skill set end-->
 
                                         </div>
@@ -2704,15 +2705,16 @@
     })
 </script>
 <script>
-    $('.next-skillShow').click(function () {
-        $('#next-skill').show(0);
-        $('.next-skillShow').hide(0);
-        $('.next-skillHide').show(0);
-    });
+  
     $('.next-skillHide').click(function () {
         $('#next-skill').hide(0);
         $('.next-skillShow').show(0);
         $('.next-skillHide').hide(0);
+    });
+   $('.next-skillShow').click(function () {
+        $('#next-skill').show(0);
+        $('.next-skillShow').hide(0);
+        $('.next-skillHide').show(0);
     });
 </script>
 @await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
