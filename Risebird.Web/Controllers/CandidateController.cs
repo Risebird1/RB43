@@ -4066,7 +4066,7 @@ namespace Risebird.Web.Controllers
                             var intComment = GetContent(document);
                             Sheet.Cells[i, 12].Value = intComment;
                         }
-                      //  Sheet.Cells[i, 12].Value = item.InterviewerComment;
+                        //  Sheet.Cells[i, 12].Value = item.InterviewerComment;
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -4318,7 +4318,7 @@ namespace Risebird.Web.Controllers
                     //SheetNotScheduled.Cells[1, 5].Value = "Current Status";
 
                     SheetNotScheduled.Cells[1, 5].Value = "Client Hr";
-                    
+
                     int iNs = 2;
                     if (modelNotScheduled.Count() > 0)
                     {
@@ -4339,7 +4339,7 @@ namespace Risebird.Web.Controllers
                             //}
 
                             SheetNotScheduled.Cells[iNs, 5].Value = item.HREmail;
-                            
+
                             iNs++;
                         }
                         //return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4354,7 +4354,7 @@ namespace Risebird.Web.Controllers
 
                 //data for cold candidates
                 var coldCandidatesData = await _candidateService.GetColdCandidatesListByClient(emailid);
-                if(coldCandidatesData != null)
+                if (coldCandidatesData != null)
                 {
                     coldCandidatesData = coldCandidatesData.Select(x =>
                     {
@@ -4427,7 +4427,7 @@ namespace Risebird.Web.Controllers
                     SheetNpr.Cells[1, 2].Value = "Resume Link";
                     SheetNpr.Cells[1, 3].Value = "Is Email Missing";
                     SheetNpr.Cells[1, 4].Value = "Added On";
-                    
+
 
                     int iNpr = 2;
                     foreach (var item in notProcessedResumes)
@@ -4446,7 +4446,7 @@ namespace Risebird.Web.Controllers
                             SheetNpr.Cells[iNpr, 2].Value = "No Resume";
                         }
 
-                        if(item.IsEmailMissing.HasValue && item.IsEmailMissing.Value)
+                        if (item.IsEmailMissing.HasValue && item.IsEmailMissing.Value)
                         {
                             SheetNpr.Cells[iNpr, 3].Value = "Yes";
                         }
