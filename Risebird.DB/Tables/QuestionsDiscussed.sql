@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[QuestionsDiscussed](
 	[RatingId] [int] NOT NULL,
 	[Timing] [int] NULL,
 	[SkillName] [varchar](max) NULL,
+	[SkillSet] [int] NULL,
 	FOREIGN KEY([InterviewId]) REFERENCES [dbo].[InterviewMeetings] ([id]),
  CONSTRAINT [PK_QuestionsDiscussed] PRIMARY KEY CLUSTERED 
 (

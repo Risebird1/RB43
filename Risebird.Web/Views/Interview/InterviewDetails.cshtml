@@ -28,13 +28,13 @@
         </div>
         <div class="card" style="margin-bottom:10px;">
 
-            <label class="question" for="checkbox_two">
+            <label class="question note-card" for="checkbox_two">
                 <label for="checkbox_two">
                     <i class="fa fa-cogs" aria-hidden="true"></i>
 
 
-                    Tech Skills 
-                   
+                    Tech Skills
+
                 </label>
                 <span class="round">
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_two" name="question1" data-trigger="hidden_fields_two" />
@@ -84,6 +84,30 @@
 
     </div>
     </div>*@
+    @*Start: Pre Interview Screening Report *@
+    @if (!string.IsNullOrWhiteSpace(Model.PreReportLink))
+    {
+        <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+            <div class="card" style="margin-bottom:10px;">
+                <label class="question" for="checkbox_eight">
+                    <label class="consent-label" for="checkbox_eight">
+                        <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Pre-Interview Screening Report
+                    </label>
+                    <span class="round">
+                        <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
+                        <label style="visibility:hidden" for="checkbox_eight"></label>
+
+                        <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                        <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                    </span>
+                </label>
+                <fieldset class="answer hidden" id="hidden_fields_eight">
+                    <div id="PreInterviewReport"><a target="_blank" href="@Model.PreReportLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Pre-Interview Report Link</span></a></div>
+                </fieldset>
+            </div>
+        </div>
+    }
+    @*End: Pre Interview Screening Report *@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
             <label class="question" for="checkbox_nine">
@@ -694,7 +718,7 @@
             url: "/IRF/DeliveryHeadSkillDetails",
             data: { id: id },
             success: function (data) {
-                bindSkillData(data.colectionone,data.colectiontwo);
+                bindSkillData(data.colectionone, data.colectiontwo);
             }
         });
         var interviewId = @ViewBag.InterviewId;
@@ -720,7 +744,7 @@
         //    }
         //});
     });
-    function bindSkillData(data,result) {
+    function bindSkillData(data, result) {
         var html = '';
         html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll;padding-bottom:0px;"><table style="background:#fff;" class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
         html += '  <thead>';
@@ -746,34 +770,33 @@
         }
         html += '</tbody>';
         html += ' </table></div>';
-        if(result!=null && result.length>0)
-        {
-        html+=' <span id="techskill-note"><span class="report-tooltip" style="border:0px;margin-right:10px;"><svg style="color:#888;position:relative;top:18px;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16"> <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="#ccc"></path> </svg><span class="report-tooltiptext"><p style="font-weight:500;line-height:20px;">(This is a muktistack interview where <b style="color:#dd1f1f;">50-60 mins</b> have to be allocated to evaluate primary stack skills and remaining <b style="color:#dd1f1f;">30-40 mins</b> have to be allocated to evaluate secondary stack skills)</p></span></span></span>'
-        html += '<h1 style="font-size:18px;padding:10px;display:block;">OTHER SKILL</h1>';
-        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll;padding-bottom:0px;"><table style="background:#fff;" class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
-        html += '  <thead>';
-        html += '  <tr>';
-        html += '  <th width="20%" class="table_heading">Exprience<span class="red">*</span></th>';
-        html += '  <th width="40%" class="table_heading">Skill Name<span class="red">*</span></th>';
-        html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
-        html += '  <th width="10%" class="table_heading">Skills Info <span class="red">*</span></th>';
-        html += '  </tr>';
-        html += '  </thead>';
-        html += '  <tbody>';
-        for (i = 0; i < result.length; i++) {
-            html += '   <tr>';
-            html += '  <td>' + result[i].levelName + '</td>';
-            html += '  <td>' + result[i].skillName + '</td>';
-            html += '  <td>' + result[i].weightage + '</td>';
-            if (result[i].isEliminationskill == true) {
-                html += '  <td style="color:red">Elimination Skill</td>';
-            } else {
-                html += '  <td></td>';
-            }
+        if (result != null && result.length > 0) {
+            html += ' <span id="techskills-note-txt"><label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">(This is a muktistack interview where <b style="color:#dd1f1f;">50-60 mins</b> have to be allocated to evaluate primary stack skills and remaining <b style="color:#dd1f1f;">30-40 mins</b> have to be allocated to evaluate secondary stack skills)</label></span>'
+            html += '<h1 style="font-size:18px;padding:10px;display:block;">OTHER SKILL</h1>';
+            html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll;padding-bottom:0px;"><table style="background:#fff;" class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+            html += '  <thead>';
+            html += '  <tr>';
+            html += '  <th width="20%" class="table_heading">Exprience<span class="red">*</span></th>';
+            html += '  <th width="40%" class="table_heading">Skill Name<span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Weightage <span class="red">*</span></th>';
+            html += '  <th width="10%" class="table_heading">Skills Info <span class="red">*</span></th>';
             html += '  </tr>';
-        }
-        html += '</tbody>';
-        html += ' </table></div>';
+            html += '  </thead>';
+            html += '  <tbody>';
+            for (i = 0; i < result.length; i++) {
+                html += '   <tr>';
+                html += '  <td>' + result[i].levelName + '</td>';
+                html += '  <td>' + result[i].skillName + '</td>';
+                html += '  <td>' + result[i].weightage + '</td>';
+                if (result[i].isEliminationskill == true) {
+                    html += '  <td style="color:red">Elimination Skill</td>';
+                } else {
+                    html += '  <td></td>';
+                }
+                html += '  </tr>';
+            }
+            html += '</tbody>';
+            html += ' </table></div>';
         }
         $("#techskills").empty().html(html);
     }
@@ -999,12 +1022,10 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script>
-                $(window).scroll(function(event) {
-        function footer()
-        {
+    $(window).scroll(function (event) {
+        function footer() {
             var scroll = $(window).scrollTop();
-            if(scroll > 50)
-            {
+            if (scroll > 50) {
                 $(".footer-nav").fadeIn("slow").addClass("show");
             }
             //else
@@ -1012,15 +1033,15 @@
             //    $(".footer-nav").fadeOut("slow").removeClass("show");
             //}
 
-      //    clearTimeout($.data(this, 'scrollTimer'));
-      //      $.data(this, 'scrollTimer', setTimeout(function() {
-      //          if ($('.footer-nav').is(':hover')) {
-         //       	footer();
-      //  		}
-      //          else
-      //          {
-      //          	$(".footer-nav").fadeIn("slow");
-      //          }
+            //    clearTimeout($.data(this, 'scrollTimer'));
+            //      $.data(this, 'scrollTimer', setTimeout(function() {
+            //          if ($('.footer-nav').is(':hover')) {
+            //       	footer();
+            //  		}
+            //          else
+            //          {
+            //          	$(".footer-nav").fadeIn("slow");
+            //          }
             //}, 2000));
         }
         footer();

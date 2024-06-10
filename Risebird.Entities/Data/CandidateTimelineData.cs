@@ -53,6 +53,7 @@ namespace Risebird.Entities.Data
         public string LatestComment { get; set; }
         public string SchedulerUniqueid { get; set; }
         public DateTime EndDate { get; set; }
+        public bool IsDeleted { get; set; }
         public bool HasEmailDroppedOrBounced { get; set; }
     }
     }

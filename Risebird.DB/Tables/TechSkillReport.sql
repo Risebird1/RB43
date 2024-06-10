@@ -10,6 +10,7 @@ CREATE TABLE [dbo].[TechSkillReport](
 	[WeightageRequired] [float] NULL,
 	[WeightageActual] [float] NULL,
 	[TechComments] [varchar](500) NULL,
+	[SkillSet] [int] NULL,
  CONSTRAINT [PK_TechSkillReport] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

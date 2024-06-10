@@ -2099,7 +2099,7 @@ namespace Risebird.Web.Controllers
                             bool result = await _irfService.AddCandidateStatus(model);
                             if (result)
                             {
-                                TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
+                               TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
                             }
                             else
                             {
@@ -3478,7 +3478,8 @@ namespace Risebird.Web.Controllers
                         var lastvalue = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate).LastOrDefault();
                         if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            //firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            firstData = data.Where(x => (x.confirmationStatus == 1 || x.confirmationStatus == 2) && !x.IsDeleted).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                         }
                         else
                         {
@@ -3664,7 +3665,8 @@ namespace Risebird.Web.Controllers
                     var lastvalue = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate).LastOrDefault();
                     if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        firstData = data.Where(x => (x.confirmationStatus == 1 || x.confirmationStatus == 2) && !x.IsDeleted).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
                     else
                     {
@@ -3892,7 +3894,8 @@ namespace Risebird.Web.Controllers
                     var lastvalue = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate).LastOrDefault();
                     if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        firstData = data.Where(x => (x.confirmationStatus == 1 || x.confirmationStatus == 2) && !x.IsDeleted).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
                     else
                     {
@@ -5524,6 +5527,14 @@ namespace Risebird.Web.Controllers
                 }
                 model = model.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
                 var skillslist = model?.FirstOrDefault().TechSkillReportCollection.Select(x => x.SkillName).Distinct();
+                var skillsTwolist = model?.FirstOrDefault().TechSkillReportTwoCollection?.Select(x => x.SkillName).Distinct();
+
+                string jdtitle = string.Empty;
+                jdtitle = skillslist.FirstOrDefault();
+
+                string jdtitleTwo = string.Empty;
+                jdtitleTwo = skillsTwolist.FirstOrDefault();
+
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
                 Sheet.Cells["A1:Z1"].Style.WrapText = true;
@@ -5560,31 +5571,57 @@ namespace Risebird.Web.Controllers
                 //Sheet.Cells[1, 15].Value = "Meeting Status";
                 //Sheet.Cells[1, 16].Value = "Interview Status";
 
-                Sheet.Cells[1, 17].Value = "Interviewer Comment";
+                //Sheet.Cells[1, 17].Value = "Interviewer Comment";
                 //Sheet.Cells[1, 16].Value = "Video Link";
-                Sheet.Cells[1, 18].Value = "Report Link";
+                Sheet.Cells[1, 17].Value = "Report Link";
                 //Sheet.Cells[1, 17].Value = "Pb Report Link";
 
-                Sheet.Cells[1, 19].Value = "Communication Score";
+                Sheet.Cells[1, 18].Value = "Communication Score";
 
                 bool? isDrive = model.Where(x => x.CandidateType == CandidateSingleSourceTruthTypes.Completed)?.FirstOrDefault()?.IsDrive;
-
+                int j = 18;
                 if (isDrive.HasValue && isDrive.Value)
                 {
-                    int j = 19;
+                    
                     foreach (var item in skillslist)
                     {
                         j++;
                         Sheet.Cells[1, j].Value = item;
                     }
                     j++;
-                    Sheet.Cells[1, j].Value = "Tech Score";
+                    Sheet.Cells[1, j].Value = $"Tech Score ({jdtitle})";
 
                 }
                 else
                 {
-                    Sheet.Cells[1, 20].Value = "Tech Score";
+                    Sheet.Cells[1, ++j].Value = $"Tech Score ({jdtitle})";
                 }
+                Sheet.Cells[1, ++j].Value = $"Interview Status ({jdtitle})";
+                Sheet.Cells[1, ++j].Value = $"Interviewer Comment ({jdtitle})";
+                if (skillsTwolist != null && skillsTwolist.Count() > 0)
+                {
+                    if (isDrive.HasValue && isDrive.Value)
+                    {
+                        //int j = 19;
+                        foreach (var item in skillslist)
+                        {
+                            j++;
+                            Sheet.Cells[1, j].Value = item;
+                        }
+                        j++;
+                        Sheet.Cells[1, j].Value = $"Tech Score ({jdtitleTwo})";//"Tech Score (Stack 2)";//$"Tech Score {jdtitleTwo}";
+
+                    }
+                    else
+                    {
+                        Sheet.Cells[1, ++j].Value = $"Tech Score ({jdtitleTwo})";//"Tech Score (Stack 2)";// $"Tech Score {jdtitleTwo}";
+                    }
+                    Sheet.Cells[1, ++j].Value = $"Interview Status ({jdtitleTwo})"; //"Interview Status (Stack 2)";//$"Interview Status {jdtitleTwo}";
+                    Sheet.Cells[1, ++j].Value = $"Interviewer Comment ({jdtitleTwo})"; //"Interviewer Comment (Stack 2)";//$"Interviewer Comment {jdtitleTwo}";
+
+                }
+                
+                
 
                 int i = 2;
                 if (model.Count() > 0)
@@ -5633,14 +5670,7 @@ namespace Risebird.Web.Controllers
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
                         // item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
-                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
-                        {
-                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
-
-                            var document = new HTMLDocument(interviewerComent, "");
-                            var intComment = GetContent(document);
-                            Sheet.Cells[i, 17].Value = intComment;
-                        }
+                        
                        
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
@@ -5663,14 +5693,14 @@ namespace Risebird.Web.Controllers
                         var executiveurl = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
                         try
                         {
-                            Sheet.Cells[i, 18].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                            Sheet.Cells[i, 18].Value = "Executive Report";
-                            Sheet.Cells[i, 18].Style.Font.UnderLine = true;
-                            Sheet.Cells[i, 18].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            Sheet.Cells[i, 17].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                            Sheet.Cells[i, 17].Value = "Executive Report";
+                            Sheet.Cells[i, 17].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 17].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                         }
                         catch (Exception)
                         {
-                            Sheet.Cells[i, 18].Value = "No Report";
+                            Sheet.Cells[i, 17].Value = "No Report";
                         }
 
                         //var publicReportLink = "https://portal.risebird.io/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + irfId + "&isClient=true";
@@ -5685,26 +5715,27 @@ namespace Risebird.Web.Controllers
                         //{
                         //    Sheet.Cells[i, 17].Value = "No Report";
                         //}
-                        Sheet.Cells[i, 19].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
+                        Sheet.Cells[i, 18].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
                         var totalskillscore = 0.0;
                         var totalskillscount = 0;
+                        int jV = 18;
                         if (isDrive.HasValue && isDrive.Value)
                         {
-                            int j = 19;
+                            
 
                             foreach (var skillvalue in skillslist)
                             {
-                                j++;
+                                jV++;
                                 var skilldata = item.TechSkillReportCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
                                 if (skilldata != null)
                                 {
                                     totalskillscount++;
                                     totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
-                                    Sheet.Cells[i, j].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
+                                    Sheet.Cells[i, jV].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
                                 }
                             }
-                            j++;
-                            Sheet.Cells[i, j].Value = totalskillscore / totalskillscount;
+                            jV++;
+                            Sheet.Cells[i, jV].Value = totalskillscore / totalskillscount;
 
                         }
                         else
@@ -5719,7 +5750,90 @@ namespace Risebird.Web.Controllers
                                     totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
                                 }
                             }
-                            Sheet.Cells[i, 20].Value = totalskillscore / totalskillscount;
+                            Sheet.Cells[i, ++jV].Value = totalskillscore / totalskillscount;
+                        }
+                        if (item.ClientId == 177)
+                        {
+                            if (item.isQcDone.HasValue && item.isQcDone.Value == true)
+                            {
+                                Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, ++jV].Value = "QCPending(" + item.CandidateLatestStatus + ")";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
+                        }
+                        if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
+                        {
+                            var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
+
+                            var document = new HTMLDocument(interviewerComent, "");
+                            var intComment = GetContent(document);
+                            Sheet.Cells[i, ++jV].Value = intComment;
+                        }
+                        if (skillsTwolist != null && skillsTwolist.Count() > 0)
+                        {
+                            var totalskillTwoscore = 0.0;
+                            var totalskillsTwocount = 0;
+                            if (isDrive.HasValue && isDrive.Value)
+                            {
+                                foreach (var skillvalue in skillsTwolist)
+                                {
+                                    jV++;
+                                    var skilldata = item.TechSkillReportTwoCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
+                                    if (skilldata != null)
+                                    {
+                                        totalskillsTwocount++;
+                                        totalskillTwoscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                        Sheet.Cells[i, jV].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
+                                    }
+                                }
+                                jV++;
+                                Sheet.Cells[i, jV].Value = totalskillTwoscore / totalskillsTwocount;
+
+                            }
+                            else
+                            {
+                                foreach (var skillvalue in skillsTwolist)
+                                {
+
+                                    var skilldata = item.TechSkillReportTwoCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
+                                    if (skilldata != null)
+                                    {
+                                        totalskillsTwocount++;
+                                        totalskillTwoscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                    }
+                                }
+                                Sheet.Cells[i, ++jV].Value = totalskillTwoscore / totalskillsTwocount;
+                            }
+                            if (item.ClientId == 177)
+                            {
+                                if (item.isQcDone.HasValue && item.isQcDone.Value == true)
+                                {
+                                    Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, ++jV].Value = "QCPending(" + (item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty) + ")";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+                            }
+                            if (!string.IsNullOrWhiteSpace(item.InterviewerCommentTwo))
+                            {
+                                var interviewerComentTwo = System.Net.WebUtility.HtmlDecode(item.InterviewerCommentTwo);
+
+                                var document = new HTMLDocument(interviewerComentTwo, "");
+                                var intComment = GetContent(document);
+                                Sheet.Cells[i, ++jV].Value = intComment;
+                            }
+
                         }
 
                         i++;
@@ -5957,7 +6071,7 @@ namespace Risebird.Web.Controllers
 
                         i++;
                     }
-                    
+
 
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 }

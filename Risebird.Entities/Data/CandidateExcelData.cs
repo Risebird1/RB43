@@ -13,6 +13,7 @@ namespace Risebird.Entities.Data
         public CandidateExcelData()
         {
             TechSkillReportCollection = new List<TechSkillReport>();
+            TechSkillReportTwoCollection = new List<TechSkillReport>();
         }
         public int id { get; set; }
         public string IRFId { get; set; }
@@ -28,6 +29,7 @@ namespace Risebird.Entities.Data
         public string ClientHrContact { get; set; }
         public string VideoLink { get; set; }
         public IList<TechSkillReport> TechSkillReportCollection { get; set; }
+        public IList<TechSkillReport> TechSkillReportTwoCollection { get; set; }
         public IList<string> SkillList { get; set; }
         public int CommunicationalProficiency { get; set; }
         public string CandidateLatestStatus { get; set; }
@@ -45,6 +47,15 @@ namespace Risebird.Entities.Data
         public int ClientId { get; set; }
         public bool IsDrive { get; set; }//if the irf is marked as a Drive
         public string InterviewerCodedName { get; set; }
+
+        public int? MeetingStatusTwo { get; set; }
+        public int? InterviewStatusTwo { get; set; }
+        public string InterviewerCommentTwo { get; set; }
+        public string MeetingStatusTwoDesc { get; set; }
+        public string InterviewStatusTwoDesc { get; set; }
+        public int numberOfTechStacks { get; set; }
+        public IList<string> SkillListTwo { get; set; }
+        public string JDTitleTwo { get; set; }
 
     }
 }
