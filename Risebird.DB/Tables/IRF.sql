@@ -59,6 +59,7 @@ CREATE TABLE [dbo].[IRF](
             [DMApproved] [bit] null,
             [DMApprovedBy] [varchar](150)Null,
             [SkillSetsevaluate] [int]Null,
+            [JDTitleTwo] [VARCHAR](150) null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -524,6 +525,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add SkillSetsevaluate int
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'JDTitleTwo')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add JDTitleTwo VARCHAR(150)
 END
 
 END

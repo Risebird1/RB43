@@ -21,7 +21,9 @@ CREATE PROCEDURE [dbo].[usp_UpdateTechSkillQuestionsForRemovedTechSkill]
 AS  
 Begin 
 
-delete from TechSkillComments where IRFId =@IRFId and Skill=@SkillId
+
+select 1
+--delete from TechSkillComments where IRFId =@IRFId and Skill=@SkillId
 
 End
 GO

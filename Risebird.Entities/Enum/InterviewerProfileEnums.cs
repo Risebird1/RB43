@@ -1237,8 +1237,12 @@ namespace Risebird.Entities.Enum
         Pro = 4,
         [Description("Advanced")]
         Elite = 5,
-        [Description("Multistack")]
-        Multistack = 6
+        [Description("Multistack(L)")]
+        MultistackL = 6,
+        [Description("Multistack(M)")]
+        MultistackM = 7,
+        [Description("Multistack(S)")]
+        MultistackS = 8
     }
     public enum AssassinationStatus
     {
