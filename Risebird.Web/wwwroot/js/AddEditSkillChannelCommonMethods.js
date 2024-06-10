@@ -214,7 +214,7 @@ if (profile != null && profile != "Admin" && type != 'add') {
     if(type == 'add' && planType != null)// this means plantype is the dropdown that has been changed
     {
         //set the value of skill sets drop-down to two and disable it
-       if (planType == 6) {
+       if (planType == 6 || planType == 7 || planType == 8) {
              //multistack planType is selected
             document.getElementById("SkillSetsevaluate").value = '2';
             //document.getElementById("SkillSetsevaluate").disabled = true;
