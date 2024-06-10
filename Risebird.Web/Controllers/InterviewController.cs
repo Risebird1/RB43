@@ -8676,6 +8676,8 @@ namespace Risebird.Web.Controllers
             }
             return sb.ToString();
         }
+
+        #region Multi Skill Sets
         public async Task ReportSkillSetandCombine(InterviewReport model)
         {
             //Questions discussed 
@@ -8712,5 +8714,6 @@ namespace Risebird.Web.Controllers
             model.TechSkillTwoReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet == 2).ToList();
             model.TechSkillReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet != 2).ToList();
         }
+        #endregion
     }
 }
