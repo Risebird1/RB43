@@ -59,7 +59,6 @@ CREATE TABLE [dbo].[IRF](
             [DMApproved] [bit] null,
             [DMApprovedBy] [varchar](150)Null,
             [SkillSetsevaluate] [int]Null,
-            [DMApprovedBy] [varchar](150)Null,
             [JDTitleTwo] [VARCHAR](150) null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
