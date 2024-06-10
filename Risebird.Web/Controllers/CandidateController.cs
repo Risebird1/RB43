@@ -5521,6 +5521,9 @@ namespace Risebird.Web.Controllers
                 }
                 model = model.Select(x => { x.MeetingStatus = !string.IsNullOrWhiteSpace(x.MeetingStatus) ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.InterviewStatus = !string.IsNullOrWhiteSpace(x.InterviewStatus) ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.confirmationStatus = !string.IsNullOrWhiteSpace(x.confirmationStatus) ? ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription() : string.Empty; return x; }).ToList();
                 var skillslist = model?.FirstOrDefault().TechSkillReportCollection.Select(x => x.SkillName).Distinct();
+                var skillsTwolist = model?.FirstOrDefault().TechSkillReportTwoCollection?.Select(x => x.SkillName).Distinct();
+                string jdtitleTwo = string.Empty;
+                jdtitleTwo = model?.FirstOrDefault().JDTitleTwo;
                 Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
                 Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
                 Sheet.Cells["A1:Z1"].Style.WrapText = true;
@@ -5565,10 +5568,10 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 19].Value = "Communication Score";
 
                 bool? isDrive = model.Where(x => x.CandidateType == CandidateSingleSourceTruthTypes.Completed)?.FirstOrDefault()?.IsDrive;
-
+                int j = 19;
                 if (isDrive.HasValue && isDrive.Value)
                 {
-                    int j = 19;
+                    
                     foreach (var item in skillslist)
                     {
                         j++;
@@ -5580,8 +5583,32 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    Sheet.Cells[1, 20].Value = "Tech Score";
+                    Sheet.Cells[1, ++j].Value = "Tech Score";
                 }
+                if(skillsTwolist != null && skillsTwolist.Count() > 0)
+                {
+                    if (isDrive.HasValue && isDrive.Value)
+                    {
+                        //int j = 19;
+                        foreach (var item in skillslist)
+                        {
+                            j++;
+                            Sheet.Cells[1, j].Value = item;
+                        }
+                        j++;
+                        Sheet.Cells[1, j].Value = "Tech Score (Stack 2)";//$"Tech Score {jdtitleTwo}";
+
+                    }
+                    else
+                    {
+                        Sheet.Cells[1, ++j].Value = "Tech Score (Stack 2)";// $"Tech Score {jdtitleTwo}";
+                    }
+                    Sheet.Cells[1, ++j].Value = "Interview Status (Stack 2)";//$"Interview Status {jdtitleTwo}";
+                    Sheet.Cells[1, ++j].Value = "Interviewer Comment (Stack 2)";//$"Interviewer Comment {jdtitleTwo}";
+
+                }
+                
+                
 
                 int i = 2;
                 if (model.Count() > 0)
@@ -5685,23 +5712,24 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 19].Value = item.CommunicationalProficiency != 0 ? ((item.CommunicationalProficiency * 10).ToString()) + "%" : "NA";
                         var totalskillscore = 0.0;
                         var totalskillscount = 0;
+                        int jV = 19;
                         if (isDrive.HasValue && isDrive.Value)
                         {
-                            int j = 19;
+                            
 
                             foreach (var skillvalue in skillslist)
                             {
-                                j++;
+                                jV++;
                                 var skilldata = item.TechSkillReportCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
                                 if (skilldata != null)
                                 {
                                     totalskillscount++;
                                     totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
-                                    Sheet.Cells[i, j].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
+                                    Sheet.Cells[i, jV].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
                                 }
                             }
-                            j++;
-                            Sheet.Cells[i, j].Value = totalskillscore / totalskillscount;
+                            jV++;
+                            Sheet.Cells[i, jV].Value = totalskillscore / totalskillscount;
 
                         }
                         else
@@ -5716,7 +5744,67 @@ namespace Risebird.Web.Controllers
                                     totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
                                 }
                             }
-                            Sheet.Cells[i, 20].Value = totalskillscore / totalskillscount;
+                            Sheet.Cells[i, ++jV].Value = totalskillscore / totalskillscount;
+                        }
+                        if (skillsTwolist != null && skillsTwolist.Count() > 0)
+                        {
+                            var totalskillTwoscore = 0.0;
+                            var totalskillsTwocount = 0;
+                            if (isDrive.HasValue && isDrive.Value)
+                            {
+                                foreach (var skillvalue in skillsTwolist)
+                                {
+                                    jV++;
+                                    var skilldata = item.TechSkillReportTwoCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
+                                    if (skilldata != null)
+                                    {
+                                        totalskillsTwocount++;
+                                        totalskillTwoscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                        Sheet.Cells[i, jV].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
+                                    }
+                                }
+                                jV++;
+                                Sheet.Cells[i, jV].Value = totalskillTwoscore / totalskillsTwocount;
+
+                            }
+                            else
+                            {
+                                foreach (var skillvalue in skillsTwolist)
+                                {
+
+                                    var skilldata = item.TechSkillReportTwoCollection.Where(x => x.SkillName == skillvalue).FirstOrDefault();
+                                    if (skilldata != null)
+                                    {
+                                        totalskillsTwocount++;
+                                        totalskillTwoscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                    }
+                                }
+                                Sheet.Cells[i, ++jV].Value = totalskillTwoscore / totalskillsTwocount;
+                            }
+                            if (item.ClientId == 177)
+                            {
+                                if (item.isQcDone.HasValue && item.isQcDone.Value == true)
+                                {
+                                    Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, ++jV].Value = "QCPending(" + (item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty) + ")";
+                                }
+                            }
+                            else
+                            {
+                                Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+                            }
+                            if (!string.IsNullOrWhiteSpace(item.InterviewerCommentTwo))
+                            {
+                                var interviewerComentTwo = System.Net.WebUtility.HtmlDecode(item.InterviewerCommentTwo);
+
+                                var document = new HTMLDocument(interviewerComentTwo, "");
+                                var intComment = GetContent(document);
+                                Sheet.Cells[i, ++jV].Value = intComment;
+                            }
+
                         }
 
                         i++;
