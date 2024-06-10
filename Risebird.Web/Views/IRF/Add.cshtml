@@ -2611,13 +2611,26 @@
             // document.getElementById("btnUpload").disabled = false;
         }
         function checkSkillsetsActive(){
+            var planType = document.getElementById("Heuristicsscore").value;
             if ($("#SkillSetsevaluate").val() == 1){
                 document.getElementById("secondSkillSets").style.display = "none";
-                document.getElementById("Heuristicsscore").value = '';
+                if(planType == 6 || planType == 7 || planType == 8)
+                {
+                   document.getElementById("Heuristicsscore").value = '';
+                }
             }
-            else{
+            if ($("#SkillSetsevaluate").val() == 2){
                 document.getElementById("secondSkillSets").style.display = "block";
-                document.getElementById("Heuristicsscore").value = '6';
+                if(planType == 2 || planType == 5 || planType == 6)
+                {
+                   document.getElementById("Heuristicsscore").value = '';
+                }
+                //document.getElementById("Heuristicsscore").value = '6';
+            }
+            else
+            {
+                document.getElementById("secondSkillSets").style.display = "none";
+                //document.getElementById("Heuristicsscore").value = '6';
             }
 
         }
