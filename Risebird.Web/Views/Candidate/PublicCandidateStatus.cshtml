@@ -940,7 +940,7 @@
                                                                                     }
                                                                                     
                                                                                     <td>
-                                                                                          @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
+                                                                                    @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                     {
                                                                                         @if (item.RedoInterview == true)
                                                                                         {
@@ -1115,6 +1115,7 @@
                                                                                                                 </div>
                                                                                                             }
                                                                                                         }
+                                                                                                       
                                                                                                         else
                                                                                                         {
                                                                                                             <span> @item.StatusValue</span>
@@ -1123,7 +1124,44 @@
                                                                                                     </div>
 
                                                                                                 }
+                                                                                                else if (item.StatusValue == "Reminder Call")
+                                                                                                {
+                                                                                                    <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                        @item.StatusValue
+                                                                                                    </span>
+                                                                                                }
+                                                                                                else if (item.StatusValue == "Called Candidate")
+                                                                                                {
+                                                                                                    <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                        @item.StatusValue
+                                                                                                    </span>
+                                                                                                }
+                                                                                                else if (item.StatusValue == "Not Responding")
+                                                                                                {
+                                                                                                    <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                        @item.StatusValue
+                                                                                                    </span>
+                                                                                                }
+                                                                                                else if (item.StatusValue == "Not Reachable")
+                                                                                                {
+                                                                                                    <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                        @item.StatusValue
+                                                                                                    </span>
+                                                                                                }
+                                                                                                else if (item.StatusValue == "Wrong Number/Out of service")
+                                                                                                {
+                                                                                                    <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                        @item.StatusValue
+                                                                                                    </span>
+                                                                                                }
+                                                                                                else if (item.StatusValue == "Will schedule by themselves")
+                                                                                                {
+                                                                                                    <span style="color:#7d7079;font-weight: 500; padding:2px; font-size: 12px;background: #77838345;">
+                                                                                                        @item.StatusValue
+                                                                                                    </span>
+                                                                                                }
                                                                                             }
+                                                         
                                                                                             else
                                                                                             {
                                                                                                  <p>No status</p>

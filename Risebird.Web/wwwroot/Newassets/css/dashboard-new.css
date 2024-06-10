@@ -10331,9 +10331,17 @@ option {
     height: 26px;
     position:absolute;
 }
-    #techskill-note .report-tooltip svg{
-        top:0px!important;
-    }
+#techskills-note-txt {
+    top: 10px;
+    left: 145px;
+    width: 75%;
+    height: 26px;
+    position: absolute;
+}
+ #techskill-note .report-tooltip svg {
+        top: 0px !important;
+   }
+
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
         .rbpay .sb-scrollbar {
@@ -12470,6 +12478,12 @@ option {
             display: none !important;
         }
 
+       .note-card {
+           height:95px;
+        }
+
+    
+
         .calibration-btn {
             top: -12px !important;
             right: 200px !important;
@@ -12730,6 +12744,12 @@ option {
             float: none !important;
             position: relative !important;
             left: 0px !important;
+        }
+        #techskills-note-txt {
+            top: -180px;
+            left: 0px;
+            width: 100%;
+            position: relative;
         }
     }
 

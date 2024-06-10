@@ -58,6 +58,8 @@ CREATE TABLE [dbo].[IRF](
             [AffindaEmbedUrlCreatedAt] [datetime] null,
             [DMApproved] [bit] null,
             [DMApprovedBy] [varchar](150)Null,
+            [SkillSetsevaluate] [int]Null,
+            [DMApprovedBy] [varchar](150)Null,
             [JDTitleTwo] [VARCHAR](150) null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
@@ -515,6 +517,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add AffindaEmbedUrlCreatedAt datetime
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillSetsevaluate')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add SkillSetsevaluate int
 END
 
 IF NOT EXISTS(

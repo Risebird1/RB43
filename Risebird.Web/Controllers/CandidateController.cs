@@ -2099,7 +2099,7 @@ namespace Risebird.Web.Controllers
                             bool result = await _irfService.AddCandidateStatus(model);
                             if (result)
                             {
-                                TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
+                               TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
                             }
                             else
                             {
@@ -3478,7 +3478,8 @@ namespace Risebird.Web.Controllers
                         var lastvalue = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate).LastOrDefault();
                         if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                         {
-                            firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            //firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                            firstData = data.Where(x => (x.confirmationStatus == 1 || x.confirmationStatus == 2) && !x.IsDeleted).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                         }
                         else
                         {
@@ -3663,7 +3664,8 @@ namespace Risebird.Web.Controllers
                     var lastvalue = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate).LastOrDefault();
                     if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        firstData = data.Where(x => (x.confirmationStatus == 1 || x.confirmationStatus == 2) && !x.IsDeleted).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
                     else
                     {
@@ -3889,7 +3891,8 @@ namespace Risebird.Web.Controllers
                     var lastvalue = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate).LastOrDefault();
                     if (data.Where(x => x.confirmationStatus == 1).Any() || data.Where(x => x.confirmationStatus == 2).Any())
                     {
-                        firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        //firstData = data.Where(x => x.confirmationStatus == 1 || x.confirmationStatus == 2).OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                        firstData = data.Where(x => (x.confirmationStatus == 1 || x.confirmationStatus == 2) && !x.IsDeleted).OrderByDescending(x => x.interviewDate).FirstOrDefault();
                     }
                     else
                     {
@@ -6065,7 +6068,7 @@ namespace Risebird.Web.Controllers
 
                         i++;
                     }
-                    
+
 
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 }
