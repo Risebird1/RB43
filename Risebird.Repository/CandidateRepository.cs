@@ -1034,14 +1034,21 @@ namespace Risebird.Repository
                 {
                     var _resultVM = new List<CandidateExcelData>();
                     var skillLists = new List<string>();
+                    var skillListsTwo = new List<string>();
                     DataSet dataset = new DataSet();
                     SqlDataAdapter adapter = new SqlDataAdapter();
-                    adapter.SelectCommand = new SqlCommand("usp_GetIRFCandidateStatsForExcelDownLoadV2", con);//usp_GetIRFCandidateStatsForExcelDownLoad
+                    adapter.SelectCommand = new SqlCommand("usp_GetIRFCandidateStatsForExcelDownLoadV2", con);//usp_GetIRFCandidateStatsForExcelDownLoadV2//usp_GetIRFCandidateStatsForExcelDownLoad
                     adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
                     adapter.SelectCommand.CommandTimeout = 600;
                     adapter.SelectCommand.Parameters.AddWithValue("@irfId", irfId);
                     adapter.SelectCommand.Parameters.AddWithValue("@timeNow", DateTime.Now);
+                    SqlParameter outputParam = new SqlParameter("@numbertOFTechStacks", SqlDbType.Int);
+                    outputParam.Direction = ParameterDirection.Output;
+                    adapter.SelectCommand.Parameters.Add(outputParam);
                     adapter.Fill(dataset);
+
+                    //find the value of number of tech stacks heres
+                    int numberOfTechStacks = (int)adapter.SelectCommand.Parameters["@numbertOfTechStacks"].Value;
                     DataTable dt = new DataTable();
                     if (dataset.Tables.Count > 0)
                     {
@@ -1080,6 +1087,11 @@ namespace Risebird.Repository
                                     VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
                                     confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
                                     CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
+
+                                    MeetingStatusTwo = !string.IsNullOrEmpty(dt.Rows[i]["MeetingStatusTwo"].ToString()) ? Convert.ToInt32(dt.Rows[i]["MeetingStatusTwo"]) : null,
+                                    InterviewStatusTwo = !string.IsNullOrEmpty(dt.Rows[i]["InterviewStatusTwo"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewStatusTwo"]) :null,
+                                    InterviewerCommentTwo = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerCommentTwo"].ToString()) ? dt.Rows[i]["InterviewerCommentTwo"].ToString() : null,
+
                                     CandidateType = CandidateSingleSourceTruthTypes.Completed
                                 });
                             }
@@ -1278,6 +1290,36 @@ namespace Risebird.Repository
                             _resultVM.AddRange(listCandidates);
                         }
                     }
+                    if (dataset.Tables.Count > 6)
+                    {
+                        dt = dataset.Tables[6];
+                        if (dt.Rows != null && dt.Rows.Count > 0)
+                        {
+                            int interviewid = 0;
+                            string skill = string.Empty;
+                            for (int i = 0; i < dt.Rows.Count; i++)
+                            {
+                                interviewid = !string.IsNullOrEmpty(dt.Rows[i]["InterviewId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewId"]) : 0;
+                                skill = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : null;
+                                if (_resultVM.Where(x => x.id == interviewid) != null && _resultVM.Where(x => x.id == interviewid).Count() > 0)
+                                {
+                                    _resultVM.Where(x => x.id == interviewid).FirstOrDefault().TechSkillReportTwoCollection.Add(new TechSkillReport
+                                    {
+                                        WeightageActual = (float)(!string.IsNullOrEmpty(dt.Rows[i]["WeightageActual"].ToString()) ? Convert.ToDecimal(dt.Rows[i]["WeightageActual"]) : 0),
+                                        WeightageRequired = (float)(!string.IsNullOrEmpty(dt.Rows[i]["WeightageRequired"].ToString()) ? Convert.ToDecimal(dt.Rows[i]["WeightageRequired"]) : 0),
+                                        SkillName = dt.Rows[i]["SkillName"] != null ? dt.Rows[i]["SkillName"].ToString() : null,
+                                        InterviewId = !string.IsNullOrEmpty(dt.Rows[i]["InterviewId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewId"]) : 0
+                                    });
+                                    if (!skillListsTwo.Contains(skill))
+                                    {
+                                        skillListsTwo.Add(skill);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (_resultVM.Count() > 0)
+                        _resultVM.FirstOrDefault().SkillListTwo = skillListsTwo;
                     return _resultVM;
                 }
             }
