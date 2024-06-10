@@ -13,10 +13,11 @@ CREATE PROCEDURE usp_FetchJDTitleByIRFId
 @IRFId varchar(100)
 AS
 BEGIN
-Select JDTiltle, JDLink from IRF
+Select JDTiltle, JDLink,pm.DurationSelectedMin as InterviewDuration  from IRF
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType
 where IRFId=@IRFId 
 union 
-Select JDTiltle, JDLink from InterviewerSkillsChannel 
+Select JDTiltle, JDLink,55 as InterviewDuration from InterviewerSkillsChannel 
 where InterviewerSkillId=@IRFId
 END
 GO
