@@ -3524,6 +3524,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.CandidateId = firstData.CandidateId;
                         candidateTimeline.IsQCDone = firstData.IsQCDone;
                         candidateTimeline.zoomLink = firstData.zoomLink;
+                        candidateTimeline.HasEmailDroppedOrBounced=firstData.HasEmailDroppedOrBounced;
                         //candidateTimeline.staffingAgency = firstData.staffingAgency;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -3713,6 +3714,8 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
                     candidateTimeline.CandidateId = firstData.CandidateId;
                     candidateTimeline.IsQCDone = firstData.IsQCDone;
+                    candidateTimeline.HasEmailDroppedOrBounced = firstData.HasEmailDroppedOrBounced;
+
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
 

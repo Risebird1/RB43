@@ -763,18 +763,24 @@
 
                                                                             @foreach (var item in Model)
                                                                             {
-                                                                                var backcolor = "";
-                                                                                @*@if (item.reportcount > 1)
-                                                                            {
-                                                                            backcolor = "#ea8611e3";
-                                                                            }*@
-                                                                                <tr style="background-color:@backcolor">
+                                                                                var colorcode = "";
+
+                                                                                if (item.HasEmailDroppedOrBounced == true)
+                                                                                {
+                                                                                    colorcode = "#fa77775e";
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    colorcode = "#fff";
+                                                                                }
+                                                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                                                                <tr data-changes="1" style="background:@colorcode">
                                                                                       @if (ViewBag.CandidateType != CandidateTypeForClient.NotScheduled.GetDescription())
                                                                                     {
                                                                                         <td>@item.IRFname</td>
                                                                                     }
 
-                                                                                    <td class="cadName text-left pl15" style="padding-top:20px;">
+                                                                                    <td class="cadName text-left pl15" style="padding-top:20px;position:relative;" valign="top">
 
                                                                                         @*  <span style="position:relative;top:40px;right:100px;">
                                                                                     @if (item.IsColdCandidate)
@@ -790,6 +796,20 @@
                                                                                                 {
                                                                                                     @if (item.CandidateName.Length > 15)
                                                                                                     {
+                                                                                                        @if (item.HasEmailDroppedOrBounced == true)
+                                                                                                        {
+                                                                                                            <div class="absCenter">
+                                                                                                                <button class="infoButton">
+                                                                                                                    <div class="infoButton-btn">
+                                                                                                                        <span class="infoButton-btn-text">i</span>
+                                                                                                                    </div>
+                                                                                                                    <div class="infoButton-container">
+                                                                                                                        <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
+                                                                                                                    </div>
+                                                                                                                </button>
+                                                                                                            </div>
+
+                                                                                                        }
                                                                                                         @if (item.reportcount > 1)
                                                                                                         {
                                                                                                             <p class="name-field" title="@item.CandidateName"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName.Substring(0, 15) ... </p>
@@ -801,6 +821,19 @@
                                                                                                     }
                                                                                                     else
                                                                                                     {
+                                                                                                        @if (item.HasEmailDroppedOrBounced == true)
+                                                                                                        {
+                                                                                                            <div class="absCenter">
+                                                                                                                <button class="infoButton">
+                                                                                                                    <div class="infoButton-btn">
+                                                                                                                        <span class="infoButton-btn-text">i</span>
+                                                                                                                    </div>
+                                                                                                                    <div class="infoButton-container">
+                                                                                                                        <div class="infoButton-container-message"><b style="color:red">Bounce/Dropped :</b> emails indicates a temporary delivery failure</div>
+                                                                                                                    </div>
+                                                                                                                </button>
+                                                                                                            </div>
+                                                                                                        }
                                                                                                         @if (item.reportcount > 1)
                                                                                                         {
                                                                                                             <p class="name-field"><span title="Multiple Interviews" class="fas fa-exclamation-triangle" style="font-size:14px;color:red"></span> @item.CandidateName </p>
