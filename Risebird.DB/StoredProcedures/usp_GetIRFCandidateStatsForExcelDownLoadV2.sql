@@ -8,12 +8,15 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE usp_GetIRFCandidateStatsForExcelDownLoadV2  
+CREATE PROCEDURE usp_GetIRFCandidateStatsForExcelDownLoadV2
 @irfId int,         
-@timeNow datetime  
+@timeNow datetime, 
+@numbertOfTechStacks int out
 AS  
 BEGIN  
              
+
+set @numbertOfTechStacks = (select SkillSetsevaluate from IRF where id = @irfId)
 
 DECLARE @TemporaryCandidateTableVariable TABLE (              
  IRFId int,        
@@ -47,12 +50,16 @@ group by ca.IRFId, ca.CandidateMasterId,cm.UserId, La.LatestStatus, La.interview
 
 select im.id, im.IRFId, im.interviewDate, im.candidateEmail, im.candidateName, ul.MobileNumber, IRF.JDTiltle, ic.MeetingStatus,
 ic.InterviewStatus, ic.InterviewerComment, im.ClientHrContact, ic.VideoLink, im.confirmationStatus, ic.CommunicationalProficiency,
-im.staffingAgency, tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, tctv.FirstScheduledOninterviewDate, tctv.completedDate
+im.staffingAgency, ice.InterviewStatus as InterviewStatusTwo, ice.MeetingStatus as MeetingStatusTwo, 
+ice.InterviewerComment as InterviewerCommentTwo,
+tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, 
+tctv.FirstScheduledOninterviewDate, tctv.completedDate
 , psd.isQcDone, irf.IsDrive, ipr.NickName as InterviewerCodedName, irf.ClientId --177 for turing
 from @TemporaryCandidateTableVariable tctv
 join InterviewMeetings im on im.id = tctv.InterviewId
 join IRF on IRF.IRFId=im.IRFId 
 join InterviewComments ic on ic.InterviewId=im.id
+left join InterviewCommentsExtension ice on ice.Interviewid = im.id
 join UserList ul on ul.EmailId = im.candidateEmail
 left join UserList uli on uli.EmailId = im.interviewer
 left join InterviewerProfile ipr on ipr.UserId = uli.id
@@ -62,7 +69,7 @@ where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%RE
 
 select a.*, Skill.[Name] as SkillName from 
 (select ts.*, [LevelTech].[Name] as RequiredLevel from 
-TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id 
+TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id where (ts.SkillSet = 1 or ts.SkillSet is null)) as a inner join Skill on a.SkillId = Skill.id 
 join InterviewMeetings im on im.id=a.InterviewId
 join @TemporaryCandidateTableVariable tctv on tctv.InterviewId = im.id
 join IRF on IRF.IRFId=im.IRFId
@@ -125,6 +132,20 @@ join IRF on IRF.id =tctv.IRFId
 join UserList ul on ul.id = tctv.UserId
 where CandidateLatestStatus in ('NOTSCHEDULED')
 
+
+
+--tech report of the other/secondary skills in case of a multistack IRF
+if(@numbertOfTechStacks > 1)
+Begin
+	select a.*, Skill.[Name] as SkillName from 
+	(select ts.*, [LevelTech].[Name] as RequiredLevel from 
+	TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id where ts.SkillSet = 2) as a inner join Skill on a.SkillId = Skill.id 
+	join InterviewMeetings im on im.id=a.InterviewId
+	join @TemporaryCandidateTableVariable tctv on tctv.InterviewId = im.id
+	join IRF on IRF.IRFId=im.IRFId
+	--where CandidateLatestStatus in ('SELECTED', 'REJECTED')
+	where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%REJECTED%' 
+End
 
 END
 GO
