@@ -2072,7 +2072,7 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all fields and try again.";
             }
         }
-        public async Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountEmail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId, int? SkillSetsevaluate, string jdLink = null, string clientLogoLink = null, string companyLink = null)
+        public async Task<string> SendInterviewInvite(Mail model, string Email, string join_url, string StaffingAgiencies, string HRCoordinator, string accountEmail, DateTime interviewdatetime, string Name, string timezonevalue, string ClientName, int offset, int? interviewId, int InterviewDuration, string jdLink = null, string clientLogoLink = null, string companyLink = null)
         {
             try
             {
@@ -2125,9 +2125,9 @@ namespace Risebird.CommonHelper
                 str.AppendLine("BEGIN:VEVENT");
                 str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset)));
                 str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
-                if (SkillSetsevaluate > 1)
+                if (InterviewDuration > 0)
                 {
-                    str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(90)));
+                    str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(InterviewDuration)));
                 }
                 else
                 {
