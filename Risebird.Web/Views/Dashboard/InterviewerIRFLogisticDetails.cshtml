@@ -26,38 +26,38 @@
                 <div class="pull-left">
                     @if (ViewBag.Type == "Latejoin")
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Latejoin')"><strong>Late Join</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment')"><strong>Short Select Comment</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment')"><strong>Short Reject Comment</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Lessquestion')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Latejoin','@ViewBag.ReturnBack')"><strong>Late Join</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment','@ViewBag.ReturnBack')"><strong>Short Select Comment</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
                     }
                     else if (ViewBag.Type == "Shortselectcomment")
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('Latejoin')"><strong>Late Join</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Shortselectcomment')"><strong>Short Select Comment</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment')"><strong>Short Reject Comment</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Lessquestion')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Latejoin','@ViewBag.ReturnBack')"><strong>Late Join</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Shortselectcomment','@ViewBag.ReturnBack')"><strong>Short Select Comment</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
                     }
                     else if (ViewBag.Type == "Shortrejectcomment")
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('Latejoin')"><strong>Late Join</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment')"><strong>Short Select Comment</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Shortrejectcomment')"><strong>Short Reject Comment</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Lessquestion')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Latejoin','@ViewBag.ReturnBack')"><strong>Late Join</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment','@ViewBag.ReturnBack')"><strong>Short Select Comment</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
                     }
                     else if (ViewBag.Type == "Lessquestion")
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('Latejoin')"><strong>Late Join</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment')"><strong>Short Select Comment</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment')"><strong>Short Reject Comment</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Lessquestion')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Latejoin','@ViewBag.ReturnBack')"><strong>Late Join</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment','@ViewBag.ReturnBack')"><strong>Short Select Comment</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
                     }
                     else
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('Latejoin')"><strong>Late Join</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Latejoin','@ViewBag.ReturnBack')"><strong>Late Join</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('Shortselectcomment')"><strong>Short Select Comment</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment')"><strong>Short Reject Comment</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Lessquestion')"><strong>Less Question</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Shortrejectcomment','@ViewBag.ReturnBack')"><strong>Short Reject Comment</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Lessquestion','@ViewBag.ReturnBack')"><strong>Less Question</strong></div>
                     }
                 </div>
                 <div class="pull-right">
@@ -65,7 +65,15 @@
                         <div class="pull-left" style="margin-left:10px">
                             <div class="filtercon">
                                 <div id="myinterview_3">
-                                    <a href='/Dashboard/Dashboard911' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
+                                    @if (ViewBag.ReturnBack == 1)
+                                    {
+                                        
+                                        <a href='/Dashboard/EmergencyDashboard' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
+                                    }
+                                    else
+                                    {
+                                        <a href='/Dashboard/Dashboard911' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -272,7 +280,7 @@
     };
 </script>
 <script>
-    function Changeurldetails(type) {
-        window.location.href = "/Dashboard/InterviewerIRFLogisticDetails?type=" + type;
+    function Changeurldetails(type,returnBack) {
+        window.location.href = "/Dashboard/InterviewerIRFLogisticDetails?type=" + type + "&returnBack=" + returnBack;
     }
 </script>

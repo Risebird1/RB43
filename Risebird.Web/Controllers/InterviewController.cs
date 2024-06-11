@@ -7379,7 +7379,7 @@ namespace Risebird.Web.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ProbableNoShowCandidates()
+        public async Task<IActionResult> ProbableNoShowCandidates(int returnBack)
         {
             try
             {
@@ -7390,6 +7390,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _meetingService.GetProbableNoShowCandidates();
@@ -8066,7 +8067,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<IActionResult> PaymentSlaDetails(string actionstatus)
+        public async Task<IActionResult> PaymentSlaDetails(string actionstatus,int returnBack)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -8074,7 +8075,8 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                ViewBag.ReturnBack = returnBack;
+                if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "Finance")
                 {
                     if (string.IsNullOrWhiteSpace(actionstatus))
                     {

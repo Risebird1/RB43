@@ -457,7 +457,7 @@ namespace Risebird.Web.Controllers
             }
             return Json("Request is not raised, Please try again.");
         }
-        public async Task<IActionResult> RaisedRequests(string type)
+        public async Task<IActionResult> RaisedRequests(string type,int returnBack)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -466,6 +466,7 @@ namespace Risebird.Web.Controllers
                     type = "Open";
                 }
                 ViewBag.Type = type;
+                ViewBag.ReturnBack = returnBack;
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var model = await _supportService.GetRaisedIssueDetails(profileName);

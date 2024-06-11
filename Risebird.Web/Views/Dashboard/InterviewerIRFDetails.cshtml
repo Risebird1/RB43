@@ -33,21 +33,21 @@
                 <div class="pull-left">
                     @if (ViewBag.Type == "Selection")
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Selection','@ViewBag.uniqueid')"><strong>High Selection Rate</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid')"><strong>High Rejection Rate</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid')"><strong>High -ve Rating</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Selection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Selection Rate</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Rejection Rate</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High -ve Rating</strong></div>
                     }
                     else if (ViewBag.Type == "Rejection")
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('Selection','@ViewBag.uniqueid')"><strong>High Selection Rate</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid')"><strong>High Rejection Rate</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid')"><strong>High -ve Rating</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Selection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Selection Rate</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Rejection Rate</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High -ve Rating</strong></div>
                     }
                     else
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('Selection','@ViewBag.uniqueid')"><strong>High Selection Rate</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid')"><strong>High Rejection Rate</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid')"><strong>High -ve Rating</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Selection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Selection Rate</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Rejection','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High Rejection Rate</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('NegativeCandidate','@ViewBag.uniqueid','@ViewBag.ReturnBack')"><strong>High -ve Rating</strong></div>
                     }
                 </div>
                 <div class="pull-right">
@@ -61,7 +61,14 @@
                                     }
                                     else
                                     {
-                                        <a href='/Dashboard/Dashboard911' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
+                                        @if (ViewBag.ReturnBack == 1)
+                                        {
+                                            <a href='/Dashboard/EmergencyDashboard' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
+                                        }
+                                        else
+                                        {
+                                            <a href='/Dashboard/Dashboard911' class='mdc-button mdc-button--raised mdc-ripple-upgraded'>Back</a>
+                                        }
                                     }
                                 </div>
                             </div>
@@ -349,9 +356,9 @@
     };
 </script>
 <script>
-    function Changeurldetails(type, uniqueid) {
+    function Changeurldetails(type, uniqueid,returnBack) {
         if (uniqueid == "" || uniqueid == null) {
-            window.location.href = "/Dashboard/InterviewerIRFDetails?type=" + type;
+            window.location.href = "/Dashboard/InterviewerIRFDetails?type=" + type+"&returnBack=" + returnBack;
         }
         else {
             window.location.href = "/Dashboard/InterviewerRiskIRFDetails?type=" + type + "&uniqueid=" + uniqueid;
