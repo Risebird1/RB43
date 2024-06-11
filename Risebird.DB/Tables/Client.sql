@@ -27,7 +27,9 @@ CREATE TABLE [dbo].[Client](
             [Reportsnippet][int] Null,
             [IsTranscript][bit] Null,
             [ShowInterviewInstructions][bit] Null,
-            [isCandidateportal][bit] Null
+            [isCandidateportal][bit] Null,
+            [IsPlanFlixable][bit] null,
+            [PlanType][int]null,
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -278,6 +280,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add isCandidateportal bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsPlanFlixable')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add IsPlanFlixable bit
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PlanType')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add PlanType int
 END
 
 END

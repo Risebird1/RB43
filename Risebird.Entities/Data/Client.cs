@@ -69,7 +69,7 @@ namespace Risebird.Entities.Data
         [Display(Name = "Payment Term")]
         public int PaymentTerm { get; set; }
         public SelectList GSTApplicableList { get; set; }
-
+        
         [Display(Name = "Client Type")]
         public int ClientType { get; set; } // service, product, elite
 
@@ -80,5 +80,8 @@ namespace Risebird.Entities.Data
         public int Reportsnippet { get; set; }
         [Display(Name = "Video Transcript")]
         public bool IsTranscript { get; set; }
+        public SelectList Heuristicsscorelist { get; set; }
+        public int PlanType { get; set; }
+        public bool IsPlanFlixable { get; set; }
     }
 }

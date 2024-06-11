@@ -33,7 +33,9 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @ClientType int,
 @CountryType int,
 @Reportsnippet int,
-@IsTranscript bit
+@IsTranscript bit,
+@IsPlanFlixable bit,
+@PlanType int
 AS          
 Begin          
       
@@ -65,6 +67,8 @@ SET
   ,[CountryType]= @CountryType
   ,[Reportsnippet]=@Reportsnippet
   ,[IsTranscript]=@IsTranscript
+  ,[IsPlanFlixable]=@IsPlanFlixable
+  ,[PlanType]=@PlanType
 WHERE          
       Id = @id          
 End     
