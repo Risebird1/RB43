@@ -227,6 +227,8 @@ namespace Risebird.Repository
             parameters.Add("@PaymentTerm", entity.PaymentTerm);
             parameters.Add("@Reportsnippet", entity.Reportsnippet);
             parameters.Add("@IsTranscript", entity.IsTranscript);
+            parameters.Add("@IsPlanFlixable", entity.IsPlanFlixable);
+            parameters.Add("@PlanType", entity.PlanType);
             if (entity.GSTApplicable == 1)
             {
                 parameters.Add("@GSTApplicable", true);
