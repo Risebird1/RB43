@@ -45,6 +45,7 @@ CREATE TABLE [dbo].[Candidate](
 	[IsProctor] [bit] NULL,
 	[AffindaResumeIdentifier] [varchar](75) NULL,
     [CodedResumeLink] [varchar](2000) NULL,
+    [PreReportLink] [varchar](500) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -431,6 +432,12 @@ AND Object_ID = Object_ID(N'Candidate'))
 BEGIN
 	alter table Candidate
 	Add IsResumeRedactFailed bit null
+END
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'PreReportLink')
+AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+	alter table Candidate
+	Add PreReportLink varchar(500) null
 END
 
 End
