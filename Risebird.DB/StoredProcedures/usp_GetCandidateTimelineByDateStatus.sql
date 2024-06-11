@@ -31,8 +31,10 @@ begin
  Select ab.*,csm.StatusValue as ScheduleStatusValue,cs.Comments as ScheduleStatusComments,  
  CountTable.CallsCount, CountTable.MailCount, CountTable.WhatsappCount,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment from(    
  Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate
+ ,Cd.HasEmailDroppedOrBounced
  from              
- (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid, IRF.EndDate
+ (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,IRF.EndDate
+ ,dbo.fn_HasEmailDroppedOrBounced(CTE.EmailId) as HasEmailDroppedOrBounced
  from CTE join      
  IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id              
  left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                          
@@ -44,10 +46,10 @@ begin
  Where tcul.EmailId=@Emailid and cs.Date is not Null and c.ProfileSource=@Emailid AND ISNULL(cci.IsColdCandidate,0) !=1                      
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
  c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
- c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)), IRF.EndDate having Count(*)=1) as Cd                
+ c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)),IRF.EndDate,dbo.fn_HasEmailDroppedOrBounced(CTE.EmailId) having Count(*)=1) as Cd                
  where cd.dtCreatedOn>=@startDate and cd.dtCreatedOn<@endDate      
  group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,  
- Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate)as ab     
+ Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate,Cd.HasEmailDroppedOrBounced)as ab     
  OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(ab.IRFId, ab.Emailid) as CountTable
  outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ab.IRFId and CandidateId = ab.CandidateMasterId  order by cs.Date desc) as LastCandidateStatus
  --left join RisebirdCandidateCommunicationCount rccc on rccc.IRFId = ab.IRFId  
@@ -63,9 +65,11 @@ begin
  Union All Select distinct im.candidateEmail,irf.IRFId ,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber from InterviewMeetings im join irf on irf.IRFId=im.IRFId join Userlist ul on ul.EmailId=im.candidateEmail left join Trans_QCFormReport tqr on tqr.Interviewid=im.id where irf.ClientId=@Clientid and irf.EndDate>=GetDate() and IsNull(IsPaused,0)=0)                            
  Select ab.*,csm.StatusValue as ScheduleStatusValue,cs.Comments as ScheduleStatusComments, --D.*   
  CountTable.CallsCount, CountTable.MailCount, CountTable.WhatsappCount,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment from(    
- Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid, Cd.EndDate
+ Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate
+ ,Cd.HasEmailDroppedOrBounced
  from              
- (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid, IRF.EndDate
+ (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,IRF.EndDate
+ ,dbo.fn_HasEmailDroppedOrBounced(CTE.EmailId) as HasEmailDroppedOrBounced
  from CTE join      
  IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id              
  left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                     
@@ -77,11 +81,11 @@ begin
  Where tcul.EmailId=@Emailid and cs.Date is not Null and c.ClientHRAttemptContact=@Emailid AND ISNULL(cci.IsColdCandidate,0) !=1                      
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
  c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
- c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)), IRF.EndDate having Count(*)=1) as Cd          
+ c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)),IRF.EndDate,dbo.fn_HasEmailDroppedOrBounced(CTE.EmailId) having Count(*)=1) as Cd          
    
  where cd.dtCreatedOn>=@startDate and cd.dtCreatedOn<@endDate      
  group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,  
- Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate)as ab     
+ Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate,Cd.HasEmailDroppedOrBounced)as ab     
  --outer apply   
  --(  
  --select rccc.* from RisebirdCandidateCommunicationCount rccc join InterviewMeetings imr on imr.id = rccc.InterviewId  
@@ -103,10 +107,10 @@ begin
  Select ab.*,csm.StatusValue as ScheduleStatusValue,cs.Comments as ScheduleStatusComments, --D.*   
  CountTable.CallsCount, CountTable.MailCount, CountTable.WhatsappCount,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment from(    
  Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate
-
+ ,Cd.HasEmailDroppedOrBounced
  from              
- (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid, IRF.EndDate
-
+ (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,IRF.EndDate
+ ,dbo.fn_HasEmailDroppedOrBounced(CTE.EmailId) as HasEmailDroppedOrBounced
  from CTE join      
  IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id              
  left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                     
@@ -116,10 +120,10 @@ begin
  Where cs.Date is not Null AND ISNULL(cci.IsColdCandidate,0) !=1
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,  
  c.resumeLink,c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,  
- c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)), IRF.EndDate having Count(*)=1) as Cd          
+ c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)),IRF.EndDate,dbo.fn_HasEmailDroppedOrBounced(CTE.EmailId) having Count(*)=1) as Cd          
  where cd.dtCreatedOn>=@startDate and cd.dtCreatedOn<@endDate      
  group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,  
- Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate)as ab     
+ Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate,Cd.HasEmailDroppedOrBounced)as ab     
  OUTER APPLY dbo.fn_GetCandidateCommunicationCountForIRF(ab.IRFId, ab.Emailid) as CountTable 
   outer apply(select top 1 csom.StatusValue,cs.Comments as LatestComment From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=ab.IRFId and CandidateId = ab.CandidateMasterId  order by cs.Date desc) as LastCandidateStatus
  join CandidateStatus cs on ab.interviewDate=cs.Date and ab.IRFId=cs.IRFId and ab.CandidateMasterId=cs.CandidateId    
@@ -135,8 +139,10 @@ begin
  Select ab.*,csm.StatusValue as ScheduleStatusValue,cs.Comments as ScheduleStatusComments, --D.*,   
  CountTable.CallsCount, CountTable.MailCount, CountTable.WhatsappCount,LastCandidateStatus.StatusValue,LastCandidateStatus.LatestComment from(    
  Select Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle as PrimarySkill,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact as HREmail,Max(dtCreatedOn) as interviewDate,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate
+ ,Cd.HasEmailDroppedOrBounced
  from              
- (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid, IRF.EndDate
+ (Select c.id as CandidateId,IRF.id as imid,IRF.id as IRFId,CTE.Emailid,CTE.IRFId as IRFName,candidateName as Name,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,cs.Date as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,IRF.JobCountry,c.CandidateMasterId,c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid,IRF.EndDate
+ ,dbo.fn_HasEmailDroppedOrBounced(CTE.EmailId) as HasEmailDroppedOrBounced
  from CTE join      
  IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id              
  left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                     
@@ -148,10 +154,10 @@ begin
  Where tcul.EmailId=@Emailid and cs.Date is not Null AND ISNULL(cci.IsColdCandidate,0) !=1                       
  group by c.id,IRF.id,IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,  
  c.ClientHRAttemptContact,cs.Date,IRF.CalendlyLink,cl.Name,IRF.JobCountry,c.CandidateMasterId,  
- c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)), IRF.EndDate having Count(*)=1) as Cd                
+ c.ProfileSource,SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)),IRF.EndDate,dbo.fn_HasEmailDroppedOrBounced(CTE.EmailId) having Count(*)=1) as Cd                
    
  where cd.dtCreatedOn>=@startDate and cd.dtCreatedOn<@endDate      
- group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate)as ab     
+ group by Cd.CandidateId,Cd.imid,Cd.IRFId,Cd.Emailid,Cd.IRFName,Cd.Name,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,ClientName,JobCountry,Cd.CandidateMasterId,Cd.ProfileSource,Cd.SchedulerUniqueid,Cd.EndDate,Cd.HasEmailDroppedOrBounced)as ab     
  --outer apply   
  --(  
  --select rccc.InterviewId, rccc.CallsCount, rccc.MailCount, rccc.WhatsappCount from RisebirdCandidateCommunicationCount rccc join InterviewMeetings imr on imr.id = rccc.InterviewId  
@@ -195,6 +201,7 @@ if @EmailId is not null
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
  im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked 
  ,im.RedoInterview,ic.InterviewerComment, ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
+ ,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -214,7 +221,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId)
       
   End                          
  End                              
@@ -233,6 +240,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
  im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
+ ,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -253,7 +261,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,im.id,IRF.id,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end  
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end ,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId)
             
    End                             
   else if(@roleId=4)                            
@@ -270,6 +278,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
  im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
+,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId     
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -290,7 +299,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end         
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId)         
                             
   End          
    else if(@roleId=9)                            
@@ -307,6 +316,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
  im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
+,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -324,7 +334,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end         
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId)         
                             
   End          
   else                              
@@ -341,6 +351,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END) as PrimarySkill,  
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
  im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment ,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone 
+ ,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced
  from InterviewMeetings im   
 join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
@@ -362,7 +373,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus,im.id,IRF.id, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,       
     (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,  
- IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end   
+ IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId)   
                
    End                              
  End                              
@@ -381,6 +392,7 @@ Else
  ul.MobileNumber,IRF.id as imid,IRF.IRFId as IRFname,IRF.CalendlyLink,ic.InterviewerNickName,  
  im.Interviewer, CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,
  im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQCDone
+,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId) as HasEmailDroppedOrBounced
 from InterviewMeetings im join IRF on IRF.IRFId=im.IRFId      
 join UserList ul on ul.EmailId=im.candidateEmail       
 join CandidatesMaster cm on cm.UserId=ul.id      
@@ -400,7 +412,7 @@ group by ca.id, ca.CandidateMasterId, ul.EmailId,
     case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end,                            
     ca.ClientHRAttemptContact, ca.ProfileSource,im.id,IRF.id,cs.Comments,csm.StatusValue,ic.InterviewStatus,ic.MeetingStatus, im.confirmationStatus, irf.IRFId, ca.Phone,im.interviewDate,        
  (CASE WHEN CHARINDEX('|', JDTiltle) > 0 THEN SUBSTRING(JDTiltle, 1, CHARINDEX('|', JDTiltle) -1) ELSE JDTiltle END),ul.MobileNumber,IRF.id,IRF.IRFId,IRF.CalendlyLink,ic.InterviewerNickName,im.Interviewer  
-    , CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end
+    , CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,tqr.IsReportBlocked,im.RedoInterview,ic.InterviewerComment,ic.VideoLink,im.zoomLink,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end,dbo.fn_HasEmailDroppedOrBounced(ul.EmailId)
  End                     
 END                    
                                
