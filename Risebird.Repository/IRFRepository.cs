@@ -8357,13 +8357,15 @@ namespace Risebird.Repository
             }
 
         }
-        public async Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates()
+        public async Task<IEnumerable<IRFVm>> GetSkillChannelsCreatedUsingTemplates(string EmailId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetSkillChannelsCreatedUsingTemplates", null,
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@EmailId", EmailId);
+                    return await SqlMapper.QueryAsync<IRFVm>(con, "usp_GetSkillChannelsCreatedUsingTemplates", dynamicParameters,
                          commandType: CommandType.StoredProcedure);
                 }
             }

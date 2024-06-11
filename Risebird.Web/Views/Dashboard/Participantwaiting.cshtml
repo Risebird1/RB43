@@ -26,20 +26,29 @@
                 <div class="pull-left">
                     @if (ViewBag.Type == "Interviewer")
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack')"><strong>Candidate</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack')"><strong>Interviewer</strong></div>
                     }
                     else
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack')"><strong>Candidate</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack')"><strong>Interviewer</strong></div>
                     }
                 </div>
                 <div class="pull-right">
                     <div>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                        </button>
+                        @if (ViewBag.ReturnBack == 1)
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
@@ -400,8 +409,8 @@
         var modal = document.getElementById("ZoomMeetingHistory");
         modal.style.display = "none";
     }
-    function Changeurldetails(type) {
-        window.location.href = "/DashBoard/Participantwaiting?type=" + type;
+    function Changeurldetails(type,returnBack) {
+        window.location.href = "/DashBoard/Participantwaiting?type=" + type + "&returnBack=" + returnBack;
     }
 </script>
 

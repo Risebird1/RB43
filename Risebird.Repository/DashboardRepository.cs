@@ -907,7 +907,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchRibbonDetailsValuesbydate", parameters,
-                        commandType: CommandType.StoredProcedure);
+                        commandType: CommandType.StoredProcedure,commandTimeout:600);
                     return result?.ToList();
                 }
             }
@@ -1272,13 +1272,14 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetRedoRrquest()
+        public async Task<IEnumerable<MeetingVM>> GetRedoRrquest(string EmailId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", EmailId);
                     var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_ShowRedoRequestLit", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -1337,12 +1338,13 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> PotentialRiskByCandidate()
+        public async Task<IEnumerable<MeetingVM>> PotentialRiskByCandidate(string EmailId)
         {
             try
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@CurrentDate", DateTime.Now);
+                dynamicParam.Add("@EmailId",EmailId);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MeetingVM>(conChange, "usp_PotentialRiskByCandidate", dynamicParam,
@@ -1356,13 +1358,15 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails()
+        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails(string EmailId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchParticipantwaitingDetails", null,
+                    DynamicParameters dynamicParam = new DynamicParameters();
+                    dynamicParam.Add("@EmailId", EmailId);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchParticipantwaitingDetails", dynamicParam,
                         commandType: CommandType.StoredProcedure);
                     return result?.ToList();
                 }
@@ -1493,7 +1497,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null, string emailid = null)
         {
             try
             {
@@ -1501,7 +1505,9 @@ namespace Risebird.Repository
                 parameters.Add("@recipientType", recipientType);
                 parameters.Add("@startDate", startDate);
                 parameters.Add("@endDate", endDate);
+                parameters.Add("@startDate", DateTime.Now.AddDays(-10));
                 parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@EmailId", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<MailRecipientActivityDetailsVM>(con, "usp_GetEmailRecipientsActivityBounceDropped", parameters, commandTimeout: 600,
@@ -1517,14 +1523,16 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<List<MeetingVM>> GetDMApproveDetailsRepository()
+        public async Task<List<MeetingVM>> GetDMApproveDetailsRepository(string EmailId)
         {
             try
             {
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetDmApproveDetails",
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId",EmailId);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetDmApproveDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result?.ToList();
                 }
@@ -1562,7 +1570,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type,string uniqueid)
+        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type,string uniqueid, string Email)
         {
             try
             {
@@ -1570,6 +1578,7 @@ namespace Risebird.Repository
                 parameters.Add("@type", type);
                 parameters.Add("@uniqueid", uniqueid);
                 parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@Email",Email);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1589,13 +1598,14 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type)
+        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId)
         {
             try
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("@type", type);
                 parameters.Add("@timeNow", DateTime.Now);
+                parameters.Add("@EmailId", EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<PQIDetails>(con, "usp_PLIInfoDetails", parameters,
@@ -1614,13 +1624,15 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchTechQCDetails()
+        public async Task<List<MeetingVM>> FetchTechQCDetails(string EmailId)
         {
             try
             {
+                var parameters = new DynamicParameters();
+                parameters.Add("@EmailId",EmailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchTechQCDetails", null,
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_FetchTechQCDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result?.ToList();
                 }
@@ -1637,7 +1649,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue)
+        public async Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue, string EmailId)
         {
             try
             {
@@ -1649,13 +1661,16 @@ namespace Risebird.Repository
                         
                         parameters.Add("@startDate", DateTime.Now.AddMonths(-6));
                         parameters.Add("@endDate", DateTime.Now);
+                        parameters.Add("@Emailid", EmailId);
                         var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetColdCandidateList",parameters ,commandTimeout: 600,
                             commandType: CommandType.StoredProcedure);
                         return result.ToList();
                     }
                     else
                     {
-                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidate", commandTimeout: 600,
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@Emailid", EmailId);
+                        var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidate",parameters, commandTimeout: 600,
                                                     commandType: CommandType.StoredProcedure);
                         return result.ToList();
                     }
@@ -1720,13 +1735,15 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<List<MeetingVM>> PotentialPausedRepository()
+        public async Task<List<MeetingVM>> PotentialPausedRepository(string EmailId)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetPotentialPauseChannel", null,
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@EmailId ", EmailId);
+                    var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetPotentialPauseChannel", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
                     return result?.ToList();
                 }
@@ -1758,6 +1775,27 @@ namespace Risebird.Repository
                         return result.ToList();                   
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<InterviewManagementVM>> GetAllInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startdate", interviewstartdate);
+                    parameters.Add("@enddate", interviewenddate);
+                    var result = await SqlMapper.QueryAsync<InterviewManagementVM>(con, "usp_AllEmergencyInterviewsDetails", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result;
+                }
             }
             catch (SqlException ex)
             {

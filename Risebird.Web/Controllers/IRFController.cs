@@ -9020,7 +9020,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Campaigns()
+        public async Task<IActionResult> Campaigns(int returnBack)
         {
             try
             {
@@ -9030,6 +9030,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
                     {
                         var model = await _irfService.GetCampaignList();
@@ -9254,7 +9255,7 @@ namespace Risebird.Web.Controllers
         #endregion 
 
         [HttpGet]
-        public async Task<IActionResult> SkillChannelsByTemplate()
+        public async Task<IActionResult> SkillChannelsByTemplate(int returnBack)
         {
             try
             {
@@ -9264,9 +9265,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
                     {
-                        var model = await _irfService.GetSkillChannelsCreatedUsingTemplates();
+                        var model = await _irfService.GetSkillChannelsCreatedUsingTemplates(emailid);
                         ViewBag.Profile = profileName;
                         return View(model);
                     }
@@ -9318,7 +9320,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [Authorize]
-        public async Task<IActionResult> CalibrationMeetingsDetails(string type)
+        public async Task<IActionResult> CalibrationMeetingsDetails(string type,int returnBack)
         {
             try
             {
@@ -9329,6 +9331,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
+                    ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _irfService.GetAllCalibrationMeetingsById(emailid, "All");

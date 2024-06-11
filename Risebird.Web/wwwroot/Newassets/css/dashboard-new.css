@@ -7088,9 +7088,9 @@ input[type=search]:focus {
     cursor: pointer;
     top: 10px;
     position: relative;
-    right: 0px;
+    right: 35px;
     float: right;
-    width: 181px;
+    width:auto;
     line-height: 40px;
     color: #244871;
     font-weight: bold;

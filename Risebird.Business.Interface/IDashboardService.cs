@@ -55,27 +55,28 @@ namespace Risebird.Business.Interface
         Task<QCFormVM> GetRedFlagsQCReportService(int Interviewid);
         Task<bool> UndoSuspiciousInterviewerService(int InterviewerProfileId);
         Task<bool> ApprovedRedoInterviewsService(int InterviewId, string modifyBy, DateTime modifyDate);
-        Task<IEnumerable<MeetingVM>> GetRedoRequestService();
+        Task<IEnumerable<MeetingVM>> GetRedoRequestService(string EmailId);
         Task<IEnumerable<InterviewerRedmarkers>> GetHighRiskInterviewersService();
         Task<bool> AddRedoInterviewsService(int InterviewId, string Type);
         Task<bool> MoveToUnassignService(int meetingId);
-        Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService();
-        Task<List<MeetingVM>> FetchParticipantwaitingDetails();
+        Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService(string EmailId);
+        Task<List<MeetingVM>> FetchParticipantwaitingDetails(string EmailId);
         Task<IEnumerable<InterviewerVideoKYCVM>> GeInterviewerVideoKYC();
         Task<bool> UpdateInterviewerVideoKYC(int id, string type);
         Task<IEnumerable<ProctoringReport>> GetProxyReport();
         Task<ProctoringReport> GetProxyReportCountDetails(int id);
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate, string Emailid);
-        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null);
-        Task<List<MeetingVM>> GetDMApproveDetails();
+        Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null,string emailid=null);
+        Task<List<MeetingVM>> GetDMApproveDetails(string EmailId);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailDetails(int campaignId);
-        Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null);
-        Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue);
+        Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null,string Email=null);
+        Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue,string EmailId);
         Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type);
-        Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type);
-        Task<List<MeetingVM>> FetchTechQCDetails();
+        Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type,string EmailId);
+        Task<List<MeetingVM>> FetchTechQCDetails(string EmailId);
         Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail);
-        Task<List<MeetingVM>> PotentialPausedDetails();
+        Task<List<MeetingVM>> PotentialPausedDetails(string EmailId);
         Task<List<MeetingVM>> GetColdCandidatesByClient(string Email);
+        Task<IEnumerable<InterviewManagementVM>> GetAllInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate);
     }
 }

@@ -19,23 +19,33 @@
             <div class="card-header bg-w clearfix">
 
                 <div class="pull-right client-ms">
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                    </button>
+                    @if (ViewBag.ReturnBack == 1)
+                    {
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                        </button>
+
+                    }
+                    else
+                    {
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                        </button>
+                    }
                 </div>
 
 
                 <div>
                     @if (ViewBag.ColdCandidateValue == 0)
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails(0)"><strong>Potentially Pausable Skill Channel</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails(1)"><strong>Paused Skill Channel</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails(0,'@ViewBag.ReturnBack')"><strong>Potentially Pausable Skill Channel</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails(1,'@ViewBag.ReturnBack')"><strong>Paused Skill Channel</strong></div>
 
                     }
                     else if (ViewBag.ColdCandidateValue == 1)
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails(0)"><strong>Potentially Pausable Skill Channel</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails(1)"><strong>Paused Skill Channel</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails(0,'@ViewBag.ReturnBack')"><strong>Potentially Pausable Skill Channel</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails(1,'@ViewBag.ReturnBack')"><strong>Paused Skill Channel</strong></div>
 
                     }
 
@@ -301,8 +311,8 @@
         window.location.href = "/IRF/NotScheduledCandidate?IRFId=" + IRFId;
     }
 
-    function Changeurldetails(type) {
-        window.location.href = "/Dashboard/PotentialPausedDetails?type=" + type;
+    function Changeurldetails(type,returnBack) {
+        window.location.href = "/Dashboard/PotentialPausedDetails?type=" + type + "&returnBack=" + 1;
     }
 </script>
 

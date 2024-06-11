@@ -25,20 +25,30 @@
                 <div class="pull-left">
                     @if (ViewBag.actionstatus == "SLACompleted")
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('PaymentCompliance')"><strong>Payment Compliance</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('SLACompleted')"><strong>SLA Completed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
                     }
                     else
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('PaymentCompliance')"><strong>Payment Compliance</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('SLACompleted')"><strong>SLA Completed</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('PaymentCompliance','@ViewBag.ReturnBack')"><strong>Payment Compliance</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('SLACompleted','@ViewBag.ReturnBack')"><strong>SLA Completed</strong></div>
                     }
                 </div>
                 <div class="pull-right">
                     <div>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                        </button>
+                        @if (ViewBag.ReturnBack == 1)
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                            </button>
+                        }
+
                     </div>
                 </div>
             </div>
@@ -464,8 +474,8 @@
         html += ' </table></div>';
         $("#divcandidateskills").empty().html(html);
     }
-    function Changeurldetails(type) {
-        window.location.href = "/Interview/PaymentSlaDetails?actionstatus=" + type;
+    function Changeurldetails(type,returnBack) {
+        window.location.href = "/Interview/PaymentSlaDetails?actionstatus=" + type + "&returnBack=" + returnBack;
     }
 </script>
 <script>

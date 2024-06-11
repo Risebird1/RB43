@@ -11,9 +11,13 @@ GO
 CREATE Procedure usp_PQIHighStatsRates
 @timeNow datetime,
 @uniqueid varchar(50),
-@type varchar(50)
+@type varchar(50),
+@Email varchar(200)
 AS
 BEGIN
+Declare @Role varchar(150)              
+Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Email 
+
 Declare @Emailid varchar(150)
 if(@uniqueid!=null or @uniqueid!='')
 begin
@@ -80,7 +84,23 @@ join InterviewMeetings im on im.IRFId=ir.IRFId
 left join InterviewComments ic on ic.InterviewId = im.id  
 where (ic.InterviewStatus = 2) and (ic.MeetingStatus = 4 or ic.MeetingStatus = 6)  
 group by ir.IRFId,im.interviewer  
-  
+ if(@Role='SeniorHR')
+ Begin
+ ;With CTE as(
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName 
+from @tbl_RelevantInterviews im
+join IRF on IRF.IRFId=im.IRFId
+join UserList ul on IRF.RisebirdHr=ul.id
+join Client cl on cl.id=IRF.Clientid
+left join UserList ulc on ulc.id=IRF.BillingOwner
+left join UserList uli on uli.Emailid=im.interviewer
+left join InterviewerProfile ip on ip.UserId=uli.id
+left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewer=im.interviewer
+left join @tbl_InterviewerSelected ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer where ul.EmailId=@Email)
+Select * From CTE where selectionrate>=40
+ End
+ Else
+ Begin
 ;With CTE as(
 Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalSelected,(ISNULL(ism.TotalSelected,0)*100/icm.TotalCompletedMeetings) selectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName 
 from @tbl_RelevantInterviews im
@@ -93,6 +113,7 @@ left join InterviewerProfile ip on ip.UserId=uli.id
 left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewer=im.interviewer
 left join @tbl_InterviewerSelected ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer)
 Select * From CTE where selectionrate>=40
+END
 END
 else if(@type Like '%NegativeCandidate%')
 begin
@@ -108,7 +129,23 @@ join InterviewMeetings im on im.IRFId=ir.IRFId
 join CandidateFeedbackDetails cd on cd.InterviewId=im.id
 where cd.Rating<4
 group by ir.IRFId,im.interviewer  
-
+if(@Role='SeniorHR')
+BEGIN
+;With CTE as(
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.NegativeRating,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName 
+from @tbl_RelevantInterviews im
+join IRF on IRF.IRFId=im.IRFId
+join UserList ul on IRF.RisebirdHr=ul.id
+join Client cl on cl.id=IRF.Clientid
+left join UserList ulc on ulc.id=IRF.BillingOwner
+left join UserList uli on uli.Emailid=im.interviewer
+left join InterviewerProfile ip on ip.UserId=uli.id
+left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewer=im.interviewer
+left join @tbl_InterviewerNegativeRating ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer where ul.EmailId=@Email)
+Select * From CTE where NegativeRating>0
+END
+ELSE
+BEGIN
 ;With CTE as(
 Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.NegativeRating,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName 
 from @tbl_RelevantInterviews im
@@ -122,7 +159,7 @@ left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewe
 left join @tbl_InterviewerNegativeRating ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer)
 Select * From CTE where NegativeRating>0
 end
-
+END
 Else 
 begin
 DECLARE @tbl_InterviewerRejected TABLE (                      
@@ -137,7 +174,23 @@ join InterviewMeetings im on im.IRFId=ir.IRFId
 left join InterviewComments ic on ic.InterviewId = im.id  
 where (ic.InterviewStatus = 3) and (ic.MeetingStatus = 4  or ic.MeetingStatus = 7)  
 group by ir.IRFId,im.interviewer  
-  
+if(@Role='SeniorHR')
+BEGIN 
+;With CTE as(
+Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalRejected,(ISNULL(ism.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName  
+from @tbl_RelevantInterviews im
+join IRF on IRF.IRFId=im.IRFId
+join UserList ul on IRF.RisebirdHr=ul.id
+join Client cl on cl.id=IRF.Clientid
+left join UserList ulc on ulc.id=IRF.BillingOwner
+left join UserList uli on uli.Emailid=im.interviewer
+left join InterviewerProfile ip on ip.UserId=uli.id
+left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewer=im.interviewer
+left join @tbl_InterviewerRejected ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer where ul.EmailId=@Email)
+Select * From CTE where rejectionrate>=80
+END
+ELSE
+BEGIN
 ;With CTE as(
 Select IRF.id,im.IRFId,im.interviewer,im.TotalInterview,icm.TotalCompletedMeetings,ism.TotalRejected,(ISNULL(ism.TotalRejected,0)*100/icm.TotalCompletedMeetings) rejectionrate,ul.EmailId as ChannelOwner,cl.Name as Client,uli.id as UserId,ip.CompanyName,ulc.EmailId as Clienthr,IRF.JDTiltle,ip.NickName  
 from @tbl_RelevantInterviews im
@@ -151,5 +204,6 @@ left join @tbl_InterviewerCompleted icm on icm.IRFId=im.IRFId and icm.interviewe
 left join @tbl_InterviewerRejected ism on ism.IRFId=im.IRFId and ism.interviewer=im.interviewer)
 Select * From CTE where rejectionrate>=80
 end
+END
 END
 GO

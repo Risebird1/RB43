@@ -721,11 +721,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetRedoRequestService()
+        public async Task<IEnumerable<MeetingVM>> GetRedoRequestService(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.GetRedoRrquest();
+                return await _dashboardRespository.GetRedoRrquest(EmailId);
             }
             catch (Exception e)
             {
@@ -774,11 +774,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService()
+        public async Task<IEnumerable<MeetingVM>> GetPotentialRiskByCandidateService(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.PotentialRiskByCandidate();
+                return await _dashboardRespository.PotentialRiskByCandidate(EmailId);
             }
             catch (Exception e)
             {
@@ -786,11 +786,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails()
+        public async Task<List<MeetingVM>> FetchParticipantwaitingDetails(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.FetchParticipantwaitingDetails();
+                return await _dashboardRespository.FetchParticipantwaitingDetails(EmailId);
             }
             catch (Exception ex)
             {
@@ -863,11 +863,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null,string emailid=null)
         {
             try
             {
-                return await _dashboardRespository.GetEmailRecipientsDetails(recipientType, startDate, endDate);
+                return await _dashboardRespository.GetEmailRecipientsDetails(recipientType, startDate, endDate,emailid);
             }
             catch (Exception ex)
             {
@@ -876,11 +876,11 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<List<MeetingVM>> GetDMApproveDetails()
+        public async Task<List<MeetingVM>> GetDMApproveDetails(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.GetDMApproveDetailsRepository();
+                return await _dashboardRespository.GetDMApproveDetailsRepository(EmailId);
             }
             catch (Exception ex)
             {
@@ -901,11 +901,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null)
+        public async Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null, string Email = null)
         {
             try
             {
-                return await _dashboardRespository.GetInterviewerIRFDetails(type, uniqueid);
+                return await _dashboardRespository.GetInterviewerIRFDetails(type, uniqueid,Email);
             }
             catch (Exception ex)
             {
@@ -913,11 +913,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type)
+        public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId)
         {
             try
             {
-                return await _dashboardRespository.InterviewerIRFLogisticDetails(type);
+                return await _dashboardRespository.InterviewerIRFLogisticDetails(type,EmailId);
             }
             catch (Exception ex)
             {
@@ -925,11 +925,11 @@ namespace Risebird.Business
             }
             return null;
         }
-        public async Task<List<MeetingVM>> FetchTechQCDetails()
+        public async Task<List<MeetingVM>> FetchTechQCDetails(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.FetchTechQCDetails();
+                return await _dashboardRespository.FetchTechQCDetails(EmailId);
             }
             catch (Exception ex)
             {
@@ -938,11 +938,11 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue)
+        public async Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue,string EmailId)
         {
             try
             {
-                return (await _dashboardRespository.GetColdCandidatesRepository(ColdCandidateValue)).ToList();
+                return (await _dashboardRespository.GetColdCandidatesRepository(ColdCandidateValue,EmailId)).ToList();
             }
             catch (Exception ex)
             {
@@ -978,11 +978,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<List<MeetingVM>> PotentialPausedDetails()
+        public async Task<List<MeetingVM>> PotentialPausedDetails(string EmailId)
         {
             try
             {
-                return await _dashboardRespository.PotentialPausedRepository();
+                return await _dashboardRespository.PotentialPausedRepository(EmailId);
             }
             catch (Exception ex)
             {
@@ -1002,6 +1002,19 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<IEnumerable<InterviewManagementVM>> GetAllInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate)
+        {
+            try
+            {
+                return await _dashboardRespository.GetAllInterviewManagementDetails(interviewstartdate, interviewenddate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 }
