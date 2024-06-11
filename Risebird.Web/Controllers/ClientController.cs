@@ -4239,6 +4239,9 @@ namespace Risebird.Web.Controllers
             var gstapplicable = from Invoicesubmition s in Enum.GetValues(typeof(Invoicesubmition))
                                 select new { ID = (int)s, Name = s.GetDescription() };
             model.GSTApplicableList = new SelectList(gstapplicable, "ID", "Name");
+            var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            model.Heuristicsscorelist = new SelectList(Heuristics, "ID", "Name");
         }
 
         public async Task<IActionResult> GetClientCommentsForReport(int interviewId, bool allowClientAction = false)
