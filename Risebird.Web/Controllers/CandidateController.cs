@@ -5730,12 +5730,12 @@ namespace Risebird.Web.Controllers
                                 if (skilldata != null)
                                 {
                                     totalskillscount++;
-                                    totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                    totalskillscore += (skilldata.WeightageActual);// * 100 / skilldata.WeightageRequired);
                                     Sheet.Cells[i, jV].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
                                 }
                             }
                             jV++;
-                            Sheet.Cells[i, jV].Value = totalskillscore / totalskillscount;
+                            Sheet.Cells[i, jV].Value = totalskillscore; //  / totalskillscount;
 
                         }
                         else
@@ -5747,10 +5747,10 @@ namespace Risebird.Web.Controllers
                                 if (skilldata != null)
                                 {
                                     totalskillscount++;
-                                    totalskillscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                    totalskillscore += (skilldata.WeightageActual);// * 100 / skilldata.WeightageRequired);
                                 }
                             }
-                            Sheet.Cells[i, ++jV].Value = totalskillscore / totalskillscount;
+                            Sheet.Cells[i, ++jV].Value = totalskillscore; //  / totalskillscount;
                         }
                         if (item.ClientId == 177)
                         {
@@ -5788,12 +5788,12 @@ namespace Risebird.Web.Controllers
                                     if (skilldata != null)
                                     {
                                         totalskillsTwocount++;
-                                        totalskillTwoscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                        totalskillTwoscore += (skilldata.WeightageActual);// * 100 / skilldata.WeightageRequired);
                                         Sheet.Cells[i, jV].Value = (skilldata.WeightageActual * 100 / skilldata.WeightageRequired) + " %";
                                     }
                                 }
                                 jV++;
-                                Sheet.Cells[i, jV].Value = totalskillTwoscore / totalskillsTwocount;
+                                Sheet.Cells[i, jV].Value = totalskillTwoscore; //  / totalskillsTwocount;
 
                             }
                             else
@@ -5805,10 +5805,10 @@ namespace Risebird.Web.Controllers
                                     if (skilldata != null)
                                     {
                                         totalskillsTwocount++;
-                                        totalskillTwoscore += (skilldata.WeightageActual * 100 / skilldata.WeightageRequired);
+                                        totalskillTwoscore += (skilldata.WeightageActual);// * 100 / skilldata.WeightageRequired);
                                     }
                                 }
-                                Sheet.Cells[i, ++jV].Value = totalskillTwoscore / totalskillsTwocount;
+                                Sheet.Cells[i, ++jV].Value = totalskillTwoscore; //  / totalskillsTwocount;
                             }
                             if (item.ClientId == 177)
                             {
