@@ -48,13 +48,13 @@
                     {
                         if (ViewBag.actionstatus == "QCPendingReport")
                         {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
                         }
                         else
                         {
-                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport')"><strong>QC Pending Report</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport')"><strong>QC Report</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('QCPendingReport','@ViewBag.ReturnBack')"><strong>QC Pending Report</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('QCReport','@ViewBag.ReturnBack')"><strong>QC Report</strong></div>
                         }
                     }
                 </div>
@@ -67,9 +67,29 @@
 
                         @if (ViewBag.Actiontype == 0)
                         {
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                            </button>
+                            @if (ViewBag.ReturnBack == 1 && (ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" ||
+                            ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "QCPendingReport" 
+                            || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "SuspeciousInterviewerCount" 
+                            || ViewBag.actionstatus == "ZoomLink" || ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "NeedClarity"
+                           || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "CancelledInterviewCount" || ViewBag.actionstatus == "DeletedZoomMeetings"
+                           || ViewBag.actionstatus == "InterviewerChurn" || ViewBag.actionstatus == "VideoLink"))
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+                            }
+                            else if (ViewBag.ReturnBack == 2 && (ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport" || ViewBag.actionstatus == "MeetingStatus" || ViewBag.actionstatus == "VideoLink"))
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                    <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                                </button>
+                            }
                         }
                         else
                         {
@@ -125,7 +145,7 @@
                                             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <form action="@Url.Action("UnassignedInterviews","Dashboard",new { actionstatus=ViewBag.actionstatus,actiontype=ViewBag.Actiontype})" method="post" id="form">
+                                            <form action="@Url.Action("UnassignedInterviews","Dashboard",new { actionstatus=ViewBag.actionstatus,actiontype=ViewBag.Actiontype,returnBack=ViewBag.ReturnBack})" method="post" id="form">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -2025,7 +2045,8 @@
 
     function ResetFilter() {
         var value = $("#hidactionstatus").val();
-        window.location.href = "/Dashboard/ResetUnassignedInterviewsFilter?actionstatus=" + value;
+        var returnBack='@ViewBag.ReturnBack';
+        window.location.href = "/Dashboard/ResetUnassignedInterviewsFilter?actionstatus=" + value + "&returnBack=" + returnBack;
 
     }
     function ApplySessionFilter() {
@@ -2201,9 +2222,9 @@
         var modal = document.getElementById("ZoomMeetingHistory");
         modal.style.display = "none";
     }
-    function Changeurldetails(type) {
+    function Changeurldetails(type,returnBack) {
         var actiontype = $("#hidactiontype").val();
-        window.location.href = "/DashBoard/UnassignedInterviews?actionstatus=" + type + "&actiontype=" + actiontype;
+        window.location.href = "/DashBoard/UnassignedInterviews?actionstatus=" + type + "&actiontype=" + actiontype + "&returnBack=" + returnBack;
     }
 
     function Sendinvite(id, IRFId, CandidateEmail) {

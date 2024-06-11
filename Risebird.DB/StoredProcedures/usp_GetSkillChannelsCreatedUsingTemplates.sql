@@ -11,31 +11,49 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_GetSkillChannelsCreatedUsingTemplates]
-
-
+@EmailId varchar(150)
 AS
 Begin
+Declare @Role varchar(150)              
+Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid 
 
+if(@Role='SeniorHR')             
+BEGIN
 WITH CTE AS (
         SELECT Particulars, PerformedBy
         FROM ActivityTracker
         WHERE ActivityType=2--activity type 2 corresponds to creation of skill channel(refer enum)
 )
-
-select distinct irf.IRFId, irf.CreatedOn, csc.[Name] as CreatedFromTemplateName, cl.[Name] as ClientCompName, 
+select irf.IRFId, irf.CreatedOn, csc.[Name] as CreatedFromTemplateName, cl.[Name] as ClientCompName, 
 ul.EmailId as RisebirdHREmail, cte.PerformedBy as CreatedBy, asg.AssessmentGroup as AssessmentGroupName
 from IRF 
 join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId
 join Client cl on cl.id = irf.ClientId
-left join CTE on cte.Particulars = irf.IRFId
+join CTE on cte.Particulars = irf.IRFId
+join UserList ul on ul.id = irf.RisebirdHr
+join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
+where CreatedFromTemplateId is not null and CreatedFromTemplateId > 0 and ul.EmailId=@EmailId
+order by irf.CreatedOn desc
+End
+
+Else
+Begin
+WITH CTE AS (
+        SELECT Particulars, PerformedBy
+        FROM ActivityTracker
+        WHERE ActivityType=2--activity type 2 corresponds to creation of skill channel(refer enum)
+)
+select irf.IRFId, irf.CreatedOn, csc.[Name] as CreatedFromTemplateName, cl.[Name] as ClientCompName, 
+ul.EmailId as RisebirdHREmail, cte.PerformedBy as CreatedBy, asg.AssessmentGroup as AssessmentGroupName
+from IRF 
+join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId
+join Client cl on cl.id = irf.ClientId
+join CTE on cte.Particulars = irf.IRFId
 join UserList ul on ul.id = irf.RisebirdHr
 join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
 where CreatedFromTemplateId is not null and CreatedFromTemplateId > 0 
 order by irf.CreatedOn desc
-
 End
-
-
-
+End
 GO
 
