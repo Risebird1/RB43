@@ -8296,12 +8296,12 @@ ul.ks-cboxtags {
 
 .rate-strip {
     position: absolute;
-    top: -3px;
-    width: 97%;
+    width: 92%;
     margin-bottom: 10px;
     background: #eee;
     padding: 6px;
-    top: -2px;
+    top: -38px;
+    left: -1px;
 }
 
 .template-top {
@@ -10341,7 +10341,24 @@ option {
  #techskill-note .report-tooltip svg {
         top: 0px !important;
    }
-
+.tpround-image {
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 40px;
+    width: 40px;
+    margin: 5px;
+    background-size:contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #99858512;
+}
+.tpround-skill-name {
+    margin: 8px;
+    line-height: 35px;
+    font-size: 17px;
+    color:grey;
+}
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
         .rbpay .sb-scrollbar {
