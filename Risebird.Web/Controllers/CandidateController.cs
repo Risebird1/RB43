@@ -1538,7 +1538,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> SendInvite(int irfId, string IRFName, string emailId, DateTime endDate)
+        public async Task<IActionResult> SendInvite(int irfId, string IRFName, string emailId, DateTime endDate, int? communicationMedium = null)
         {
             try
             {
@@ -1556,7 +1556,7 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite! The requested Skill Channel positions have been filled.";
                             return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
                         }
-                        if (await _irfService.SendInvite(irfId, emailId, loggedInUserEmail, linkurl))
+                        if (await _irfService.SendInvite(irfId, emailId, loggedInUserEmail, linkurl, communicationMedium))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Invitation has been sent Successfully!";
                             return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });

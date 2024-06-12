@@ -688,20 +688,21 @@
 
                                                                                 @if (!item.IsColdCandidate)
                                                                                 {
-                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate })" title="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
-                                                                                        <span title="Send Invite"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
+                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Email })" title="Send Invite Over Mail" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                                        <span title="Send Invite over Email"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
+                                                                                    </a>
+                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
+                                                                                        <span title="Send Invite Over Whatsapp"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
                                                                                     </a>
                                                                                 }
                                                                             }
                                                                             else
                                                                             {
-                                                                               
                                                                                     <div id="getstatus_8" class="btn shadow btn-invite btn-xs sharp me-1 mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important">
                                                                                         <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
                                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" style="position:relative;top:-1px;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                                         </span>
                                                                                     </div>
-                                                                                
                                                                             }
                                                                         }
 
