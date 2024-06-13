@@ -42,7 +42,7 @@ Begin
  where ul.IsActive =1 and ul.emailid =@EmailParam and ir.Id = @irfIdParam    
     
  select im.id as Interviewid, im.resumeLink, im.zoomLink, im.interviewDate, im.candidateEmail, im.interviewSlot,    
- im.ConfirmationStatus,ic.MeetingStatus,ic.InterviewStatus, ulim.MobileNumber    
+ im.ConfirmationStatus,ic.MeetingStatus,ic.InterviewStatus, ulim.MobileNumber,im.TimeZoneoffset,im.TimeZonesValue    
  from InterviewMeetings im join InterviewComments ic on ic.interviewid=im.id  
  left join UserList ulim on ulim.EmailId=im.interviewer  
  where IRFId = @IRFName and candidateEmail = @EmailParam    
