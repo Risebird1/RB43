@@ -54,7 +54,7 @@ im.staffingAgency, ice.InterviewStatus as InterviewStatusTwo, ice.MeetingStatus 
 ice.InterviewerComment as InterviewerCommentTwo,
 tctv.ResumeLink, CandidateLatestStatus, tctv.AddedOnDate, tctv.InvitationSentOnDate, tctv.FirstScheduledOnDate, 
 tctv.FirstScheduledOninterviewDate, tctv.completedDate
-, psd.isQcDone, irf.IsDrive, ipr.NickName as InterviewerCodedName, irf.ClientId --177 for turing
+, 1 as isQcDone, irf.IsDrive, ipr.NickName as InterviewerCodedName, irf.ClientId --177 for turing
 from @TemporaryCandidateTableVariable tctv
 join InterviewMeetings im on im.id = tctv.InterviewId
 join IRF on IRF.IRFId=im.IRFId 
