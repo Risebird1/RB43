@@ -146,7 +146,10 @@ Begin
 	--where CandidateLatestStatus in ('SELECTED', 'REJECTED')
 	where CandidateLatestStatus like '%SELECTED%' or CandidateLatestStatus like '%REJECTED%' 
 End
-
+if(@numbertOfTechStacks is null)
+Begin
+	set @numbertOfTechStacks = 1
+End
 END
 GO
 
