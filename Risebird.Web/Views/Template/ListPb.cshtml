@@ -292,7 +292,9 @@
                                                             @if (!string.IsNullOrEmpty(item.Name))
                                                             {
                                                                 <td>
-                                                                    <span class="tpround-image pull-left" style="background-image: url(https://risebirdportal.blob.core.windows.net/skill-logo/azure-devops.png)"></span>
+                                                                    @* <span class="tpround-image pull-left" style="background-image: url(https://risebirdportal.blob.core.windows.net/skill-logo/dotnet.png)"></span>*@
+
+                                                                    <span class="tpround-image pull-left icon-color">@item.Name.Substring(0,1)</span>
 
                                                                 <span class="tpround-skill-name pull-left"> @item.Name</span> </td>
                                                                 @* <td> @Html.Raw(item.Name)</td> *@
@@ -416,7 +418,7 @@
 
         </div>
     </div>
-<</div>
+</div>
 @if (Model.Message != null && Model.Message2 != null)//&& Model.Message3 != null
 {
     <script type="text/javascript">
@@ -842,5 +844,11 @@ else if (Model.Message != null)
         model.style.display = "none";
     }
 </script> *@
-
+<script>
+$( document ).ready(function() {
+        var colors = ['#ffffff', '#ffbd4b', '#ff634b', '#4b9fff'];
+        document.querySelectorAll('.icon-color').forEach(
+            el => el.style.background-color = colors[Math.floor(Math.random() * colors.length)]);
+    };
+</script>
 
