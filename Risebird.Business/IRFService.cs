@@ -1180,7 +1180,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId, string linkurl)
+        public async Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId, string linkurl, int? communicationMedium = null)
         {
             try
             {
@@ -1209,17 +1209,24 @@ namespace Risebird.Business
                     }
                     oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + email;
                     //oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
-                    if (irf.BussinessType == "B2B")
+                    
+                    if(!communicationMedium.HasValue || (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Email))
                     {
-                        //_notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
-                        await _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId);
+                        if (irf.BussinessType == "B2B")
+                        {
+                            //_notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink);
+                            await _notificationHelper.SendB2BCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, client.LogoLink, client.CompanyLink, client.CompanyVideoLink, candidate.ProfileSource, irfId);
+
+                        }
+                        else
+                        {
+                            //_notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
+                            await _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, irfId);
+                        }
 
                     }
-                    else
-                    {
-                        //_notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact);
-                        await _notificationHelper.SendCandidateInvite(client.Name, jdLink, irfClientUsers.ToList(), primarySkill, (!string.IsNullOrEmpty(oneTimeSchedulingLink)) ? oneTimeSchedulingLink : calendlyLink, email, candidate.Name, candidate.ClientHRAttemptContact, candidate.ProfileSource, irfId);
-                    }
+                    
+                    
                     WhatsAppVM _whatsapp = new WhatsAppVM();
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;

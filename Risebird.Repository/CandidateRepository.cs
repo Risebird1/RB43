@@ -1079,7 +1079,7 @@ namespace Risebird.Repository
                                     IsDrive = dt.Rows[i]["IsDrive"] != null && dt.Rows[i]["IsDrive"] != DBNull.Value ? Convert.ToBoolean(dt.Rows[i]["IsDrive"]) : false,
 
                                     InterviewerComment = dt.Rows[i]["InterviewerComment"] != null ? dt.Rows[i]["InterviewerComment"].ToString() : null,
-                                    //MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
+                                    MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? dt.Rows[i]["MeetingStatus"].ToString() : null,
                                     //InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? dt.Rows[i]["InterviewStatus"].ToString() : null,
                                     CandidateLatestStatus = dt.Rows[i]["CandidateLatestStatus"] != null ? dt.Rows[i]["CandidateLatestStatus"].ToString() : null,
                                     InterviewerCodedName = dt.Rows[i]["InterviewerCodedName"] != null ? dt.Rows[i]["InterviewerCodedName"].ToString() : null,
