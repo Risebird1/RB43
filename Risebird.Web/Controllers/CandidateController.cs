@@ -4534,18 +4534,18 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser)
+        public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser, int? communicationMedium = null)
         {
             try
             {
                 var linkurl = "https://" + Request.Host.ToString();
-                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser, linkurl))
+                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser, linkurl, communicationMedium))
                 {
-                    return Json("Invitation has been sent Successfully!");
+                    return Json($"Invitation has been sent Successfully to {emailId}!");
                 }
                 else
                 {
-                    return Json("Sorry! Could not send invite!");
+                    return Json($"Sorry! Could not send invite to {emailId}!");
                 }
             }
             catch (Exception ex)
