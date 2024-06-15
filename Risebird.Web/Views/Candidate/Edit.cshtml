@@ -43,6 +43,11 @@
                                         @Html.EditorFor(model => model.PreReportLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.PreReportLink, "", new { @class = "text-danger" })
                                     </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PreReportUsername, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.PreReportUsername, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.PreReportUsername, "", new { @class = "text-danger" })
+                                    </div>
                                     @*   @if (Model.profileName != "Client")
                                 {
                                 <div class="form-group">
@@ -85,6 +90,11 @@
                                         @Html.EditorFor(model => model.ClientHRAttemptContact, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.ClientHRAttemptContact, "", new { @class = "text-danger" })
 
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PreReportPassword, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.PreReportPassword, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.PreReportPassword, "", new { @class = "text-danger" })
                                     </div>
                                     @*<div class="form-group">
                                 @Html.LabelFor(model => model.CurrentLocation, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
