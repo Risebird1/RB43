@@ -4534,18 +4534,18 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser)
+        public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser, int? communicationMedium = null)
         {
             try
             {
                 var linkurl = "https://" + Request.Host.ToString();
-                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser, linkurl))
+                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser, linkurl, communicationMedium))
                 {
-                    return Json("Invitation has been sent Successfully!");
+                    return Json($"Invitation has been sent Successfully to {emailId}!");
                 }
                 else
                 {
-                    return Json("Sorry! Could not send invite!");
+                    return Json($"Sorry! Could not send invite to {emailId}!");
                 }
             }
             catch (Exception ex)
@@ -5645,22 +5645,23 @@ namespace Risebird.Web.Controllers
 
                         Sheet.Cells[i, 13].Value = item.completedDate.HasValue ? item.completedDate.Value.ToString() : string.Empty;
 
-                        if (item.ClientId == 177)
-                        {
-                            if (item.isQcDone.HasValue && item.isQcDone.Value == true)
-                            {
-                                Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
-                            }
-                            else
-                            {
-                                Sheet.Cells[i, 14].Value = "QCPending(" + item.CandidateLatestStatus + ")";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
-                        }
+                        //if (item.ClientId == 177)
+                        //{
+                        //    if (item.isQcDone.HasValue && item.isQcDone.Value == true)
+                        //    {
+                        //        Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
+                        //    }
+                        //    else
+                        //    {
+                        //        Sheet.Cells[i, 14].Value = "QCPending(" + item.CandidateLatestStatus + ")";
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
+                        //}
 
+                        Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
 
                         Sheet.Cells[i, 15].Value = item.ClientHrContact;
                         Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
@@ -5752,21 +5753,22 @@ namespace Risebird.Web.Controllers
                             }
                             Sheet.Cells[i, ++jV].Value = totalskillscore; //  / totalskillscount;
                         }
-                        if (item.ClientId == 177)
-                        {
-                            if (item.isQcDone.HasValue && item.isQcDone.Value == true)
-                            {
-                                Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
-                            }
-                            else
-                            {
-                                Sheet.Cells[i, ++jV].Value = "QCPending(" + item.CandidateLatestStatus + ")";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
-                        }
+                        //if (item.ClientId == 177)
+                        //{
+                        //    if (item.isQcDone.HasValue && item.isQcDone.Value == true)
+                        //    {
+                        //        Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
+                        //    }
+                        //    else
+                        //    {
+                        //        Sheet.Cells[i, ++jV].Value = "QCPending(" + item.CandidateLatestStatus + ")";
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
+                        //}
+                        Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
                         if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
                         {
                             var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
@@ -5810,21 +5812,23 @@ namespace Risebird.Web.Controllers
                                 }
                                 Sheet.Cells[i, ++jV].Value = totalskillTwoscore; //  / totalskillsTwocount;
                             }
-                            if (item.ClientId == 177)
-                            {
-                                if (item.isQcDone.HasValue && item.isQcDone.Value == true)
-                                {
-                                    Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
-                                }
-                                else
-                                {
-                                    Sheet.Cells[i, ++jV].Value = "QCPending(" + (item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty) + ")";
-                                }
-                            }
-                            else
-                            {
-                                Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
-                            }
+                            //if (item.ClientId == 177)
+                            //{
+                            //    if (item.isQcDone.HasValue && item.isQcDone.Value == true)
+                            //    {
+                            //        Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+                            //    }
+                            //    else
+                            //    {
+                            //        Sheet.Cells[i, ++jV].Value = "QCPending(" + (item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty) + ")";
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+                            //}
+                            Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+
                             if (!string.IsNullOrWhiteSpace(item.InterviewerCommentTwo))
                             {
                                 var interviewerComentTwo = System.Net.WebUtility.HtmlDecode(item.InterviewerCommentTwo);
