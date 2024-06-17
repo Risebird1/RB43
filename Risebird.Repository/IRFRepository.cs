@@ -3750,6 +3750,8 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@WhatsappNumber", obj.WhatsappNumber);
                 dynamicParameters.Add("@IsProctor", obj.IsProctor);
                 dynamicParameters.Add("@PreReportLink", obj.PreReportLink);
+                dynamicParameters.Add("@PreReportUsername", obj.PreReportUsername);
+                dynamicParameters.Add("@PreReportPassword", obj.PreReportPassword);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<int>(

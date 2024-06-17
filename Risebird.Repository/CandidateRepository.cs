@@ -818,7 +818,9 @@ namespace Risebird.Repository
                                     confirmationStatus = dt.Rows[i]["ConfirmationStatus"] != null ? dt.Rows[i]["ConfirmationStatus"].ToString() : null,
                                     MeetingStatus = dt.Rows[i]["MeetingStatus"] != null ? !string.IsNullOrWhiteSpace(dt.Rows[i]["MeetingStatus"].ToString()) ? Convert.ToInt32(dt.Rows[i]["MeetingStatus"]) : null : null,
                                     InterviewStatus = dt.Rows[i]["InterviewStatus"] != null ? !string.IsNullOrWhiteSpace(dt.Rows[i]["InterviewStatus"].ToString()) ? Convert.ToInt32(dt.Rows[i]["InterviewStatus"]) : null : null,
-                                    MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null
+                                    MobileNumber = dt.Rows[i]["MobileNumber"] != null ? dt.Rows[i]["MobileNumber"].ToString() : null,
+                                    TimeZoneoffset = dt.Rows[i]["TimeZoneoffset"] != null ? Convert.ToInt32(dt.Rows[i]["TimeZoneoffset"]) : 0,
+                                    TimeZonesValue = dt.Rows[i]["TimeZonesValue"] != null ? dt.Rows[i]["TimeZonesValue"].ToString() : null
 
                                 });
                             }

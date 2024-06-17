@@ -157,6 +157,8 @@ namespace Risebird.Entities.ViewModel
         public bool HasEmailDroppedOrBounced { get; set; }
         public string CurrentInterviewStatus { get; set; }
         public string PreReportLink { get; set; }
+        public string PreReportUsername { get; set; }
+        public string PreReportPassword { get; set; }
 
     }
 }

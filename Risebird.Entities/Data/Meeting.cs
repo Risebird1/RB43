@@ -126,6 +126,9 @@ namespace Risebird.Entities.Data
         public string ConsentFormUrl { get; set; }
         public int SkillSetsevaluate { get; set; }
         public string PreReportLink { get; set; }
+        public int Heuristicsscore { get; set; }
+        public string PreReportUsername { get; set; }
+        public string PreReportPassword { get; set; }
 
     }
 }

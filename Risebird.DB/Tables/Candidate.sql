@@ -46,6 +46,8 @@ CREATE TABLE [dbo].[Candidate](
 	[AffindaResumeIdentifier] [varchar](75) NULL,
     [CodedResumeLink] [varchar](2000) NULL,
     [PreReportLink] [varchar](500) NULL,
+    [PreReportUsername] [varchar](50) NULL,
+    [PreReportPassword] [varchar](50) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -438,6 +440,18 @@ AND Object_ID = Object_ID(N'Candidate'))
 BEGIN
 	alter table Candidate
 	Add PreReportLink varchar(500) null
+END
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'PreReportUsername')
+AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+	alter table Candidate
+	Add PreReportUsername varchar(50) null
+END
+IF Not EXISTS(SELECT * FROM sys.columns WHERE Name IN (N'PreReportPassword')
+AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+	alter table Candidate
+	Add PreReportPassword varchar(50) null
 END
 
 End
