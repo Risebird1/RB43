@@ -31,6 +31,7 @@ namespace Risebird.Entities.ViewModel
         public int duration { get; set; }
         public int TimeSlotDays { get; set; }
         public int SkillSetsevaluate { get; set; }
+        public int Interviewduration { get; set; }
     }
     public class daytimes_report
     {
@@ -114,6 +115,7 @@ namespace Risebird.Entities.ViewModel
         public int Pagereturnvalue { get; set; }
         public string urlid { get; set; }
         public int SkillSetsevaluate { get; set; }
+        public int Interviewduration { get; set; }
     }
     public class TimeslotsVM
     {

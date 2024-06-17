@@ -114,8 +114,12 @@
                         <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                     </span>
                 </label>
-                <fieldset class="answer hidden" id="hidden_fields_eight">
-                    <div id="PreInterviewReport"><a target="_blank" href="@Model.PreReportLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Pre-Interview Report Link</span></a></div>
+                <fieldset class="row answer hidden" id="hidden_fields_eight">
+                    <div class="col-md-6" id="PreInterviewReport"><a target="_blank" href="@Model.PreReportLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Pre-Interview Report Link</span></a></div>
+                    <div class="col-md-6">
+                        <div>User Name: <strong>@Model.PreReportUsername</strong></div>
+                        <div>Password: <strong>@Model.PreReportPassword</strong></div>
+                    </div>
                 </fieldset>
             </div>
         </div>

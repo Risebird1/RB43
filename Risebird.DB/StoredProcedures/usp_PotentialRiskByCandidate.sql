@@ -49,4 +49,5 @@ left join UserList ulc on ulc.EmailId=im.candidateEmail
 join CandidatesMaster cm on cm.UserId=ulc.id 
 where cfd.Rating<=3 and Cast(interviewDate as Date)<= @CurrentDate --(Cast(interviewDate as Date)> Cast(DATEADD(day,-7,@CurrentDate) as Date) and Cast(interviewDate as Date)<= @CurrentDate)
 End
+End
 GO

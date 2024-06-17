@@ -31,6 +31,7 @@ using System.Xml;
 using Twilio.TwiML.Voice;
 using Twilio.Types;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 using Stream = System.IO.Stream;
 using Task = System.Threading.Tasks.Task;
@@ -2099,7 +2100,7 @@ namespace Risebird.Web.Controllers
                             bool result = await _irfService.AddCandidateStatus(model);
                             if (result)
                             {
-                               TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
+                                TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
                             }
                             else
                             {
@@ -3525,7 +3526,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.CandidateId = firstData.CandidateId;
                         candidateTimeline.IsQCDone = firstData.IsQCDone;
                         candidateTimeline.zoomLink = firstData.zoomLink;
-                        candidateTimeline.HasEmailDroppedOrBounced=firstData.HasEmailDroppedOrBounced;
+                        candidateTimeline.HasEmailDroppedOrBounced = firstData.HasEmailDroppedOrBounced;
                         //candidateTimeline.staffingAgency = firstData.staffingAgency;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -4072,7 +4073,7 @@ namespace Risebird.Web.Controllers
                             var intComment = GetContent(document);
                             Sheet.Cells[i, 12].Value = intComment;
                         }
-                      //  Sheet.Cells[i, 12].Value = item.InterviewerComment;
+                        //  Sheet.Cells[i, 12].Value = item.InterviewerComment;
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -4324,7 +4325,7 @@ namespace Risebird.Web.Controllers
                     //SheetNotScheduled.Cells[1, 5].Value = "Current Status";
 
                     SheetNotScheduled.Cells[1, 5].Value = "Client Hr";
-                    
+
                     int iNs = 2;
                     if (modelNotScheduled.Count() > 0)
                     {
@@ -4345,7 +4346,7 @@ namespace Risebird.Web.Controllers
                             //}
 
                             SheetNotScheduled.Cells[iNs, 5].Value = item.HREmail;
-                            
+
                             iNs++;
                         }
                         //return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4360,7 +4361,7 @@ namespace Risebird.Web.Controllers
 
                 //data for cold candidates
                 var coldCandidatesData = await _candidateService.GetColdCandidatesListByClient(emailid);
-                if(coldCandidatesData != null)
+                if (coldCandidatesData != null)
                 {
                     coldCandidatesData = coldCandidatesData.Select(x =>
                     {
@@ -4433,7 +4434,7 @@ namespace Risebird.Web.Controllers
                     SheetNpr.Cells[1, 2].Value = "Resume Link";
                     SheetNpr.Cells[1, 3].Value = "Is Email Missing";
                     SheetNpr.Cells[1, 4].Value = "Added On";
-                    
+
 
                     int iNpr = 2;
                     foreach (var item in notProcessedResumes)
@@ -4452,7 +4453,7 @@ namespace Risebird.Web.Controllers
                             SheetNpr.Cells[iNpr, 2].Value = "No Resume";
                         }
 
-                        if(item.IsEmailMissing.HasValue && item.IsEmailMissing.Value)
+                        if (item.IsEmailMissing.HasValue && item.IsEmailMissing.Value)
                         {
                             SheetNpr.Cells[iNpr, 3].Value = "Yes";
                         }
@@ -5197,6 +5198,22 @@ namespace Risebird.Web.Controllers
                     CandidateDetails.Timer = Convert.ToInt32(timediff.TotalMinutes);
                 }
                 //End: InterviewMeeting Timer
+                //Start: Candidate Scheduled Time in same TimeZone 
+                string timeZoneValue = "IST";
+                if (!string.IsNullOrWhiteSpace(details.TimeZonesValue) && !details.TimeZonesValue.Contains("Chennai"))
+                {
+                    timeZoneValue = details.TimeZonesValue.Split(")").ElementAtOrDefault(1);
+                    details.interviewDateTimeZone = details.interviewDate.AddMinutes(-(330 + details.TimeZoneoffset));
+                    if (timeZoneValue.Contains("("))
+                    {
+                        if (!timeZoneValue.Contains(")"))
+                        {
+                            timeZoneValue = timeZoneValue + ")";
+                        }
+                    }
+                    details.TimeZonesValue = timeZoneValue;
+                }
+                //End: Candidate Scheduled Time in same TimeZone 
             }
             foreach (var item in CandidateDetails.Meetings)
             {
@@ -5582,7 +5599,7 @@ namespace Risebird.Web.Controllers
                 int j = 18;
                 if (isDrive.HasValue && isDrive.Value)
                 {
-                    
+
                     foreach (var item in skillslist)
                     {
                         j++;
@@ -5620,8 +5637,8 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, ++j].Value = $"Interviewer Comment ({jdtitleTwo})"; //"Interviewer Comment (Stack 2)";//$"Interviewer Comment {jdtitleTwo}";
 
                 }
-                
-                
+
+
 
                 int i = 2;
                 if (model.Count() > 0)
@@ -5671,8 +5688,8 @@ namespace Risebird.Web.Controllers
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
                         // item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
-                        
-                       
+
+
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -5722,7 +5739,7 @@ namespace Risebird.Web.Controllers
                         int jV = 18;
                         if (isDrive.HasValue && isDrive.Value)
                         {
-                            
+
 
                             foreach (var skillvalue in skillslist)
                             {

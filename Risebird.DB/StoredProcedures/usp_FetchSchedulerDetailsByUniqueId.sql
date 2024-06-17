@@ -13,16 +13,20 @@ Create Procedure usp_FetchSchedulerDetailsByUniqueId
 @uniqueid varchar(50)
 AS
 BEGIN
-Select sie.*,IRF.MeetingPlatform,'IRF' schedulertype,IRF.SkillSetsevaluate from ScheduleInterviewEvent sie join IRF on IRF.IRFId=sie.SkillChannel 
+Select sie.*,IRF.MeetingPlatform,'IRF' schedulertype,IRF.SkillSetsevaluate,case when IRF.IsNewSkillChannel=1 then Isnull(pm.DurationSelectedMin,0) else 60 end as Interviewduration from ScheduleInterviewEvent sie join IRF on IRF.IRFId=sie.SkillChannel 
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType
 where uniqueid=@uniqueid and  IsActive=1 and IsNull(IsSingleUse,0)=0 
 union 
-Select sie.*,IRF.MeetingPlatform,'IRF' schedulertype,IRF.SkillSetsevaluate from ScheduleInterviewEvent sie join IRF on IRF.IRFId=sie.SkillChannelRelation 
+Select sie.*,IRF.MeetingPlatform,'IRF' schedulertype,IRF.SkillSetsevaluate,case when IRF.IsNewSkillChannel=1 then Isnull(pm.DurationSelectedMin,0) else 60 end as Interviewduration from ScheduleInterviewEvent sie join IRF on IRF.IRFId=sie.SkillChannelRelation 
+left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanTypeEnumValue=IRF.Heuristicsscore and pm.CompanyType=IRF.CompanyType
 where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0 and IsSingleUse=1 
 union 
-Select sie.*,'Zoom' MeetingPlatform,'Interviewer' schedulertype,1 as SkillSetsevaluate from ScheduleInterviewEvent sie join InterviewerSkillsChannel IRF on IRF.InterviewerSkillId=sie.SkillChannel 
+Select sie.*,'Zoom' MeetingPlatform,'Interviewer' schedulertype,1 as SkillSetsevaluate,60 as Interviewduration from ScheduleInterviewEvent sie join InterviewerSkillsChannel IRF on IRF.InterviewerSkillId=sie.SkillChannel 
 where uniqueid=@uniqueid and  IsActive=1 and IsNull(IsSingleUse,0)=0 
 union 
-Select sie.*,'Zoom' MeetingPlatform,'Interviewer' schedulertype,1 as SkillSetsevaluate from ScheduleInterviewEvent sie join InterviewerSkillsChannel IRF on IRF.InterviewerSkillId=sie.SkillChannelRelation
+Select sie.*,'Zoom' MeetingPlatform,'Interviewer' schedulertype,1 as SkillSetsevaluate,60 as Interviewduration from ScheduleInterviewEvent sie join InterviewerSkillsChannel IRF on IRF.InterviewerSkillId=sie.SkillChannelRelation
 where uniqueid=@uniqueid and IsActive=1 and IsNull(IsOnetimeUsed,0)=0 and IsSingleUse=1
 END
+
+
 GO
