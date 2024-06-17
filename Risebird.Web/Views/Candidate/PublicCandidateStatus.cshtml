@@ -4,6 +4,7 @@
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Candidates Status";
@@ -336,7 +337,7 @@
 <input type="text" hidden id="txtVideostatus" value="@ViewBag.PageType" />
 <input type="text" hidden id="hidtxtemailid" value="@ViewBag.emailid" />
 <input type="text" hidden id="hidtxtid" value="@ViewBag.Id" />
-<div class="client-toll-no"><b>SUPPORT :</b> <span style="color:#46f807;font-weight:bold">TOLL FREE <i style='font-size:15px;rotate:95deg;color:#fff' class='fa fa-phone'></i>18002578975</span></div>
+<div class="client-toll-no" style="position:fixed"><b>SUPPORT :</b> <span style="color:#46f807;font-weight:bold">TOLL FREE <i style='font-size:15px;rotate:95deg;color:#fff' class='fa fa-phone'></i>18002578975</span></div>
 <div id="main-panel">
     <div>
         <div class="pt30 videocon">
@@ -1214,10 +1215,13 @@
                                                                                                  <span title="Send Invite"><i class="fa fa-send" style="font-size:11px; position: relative;top:-1px;"></i></span>
                                                                                                        
                                                                                              </a> *@
-                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
+                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId', '@((int)CommunicationMedium.Email)')" data-original-title="Tooltip on top">
                                                                                                         <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send" style="color:#fff;font-size:11px;position:relative;top:-2px;"></span></span>
                                                                                                     </span>
-                                                                                                    }
+                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId', '@((int)CommunicationMedium.Whatsapp)')" data-original-title="Tooltip on top">
+                                                                                                        <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;background: #4eb14eb8!important;" title="Send Invite Over Whatsapp"><img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" /></span>
+                                                                                                    </span>
+                                                                                                }
 
                                                                                             }
 
@@ -1234,9 +1238,14 @@
                                                                                             {
                                                                                                 @if (!item.IsColdCandidate)
                                                                                                 {
-                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId')" data-original-title="Tooltip on top">
-                                                                                                        <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;" title="Send Invite"><span class="fas fa-send" style="color:#fff;font-size:11px;position:relative;top:-2px;"></span></span>
+                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId', '@((int)CommunicationMedium.Email)')" data-original-title="Tooltip on top">
+                                                                                                        <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;" title="Send Invite Over Email"><span class="fas fa-send" style="color:#fff;font-size:11px;position:relative;top:-2px;"></span></span>
                                                                                                     </span>
+
+                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="Sendinvite(@item.IRFId,'@item.IRFname','@item.CandidateEmailId', '@((int)CommunicationMedium.Whatsapp)')" data-original-title="Tooltip on top">
+                                                                                                        <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;background: #4eb14eb8!important;" title="Send Invite Over Whatsapp"><img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" /></span>
+                                                                                                    </span>
+                                                                                                    
                                                                                                 }
                                                                                             }
                                                                                          
@@ -1938,11 +1947,11 @@
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
-    function Sendinvite(id, IRFId, CandidateEmail) {
+    function Sendinvite(id, IRFId, CandidateEmail, communicationMedium = null) {
         $.ajax({
             url: '/Candidate/PublicSendInvite',
             type: 'POST',
-            data: { 'irfId': id, 'IRFName': IRFId, 'emailId': CandidateEmail, 'logiduser': $("#hidtxtemailid").val() },
+            data: { 'irfId': id, 'IRFName': IRFId, 'emailId': CandidateEmail, 'logiduser': $("#hidtxtemailid").val(), 'communicationMedium': communicationMedium },
             success: function (data) {
                 swal.fire(data);
             }

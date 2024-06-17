@@ -253,6 +253,11 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("SkillSet Evaluation Numbers")]
         [Required]
         public int SkillSetsevaluate { get; set; }
+
+        public int DisHeuristicsscore { get; set; }
+        public string DisCompanyType { get; set; }
+        public string DisJobCountry { get; set; }
+        public int DisSkillSetsevaluate { get; set; }
     }
     public class InterviewerIds
     {
