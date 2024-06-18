@@ -37,6 +37,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @BillingOwner int,     
 @AssessmentGroupId varchar(100),
 @SkillSetsevaluate int,
+@JDTitleTwo varchar(150),
 --@IsQCRequired bit,
 @IsJoinabilitySelectabilityRequired bit,
 @IsGeneralSkillRequired bit,
@@ -105,6 +106,7 @@ Begin
 				   ,[IsNewSkillChannel]
 				   ,[FlatRate]
 				   ,[SkillSetsevaluate]
+				   ,[JDTitleTwo]
 				   )
 				   --,[InterviewDuration]
 				   --,[IsFixedInterviewduration]
@@ -144,7 +146,8 @@ Begin
 				   @IsMeetingNotificationSend,
 				   @IsNewSkillChannel,
 				   @FlatRate,
-				   @SkillSetsevaluate
+				   @SkillSetsevaluate,
+				   @JDTitleTwo
 				   )
 				   --@InterviewDuration,
 				   --@IsFixedInterviewduration,

@@ -370,6 +370,7 @@ namespace Risebird.Entities.ViewModel
         public int TimeZoneoffset {  get; set; }
         public string TimeZonesValue {  get; set; }
         public DateTime interviewDateTimeZone { get; set; }
+        public string JDTitleTwo { get; set; }
     }
 
     public class VedioComments
