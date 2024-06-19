@@ -9563,7 +9563,7 @@ namespace Risebird.Web.Controllers
         }
         public async Task checkSkillSetandCombine(IRFVm irfDetails)
         {
-            if (String.IsNullOrWhiteSpace(irfDetails.JDTitleTwo))
+            if (string.IsNullOrWhiteSpace(irfDetails.JDTitleTwo))
             {
                 irfDetails.JDTitleTwo = "";
             }
