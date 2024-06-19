@@ -1,4 +1,5 @@
 ﻿using Aspose.Html;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -1586,6 +1587,67 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        public async Task<IActionResult> SendFeedbackReminder(int interviewId, int irfId, string IRFName, string emailId, int? communicationMedium = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
+                    loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        if (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp)
+                        {
+                            string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + interviewId;
+
+                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                            _whatsAppVM.Emailid = emailId;
+                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                            _whatsAppVM.Event = "Risebird: Interview Feedback";
+                            _whatsAppVM.irfId = irfId;
+                            _whatsAppVM.InterviewId = interviewId;
+                            _whatsAppVM.SentBy = loggedInUserEmail;
+                            var result = await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
+                            if (result != null && result.ToLower().Contains("success"))
+                            {
+                                TempData["SuccessErrorMessageCandidate"] = $"Invitation has been sent Successfully to {emailId}";
+                                return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
+                                return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            }
+
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Medium not specified!";
+                            return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
+                return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+            }
+        }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> CancelInvite(int irfId, string IRFName, string emailId)
@@ -4555,6 +4617,91 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not send invite!");
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> PublicSendFeedbackReminder(int interviewId, int irfId, string emailId, string loggedInUser, int? communicationMedium = null)
+        {
+            try
+            {
+                if(communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp)
+                {
+                    string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + interviewId;
+
+                    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                    _whatsAppVM.Emailid = emailId;
+                    _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                    _whatsAppVM.Event = "Risebird: Interview Feedback";
+                    _whatsAppVM.irfId = irfId;
+                    _whatsAppVM.InterviewId = interviewId;
+                    _whatsAppVM.SentBy = loggedInUser;
+                    var result = await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
+                    if(result != null && result.ToLower().Contains("success"))
+                    {
+                        return Json($"Invitation has been sent Successfully to {emailId}!");
+                    }
+                    else
+                    {
+                        return Json("Sorry! Could not send invite!");
+                    }
+
+                }
+                else
+                {
+                    return Json("Medium not specified!");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Could not send invite!");
+            }
+        }
+
+        //[AllowAnonymous]
+        //[HttpPost]
+        //public async Task<JsonResult> PublicSendInterviewReminder(int interviewId, int irfId, string emailId, string loggedInUser, int? communicationMedium = null)
+        //{
+        //    try
+        //    {
+        //        if (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp)
+        //        {
+        //            string timeZoneValue = "IST";
+        //            WhatsAppVM _whatsAppVM = new WhatsAppVM();
+
+        //            _whatsAppVM.Emailid = emailId;
+        //            _whatsAppVM.InterviewDate = interviewDate.ToString() + "(" + timeZoneValue + ")";
+        //            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
+        //            _whatsAppVM.Event = "Interview Reminder Second";
+        //            _whatsAppVM.PrimarySkill = PrimarySkillInvite;
+        //            _whatsAppVM.MessageValue = ClientName;
+        //            _whatsAppVM.timezone = timeZoneValue;
+        //            _whatsAppVM.irfId = irfId;
+        //            _whatsAppVM.InterviewId = interviewId;
+        //            var result = await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+        //            if (result != null && result.ToLower().Contains("success"))
+        //            {
+        //                return Json($"Invitation has been sent Successfully to {emailId}!");
+        //            }
+        //            else
+        //            {
+        //                return Json("Sorry! Could not send invite!");
+        //            }
+
+        //        }
+        //        else
+        //        {
+        //            return Json("Medium not specified!");
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return Json("Sorry! Could not send invite!");
+        //    }
+        //}
 
         [AllowAnonymous]
         [HttpPost]
