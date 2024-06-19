@@ -7639,9 +7639,12 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
-                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
-                model.InterviewerComment = output;
+                if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
+                {
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+                    string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                    model.InterviewerComment = output;
+                }
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -8067,7 +8070,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<IActionResult> PaymentSlaDetails(string actionstatus,int returnBack)
+        public async Task<IActionResult> PaymentSlaDetails(string actionstatus, int returnBack)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {

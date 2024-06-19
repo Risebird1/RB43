@@ -76,6 +76,7 @@ SELECT [InterviewMeetings].id as imid
   ,ul.AadhaarVerified
   ,IRF.MeetingPlatform
   ,IRF.JDTiltle
+  ,IRF.JDTitleTwo
   ,cl.LogoLink as LogoUrl
   ,InterviewMeetings.Surcharge
   ,InterviewMeetings.SurchargeComment
