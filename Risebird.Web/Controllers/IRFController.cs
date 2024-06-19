@@ -9567,6 +9567,10 @@ namespace Risebird.Web.Controllers
             {
                 irfDetails.JDTitleTwo = "";
             }
+            if (string.IsNullOrWhiteSpace(irfDetails.ClientName))
+            {
+                irfDetails.ClientName = "";
+            }
             foreach (var item in irfDetails.SkillCollection)
             {
                 item.SkillSet = 1;
