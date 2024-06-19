@@ -743,7 +743,8 @@ namespace Risebird.CommonHelper
                     obj.InterviewDate = _whatsAppVM.InterviewDate;
                     obj.Header = _whatsAppVM.Header;
                     obj.InterviewId = _whatsAppVM.InterviewId != 0 ? _whatsAppVM.InterviewId : null;
-                    obj.IRFId = _whatsAppVM.irfId != 0 ? _whatsAppVM.irfId : null; 
+                    obj.IRFId = _whatsAppVM.irfId != 0 ? _whatsAppVM.irfId : null;
+                    obj.SentBy = _whatsAppVM.SentBy;
                     if (_whatsappRepository != null)
                     {
                         return await _whatsappRepository.SaveSentWhatsappMessageDetails(obj);

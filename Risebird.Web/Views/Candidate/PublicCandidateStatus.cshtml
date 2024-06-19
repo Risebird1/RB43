@@ -1001,6 +1001,12 @@
                                                                                                             <span title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
                                                                                                         </button>
                                                                                                     </a>
+
+                                                                                                    <span class="call" data-toggle="tooltip" data-placement="top" onclick="SendFeedbackReminder(@item.InterviewId, @item.IRFId,'@item.CandidateEmailId', '@((int)CommunicationMedium.Whatsapp)')" data-original-title="Tooltip on top">
+                                                                                                        <span class="btn btn-primary shadow btn-xs sharp me-1" style="cursor: pointer;background: #4eb14eb8!important;" title="Send Invite Over Whatsapp"><img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" /></span>
+                                                                                                    </span>
+
+
                                                                                                 </div>
                                                                                             }
                                                                                             else
@@ -1952,6 +1958,16 @@
             url: '/Candidate/PublicSendInvite',
             type: 'POST',
             data: { 'irfId': id, 'IRFName': IRFId, 'emailId': CandidateEmail, 'logiduser': $("#hidtxtemailid").val(), 'communicationMedium': communicationMedium },
+            success: function (data) {
+                swal.fire(data);
+            }
+        });
+    }
+    function SendFeedbackReminder(interviewId, irfId, CandidateEmail, communicationMedium = null) {
+        $.ajax({
+            url: '/Candidate/PublicSendFeedbackReminder',
+            type: 'POST',
+            data: { 'interviewId': interviewId, 'irfId': irfId, 'emailId': CandidateEmail, 'loggedInUser': $("#hidtxtemailid").val(), 'communicationMedium': communicationMedium },
             success: function (data) {
                 swal.fire(data);
             }

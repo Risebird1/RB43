@@ -20,6 +20,7 @@ namespace Risebird.Entities.ViewModel
         public string PerSuccessRate { get; set; }
         public string Interviewduration { get; set; }
         public int InterviewId { get; set; }
+        public string SentBy { get; set; }
 
     }
     public class WhatsAppVMResponse
