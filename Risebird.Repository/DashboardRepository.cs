@@ -1803,5 +1803,57 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var result = await SqlMapper.QueryAsync<Surcharges>(con, "usp_GetSurchargeRequestDetails", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId, int actionType)
+        {
+            try
+            {
+                string RequestType=string.Empty;
+                if (actionType==1)
+                {
+                    RequestType = "Approved";
+                }
+                else { RequestType = "UnApproved"; }
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@InterviewId", InterviewId);
+                dynamicParam.Add("@Type",Type );
+                dynamicParam.Add("@Surcharge", Surcharge);
+                dynamicParam.Add("@SurchargeComment", SurchargeComment);
+                dynamicParam.Add("@RequestBy", EmailId);
+                dynamicParam.Add("@RequestAt", DateTime.Now);
+                dynamicParam.Add("@RequestType", RequestType);
+                dynamicParam.Add("@actionType", actionType);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_ApproveSurchage", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }

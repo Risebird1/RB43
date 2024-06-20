@@ -3677,5 +3677,67 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("AllEmergencyInterviewDetails");
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetSurchargesDetails()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    //profileName = profileName.Replace("\"", "");
+                    //var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    //Emailid = Emailid.Replace("\"", "");
+
+                    var surchaes = await _dashboardService.GetSurcharesDetails();
+                    return View(surchaes);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> ApproveSurcharge(int InterviewId,int Surcharge,string SurchargeComment,string Type,int actionType)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                   
+                    var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                    var data = await _dashboardService.ApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type,Emailid, actionType);
+
+                    if (data)
+                    {
+                        return Json("Surcharge approve successfully");
+                    }
+                    else
+                    {
+                        return Json("Failed surcharge approve.");
+                    }
+
+                }
+                else
+                {
+                    return Json(new { success = false, redirectUrl = Url.Action("SignOut", "Session") });
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

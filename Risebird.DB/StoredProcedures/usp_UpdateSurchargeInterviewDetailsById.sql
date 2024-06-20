@@ -11,9 +11,13 @@ GO
 CREATE PROCEDURE usp_UpdateSurchargeInterviewDetailsById
 @interviewid int,
 @surchargecomment varchar(500),
-@surchargeamt int
+@surchargeamt int,
+@RequestBy varchar(150),
+@RequestAt datetime,
+@IRFId int
 AS
 BEGIN
 Update InterviewMeetings set Surcharge=@surchargeamt,SurchargeComment=@surchargecomment where id=@interviewid
+Exec usp_SurchargeRequest @interviewid,@RequestBy,@RequestAt,'Raised',@surchargeamt,@surchargecomment,@IRFId
 END
 GO

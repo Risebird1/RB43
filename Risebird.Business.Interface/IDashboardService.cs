@@ -78,5 +78,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> PotentialPausedDetails(string EmailId);
         Task<List<MeetingVM>> GetColdCandidatesByClient(string Email);
         Task<IEnumerable<InterviewManagementVM>> GetAllInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate);
+        Task<IEnumerable<Surcharges>> GetSurcharesDetails();
+        Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type,string EmailId, int actionType);
     }
 }

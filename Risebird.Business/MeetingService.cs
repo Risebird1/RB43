@@ -3898,11 +3898,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, string CandidateEmail)
+        public async Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, string CandidateEmail, int IRFId)
         {
             try
             {
-                var result = await _meetingRespository.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt);
+                var result = await _meetingRespository.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt,emailId, IRFId);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
@@ -4246,6 +4246,19 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        public async Task<bool> SurchargeRequest(int InterviewId,string emailId, int IRFId, int Surcharge, string SurchargeComment)
+        {
+            try
+            {
+                return await _meetingRespository.SurchargeRequest(InterviewId,emailId,IRFId, Surcharge, SurchargeComment);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

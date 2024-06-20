@@ -6676,7 +6676,7 @@ namespace Risebird.Repository
             }
             return false;
         }
-        public async Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt)
+        public async Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, int IRFId)
         {
             try
             {
@@ -6686,6 +6686,9 @@ namespace Risebird.Repository
                     parameters.Add("@interviewid", interviewid);
                     parameters.Add("@surchargecomment", surchargecomment);
                     parameters.Add("@surchargeamt", surchargeamt);
+                    parameters.Add("@RequestBy", emailId);
+                    parameters.Add("@RequestAt", DateTime.Now);
+                    parameters.Add("@IRFId", IRFId);
                     var result = await SqlMapper.QueryAsync(con, "usp_UpdateSurchargeInterviewDetailsById", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                     return true;
@@ -7368,6 +7371,32 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<bool> SurchargeRequest(int InterviewId, string emailId, int IRFId, int Surcharge, string SurchargeComment)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId",IRFId);
+                dynamicParameters.Add("@InterviewId", InterviewId);
+                dynamicParameters.Add("@RequestAt", DateTime.Now);
+                dynamicParameters.Add("@RequestBy",emailId);
+                dynamicParameters.Add("@RequestType","Request");
+                dynamicParameters.Add("@", "Surcharge");
+                dynamicParameters.Add("@", "SurchargeComment");
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_SurchargeRequest", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }
