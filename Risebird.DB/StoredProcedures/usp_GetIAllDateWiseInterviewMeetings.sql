@@ -40,7 +40,9 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,    
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,    
   im.BackUpLink, im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,    
-  Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
+ -- Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge
+ Case when (im.Surcharge=0 or im.Surcharge is null) then 1 else 0 end as IsSurcharge
+  ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId
   ,iman.interviewDate RescheduleDate
   from  InterviewMeetings im                                
@@ -87,7 +89,9 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,    
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,    
   im.BackUpLink,im.BackUpLinkId,  ulr.EmailId as ChannelOwner,    
-  Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
+  --Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge 
+  Case when (im.Surcharge=0 or im.Surcharge is null) then 1 else 0 end as IsSurcharge
+  ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId
   ,iman.interviewDate RescheduleDate
   from InterviewMeetings im                                
@@ -134,7 +138,9 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,    
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,    
   im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,    
-  Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker           
+  --Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge 
+  Case when (im.Surcharge=0 or im.Surcharge is null) then 1 else 0 end as IsSurcharge
+  ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker           
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId
   ,iman.interviewDate RescheduleDate
   from InterviewMeetings im                                
@@ -181,7 +187,9 @@ else
   , im.HasDistinctParticipants, irf.CreatedFromTemplateId, csc.[Name] as TemplateName,IRF.IsAadhaarVerificationRequired,    
   ulc.AadhaarVerified,im.RedoInterview,ISNULL(IRF.MeetingPlatform,'Zoom') as MeetingPlatform,    
   im.BackUpLink,im.BackUpLinkId,  ulcho.EmailId as ChannelOwner,    
-  Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
+  --Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge
+  Case when (im.Surcharge=0 or im.Surcharge is null) then 1 else 0 end as IsSurcharge
+  ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
  --,si.Uniqueid as SchedulerUniqueid
  ,iman.interviewDate RescheduleDate
   from InterviewMeetings im                                
@@ -205,7 +213,7 @@ else
   where im.interviewDate >= @startDate AND im.interviewDate < @endDate                       
  End    
                                  
-End               
+End                
                  
 GO
 

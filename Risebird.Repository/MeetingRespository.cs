@@ -7372,31 +7372,5 @@ namespace Risebird.Repository
             }
             return null;
         }
-
-        public async Task<bool> SurchargeRequest(int InterviewId, string emailId, int IRFId, int Surcharge, string SurchargeComment)
-        {
-            try
-            {
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId",IRFId);
-                dynamicParameters.Add("@InterviewId", InterviewId);
-                dynamicParameters.Add("@RequestAt", DateTime.Now);
-                dynamicParameters.Add("@RequestBy",emailId);
-                dynamicParameters.Add("@RequestType","Request");
-                dynamicParameters.Add("@", "Surcharge");
-                dynamicParameters.Add("@", "SurchargeComment");
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var result = await SqlMapper.QueryAsync<int>(con, "usp_SurchargeRequest", dynamicParameters,
-                       commandType: CommandType.StoredProcedure);
-                    return true;
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
-        }
     }
 }

@@ -371,7 +371,6 @@ namespace Risebird.Entities.ViewModel
         public string TimeZonesValue {  get; set; }
         public DateTime interviewDateTimeZone { get; set; }
         public string JDTitleTwo { get; set; }
-        public int UserId {  get; set; }
     }
 
     public class VedioComments

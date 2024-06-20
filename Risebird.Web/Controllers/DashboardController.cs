@@ -3706,7 +3706,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> ApproveSurcharge(int InterviewId,int Surcharge,string SurchargeComment,string Type,int actionType)
+        public async Task<JsonResult> ApproveSurcharge(int InterviewId,int Surcharge,string SurchargeComment,string Type,int IRFId,int actionType)
         {
             try
             {
@@ -3715,15 +3715,16 @@ namespace Risebird.Web.Controllers
                    
                     var Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
-                    var data = await _dashboardService.ApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type,Emailid, actionType);
+                    var data = await _dashboardService.ApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type,Emailid, IRFId, actionType);
 
                     if (data)
                     {
-                        return Json("Surcharge approve successfully");
+                            return Json("Successfully");
+                           
                     }
                     else
                     {
-                        return Json("Failed surcharge approve.");
+                            return Json("UnSuccessfully");
                     }
 
                 }

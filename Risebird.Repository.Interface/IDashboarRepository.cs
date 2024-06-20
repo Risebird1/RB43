@@ -78,6 +78,6 @@ namespace Risebird.Repository.Interface
         Task<List<MeetingVM>> GetColdCandidatesByClientRepository(string Email);
         Task<IEnumerable<InterviewManagementVM>> GetAllInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate);
         Task<IEnumerable<Surcharges>> GetSurcharesDetails();
-        Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId, int actionType);
+        Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId, int IRFId, int actionType);
     }
 }

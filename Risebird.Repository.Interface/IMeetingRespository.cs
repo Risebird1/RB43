@@ -287,6 +287,5 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<PendingVideoMeetingsData>> FetchMeetingPendingVideo();
         Task<bool> UpdateVideoinfo(int interviewId, string videoLink = null, string meetingtype = null);
         Task<List<DMInstructionVM>> GetMyDMInstruction(string emailId);
-        Task<bool> SurchargeRequest(int InterviewId, string emailId, int IRFId, int Surcharge, string SurchargeComment);
     }
 }

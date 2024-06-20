@@ -209,7 +209,19 @@ BEGIN
 	[ModifiedBy])  
     
 	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source], @ModifiedBy as InterviewerId FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
-  
+	Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId)
+	SELECT 
+    0 AS InterviewId,  -- Assuming @InterviewId is 0 or a default value
+    ibd.Surcharge,
+    NULL AS SurchargeComment,  -- Assuming no comment is provided
+   @ModifiedBy,
+    @timeNow,  -- Assuming @timeNow is replaced with current datetime
+    'Raised' AS RequestType,
+    ibd.IRFId AS IRFId
+FROM 
+    @InterviewerSurchargeBulkData ibd;
+
+					--emergency interviewers
  End
  else
  Begin

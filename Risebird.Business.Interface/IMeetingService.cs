@@ -243,6 +243,6 @@ namespace Risebird.Business.Interface
         Task<bool> AssignYourSelfForMyQCInterviws(string emailId, int id);
         Task<List<MeetingVM>> GetMyQCInterviews(string emailId);
         Task<List<DMInstructionVM>> GetMyDMInstruction(string emailId);
-        Task<bool> SurchargeRequest(int InterviewId, string emailId, int IRFId, int Surcharge, string SurchargeComment);
+      
     }
 }

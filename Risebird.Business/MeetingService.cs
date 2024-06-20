@@ -4249,19 +4249,6 @@ namespace Risebird.Business
                 return null;
             }
         }
-
-        public async Task<bool> SurchargeRequest(int InterviewId,string emailId, int IRFId, int Surcharge, string SurchargeComment)
-        {
-            try
-            {
-                return await _meetingRespository.SurchargeRequest(InterviewId,emailId,IRFId, Surcharge, SurchargeComment);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
-            }
-        }
     }
 }
 

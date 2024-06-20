@@ -1029,11 +1029,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId, int actionType)
+        public async Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId,int IRFId, int actionType)
         {
             try
             {
-                return await _dashboardRespository.ApproveSurcharge(InterviewId,Surcharge,SurchargeComment,Type,EmailId, actionType);
+                return await _dashboardRespository.ApproveSurcharge(InterviewId,Surcharge,SurchargeComment,Type,EmailId, IRFId, actionType);
 
             }
             catch (Exception e)

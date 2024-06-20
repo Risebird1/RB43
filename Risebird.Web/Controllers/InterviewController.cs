@@ -8682,33 +8682,6 @@ namespace Risebird.Web.Controllers
             }
             return sb.ToString();
         }
-        [HttpPost]
-        public async Task<JsonResult> SurchargeRequest(int InterviewId,int IRFId,int Surcharge, string SurchargeComment)
-        {
-            try
-            {
-                var Emailid = string.Empty;
-                if (HttpContext.Session.GetString("email") != null)
-                {
-                    Emailid = HttpContext.Session.GetString("email")?.Trim();
-                    Emailid = Emailid.Replace("\"", "");
-                }
-                var data = await _meetingService.SurchargeRequest(InterviewId, Emailid, IRFId, Surcharge, SurchargeComment);
-                if (data)
-                {
-                    return Json("Surcharge request successfully");
-                }
-                else
-                {
-                    return Json("Surcharge request not successfully.");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
         #region Multi Skill Sets
         public async Task ReportSkillSetandCombine(InterviewReport model)
         {
