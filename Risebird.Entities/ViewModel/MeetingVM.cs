@@ -367,6 +367,10 @@ namespace Risebird.Entities.ViewModel
         public string CodeSnippet {  get; set; }
         public string LatestComment {  get; set; }
         public bool HasEmailDroppedOrBounced {  get; set; }
+        public int TimeZoneoffset {  get; set; }
+        public string TimeZonesValue {  get; set; }
+        public DateTime interviewDateTimeZone { get; set; }
+        public string JDTitleTwo { get; set; }
         public int UserId {  get; set; }
     }
 

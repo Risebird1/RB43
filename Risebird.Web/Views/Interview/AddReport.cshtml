@@ -913,7 +913,7 @@
                                                  
                                                     <div id="next-skill">
                                                       
-                                                        <h1 style="font-size:18px;padding:10px;display:block;">OTHER SKILL</h1>
+                                                        <h1 style="font-size:18px;padding:10px;display:block;">OTHER SKILL : @Model.JDTitleTwo</h1>
                                                     <!--report start-->
                                                     <div class="card" style="margin-bottom:10px;">
 
@@ -1724,6 +1724,7 @@
                 $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
                 $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
             }
+            SetTechTwoReportCalculation('TechSkillTwoReportCollection');
         }
 
         $(document).ready(function () {
@@ -2244,26 +2245,28 @@
 
         function CheckQuestionsCount() {
             var meetingStatusValue = document.getElementById("MeetingStatus").value;
-            if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
-                var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
-    @* if (questionItems != null && questionItems.length >= 5) {
-
-                }
-                else {
-                    alert('A minimum of 5 questions should be added.');
-                    return false;
-                } *@
-                if (questionItems == null || questionItems.length < 5) {
-                    alert('A minimum of 5 questions should be added.');
-                    return false;
-                }
-            }
             if($("#SkillSetsevaluate").val()>1){
+                if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
+                var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
+                    if (questionItems == null || questionItems.length < 3) {
+                        alert('A minimum of 3 questions should be added.');
+                        return false;
+                    }
+                }
                 var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
                 if (meetingStatusValueTwo == 4 || meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8) {
                     var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
-                    if (questionItemsTwo == null || questionItemsTwo.length < 5) {
-                        alert('A minimum of 5 questions should be added for other Skill set.');
+                    if (questionItemsTwo == null || questionItemsTwo.length < 3) {
+                        alert('A minimum of 3 questions should be added for other Skill set.');
+                        return false;
+                    }
+                }
+            }
+            else{
+                if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
+                var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
+                    if (questionItems == null || questionItems.length < 5) {
+                        alert('A minimum of 5 questions should be added.');
                         return false;
                     }
                 }

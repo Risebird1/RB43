@@ -35,7 +35,9 @@ Create PROCEDURE [dbo].[usp_UpdateCandidate]
 @ProfileSource varchar(200),  
 @WhatsappNumber varchar(15),  
 @IsProctor bit,  
-@PreReportLink varchar(500)  
+@PreReportLink varchar(500),
+@PreReportUsername varchar(50),
+@PreReportPassword varchar(50)
       
 AS      
 Begin      
@@ -66,7 +68,12 @@ AvailableFreeLancing=@AvailableFreeLancing,
 ClientHRAttemptContact = @ClientHRAttemptContact,    
 --ProfileSource=@ProfileSource,  
 IsProctor=@IsProctor,  
-PreReportLink=@PreReportLink  
+PreReportLink=@PreReportLink,
+PreReportUsername=@PreReportUsername,
+PreReportPassword=@PreReportPassword
 where id=@id      
       
 End     
+
+
+GO

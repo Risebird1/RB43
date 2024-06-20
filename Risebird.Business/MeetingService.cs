@@ -1252,6 +1252,7 @@ namespace Risebird.Business
                 reportModel.IsQCDone = interviewDetails.IsQC;
                 reportModel.CodeSnippet = interviewDetails.CodeSnippet;
                 reportModel.SkillSetsevaluate = irfDetails.SkillSetsevaluate;
+                reportModel.JDTitleTwo = interviewDetails.JDTitleTwo;
                 return reportModel;
             }
             catch (Exception e)

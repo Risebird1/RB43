@@ -830,6 +830,10 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     irfDetails.Profile = profileName;
+                    irfDetails.Heuristicsscore = irfDetails.DisHeuristicsscore;
+                    irfDetails.JobCountry = irfDetails.DisJobCountry;
+                    irfDetails.CompanyType = irfDetails.DisCompanyType;
+                    irfDetails.SkillSetsevaluate = irfDetails.DisSkillSetsevaluate;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
                         string uploadedFileURL = string.Empty;
@@ -9320,7 +9324,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [Authorize]
-        public async Task<IActionResult> CalibrationMeetingsDetails(string type,int returnBack)
+        public async Task<IActionResult> CalibrationMeetingsDetails(string type, int returnBack)
         {
             try
             {
@@ -9559,6 +9563,14 @@ namespace Risebird.Web.Controllers
         }
         public async Task checkSkillSetandCombine(IRFVm irfDetails)
         {
+            if (string.IsNullOrWhiteSpace(irfDetails.JDTitleTwo))
+            {
+                irfDetails.JDTitleTwo = "";
+            }
+            if (string.IsNullOrWhiteSpace(irfDetails.ClientName))
+            {
+                irfDetails.ClientName = "";
+            }
             foreach (var item in irfDetails.SkillCollection)
             {
                 item.SkillSet = 1;

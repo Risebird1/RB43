@@ -3305,7 +3305,7 @@ namespace Risebird.Web.Controllers
                     var Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
                     ViewBag.ProfileName = profileName;
-                    if (profileName == "Admin"||profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin"||profileName == "SeniorHR" || profileName == "Quality Controller" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin")
                     {
                         var model = new DashboardVM();
                         model.NotUpdatedMeetingsObj = new NotUpdatedMeetings();

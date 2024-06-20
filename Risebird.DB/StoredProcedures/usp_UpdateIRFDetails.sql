@@ -36,6 +36,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@BillingOwner int,  
 	@AssessmentGroupId varchar(100),
 	@SkillSetsevaluate int,
+	@JDTitleTwo varchar(150),
 	@MeetingPlatform varchar(100),
 	--@IsQCRequired bit,
 	@IsJoinabilitySelectabilityRequired bit,
@@ -121,6 +122,7 @@ BEGIN
 	,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
 	,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
 	,[IsLocked]=@IsLocked
+	,[JDTitleTwo]=@JDTitleTwo
 	--,[InterviewDuration]=@InterviewDuration
 	--,[IsFixedInterviewduration]=@IsFixedInterviewduration
 	--,[FixedAmount] = @FixedAmount

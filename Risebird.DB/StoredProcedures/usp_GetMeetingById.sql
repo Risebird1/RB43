@@ -76,6 +76,7 @@ SELECT [InterviewMeetings].id as imid
   ,ul.AadhaarVerified
   ,IRF.MeetingPlatform
   ,IRF.JDTiltle
+  ,IRF.JDTitleTwo
   ,cl.LogoLink as LogoUrl
   ,InterviewMeetings.Surcharge
   ,InterviewMeetings.SurchargeComment
@@ -84,7 +85,7 @@ SELECT [InterviewMeetings].id as imid
   ,ti.IsActive as IRFInterviewerActive
   ,cl.id as ClientId
   ,InterviewComments.CommunicationalProficiency
-  ,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,0) else 1 end IsQC
+  ,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,1) else 1 end IsQC
   ,[InterviewMeetings].CodeSnippet
 FROM [dbo].[InterviewMeetings]    
 inner join     

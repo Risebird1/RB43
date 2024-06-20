@@ -40,6 +40,11 @@
                             @Html.HiddenFor(x => x.InterviewerId)
                             @Html.HiddenFor(m => m.FlatRate)
 
+                            @Html.HiddenFor(m => m.DisHeuristicsscore)
+                            @Html.HiddenFor(m => m.DisCompanyType)
+                            @Html.HiddenFor(m => m.DisJobCountry)
+                            @Html.HiddenFor(m => m.DisSkillSetsevaluate)
+
                             <div>
 
 
@@ -288,7 +293,6 @@
                                         <div class="tab-box" id="tab-2">
                                             <div class="tab-main-box">
                                                 <div class="row">
-
                                                     <div class="col-md-4 col-sm-4 pr-1">
                                                         <div class="form-group">
                                                             <div class="mandate">
@@ -296,9 +300,7 @@
                                                             </div>
                                                             @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "Add Primary Skill and Role(max 40 char)" } })
                                                             @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @id = "error_JDTiltle", @class = "text-danger" })
-
                                                         </div>
-
                                                         @* <div class="form-group" >
                                                     <div class="mandate">
                                                     @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
@@ -496,6 +498,15 @@
                                                     @Html.RadioButtonFor(m => m.Type, "B2C")<span class="radio-field">B2C</span>
                                                     </div>*@
 
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-4 pr-1" id="divJDTitleTwo" style="display:none">
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.JDTitleTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                            </div>
+                                                            @Html.EditorFor(model => model.JDTitleTwo, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "Add Other Skill and Role(max 40 char)" } })
+                                                            @Html.ValidationMessageFor(model => model.JDTitleTwo, "", new { @id = "error_JDTiltleTwo", @class = "text-danger" })
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1196,35 +1207,35 @@
                                     </div>
                                     </div>*@
                                         <!--<h3 class="tab_drawer_heading" rel="tab-11">Resume Evaluator</h3>
-                                                                                                                           <div class="tab-box" id="tab-11">
-                                                                                                                               <div class="tab-main-box">
-                                                                                                                                   <div class="row">
+                                                                                                                                                       <div class="tab-box" id="tab-11">
+                                                                                                                                                           <div class="tab-main-box">
+                                                                                                                                                               <div class="row">
 
-                                                                                                                                       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                                                                                           <div class="table-responsive-sm">
-                                                                                                                                               <table class="table table-bordered mbn" id="ResumeEvaluatorTable">
-                                                                                                                                                   <thead>
-                                                                                                                                                       <tr>
-                                                                                                                                                           <th class="table_heading">User</th>
-                                                                                                                                                           <th width="10%" class="table_heading text-center">Action</th>
-                                                                                                                                                       </tr>
-                                                                                                                                                   </thead>
-                                                                                                                                                   <tbody>
+                                                                                                                                                                   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                                                                                                                       <div class="table-responsive-sm">
+                                                                                                                                                                           <table class="table table-bordered mbn" id="ResumeEvaluatorTable">
+                                                                                                                                                                               <thead>
+                                                                                                                                                                                   <tr>
+                                                                                                                                                                                       <th class="table_heading">User</th>
+                                                                                                                                                                                       <th width="10%" class="table_heading text-center">Action</th>
+                                                                                                                                                                                   </tr>
+                                                                                                                                                                               </thead>
+                                                                                                                                                                               <tbody>
 
-                                                                                                                                                       <tr>
-                                                                                                                                                           <td>
+                                                                                                                                                                                   <tr>
+                                                                                                                                                                                       <td>
                                         @*                                         @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators,"Select", new { @class = "select-css form-control " })
                                     *@                                                                        </td>
 
-                                                                                                                                                           <td class="action text-center">
+                                                                                                                                                                                       <td class="action text-center">
 
-                                                                                                                                                               <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                                                                                               <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                                                                                                                           <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                                                                                                                           <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
 
-                                                                                                                                                           </td>
-                                                                                                                                                       </tr>
-                                                                                                                                                   </tbody>
-                                                                                                                                               </table>-->
+                                                                                                                                                                                       </td>
+                                                                                                                                                                                   </tr>
+                                                                                                                                                                               </tbody>
+                                                                                                                                                                           </table>-->
                                         @*<label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>*@
 
                                         <!--</div>
@@ -1641,6 +1652,7 @@
 
 
         function CheckConditions() {
+            AssignPlansForClient();
             return CheckTotalWeightage() && checkUniqueness();
         }
 
@@ -1653,7 +1665,7 @@
            {
                skillArray.push("SkillTwoCollection");
            }
-            
+
             for (i = 0; i < skillArray.length; i++) {
                 var items = $('[id^=' + skillArray[i] + '][id$="Weightage"]');
                 var total = 0;
@@ -1694,7 +1706,7 @@
                     if ($("#InterviewerCollection_" + i + "__PerSuccessRate").val() == "") {
                         if (message == "") {
                             message = "Per Interviewer Rate should not be blank";
-                        } 
+                        }
                         else {
                             message = message + ",Per Interviewer Rate should not be blank";
                         }
@@ -1703,7 +1715,7 @@
                     }
                 }
             }
-            
+
     @*var emetable = document.getElementById("EmergencyInterviewerTable");
             var emerowCount = emetable.rows.length;
             for (var i = 0; i < emerowCount; i++) {
@@ -1788,10 +1800,35 @@
                     document.getElementById('IsMeetingNotificationSend').checked = data.isMeetingNotificationSend;
                     //document.getElementById('InterviewDuration').value = data.interviewDuration;
                     CheckCandidateavailabilityDetails();
+                    if(data.isPlanFlixable){
+                        document.getElementById('Heuristicsscore').value=data.planType;
+                        document.getElementById('CompanyType').value=data.clientType;
+                        document.getElementById('JobCountry').value=data.countryType;
+                        checkSkillsetsActive();
+                        UpdateInterviewerRate(data.planType,null,null,null,'add');
+                        document.getElementById('Heuristicsscore').disabled=true;
+                        document.getElementById('CompanyType').disabled=true;
+                        document.getElementById('JobCountry').disabled=true;
+                        document.getElementById('SkillSetsevaluate').disabled=true;
+                    }else{
+                      EnablePlansForClient();
+                    }
                 }
             });
+            //Client Based info about Plans
         }
-
+        function EnablePlansForClient(){
+                 document.getElementById('Heuristicsscore').disabled=false;
+                 document.getElementById('CompanyType').disabled=false;
+                 document.getElementById('JobCountry').disabled=false;
+                 document.getElementById('SkillSetsevaluate').disabled=false;
+        }
+        function AssignPlansForClient(){
+                document.getElementById('DisHeuristicsscore').value=document.getElementById('Heuristicsscore').value;
+                document.getElementById('DisCompanyType').value=document.getElementById('CompanyType').value;
+                document.getElementById('DisJobCountry').value=document.getElementById('JobCountry').value;
+                document.getElementById('DisSkillSetsevaluate').value=document.getElementById('SkillSetsevaluate').value;
+        }
     @*function AssessmentGroupChanged() {
             var Assessmentgroupid = $("#AssessmentGroupId").val();
             var countryType = $("#JobCountry").val();
@@ -2621,6 +2658,7 @@
             }
             if ($("#SkillSetsevaluate").val() == 2){
                 document.getElementById("secondSkillSets").style.display = "block";
+                document.getElementById("divJDTitleTwo").style.display="block";
                 if(planType == 2 || planType == 5 || planType == 6)
                 {
                    document.getElementById("Heuristicsscore").value = '';
@@ -2630,9 +2668,9 @@
             else
             {
                 document.getElementById("secondSkillSets").style.display = "none";
+                document.getElementById("divJDTitleTwo").style.display="none";
                 //document.getElementById("Heuristicsscore").value = '6';
             }
-
         }
         function BindSkillsAndRateAndResume(id, data, rateElementId = null, rate = null, resumeLink = null) {
             var num = id.match(/(\d+)/);
@@ -3651,9 +3689,24 @@
         }
         else {
             document.getElementById("error_JDTiltle").innerHTML = "";
-            return false;
         }
-
+        if ($("#SkillSetsevaluate").val() == 2) {
+            var valTwo = document.getElementById("JDTitleTwo").value;
+            if (valTwo == null || valTwo == "") {
+                document.getElementById("JDTitleTwo").focus();
+                document.getElementById("error_JDTiltleTwo").innerHTML = "The Job Title field is required.";
+                return true;
+            }
+            else if (valTwo.length > 40) {
+                document.getElementById("JDTitleTwo").focus();
+                document.getElementById("error_JDTiltleTwo").innerHTML = "The Job Title should not be more than 40 characters long.";
+                return true;
+            }
+            else {
+                document.getElementById("error_JDTiltleTwo").innerHTML = "";
+            }
+        }
+        return false;
     }
 
     function checkClientDetails() {

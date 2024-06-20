@@ -1,4 +1,5 @@
 ﻿using Aspose.Html;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,7 @@ using System.Xml;
 using Twilio.TwiML.Voice;
 using Twilio.Types;
 using X.PagedList;
+using static iTextSharp.text.pdf.AcroFields;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 using Stream = System.IO.Stream;
 using Task = System.Threading.Tasks.Task;
@@ -1586,6 +1588,67 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> SendFeedbackReminder(int interviewId, int irfId, string IRFName, string emailId, int? communicationMedium = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
+                    loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        if (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp)
+                        {
+                            string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + interviewId;
+
+                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                            _whatsAppVM.Emailid = emailId;
+                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                            _whatsAppVM.Event = "Risebird: Interview Feedback";
+                            _whatsAppVM.irfId = irfId;
+                            _whatsAppVM.InterviewId = interviewId;
+                            _whatsAppVM.SentBy = loggedInUserEmail;
+                            var result = await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
+                            if (result != null && result.ToLower().Contains("success"))
+                            {
+                                TempData["SuccessErrorMessageCandidate"] = $"Invitation has been sent Successfully to {emailId}";
+                                return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
+                                return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                            }
+
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Medium not specified!";
+                            return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
+                return RedirectToAction("GetCandidates", new { id = irfId, irfName = IRFName });
+            }
+        }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> CancelInvite(int irfId, string IRFName, string emailId)
         {
@@ -2099,7 +2162,7 @@ namespace Risebird.Web.Controllers
                             bool result = await _irfService.AddCandidateStatus(model);
                             if (result)
                             {
-                               TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
+                                TempData["SuccessErrorMessageCandidate"] = "Candidate status has been saved Successfully!";
                             }
                             else
                             {
@@ -3525,7 +3588,7 @@ namespace Risebird.Web.Controllers
                         candidateTimeline.CandidateId = firstData.CandidateId;
                         candidateTimeline.IsQCDone = firstData.IsQCDone;
                         candidateTimeline.zoomLink = firstData.zoomLink;
-                        candidateTimeline.HasEmailDroppedOrBounced=firstData.HasEmailDroppedOrBounced;
+                        candidateTimeline.HasEmailDroppedOrBounced = firstData.HasEmailDroppedOrBounced;
                         //candidateTimeline.staffingAgency = firstData.staffingAgency;
                         candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
 
@@ -3716,8 +3779,8 @@ namespace Risebird.Web.Controllers
                     candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
                     candidateTimeline.CandidateId = firstData.CandidateId;
                     candidateTimeline.IsQCDone = firstData.IsQCDone;
+                    candidateTimeline.zoomLink = firstData.zoomLink;
                     candidateTimeline.HasEmailDroppedOrBounced = firstData.HasEmailDroppedOrBounced;
-
                     candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
                     //schedule status
 
@@ -4072,7 +4135,7 @@ namespace Risebird.Web.Controllers
                             var intComment = GetContent(document);
                             Sheet.Cells[i, 12].Value = intComment;
                         }
-                      //  Sheet.Cells[i, 12].Value = item.InterviewerComment;
+                        //  Sheet.Cells[i, 12].Value = item.InterviewerComment;
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -4324,7 +4387,7 @@ namespace Risebird.Web.Controllers
                     //SheetNotScheduled.Cells[1, 5].Value = "Current Status";
 
                     SheetNotScheduled.Cells[1, 5].Value = "Client Hr";
-                    
+
                     int iNs = 2;
                     if (modelNotScheduled.Count() > 0)
                     {
@@ -4345,7 +4408,7 @@ namespace Risebird.Web.Controllers
                             //}
 
                             SheetNotScheduled.Cells[iNs, 5].Value = item.HREmail;
-                            
+
                             iNs++;
                         }
                         //return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4360,7 +4423,7 @@ namespace Risebird.Web.Controllers
 
                 //data for cold candidates
                 var coldCandidatesData = await _candidateService.GetColdCandidatesListByClient(emailid);
-                if(coldCandidatesData != null)
+                if (coldCandidatesData != null)
                 {
                     coldCandidatesData = coldCandidatesData.Select(x =>
                     {
@@ -4433,7 +4496,7 @@ namespace Risebird.Web.Controllers
                     SheetNpr.Cells[1, 2].Value = "Resume Link";
                     SheetNpr.Cells[1, 3].Value = "Is Email Missing";
                     SheetNpr.Cells[1, 4].Value = "Added On";
-                    
+
 
                     int iNpr = 2;
                     foreach (var item in notProcessedResumes)
@@ -4452,7 +4515,7 @@ namespace Risebird.Web.Controllers
                             SheetNpr.Cells[iNpr, 2].Value = "No Resume";
                         }
 
-                        if(item.IsEmailMissing.HasValue && item.IsEmailMissing.Value)
+                        if (item.IsEmailMissing.HasValue && item.IsEmailMissing.Value)
                         {
                             SheetNpr.Cells[iNpr, 3].Value = "Yes";
                         }
@@ -4534,18 +4597,18 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser)
+        public async Task<JsonResult> PublicSendInvite(string irfId, string IRFName, string emailId, string logiduser, int? communicationMedium = null)
         {
             try
             {
                 var linkurl = "https://" + Request.Host.ToString();
-                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser, linkurl))
+                if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, logiduser, linkurl, communicationMedium))
                 {
-                    return Json("Invitation has been sent Successfully!");
+                    return Json($"Invitation has been sent Successfully to {emailId}!");
                 }
                 else
                 {
-                    return Json("Sorry! Could not send invite!");
+                    return Json($"Sorry! Could not send invite to {emailId}!");
                 }
             }
             catch (Exception ex)
@@ -4554,6 +4617,91 @@ namespace Risebird.Web.Controllers
                 return Json("Sorry! Could not send invite!");
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<JsonResult> PublicSendFeedbackReminder(int interviewId, int irfId, string emailId, string loggedInUser, int? communicationMedium = null)
+        {
+            try
+            {
+                if(communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp)
+                {
+                    string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + interviewId;
+
+                    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                    _whatsAppVM.Emailid = emailId;
+                    _whatsAppVM.buttonlink = !string.IsNullOrEmpty(currenturl) ? currenturl.Replace("https://" + Request.Host.ToString() + "/", "") : "";
+                    _whatsAppVM.Event = "Risebird: Interview Feedback";
+                    _whatsAppVM.irfId = irfId;
+                    _whatsAppVM.InterviewId = interviewId;
+                    _whatsAppVM.SentBy = loggedInUser;
+                    var result = await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
+                    if(result != null && result.ToLower().Contains("success"))
+                    {
+                        return Json($"Invitation has been sent Successfully to {emailId}!");
+                    }
+                    else
+                    {
+                        return Json("Sorry! Could not send invite!");
+                    }
+
+                }
+                else
+                {
+                    return Json("Medium not specified!");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Sorry! Could not send invite!");
+            }
+        }
+
+        //[AllowAnonymous]
+        //[HttpPost]
+        //public async Task<JsonResult> PublicSendInterviewReminder(int interviewId, int irfId, string emailId, string loggedInUser, int? communicationMedium = null)
+        //{
+        //    try
+        //    {
+        //        if (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp)
+        //        {
+        //            string timeZoneValue = "IST";
+        //            WhatsAppVM _whatsAppVM = new WhatsAppVM();
+
+        //            _whatsAppVM.Emailid = emailId;
+        //            _whatsAppVM.InterviewDate = interviewDate.ToString() + "(" + timeZoneValue + ")";
+        //            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
+        //            _whatsAppVM.Event = "Interview Reminder Second";
+        //            _whatsAppVM.PrimarySkill = PrimarySkillInvite;
+        //            _whatsAppVM.MessageValue = ClientName;
+        //            _whatsAppVM.timezone = timeZoneValue;
+        //            _whatsAppVM.irfId = irfId;
+        //            _whatsAppVM.InterviewId = interviewId;
+        //            var result = await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
+        //            if (result != null && result.ToLower().Contains("success"))
+        //            {
+        //                return Json($"Invitation has been sent Successfully to {emailId}!");
+        //            }
+        //            else
+        //            {
+        //                return Json("Sorry! Could not send invite!");
+        //            }
+
+        //        }
+        //        else
+        //        {
+        //            return Json("Medium not specified!");
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return Json("Sorry! Could not send invite!");
+        //    }
+        //}
 
         [AllowAnonymous]
         [HttpPost]
@@ -5197,6 +5345,22 @@ namespace Risebird.Web.Controllers
                     CandidateDetails.Timer = Convert.ToInt32(timediff.TotalMinutes);
                 }
                 //End: InterviewMeeting Timer
+                //Start: Candidate Scheduled Time in same TimeZone 
+                string timeZoneValue = "IST";
+                if (!string.IsNullOrWhiteSpace(details.TimeZonesValue) && !details.TimeZonesValue.Contains("Chennai"))
+                {
+                    timeZoneValue = details.TimeZonesValue.Split(")").ElementAtOrDefault(1);
+                    details.interviewDateTimeZone = details.interviewDate.AddMinutes(-(330 + details.TimeZoneoffset));
+                    if (timeZoneValue.Contains("("))
+                    {
+                        if (!timeZoneValue.Contains(")"))
+                        {
+                            timeZoneValue = timeZoneValue + ")";
+                        }
+                    }
+                    details.TimeZonesValue = timeZoneValue;
+                }
+                //End: Candidate Scheduled Time in same TimeZone 
             }
             foreach (var item in CandidateDetails.Meetings)
             {
@@ -5582,7 +5746,7 @@ namespace Risebird.Web.Controllers
                 int j = 18;
                 if (isDrive.HasValue && isDrive.Value)
                 {
-                    
+
                     foreach (var item in skillslist)
                     {
                         j++;
@@ -5620,8 +5784,8 @@ namespace Risebird.Web.Controllers
                     Sheet.Cells[1, ++j].Value = $"Interviewer Comment ({jdtitleTwo})"; //"Interviewer Comment (Stack 2)";//$"Interviewer Comment {jdtitleTwo}";
 
                 }
-                
-                
+
+
 
                 int i = 2;
                 if (model.Count() > 0)
@@ -5645,22 +5809,23 @@ namespace Risebird.Web.Controllers
 
                         Sheet.Cells[i, 13].Value = item.completedDate.HasValue ? item.completedDate.Value.ToString() : string.Empty;
 
-                        if (item.ClientId == 177)
-                        {
-                            if (item.isQcDone.HasValue && item.isQcDone.Value == true)
-                            {
-                                Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
-                            }
-                            else
-                            {
-                                Sheet.Cells[i, 14].Value = "QCPending(" + item.CandidateLatestStatus + ")";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
-                        }
+                        //if (item.ClientId == 177)
+                        //{
+                        //    if (item.isQcDone.HasValue && item.isQcDone.Value == true)
+                        //    {
+                        //        Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
+                        //    }
+                        //    else
+                        //    {
+                        //        Sheet.Cells[i, 14].Value = "QCPending(" + item.CandidateLatestStatus + ")";
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
+                        //}
 
+                        Sheet.Cells[i, 14].Value = item.CandidateLatestStatus;
 
                         Sheet.Cells[i, 15].Value = item.ClientHrContact;
                         Sheet.Cells[i, 16].Value = item.InterviewerCodedName ?? string.Empty;
@@ -5670,8 +5835,8 @@ namespace Risebird.Web.Controllers
                         //Sheet.Cells[i, 15].Value = item.MeetingStatus ?? string.Empty;
                         //Sheet.Cells[i, 16].Value = item.InterviewStatus ?? string.Empty;
                         // item.InterviewerComment = System.Web.HttpUtility.HtmlDecode(item.InterviewerComment);
-                        
-                       
+
+
                         //if (!string.IsNullOrEmpty(item.VideoLink))
                         //{
                         //    try
@@ -5721,7 +5886,7 @@ namespace Risebird.Web.Controllers
                         int jV = 18;
                         if (isDrive.HasValue && isDrive.Value)
                         {
-                            
+
 
                             foreach (var skillvalue in skillslist)
                             {
@@ -5752,21 +5917,22 @@ namespace Risebird.Web.Controllers
                             }
                             Sheet.Cells[i, ++jV].Value = totalskillscore; //  / totalskillscount;
                         }
-                        if (item.ClientId == 177)
-                        {
-                            if (item.isQcDone.HasValue && item.isQcDone.Value == true)
-                            {
-                                Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
-                            }
-                            else
-                            {
-                                Sheet.Cells[i, ++jV].Value = "QCPending(" + item.CandidateLatestStatus + ")";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
-                        }
+                        //if (item.ClientId == 177)
+                        //{
+                        //    if (item.isQcDone.HasValue && item.isQcDone.Value == true)
+                        //    {
+                        //        Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
+                        //    }
+                        //    else
+                        //    {
+                        //        Sheet.Cells[i, ++jV].Value = "QCPending(" + item.CandidateLatestStatus + ")";
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
+                        //}
+                        Sheet.Cells[i, ++jV].Value = item.CandidateLatestStatus;
                         if (!string.IsNullOrWhiteSpace(item.InterviewerComment))
                         {
                             var interviewerComent = System.Net.WebUtility.HtmlDecode(item.InterviewerComment);
@@ -5810,21 +5976,23 @@ namespace Risebird.Web.Controllers
                                 }
                                 Sheet.Cells[i, ++jV].Value = totalskillTwoscore; //  / totalskillsTwocount;
                             }
-                            if (item.ClientId == 177)
-                            {
-                                if (item.isQcDone.HasValue && item.isQcDone.Value == true)
-                                {
-                                    Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
-                                }
-                                else
-                                {
-                                    Sheet.Cells[i, ++jV].Value = "QCPending(" + (item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty) + ")";
-                                }
-                            }
-                            else
-                            {
-                                Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
-                            }
+                            //if (item.ClientId == 177)
+                            //{
+                            //    if (item.isQcDone.HasValue && item.isQcDone.Value == true)
+                            //    {
+                            //        Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+                            //    }
+                            //    else
+                            //    {
+                            //        Sheet.Cells[i, ++jV].Value = "QCPending(" + (item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty) + ")";
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+                            //}
+                            Sheet.Cells[i, ++jV].Value = item.InterviewStatusTwo.HasValue ? ((InterviewStatus)item.InterviewStatusTwo).GetDescription() : string.Empty;//item.InterviewStatusTwoDesc;
+
                             if (!string.IsNullOrWhiteSpace(item.InterviewerCommentTwo))
                             {
                                 var interviewerComentTwo = System.Net.WebUtility.HtmlDecode(item.InterviewerCommentTwo);

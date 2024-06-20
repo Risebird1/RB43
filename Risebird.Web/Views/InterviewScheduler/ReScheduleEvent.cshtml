@@ -140,14 +140,7 @@
                                     <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#9b9797"><path d="M86,6.88c-43.62608,0 -79.12,35.49048 -79.12,79.12c0,43.62952 35.49392,79.12 79.12,79.12c43.62608,0 79.12,-35.49048 79.12,-79.12c0,-43.62952 -35.49392,-79.12 -79.12,-79.12zM129.8084,43.61576l-34.71304,37.60264c0.7568,1.43448 1.22464,3.04784 1.22464,4.7816c0,2.6144 -1.00448,4.97768 -2.60752,6.79744l12.49408,22.49416c0.92536,1.65808 0.32336,3.75304 -1.33472,4.67496c-0.52976,0.29584 -1.10424,0.43344 -1.6684,0.43344c-1.21088,0 -2.38048,-0.63984 -3.01,-1.7716l-12.49064,-22.4804c-0.55728,0.09288 -1.118,0.172 -1.7028,0.172c-5.70008,0 -10.32,-4.61992 -10.32,-10.32c0,-5.70008 4.61992,-10.32 10.32,-10.32c1.4448,0 2.8208,0.30272 4.06952,0.83936l34.68208,-37.57512c1.29,-1.38976 3.46408,-1.48264 4.86072,-0.19264c1.39664,1.29 1.48264,3.46408 0.19608,4.86416z"></path></g></g>
                                 </svg>
                             </span>
-                            @if (Model.SkillSetsevaluate > 1)
-                            {
-                                <span class="pull-left time-txt">1:30&nbsp;hr</span>
-                            }
-                            else
-                            {
-                                <span class="pull-left time-txt">1&nbsp;hr</span>
-                            }
+                          <span class="pull-left time-txt">@Model.Interviewduration &nbsp;Min</span>
                         </div>
                     </div>
 
@@ -305,6 +298,7 @@
                                 @Html.HiddenFor(m => m._IRFDetails.inIRFid)
                                 @Html.HiddenFor(m => m.Resume)
                                 @Html.HiddenFor(m => m.SkillSetsevaluate)
+                                @Html.HiddenFor(m => m.Interviewduration)
                                 <h2>Enter Details</h2>
                                 <div class="form-group">
                                     <div class="mandate">
