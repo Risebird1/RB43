@@ -3686,11 +3686,6 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    //profileName = profileName.Replace("\"", "");
-                    //var Emailid = HttpContext.Session.GetString("email")?.Trim();
-                    //Emailid = Emailid.Replace("\"", "");
-
                     var surchaes = await _dashboardService.GetSurcharesDetails();
                     return View(surchaes);
                 }
@@ -3706,7 +3701,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> ApproveSurcharge(int InterviewId,int Surcharge,string SurchargeComment,string Type,int IRFId,int actionType)
+        public async Task<JsonResult> ApproveSurcharge(int InterviewId,int Surcharge,string SurchargeComment,string Type,int IRFId,int actionType,int UserId)
         {
             try
             {
@@ -3715,7 +3710,7 @@ namespace Risebird.Web.Controllers
                    
                     var Emailid = HttpContext.Session.GetString("email")?.Trim();
                     Emailid = Emailid.Replace("\"", "");
-                    var data = await _dashboardService.ApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type,Emailid, IRFId, actionType);
+                    var data = await _dashboardService.ApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type,Emailid, IRFId, actionType, UserId);
 
                     if (data)
                     {

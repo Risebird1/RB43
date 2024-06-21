@@ -21,5 +21,6 @@ namespace Risebird.Entities.Data
         public string JDTiltle { get; set; }
         public string ClientName { get; set; }
         public string Type { get; set; }
+        public int UserId { get; set; }
     }
 }

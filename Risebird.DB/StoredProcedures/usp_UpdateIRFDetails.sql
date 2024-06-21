@@ -206,20 +206,22 @@ BEGIN
 	[IsAvailable],
 	[InterviewerId],
 	[Source],
-	[ModifiedBy])  
+	[ModifiedBy],
+	[IsSurchargeApprove])  
     
-	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source], @ModifiedBy as InterviewerId FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
-	Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId)
+	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source], @ModifiedBy as InterviewerId,NULL as IsSurchargeApprove FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+	Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
 	SELECT 
-    0 AS InterviewId,  -- Assuming @InterviewId is 0 or a default value
+    0 AS InterviewId,
     ibd.Surcharge,
-    NULL AS SurchargeComment,  -- Assuming no comment is provided
-   @ModifiedBy,
-    @timeNow,  -- Assuming @timeNow is replaced with current datetime
+    NULL AS SurchargeComment,
+    @ModifiedBy,
+    @timeNow,
     'Raised' AS RequestType,
-    ibd.IRFId AS IRFId
+    ibd.IRFId AS IRFId,
+	ibd.UserId
 FROM 
-    @InterviewerSurchargeBulkData ibd;
+    @InterviewerSurchargeBulkData ibd where ISNULL(ibd.Surcharge,0)<>0;
 
 					--emergency interviewers
  End
@@ -354,7 +356,7 @@ where ti.IsActive=0 and ti.IRFId=@id and interviewDate>@timeNow
    
  end catch  
   
-END 
+END
 GO
 
 

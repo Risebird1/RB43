@@ -1822,7 +1822,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId, int IRFId, int actionType)
+        public async Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId, int IRFId, int actionType, int UserId)
         {
             try
             {
@@ -1842,6 +1842,7 @@ namespace Risebird.Repository
                 dynamicParam.Add("@RequestType", RequestType);
                 dynamicParam.Add("@actionType", actionType);
                 dynamicParam.Add("@IRFId",IRFId);
+                dynamicParam.Add("@UserId", UserId);
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_ApproveSurchage", dynamicParam,

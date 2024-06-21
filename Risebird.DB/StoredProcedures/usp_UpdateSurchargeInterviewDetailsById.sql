@@ -17,7 +17,7 @@ CREATE PROCEDURE usp_UpdateSurchargeInterviewDetailsById
 @IRFId int
 AS
 BEGIN
-Update InterviewMeetings set Surcharge=@surchargeamt,SurchargeComment=@surchargecomment where id=@interviewid
+Update InterviewMeetings set Surcharge=@surchargeamt,SurchargeComment=@surchargecomment,IsSurchargeApprove=null where id=@interviewid
 Exec usp_SurchargeRequest @interviewid,@RequestBy,@RequestAt,'Raised',@surchargeamt,@surchargecomment,@IRFId
 END
 GO

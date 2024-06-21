@@ -17,7 +17,8 @@ Create PROCEDURE [dbo].[usp_ApproveSurchage]
 @RequestAt datetime,
 @RequestType Varchar(50),
 @actionType int,
-@IRFId int
+@IRFId int,
+@UserId int
 As
 Begin
 Declare @InterviewIdType int;
@@ -30,10 +31,10 @@ set @InterviewIdType=@InterviewId;
 End
 Else
 Begin
-update  TransInterviewer set IsSurchargeApprove=1 where IRFId=@IRFId
+update  TransInterviewer set IsSurchargeApprove=1 where IRFId=@IRFId and UserId=@UserId 
 set @InterviewIdType=0;
 End
-Insert Into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId) values(@InterviewIdType,@Surcharge,@SurchargeComment,@RequestBy,@RequestAt,@RequestType,@IRFId)
+Insert Into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId) values(@InterviewIdType,@Surcharge,@SurchargeComment,@RequestBy,@RequestAt,@RequestType,@IRFId,@UserId)
 End
 Else
 Begin
@@ -44,10 +45,10 @@ set @InterviewIdType=@InterviewId;
 End
 Else
 Begin
-update  TransInterviewer set IsSurchargeApprove=0 ,Surcharge=0  where IRFId=@IRFId
+update  TransInterviewer set IsSurchargeApprove=0 ,Surcharge=0  where IRFId=@IRFId and UserId=@UserId
 set @InterviewIdType=0;
 End
-Insert Into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId) values(@InterviewIdType,0,null,@RequestBy,@RequestAt,@RequestType,@IRFId)
+Insert Into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId) values(@InterviewIdType,0,null,@RequestBy,@RequestAt,@RequestType,@IRFId,@UserId)
 End
-End 
+End
 GO

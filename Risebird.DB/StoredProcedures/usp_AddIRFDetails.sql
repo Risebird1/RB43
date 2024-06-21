@@ -204,11 +204,12 @@ Begin
 					[Surcharge],
 					[IsActive],
 					[IsAvailable],
-					[InterviewerId])  
+					[InterviewerId],
+					[IsSurchargeApprove])  
     
-					SELECT @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+					SELECT @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId,NULL as IsSurchargeApprove FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
 
-					Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId)
+					Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
 	SELECT 
     0 AS InterviewId, 
     ibd.Surcharge,
@@ -216,9 +217,11 @@ Begin
     @CreatedBy,
     @CreatedOn, 
     'Raised' AS RequestType,
-    ibd.IRFId AS IRFId
+    ibd.IRFId AS IRFId,
+	ibd.UserId
 FROM 
-    @InterviewerBulkData ibd;
+
+    @InterviewerBulkData ibd where ISNULL(ibd.Surcharge,0)<>0;
 					INSERT INTO [dbo].[TransEmergencyInterviewer](  
 					[IRFId] ,  
 					[UserId],  

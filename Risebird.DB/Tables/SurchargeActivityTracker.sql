@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[SurchargeActivityTracker](
 	[RequestAt] [datetime] NULL,
 	[RequestType] [varchar](100) NULL,
 	[IRFId] [int] NULL,
+	[UserId] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
