@@ -8,7 +8,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE [dbo].[usp_GetSurchargeRequestDetails]     
+Create PROCEDURE [dbo].[usp_GetSurchargeRequestDetails] 
+As
 Begin
 Select im.id as InterviewId,IRF.id as IRFID,IRF.IRFId as SkillChannel,IRF.JDTiltle,IRF.ClientName,im.interviewer,
 'Interview' as type,im.Surcharge,im.SurchargeComment as SurchargeComment
