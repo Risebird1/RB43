@@ -679,13 +679,15 @@
                                                                         {
                                                                             <span>
                                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Add Surcharge">
-                                                                                    <span onclick="UpdateSurchargeDetails(@item.imid,'@item.candidateEmail')" title="Add Surcharge" class="mdc-fab__icon material-icons">
+                                                                                    <span onclick="UpdateSurchargeDetails(@item.imid,'@item.candidateEmail','@item.irfIntId')" title="Add Surcharge" class="mdc-fab__icon material-icons">
                                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus-fill" viewBox="0 0 16 16">
                                                                                             <path d="M11 13a5 5 0 1 0-4.975-5.5H4A1.5 1.5 0 0 0 2.5 6h-1A1.5 1.5 0 0 0 0 7.5v1A1.5 1.5 0 0 0 1.5 10h1A1.5 1.5 0 0 0 4 8.5h2.025A5 5 0 0 0 11 13zm.5-7.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2a.5.5 0 0 1 1 0z" />
                                                                                         </svg>
                                                                                     </span>
                                                                                 </button>
                                                                             </span>
+
+                                                                           
                                                                         }
                                                                         @*<span class="interview_8">
                                                             <button class="mdc-fab app-fab--absolute " aria-label="Comment">
@@ -1591,7 +1593,7 @@
                         </svg>
                     </span>
                 </div>
-                <h5 class="modal-title pull-left">Surchange Details </h5>f
+                <h5 class="modal-title pull-left">Surchange Details </h5>
             </div>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span onclick="closeUpdateSurchargeDetailsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
@@ -1601,6 +1603,7 @@
                     <input type="hidden" id="txtSurchargeinterviewid" />
                     <input type="hidden" id="txtSurchargeCandidateEmaild" />
                     <input type="hidden" id="txtSurchargeplantype" />
+                    <input type="hidden" id="txtIRFId" />
                     <div style="padding:10px">
                         <input type="number" id="txtSurchargeamt" class="form-control" placeholder="Surchange amount" />
                     </div>
@@ -1625,7 +1628,6 @@
         </div>
     </div>
 </div>
-
 
 <div id="BlckListCompanyModal" class="modal modal-bg">
     <!-- Modal content -->
@@ -2297,7 +2299,7 @@
         var modal = document.getElementById("UpdateSurchargeDetailsModel");
         modal.style.display = "none";
     }
-    function UpdateSurchargeDetails(interviewid, candidateEmailid) {
+    function UpdateSurchargeDetails(interviewid, candidateEmailid,IRFId) {
         $.ajax({
             type: "POST",
             url: "/Interview/FetchInterviewVideoDetails",
@@ -2309,6 +2311,7 @@
                 $("#txtSurchargeamt").val(data.surcharge);
                 $("#txtSurchargeComment").val(data.surchargeComment);
                 $("#txtSurchargeplantype").val(data.heuristicsscore);
+                $("#txtIRFId").val(IRFId);
             }
         });
     }
@@ -2318,6 +2321,7 @@
         var interviewid = $("#txtSurchargeinterviewid").val();
         var CandidateEmail = $("#txtSurchargeCandidateEmaild").val();
         var plantype = parseInt($("#txtSurchargeplantype").val());
+        var IRFId = $("#txtIRFId").val();
         if (plantype == 2 && parseInt(surchargeamt) > 100) {
             alert("Surcharge should be between 0 to 100.");
         }
@@ -2331,7 +2335,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Interview/SaveSurchargeInterviewDetails",
-                data: { interviewid: interviewid, surchargecomment: surchargecomment, surchargeamt: surchargeamt, CandidateEmail: CandidateEmail },
+                data: { interviewid: interviewid, surchargecomment: surchargecomment, surchargeamt: surchargeamt, CandidateEmail: CandidateEmail,'IRFId': IRFId },
                 success: function (data) {
                     alert(data);
                     closeUpdateSurchargeDetailsModel();
