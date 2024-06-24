@@ -1042,5 +1042,32 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> UpdateSurchargeDetails(int InterviewId, int IRFId, string Type, int UserId, string SurchargeComment, int Surchargeamt, string EmailId)
+        {
+            try
+            {
+                return await _dashboardRespository.UpdateSurchargeDetails (InterviewId,IRFId,Type,UserId,SurchargeComment,Surchargeamt,EmailId);
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<Surcharges>> GetSurcharesActivityTraker(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetSurcharesActivityTracker(InterviewId,IRFId,Type,UserId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

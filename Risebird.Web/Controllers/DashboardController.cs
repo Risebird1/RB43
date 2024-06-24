@@ -3735,5 +3735,59 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateSurchargeDetails(int InterviewId, int IRFId, string Type, int UserId, string SurchargeComment,int Surchargeamt)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var model = await _dashboardService.UpdateSurchargeDetails(InterviewId, IRFId, Type, UserId, SurchargeComment, Surchargeamt, emailId);
+                if (model)
+                {
+                    return Json("Surcharge details are updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update Surcharge details, please try again.");
+                }
+            }
+            else
+            {
+                return Json("Failed to update Surcharge details, please try again.");
+            }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetSurchargesActivityTracker(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var surchaes = await _dashboardService.GetSurcharesActivityTraker(InterviewId,IRFId, Type,UserId);
+                    return PartialView("_GetSurchargesActivityTracker", surchaes);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }
