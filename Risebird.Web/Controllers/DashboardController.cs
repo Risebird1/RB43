@@ -3680,13 +3680,14 @@ namespace Risebird.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetSurchargesDetails()
+        public async Task<IActionResult> GetSurchargesDetails(int actionType)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var surchaes = await _dashboardService.GetSurcharesDetails();
+                    ViewBag.Type = actionType;
+;                   var surchaes = await _dashboardService.GetSurcharesDetails(actionType);
                     return View(surchaes);
                 }
                 else

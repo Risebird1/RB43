@@ -1805,13 +1805,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails()
+        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
+                    parameters.Add("@actionType",actionType);
                     var result = await SqlMapper.QueryAsync<Surcharges>(con, "usp_GetSurchargeRequestDetails", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
                     return result;

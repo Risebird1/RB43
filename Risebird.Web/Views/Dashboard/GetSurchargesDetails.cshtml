@@ -12,7 +12,18 @@
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title">Surcharge Details</h4></div>
                 </div>
+                @if (ViewBag.Type == 0)
+                {
+                    <div class="feedback-tab-ac" onclick="Changeurldetails(0)"><strong>Surcharge Requested</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails(1)"><strong>Surcharge Approved</strong></div>
+                }
+                else if (ViewBag.Type == 1)
+                {
+                    <div class="feedback-tab" onclick="Changeurldetails(0)"><strong>Surcharge Requested</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails(1)"><strong>Surcharge Approved</strong></div>
+                }
                 <div class="pull-right">
+                    
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                     </button>
@@ -20,7 +31,7 @@
             </div>
         </div>
     </div>
-
+   
             <div class="content client">
         <div class="row bl-bg">
                 <div class="col-md-12">
@@ -29,7 +40,7 @@
                             <div class="loader text-center">
                                 <img src="~/Newassets/img/lazyload.gif" />
                             </div>
-                            
+                   
                             <div class="dataloading">
 
                                 <div class="toolbar">
@@ -42,10 +53,14 @@
                                                             <th>Skill Channel</th>
                                                             <th>Interviewer</th>
                                                             <th>Surcharge</th>
+                                                            <th>Comment</th>
                                                             <th>JDTitle</th>
                                                             <th>Client</th>   
                                                             <th>Type</th>
+                                                    @if (ViewBag.Type == 0)
+                                                    {
                                                             <th>Action</th>
+                                                    }
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
@@ -53,10 +68,14 @@
                                                             <th>Skill Channel</th>
                                                             <th>Interviewer</th>
                                                             <th>Surcharge</th>
+                                                            <th>Comment</th>
                                                             <th>JDTitle</th>
                                                             <th>Client</th>  
                                                             <th>Type</th>
+                                                    @if (ViewBag.Type == 0)
+                                                    {
                                                             <th>Action</th>
+                                                    }
                                                         </tr>
                                                     </tfoot>
                                                     <tbody>
@@ -66,6 +85,7 @@
                                                                 <td>@item.SkillChannel</td>
                                                                 <td>@item.interviewer</td>
                                                                 <td>@item.Surcharge</td>
+                                                                <td>@item.SurchargeComment</td>
                                                                 <td>@item.JDTiltle</td>
                                                                 <td>@item.ClientName</td>
                                                                 @if (item.Type=="Interview")
@@ -76,32 +96,35 @@
                                                                 {
                                                                     <td><div>Skill Channel</div></td>
                                                                 }
-                                                                <td>
-                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Approve Surcharge" style="width:25px!important;height:25px!important;background:#58c975b3;border-color:#6fde8bb3;position:relative;left:4px;">
-                                                                        <span onclick="ApproveSurcharge('@item.InterviewId','@item.Surcharge','@item.SurchargeComment','@item.Type','@item.IRFId',1,'@item.UserId')" title="Approve Surcharge">
-                                                                    <i class="fas fa-check-circle" style="position:relative;top:1px;font-size:13px;"></i>
-                                                                </span>
-                                                                    </button>
-                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="UnApprove Surcharge" style="width:25px!important;height:25px!important;background:#f49b81;border-color:#f49b81;position:relative;left:4px;">
-                                                                        <span onclick="UnApproveSurcharge('@item.InterviewId','@item.Surcharge','@item.SurchargeComment','@item.Type','@item.IRFId',2,'@item.UserId')" title="UnApprove Surcharge">
-                                                                    <i class="fa fa-times-circle" aria-hidden="true" style="position:relative;font-size:14px;top:1px;"></i>
-                                                                </span>
-                                                                    </button>
-                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Edit Surcharge" style="width:25px!important;height:25px!important;background:#a2ccef;border-color:#a2ccef;position:relative;left:4px;">
-                                                                        <span onclick="openEditSurchargeDetailsModel('@item.InterviewId','@item.IRFId','@item.Type','@item.UserId')" title="Edit Surcharge">
-                                                                    <i style="color: white;position: relative;top:-2px;font-size: 10px;" class="fa fa-percent" aria-hidden="true"></i>
-                                                                    <svg fill="#fff" style="position:relative;top:2px;right:11px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
-                                                                </span>
-                                                                    </button>
+                                                        @if (ViewBag.Type == 0)
+                                                        {
+                                                            <td>
+                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Approve Surcharge" style="width:25px!important;height:25px!important;background:#58c975b3;border-color:#6fde8bb3;position:relative;left:4px;">
+                                                                    <span onclick="ApproveSurcharge('@item.InterviewId','@item.Surcharge','@item.SurchargeComment','@item.Type','@item.IRFId',1,'@item.UserId')" title="Approve Surcharge">
+                                                                        <i class="fas fa-check-circle" style="position:relative;top:1px;font-size:13px;"></i>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="UnApprove Surcharge" style="width:25px!important;height:25px!important;background:#f49b81;border-color:#f49b81;position:relative;left:4px;">
+                                                                    <span onclick="UnApproveSurcharge('@item.InterviewId','@item.Surcharge','@item.SurchargeComment','@item.Type','@item.IRFId',2,'@item.UserId')" title="UnApprove Surcharge">
+                                                                        <i class="fa fa-times-circle" aria-hidden="true" style="position:relative;font-size:14px;top:1px;"></i>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Edit Surcharge" style="width:25px!important;height:25px!important;background:#a2ccef;border-color:#a2ccef;position:relative;left:4px;">
+                                                                    <span onclick="openEditSurchargeDetailsModel('@item.InterviewId','@item.IRFId','@item.Type','@item.UserId')" title="Edit Surcharge">
+                                                                        <i style="color: white;position: relative;top:-2px;font-size: 10px;" class="fa fa-percent" aria-hidden="true"></i>
+                                                                        <svg fill="#fff" style="position:relative;top:2px;right:11px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+                                                                    </span>
+                                                                </button>
 
-                                                            <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Surcharge History" style="width:25px!important;height:25px!important;background:#e0af44ba;border-color:#ebc676ba;position:relative;left:4px;">
-                                                                        <span onclick="SurchargeActivityTracker('@item.InterviewId','@item.IRFId','@item.Type','@item.UserId')" title="Surcharge History">
-                                                                    <i style="color: white;position: relative;top: -3px;left: -2px;font-size: 10px;" class="fa fa-percent" aria-hidden="true"></i>
-                                                                    <i class="fa fa-history" aria-hidden="true" style="position: relative;top:2px;right:10px;font-size:11px;"></i>
-                                                                </span>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
+                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Surcharge History" style="width:25px!important;height:25px!important;background:#e0af44ba;border-color:#ebc676ba;position:relative;left:4px;">
+                                                                    <span onclick="SurchargeActivityTracker('@item.InterviewId','@item.IRFId','@item.Type','@item.UserId')" title="Surcharge History">
+                                                                        <i style="color: white;position: relative;top: -3px;left: -2px;font-size: 10px;" class="fa fa-percent" aria-hidden="true"></i>
+                                                                        <i class="fa fa-history" aria-hidden="true" style="position: relative;top:2px;right:10px;font-size:11px;"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </td>
+                                                        }
+                                                    </tr>
                                                         }
                                                     </tbody>
                                                 </table>
@@ -428,5 +451,8 @@
     function closeSurchargeHistoryModel() {
         var modal = document.getElementById("SurchargeHistoryModel");
         modal.style.display = "none";
+    }
+    function Changeurldetails(actionType) {
+        window.location.href = "/Dashboard/GetSurchargesDetails?actionType=" + actionType;
     }
 </script>
