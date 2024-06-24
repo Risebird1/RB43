@@ -5360,6 +5360,10 @@ namespace Risebird.Web.Controllers
                     }
                     details.TimeZonesValue = timeZoneValue;
                 }
+                else
+                {
+                    details.interviewDateTimeZone = details.interviewDate;
+                }
                 //End: Candidate Scheduled Time in same TimeZone 
             }
             foreach (var item in CandidateDetails.Meetings)
