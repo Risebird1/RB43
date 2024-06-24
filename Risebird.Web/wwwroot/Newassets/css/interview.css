@@ -1992,8 +1992,8 @@ select:-moz-focusring {
 #SurchargeHistoryModel .modal-lg {
     max-width: 1000px !important;
 }
-    @media screen and (max-width:991px) {
-        #ProctoringTable .label-type {
+@media screen and (max-width:991px) {
+    #ProctoringTable .label-type {
         white-space: normal;
     }
 
@@ -2019,6 +2019,10 @@ select:-moz-focusring {
     .pr-1.mobpad, .pl-1.mobpad {
         padding: 0px !important
     }
+
+    #SurchargeHistoryModel .modal-lg {
+        width:100%!important;
+    }
 }
 
 
@@ -2038,7 +2042,9 @@ select:-moz-focusring {
         margin: 0px 0px 0px 0px !important;
         left: 0px !important;
     }
-
+    #SurchargeHistoryModel .modal-lg {
+        width: 100% !important;
+    }
     .skill .table-responsive, .daily-interview .table-responsive {
         border: 0px;
     }
