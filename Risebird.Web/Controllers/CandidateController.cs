@@ -6330,6 +6330,15 @@ namespace Risebird.Web.Controllers
             }
             return sb.ToString();
         }
+        public async Task<IActionResult> ResumeScreening(int id, string emailid,string jdtitle,string resume)
+        {
+            var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
+
+
+            return View(candidateList);
+        }
+
+
 
     }
 }
