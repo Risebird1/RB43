@@ -4624,7 +4624,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if(communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp)
+                if (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp)
                 {
                     string currenturl = "https://" + Request.Host.ToString() + "/Survey/CandidateFeedbackForm?id=" + interviewId;
 
@@ -4636,7 +4636,7 @@ namespace Risebird.Web.Controllers
                     _whatsAppVM.InterviewId = interviewId;
                     _whatsAppVM.SentBy = loggedInUser;
                     var result = await _whatsAppHelper.WhatsAppSendFeedbackRemainder(_whatsAppVM);
-                    if(result != null && result.ToLower().Contains("success"))
+                    if (result != null && result.ToLower().Contains("success"))
                     {
                         return Json($"Invitation has been sent Successfully to {emailId}!");
                     }
@@ -4650,7 +4650,7 @@ namespace Risebird.Web.Controllers
                 {
                     return Json("Medium not specified!");
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -5359,6 +5359,10 @@ namespace Risebird.Web.Controllers
                         }
                     }
                     details.TimeZonesValue = timeZoneValue;
+                }
+                else
+                {
+                    details.interviewDateTimeZone = details.interviewDate;
                 }
                 //End: Candidate Scheduled Time in same TimeZone 
             }
