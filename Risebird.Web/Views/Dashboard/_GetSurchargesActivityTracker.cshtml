@@ -7,8 +7,8 @@
             <th>Interviewer</th>
             <th>Surcharge</th>
             <th>Comment</th>
-            <th>RequestedBy</th>
-            <th>RequestedAt</th>
+            <th>Requested By</th>
+            <th>Requested At</th>
             <th>Type</th>
         </tr>
     </thead>
@@ -30,7 +30,7 @@
                 <td>@item.SkillChannel</td>
                 <td>@item.interviewer</td>
                 <td>@item.Surcharge</td>
-                <td>@item.SurchargeComment</td>
+                <td style="white-space:normal;width:200px!important;display:block;">@item.SurchargeComment</td>
                 <td>@item.RequestBy</td>
                 <td>@item.RequestAt</td>
                 @if (item.Type=="Interview")

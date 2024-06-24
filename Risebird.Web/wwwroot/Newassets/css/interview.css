@@ -1989,7 +1989,9 @@ select:-moz-focusring {
     position: relative;
     left: -10px;
 }
-
+#SurchargeHistoryModel .modal-lg {
+    max-width: 1000px !important;
+}
     @media screen and (max-width:991px) {
         #ProctoringTable .label-type {
         white-space: normal;
