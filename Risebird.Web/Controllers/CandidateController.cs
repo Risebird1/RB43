@@ -870,6 +870,7 @@ namespace Risebird.Web.Controllers
                         //}
                         //_candidateModelDetails = candidateList;
                         //return View(candidateList.ToPagedList(Page ?? 1, 10));
+                        ViewBag.Skills = "Python,Data Science,DSA,ML";
                         return View(candidateList);
 
 
