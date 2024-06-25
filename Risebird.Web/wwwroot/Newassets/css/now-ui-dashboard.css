@@ -11635,8 +11635,10 @@ div.dataTables_scrollFoot table {
     .pt30 .card-title {
         margin-right: 10px;
     }
-
-    .table-responsive {
+    .pt30 .mobile-view .card-title {
+        line-height:35px;
+    }
+        .table-responsive {
         width: 100%;
         /* margin-bottom: 15px;*/
         overflow-y: hidden;

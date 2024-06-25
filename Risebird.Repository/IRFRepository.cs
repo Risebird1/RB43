@@ -635,6 +635,7 @@ namespace Risebird.Repository
                             _resultVM.ClientInterviewDuration = !string.IsNullOrEmpty(dt.Rows[0]["ClientInterviewDuration"].ToString()) ? Convert.ToInt32(dt.Rows[0]["ClientInterviewDuration"]) : 0;
                             _resultVM.DMApproved = !string.IsNullOrEmpty(dt.Rows[0]["DMApproved"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["DMApproved"]) : false;
                             _resultVM.SkillSetsevaluate = !string.IsNullOrEmpty(dt.Rows[0]["SkillSetsevaluate"].ToString()) ? Convert.ToInt32(dt.Rows[0]["SkillSetsevaluate"]) : 1;
+                            _resultVM.JDTitleTwo = !string.IsNullOrEmpty(dt.Rows[0]["JDTitleTwo"].ToString()) ? dt.Rows[0]["JDTitleTwo"].ToString() : null;
 
                         }
                     }
@@ -1345,6 +1346,9 @@ namespace Risebird.Repository
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@SkillSetsevaluate", SqlDbType.Int));
                     cmdCreateIRF.Parameters["@SkillSetsevaluate"].Value = irfDetails.SkillSetsevaluate;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@JDTitleTwo", SqlDbType.VarChar));
+                    cmdCreateIRF.Parameters["@JDTitleTwo"].Value = irfDetails.JDTitleTwo;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsQCRequired", SqlDbType.Bit));
                     //cmdUpdateIRF.Parameters["@IsQCRequired"].Value = irfDetails.IsQCRequired;
@@ -2301,6 +2305,9 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@SkillSetsevaluate", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@SkillSetsevaluate"].Value = irfDetails.SkillSetsevaluate;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@JDTitleTwo", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@JDTitleTwo"].Value = irfDetails.JDTitleTwo;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@MeetingPlatform", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@MeetingPlatform"].Value = irfDetails.MeetingPlatform;

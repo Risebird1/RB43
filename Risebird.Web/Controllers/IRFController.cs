@@ -9563,6 +9563,14 @@ namespace Risebird.Web.Controllers
         }
         public async Task checkSkillSetandCombine(IRFVm irfDetails)
         {
+            if (string.IsNullOrWhiteSpace(irfDetails.JDTitleTwo))
+            {
+                irfDetails.JDTitleTwo = "";
+            }
+            if (string.IsNullOrWhiteSpace(irfDetails.ClientName))
+            {
+                irfDetails.ClientName = "";
+            }
             foreach (var item in irfDetails.SkillCollection)
             {
                 item.SkillSet = 1;

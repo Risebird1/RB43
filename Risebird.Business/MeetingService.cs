@@ -1252,6 +1252,7 @@ namespace Risebird.Business
                 reportModel.IsQCDone = interviewDetails.IsQC;
                 reportModel.CodeSnippet = interviewDetails.CodeSnippet;
                 reportModel.SkillSetsevaluate = irfDetails.SkillSetsevaluate;
+                reportModel.JDTitleTwo = interviewDetails.JDTitleTwo;
                 return reportModel;
             }
             catch (Exception e)
@@ -3898,11 +3899,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, string CandidateEmail)
+        public async Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, string CandidateEmail, int IRFId)
         {
             try
             {
-                var result = await _meetingRespository.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt);
+                var result = await _meetingRespository.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt,emailId, IRFId);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();

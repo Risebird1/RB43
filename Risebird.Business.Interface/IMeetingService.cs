@@ -217,7 +217,7 @@ namespace Risebird.Business.Interface
         Task<bool> SaveCapturedJoinMeetingTime(int interviewid, string emailid);
         Task<List<Meeting>> GetInterviewerAssignedInterviews(string emailID, string meetingLineUpType);
         Task<Meeting> GetMeetingDetails(int interviewId);
-        Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, string CandidateEmail);
+        Task<bool> SaveSurchargeInterviewDetailsById(int interviewid, string surchargecomment, int surchargeamt, string emailId, string CandidateEmail, int IRFId);
         Task<List<MeetingVM>> FetchCompletedInterviewsByClientId(int clientid, DateTime stdate, DateTime endate, string year, int month);
         Task<string> GetTranscriptUrlByMeeting(int meetingId);
         Task<bool> AddBlackListCompanyService(BlackListCompanyVM model);
@@ -243,5 +243,6 @@ namespace Risebird.Business.Interface
         Task<bool> AssignYourSelfForMyQCInterviws(string emailId, int id);
         Task<List<MeetingVM>> GetMyQCInterviews(string emailId);
         Task<List<DMInstructionVM>> GetMyDMInstruction(string emailId);
+      
     }
 }

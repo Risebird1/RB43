@@ -3465,7 +3465,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     int ClientId = 0;
-                    if ( profileName == "SeniorHR")
+                    if ( profileName == "SeniorHR" || profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Client")
                     {
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {

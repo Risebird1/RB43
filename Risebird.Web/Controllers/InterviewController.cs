@@ -7538,7 +7538,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> SaveSurchargeInterviewDetails(int interviewid, string surchargecomment, int surchargeamt, string CandidateEmail)
+        public async Task<JsonResult> SaveSurchargeInterviewDetails(int interviewid, string surchargecomment, int surchargeamt, string CandidateEmail,int IRFId)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -7548,7 +7548,7 @@ namespace Risebird.Web.Controllers
                 {
                     surchargecomment = "";
                 }
-                var model = await _meetingService.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt, emailId, CandidateEmail);
+                var model = await _meetingService.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt, emailId, CandidateEmail,IRFId);
                 if (model)
                 {
                     return Json("Surcharge details are updated successfully.");
@@ -7639,9 +7639,12 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
-                model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
-                string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
-                model.InterviewerComment = output;
+                if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
+                {
+                    model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+                    string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+                    model.InterviewerComment = output;
+                }
                 if (profileName == "Client")
                 {
                     var client = await _userRepository.GetClientUserDetails(email);
@@ -8067,7 +8070,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public async Task<IActionResult> PaymentSlaDetails(string actionstatus,int returnBack)
+        public async Task<IActionResult> PaymentSlaDetails(string actionstatus, int returnBack)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -8679,7 +8682,6 @@ namespace Risebird.Web.Controllers
             }
             return sb.ToString();
         }
-
         #region Multi Skill Sets
         public async Task ReportSkillSetandCombine(InterviewReport model)
         {

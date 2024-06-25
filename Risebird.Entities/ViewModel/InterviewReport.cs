@@ -373,6 +373,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerCommentTwo { get; set; }
         public IList<QuestionsDiscussed> QuestionsTwoCollection { get; set; }
         public IList<TechSkillReport> TechSkillTwoReportCollection { get; set; }
+        public string JDTitleTwo { get; set; }
     }
     public class RBInterviewDetails
     {

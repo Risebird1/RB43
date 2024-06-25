@@ -3677,5 +3677,118 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("AllEmergencyInterviewDetails");
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetSurchargesDetails(int actionType)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    ViewBag.Type = actionType;
+;                   var surchaes = await _dashboardService.GetSurcharesDetails(actionType);
+                    return View(surchaes);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> ApproveSurcharge(int InterviewId,int Surcharge,string SurchargeComment,string Type,int IRFId,int actionType,int UserId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                   
+                    var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                    var data = await _dashboardService.ApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type,Emailid, IRFId, actionType, UserId);
+
+                    if (data)
+                    {
+                            return Json("Successfully");
+                           
+                    }
+                    else
+                    {
+                            return Json("UnSuccessfully");
+                    }
+
+                }
+                else
+                {
+                    return Json(new { success = false, redirectUrl = Url.Action("SignOut", "Session") });
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateSurchargeDetails(int InterviewId, int IRFId, string Type, int UserId, string SurchargeComment,int Surchargeamt)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var model = await _dashboardService.UpdateSurchargeDetails(InterviewId, IRFId, Type, UserId, SurchargeComment, Surchargeamt, emailId);
+                if (model)
+                {
+                    return Json("Surcharge details are updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update Surcharge details, please try again.");
+                }
+            }
+            else
+            {
+                return Json("Failed to update Surcharge details, please try again.");
+            }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetSurchargesActivityTracker(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var surchaes = await _dashboardService.GetSurcharesActivityTraker(InterviewId,IRFId, Type,UserId);
+                    return PartialView("_GetSurchargesActivityTracker", surchaes);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

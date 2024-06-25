@@ -37,6 +37,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @BillingOwner int,     
 @AssessmentGroupId varchar(100),
 @SkillSetsevaluate int,
+@JDTitleTwo varchar(150),
 --@IsQCRequired bit,
 @IsJoinabilitySelectabilityRequired bit,
 @IsGeneralSkillRequired bit,
@@ -105,6 +106,7 @@ Begin
 				   ,[IsNewSkillChannel]
 				   ,[FlatRate]
 				   ,[SkillSetsevaluate]
+				   ,[JDTitleTwo]
 				   )
 				   --,[InterviewDuration]
 				   --,[IsFixedInterviewduration]
@@ -144,7 +146,8 @@ Begin
 				   @IsMeetingNotificationSend,
 				   @IsNewSkillChannel,
 				   @FlatRate,
-				   @SkillSetsevaluate
+				   @SkillSetsevaluate,
+				   @JDTitleTwo
 				   )
 				   --@InterviewDuration,
 				   --@IsFixedInterviewduration,
@@ -201,12 +204,24 @@ Begin
 					[Surcharge],
 					[IsActive],
 					[IsAvailable],
-					[InterviewerId])  
+					[InterviewerId],
+					[IsSurchargeApprove])  
     
-					SELECT @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+					SELECT @idIrf, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId,NULL as IsSurchargeApprove FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
 
-					--emergency interviewers
+					Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
+	SELECT 
+    0 AS InterviewId, 
+    ibd.Surcharge,
+    NULL AS SurchargeComment,  
+    @CreatedBy,
+    @CreatedOn, 
+    'Raised' AS RequestType,
+    ibd.IRFId AS IRFId,
+	ibd.UserId
+FROM 
 
+    @InterviewerBulkData ibd where ISNULL(ibd.Surcharge,0)<>0;
 					INSERT INTO [dbo].[TransEmergencyInterviewer](  
 					[IRFId] ,  
 					[UserId],  

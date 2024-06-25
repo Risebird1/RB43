@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using static Dapper.SqlMapper;
+using static Risebird.Entities.Data.RchilliResumeMapFields;
 
 
 namespace Risebird.Repository
@@ -1803,5 +1804,109 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@actionType",actionType);
+                    var result = await SqlMapper.QueryAsync<Surcharges>(con, "usp_GetSurchargeRequestDetails", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId, int IRFId, int actionType, int UserId)
+        {
+            try
+            {
+                string RequestType=string.Empty;
+                if (actionType==1)
+                {
+                    RequestType = "Approved";
+                }
+                else { RequestType = "UnApproved"; }
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@InterviewId", InterviewId);
+                dynamicParam.Add("@Type",Type );
+                dynamicParam.Add("@Surcharge", Surcharge);
+                dynamicParam.Add("@SurchargeComment", SurchargeComment);
+                dynamicParam.Add("@RequestBy", EmailId);
+                dynamicParam.Add("@RequestAt", DateTime.Now);
+                dynamicParam.Add("@RequestType", RequestType);
+                dynamicParam.Add("@actionType", actionType);
+                dynamicParam.Add("@IRFId",IRFId);
+                dynamicParam.Add("@UserId", UserId);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_ApproveSurchage", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> UpdateSurchargeDetails(int InterviewId, int IRFId, string Type, int UserId, string SurchargeComment, int Surchargeamt,string EmailId)
+        {
+            try
+            {
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@InterviewId", InterviewId);
+                dynamicParam.Add("@IRFId", IRFId);
+                dynamicParam.Add("@Type", Type);
+                dynamicParam.Add("@UserId", UserId);
+                dynamicParam.Add("@Surchargeamt", Surchargeamt);
+                dynamicParam.Add("@SurchargeComment", SurchargeComment);
+                dynamicParam.Add("@RequestBy", EmailId);
+                dynamicParam.Add("@RequestAt", DateTime.Now);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_UpdateSurchargeDetails", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<Surcharges>> GetSurcharesActivityTracker(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@InterviewId", InterviewId);
+                    parameters.Add("@IRFId",IRFId);
+                    parameters.Add("@UserId",UserId);
+                    parameters.Add("@Type",Type);
+                    var result = await SqlMapper.QueryAsync<Surcharges>(con, "usp_SurchargeActivityTracker", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

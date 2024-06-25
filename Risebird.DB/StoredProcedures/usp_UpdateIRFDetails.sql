@@ -36,6 +36,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@BillingOwner int,  
 	@AssessmentGroupId varchar(100),
 	@SkillSetsevaluate int,
+	@JDTitleTwo varchar(150),
 	@MeetingPlatform varchar(100),
 	--@IsQCRequired bit,
 	@IsJoinabilitySelectabilityRequired bit,
@@ -121,6 +122,7 @@ BEGIN
 	,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
 	,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
 	,[IsLocked]=@IsLocked
+	,[JDTitleTwo]=@JDTitleTwo
 	--,[InterviewDuration]=@InterviewDuration
 	--,[IsFixedInterviewduration]=@IsFixedInterviewduration
 	--,[FixedAmount] = @FixedAmount
@@ -204,10 +206,24 @@ BEGIN
 	[IsAvailable],
 	[InterviewerId],
 	[Source],
-	[ModifiedBy])  
+	[ModifiedBy],
+	[IsSurchargeApprove])  
     
-	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source], @ModifiedBy as InterviewerId FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
-  
+	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source], @ModifiedBy as InterviewerId,NULL as IsSurchargeApprove FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+	Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
+	SELECT 
+    0 AS InterviewId,
+    ibd.Surcharge,
+    NULL AS SurchargeComment,
+    @ModifiedBy,
+    @timeNow,
+    'Raised' AS RequestType,
+    ibd.IRFId AS IRFId,
+	ibd.UserId
+FROM 
+    @InterviewerSurchargeBulkData ibd where ISNULL(ibd.Surcharge,0)<>0;
+
+					--emergency interviewers
  End
  else
  Begin
@@ -340,7 +356,7 @@ where ti.IsActive=0 and ti.IRFId=@id and interviewDate>@timeNow
    
  end catch  
   
-END 
+END
 GO
 
 
