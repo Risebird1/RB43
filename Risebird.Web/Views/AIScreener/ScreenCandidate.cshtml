@@ -1,0 +1,127 @@
+﻿@model Risebird.Entities.Data.OpenAIModels.RunResult
+
+@{
+    ViewData["Title"] = "Candidate Resume Screener";
+    ViewBag.PageHeader = "Candidate Resume Screener";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+@* <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head> *@
+
+
+
+
+
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<div class="main-panel" id="main-panel">
+
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Candidate Resume Screener</h4></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="content  client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="card">
+                            <h5 class="card-title">Candidate: @ViewBag.CandidateEmail</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Job Title: @ViewBag.JobTitle</h6>
+                            <a href="@ViewBag.ResumeLink" target="_blank" class="card-link">View Resume</a>
+                            <hr>
+                            @if (Model != null)
+                            {
+                                @foreach (var item in Model.Data)
+                                {
+                                    @if (item != null)
+                                    {
+                                        @foreach (var obj in item.Content)
+                                        {
+                                            @if ((obj?.Text?.Value?.Contains("Evaluate the resume")).HasValue && !(obj?.Text?.Value?.Contains("Evaluate the resume")).Value)
+                                            {
+                                                <br>
+                                                <div class="card-body">
+                                                    @Html.Raw(obj?.Text?.Value?.Replace("\n", "<br>").Replace("**", "<strong>").Replace("**", "</strong>"))
+                                                </div>
+                                            }
+                                            
+                                        }
+
+                                    }
+
+
+                                }
+
+                            }
+
+
+                        </div>
+                        
+
+                        <!-- end col-md-12 -->
+                    </div>
+
+
+
+
+                    <!-- end row -->
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+
+</div>
+@* <body>
+    <div class="container mt-5">
+        <div class="card">
+            <h5 class="card-title">Candidate: @ViewBag.CandidateEmail</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Job Title: @ViewBag.JobTitle</h6>
+            <a href="@ViewBag.ResumeLink" target="_blank" class="card-link">View Resume</a>
+            <hr>
+            @if(Model != null)
+            {
+                @foreach (var item in Model.Data)
+                {
+                    @if(item!=null)
+                    {
+                        @foreach (var obj in item.Content)
+                        {
+                            <br>
+                            <div class="card-body">
+                                @Html.Raw(obj?.Text?.Value?.Replace("\n", "<br>").Replace("**", "<strong>").Replace("**", "</strong>"))
+                            </div>
+                        }
+                        
+                    }
+                    
+
+                }
+                
+            }
+            
+            
+        </div>
+    </div>
+</body> *@
+@* </html> *@
