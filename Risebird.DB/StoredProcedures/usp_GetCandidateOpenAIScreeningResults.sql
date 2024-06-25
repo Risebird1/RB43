@@ -13,6 +13,6 @@ Create PROCEDURE [dbo].[usp_GetCandidateOpenAIScreeningResults]
 @candidateMasterId int
 As
 Begin
- select top 1 OpenAIScreeningResponseJson from Candidate where irfid = @irfId and CandidateMasterId = @candidateMasterId
+ select top 1 OpenAIScreeningResponseJson, ResumeLink from Candidate where irfid = @irfId and CandidateMasterId = @candidateMasterId
 End
 GO
