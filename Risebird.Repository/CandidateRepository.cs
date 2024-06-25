@@ -1337,7 +1337,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<string> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId)
+        public async Task<Candidate> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId)
         {
             try
             {
@@ -1346,7 +1346,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@candidateMasterId", candidateMasterId);
-                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetCandidateOpenAIScreeningResults", parameters, commandTimeout: 600,
+                    var result = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetCandidateOpenAIScreeningResults", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }

@@ -568,7 +568,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<string> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId)
+        public async Task<Candidate> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId)
         {
             try
             {
