@@ -757,6 +757,20 @@
                                                                         <div class="btn btn-record shadow btn-xs sharp me-1" aria-label="Call Record" style="position: relative;cursor: pointer; width:23px!important;height:23px!important;">
                                                                             <span onclick="FetchRecording('@item.EmailId')" title="Call Record"><i style="left: 0px;top:-1px;position:relative;font-size:12px;font-size:12px;" class='fa fa-dot-circle'></i></span>
                                                                         </div>
+
+                                                                        @* <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Screen Resume" style="width:23px!important;height:23px!important;">
+                                                                            <span onclick="ScreenCandidateBasedOnResume('@item.ResumeLink','@item.EmailId', '@item.JDTiltle')" title="Screen Resume">
+                                                                                <svg style="position:relative;top:-2px;left:-1px;" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="#fff" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" /></svg>
+                                                                            </span>
+                                                                        </button> *@
+
+                                                                        <div style="float:left;">
+                                                                            <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenCandidate", "AIScreener" , new { resumeLink = item.ResumeLink, jdTitle = item.JDTiltle, emailId = item.EmailId, irfId = item.IRFId, candidateMasterId = item.CandidateMasterId, irfName = item.IRFName})">
+                                                                                <button class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#98a3d7;border-color:#98a3d7; width:23px!important;height:23px!important; top:3px;position:relative;   margin: 0px 0px 0px 3px;">
+                                                                                    <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top:-2px;left:-0.5px" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z" /></svg></span>
+                                                                                </button>
+                                                                            </a>
+                                                                        </div>
                                                                     }
 
                                                                     @if (ViewBag.AccessType != "Public")
@@ -1223,6 +1237,30 @@
 <div id="modal_candidateCommunicationDetails_placeholder"></div>
 <script src="~/js/ModalFormServerValidation.js?v=2024"></script>
 <script src="~/js/common.js?2024"></script>
+
+@* <script>
+    function ScreenCandidateBasedOnResume(resumeLink, candidateEmail, jdTitle) {
+        
+        
+        $.ajax({
+            type: "POST",
+            url: "/AIScreener/ScreenCandidate",
+            //contentType: false,
+            //processData: false,
+            data: { 'resumeLink': resumeLink, 'jdTitle': jdTitle },
+            success: function (data) {
+                // debugger;
+                // document.getElementById('aiScreenResultModal').style.display = "block";
+                // $('#aiScreenCandidate').html('');
+                // $('#aiScreenCandidate').html(candidateEmail);
+                // $('#aiScreenRationale').html('');
+                // $('#aiScreenVerdict').html('');
+                // $('#aiScreenRationale').html(data.rationale);
+                // $('#aiScreenVerdict').html(data.verdict);
+            }
+        });
+    }
+</script> *@
 <script>
     var spanImport = document.getElementById("importResultPopUp");
     // When the user clicks on <span> (x), close the modal
