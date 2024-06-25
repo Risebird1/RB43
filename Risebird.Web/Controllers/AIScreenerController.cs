@@ -32,7 +32,7 @@ namespace Risebird.Web.Controllers
         
 
         //[HttpPost("screen")]
-        public async Task<IActionResult> ScreenCandidate(string resumeLink, string jdTitle, string emailId, int irfId, int candidateMasterId, string irfName)//, string skills
+        public async Task<IActionResult> ScreenCandidate(string jdTitle, string emailId, int irfId, int candidateMasterId, string irfName)//, string skillsstring resumeLink, 
         {
             try
             {
@@ -45,24 +45,24 @@ namespace Risebird.Web.Controllers
 
                         //check if the candidate's screening is already done and saved in db(as json string)
 
-                        var screeningResultsJsonStringFromDB = await _candidateService.GetCandidateOpenAIScreeningResults(irfId, candidateMasterId);
+                        var candidate = await _candidateService.GetCandidateOpenAIScreeningResults(irfId, candidateMasterId);
                         
                         ViewBag.CandidateEmail = emailId;
                         ViewBag.JobTitle = jdTitle;
-                        ViewBag.ResumeLink = resumeLink;
+                        ViewBag.ResumeLink = candidate?.ResumeLink;
                         ViewBag.IRFName = irfName;
                         ViewBag.SaveOperationResult = "NA";
 
-                        if (!string.IsNullOrEmpty(screeningResultsJsonStringFromDB))
+                        if (candidate != null && !string.IsNullOrEmpty(candidate.OpenAIScreeningResponseJson))
                         {
-                            return View(JsonConvert.DeserializeObject<RunResult>(screeningResultsJsonStringFromDB));
+                            return View(JsonConvert.DeserializeObject<RunResult>(candidate.OpenAIScreeningResponseJson));
                         }
 
                         var request = new CandidateScreeningRequest
                         {
                             //Skills = skills,
                             JDTitle = jdTitle,
-                            ResumeLink = resumeLink
+                            ResumeLink = candidate.ResumeLink
                         };
                         var response = await _assistantServiceHelper.ScreenCandidateAsync(request);
 
