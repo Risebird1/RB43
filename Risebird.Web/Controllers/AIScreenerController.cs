@@ -9,6 +9,8 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
+using Risebird.Entities.Data.OpenAIModels;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
@@ -16,19 +18,21 @@ namespace Risebird.Web.Controllers
     [Authorize]
     public class AIScreenerController : Controller
     {
-        private IApplicationErrorLogger _applicationErrorLogger;
-        private IAssistantServiceHelper _assistantServiceHelper;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
+        private readonly ICandidateService _candidateService;
 
-        public AIScreenerController(IAssistantServiceHelper assistantServiceHelper, IApplicationErrorLogger applicationErrorLogger)
+        public AIScreenerController(IAssistantServiceHelper assistantServiceHelper, IApplicationErrorLogger applicationErrorLogger, ICandidateService candidateService)
         {
             _assistantServiceHelper = assistantServiceHelper;
             _applicationErrorLogger = applicationErrorLogger;
+            _candidateService = candidateService;
         }
 
         
 
         //[HttpPost("screen")]
-        public async Task<IActionResult> ScreenCandidate(string resumeLink, string jdTitle)//, string skills
+        public async Task<IActionResult> ScreenCandidate(string resumeLink, string jdTitle, string emailId, int irfId, int candidateMasterId, string irfName)//, string skills
         {
             try
             {
@@ -38,6 +42,49 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
+
+                        //check if the candidate's screening is already done and saved in db(as json string)
+
+                        var screeningResultsJsonStringFromDB = await _candidateService.GetCandidateOpenAIScreeningResults(irfId, candidateMasterId);
+                        
+                        ViewBag.CandidateEmail = emailId;
+                        ViewBag.JobTitle = jdTitle;
+                        ViewBag.ResumeLink = resumeLink;
+                        ViewBag.IRFName = irfName;
+                        ViewBag.SaveOperationResult = "NA";
+
+                        if (!string.IsNullOrEmpty(screeningResultsJsonStringFromDB))
+                        {
+                            return View(JsonConvert.DeserializeObject<RunResult>(screeningResultsJsonStringFromDB));
+                        }
+
+                        var request = new CandidateScreeningRequest
+                        {
+                            //Skills = skills,
+                            JDTitle = jdTitle,
+                            ResumeLink = resumeLink
+                        };
+                        var response = await _assistantServiceHelper.ScreenCandidateAsync(request);
+
+                        var responseInJson = JsonConvert.SerializeObject(response);
+                        //save the response in db
+                        bool saveOperationResult = true;
+                        if(!string.IsNullOrEmpty(responseInJson))
+                        {
+                            saveOperationResult = await _candidateService.SaveCandidateOpenAIScreeningResults(irfId, candidateMasterId, responseInJson);
+                        }
+                        
+                        if (saveOperationResult)
+                        {
+                            ViewBag.SaveOperationResult = "Evaluation saved successfully.";
+                        }
+                        else
+                        {
+                            ViewBag.SaveOperationResult = "Failed to save the evaluation.";
+                        }
+
+                        return View(response);
+                        //return Json(response);
                         //HttpClient myWebClient = new HttpClient();
                         //using (var reader = new StreamReader(myWebClient.GetStreamAsync(resumeLink).Result))//new StreamReader(resumeFile.OpenReadStream())
                         //{
@@ -50,14 +97,6 @@ namespace Risebird.Web.Controllers
                         //    var response = await _assistantServiceHelper.ScreenCandidateAsync(request);
                         //    return Json(response);
                         //}
-                        var request = new CandidateScreeningRequest
-                        {
-                            //Skills = skills,
-                            JDTitle = jdTitle,
-                            ResumeLink = resumeLink
-                        };
-                        var response = await _assistantServiceHelper.ScreenCandidateAsync(request);
-                        return Json(response);
                     }
                     else
                     {

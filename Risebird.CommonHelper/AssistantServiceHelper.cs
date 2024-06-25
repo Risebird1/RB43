@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace Risebird.CommonHelper
             candidateResumesVectorStoreId = _configuration["OpenAI:CandidateResumesVectorStoreId"];//"vs_ryqG2ou94myQaS3TOatPEZwY";
         }
 
-        public async Task<CandidateScreeningResponse> ScreenCandidateAsync(CandidateScreeningRequest requestModel)
+        public async Task<RunResult> ScreenCandidateAsync(CandidateScreeningRequest requestModel)
         {
             try
             {
@@ -59,19 +60,21 @@ namespace Risebird.CommonHelper
                     if (runStatus == "failed")
                         break;
                 }
+                var messages = await ListRunMessages(threadId);
+                return messages;
+                //if (runStatus == "completed")
+                //{
+                //    //retrive messages list
+                //    var messages = await ListRunMessages(threadId);
+                //    return messages;
+                //    //return new CandidateScreeningResponse { Status = true, EvaluationResult = messages?.Data.Where };
+                //}
+                //else if(runStatus == "failed")
+                //{
+                //    return null;
+                //}
 
-                if(runStatus == "completed")
-                {
-                    //retrive messages list
-                    var messages = await ListRunMessages(threadId);
-                    return new CandidateScreeningResponse { Status = true };
-                }
-                else if(runStatus == "failed")
-                {
-                    return new CandidateScreeningResponse { Status = false};
-                }
-
-                return null;
+                //return null;
             }
             catch (Exception ex)
             {
@@ -324,42 +327,4 @@ namespace Risebird.CommonHelper
         //public MetaData metadata { get; set; }
     }
 
-    public class RunResult
-    {
-        public string Object { get; set; }
-        public List<Datum> Data { get; set; }
-        public string FirstId { get; set; }
-        public string LastId { get; set; }
-        public bool HasMore { get; set; }
-    }
-
-    public class Datum
-    {
-        public string Id { get; set; }
-        public string Object { get; set; }
-        public long CreatedAt { get; set; }
-        public string AssistantId { get; set; }
-        public string ThreadId { get; set; }
-        public string RunId { get; set; }
-        public string Role { get; set; }
-        public List<Content> Content { get; set; }
-        public List<object> Attachments { get; set; }
-        public Metadata Metadata { get; set; }
-    }
-
-    public class Content
-    {
-        public string Type { get; set; }
-        public Text Text { get; set; }
-    }
-
-    public class Text
-    {
-        public string Value { get; set; }
-        public List<object> Annotations { get; set; }
-    }
-
-    public class Metadata
-    {
-    }
 }

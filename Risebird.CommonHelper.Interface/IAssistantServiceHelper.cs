@@ -1,4 +1,6 @@
-﻿using Risebird.Entities.Data;
+﻿using Microsoft.AspNetCore.Rewrite;
+using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ namespace Risebird.CommonHelper.Interface
 {
     public interface IAssistantServiceHelper
     {
-        Task<CandidateScreeningResponse> ScreenCandidateAsync(CandidateScreeningRequest request);
+        //Task<CandidateScreeningResponse> ScreenCandidateAsync(CandidateScreeningRequest request);
+        Task<RunResult> ScreenCandidateAsync(CandidateScreeningRequest request);
     }
 }
