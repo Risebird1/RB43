@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Risebird.Entities.Data.Surcharges>
+<div id="style-2" class="scrollers" style="overflow-y:auto">
+
+<table id="SurcharegesTable" class="table table-striped  table-bordered dt-responsive" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Skill Channel</th>
+            <th>Interviewer</th>
+            <th>Surcharge</th>
+            <th>Comment</th>
+            <th>Requested By</th>
+            <th>Requested At</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Skill Channel</th>
+            <th>Interviewer</th>
+            <th>Surcharge</th>
+            <th>Comment</th>
+            <th>RequestedBy</th>
+            <th>RequestedAt</th>
+            <th>Type</th>
+        </tr>
+    </tfoot>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.SkillChannel</td>
+                <td>@item.interviewer</td>
+                <td>@item.Surcharge</td>
+                <td style="white-space:normal;width:200px!important;display:block;">@item.SurchargeComment</td>
+                <td>@item.RequestBy</td>
+                <td>@item.RequestAt</td>
+                @if (item.Type=="Interview")
+                {
+                <td><div>Interview</div></td> 
+                }
+                else{<td><div>Skill Channel</div></td>}
+            </tr>
+        }
+    </tbody>
+</table>
+</div>

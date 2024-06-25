@@ -77,5 +77,9 @@ namespace Risebird.Repository.Interface
         Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail);
         Task<List<MeetingVM>> GetColdCandidatesByClientRepository(string Email);
         Task<IEnumerable<InterviewManagementVM>> GetAllInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate);
+        Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType);
+        Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId, int IRFId, int actionType, int UserId);
+        Task<bool> UpdateSurchargeDetails(int InterviewId, int IRFId, string Type, int UserId, string SurchargeComment, int Surchargeamt, string EmailId);
+        Task<IEnumerable<Surcharges>> GetSurcharesActivityTracker(int InterviewId, int IRFId, string Type, int UserId);
     }
 }
