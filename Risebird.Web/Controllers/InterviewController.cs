@@ -7538,7 +7538,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> SaveSurchargeInterviewDetails(int interviewid, string surchargecomment, int surchargeamt, string CandidateEmail)
+        public async Task<JsonResult> SaveSurchargeInterviewDetails(int interviewid, string surchargecomment, int surchargeamt, string CandidateEmail,int IRFId)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -7548,7 +7548,7 @@ namespace Risebird.Web.Controllers
                 {
                     surchargecomment = "";
                 }
-                var model = await _meetingService.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt, emailId, CandidateEmail);
+                var model = await _meetingService.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt, emailId, CandidateEmail,IRFId);
                 if (model)
                 {
                     return Json("Surcharge details are updated successfully.");
@@ -8682,7 +8682,6 @@ namespace Risebird.Web.Controllers
             }
             return sb.ToString();
         }
-
         #region Multi Skill Sets
         public async Task ReportSkillSetandCombine(InterviewReport model)
         {
