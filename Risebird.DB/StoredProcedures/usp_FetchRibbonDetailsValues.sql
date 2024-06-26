@@ -32,7 +32,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				left join UserList ulsh on ulsh.id=sh.Userid 
 				join UserList ul on ul.id= irf.RisebirdHr
 				join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
-				where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and ulsh.Emailid= @Emailid
+				where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and ul.Emailid= @Emailid
 			end
 			else
 			begin

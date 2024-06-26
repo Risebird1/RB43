@@ -2756,6 +2756,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<MailActivityFilter>(HttpContext.Session.GetString("MailActivityFilters"));
 
                             recipientType = filter.RecipientType;
+                            ViewBag.ReturnBack = filter.returnBack;
                             recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType, filter.StartDate, filter.EndDate,emailid);
 
                             filter.SkillChannel = filter.SkillChannel == null ? filter.SkillChannel = recipients.Select(x => x.SkillChannelName).ToArray() : filter.SkillChannel = filter.SkillChannel;
@@ -2821,6 +2822,7 @@ namespace Risebird.Web.Controllers
                         if (filter != null)
                         {
                             filter.RecipientType = recipientType;
+                            filter.returnBack = returnBack;
                             HttpContext.Session.SetString("MailActivityFilters", JsonConvert.SerializeObject(filter));
                         }
 

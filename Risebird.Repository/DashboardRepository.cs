@@ -1506,7 +1506,7 @@ namespace Risebird.Repository
                 parameters.Add("@recipientType", recipientType);
                 parameters.Add("@startDate", startDate);
                 parameters.Add("@endDate", endDate);
-                parameters.Add("@startDate", DateTime.Now.AddDays(-10));
+                parameters.Add("@startDate", startDate);
                 parameters.Add("@timeNow", DateTime.Now);
                 parameters.Add("@EmailId", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
