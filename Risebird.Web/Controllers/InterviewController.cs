@@ -8831,6 +8831,8 @@ namespace Risebird.Web.Controllers
                 }
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+                model.HeuristicsscoreDesc= ((Heuristicsscorelevel)model.Heuristicsscore).GetDescription();
+                model.JobLevelName= ((JobLevels)model.JobLevel).GetDescription();
                 await ReportSkillSetandSeperate(model);
                 if (model == null)
                 {

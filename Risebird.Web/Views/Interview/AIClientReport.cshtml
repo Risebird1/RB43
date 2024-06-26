@@ -352,7 +352,13 @@
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 18px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
                                                
-                                                  <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">Interviewer Late Join : <span style="color:#000">Yes</span> </div>
+                                                <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">Interviewer Late Join : <span style="color:#000">@if (Model.InterviewerLateJoin)
+                                                        {
+                                                            <span>Yes</span>
+                                                        }else{
+                                                            <span>No</span>
+                                                        }
+                                                    </span> </div>
 
                                                 
                                                 @if (Model.CommunicationalProficiency != 0)
@@ -388,9 +394,11 @@
                                                         <h3>
                                                             <div class="pull-left"><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Interview Video</div>
                                                             <div class="pull-right">
-                                                             <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px"><font style="color: #9b9494;padding: 0px;">Plan Type : </font>Pro </span>
+                                                             <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px"><font style="color: #9b9494;padding: 0px;">Plan Type : </font>
+                                                                @Model.HeuristicsscoreDesc
+                                                             </span>
                                                              <span style="padding: 0px 5px;background: #a4b8b7;display: inline-block;margin: 0px 5px;height: 2px;background: #a4b8b7;top: -4px;left: 1px;transform: rotate(90deg); width: 11px;position: relative;"></span>
-                                                             <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;"><font style="color: #9b9494;padding: 0px">Interview Duration : </font>( 40-50 mins) </span>
+                                                                <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;"><font style="color: #9b9494;padding: 0px">Interview Duration : </font>@Model.VideoDuration</span>
                                                             </div>
                                                         </h3>
                                                        
@@ -626,9 +634,9 @@
                                                     </div>
                                                 }
                                                       <div class="level-div">
-                                                                 <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px;">Seniority : </font>Lead </span>
+                                                                 <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px;">Seniority : </font>@Model.JobLevelName </span>
                                                                  <span style="padding: 0px 5px;background: #a4b8b7;display: inline-block;margin: 0px 5px;height: 2px;background: #a4b8b7;top: -2px;left: 1px;transform: rotate(90deg); width: 11px;position: relative;"></span>
-                                                                 <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px">Difficulty Level : </font>70%</span>
+                                                                 <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px">Difficulty Level : </font>@Model.Difficultylevel</span>
                                                                 </div>
                                             </div>
                                            
