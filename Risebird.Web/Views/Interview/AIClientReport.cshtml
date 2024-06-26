@@ -118,7 +118,6 @@
 <input type="text" hidden id="id_IsMatched" value="@ViewBag.IsMatched" />
 <input type="text" hidden id="hidtxtinterviewid" value="@ViewBag.InterviewId" />
 <input type="text" hidden id="hidtxtirfid" value="@ViewBag.IrfId" />
-
 <div id="main-panel">
     <div class="pt30">
         <div class="col-md-12">
@@ -350,8 +349,12 @@
 
                                                 <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
 
-                                                <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;">Interviewer Coded Name: </div>
-                                                <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 19px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
+                                                <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
+                                                <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 18px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
+                                               
+                                                  <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">Interviewer Late Join : <span style="color:#000">Yes</span> </div>
+
+                                                
                                                 @if (Model.CommunicationalProficiency != 0)
                                                 {
                                                     <div style="margin-top:10px">
@@ -382,7 +385,15 @@
                                                 else
                                                 {
                                                     <div class="row">
-                                                        <h3><span class="pull-left"><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Interview Video</span></h3>
+                                                        <h3>
+                                                            <div class="pull-left"><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Interview Video</div>
+                                                            <div class="pull-right">
+                                                             <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px"><font style="color: #9b9494;padding: 0px;">Plan Type : </font>Pro </span>
+                                                             <span style="padding: 0px 5px;background: #a4b8b7;display: inline-block;margin: 0px 5px;height: 2px;background: #a4b8b7;top: -4px;left: 1px;transform: rotate(90deg); width: 11px;position: relative;"></span>
+                                                             <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;"><font style="color: #9b9494;padding: 0px">Interview Duration : </font>( 40-50 mins) </span>
+                                                            </div>
+                                                        </h3>
+                                                       
                                                         <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
                                                             <div>
                                                                 @Html.HiddenFor(x => Model.VideoLink)
@@ -614,23 +625,28 @@
                                                         }
                                                     </div>
                                                 }
-
+                                                      <div class="level-div">
+                                                                 <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px;">Seniority : </font>Lead </span>
+                                                                 <span style="padding: 0px 5px;background: #a4b8b7;display: inline-block;margin: 0px 5px;height: 2px;background: #a4b8b7;top: -2px;left: 1px;transform: rotate(90deg); width: 11px;position: relative;"></span>
+                                                                 <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px">Difficulty Level : </font>70%</span>
+                                                                </div>
                                             </div>
+                                           
                                             <div class="col-lg-3 col-md-5 clientnfo">
-                                                @if (!string.IsNullOrEmpty(Model.CodeSnippet))
+                                             @if (!string.IsNullOrEmpty(Model.CodeSnippet))
                                                 {
                                                     <div class="clearfix" style="margin: 20px 0px 0px 0px;padding-bottom: 20px;">
                                                         <h3>
                                                             <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/code-output.png">Code Output:
                                                         </h3>
                                                         <div style="margin:15px 0px 10px 0px;">
-
-                                                            <div><a style="text-decoration:none!important;" href="@Model.CodeSnippet" target="_blank"><span style="background: #42a5f5;color: #fff;padding: 3px 10px 6px 10px;border-radius:3px;text-decoration:none">Click here to view code snippet</span></a></div>
-                                                        </div>
+                                                          <div id="div_aicodesnippets">
+                                                            </div>
+                                                    @*<div><a style="text-decoration:none!important;" href="@Model.CodeSnippet" target="_blank"><span style="background: #42a5f5;color: #fff;padding: 3px 10px 6px 10px;border-radius:3px;text-decoration:none">Click here to view code snippet</span></a></div>*@                                                        </div>
                                                     </div>
 
                                                 }
-                                                else
+                                               else
                                                 {
                                                     <div class="clearfix" style="margin: 20px 0px 0px 0px;padding-bottom: 20px;">
                                                         <h3>
@@ -1438,6 +1454,7 @@
     }
 </script>
 
+   </script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -1653,4 +1670,31 @@
         $('.next-skillHide').show(0);
     });
 </script>
+<script>
+    $(document).ready(function () {
+        FetchCodesnippet();
+    });
+    </script>
+<script>
+    
+    function FetchCodesnippet() {
+        var interviewid = $("#hidtxtinterviewid").val();
+        $.ajax({
+            type: "POST",
+            url: '/IRF/GetCodeSnippet',
+            data: { interviewid: interviewid },
+            success: function (data) {
+                BindCodeSnippet(data);
+            }
+        });
+    }
+    function BindCodeSnippet(data) {
+        var html = '';
+        if (data != null) {
+            html += '<iframe src="' + data + '"></iframe>';
+        }
+        $("#div_aicodesnippets").empty().html(html);
+    }
+</script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+

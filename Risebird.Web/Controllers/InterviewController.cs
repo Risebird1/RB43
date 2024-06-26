@@ -8684,19 +8684,130 @@ namespace Risebird.Web.Controllers
         }
         public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
         {
+
+            //try
+            //{
+            //    ViewBag.InterviewId = interviewId;
+            //    ViewBag.IrfId = irfId;
+
+            //        ViewBag.SecurelyShared = "";
+            //        ViewBag.UniqueId = "";
+            //        ViewBag.IsMatched = "";
+
+            //    ViewBag.PageStatus = "Mainurl";
+
+
+
+            //    var email = HttpContext.Session.GetString("email");
+            //    email = email.Replace("\"", "");
+            //    ViewBag.EmailId = email;
+            //    bool isAdminHR = false;
+            //    bool isInterviewer = false;
+            //    ViewBag.actiontype = actiontype;
+            //    ViewBag.IRFID = irfId;
+            //    string profileName = HttpContext.Session.GetString("profileName");
+            //    ViewBag.profile = profileName.Replace("\"", "");
+
+            //    if (profileName != null)
+            //    {
+            //        profileName = profileName.Replace("\"", "");
+            //        if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+            //        {
+            //            isAdminHR = true;
+            //        }
+            //        else if (profileName == "Interviewer")
+            //        {
+            //            isInterviewer = true;
+            //        }
+            //    }
+
+            //    var model = await _meetingService.GetInteviewReport(interviewId, irfId);
+            //    await ReportSkillSetandSeperate(model);
+            //    if (model == null)
+            //    {
+            //        if (isAdminHR)
+            //        {
+            //            return RedirectToAction("Index");
+            //        }
+            //        else if (isInterviewer)
+            //        {
+            //            return RedirectToAction("MyInterview");
+            //        }
+            //    }
+            //    if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
+            //    {
+            //        model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
+            //        string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
+            //        model.InterviewerComment = output;
+            //    }
+
+
+            //    if (model.QuestionsCollection == null)
+            //    {
+            //        ViewBag.QuestionsDiscussedCount = 0;
+            //    }
+            //    else
+            //    {
+            //        foreach (var question in model.QuestionsCollection)
+            //        {
+            //            question.Comment = question.Comment.Replace("\t", " ").Replace("\n", " ").Replace("\r", " ");
+            //        }
+            //        ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+            //    }
+            //    ViewBag.IsClient = isClient;
+            //    ViewBag.IsClientSelected = isClientSelected;
+            //    model.IsQC = isQC;
+            //    model.IsInterviewer = isInterviewer;
+            //    model.PreviousMeetingStatus = model.MeetingStatus;
+
+            //    if (!string.IsNullOrEmpty(uniqueid) || !string.IsNullOrEmpty(publicEmailId))
+            //    {
+            //        model.Userid = 0;
+            //    }
+            //    else
+            //    {
+            //        model.Userid = _iRFService.GetUserId(email, profileName);
+
+            //    }
+
+            //    await GetStatusList(model, irfId, model.Userid);
+            //    //if (model.Userid != 0)
+            //    //{
+            //    //    await GetStatusList(model, irfId, model.Userid);
+            //    //}
+            //    //else
+            //    //{
+            //    //    return RedirectToAction("SignOut", "Session");
+            //    //}
+            //    model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+            //    ViewBag.ClientDetails = "";
+
+            //    if (isClient || isClientSelected)
+            //    {
+            //        ViewBag.ClientDetails = "client";
+
+
+            //    }
+            //    else {
+            //        return View(model);
+            //    }
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            //    return null;
+            //}
+
+
             try
             {
                 ViewBag.InterviewId = interviewId;
                 ViewBag.IrfId = irfId;
-              
-                    ViewBag.SecurelyShared = "";
-                    ViewBag.UniqueId = "";
-                    ViewBag.IsMatched = "";
-                
+                ViewBag.SecurelyShared = "";
+                ViewBag.UniqueId = "";
+                ViewBag.IsMatched = "";
                 ViewBag.PageStatus = "Mainurl";
-               
-
-               
                 var email = HttpContext.Session.GetString("email");
                 email = email.Replace("\"", "");
                 ViewBag.EmailId = email;
@@ -8706,19 +8817,51 @@ namespace Risebird.Web.Controllers
                 ViewBag.IRFID = irfId;
                 string profileName = HttpContext.Session.GetString("profileName");
                 ViewBag.profile = profileName.Replace("\"", "");
-                
+                if (profileName != null)
+                {
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+                        isAdminHR = true;
+                    }
+                    else if (profileName == "Interviewer")
+                    {
+                        isInterviewer = true;
+                    }
+                }
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 await ReportSkillSetandSeperate(model);
-               
+                if (model == null)
+                {
+                    if (isAdminHR)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else if (isInterviewer)
+                    {
+                        return RedirectToAction("MyInterview");
+                    }
+                }
                 if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
                 {
                     model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
                     string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
                     model.InterviewerComment = output;
                 }
-               
-                
+                if (profileName == "Client")
+                {
+                    var client = await _userRepository.GetClientUserDetails(email);
+                    if (client != null)
+                    {
+                        model.IsQCRequired = client.IsQCRequired;
+                        model.IsRedoInterview = client.IsRedoInterview;
+                    }
+                }
+                else
+                {
+                    model.IsQCRequired = false;
+                }
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
@@ -8748,33 +8891,48 @@ namespace Risebird.Web.Controllers
                 }
 
                 await GetStatusList(model, irfId, model.Userid);
-                //if (model.Userid != 0)
+                
+                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
+                ViewBag.ClientDetails = "";
+                //if (TempData["SuccessErrorMessageQCForm"] != null)
                 //{
-                //    await GetStatusList(model, irfId, model.Userid);
+                //    ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
+                //    TempData.Remove("SuccessErrorMessageQCForm");
+                //}
+                //if (isClient || isClientSelected)
+                //{
+                //    ViewBag.ClientDetails = "client";
+                //    if (model.IsProctor)
+                //    {
+                //        return PartialView("ClientProctorReport", model);
+                //    }
+                //    else
+                //    {
+                //        return View(model);
+                //    }
                 //}
                 //else
                 //{
-                //    return RedirectToAction("SignOut", "Session");
+                //    if (model.IsProctor)
+                //    {
+                //        return View("ProctorReport", model);
+                //    }
+                //    else
+                //    {
+                //        return View(model);
+                //    }
+
+
                 //}
-                model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
-                ViewBag.ClientDetails = "";
-                
-                if (isClient || isClientSelected)
-                {
-                    ViewBag.ClientDetails = "client";
-                    
-                  
-                }
-                else {
-                    return View(model);
-                }
-                
+                return View(model);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+
+
         }
 
             #region Multi Skill Sets

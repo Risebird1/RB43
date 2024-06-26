@@ -9773,6 +9773,13 @@ option {
     background: #fff;
     padding: 10px;
 }
+#div_aicodesnippets iframe {
+    display: block;
+    margin: 20px auto;
+    width: 100%;
+    background: #fff;
+    padding: 10px;
+}
 .show-default{
     display:block!important;
 }
@@ -10362,7 +10369,13 @@ option {
     font-size: 17px;
     color:grey;
 }
-
+.level-div {
+    position: relative;
+    top: -7px;
+    right: 0px;
+    margin: 10px auto;
+    width: fit-content;
+}
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
         .rbpay .sb-scrollbar {
