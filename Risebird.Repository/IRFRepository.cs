@@ -8626,6 +8626,51 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int interviewerProfileId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@interviewerProfileId", interviewerProfileId);
+                    var result = await SqlMapper.QuerySingleAsync<TransInterviewer>(con, "usp_GetInterviewerOpenAIScreeningResult", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int interviewerProfileId, string screeningResponseJson)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@interviewerProfileId", interviewerProfileId);
+                    parameters.Add("@screeningResponseJson", screeningResponseJson);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveInterviewerOpenAIScreeningResults", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
 
