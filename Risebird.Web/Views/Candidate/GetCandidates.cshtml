@@ -752,11 +752,15 @@
                                                                         }
 
                                                                     }
-                                                                    @if (ViewBag.profile == "Admin")
+                                                                    @if (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")
                                                                     {
-                                                                        <div class="btn btn-record shadow btn-xs sharp me-1" aria-label="Call Record" style="position: relative;cursor: pointer; width:22px!important;height:22px!important;left:-6px">
-                                                                            <span onclick="FetchRecording('@item.EmailId')" title="Call Record"><i style="left: 0px;top:-1px;position:relative;font-size:12px;font-size:12px;" class='fa fa-dot-circle'></i></span>
-                                                                        </div>
+                                                                        @if (ViewBag.profile == "Admin" )
+                                                                        {
+                                                                            <div class="btn btn-record shadow btn-xs sharp me-1" aria-label="Call Record" style="position: relative;cursor: pointer; width:22px!important;height:22px!important;left:-6px">
+                                                                                <span onclick="FetchRecording('@item.EmailId')" title="Call Record"><i style="left: 0px;top:-1px;position:relative;font-size:12px;font-size:12px;" class='fa fa-dot-circle'></i></span>
+                                                                            </div>
+                                                                        }
+                                                                        
 
                                                                         @* <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Screen Resume" style="width:23px!important;height:23px!important;">
                                                                             <span onclick="ScreenCandidateBasedOnResume('@item.ResumeLink','@item.EmailId', '@item.JDTiltle')" title="Screen Resume">
