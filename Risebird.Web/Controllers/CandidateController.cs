@@ -870,6 +870,7 @@ namespace Risebird.Web.Controllers
                         //}
                         //_candidateModelDetails = candidateList;
                         //return View(candidateList.ToPagedList(Page ?? 1, 10));
+                        ViewBag.Skills = "Python,Data Science,DSA,ML";
                         return View(candidateList);
 
 
@@ -6330,6 +6331,15 @@ namespace Risebird.Web.Controllers
             }
             return sb.ToString();
         }
+        public async Task<IActionResult> ResumeScreening(int id, string emailid,string jdtitle,string resume)
+        {
+            var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
+
+
+            return View(candidateList);
+        }
+
+
 
     }
 }

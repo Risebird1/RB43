@@ -37,5 +37,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetColdCandidatesListByClient(string Email);
         Task<List<CandidateResume>> GetNotProcessedResumeByClient(string Email);
         Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId);
+        Task<Candidate> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId);
+        Task<bool> SaveCandidateOpenAIScreeningResults(int irfId, int candidateMasterId, string screeningResponseJson);
     }
 }

@@ -48,6 +48,7 @@ CREATE TABLE [dbo].[Candidate](
     [PreReportLink] [varchar](500) NULL,
     [PreReportUsername] [varchar](50) NULL,
     [PreReportPassword] [varchar](50) NULL,
+    [OpenAIScreeningResponseJson] [varchar](max) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -452,6 +453,16 @@ AND Object_ID = Object_ID(N'Candidate'))
 BEGIN
 	alter table Candidate
 	Add PreReportPassword varchar(50) null
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'OpenAIScreeningResponseJson')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add OpenAIScreeningResponseJson VARCHAR(max)
 END
 
 End

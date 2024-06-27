@@ -10362,7 +10362,168 @@ option {
     font-size: 17px;
     color:grey;
 }
+.student-profile .card {
+    border-radius: 10px;
+}
 
+    .student-profile .card .card-header .profile_img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        margin: 10px auto;
+        border: 10px solid #ccc;
+        border-radius: 50%;
+    }
+
+    .student-profile .card h3 {
+        padding-top: 20px;
+        font-weight: 700;
+        color: #20B2AA;
+        font-size: 20px;
+    }
+
+    .student-profile .card p {
+        color: #858181;
+        line-height: 25px;
+        font-size:14px;
+    }
+
+.content-div h5 {
+    font-family: "Asap", sans-serif;
+    font-weight: 700;
+    font-size: 1.43rem;
+    color: #20B2AA;
+    padding-bottom: 0px;
+    padding-top: 10px;
+}
+
+.content-div h4 {
+    font-family: "Asap", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #404040;
+    margin: 0;
+}
+
+    .content-div h4 li {
+        padding-bottom: 5px;
+        line-height: 19px;
+        font-size: 1.3rem;
+    }
+
+section {
+    border-bottom: 1px solid #efefef;
+    margin-top: 10px;
+}
+
+.heading-text {
+    color: #8b7e7e;
+    background: #eeeaea85;
+    padding: 3px 5px 6px 5px;
+    font-size: 1.5rem;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    line-height: 1.2;
+    width: 100%;
+    float: left;
+}
+
+.heading h2 {
+    text-transform: uppercase;
+    float: left;
+    width: 20%;
+}
+
+.content-divs ol li {
+    font-weight: 600;
+    color: #20B2AA;
+    line-height: 26px;
+}
+
+.content-div {
+    float: right;
+    width: 90%;
+}
+
+    .content-div h4 ul li:first-child {
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+
+.final-score-wrapper {
+    padding-block: 2em;
+    align-self: center;
+    clip-path: circle(5.5rem);
+}
+
+.final-score {
+    font-size: 3em !important;
+    line-height: 32px;
+    font-weight: normal;
+    text-shadow: 2px 2px #b7aeae;
+    position: relative;
+    left: 6px;
+}
+
+    .final-score span {
+        font-size: 20px;
+        line-height: 12px;
+        position: relative;
+        left: -7px;
+    }
+
+.white-text {
+    color: #Fff !important;
+}
+
+.light-grey-text {
+    color: #ccbfbf !important;
+}
+
+.gradient-2 {
+    background: linear-gradient(#efeff2, #dedde7);
+}
+
+.highlight-text {
+    font-family: "Asap", sans-serif;
+    font-weight: 500;
+    font-size: 1.45rem;
+    /*   color: #20B2AA;*/
+    padding-bottom: 0px;
+    width: 100%;
+    float: left;
+    margin-top: 10px;
+}
+
+.black-text {
+    font-family: "Asap", sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: #858181;
+    padding-bottom: 0px;
+    padding-top: 10px
+}
+
+.summary strong {
+    color: #a89b9b;
+    font-size: 14px;
+}
+
+.summary span {
+    color: #b8b1b1;
+    font-size: 14px;
+    line-height: 20px;
+    display: inline-block;
+    font-family: arial;
+}
+
+.response-div {
+    height: 700px;
+    overflow: auto;
+    margin: 10px 0px 10px 0px;
+    padding-right: 10px;
+}
     /***** Media queries *****/
     @media only screen and (min-width: 1920px) {
         .rbpay .sb-scrollbar {
