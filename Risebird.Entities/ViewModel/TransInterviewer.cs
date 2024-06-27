@@ -24,5 +24,6 @@
         public bool IsResumeRedactAttempted { get; set; }
         public bool IsCampaignActivity { get; set; }
         public string CampaignName { get; set; }
+        public string OpenAIScreeningResponse { get; set; }
     }
 }

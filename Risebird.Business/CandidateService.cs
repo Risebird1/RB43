@@ -555,5 +555,30 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> SaveCandidateOpenAIScreeningResults(int irfId, int candidateMasterId, string screeningResponseJson)
+        {
+            try
+            {
+                return await _candidateRepository.SaveCandidateOpenAIScreeningResults(irfId, candidateMasterId, screeningResponseJson);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<Candidate> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId)
+        {
+            try
+            {
+                return await _candidateRepository.GetCandidateOpenAIScreeningResults(irfId, candidateMasterId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

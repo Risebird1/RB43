@@ -1,0 +1,1146 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.Candidate>
+@using Risebird.Entities.Enum
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Candidates";
+    ViewBag.PageHeader = "";
+    if (ViewBag.AccessType != null && ViewBag.AccessType == "Public")
+    {
+        Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+
+    }
+
+}
+<script>
+    var Header = "";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<style>
+
+    .content-div h5{
+     font-family: "Asap", sans-serif;
+    font-weight: 700;
+    font-size: 1.43rem;
+    color: #20B2AA;
+    padding-bottom: 0px;
+    padding-top: 10px;
+    }
+      .content-div h4{
+          font-family: "Asap", sans-serif;
+        font-weight: 500;
+        font-size: 14px;
+        color: #404040;
+        margin: 0;
+      }
+      .content-div h4 li{
+      padding-bottom: 5px;
+      line-height: 19px;
+      font-size: 1.3rem;
+      }
+    section {
+  border-bottom: 1px solid #efefef;
+  margin-top: 10px;
+}
+
+.heading{
+    color: #8b7e7e;
+    background: #eeeaea85;
+    padding: 3px 5px 6px 5px;
+    font-size: 1.7rem;
+}
+.heading h2 {
+  text-transform: uppercase;
+  float: left;
+  width: 20%;
+}
+.content-divs ol li{
+  font-weight: 600;
+  color: #20B2AA;
+  line-height: 26px;
+}
+.content-div {
+  float: right;
+  width: 90%;
+}
+
+.content-div h4 ul li:first-child {
+font-weight:bold;
+font-size: 1.25rem;
+}
+
+    .final-score-wrapper {
+        padding-block: 2em;
+        align-self: center;
+        clip-path: circle(5.5rem);
+    }
+
+    .final-score {
+    font-size: 3em !important;
+    line-height: 32px;
+    font-weight: normal;
+    text-shadow: 2px 2px #b7aeae;
+    position: relative;
+    left: 6px;
+    }
+     .final-score span{
+    font-size: 20px;
+    line-height: 12px;
+    position: relative;
+    left: -7px;
+     }
+    .white-text {
+        color: #Fff!important;
+    }
+
+    .light-grey-text {
+     color: #ccbfbf !important;
+    }
+
+    .gradient-2 {
+           background: linear-gradient(#efeff2, #dedde7);
+    }
+    .summary strong{
+        color:#a89b9b;
+        font-size:14px;
+    }
+    .summary span{
+     color:#b8b1b1;
+    font-size: 14px;
+    line-height: 20px;
+    display: inline-block;
+    font-family: arial;
+    }
+.response-div{
+   height: 700px;
+    overflow: auto;
+    margin: 10px 0px 10px 0px;
+    padding-right: 10px;
+}
+
+</style>
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css?v=2024" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<div class="main-panel" id="main-panel">
+    
+    <div class="content client candidate">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+
+
+                            <div>
+
+
+
+                               <!-- Student Profile -->
+<div class="student-profile py-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-transparent text-center">
+                 <h3>Krishna Subhash Bandaru</h3>
+                 <p class="light-grey-text" style="padding-top:10px;margin-bottom:0px;font-size: 18px;">Total Score</p>
+            <div class="final-score-wrapper gradient-2">
+      <p class="final-score white-text">76 <span>%</span></p>
+      <p class="light-grey-text" style="font-weight:bold;color: #8769ab !important;font-size: 18px;">of 100</p>
+    </div>
+         
+          </div>
+          <div class="card-body">
+            <p class="mb-10 summary"><strong class="pr-1">Summary:</strong><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin fermentum, magna non convallis gravida, orci augue rutrum ante, dignissim consequat nulla ante eu risus.</span> </p>
+                        <p class="mb-10 summary"><strong class="pr-1">Resume:</strong> </p>
+                         <p class="mb-0 summary"><strong class="pr-1">Verdict:</strong> </p>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+         
+          <div class="card-body pt-0">
+              <div class="response-div style-2">
+                <section  class="clearfix">
+                     <h2 class="heading">
+                    Must-Have Technical Evaluation Criteria for Microsoft Office 365 Administrator:
+
+                 </h2>
+                 <div class="content-divs">
+                    <ol>
+                        <li>Office 365 Suite Administration (Exchange Online, SharePoint Online, Teams, etc.)</li>
+                        <li>PowerShell Scripting</li>
+                        <li>Office 365 Security and Compliance (ATP, DLP, IRM)</li>
+                        <li>Migration Experience (SharePoint, Office 365)</li>
+                        <li>Azure Active Directory Management</li>
+                        </ol>
+                        </div>
+                    </section>
+             <!--Begin Must-Have Technical Evaluation  Section-->
+            <section  class="clearfix">
+                <h2 class="heading">
+                    Evaluation of Krishna Subhash Bandaru's Resume:
+                 </h2>
+                <div class="content-div">
+                    <ol><li><h5>Office 365 Suite Administration</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                            <li>Demonstrated extensive experience with Office 365 Suite, Exchange Online, SharePoint Online, and Teams. Manages Office 365 identities and requirements.
+</li>
+                        </ul>
+                    </h4>
+                    
+                   <li> <h5>PowerShell Scripting:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                            <li>Experience with PnP Provisioning and PowerShell scripting for automation is well-documented.</li>
+                           
+                        </ul>
+                    </h4>
+
+
+                     <li> <h5>Office 365 Security and Compliance (ATP, DLP, IRM):</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                            <li>Hands-on experience configuring ATP, DLP policies, and applying IRM and label policies as part of organizational governance.</li>
+                           
+                        </ul>
+                    </h4>
+                    <li> <h5>Migration Experience (SharePoint, Office 365):</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                            <li>Multiple instances of migration experience from SharePoint 2010/2013 to SharePoint 2016 and Office 365, including use of SharePoint Migration Tools like MetaLogix and ShareGate.</li>
+                           
+                        </ul>
+                    </h4>
+                     <li> <h5>Azure Active Directory Management:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                            <li>Mentioned managing Office 365 identities, which typically involves Azure AD.</li>
+                           
+                        </ul>
+                    </h4>
+                    </ol>
+                </div>
+            </section>
+            <!--End Must-Have Technical Evaluation Section-->
+             <!--Begin Scoring Section-->
+            <section class="clearfix">
+              <h2 class="heading">
+                Detailed Scoring:
+               </h2>   
+                <div class="content-div">
+                    <ol><li><h5>Technical Skills Match:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                            <li>All critical technical skills are present and well-documented.
+</li>
+                        </ul>
+                    </h4>
+                    
+                   <li> <h5>Real-Time Implementation Experience:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                            <li>Current projects involve extensive use of Office 365, PowerShell, and security configurations.</li>
+                           
+                        </ul>
+                    </h4>
+
+
+                     <li> <h5>Credibility of Employers:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                            <li>Has worked for reputable companies like Tech Mahindra and Accenture.</li>
+                           
+                        </ul>
+                    </h4>
+                     <li> <h5>Credibility of Employers:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                            <li>Has worked for reputable companies like Tech Mahindra and Accenture.</li>
+                           
+                        </ul>
+                    </h4>
+                    <li> <h5>Primary Specialization:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                             <li>Primary specialization in Office 365 and related technologies, demonstrated consistently across roles and projects.</li>
+                           
+                        </ul>
+                    </h4>
+                    <li> <h5>Recent Hands-On Experience:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 20/20</li>
+                             <li>Recent project (Tech Mahindra) involves Office 365 and related administration tasks.</li>
+                           
+                        </ul>
+                    </h4>
+                    <li> <h5>Total Experience Adjustment:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>No Deduction</li>
+                             <li>Over 10 years of experience (14 years).</li>
+                           
+                        </ul>
+                    </h4>
+                    <li> <h5>Educational Background:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>Score: 5/5</li>
+                             <li>B.Tech from Andhra University.</li>
+                           
+                        </ul>
+                    </h4>
+                     <li> <h5>Multiple Specializations Adjustment:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>No Deduction</li>
+                             <li>Focused expertise in relevant technologies.</li>
+                           
+                        </ul>
+                    </h4>
+                     <li> <h5>Teaching Role Adjustment:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>No Deduction</li>
+                             <li>Not applicable.</li>
+                           
+                        </ul>
+                    </h4>
+                    <li> <h5>Employment/Education Gaps Adjustment:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>No Deduction</li>
+                             <li>No significant gaps noted.</li>
+                           
+                        </ul>
+                    </h4>
+                    <li> <h5>Freelancing Role Adjustment:</h5></li>
+                    <h4>
+                        <ul>
+                            <li>No Deduction</li>
+                             <li>Not applicable.</li>
+                           
+                        </ul>
+                    </h4>
+                    </ol>
+                </div>
+            </section>
+            <!--End Scoring Section-->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+                            </div>
+
+
+                        </div>
+                        <!-- end content-->
+                    </div>
+                    <!--  end card  -->
+                </div>
+
+                <!-- end col-md-12 -->
+            </div>
+
+            <div id="myModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+
+
+
+                            <div class="filheader">
+                                <div class="filavatar">
+                                    <span>
+
+
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="rgb(255,255,255)" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg>
+                                    </span>
+                                </div>
+                                <h5 class="modal-title pull-left"> Import Candidates</h5>
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true" id="importPopUp" style="cursor:pointer;">&times;</span>
+                            </button>
+
+
+
+
+
+                            <div class="modal-body">
+                                <div class="form-group text-center">
+                                    <h5 style="font-size:20px;"> Download the template  <span onclick="location.href='@Url.Action("DownloadTemplate", "Candidate")'"><svg style="fill:#53a5f5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg></span></h5>
+
+
+                                </div>
+
+                                @using (Html.BeginForm("ImportQuickCandidates", "Candidate", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                {
+                                    <div class="form-group">
+
+
+
+                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile" style="margin:0px auto; display:block;">
+                                            <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                                <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" id="idExcelFile" />
+
+                                            </div>
+                                        </button>
+
+                                        @*<form>
+                                    <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded upload-wrap" for="UploadedFile">
+                                    <div class="file-upload-wrapper" data-text="CLICK HERE TO CHOOSE FILE">
+                                    <input type="file" class="file-upload-field" accept=".xls, .xlsx" name="UploadedFile" />
+
+                                    </div>
+                                    </button>
+                                    </form>*@
+                                        @*<input type="file" accept=".xls, .xlsx" name="UploadedFile" />*@
+                                    </div>
+                                    @*<div class="">
+                                <input type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import">
+
+                                </div>*@
+                                    <div class="">
+                                        <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 0px auto;display: block;" id="btnImport" value="Import" onclick="ImportQuickCandidates()">
+
+                                    </div>
+                                    <input type="hidden" id="IRFId" name="IRFId" value='@ViewBag.IRFId'>
+                                    <input type="hidden" id="IRFName" name="IRFName" value='@ViewBag.IRFName'>
+                                    <input type="hidden" id="IsSendInvite" name="IsSendInvite">
+
+                                }
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
+            @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
+
+            <script src="~/js/markcoldcandidate.js?2024"></script>
+
+            <div id="importResultModal" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+
+
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span class="publicsharing-icon  fas fa-file-import" style="font-size:24px;"></span>
+                            </div>
+                            <h5 class="modal-title pull-left" id="importResultHeading">Import status</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" id="importResultPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+
+                        <div class="modal-body" id="importResultTableBody" style=" overflow: auto; height: 300px">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- end row -->
+            <div id="myCallRecords" class="modal modal-bg">
+                <!-- Modal content -->
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span>
+                                    <i class="fa fa-phone-square" style="font-size: 25px;"></i>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left">Call Details <span class="popup-text" id="candidate_email_pop"></span> </h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span onclick="closemyCallRecords()" aria-hidden="true" id="CommentPopUp" style="cursor:pointer;">&times;</span>
+                        </button>
+                        <div class="modal-body" style="padding: 2px 16px;">
+                            <div class="row">
+                                <div class="table-responsive style-2" style="height:300px;">
+                                    <table class="table table-striped table-bordered" style="width:100%;" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Who called</th>
+                                                <th>Call date</th>
+                                                <th>Recording</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tblcallrecdetails">
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 text-right">
+                                    <input style="color: #fff;line-height: 13px;margin-bottom:10px;" type="button" onclick="closemyCallRecords()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="AddCandidateModel" class="modal modal-bg">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="rgb(255, 255, 255)" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+                        </svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Add Candidate <label id="txtmodelheader"></label></h5>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span onclick="closeAddCandidateModel()" id="SharePopUp" style="cursor:pointer;" aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body" style="padding-bottom:0px" id="addCandidatelist">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal_recipientActivity_placeholder"></div>
+
+<div id="modal_clientComment_placeholder"></div>
+
+<div id="modal_candidateCommunicationDetails_placeholder"></div>
+<script src="~/js/ModalFormServerValidation.js?v=2024"></script>
+<script src="~/js/common.js?2024"></script>
+<script>
+    var spanImport = document.getElementById("importResultPopUp");
+    // When the user clicks on <span> (x), close the modal
+    spanImport.onclick = function () {
+        var modal = document.getElementById("importResultModal");
+        modal.style.display = "none";
+        location.reload();
+    }
+    function ImportQuickCandidates() {
+        document.getElementById("btnImport").disabled = true;
+        var irfExcelId = '@ViewBag.IRFId';
+        var irfExcelName = '@ViewBag.IRFName';
+        var excel_file = $("#idExcelFile")[0].files[0];
+        var isSendInvite = document.getElementById("IsSendInvite").value;
+
+
+        var formdata = new FormData();
+        formdata.append('IRFId', irfExcelId);
+        formdata.append('IsSendInvite', isSendInvite);
+        formdata.append('excel_file', excel_file);
+        formdata.append('IRFName', irfExcelName);
+
+        $.ajax({
+            type: "POST",
+            url: "/Candidate/ImportQuickCandidates",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+
+                document.getElementById('myModal').style.display = "none";
+                var importMsg = data.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                document.getElementById('importResultModal').style.display = "block";
+                $('#importResultTableBody').html('');
+                $('#importResultTableBody').html(importMsg);
+            }
+        });
+    }
+</script>
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        //window.location.href = '/IRF/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //location.reload(true);
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function () {
+                        //window.location.href = '/IRF/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //location.reload(true);
+
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+<script>
+    function CopyPublicUrl(EmailId, IRFId, type) {
+        $.ajax({
+            url: '/Candidate/GetPublicURLCandidate',
+            data: { 'Emailid': EmailId, 'IRFId': IRFId, 'type': type },
+            type: 'POST',
+            success: function (result) {
+                var modal = document.getElementById("PublicUrlShareModel");
+                modal.style.display = "block";
+                $("#txtUrl").text(result);
+            }
+        });
+    }
+
+    function closePublicUrlShareModel() {
+        var modal = document.getElementById("PublicUrlShareModel");
+        modal.style.display = "none";
+    }
+
+    function copyToClipboard(element) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val($(element).text()).select();
+        document.execCommand("copy");
+        temp.remove();
+        $('#special_text').text('Copied');
+    }
+
+</script>
+
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#candidateTableId").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#candidateTableId").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#candidateTableId").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
+<script>
+
+    function searchResult() {
+        $('#candidateTableId').DataTable();
+    }
+    function RefreshSearch() {
+        $('#candidateTableId').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+
+    $(document).ready(function () {
+        applyDataTable();
+    });
+    function applyDataTable() {
+        var table = $('#candidateTableId').DataTable({
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            },
+            order: [[1, 'desc']]
+        });
+@*        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+*@
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+
+    };
+
+</script>
+
+<script>
+    var span = document.getElementById("importPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    
+    var candidateId;
+    var irfId;
+</script>
+<script>
+    function ModalButtonClick(value) {
+        document.getElementById("IsSendInvite").value = value;
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+    }
+
+</script>
+<script>
+    function DeleteCandidate(id, emailId) {
+        var irfName = '@ViewBag.IRFName';
+        var irfId = '@ViewBag.IRFId';
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'The candidate(' + emailId + ') will be deleted!',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/Delete',
+                        method: 'POST',
+                        data: {
+                            'id': id,
+                            'irfId': irfId,
+                            'IRFName': irfName
+                        },
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The candidate has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Delete cancelled! :)',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+<script>
+    // function changeicon(id) {
+    //     if ($("#" + id).attr("data-changes") == "1") {
+    //         $("#" + id).addClass("shows");
+    //         $('.' + id).addClass("in");
+    //         $("#" + id).attr("data-changes", "2");
+    //     }
+    //     else {
+    //         $("#" + id).removeClass("shows");
+    //         $('.' + id).removeClass("in");
+    //         $("#" + id).attr("data-changes", "1");
+    //     }
+    // }
+    // function RefreshSearch() {
+    //     $(".dataTables_filter input").val('');
+    //     searchResult();
+    // }
+    // $(document).ready(function () {
+
+    //     $(".dataTables_filter").keyup(function (e) {
+
+    //         if ($('#txtmeeting_filter').val() == "") {
+    //             $("#x").hide();
+    //         }
+    //         else {
+    //             $("#x").show();
+    //         }
+    //     });
+    //     $("#x").click(function (e) {
+    //         $(".dataTables_filter input").val('');
+    //         $(this).hide();
+    //         searchResult();
+    //     });
+
+
+    // });
+
+    // function searchResult() {
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "/Candidate/CandidatesJson",
+    //         data: { 'searchValue': $('#txtmeeting_filter').val(), 'id': $("#hidirfid").val(), 'irfName': $("#hidirfname").val() },
+    //         success: function (data) {
+    //             $('#tableID').html('');
+    //             $('#tableID').html(data);
+    //         }
+    //     });
+    // }
+
+
+    function closemyCallRecords() {
+        var modal = document.getElementById("myCallRecords");
+        modal.style.display = "none";
+    }
+    function FetchRecording(candidateEmailid) {
+        $.ajax({
+            type: "POST",
+            url: "/User/FetchRecordings",
+            data: { 'candidateEmailid': candidateEmailid, 'irfid': $("#hidirfid").val() },
+            success: function (data) {
+                bindCallData(data);
+                var modal = document.getElementById("myCallRecords");
+                modal.style.display = "block";
+                $("#candidate_email_pop").text(candidateEmailid);
+
+            }
+        });
+    }
+    function bindCallData(data) {
+        var html = '';
+
+        for (var i = 0; i < data.length; i++) {
+            html += '<tr>';
+            html += '<td>' + data[i].whoCalled + '</td>';
+            html += '<td>' + data[i].calledOn.replace("T", " ").replace(".000", "") + '</td>';
+            html += '<td><audio controls><source src = "' + data[i].recordingUrl + '" type = "audio/ogg" ><source src="' + data[i].recordingUrl + '" type="audio/mpeg"></audio></td>';
+
+            html += '</tr>';
+        }
+        if (data.length == 0) {
+            html = '<td colspan="3" style="text-align:center">No call records founds.</td>';
+        }
+        $("#tblcallrecdetails").empty().html(html);
+    }
+</script>
+<script src="~/js/TwilioCallMaker.js?v=2024"></script>
+<script>
+    function replaceButtonWithResumeLink(buttonElementId, redactedResumeLink) {
+        var anchor = document.createElement('a');
+
+        // Get the button element
+        var button = document.getElementById(buttonElementId);
+
+        // Copy attributes from the button to the anchor
+        anchor.href = redactedResumeLink; // Set the desired href attribute for the anchor
+        anchor.innerHTML = 'Resume Link'; // Copy the button content to the anchor
+        anchor.id = buttonElementId;
+        anchor.target = '_blank';
+        // Replace the button with the anchor
+        button.parentNode.replaceChild(anchor, button);
+    }
+    function UploadOrConvertIntoCodedResume(elementId, candidateId, candidateEmail, resumeLink = null) {
+        document.getElementById(elementId).innerHTML = 'Redacting...';
+
+        $.ajax({
+            url: '/Candidate/CandidateResumeUpdate',
+            data: { id: candidateId, resumeLink: resumeLink },
+            async: true,
+            success: function (data) {
+                if (resumeLink != null) {
+                    if (data != null && data != '' && data != 'failed') {
+                        swal.fire({
+                            title: 'Redacted!',
+                            type: 'success',
+                            html: '<p>The Resume for ' + candidateEmail + ' has been redacted.</p>',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Close!',
+                            allowOutsideClick: false
+                        }).then(function () {
+
+                            replaceButtonWithResumeLink(elementId, data);
+                        })
+
+                    }
+                    else {
+                        swal.fire({
+                            title: 'Failed!',
+                            type: 'error',
+                            html: '<p>The Resume for ' + interviewer + ' could not be redacted.</p>',
+                            showCancelButton: false,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Close!',
+                            allowOutsideClick: false
+                        }).then(function () {
+                            document.getElementById(elementId).innerHTML = 'Redaction Failed!';
+
+                        })
+
+                    }
+
+
+                }
+                else {
+                    var modal = document.getElementById("Resumepopup");
+                    modal.style.display = "block";
+                    $('#divresumepopup').html('');
+                    $('#divresumepopup').html(data);
+                    $('#txtheaderinterviewer').text(interviewer);
+                }
+
+            }
+        });
+    }
+
+</script>
+<script>
+    
+    function OpenStatusModalJson(irfId, candidateId) {
+        var irfname = $('#hidcandidatestatus' + irfId).val();
+        var itemname = $('#hiditem' + irfId).val();
+        OpenStatusModal(irfId, candidateId, irfname, itemname);
+    }
+
+</script>
+<script>
+    function AddCandidate(irfId, irfName) {
+        $.ajax({
+            url: '/Candidate/Add',
+            data: { 'irfId': irfId, 'irfName': irfName },
+            success: function (data) {
+                $('#addCandidatelist').html('');
+                $('#addCandidatelist').html(data);
+                openAddCandidateModel();
+            }
+        });
+    }
+    function openAddCandidateModel() {
+        var modal = document.getElementById("AddCandidateModel");
+        modal.style.display = "block";
+    }
+    function closeAddCandidateModel() {
+        var modal = document.getElementById("AddCandidateModel");
+        modal.style.display = "none";
+    }
+</script>
+<script>
+   
+    function GetCandidateStatusListJson(irfId, candidateId) {
+
+        var itemname = $('#hiditem' + irfId).val();
+        var irfname = $('hidirfname').val();
+        GetCandidateStatusList(irfId, candidateId, irfname, itemname);
+    }
+
+</script>
+<script>
+    function AutoCallCandidatejson(irfId, candidateMasterId) {
+        var phone = $('#hidphone' + irfId).val();
+        var candidatename = $('#hiditem' + irfId).val();
+        AutoCallCandidate(phone, irfId, candidateMasterId, candidatename);
+    }
+    function AutoCallCandidate(phoneNumber, irfId, candidateId, candidateName) {
+
+        swal.fire({
+            title: 'Call ' + candidateName + '?',
+            text: "A system generated schedule call will be placed to the candidate.",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/Candidate/AutoCallCandidate',
+                        data: { 'phoneNumber': phoneNumber, 'irfId': irfId, 'candidateId': candidateId },
+                        success: function (result) {
+                            if (result == true) {
+                                resolve(result)
+
+                            }
+                            else {
+                                swal.fire("Error calling!", "Please try again", "error");
+
+                            }
+
+                        },
+                        error: function () {
+                            swal.fire("Error calling!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Call placed!',
+                    type: 'success',
+                    html: '<p>Successfully completed the schedule call.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                })
+                //.then(function () {
+                //    window.location = "/Interviewer/Index";
+                //})
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled!',
+                    '',
+                    'error'
+                )
+            }
+        })
+    }
+
+</script>
+
+<script>
+    $("form").on("change", ".file-upload-field", function () {
+        $(this).parent(".file-upload-wrapper").attr("data-text", $(this).val().replace(/.*(\/|\\)/, ''));
+    });
+
+
+    function moreless(id) {
+        $('.moretext_' + id).slideToggle();
+        if ($('#read_' + id).val() == 'Readmore') {
+            $('#read_' + id).empty().html('Read more');
+            $('#read_' + id).val('Readless');
+        } else {
+            $('#read_' + id).empty().html('Read less');
+            $('#read_' + id).val('Readmore');
+        }
+    }
+</script>
+<script>
+    // JS for thumbnail presentation only
+
+let mouseMoved = false;
+const button = document.querySelector('.infoButton');
+
+const mouseMoveHandler = event => {
+    clearInterval(loop);
+    document.onmousemove = null;
+    button.classList.remove('infoButton_isActive');
+};
+
+const toggleHandler = event => {    
+    const classes = button.classList;
+    if (classes.contains('infoButton_isActive')) {
+        classes.remove('infoButton_isActive');
+    } else {
+        classes.add('infoButton_isActive');
+    }
+}
+
+document.onmousemove = mouseMoveHandler;
+
+const loop = setInterval(toggleHandler, 1000);
+</script>
+
+
+
+
