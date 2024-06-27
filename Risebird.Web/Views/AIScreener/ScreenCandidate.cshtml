@@ -17,15 +17,14 @@
 </head> *@
 
 
-
-
+    
 
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
 <div class="main-panel" id="main-panel">
 
-    <div class="pt30">
+  @*  <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
@@ -35,44 +34,82 @@
 
             </div>
         </div>
-    </div>
-    <div class="content  client">
+    </div>*@
+   <div class="content client candidate">
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
-                        <div class="card">
-                            <h5 class="card-title">Candidate: @ViewBag.CandidateEmail</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Job Title: @ViewBag.JobTitle</h6>
-                            <a href="@ViewBag.ResumeLink" target="_blank" class="card-link">View Resume</a>
-                            <hr>
-                            @if (Model != null)
-                            {
-                                @foreach (var item in Model.Data)
-                                {
-                                    @if (item != null)
-                                    {
-                                        @foreach (var obj in item.Content)
-                                        {
-                                            @if ((obj?.Text?.Value?.Contains("Evaluate the resume")).HasValue && !(obj?.Text?.Value?.Contains("Evaluate the resume")).Value)
-                                            {
-                                                <br>
-                                                <div class="card-body">
-                                                    @Html.Raw(obj?.Text?.Value?.Replace("\n", "<br>").Replace("**", "<strong>").Replace("**", "</strong>"))
+                        <div class="student-profile py-4">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-4">
+                                                    <div class="card shadow-sm">
+                                                        <div class="card-header bg-transparent text-center">
+                                                            <h3>@ViewBag.CandidateEmail</h3>
+                                                            <div class="light-grey-text">Job Title: @ViewBag.JobTitle</div>
+                                                            @*<div class="light-grey-text" style="padding-top:10px;margin-bottom:0px;font-size: 18px;">Total Score</div>
+                                                            <div class="final-score-wrapper gradient-2">
+                                                                <div class="final-score white-text">76 <span>%</span></div>
+                                                                <div class="light-grey-text" style="font-weight:bold;color: #8769ab !important;font-size: 18px;">of 100</div>
+                                                            </div>*@
+
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="mb-10 summary"><strong class="pr-1">Summary:</strong><span>Summary</span> </div>
+                                                            <div class="mb-10 summary"><strong class="pr-1">Resume:</strong><a style="font-size:14px;padding:0px 10px;" href="@ViewBag.ResumeLink" target="_blank" class="card-link">View Resume</a> </div>
+                                                            <div class="mb-0 summary"><strong class="pr-1">Verdict:</strong> </div>
+
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            }
-                                            
-                                        }
+                                                <div class="col-lg-8">
+                                                    <div class="card shadow-sm">
 
-                                    }
+                                                        <div class="card-body pt-0">
+                                                            <div class="response-div style-2">
+                                                                <section class="clearfix">
+                                                                    <p>
+                                                               <br/>    <br/>   
+                                                        @if (Model != null)
+                                                        {
+                                                            @foreach (var item in Model.Data)
+                                                            {
+                                                                @if (item != null)
+                                                                {
+                                                                    @foreach (var obj in item.Content)
+                                                                    {
+                                                                        @if ((obj?.Text?.Value?.Contains("Evaluate the resume")).HasValue && !(obj?.Text?.Value?.Contains("Evaluate the resume")).Value)
+                                                                        {
+                                                                  
+                                                                    
+                                                                                @Html.Raw(obj?.Text?.Value?.Replace("\n", "<br>").Replace("**", "").Replace("**", ""))
+                                                                   
+                                                                        }
+
+                                                                    }
+
+                                                                }
 
 
-                                }
+                                                            }
 
-                            }
+                                                            }</p>
+                                                                </section>
+                                                            
+                                                                <!--End Scoring Section-->
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
 
-                        </div>
+
+                        
                         
 
                         <!-- end col-md-12 -->
@@ -92,36 +129,48 @@
 
 
 </div>
-@* <body>
-    <div class="container mt-5">
-        <div class="card">
-            <h5 class="card-title">Candidate: @ViewBag.CandidateEmail</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Job Title: @ViewBag.JobTitle</h6>
-            <a href="@ViewBag.ResumeLink" target="_blank" class="card-link">View Resume</a>
-            <hr>
-            @if(Model != null)
-            {
-                @foreach (var item in Model.Data)
-                {
-                    @if(item!=null)
-                    {
-                        @foreach (var obj in item.Content)
-                        {
-                            <br>
-                            <div class="card-body">
-                                @Html.Raw(obj?.Text?.Value?.Replace("\n", "<br>").Replace("**", "<strong>").Replace("**", "</strong>"))
-                            </div>
-                        }
-                        
-                    }
-                    
+ <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const paragraphs = document.querySelectorAll("p");
+            paragraphs.forEach(paragraph => {
+                let html = paragraph.innerHTML;
+                // Adjusted regex to match two <br> tags followed by any text
+                html = html.replace(/(<br>\s*<br>\s*)(.*?)(?=<br>|$)/g, '<span class="highlight-text">$2</span>');
+               
 
+                 html = html.replace(/<br>\s*(\S)/g, '<br><span class="black-text">$1</span>')
+
+                     html = html.replace(/\b\d+\b/g, '<span class="black-text">$&</span>');
+                   
+                paragraph.innerHTML = html;
+                
+            });
+        });
+    </script>
+   <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const spans = document.querySelectorAll("span.highlight-text");
+
+            spans.forEach(span => {
+                // Get the text content of the span
+                let textContent = span.innerHTML;
+
+                // Check if the span starts with '###'
+                if (textContent.startsWith('###')) {
+                   
+                    // Replace the class of the span
+                    span.classList.remove('highlight-text');
+                    span.classList.add('heading-text');
+                    
                 }
                 
-            }
-            
-            
-        </div>
-    </div>
-</body> *@
+            });
+            document.querySelectorAll('.heading-text').forEach(element => {
+    element.textContent = element.textContent.replace(/###/g, '');
+});
+        });
+
+    </script>
+
+
 @* </html> *@
