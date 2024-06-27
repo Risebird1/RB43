@@ -88,6 +88,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Per Interview Rate")]
         [Required]
         public double PerMintuteRate { get; set; }
+        public string ChannelOwner { get; set; }
 
         public DateTime CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }

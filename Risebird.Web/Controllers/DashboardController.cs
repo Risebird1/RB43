@@ -3361,7 +3361,15 @@ namespace Risebird.Web.Controllers
                             ClientId = client.ClientId;
                             ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty;
                         }
-                        var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                        List<MeetingVM> meetings = new List<MeetingVM>();
+                        if (profileName == "SeniorHR")
+                        {
+                            meetings = await _dashboardService.GetNotSecheduleSeniorHRList(emailid);
+                        }
+                        else
+                        {
+                             meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                        }
                         if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("NotScheduledMeetingsfilters"));
@@ -3469,7 +3477,7 @@ namespace Risebird.Web.Controllers
         public async Task<FileContentResult> NotScheduledMeetingstoExcel()
         {
             string userEmailId = string.Empty;
-            ExcelPackage Ep = new ExcelPackage();
+            ExcelPackage Ep = new ExcelPackage();          
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
             try
@@ -3485,7 +3493,15 @@ namespace Risebird.Web.Controllers
                     ClientId = client.ClientId;
                     ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                 }
-                var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                List<MeetingVM> meetings = new List<MeetingVM>();
+                if (profileName == "SeniorHR")
+                {
+                    meetings = await _dashboardService.GetNotSecheduleSeniorHRList(emailid);
+                }
+                else
+                {
+                    meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                }
                 if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("NotScheduledMeetingsfilters"));

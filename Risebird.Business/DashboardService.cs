@@ -7,6 +7,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -1062,6 +1063,20 @@ namespace Risebird.Business
             try
             {
                 return await _dashboardRespository.GetSurcharesActivityTracker(InterviewId,IRFId,Type,UserId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<List<MeetingVM>> GetNotSecheduleSeniorHRList(string Emailid)
+        {
+            try
+            {
+                var meetings = (await _dashboardRespository.GetNotSecheduleSeniorHRList(Emailid)).ToList();
+                return meetings ?? new List<MeetingVM>();
             }
             catch (Exception ex)
             {
