@@ -1520,6 +1520,13 @@
                                                                         <div onclick="location.href = '@Url.Action("AddReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></div>
                                                                     </button>
                                                                 </span>
+
+                                                                 <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { interviewId=item.imid, irfId=item.irfIntId})" title="Client Interview Report" style="text-decoration:none;">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report" style="margin: 0px 3px;">
+                                                                        <span title="AI Client Interview Report" class="mdc-fab__icon material-icons"><img src="~/img/Ai-logo.png" style="width:18px;" /></span>
+                                                                    </button>
+                                                                </a> 
+
                                                                 <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Payment Deduction">
                                                                     <div onclick="PaymentSLADetails('@item.imid','@item.candidateEmail','@item.interviewer',false,'QCPendingReport',true)" title="Payment Deduction" class="mdc-fab__icon material-icons">
                                                                         <svg style="color: white" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cash-stack" viewBox="0 0 16 16"> <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="white"></path> <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z" fill="white"></path> </svg>
