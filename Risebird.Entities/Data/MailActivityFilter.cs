@@ -7,6 +7,7 @@
         public string[] Recipient { get; set; }
         public string RecipientType { get; set; }
         public string CampaignName { get; set; }
+        public int returnBack { get; set; }
 
     }
 }

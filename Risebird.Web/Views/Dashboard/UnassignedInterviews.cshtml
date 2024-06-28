@@ -434,7 +434,8 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
-
+                                                    @if(ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                    {<th>Channel Owner</th>}
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus")
                                                     {
                                                         <th>Action</th>
@@ -442,6 +443,7 @@
 
                                                     @if ((ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport"))
                                                     {
+                                                        
                                                         <th>
                                                             Action
                                                         </th>
@@ -585,7 +587,7 @@
                                                     @*PotentialRiskInterviewCount not allow*@
                                                     @if (ViewBag.actionstatus != "SuspeciousInterviewerCount" && ViewBag.actionstatus != "CancelledInterviewCount" && ViewBag.actionstatus != "RedoInterviewCount" && ViewBag.actionstatus != "InterviewerChurn")
                                                     {
-                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity")
+                                                        @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount" || ViewBag.actionstatus == "MeetingStatus" && ViewBag.actionstatus == "PotentialRiskInterviewCount" || ViewBag.actionstatus == "PotentialRiskByClient" || ViewBag.actionstatus == "NeedClarity" )
                                                         {
                                                             <th>Channel Owner</th>
                                                         }
@@ -668,6 +670,8 @@
                                                         <th>Emergency Interview</th>
                                                         <th>Channel Owner</th>
                                                     }
+                                                    @if( ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                    {<th>Channel Owner</th>}
                                                     @if (ViewBag.actionstatus == "UnAttendedZoomLink" || ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                     {
                                                         <th>Action</th>
@@ -1410,7 +1414,10 @@
 
 
                                                         }
-
+                                                        @if( ViewBag.actionstatus == "QCPendingReport" || ViewBag.actionstatus == "QCReport")
+                                                        {
+                                                            <td>@item.ChannelOwner</td>
+                                                        }
 
                                                         @if (ViewBag.actionstatus == "ReScheduleCount" || ViewBag.actionstatus == "InterviewCount")
                                                         {
