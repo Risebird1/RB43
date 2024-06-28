@@ -10,12 +10,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE [dbo].[usp_SaveInterviewerOpenAIScreeningResults]     
 @irfId int,
-@interviewerProfileId int,
+@userId int,
 @screeningResponseJson varchar(max)
 As
 Begin
 
-  update TransInterviewer set OpenAIScreeningResponse = @screeningResponseJson where irfid = @irfId and InterviewerId = @interviewerProfileId
+  update TransInterviewer set OpenAIScreeningResponse = @screeningResponseJson where irfid = @irfId and UserId = @userId
 
 End
 GO
