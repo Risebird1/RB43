@@ -1385,7 +1385,7 @@
 
 
                                                                                 <td class="action text-center">
-                                                                                    <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                    <span id="btnPlus_0" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                     @*@if (Model.IsClone)
                                                                                 {
                                                                                 <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
@@ -1476,8 +1476,11 @@
 
                                                                                     <td class="action text-center">
                                                                                         <div>
-                                                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                            <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = Model.JDTiltle, emailId = Model.InterviewerCollection[i].EmailId, irfId = Model.id, interviewerProfileId = Model.InterviewerCollection[i].InterviewerId, irfName = Model.IRFId, resumeLink = HttpUtility.UrlEncode(Model.InterviewerCollection[i].ResumeLink)})">
+                                                                                            <span id="btnPlus_@i" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                            
+                                                                                            <span id="btnScreen_@i" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                            
+                                                                                            @* <a style="text-decoration:none" target="_blank" href="@Url.Action("ScreenInterviewer", "AIScreener" , new { jdTitle = Model.JDTiltle, emailId = Model.InterviewerCollection[i].EmailId, irfId = Model.id, interviewerProfileId = Model.InterviewerCollection[i].InterviewerId, irfName = Model.IRFId, resumeLink = HttpUtility.UrlEncode(Model.InterviewerCollection[i].ResumeLink)})">
                                                                                                 <span class="btn shadow btn-xs sharp me-1" aria-label="Screen Resume" style="background:#98a3d7;border-color:#98a3d7; width:22px!important;height:22px!important; top:3px;position:relative;left:-2px;   margin: 0px 0px 0px 3px;">
                                                                                                     <span title="Screen Resume" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><i class="fas fa-search" style="font-size: 9px;position: relative;left: -6px; top: 2px;"></i></span>
                                                                                                 </span>
@@ -2123,6 +2126,32 @@
 
     }
 
+</script>
+<script>
+    function ScreenInterviewer(elementId, jdTitle, irfId, irfName)
+    {
+        var index = -1;
+        const results = elementId.match(/-?\d+(\.\d+)?/g);
+        if (results)
+        {
+            index = results[0];
+        }
+        if(index != -1)
+        {
+            
+            //var emailId = document.getElementById('InterviewerCollection_' + index + '__EmailId').value;
+            var userId = document.getElementById('InterviewerCollection_' + index + '__UserId').value;
+            
+            var resumeLink = encodeURIComponent(document.getElementById('InterviewerCollection_' + index + '__ResumeLink').href);
+            //var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
+            var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
+            
+            var newTabUrl = actionUrl + '?jdTitle=' + jdTitle + '&irfId=' + irfId  + '&irfName=' + irfName + '&userId=' + userId + '&resumeLink=' + resumeLink;
+            window.open(newTabUrl, '_blank');
+
+        }
+
+    }
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -3938,6 +3967,11 @@
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
             return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
         });
+        $tr.find("span[id^='btn']").attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
+            return parts[1] + "_" + (++parts[2]); // build new id
+        });
+
         $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
             var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
@@ -3991,6 +4025,10 @@
         }).attr("id", function () { // change id also
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
             return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span").attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
+            return parts[1] + "_" + ++parts[2]; // build new id
         });
         $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
             var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute

@@ -246,7 +246,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRF>> GetDayStatsByClientUser(DateTime startDate, DateTime endDate, string emailid);
         Task<string> GetCodeSnippetFile(int interviewid);
         Task<bool> UpdateCodeSnippetFile(int interviewid, string uploadedFileURL, List<SkillComment> model);
-        Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int interviewerProfileId);
-        Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int interviewerProfileId, string screeningResponseJson);
+        Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int userId);
+        Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int userId, string screeningResponseJson);
     }
 }

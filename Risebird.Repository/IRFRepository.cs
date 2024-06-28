@@ -8627,7 +8627,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int interviewerProfileId)
+        public async Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int userId)
         {
             try
             {
@@ -8635,10 +8635,10 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@irfId", irfId);
-                    parameters.Add("@interviewerProfileId", interviewerProfileId);
-                    var result = await SqlMapper.QuerySingleAsync<TransInterviewer>(con, "usp_GetInterviewerOpenAIScreeningResult", parameters, commandTimeout: 600,
+                    parameters.Add("@userId", userId);
+                    var result = await SqlMapper.QueryAsync<TransInterviewer>(con, "usp_GetInterviewerOpenAIScreeningResult", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
-                    return result;
+                    return result?.FirstOrDefault();
                 }
 
             }
@@ -8649,7 +8649,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int interviewerProfileId, string screeningResponseJson)
+        public async Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int userId, string screeningResponseJson)
         {
             try
             {
@@ -8657,7 +8657,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@irfId", irfId);
-                    parameters.Add("@interviewerProfileId", interviewerProfileId);
+                    parameters.Add("@userId", userId);
                     parameters.Add("@screeningResponseJson", screeningResponseJson);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveInterviewerOpenAIScreeningResults", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
