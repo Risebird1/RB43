@@ -3987,11 +3987,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int interviewerProfileId, string screeningResponseJson)
+        public async Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int userId, string screeningResponseJson)
         {
             try
             {
-                return await _irfRepository.SaveInterviewerOpenAIScreeningResults(irfId, interviewerProfileId, screeningResponseJson);
+                return await _irfRepository.SaveInterviewerOpenAIScreeningResults(irfId, userId, screeningResponseJson);
             }
             catch (SqlTypeException ex)
             {
@@ -3999,11 +3999,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int interviewerProfileId)
+        public async Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int userId)
         {
             try
             {
-                return await _irfRepository.GetInterviewerOpenAIScreeningResults(irfId, interviewerProfileId);
+                return await _irfRepository.GetInterviewerOpenAIScreeningResults(irfId, userId);
             }
             catch (Exception ex)
             {
