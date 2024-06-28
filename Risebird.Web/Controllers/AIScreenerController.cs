@@ -119,7 +119,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> ScreenInterviewer(string jdTitle, string emailId, int irfId, int interviewerProfileId, string irfName, string resumeLink)
+        public async Task<IActionResult> ScreenInterviewer(string jdTitle, int irfId, int userId, string irfName, string resumeLink = null)
         {
             try
             {
@@ -132,9 +132,9 @@ namespace Risebird.Web.Controllers
 
                         //check if the candidate's screening is already done and saved in db(as json string)
 
-                        var interviewer = await _irfService.GetInterviewerOpenAIScreeningResults(irfId, interviewerProfileId);
+                        var interviewer = await _irfService.GetInterviewerOpenAIScreeningResults(irfId, userId);
 
-                        ViewBag.InterviewerEmail = emailId;
+                        ViewBag.InterviewerEmail = interviewer?.EmailId;
                         ViewBag.JobTitle = jdTitle;
                         ViewBag.ResumeLink = interviewer?.ResumeLink;
                         ViewBag.IRFName = irfName;
@@ -149,7 +149,7 @@ namespace Risebird.Web.Controllers
                         {
                             //Skills = skills,
                             JDTitle = jdTitle,
-                            ResumeLink = interviewer.ResumeLink
+                            ResumeLink = interviewer?.ResumeLink ?? resumeLink
                         };
                         var response = await _assistantServiceHelper.ScreenCandidateAsync(request);
 
@@ -158,7 +158,7 @@ namespace Risebird.Web.Controllers
                         bool saveOperationResult = true;
                         if (!string.IsNullOrEmpty(responseInJson))
                         {
-                            saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, interviewerProfileId, responseInJson);
+                            saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson);
                         }
 
                         if (saveOperationResult)
