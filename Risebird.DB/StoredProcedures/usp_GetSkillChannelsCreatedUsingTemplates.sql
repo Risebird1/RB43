@@ -25,7 +25,7 @@ WITH CTE AS (
         WHERE ActivityType=2--activity type 2 corresponds to creation of skill channel(refer enum)
 )
 select irf.IRFId, irf.CreatedOn, csc.[Name] as CreatedFromTemplateName, cl.[Name] as ClientCompName, 
-ul.EmailId as RisebirdHREmail, cte.PerformedBy as CreatedBy, asg.AssessmentGroup as AssessmentGroupName
+ul.EmailId as RisebirdHREmail, cte.PerformedBy as CreatedBy, asg.AssessmentGroup as AssessmentGroupName,ul.EmailId as ChannelOwner
 from IRF 
 join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId
 join Client cl on cl.id = irf.ClientId
@@ -44,7 +44,7 @@ WITH CTE AS (
         WHERE ActivityType=2--activity type 2 corresponds to creation of skill channel(refer enum)
 )
 select irf.IRFId, irf.CreatedOn, csc.[Name] as CreatedFromTemplateName, cl.[Name] as ClientCompName, 
-ul.EmailId as RisebirdHREmail, cte.PerformedBy as CreatedBy, asg.AssessmentGroup as AssessmentGroupName
+ul.EmailId as RisebirdHREmail, cte.PerformedBy as CreatedBy, asg.AssessmentGroup as AssessmentGroupName,ul.EmailId as ChannelOwner
 from IRF 
 join ClonableSkillChannel csc on csc.id = irf.CreatedFromTemplateId
 join Client cl on cl.id = irf.ClientId

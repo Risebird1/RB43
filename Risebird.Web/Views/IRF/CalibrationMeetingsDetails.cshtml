@@ -20,13 +20,13 @@
                 <div class="pull-left">
                     @if (ViewBag.Type == "UpComing")
                     {
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('UpComing')"><strong>UpComing</strong></div>
-                        <div class="feedback-tab" onclick="Changeurldetails('Completed')"><strong>Completed</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('UpComing','@ViewBag.ReturnBack')"><strong>UpComing</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('Completed','@ViewBag.ReturnBack')"><strong>Completed</strong></div>
                     }
                     else
                     {
-                        <div class="feedback-tab" onclick="Changeurldetails('UpComing')"><strong>UpComing</strong></div>
-                        <div class="feedback-tab-ac" onclick="Changeurldetails('Completed')"><strong>Completed</strong></div>
+                        <div class="feedback-tab" onclick="Changeurldetails('UpComing','@ViewBag.ReturnBack')"><strong>UpComing</strong></div>
+                        <div class="feedback-tab-ac" onclick="Changeurldetails('Completed','@ViewBag.ReturnBack')"><strong>Completed</strong></div>
                     }
                 </div>
                 <div class="pull-right">
@@ -202,7 +202,7 @@
     };
 </script>
 <script>
-    function Changeurldetails(type) {
-        window.location.href = "/IRF/CalibrationMeetingsDetails?type=" + type;
+    function Changeurldetails(type,returnType) {
+        window.location.href = "/IRF/CalibrationMeetingsDetails?type=" + type + "&returnBack=" + returnType;
     }
 </script>

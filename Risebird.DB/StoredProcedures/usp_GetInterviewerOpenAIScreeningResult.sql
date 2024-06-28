@@ -10,13 +10,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE [dbo].[usp_GetInterviewerOpenAIScreeningResult]     
 @irfId int,
-@interviewerProfileId int
+@userId int
 As
 Begin
 
- select top 1 OpenAIScreeningResponse, ResumeLink from TransInterviewer ti
+ select top 1 OpenAIScreeningResponse, ResumeLink, ul.EmailId from TransInterviewer ti
  join InterviewerProfile ipr on ipr.id = ti.InterviewerId
- where irfid = @irfId and InterviewerId = @interviewerProfileId
+ join UserList ul on ul.id = ipr.UserId
+ where irfid = @irfId and ti.UserId = @userId
 
 End
 GO
