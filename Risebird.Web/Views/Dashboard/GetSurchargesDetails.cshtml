@@ -1,8 +1,22 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.Surcharges>
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json;
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Enum
+@using Risebird.CommonHelper
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "GetSurchargesDetails";
+    dynamic filter = null;
+    string strtDte = string.Empty;
+    string endDte = string.Empty;
 }
-
+@if (HttpContextAccessor.HttpContext.Session.GetString("SurchargeFilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("SurchargeFilters"));
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
+}
 <div id="main-panel" class="main-panel">
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
@@ -23,7 +37,17 @@
                     <div class="feedback-tab-ac" onclick="Changeurldetails(1)"><strong>Surcharge Approved</strong></div>
                 }
                 <div class="pull-right">
-                    
+                    <div class="pull-right client-ms">
+                        <div style="float:left">
+                            <div class="filter-note" style="text-align: right;"> Note: To visualize data older than 45 days, please apply filter</div>
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+                            </div>
+                        <div style="float:left">
+                        </div>
+                    </div>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
                     </button>
@@ -32,6 +56,65 @@
         </div>
     </div>
    
+
+
+    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="filheader">
+                    <div class="filavatar">
+                        <span class="fa fa-filter"></span>
+                    </div>
+                    <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
+                </div>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <form action="@Url.Action("GetSurchargesDetails","Dashboard",new{actionType=ViewBag.Type})" method="post" id="form" onsubmit="return checkfilterDate();">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                        Start Date
+                                    </label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                        End Date
+                                    </label>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                         
+                            <div class="col-md-6 col-sm-6">                                                          
+                                <div class="form-group">
+                                    <div>
+                                        <div class="col-md-12 col-sm-12">
+                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 10px 0px;float:right;margin-left:5px;">
+                                                <font style="font-size:12px;"> Reset Filter</font>
+                                            </button>
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 10px;float:right">
+                                                <font style="font-size:12px;"> Apply Filter</font>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
             <div class="content client">
         <div class="row bl-bg">
                 <div class="col-md-12">
@@ -51,12 +134,18 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Skill Channel</th>
+                                                            <th>Interview Date</th>
                                                             <th>Interviewer</th>
                                                             <th>Surcharge</th>
                                                             <th>Comment</th>
                                                             <th>JDTitle</th>
                                                             <th>Client</th>   
                                                             <th>Type</th>
+                                                            <th>Candidate Email</th>
+                                                    <th>Meeting Status</th>
+                                                            <th>Channel Owner</th>
+                                                            <th>AddedBy</th>
+                                                            <th>AddedAt</th>
                                                     @if (ViewBag.Type == 0)
                                                     {
                                                             <th>Action</th>
@@ -66,12 +155,18 @@
                                                     <tfoot>
                                                         <tr>
                                                             <th>Skill Channel</th>
+                                                             <th>Interview Date</th>
                                                             <th>Interviewer</th>
                                                             <th>Surcharge</th>
                                                             <th>Comment</th>
                                                             <th>JDTitle</th>
                                                             <th>Client</th>  
                                                             <th>Type</th>
+                                                    <th>Candidate Email</th>
+                                                    <th>Meeting Status</th>
+                                                    <th>Channel Owner</th>
+                                                    <th>AddedBy</th>
+                                                    <th>AddedAt</th>
                                                     @if (ViewBag.Type == 0)
                                                     {
                                                             <th>Action</th>
@@ -83,19 +178,74 @@
                                                         {
                                                             <tr>
                                                                 <td>@item.SkillChannel</td>
+                                                        <td>@item.interviewDate</td>
                                                                 <td>@item.interviewer</td>
                                                                 <td>@item.Surcharge</td>
                                                                 <td>@item.SurchargeComment</td>
                                                                 <td>@item.JDTiltle</td>
                                                                 <td>@item.ClientName</td>
-                                                                @if (item.Type=="Interview")
-                                                                {
-                                                                    <td><div>Interview</div></td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td><div>Skill Channel</div></td>
-                                                                }
+                                                        @if (item.Type == "Interview")
+                                                        {
+                                                            <td><div>Interview</div></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td><div>Skill Channel</div></td>
+                                                        }
+                                                        <td>@item.candidateEmail</td>
+                                                        @if (item.MeetingStatusStatusDesc == "Status Pending")
+                                                        {
+                                                            <td>
+                                                                <span class="status mpending">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "Completed")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mcomplete">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "Scheduled")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mscheduled">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+
+                                                        else if (item.MeetingStatusStatusDesc == "Dropped")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mdropped">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "No Show(Candidate)")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mnoshow">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+                                                        else if (item.MeetingStatusStatusDesc == "Dropped (Rejected)")
+                                                        {
+
+                                                            <td>
+                                                                <span class="status mdropped" style="width:115px;">@item.MeetingStatusStatusDesc</span>
+                                                            </td>
+                                                        }
+
+                                                        else
+                                                        {
+                                                            <td> <span class="status">@item.MeetingStatusStatusDesc</span></td>
+
+                                                        }
+                                                        <td>@item.ChannelOwner</td>
+                                                        <td>@item.RequestBy</td>
+                                                        <td>@item.RequestAt</td>
+
+                                                               
                                                         @if (ViewBag.Type == 0)
                                                         {
                                                             <td>
@@ -229,7 +379,7 @@
         </div>
     </div>
 </div>
-
+<script src="~/js/filtervalidation.js?v=2024"></script>
 <script>
     function searchResult() {
         $('#SurcharegesTable').DataTable();
@@ -454,5 +604,14 @@
     }
     function Changeurldetails(actionType) {
         window.location.href = "/Dashboard/GetSurchargesDetails?actionType=" + actionType;
+    }
+
+    function ApplySessionFilter() {
+        var strtDte = '@strtDte';
+        var endDte = '@endDte';       
+
+        $('input[name=StartDate]').val(strtDte);
+        $('input[name=EndDate]').val(endDte);       
+        var form = $("#form").serialize();
     }
 </script>

@@ -22,5 +22,10 @@ namespace Risebird.Entities.Data
         public string ClientName { get; set; }
         public string Type { get; set; }
         public int UserId { get; set; }
+        public string candidateEmail { get; set; }
+        public string ChannelOwner { get; set; }
+        public DateTime? interviewDate { get; set; }
+        public int? MeetingStatus { get; set; }
+        public string MeetingStatusStatusDesc { get; set; }
     }
 }

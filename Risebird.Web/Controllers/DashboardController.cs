@@ -3687,7 +3687,25 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     ViewBag.Type = actionType;
-;                   var surchaes = await _dashboardService.GetSurcharesDetails(actionType);
+                    DateTime? StartDate;
+                    DateTime? EndDate;
+                    if (HttpContext.Session.GetString("ReScheduleMeetingsfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("ReScheduleMeetingsfilters"));
+                        StartDate = filter.StartDate;
+                        EndDate=filter.EndDate;
+                    }
+                    else
+                    {
+                        StartDate = DateTime.Now.AddMonths(-1);
+                        EndDate=DateTime.Now;
+                    }
+                         var surchaes = await _dashboardService.GetSurcharesDetails(actionType,StartDate,EndDate);
+                    surchaes = surchaes.Select(x =>
+                    {
+                        x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue?((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                        return x;
+                    }).ToList();
                     return View(surchaes);
                 }
                 else
@@ -3701,6 +3719,33 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> GetSurchargesDetails(SurchargeFilter filter,int actionType)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("SurchargeFilters", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("GetSurchargesDetails", "Dashboard", new { actionType });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
         [HttpPost]
         public async Task<JsonResult> ApproveSurcharge(int InterviewId,int Surcharge,string SurchargeComment,string Type,int IRFId,int actionType,int UserId)
         {

@@ -1017,11 +1017,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType)
+        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType,DateTime? StartDate,DateTime? EndDate)
         {
             try
             {
-                return await _dashboardRespository.GetSurcharesDetails(actionType);
+                return await _dashboardRespository.GetSurcharesDetails(actionType,StartDate,EndDate);
             }
             catch (Exception ex)
             {
