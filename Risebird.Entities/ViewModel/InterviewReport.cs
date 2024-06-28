@@ -108,9 +108,9 @@ namespace Risebird.Entities.ViewModel
         public string AadharFileLink { get; set; }
         [Display(Name = "Interview Date")]
         public string interviewDate { get; set; }
-
         public bool IsClientUser { get; set; }
-
+        public int Difficultylevel { get; set; }
+        public int InterviewerLateJoin { get; set; }
         public SelectList Level { get; set; }
         public SelectList LevelTech { get; set; }
         public SelectList QuestionsLevelList { get; set; }
@@ -374,6 +374,9 @@ namespace Risebird.Entities.ViewModel
         public IList<QuestionsDiscussed> QuestionsTwoCollection { get; set; }
         public IList<TechSkillReport> TechSkillTwoReportCollection { get; set; }
         public string JDTitleTwo { get; set; }
+        public int? Heuristicsscore { get; set; }
+        
+
     }
     public class RBInterviewDetails
     {

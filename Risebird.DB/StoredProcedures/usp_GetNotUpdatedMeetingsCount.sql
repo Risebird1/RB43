@@ -17,27 +17,25 @@ Begin
 Declare @Role varchar(150)              
 Select @Role=pr.Name From UserList ul join Profile pr on pr.id=ul.idprofile where Emailid=@Emailid           
   
-declare @MissedCandidateCount int=(Select Count(im.id) from InterviewMeetings im     
-join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId    
-join SeniorHr sh on sh.Clientid=irf.ClientId    
-left join UserList ulsh on ulsh.id=sh.Userid    
-Left join InterviewComments ic on ic.InterviewId=im.id          
-left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid    
-left join UserList ulc on ulc.id=IRF.RisebirdHr     
-outer Apply(Select max(PerformedOn) as PerformedOn From  PageClickDetails where Interviewid=im.id and ButtonAction='JoinMeeting') pg  
-where im.interviewdate>=DateAdd(Day,-7,(CONVERT(VARCHAR(10),@currentdate,23))) and im.interviewdate<=DateAdd(Day,1,(CONVERT(VARCHAR(10),@currentdate,23))) and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission) and im.confirmationStatus=1 and ((im.IsRescheduleNotificationSent=1 and ic.MeetingStatus!=3 and ic.MeetingStatus!=4 and ic.MeetingStatus!=6 and ic.MeetingStatus!=7 and ic.MeetingStatus!=8)  
-or (pg.PerformedOn is not null and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9))))
-
 declare @TechQCCount int =(Select count(id) from TechQualityDetails where isActive=1)
 
 if(@Role='SeniorHR' or @Role = 'HR')--or @Role='SupportAdmin'              
 BEGIN      
-declare @UnassignedInterviewsCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )    
+declare @UnassignedInterviewsCount int = (select Count(distinct im.id) from InterviewMeetings im 
+	            join IRF on im.IRFId=irf.IRFId 
+                join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId 
+				left join UserList ulsh on ulsh.id=sh.Userid 
+				join UserList ul on ul.id= irf.RisebirdHr
+				join AssessmentGroup asg on asg.id = irf.AssessmentGroupId 
+				where ul.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )    
     
 declare @UnfilledMeetingStatusCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
- left join UserList ulsh on ulsh.id=sh.Userid left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and    
- interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid)    
+ left join UserList ulsh on ulsh.id=sh.Userid left join InterviewComments ic on ic.InterviewId= im.id
+ left join UserList uli on uli.EmailId=im.interviewer
+ left join UserList ulc on ulc.id=IRF.RisebirdHr
+ where confirmationStatus=1 and    
+ interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulc.Emailid= @Emailid)    
     
  declare @UnfilledCommentsCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
  left join UserList ulsh on ulsh.id=sh.Userid  where confirmationStatus=1 and isAutoCancelled=1  and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid )    
@@ -62,10 +60,10 @@ declare @NotProcessedCandidateResume int = (Select count(cr.id) from CandidateRe
  left join UserList ulsh on ulsh.id=sh.Userid where IsnUll(cr.Isprocessed,0)=0 and ulsh.Emailid= @Emailid)    
     
 declare @QCPendingReportCount int = (Select Count(distinct im.id)  from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join IRF on IRF.IRFId=im.IRFId        
-join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id 
-  
-left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1         
-where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ulsh.Emailid= @Emailid)    
+join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id   
+left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
+left join UserList ulco on IRF.RisebirdHr=ulco.id
+where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ulco.Emailid= @Emailid)    
       
 declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where  confirmationStatus=1 and CandidateResponse=4  
  and interviewdate>=@currentdate and ulsh.Emailid= @Emailid)    
@@ -73,7 +71,7 @@ declare @NeedClarityCount int=(select Count(distinct im.id) from InterviewMeetin
 declare @OpenIssueCount int=(Select Count(id) from RaisedIssues where Status='Open' and Requester in('Interviewer','Client'))    
     
 declare @RescheduleInterviewMeetingCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=2 and Cancellationsource like'%Reschedule%' and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))    
+ left join UserList ulsh on ulsh.id=sh.Userid join UserList ul on ul.id=irf.RisebirdHr where ul.Emailid= @Emailid and confirmationStatus=2 and Cancellationsource like'%Reschedule%' and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE))    
     
  declare @PotentialRiskInterviewCount int = (select Count(im.id) from CandidateFeedbackDetails cfd
 inner join InterviewMeetings im  on cfd.interviewid=im.id
@@ -89,8 +87,8 @@ join CandidatesMaster cm on cm.UserId=ulc.id
 where cfd.Rating<=3 and Cast(interviewDate as Date)<= GETDATE() AND ul.EmailId=@Emailid)    
  declare @SuspeciousInterviewerCount int=(select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.CreatedBy=@Emailid and si.SuspiciousStatus=1)    
      
- declare @CancelledInterviewCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
- left join UserList ulsh on ulsh.id=sh.Userid where ulsh.Emailid= @Emailid and confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)    
+ declare @CancelledInterviewCount int = (select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
+ left join UserList ulsh on ulsh.id=sh.Userid join UserList ul on ul.id=irf.RisebirdHr  where ul.Emailid= @Emailid and confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)    
  and im.RedoInterview=0)     
     
  declare @RedoInterviewCount int = (select Count(im.id)  from InterviewMeetings im                                  
@@ -110,11 +108,17 @@ inner join IRF on im.IRFId=irf.IRFId
 left join UserList uli on uli.id=  irf.RisebirdHr  
 where ul.EmailId= @Emailid)    
     
-declare @PotentialRiskByClient int=(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
- left join UserList ulsh on ulsh.id=sh.Userid  
- left join PaymentSLADetails ps on ps.Interviewid=im.id  
- left join InterviewerProfile itp on itp.UserId = ulsh.id  
- where ulsh.Emailid= @Emailid and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)     
+declare @PotentialRiskByClient int=(select Count(distinct ccfr.id) from 
+ClientCommentsForReport ccfr 
+join InterviewMeetings im on ccfr.InterviewId=im.id
+				 join InterviewComments ic on ic.InterviewId=im.id 
+			    left join Trans_QCFormReport tq on tq.Interviewid=im.id
+				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
+				join UserList ul on ul.id=  irf.RisebirdHr 
+				left join PaymentSLADetails ps on im.id=ps.Interviewid
+				left join InterviewerProfile itp on itp.UserId = ul.id
+ where ul.Emailid= @Emailid and interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)     
     
  declare @BlackListCompanyCount int=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)    
     
@@ -139,16 +143,18 @@ left join PaymentSLADetails tqc on tqc.Interviewid=im.id  and ISNULL(tqc.isQcDon
 where pr.isProxyCandidate=1 and( ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7))  
 declare @DMApproveCount int=(select COUNT(irf.id) from IRF join Client c on c.id=irf.ClientId join UserList ul on ul.id= irf.RisebirdHr where DMApproved=1 AND ul.EmailId=@Emailid)  
 
-set @MissedCandidateCount=(Select Count(im.id) from InterviewMeetings im     
+declare @MissedCandidateCount int=(Select Count(distinct im.id) from InterviewMeetings im     
 join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId    
 join SeniorHr sh on sh.Clientid=irf.ClientId    
 left join UserList ulsh on ulsh.id=sh.Userid    
 Left join InterviewComments ic on ic.InterviewId=im.id          
 left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid    
-left join UserList ulc on ulc.id=IRF.RisebirdHr     
-outer Apply(Select max(PerformedOn) as PerformedOn From  PageClickDetails where Interviewid=im.id and ButtonAction='JoinMeeting') pg  
-where ulsh.Emailid=@Emailid and im.interviewdate>=DateAdd(Day,-7,(CONVERT(VARCHAR(10),@currentdate,23))) and im.interviewdate<=DateAdd(Day,1,(CONVERT(VARCHAR(10),@currentdate,23))) and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission) and im.confirmationStatus=1 and ((im.IsRescheduleNotificationSent=1 and ic.MeetingStatus!=3 and ic.MeetingStatus!=4 and ic.MeetingStatus!=6 and ic.MeetingStatus!=7 and ic.MeetingStatus!=8)  
-or (pg.PerformedOn is not null and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9))))
+left join UserList ulc on ulc.id=IRF.RisebirdHr        
+outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imc    
+where ulc.Emailid=@Emailid and im.interviewdate>=DateAdd(Day,-7,(CONVERT(VARCHAR(10),@currentdate,23))) and im.interviewdate<=DateAdd(Day,1,(CONVERT(VARCHAR(10),@currentdate,23))) and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission) and im.confirmationStatus=1
+and ((im.IsRescheduleNotificationSent=1 and ic.MeetingStatus!=3 and ic.MeetingStatus!=4 and ic.MeetingStatus!=6 and ic.MeetingStatus!=7 and ic.MeetingStatus!=8)  
+or (imc.PerformedOn is not null and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9))))
+  
   set @TechQCCount=(Select Count(tqd.id)From TechQualityDetails tqd join InterviewMeetings im on tqd.Interviewid=im.id
 join InterviewComments ic on ic.Interviewid=im.id
 join IRF on IRF.IRFId=im.IRFId
@@ -185,6 +191,30 @@ select @OpenIssueCount as OpenIssueCount
 END
 ELSE            
 BEGIN   
+IF(@Role='SupportAdmin')
+Begin
+set @MissedCandidateCount =(Select Count(distinct im.id) from InterviewMeetings im     
+join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId    
+join SeniorHr sh on sh.Clientid=irf.ClientId    
+left join UserList ulsh on ulsh.id=sh.Userid    
+Left join InterviewComments ic on ic.InterviewId=im.id          
+left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid    
+left join UserList ulc on ulc.id=IRF.RisebirdHr     
+outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imc  
+where ulsh.EmailId=@Emailid and im.interviewdate>=DateAdd(Day,-7,(CONVERT(VARCHAR(10),@currentdate,23))) and im.interviewdate<=DateAdd(Day,1,(CONVERT(VARCHAR(10),@currentdate,23))) and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission) and im.confirmationStatus=1 and ((im.IsRescheduleNotificationSent=1 and ic.MeetingStatus!=3 and ic.MeetingStatus!=4 and ic.MeetingStatus!=6 and ic.MeetingStatus!=7 and ic.MeetingStatus!=8)  
+or (imc.PerformedOn is not null and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9))))
+End
+
+set @MissedCandidateCount =(Select Count(distinct im.id) from InterviewMeetings im     
+join IRF on IRF.IRFId=im.IRFId join Client cl on cl.id=IRF.ClientId    
+join SeniorHr sh on sh.Clientid=irf.ClientId    
+left join UserList ulsh on ulsh.id=sh.Userid    
+Left join InterviewComments ic on ic.InterviewId=im.id          
+left join TransZoomMeetingExtendDetails tzme on im.ZoomMeetingId = tzme.Meetingid    
+left join UserList ulc on ulc.id=IRF.RisebirdHr     
+outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imc 
+where im.interviewdate>=DateAdd(Day,-7,(CONVERT(VARCHAR(10),@currentdate,23))) and im.interviewdate<=DateAdd(Day,1,(CONVERT(VARCHAR(10),@currentdate,23))) and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission) and im.confirmationStatus=1 and ((im.IsRescheduleNotificationSent=1 and ic.MeetingStatus!=3 and ic.MeetingStatus!=4 and ic.MeetingStatus!=6 and ic.MeetingStatus!=7 and ic.MeetingStatus!=8)  
+or (imc.PerformedOn is not null and (ic.MeetingStatus=1 or ic.MeetingStatus=5 or ic.MeetingStatus=9))))
 
  IF(@Role='Admin')
 BEGIN 
@@ -194,7 +224,7 @@ Else
 Begin
 set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open' and Requester in('Interviewer','Client')) 
 End
-set @UnassignedInterviewsCount  = (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )    
+set @UnassignedInterviewsCount  = (select Count(distinct im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )    
     
 set @UnfilledMeetingStatusCount = (select Count(im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 )    
     
@@ -214,7 +244,7 @@ set @NotProcessedCandidateResume = (Select count(*) from CandidateResume where I
     
 set @QCPendingReportCount = (Select Count(distinct im.id)  from InterviewMeetings im join IRF on im.IRFId=im.IRFId join InterviewComments ic on im.id=ic.InterviewId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=
 uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id   
-left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)   
+left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8)   
 and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0)    
     
 set @NeedClarityCount =(select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId join UserList ulsh on ulsh.id=sh.Userid left join UserList ul on ul.id=  irf.RisebirdHr where  confirmationStatus=1 and CandidateResponse=4 and interviewdate>=@currentdate)    
@@ -253,10 +283,15 @@ join InterviewComments ic on ic.Interviewid=im.id
 inner join IRF on im.IRFId=irf.IRFId   
 left join UserList uli on uli.id=  irf.RisebirdHr)    
     
-set @PotentialRiskByClient =(select Count(ccfr.id) from  ClientCommentsForReport ccfr join InterviewMeetings im on ccfr.InterviewId=im.id join irf on irf.IRFId = im.IRFId  
-left join PaymentSLADetails ps on ps.Interviewid=im.id  
-join UserList ul on ul.id=  irf.RisebirdHr  
-left join InterviewerProfile itp on itp.UserId = ul.id  
+set @PotentialRiskByClient =(select Count(distinct ccfr.id) from 
+ClientCommentsForReport ccfr 
+join InterviewMeetings im on ccfr.InterviewId=im.id
+				join InterviewComments ic on ic.InterviewId=im.id 
+			    left join Trans_QCFormReport tq on tq.Interviewid=im.id 
+				left join PaymentSLADetails ps on ps.Interviewid=im.id
+				join IRF on im.IRFId=irf.IRFId  join Client cl on irf.ClientId=cl.id 
+				join UserList ul on ul.id=  irf.RisebirdHr 
+				left join InterviewerProfile itp on itp.UserId = ul.id
 where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3)    
 set @BlackListCompanyCount=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)    
 set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)    
