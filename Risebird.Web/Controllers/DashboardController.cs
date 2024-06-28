@@ -3689,9 +3689,9 @@ namespace Risebird.Web.Controllers
                     ViewBag.Type = actionType;
                     DateTime? StartDate;
                     DateTime? EndDate;
-                    if (HttpContext.Session.GetString("ReScheduleMeetingsfilters") != null)
+                    if (HttpContext.Session.GetString("SurchargeFilters") != null)
                     {
-                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("ReScheduleMeetingsfilters"));
+                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("SurchargeFilters"));
                         StartDate = filter.StartDate;
                         EndDate=filter.EndDate;
                     }
@@ -3743,6 +3743,28 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetGetSurchargesDetailsFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("SurchargeFilters");
+                    return RedirectToAction("GetSurchargesDetails");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
             }
         }
 
