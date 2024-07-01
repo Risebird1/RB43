@@ -98,8 +98,8 @@
     </div>
     </div>*@
     @*Start: Pre Interview Screening Report *@
-    @if (!string.IsNullOrWhiteSpace(Model.PreReportLink))
-    {
+  @*  @if (!string.IsNullOrWhiteSpace(Model.PreReportLink))
+    {*@
         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
             <div class="card" style="margin-bottom:10px;">
                 <label class="question" for="checkbox_eight">
@@ -107,23 +107,27 @@
                         <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Pre-Interview Screening Report
                     </label>
                     <span class="round">
-                        <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
-                        <label style="visibility:hidden" for="checkbox_eight"></label>
+                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
+                    <label style="visibility:hidden" for="checkbox_eight"></label>
 
-                        <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                        <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" checked />
+                    <label for="hidden_fields_eight_1"></label>
+                    
+                    <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                    <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+
                     </span>
                 </label>
-                <fieldset class="row answer hidden" id="hidden_fields_eight">
-                    <div class="col-md-6" id="PreInterviewReport"><a target="_blank" href="@Model.PreReportLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Pre-Interview Report Link</span></a></div>
-                    <div class="col-md-6">
+                <fieldset class="row answer show-default hidden" id="hidden_fields_eight">
+                    <div class="col-md-6 pull-left" id="PreInterviewReport"><a style="display:block;margin-top:10px;" target="_blank" href="@Model.PreReportLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Pre-Interview Report Link</span></a></div>
+                    <div class="col-md-6 pull-left">
                         <div>User Name: <strong>@Model.PreReportUsername</strong></div>
                         <div>Password: <strong>@Model.PreReportPassword</strong></div>
                     </div>
                 </fieldset>
             </div>
         </div>
-    }
+   @* }*@
     @*End: Pre Interview Screening Report *@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
@@ -933,7 +937,7 @@
                 countcheck = countcheck + 1;
             }
         });
-        if (countcheck == 6) {
+        if (countcheck == 7) {
             $(".join-button").removeClass('disable-link')
             //enable meeting link
         }
