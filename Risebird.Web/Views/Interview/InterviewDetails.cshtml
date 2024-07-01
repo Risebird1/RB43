@@ -937,9 +937,18 @@
                 countcheck = countcheck + 1;
             }
         });
-        if (countcheck == 7) {
-            $(".join-button").removeClass('disable-link')
-            //enable meeting link
+        if($('#PreReportLink').val()==null || $('#PreReportLink').val()=='')
+        {
+            if (countcheck == 6) {
+                $(".join-button").removeClass('disable-link')
+                //enable meeting link
+            }
+        }
+        else
+        {
+            if (countcheck == 7) {
+                $(".join-button").removeClass('disable-link')
+            }
         }
     }
 </script>
