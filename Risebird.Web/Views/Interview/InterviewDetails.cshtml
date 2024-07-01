@@ -98,6 +98,7 @@
     </div>
     </div>*@
     @*Start: Pre Interview Screening Report *@
+    @Html.HiddenFor(m=>m.PreReportLink)
     @if (!string.IsNullOrWhiteSpace(Model.PreReportLink))
     {
         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
@@ -937,9 +938,18 @@
                 countcheck = countcheck + 1;
             }
         });
-        if (countcheck == 7) {
-            $(".join-button").removeClass('disable-link')
-            //enable meeting link
+        if($('#PreReportLink').val()==null || $('#PreReportLink').val()=='')
+        {
+            if (countcheck == 6) {
+                $(".join-button").removeClass('disable-link')
+                //enable meeting link
+            }
+        }
+        else
+        {
+            if (countcheck == 7) {
+                $(".join-button").removeClass('disable-link')
+            }
         }
     }
 </script>
