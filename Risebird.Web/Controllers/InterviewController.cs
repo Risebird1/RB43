@@ -7538,7 +7538,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> SaveSurchargeInterviewDetails(int interviewid, string surchargecomment, int surchargeamt, string CandidateEmail,int IRFId)
+        public async Task<JsonResult> SaveSurchargeInterviewDetails(int interviewid, string surchargecomment, int surchargeamt, string CandidateEmail, int IRFId)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -7548,7 +7548,7 @@ namespace Risebird.Web.Controllers
                 {
                     surchargecomment = "";
                 }
-                var model = await _meetingService.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt, emailId, CandidateEmail,IRFId);
+                var model = await _meetingService.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt, emailId, CandidateEmail, IRFId);
                 if (model)
                 {
                     return Json("Surcharge details are updated successfully.");
@@ -8693,14 +8693,14 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsMatched = "";
                 ViewBag.PageStatus = "Mainurl";
                 var email = HttpContext.Session.GetString("email");
-                email = email.Replace("\"", "");
+                email = email?.Replace("\"", "");
                 ViewBag.EmailId = email;
                 bool isAdminHR = false;
                 bool isInterviewer = false;
                 ViewBag.actiontype = actiontype;
                 ViewBag.IRFID = irfId;
                 string profileName = HttpContext.Session.GetString("profileName");
-               // ViewBag.profile = profileName.Replace("\"", "");
+                // ViewBag.profile = profileName.Replace("\"", "");
                 //if (profileName != null)
                 //{
                 //    profileName = profileName.Replace("\"", "");
@@ -8715,8 +8715,8 @@ namespace Risebird.Web.Controllers
                 //}
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
-              //  model.HeuristicsscoreDesc= ((Heuristicsscorelevel)model.Heuristicsscore).GetDescription();
-               // model.JobLevelName= ((JobLevels)model.JobLevel).GetDescription();
+                //  model.HeuristicsscoreDesc= ((Heuristicsscorelevel)model.Heuristicsscore).GetDescription();
+                // model.JobLevelName= ((JobLevels)model.JobLevel).GetDescription();
                 await ReportSkillSetandSeperate(model);
                 //if (model == null)
                 //{
@@ -8778,10 +8778,10 @@ namespace Risebird.Web.Controllers
                 }
 
                 await GetStatusList(model, irfId, model.Userid);
-                
+
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
-               
+
                 return View(model);
             }
             catch (Exception ex)
@@ -8793,8 +8793,8 @@ namespace Risebird.Web.Controllers
 
         }
 
-            #region Multi Skill Sets
-            public async Task ReportSkillSetandCombine(InterviewReport model)
+        #region Multi Skill Sets
+        public async Task ReportSkillSetandCombine(InterviewReport model)
         {
             //Questions discussed 
             foreach (var item in model.QuestionsCollection)
