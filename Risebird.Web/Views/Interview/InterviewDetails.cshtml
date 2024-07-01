@@ -29,7 +29,7 @@
         <div class="card" style="margin-bottom:10px;">
 
             <label class="question note-card" for="checkbox_two">
-                <label for="checkbox_two">
+                <label for="checkbox_two" class="consent-label" style="position:relative;">
                     <i class="fa fa-cogs" aria-hidden="true"></i>
 
 
@@ -107,23 +107,27 @@
                         <img width="25" src="../../img/consent.png" style="position:relative;left:-1px;top: -2px;margin-right:5px;">Candidate Pre-Interview Screening Report
                     </label>
                     <span class="round">
-                        <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
-                        <label style="visibility:hidden" for="checkbox_eight"></label>
+                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
+                    <label style="visibility:hidden" for="checkbox_eight"></label>
 
-                        <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                        <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" checked />
+                    <label for="hidden_fields_eight_1"></label>
+                    
+                    <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                    <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+
                     </span>
                 </label>
-                <fieldset class="row answer hidden" id="hidden_fields_eight">
-                    <div class="col-md-6" id="PreInterviewReport"><a target="_blank" href="@Model.PreReportLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Pre-Interview Report Link</span></a></div>
-                    <div class="col-md-6">
+                <fieldset class="row answer show-default hidden" id="hidden_fields_eight">
+                    <div class="col-md-6 pull-left" id="PreInterviewReport"><a style="display:block;margin-top:10px;" target="_blank" href="@Model.PreReportLink"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Pre-Interview Report Link</span></a></div>
+                    <div class="col-md-6 pull-left">
                         <div>User Name: <strong>@Model.PreReportUsername</strong></div>
                         <div>Password: <strong>@Model.PreReportPassword</strong></div>
                     </div>
                 </fieldset>
             </div>
         </div>
-    }
+   }
     @*End: Pre Interview Screening Report *@
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
@@ -789,7 +793,7 @@
         html += ' </table></div>';
         if (result != null && result.length > 0) {
             // plan type MultiStack[s]//
-            html += ' <span id="techskills-note-txt"><label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">(This is a muktistack interview where <b style="color:#dd1f1f;">40-45 mins</b> have to be allocated to evaluate primary stack skills and remaining <b style="color:#dd1f1f;">20-25 mins</b> have to be allocated to evaluate secondary stack skills)</label></span>'
+            html += ' <span id="techskills-note-txt"><label style="font-size:12.2px;line-height:14px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">(This is a muktistack interview where <b style="color:#dd1f1f;">40-45 mins</b> have to be allocated to evaluate primary stack skills and remaining <b style="color:#dd1f1f;">20-25 mins</b> have to be allocated to evaluate secondary stack skills)</label></span>'
             // plan type MultiStack[M]//
             //html += ' <span id="techskills-note-txt"><label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">(This is a muktistack interview where <b style="color:#dd1f1f;">50-55 mins</b> have to be allocated to evaluate primary stack skills and remaining <b style="color:#dd1f1f;">25-30 mins</b> have to be allocated to evaluate secondary stack skills)</label></span>'
             html += '<h1 style="font-size:18px;padding:10px;display:block;">OTHER SKILL</h1>';
@@ -933,7 +937,7 @@
                 countcheck = countcheck + 1;
             }
         });
-        if (countcheck == 6) {
+        if (countcheck == 7) {
             $(".join-button").removeClass('disable-link')
             //enable meeting link
         }

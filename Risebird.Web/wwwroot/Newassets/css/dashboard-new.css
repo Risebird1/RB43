@@ -10339,11 +10339,10 @@ option {
     position:absolute;
 }
 #techskills-note-txt {
-    top: 10px;
-    left: 145px;
-    width: 75%;
+    width:85%;
     height: 26px;
-    position: absolute;
+    padding-left:10px;
+    display:inline-block;
 }
  #techskill-note .report-tooltip svg {
         top: 0px !important;
