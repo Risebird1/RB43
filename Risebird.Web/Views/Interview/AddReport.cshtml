@@ -306,7 +306,7 @@
                                                     }
 
                                                     <div class="int-form-group">
-                                                        @Html.TextBoxFor(m => m.JDTiltle, new { @readonly = "readonly", @placeholder = "" })
+                                                       @Html.TextBoxFor(m => m.JDTiltle, new { @readonly = "readonly", @placeholder = "" })
 
                                                         @Html.LabelFor(model => model.JDTiltle)
 
@@ -2504,13 +2504,21 @@
 
     })();
     $('#MeetingStatus').change(function () {
+        debugger;
         var MeetingStatus = jQuery("#MeetingStatus option:selected").val();
-        if (MeetingStatus == 6 || MeetingStatus == 7) {
-            $("#remainingC").style.display = 'block';
+        var remainingCharElement = document.getElementById("remainingC");
+        if(remainingCharElement)
+        {
+            if (MeetingStatus == 6 || MeetingStatus == 7) {
+                //$("#remainingC").style.display = 'block';
+                remainingCharElement.style.display = 'block';
+            }
+            else {
+                //$("#remainingC").style.display = 'none';
+                remainingCharElement.style.display = 'none';
+            }
         }
-        else {
-            $("#remainingC").style.display = 'none';
-        }
+        
     });
     $('#InterviewerComment').keyup(function () {
 
@@ -2638,11 +2646,15 @@
     })();
     $('#MeetingStatusTwo').change(function () {
         var MeetingStatusTwo = jQuery("#MeetingStatusTwo option:selected").val();
+        var remainingCharElement = document.getElementById("remainingCTwo");
+
         if (MeetingStatusTwo == 6 || MeetingStatusTwo == 7) {
-            $("#remainingCTwo").style.display = 'block';
+            //$("#remainingCTwo").style.display = 'block';
+            remainingCharElement.style.display = 'block';
         }
         else {
-            $("#remainingCTwo").style.display = 'none';
+            //$("#remainingCTwo").style.display = 'none';
+            remainingCharElement.style.display = 'none';
         }
     });
     $('#InterviewerCommentTwo').keyup(function () {

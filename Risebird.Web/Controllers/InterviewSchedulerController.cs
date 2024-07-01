@@ -1701,7 +1701,7 @@ namespace Risebird.Web.Controllers
         {
             InstaZoomMeetingVM _zoommetingobject = new InstaZoomMeetingVM();
             _zoommetingobject.topic = subject;
-            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddThh:mm:ss");
+            _zoommetingobject.start_time = indianTime.ToString("yyyy-MM-ddTHH:mm:ss");
             accountEmail = await _interviewSchedulerservice.GetAvailableZoomAccount(indianTime.AddMinutes(-30), indianTime.AddMinutes(30), accountEmail);
             if (string.IsNullOrEmpty(accountEmail))
             {
