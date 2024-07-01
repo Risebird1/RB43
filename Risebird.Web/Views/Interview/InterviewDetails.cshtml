@@ -98,6 +98,7 @@
     </div>
     </div>*@
     @*Start: Pre Interview Screening Report *@
+    @Html.HiddenFor(m=>m.PreReportLink)
     @if (!string.IsNullOrWhiteSpace(Model.PreReportLink))
     {
         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
