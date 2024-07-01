@@ -25,7 +25,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
   begin  
    if (@Profile = 'SeniorHR' or @Profile = 'HR')  
    begin  
-		select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,cl.Name, 
+		select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name, 
 				IRF.CalendlyLink,SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
 				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup from InterviewMeetings im 
 				join IRF on im.IRFId=irf.IRFId 
@@ -38,7 +38,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
    end  
    else  
    begin  
-    select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,cl.Name,IRF.CalendlyLink,
+    select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name,IRF.CalendlyLink,
 				SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
 				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup 
 				from InterviewMeetings im 
@@ -50,7 +50,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
   end  
   else  
   begin  
-   select distinct im.*,irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId ,IRF.JDTiltle,cl.Name,
+   select distinct im.*,irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId ,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name,
 			IRF.CalendlyLink,SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  , 
 			LEN(IRF.CalendlyLink)) as scheduleUniqueid,im.id as imid, asg.AssessmentGroup
 			from InterviewMeetings im join IRF on im.IRFId=irf.IRFId 
@@ -60,7 +60,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
    where confirmationStatus=1 and interviewer is null and ul.EmailId=@emailID and interviewDate between @StartDate and @EndDate  
    union   
-   select distinct im.*,irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,cl.Name, 
+   select distinct im.*,irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name, 
 			IRF.CalendlyLink, SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
 			LEN(IRF.CalendlyLink)) as scheduleUniqueid,im.id as imid, asg.AssessmentGroup  from InterviewMeetings im
 			join IRF on im.IRFId=irf.IRFId 

@@ -157,11 +157,10 @@ namespace Risebird.Web
                 _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = loggedinUser, name = "" }, type = "required" });
                 _meeting.isOnlineMeeting = true;
                 _meeting.onlineMeetingProvider = "teamsForBusiness";
-                var accountEmail = "Tanishka@Guptatanishkarb.onmicrosoft.com";
+                var accountEmail = "interviews@Risebird492.onmicrosoft.com";
                 var result = await CreateTeamsMeetingClient(accountEmail, _meeting);
-                var urllinkdetails = result.ToString().Split("onlineMeeting")[result.ToString().Split("onlineMeeting").Length - 1];
-                var deatils = urllinkdetails.Split("https")[1].Replace(":", "https:").Replace("}}", "").Replace(@"\", "");
-                var meetingURL = deatils.Remove(deatils.Length - 2, 2);
+                var meetingdetails = await GetOnlineMeetingId(result.onlineMeeting.joinUrl);
+                await UpdateOnlineMeetingAutoRecord(meetingdetails.value.id);
             }
             catch (Exception ex)
             {
@@ -170,7 +169,7 @@ namespace Risebird.Web
 
             return "";
         }
-        public async Task<string> CreateTeamsMeetingClient(string accountEmail, OnlineMeeting data)
+        public async Task<OnlineMeetingResponse> CreateTeamsMeetingClient(string accountEmail, OnlineMeeting data)
         {
             if (!string.IsNullOrEmpty(accountEmail))
             {
@@ -183,49 +182,59 @@ namespace Risebird.Web
                 request.AddHeader("Content-Type", "application/json");
                 request.AddJsonBody(data);
                 RestResponse response = await client.ExecuteAsync(request);
-                return response.Content.ToString();
+                var content = response.Content;
+                var convertedResponse = JsonConvert.DeserializeObject<OnlineMeetingResponse>(content);
+                return convertedResponse;
+            }
+            return null;
+        }
+        public async Task<OnlineMeetingResult> GetOnlineMeetingId(string joinUrl)
+        {
+            if (!string.IsNullOrEmpty(joinUrl))
+            {
+                var client = new RestClient();
+                var token = await GetAccessTokenAsync();
+                var requestUrl = $"https://graph.microsoft.com/v1.0/me/onlineMeetings?$filter=JoinWebUrl%20eq%20'" + joinUrl + "'";
+                var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                var request = new RestRequest(requestUrl, Method.Get);
+                request.AddHeader("Authorization", $"Bearer {token}");
+                request.AddHeader("Content-Type", "application/json");
+                RestResponse response = await client.ExecuteAsync(request);
+                var content = response.Content;
+                var convertedResponse = JsonConvert.DeserializeObject<OnlineMeetingResult>(content);
+                return convertedResponse;
+            }
+            return null;
+        }
+        public async Task<string> UpdateOnlineMeetingAutoRecord(string meetingid)
+        {
+            if (!string.IsNullOrEmpty(meetingid))
+            {
+                var client = new RestClient();
+                var token = await GetAccessTokenAsync();
+                var requestUrl = $"https://graph.microsoft.com/v1.0/me/onlineMeetings/" + meetingid;
+                var httpRequest = new HttpRequestMessage(HttpMethod.Patch, requestUrl);
+                var request = new RestRequest(requestUrl, Method.Patch);
+                request.AddHeader("Authorization", $"Bearer {token}");
+                request.AddHeader("Content-Type", "application/json");
+                request.AddParameter("recordAutomatically", true);
+                RestResponse response = await client.ExecuteAsync(request);
+                var content = response.Content;
+                var convertedResponse = JsonConvert.DeserializeObject<OnlineMeetingResult>(content);
             }
             return "";
-        }
-        public async Task<string> CreateTeamsMeeting(string accountEmail, OnlineMeeting data)
-        {
-            if (!string.IsNullOrEmpty(accountEmail))
-            {
-                var httpClient = await CreateAuthorizedHttpClient();
-                var requestUrl = $"https://graph.microsoft.com/v1.0/users/{accountEmail}/calendar/events";
-                var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUrl);
-                //var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-                var content = new StringContent(data.ToString(), Encoding.UTF8, "application/json");
-                httpRequest.Content = content;
-                var response = await httpClient.SendAsync(httpRequest);
-                var result = await response.Content.ReadAsStringAsync();
-                return result;
-            }
-            return "";
-        }
-        public async Task<HttpClient> CreateAuthorizedHttpClient()
-        {
-            if (_httpClienttwo != null)
-            {
-                return _httpClienttwo;
-            }
-            var token = await GetAccessTokenAsync();
-            _httpClienttwo = new HttpClient();
-            _httpClienttwo.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            return _httpClienttwo;
         }
         private async Task<string> GetAccessTokenAsync()
         {
             var values = new List<KeyValuePair<string, string>>
             {
-                new KeyValuePair<string, string>("client_id", "4e52d62b-e1e3-4f46-87a5-6209fd114dae"),
-                new KeyValuePair<string, string>("client_secret", "QOI8Q~rH5.iITuamTGSzgRvLOO0vGRb8HwslRawa"),
+                new KeyValuePair<string, string>("client_id", "370e60c4-cdb4-4dad-8c27-3a0af77ac73f"),
+                new KeyValuePair<string, string>("client_secret", "GcH8Q~y1fOYOsRUmspKtPQZT6I0s13g3_oDjAcvA"),
                 new KeyValuePair<string, string>("scope",  "https://graph.microsoft.com/.default"),
                 new KeyValuePair<string, string>("grant_type", "client_credentials")
-                //new KeyValuePair<string, string>("resource", System.Environment.GetEnvironmentVariable($"Resource").ToString())
             };
             var client = new HttpClient();
-            var tenantId = "6446622b-9dfb-4b45-8fc1-f45d4f71c53b";
+            var tenantId = "fb212e2c-ff2c-4f52-9a84-774d6f275cb4";
             var requestUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
             var requestContent = new FormUrlEncodedContent(values);
             var response = await client.PostAsync(requestUrl, requestContent);

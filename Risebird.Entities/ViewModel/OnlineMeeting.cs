@@ -60,10 +60,15 @@ namespace Risebird.Entities.ViewModel
     public class MetingResponse
     {
         public string joinUrl { get; set; }
+        public string id { get; set; }
+        public string meetingCode { get; set; }
     }
     public class OnlineMeetingResponse
     {
         public MetingResponse onlineMeeting { get; set; }
-
+    }
+    public class OnlineMeetingResult
+    {
+        public MetingResponse value { get; set; }
     }
 }
