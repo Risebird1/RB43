@@ -2617,13 +2617,22 @@ namespace Risebird.Repository
 
         private async void UpdateTechSkillQuestionsForRemovedSkills(RemovedTechSkillsFromIRF removedTechSkill)
         {
-            DynamicParameters dynamicParam = new DynamicParameters();
-            dynamicParam.Add("@IRFId", removedTechSkill.IRFId);
-            dynamicParam.Add("@SkillId", removedTechSkill.SkillId);
-            using (SqlConnection conChange = new SqlConnection(connectionString))
+            try
             {
-                await SqlMapper.QueryAsync(conChange, "usp_UpdateTechSkillQuestionsForRemovedTechSkill", dynamicParam,
-                   commandType: CommandType.StoredProcedure);
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@IRFId", removedTechSkill.IRFId);
+                dynamicParam.Add("@SkillId", removedTechSkill.SkillId);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_UpdateTechSkillQuestionsForRemovedTechSkill", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return;
             }
         }
 
