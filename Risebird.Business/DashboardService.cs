@@ -7,6 +7,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -1009,6 +1010,73 @@ namespace Risebird.Business
             try
             {
                 return await _dashboardRespository.GetAllInterviewManagementDetails(interviewstartdate, interviewenddate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType)
+        {
+            try
+            {
+                return await _dashboardRespository.GetSurcharesDetails(actionType);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> ApproveSurcharge(int InterviewId, int Surcharge, string SurchargeComment, string Type, string EmailId,int IRFId, int actionType, int UserId)
+        {
+            try
+            {
+                return await _dashboardRespository.ApproveSurcharge(InterviewId,Surcharge,SurchargeComment,Type,EmailId, IRFId, actionType, UserId);
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateSurchargeDetails(int InterviewId, int IRFId, string Type, int UserId, string SurchargeComment, int Surchargeamt, string EmailId)
+        {
+            try
+            {
+                return await _dashboardRespository.UpdateSurchargeDetails (InterviewId,IRFId,Type,UserId,SurchargeComment,Surchargeamt,EmailId);
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<Surcharges>> GetSurcharesActivityTraker(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetSurcharesActivityTracker(InterviewId,IRFId,Type,UserId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<List<MeetingVM>> GetNotSecheduleSeniorHRList(string Emailid)
+        {
+            try
+            {
+                var meetings = (await _dashboardRespository.GetNotSecheduleSeniorHRList(Emailid)).ToList();
+                return meetings ?? new List<MeetingVM>();
             }
             catch (Exception ex)
             {

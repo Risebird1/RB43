@@ -10,6 +10,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -3984,6 +3985,31 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
+        }
+
+        public async Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int userId, string screeningResponseJson)
+        {
+            try
+            {
+                return await _irfRepository.SaveInterviewerOpenAIScreeningResults(irfId, userId, screeningResponseJson);
+            }
+            catch (SqlTypeException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int userId)
+        {
+            try
+            {
+                return await _irfRepository.GetInterviewerOpenAIScreeningResults(irfId, userId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }

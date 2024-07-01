@@ -45,13 +45,13 @@
                     <div class="pull-left">
                         @if (ViewBag.recipientType == "Interviewer")
                         {
-                            <div class="feedback-tab" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack')"><strong>Candidate</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack')"><strong>Interviewer</strong></div>
                         }
                         else if (ViewBag.recipientType == "Candidate")
                         {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
+                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack')"><strong>Candidate</strong></div>
+                            <div class="feedback-tab" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack')"><strong>Interviewer</strong></div>
                         }
                         
                     </div>
@@ -63,7 +63,7 @@
                             </button>
                         </div>
                         <div class="pull-right client-ms">
-                            @if (ViewBag.ReturnBack == 1)
+                            @if (ViewBag.ReturnBack== 1)
                             {
 
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
@@ -404,7 +404,7 @@
         $('body').removeClass("modal-open");
     });
     function ResetFilter() {
-        window.location.href = "/Dashboard/ResetRecipientActivityDetails";
+        window.location.href = "/Dashboard/ResetRecipientActivityDetails?returnBack=" + @ViewBag.ReturnBack;
     }
 
     function ApplySessionFilter() {
@@ -450,8 +450,8 @@
 
 <script>
 
-    function Changeurldetails(recipientType) {
-        window.location.href = "/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType;
+    function Changeurldetails(recipientType,returnBack) {
+        window.location.href = "/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType + "&returnBack=" + returnBack;
     }
 </script>
 <script src="~/js/common.js?v=2024"></script>

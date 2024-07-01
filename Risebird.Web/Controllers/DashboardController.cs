@@ -2756,6 +2756,7 @@ namespace Risebird.Web.Controllers
                             var filter = JsonConvert.DeserializeObject<MailActivityFilter>(HttpContext.Session.GetString("MailActivityFilters"));
 
                             recipientType = filter.RecipientType;
+                            ViewBag.ReturnBack = filter.returnBack;
                             recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType, filter.StartDate, filter.EndDate,emailid);
 
                             filter.SkillChannel = filter.SkillChannel == null ? filter.SkillChannel = recipients.Select(x => x.SkillChannelName).ToArray() : filter.SkillChannel = filter.SkillChannel;
@@ -2821,6 +2822,7 @@ namespace Risebird.Web.Controllers
                         if (filter != null)
                         {
                             filter.RecipientType = recipientType;
+                            filter.returnBack = returnBack;
                             HttpContext.Session.SetString("MailActivityFilters", JsonConvert.SerializeObject(filter));
                         }
 
@@ -3359,7 +3361,15 @@ namespace Risebird.Web.Controllers
                             ClientId = client.ClientId;
                             ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client.RoleId)).GetDescription() : string.Empty;
                         }
-                        var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                        List<MeetingVM> meetings = new List<MeetingVM>();
+                        if (profileName == "SeniorHR")
+                        {
+                            meetings = await _dashboardService.GetNotSecheduleSeniorHRList(emailid);
+                        }
+                        else
+                        {
+                             meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                        }
                         if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("NotScheduledMeetingsfilters"));
@@ -3467,7 +3477,7 @@ namespace Risebird.Web.Controllers
         public async Task<FileContentResult> NotScheduledMeetingstoExcel()
         {
             string userEmailId = string.Empty;
-            ExcelPackage Ep = new ExcelPackage();
+            ExcelPackage Ep = new ExcelPackage();          
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
             try
@@ -3483,7 +3493,15 @@ namespace Risebird.Web.Controllers
                     ClientId = client.ClientId;
                     ViewBag.ClientRole = client?.RoleId != 0 ? ((ClientRoleEnum)Convert.ToInt32(client?.RoleId)).GetDescription() : string.Empty;
                 }
-                var meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                List<MeetingVM> meetings = new List<MeetingVM>();
+                if (profileName == "SeniorHR")
+                {
+                    meetings = await _dashboardService.GetNotSecheduleSeniorHRList(emailid);
+                }
+                else
+                {
+                    meetings = await _meetingService.GetClientNotScheduledMeetingList(ClientId, emailid);
+                }
                 if (HttpContext.Session.GetString("NotScheduledMeetingsfilters") != null)
                 {
                     var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("NotScheduledMeetingsfilters"));
@@ -3675,6 +3693,119 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("AllEmergencyInterviewDetails");
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetSurchargesDetails(int actionType)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    ViewBag.Type = actionType;
+;                   var surchaes = await _dashboardService.GetSurcharesDetails(actionType);
+                    return View(surchaes);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        [HttpPost]
+        public async Task<JsonResult> ApproveSurcharge(int InterviewId,int Surcharge,string SurchargeComment,string Type,int IRFId,int actionType,int UserId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                   
+                    var Emailid = HttpContext.Session.GetString("email")?.Trim();
+                    Emailid = Emailid.Replace("\"", "");
+                    var data = await _dashboardService.ApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type,Emailid, IRFId, actionType, UserId);
+
+                    if (data)
+                    {
+                            return Json("Successfully");
+                           
+                    }
+                    else
+                    {
+                            return Json("UnSuccessfully");
+                    }
+
+                }
+                else
+                {
+                    return Json(new { success = false, redirectUrl = Url.Action("SignOut", "Session") });
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateSurchargeDetails(int InterviewId, int IRFId, string Type, int UserId, string SurchargeComment,int Surchargeamt)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                var model = await _dashboardService.UpdateSurchargeDetails(InterviewId, IRFId, Type, UserId, SurchargeComment, Surchargeamt, emailId);
+                if (model)
+                {
+                    return Json("Surcharge details are updated successfully.");
+                }
+                else
+                {
+                    return Json("Failed to update Surcharge details, please try again.");
+                }
+            }
+            else
+            {
+                return Json("Failed to update Surcharge details, please try again.");
+            }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetSurchargesActivityTracker(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var surchaes = await _dashboardService.GetSurcharesActivityTraker(InterviewId,IRFId, Type,UserId);
+                    return PartialView("_GetSurchargesActivityTracker", surchaes);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
             }
         }
     }

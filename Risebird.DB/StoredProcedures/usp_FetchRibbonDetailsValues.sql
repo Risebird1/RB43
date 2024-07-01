@@ -32,7 +32,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				left join UserList ulsh on ulsh.id=sh.Userid 
 				join UserList ul on ul.id= irf.RisebirdHr
 				join AssessmentGroup asg on asg.id = irf.AssessmentGroupId
-				where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and ulsh.Emailid= @Emailid
+				where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and ul.Emailid= @Emailid
 			end
 			else
 			begin
@@ -74,12 +74,15 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from 
+				InterviewMeetings im 
+				join IRF on im.IRFId=irf.IRFId 
+				join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
 				left join InterviewComments ic on ic.InterviewId= im.id 
 				left join UserList uli on uli.EmailId=im.interviewer
 				left join UserList ulc on ulc.id=IRF.RisebirdHr
-				where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid and interviewdate<@currentdate
+				where confirmationStatus=1 and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulc.Emailid= @Emailid and interviewdate<@currentdate
 			end
 			else
 			begin
@@ -190,7 +193,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				Select IRF.Id as irfIntId,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite as PrimarySkill,cl.Name as Client,ulc.EmailId as ChannelOwner,count(cr.id) as TotalView from IRF join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join CandidateResume cr on cr.IRFId=IRF.id join UserList ulc on ulc.id=irf.RisebirdHr where ulsh.Emailid= @Emailid and ISNULL(cr.IsProcessed,0)=0 group by IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,ulc.EmailId
+				Select IRF.Id as irfIntId,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite as PrimarySkill,cl.Name as Client,ulc.EmailId as ChannelOwner,count(cr.id) as TotalView from IRF join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join CandidateResume cr on cr.IRFId=IRF.id join UserList ulc on ulc.id=irf.RisebirdHr where ulc.Emailid= @Emailid and ISNULL(cr.IsProcessed,0)=0 group by IRF.Id,IRF.IRFId,IRF.JDTiltle,IRF.PrimarySkillInvite,cl.Name,ulc.EmailId
 			end
 			else
 			begin
@@ -210,22 +213,24 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR')
 			begin
-				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and ulsh.Emailid= @Emailid
+				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and ulco.Emailid= @Emailid
 			end
 			else
 			begin
 				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
-				Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where im.interviewer=interviewer and im.id=interviewid) imjt 
+				Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime left join UserList ulco on IRF.RisebirdHr=ulco.id where im.interviewer=interviewer and im.id=interviewid) imjt 
 				where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and ISNULL(im.RedoInterview,0)=0
 			end
 		end
 		else
 		begin
 			select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
+			left join UserList ulco on IRF.RisebirdHr=ulco.id
 			Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where im.interviewer=interviewer and im.id=interviewid) imjt 
 			where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ul.EmailId=@emailID 
 			union 
 			select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
+			left join UserList ulco on IRF.RisebirdHr=ulco.id
 			Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where im.interviewer=interviewer and im.id=interviewid) imjt 
 			where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ul.EmailId=@emailID
 		end
@@ -236,18 +241,18 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR')
 			begin
-				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,tq.Redflags,im.id imid,IRF.id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id join Trans_QCFormReport tq on tq.Interviewid=im.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulsh.Emailid= @Emailid order by tq.Redflags desc
+				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,tq.Redflags,im.id imid,IRF.id as irfIntId,ulco.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id join Trans_QCFormReport tq on tq.Interviewid=im.id left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ulco.Emailid= @Emailid order by tq.Redflags desc
 			end
 			else
 			begin
-				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,tq.PaymentComplianceCount as Redflags,IRF.id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 order by tq.PaymentComplianceCount desc
+				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,tq.PaymentComplianceCount as Redflags,IRF.id as irfIntId,ulco.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 order by tq.PaymentComplianceCount desc
 			end
 		end
 		else
 		begin
-			select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,tq.PaymentComplianceCount as Redflags,im.id imid,IRF.id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1  where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ul.EmailId=@emailID 
+			select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,tq.PaymentComplianceCount as Redflags,im.id imid,IRF.id as irfIntId,ulco.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ul.EmailId=@emailID 
             union 
-			select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,tq.PaymentComplianceCount as Redflags,im.id imid,IRF.id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id  join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1  where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ul.EmailId=@emailID order by tq.PaymentComplianceCount desc
+			select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,tq.PaymentComplianceCount as Redflags,im.id imid,IRF.id as irfIntId,ulco.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join Userlist ul on ul.id=irf.RisebirdHr join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id  join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate, @currentdate)<7 and ul.EmailId=@emailID order by tq.PaymentComplianceCount desc
 		end
 	end
 	else If(@actionstatus ='NeedClarity')
@@ -278,22 +283,22 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			begin
 				select distinct im.*, 
 				REPLACE(Cancellationsource,'Reschedule on','') as FutureSchduleDate,
-				cl.Name as Name,
-				ul.EmailId as ClientEmail
+				cl.Name as Name
+				--ul.EmailId as ClientEmail
 				,ul.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
 				join UserList ul on ul.id=  irf.RisebirdHr 
-				where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ulsh.Emailid= @Emailid
+				where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.Emailid= @Emailid
 			end
 			else
 			begin
 				select distinct im.*,
 				REPLACE(Cancellationsource,'Reschedule on','') as FutureSchduleDate,
 				 cl.Name as Name,
-				 ul.EmailId as ClientEmail,
+				 --ul.EmailId as ClientEmail,
 				ul.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im 
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
-				join UserList ul on ul.id=  irf.RisebirdHr
+				join UserList ul on ul.id=irf.RisebirdHr
 				where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)
 			end
 		end
@@ -305,7 +310,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			ulc.EmailId as ClientEmail,
 			irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId join Userlist ul on ul.id=HR.UserId 
-			join UserList ulc on ulc.id=  irf.RisebirdHr
+			join UserList ulc on ulc.id= irf.RisebirdHr
 			where confirmationStatus=2 and Cancellationsource like'%Reschedule%' and CAST(interviewDate as DATE) >=CAST(@currentdate as DATE) and ul.EmailId=@emailID 
 			union 
 			select distinct im.*,
@@ -595,6 +600,7 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
 				select distinct ccfr.Comment,ccfr.Interviewid,im.*, cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId ,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus
+				 ,ps.IsApproved,itp.RedMarker,ps.PaymentComplianceCount
 				 from  ClientCommentsForReport ccfr 
 				 join InterviewMeetings im on ccfr.InterviewId=im.id
 				 join InterviewComments ic on ic.InterviewId=im.id 
@@ -602,14 +608,16 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid 
 				join UserList ul on ul.id=  irf.RisebirdHr 
+				left join PaymentSLADetails ps on im.id=ps.Interviewid
+				left join InterviewerProfile itp on itp.UserId = ul.id
 				where  
-				--interviewDate between dateAdd(DD,-7,getdate()) and getdate() and
-				ccfr.Rating<=3 and ulsh.Emailid= @Emailid
+				interviewDate between dateAdd(DD,-7,getdate()) and getdate() and
+				ccfr.Rating<=3 and ul.Emailid= @Emailid
 			end
 			else
 			begin
 				select distinct ccfr.Comment,ccfr.Interviewid,im.*, cl.Name,ul.EmailId as ChannelOwner, IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn, ccfr.CreatedBy as RateAddedBy
-				,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus,ps.PaymentComplianceCount
+				,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus,ps.PaymentComplianceCount,ps.IsApproved,itp.RedMarker
 				from  ClientCommentsForReport ccfr 
 				join InterviewMeetings im on ccfr.InterviewId=im.id
 				join InterviewComments ic on ic.InterviewId=im.id 
@@ -617,12 +625,15 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 				left join PaymentSLADetails ps on ps.Interviewid=im.id
 				join IRF on im.IRFId=irf.IRFId  join Client cl on irf.ClientId=cl.id 
 				join UserList ul on ul.id=  irf.RisebirdHr 
+				left join InterviewerProfile itp on itp.UserId = ul.id
 				where interviewDate between dateAdd(DD,-7,getdate()) and getdate() and ccfr.Rating<=3
 			end
 		end
 		else
 		begin
-			select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ulc.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus, ps.PaymentComplianceCount  from  ClientCommentsForReport ccfr 
+			select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ulc.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus, ps.PaymentComplianceCount 
+			,ps.IsApproved,itp.RedMarker
+			from  ClientCommentsForReport ccfr 
 			join InterviewMeetings im on ccfr.InterviewId=im.id
 			join InterviewComments ic on ic.InterviewId=im.id 
 			left join PaymentSLADetails ps on ps.Interviewid=im.id
@@ -631,16 +642,19 @@ left join InterviewerProfile itp on itp.UserId = uli.id
 			join TransHR th on th.IRFId = irf.id join HR on HR.id=th.HRId
 			join Userlist ul on ul.id=HR.UserId 
 			join UserList ulc on ulc.id=  irf.RisebirdHr
-
+			left join InterviewerProfile itp on itp.UserId = ul.id
 			where ccfr.Rating<=3 and ul.EmailId=@emailID and interviewDate between dateAdd(DD,-7,getdate()) and getdate()
 			union 
-			select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus,ps.PaymentComplianceCount from  ClientCommentsForReport ccfr 
+			select distinct ccfr.Comment,ccfr.Interviewid,im.*,cl.Name,ul.EmailId as ChannelOwner,IRF.id as irfIntId,ccfr.Rating,ccfr.CreatedAt as RateAddedOn,ccfr.CreatedBy as RateAddedBy,ic.InterviewStatus,tq.Redflags,ic.MeetingStatus,ps.PaymentComplianceCount 
+			,ps.IsApproved,itp.RedMarker
+			from  ClientCommentsForReport ccfr 
 				join InterviewMeetings im on ccfr.InterviewId=im.id
 				join InterviewComments ic on ic.InterviewId=im.id 
 				left join PaymentSLADetails ps on ps.Interviewid=im.id
 			    left join Trans_QCFormReport tq on tq.Interviewid=im.id
 				join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				join Userlist ul on ul.id=irf.RisebirdHr 
+				left join InterviewerProfile itp on itp.UserId = ul.id
 			where ccfr.Rating<=3 and ul.EmailId=@emailID and interviewDate between dateAdd(DD,-7,getdate()) and getdate()
 		end
 	end

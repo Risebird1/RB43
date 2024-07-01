@@ -15,8 +15,10 @@ CREATE TABLE [dbo].[TransInterviewer](
             [ActivatedAt][datetime] null,
             [IsCampaignActivity][bit] null,
             [CampaignId][int] null,
+            [OpenAIScreeningResponse][varchar](max) null,
 			CONSTRAINT [FK_TIIRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
-			CONSTRAINT [FK_TI_InterviewerId] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),			
+			CONSTRAINT [FK_TI_InterviewerId] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),
+            [IsSurchargeApprove] [bit] NULL,
  CONSTRAINT [PK_TransInterviewer] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -128,6 +130,27 @@ BEGIN
     ALTER TABLE TransInterviewer
     Add CampaignId int null
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsSurchargeApprove')
+      AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewer
+    Add IsSurchargeApprove bit null
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'OpenAIScreeningResponse')
+      AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewer
+    Add OpenAIScreeningResponse varchar(max) null
+END
+
 
 END
 

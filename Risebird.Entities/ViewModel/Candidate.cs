@@ -159,6 +159,7 @@ namespace Risebird.Entities.ViewModel
         public string PreReportLink { get; set; }
         public string PreReportUsername { get; set; }
         public string PreReportPassword { get; set; }
+        public string OpenAIScreeningResponseJson { get; set; }
 
     }
 }

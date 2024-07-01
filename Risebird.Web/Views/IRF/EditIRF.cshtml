@@ -1,5 +1,6 @@
 @model Risebird.Entities.ViewModel.IRFVm
 @using Risebird.Entities.Enum;
+@using System.Web;
 
 @{
     ViewData["Title"] = "Edit Skills Channel";
@@ -1384,7 +1385,7 @@
 
 
                                                                                 <td class="action text-center">
-                                                                                    <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                    <span id="btnPlus_0" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                     @*@if (Model.IsClone)
                                                                                 {
                                                                                 <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class=" mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
@@ -1475,11 +1476,17 @@
 
                                                                                     <td class="action text-center">
                                                                                         <div>
-                                                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                                            @*@if (Model.IsClone)
-                                                                                    {
-                                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                                                    }*@
+                                                                                            <span id="btnPlus_@i" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                                            
+                                                                                            <span id="btnScreen_@i" title ="Screen Interviewer" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute">
+                                                                                                <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
+                                                                                            </span>
+                                                                                            
+                                                                                            
+                                                                                            @* @if (Model.IsClone)
+                                                                                            {
+                                                                                                <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill', 'PerSuccessRate', 'IsActive')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                                                            } *@
                                                                                         </div>
                                                                                     </td>
                                                                                 </tr>
@@ -2117,6 +2124,32 @@
 
     }
 
+</script>
+<script>
+    function ScreenInterviewer(elementId, jdTitle, irfId, irfName)
+    {
+        var index = -1;
+        const results = elementId.match(/-?\d+(\.\d+)?/g);
+        if (results)
+        {
+            index = results[0];
+        }
+        if(index != -1)
+        {
+            
+            //var emailId = document.getElementById('InterviewerCollection_' + index + '__EmailId').value;
+            var userId = document.getElementById('InterviewerCollection_' + index + '__UserId').value;
+            
+            var resumeLink = encodeURIComponent(document.getElementById('InterviewerCollection_' + index + '__ResumeLink').href);
+            //var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
+            var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
+            
+            var newTabUrl = actionUrl + '?jdTitle=' + jdTitle + '&irfId=' + irfId  + '&irfName=' + irfName + '&userId=' + userId + '&resumeLink=' + resumeLink;
+            window.open(newTabUrl, '_blank');
+
+        }
+
+    }
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -3932,6 +3965,11 @@
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
             return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
         });
+        $tr.find("span[id^='btn']").attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
+            return parts[1] + "_" + (++parts[2]); // build new id
+        });
+
         $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
             var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
@@ -3985,6 +4023,10 @@
         }).attr("id", function () { // change id also
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
             return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span").attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
+            return parts[1] + "_" + ++parts[2]; // build new id
         });
         $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
             var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute

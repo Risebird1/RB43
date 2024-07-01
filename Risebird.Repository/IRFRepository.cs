@@ -2617,13 +2617,22 @@ namespace Risebird.Repository
 
         private async void UpdateTechSkillQuestionsForRemovedSkills(RemovedTechSkillsFromIRF removedTechSkill)
         {
-            DynamicParameters dynamicParam = new DynamicParameters();
-            dynamicParam.Add("@IRFId", removedTechSkill.IRFId);
-            dynamicParam.Add("@SkillId", removedTechSkill.SkillId);
-            using (SqlConnection conChange = new SqlConnection(connectionString))
+            try
             {
-                await SqlMapper.QueryAsync(conChange, "usp_UpdateTechSkillQuestionsForRemovedTechSkill", dynamicParam,
-                   commandType: CommandType.StoredProcedure);
+                DynamicParameters dynamicParam = new DynamicParameters();
+                dynamicParam.Add("@IRFId", removedTechSkill.IRFId);
+                dynamicParam.Add("@SkillId", removedTechSkill.SkillId);
+                using (SqlConnection conChange = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(conChange, "usp_UpdateTechSkillQuestionsForRemovedTechSkill", dynamicParam,
+                       commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return;
             }
         }
 
@@ -8621,6 +8630,51 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int userId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@userId", userId);
+                    var result = await SqlMapper.QueryAsync<TransInterviewer>(con, "usp_GetInterviewerOpenAIScreeningResult", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result?.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int userId, string screeningResponseJson)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@irfId", irfId);
+                    parameters.Add("@userId", userId);
+                    parameters.Add("@screeningResponseJson", screeningResponseJson);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveInterviewerOpenAIScreeningResults", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }

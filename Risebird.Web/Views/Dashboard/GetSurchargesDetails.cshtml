@@ -1,0 +1,458 @@
+﻿@model IEnumerable<Risebird.Entities.Data.Surcharges>
+@{
+    ViewData["Title"] = "GetSurchargesDetails";
+}
+
+<div id="main-panel" class="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"> <h4 class="card-title">Surcharge Details</h4></div>
+                </div>
+                @if (ViewBag.Type == 0)
+                {
+                    <div class="feedback-tab-ac" onclick="Changeurldetails(0)"><strong>Surcharge Requested</strong></div>
+                    <div class="feedback-tab" onclick="Changeurldetails(1)"><strong>Surcharge Approved</strong></div>
+                }
+                else if (ViewBag.Type == 1)
+                {
+                    <div class="feedback-tab" onclick="Changeurldetails(0)"><strong>Surcharge Requested</strong></div>
+                    <div class="feedback-tab-ac" onclick="Changeurldetails(1)"><strong>Surcharge Approved</strong></div>
+                }
+                <div class="pull-right">
+                    
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+            <div class="content client">
+        <div class="row bl-bg">
+                <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="loader text-center">
+                                <img src="~/Newassets/img/lazyload.gif" />
+                            </div>
+                   
+                            <div class="dataloading">
+
+                                <div class="toolbar">
+
+                                        <div class="scrollbar int-table" id="style-2">
+                                            <div id="tableID" class="second">
+                                                <table id="SurcharegesTable" class="table table-striped  table-bordered dt-responsive" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Skill Channel</th>
+                                                            <th>Interviewer</th>
+                                                            <th>Surcharge</th>
+                                                            <th>Comment</th>
+                                                            <th>JDTitle</th>
+                                                            <th>Client</th>   
+                                                            <th>Type</th>
+                                                    @if (ViewBag.Type == 0)
+                                                    {
+                                                            <th>Action</th>
+                                                    }
+                                                        </tr>
+                                                    </thead>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th>Skill Channel</th>
+                                                            <th>Interviewer</th>
+                                                            <th>Surcharge</th>
+                                                            <th>Comment</th>
+                                                            <th>JDTitle</th>
+                                                            <th>Client</th>  
+                                                            <th>Type</th>
+                                                    @if (ViewBag.Type == 0)
+                                                    {
+                                                            <th>Action</th>
+                                                    }
+                                                        </tr>
+                                                    </tfoot>
+                                                    <tbody>
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.SkillChannel</td>
+                                                                <td>@item.interviewer</td>
+                                                                <td>@item.Surcharge</td>
+                                                                <td>@item.SurchargeComment</td>
+                                                                <td>@item.JDTiltle</td>
+                                                                <td>@item.ClientName</td>
+                                                                @if (item.Type=="Interview")
+                                                                {
+                                                                    <td><div>Interview</div></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td><div>Skill Channel</div></td>
+                                                                }
+                                                        @if (ViewBag.Type == 0)
+                                                        {
+                                                            <td>
+                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Approve Surcharge" style="width:25px!important;height:25px!important;background:#58c975b3;border-color:#6fde8bb3;position:relative;left:4px;">
+                                                                    <span onclick="ApproveSurcharge('@item.InterviewId','@item.Surcharge','@item.SurchargeComment','@item.Type','@item.IRFId',1,'@item.UserId')" title="Approve Surcharge">
+                                                                        <i class="fas fa-check-circle" style="position:relative;top:1px;font-size:13px;"></i>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="UnApprove Surcharge" style="width:25px!important;height:25px!important;background:#f49b81;border-color:#f49b81;position:relative;left:4px;">
+                                                                    <span onclick="UnApproveSurcharge('@item.InterviewId','@item.Surcharge','@item.SurchargeComment','@item.Type','@item.IRFId',2,'@item.UserId')" title="UnApprove Surcharge">
+                                                                        <i class="fa fa-times-circle" aria-hidden="true" style="position:relative;font-size:14px;top:1px;"></i>
+                                                                    </span>
+                                                                </button>
+                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Edit Surcharge" style="width:25px!important;height:25px!important;background:#a2ccef;border-color:#a2ccef;position:relative;left:4px;">
+                                                                    <span onclick="openEditSurchargeDetailsModel('@item.InterviewId','@item.IRFId','@item.Type','@item.UserId')" title="Edit Surcharge">
+                                                                        <i style="color: white;position: relative;top:-2px;font-size: 10px;" class="fa fa-percent" aria-hidden="true"></i>
+                                                                        <svg fill="#fff" style="position:relative;top:2px;right:11px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+                                                                    </span>
+                                                                </button>
+
+                                                                <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Surcharge History" style="width:25px!important;height:25px!important;background:#e0af44ba;border-color:#ebc676ba;position:relative;left:4px;">
+                                                                    <span onclick="SurchargeActivityTracker('@item.InterviewId','@item.IRFId','@item.Type','@item.UserId')" title="Surcharge History">
+                                                                        <i style="color: white;position: relative;top: -3px;left: -2px;font-size: 10px;" class="fa fa-percent" aria-hidden="true"></i>
+                                                                        <i class="fa fa-history" aria-hidden="true" style="position: relative;top:2px;right:10px;font-size:11px;"></i>
+                                                                    </span>
+                                                                </button>
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                  
+
+                                    <!-- end content-->
+                                </div>
+
+                                <!-- end col-md-12 -->
+                            </div>
+
+
+
+
+                            <!-- end row -->
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+            </div>
+       
+
+    
+</div>
+<div id="EditRequestSurchargeDetailsModel" class="modal modal-bg" style="z-index:3">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-node-plus-fill" viewBox="0 0 18 18">
+                            <path d="M11 13a5 5 0 1 0-4.975-5.5H4A1.5 1.5 0 0 0 2.5 6h-1A1.5 1.5 0 0 0 0 7.5v1A1.5 1.5 0 0 0 1.5 10h1A1.5 1.5 0 0 0 4 8.5h2.025A5 5 0 0 0 11 13zm.5-7.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2a.5.5 0 0 1 1 0z" />
+                        </svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Surcharge Details </h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeEditRequestSurchargeDetailsModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 10px;">
+                <div class="row" style="padding:10px">
+                    <input type="hidden" id="txtInterviewId" />
+                    <input type="hidden" id="txtIRFId" />
+                    <input type="hidden" id="txtType" />
+                    <input type="hidden" id="txtUserId" />
+                    <div style="padding:10px">
+                        <input type="number" id="txtSurchargeamt" class="form-control" placeholder="Surcharge amount" />
+                    </div>
+                    <div style="padding:10px">
+                        <input type="text" id="txtSurchargeComment" class="form-control" maxlength="500" placeholder="Comment" />
+                    </div>
+                </div>
+                <div>
+                    <div class="col-md-12 text-right nopad">
+                        <div>
+                            <div style="display: inline-block!important;margin-bottom:10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="UpdateSurchargeDetails()" id="btnSubmitSarcharge" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Save">
+                            </div>
+                            <div style="display: inline-block !important;margin-bottom: 10px;">
+                                <input style="color: #fff;line-height: 13px;" type="button" onclick="closeEditRequestSurchargeDetailsModel()" id="hangSubmitSarcharge" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="SurchargeHistoryModel" class="modal modal-bg" style="z-index:3;">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-node-plus-fill" viewBox="0 0 18 18">
+                            <path d="M11 13a5 5 0 1 0-4.975-5.5H4A1.5 1.5 0 0 0 2.5 6h-1A1.5 1.5 0 0 0 0 7.5v1A1.5 1.5 0 0 0 1.5 10h1A1.5 1.5 0 0 0 4 8.5h2.025A5 5 0 0 0 11 13zm.5-7.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2a.5.5 0 0 1 1 0z" />
+                        </svg>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Surcharge Details </h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span onclick="closeSurchargeHistoryModel()" aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div id="SurchargeHistory">
+
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function searchResult() {
+        $('#SurcharegesTable').DataTable();
+    }
+    function RefreshSearch() {
+        $('#SurcharegesTable').DataTable().destroy();
+        setTimeout(function () {
+            applyDataTable();
+        }, 100);
+    }
+    $(document).ready(function () {
+        applyDataTable();
+    });
+
+    function applyDataTable() {
+
+        var table = $('#SurcharegesTable').DataTable({
+
+            order: [],
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+        });
+        $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
+
+        $(".dataTables_filter").keyup(function (e) {
+            if ($('#txtmeeting_filter').val() == "") {
+                $("#x").hide();
+            }
+            else {
+                $("#x").show();
+            }
+        });
+        $("#x").click(function (e) {
+            $(".dataTables_filter input").val('');
+            $(this).hide();
+            //searchResult();
+        });
+
+    }
+    function ApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type, IRFId, actionType,UserId) {
+        swal.fire({
+            title: 'Approve Surcharge!',
+            text: "Are you sure you want to approve surcharge?" ,
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        method: 'POST',
+                        url: '/Dashboard/ApproveSurcharge',
+                        data: {
+                            'InterviewId': InterviewId,
+                            'Surcharge': Surcharge,
+                            'SurchargeComment': SurchargeComment,
+                            'Type': Type,
+                            'IRFId': IRFId,
+                            'actionType': actionType,
+                            'UserId': UserId
+                        },
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            
+                            swal.fire("Error Approve Surcharge!", "Please try again.", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Successfully!',
+                    type: 'success',                  
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    //window.location = "/IRF/CuratedIndex";
+                    location.reload();
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    '',
+                    'error'
+                )
+            }
+        })
+
+    }
+    function UnApproveSurcharge(InterviewId, Surcharge, SurchargeComment, Type, IRFId, actionType, UserId) {
+        swal.fire({
+            title: 'Unapprove Surcharge!',
+            text: "Are you sure you want to unapprove surcharge ?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        method: 'POST',
+                        url: '/Dashboard/ApproveSurcharge',
+                        data: {
+                            'InterviewId': InterviewId,
+                            'Surcharge': Surcharge,
+                            'SurchargeComment': SurchargeComment,
+                            'Type': Type,
+                            'IRFId': IRFId,
+                            'actionType': actionType,
+                            'UserId': UserId
+                        },
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+
+                            swal.fire("Error unapprove surcharge!", "Please try again.", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Successfully!',
+                    type: 'success',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload();
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    '',
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+<script>
+    function openEditSurchargeDetailsModel(InterviewId,IRFId,Type,UserId) {
+        var modal = document.getElementById("EditRequestSurchargeDetailsModel");
+        modal.style.display = "block";
+        $("#txtInterviewId").val(InterviewId);
+        $("#txtIRFId").val(IRFId);
+        $("#txtType").val(Type);
+        $("#txtUserId").val(UserId);
+        if (Type == "Skill") {
+            var modal = document.getElementById("txtSurchargeComment");
+            modal.style.display = "none";
+        }
+
+    }
+    function closeEditRequestSurchargeDetailsModel() {
+        var modal = document.getElementById("EditRequestSurchargeDetailsModel");
+        modal.style.display = "none";
+    }
+    function UpdateSurchargeDetails() {
+        var InterviewId= $("#txtInterviewId").val();
+        var IRFId= $("#txtIRFId").val();
+        var Type= $("#txtType").val();
+        var UserId= $("#txtUserId").val();
+        var SurchargeComment = $("#txtSurchargeComment").val();
+        var Surchargeamt = $("#txtSurchargeamt").val();
+          
+            $.ajax({
+                type: "POST",
+                url: "/Dashboard/UpdateSurchargeDetails",
+                data: { 'InterviewId': InterviewId, 'IRFId': IRFId, 'Type': Type, 'UserId': UserId, 'SurchargeComment': SurchargeComment, 'Surchargeamt': Surchargeamt },
+                success: function (data) {
+                    swal.fire(data);
+                closeEditRequestSurchargeDetailsModel();
+                location.reload();
+                }
+            });       
+    }
+
+    function SurchargeActivityTracker(InterviewId, IRFId, Type, UserId) {
+        var modal = document.getElementById("SurchargeHistoryModel");
+        modal.style.display = "block";
+        $.ajax({
+            method: 'Get',
+            url: '/Dashboard/GetSurchargesActivityTracker',
+            data: {
+                'InterviewId': InterviewId,
+                'IRFId': IRFId,
+                'Type': Type,              
+                'UserId': UserId
+            },
+            success: function (data) {
+                $('#SurchargeHistory').html('');
+                $('#SurchargeHistory').html(data);
+            },
+            error: function (xhr, status, error) {
+                document.log(error);
+            }
+        })
+    }
+
+    function closeSurchargeHistoryModel() {
+        var modal = document.getElementById("SurchargeHistoryModel");
+        modal.style.display = "none";
+    }
+    function Changeurldetails(actionType) {
+        window.location.href = "/Dashboard/GetSurchargesDetails?actionType=" + actionType;
+    }
+</script>
