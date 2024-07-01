@@ -1929,5 +1929,28 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<Surcharges>> GetPerSuccessRateDetails(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@InterviewId", InterviewId);
+                    parameters.Add("@IRFId", IRFId);
+                    parameters.Add("@UserId", UserId);
+                    parameters.Add("@Type", Type);
+                    var result = await SqlMapper.QueryAsync<Surcharges>(con, "usp_GetPerSuccessRateDetails", parameters,
+                        commandType: CommandType.StoredProcedure, commandTimeout: 600);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

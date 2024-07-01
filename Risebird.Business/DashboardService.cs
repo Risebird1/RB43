@@ -1084,5 +1084,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<Surcharges>> GetPerSuccessRateDetails(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetPerSuccessRateDetails(InterviewId, IRFId, Type, UserId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

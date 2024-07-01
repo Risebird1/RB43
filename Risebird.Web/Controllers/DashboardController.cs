@@ -3875,5 +3875,32 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+        //Interviewer rate and Plan type
+        [HttpPost]
+        public async Task<IActionResult> GetPerSuccessRateDetails(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var surchaes = await _dashboardService.GetPerSuccessRateDetails(InterviewId,IRFId,Type,UserId);
+                    foreach (var item in surchaes)
+                    {
+                        return Json(new { Heuristicsscore = item.Heuristicsscore, PerSuccessRate = item.PerSuccessRate });
+                    }
+                    return View();
+                }
+                
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

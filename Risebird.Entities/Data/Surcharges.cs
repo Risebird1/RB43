@@ -27,5 +27,7 @@ namespace Risebird.Entities.Data
         public DateTime? interviewDate { get; set; }
         public int? MeetingStatus { get; set; }
         public string MeetingStatusStatusDesc { get; set; }
+        public int Heuristicsscore { get; set; }
+        public int PerSuccessRate { get; set; }
     }
 }

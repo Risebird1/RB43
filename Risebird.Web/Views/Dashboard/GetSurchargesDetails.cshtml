@@ -256,7 +256,7 @@
                                                                     </span>
                                                                 </button>
                                                                 <button class="btn btn-candlist shadow btn-xs sharp me-1" aria-label="Edit Surcharge" style="width:25px!important;height:25px!important;background:#a2ccef;border-color:#a2ccef;position:relative;left:4px;">
-                                                                    <span onclick="openEditSurchargeDetailsModel('@item.InterviewId','@item.IRFId','@item.Type','@item.UserId')" title="Edit Surcharge">
+                                                                    <span onclick="openEditSurchargeDetailsModel('@item.InterviewId','@item.IRFId','@item.Type','@item.UserId','@item.SurchargeComment','@item.Surcharge')" title="Edit Surcharge">
                                                                         <i style="color: white;position: relative;top:-2px;font-size: 10px;" class="fa fa-percent" aria-hidden="true"></i>
                                                                         <svg fill="#fff" style="position:relative;top:2px;right:11px;" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
                                                                     </span>
@@ -323,6 +323,8 @@
                     <input type="hidden" id="txtIRFId" />
                     <input type="hidden" id="txtType" />
                     <input type="hidden" id="txtUserId" />
+                    <input type="hidden" id="txtPlanType" />
+                    <input type="hidden" id="txtPerSuccessRate" />
                     <div style="padding:10px">
                         <input type="number" id="txtSurchargeamt" class="form-control" placeholder="Surcharge amount" />
                     </div>
@@ -542,13 +544,26 @@
     }
 </script>
 <script>
-    function openEditSurchargeDetailsModel(InterviewId,IRFId,Type,UserId) {
+    function openEditSurchargeDetailsModel(InterviewId,IRFId,Type,UserId,SurchargeComment,Surchargeamt) {
         var modal = document.getElementById("EditRequestSurchargeDetailsModel");
         modal.style.display = "block";
         $("#txtInterviewId").val(InterviewId);
         $("#txtIRFId").val(IRFId);
         $("#txtType").val(Type);
         $("#txtUserId").val(UserId);
+        $("#txtSurchargeComment").val(SurchargeComment);
+         $("#txtSurchargeamt").val(Surchargeamt);
+         $.ajax({
+                type: "Post",
+                url: "/Dashboard/GetPerSuccessRateDetails",
+                data: { 'InterviewId': InterviewId, 'IRFId': IRFId, 'Type': Type, 'UserId': UserId },
+                success: function (data) {
+                    console.log(data.heuristicsscore);
+                  $("#txtPlanType").val(data.heuristicsscore);
+                  $("#txtPerSuccessRate").val(data.perSuccessRate);
+                
+                }
+            });   
         if (Type == "Skill") {
             var modal = document.getElementById("txtSurchargeComment");
             modal.style.display = "none";
@@ -566,7 +581,28 @@
         var UserId= $("#txtUserId").val();
         var SurchargeComment = $("#txtSurchargeComment").val();
         var Surchargeamt = $("#txtSurchargeamt").val();
-          
+        var plantype = parseInt($("#txtPlanType").val());
+           var PerSuccessRate = $("#txtPerSuccessRate").val();
+        var percentageRate=(100/100)*PerSuccessRate;
+        if (plantype == 2 && parseInt(surchargeamt) >= percentageRate && Type=="Interview") {
+            alert("Surcharge should be between 0 to " + percentageRate);
+        }
+        else if (plantype == 4 && parseInt(Surchargeamt) > percentageRate && Type=="Interview") {
+            alert("Surcharge should be between 0 to "+percentageRate);
+        }
+        else if (plantype == 5 && parseInt(Surchargeamt) > percentageRate && Type=="Interview") {
+            alert("Surcharge should be between 0 to "+ percentageRate);
+        }
+         else if (plantype == 6 && parseInt(Surchargeamt) > percentageRate && Type=="Interview") {
+            alert("Surcharge should be between 0 to "+ percentageRate);
+        }
+         else if (plantype == 7 && parseInt(Surchargeamt) > percentageRate && Type=="Interview") {
+            alert("Surcharge should be between 0 to "+ percentageRate);
+        }
+                     else if (plantype == 8 && parseInt(Surchargeamt) > percentageRate && Type=="Interview") {
+            alert("Surcharge should be between 0 to "+ percentageRate);
+        }
+        else{
             $.ajax({
                 type: "POST",
                 url: "/Dashboard/UpdateSurchargeDetails",
@@ -577,6 +613,7 @@
                 location.reload();
                 }
             });       
+            }
     }
 
     function SurchargeActivityTracker(InterviewId, IRFId, Type, UserId) {

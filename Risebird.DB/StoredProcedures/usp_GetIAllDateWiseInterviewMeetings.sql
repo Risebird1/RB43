@@ -43,7 +43,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge
   ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId
-  ,iman.interviewDate RescheduleDate
+  ,iman.interviewDate RescheduleDate,ti.PerSuccessRate
   from  InterviewMeetings im                                
   inner join IRF on im.IRFId = IRF.IRFId                                
   left join UserList ulc on im.candidateEmail= ulc.EmailId                              
@@ -91,7 +91,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge 
   ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId
-  ,iman.interviewDate RescheduleDate
+  ,iman.interviewDate RescheduleDate,ti.PerSuccessRate
   from InterviewMeetings im                                
   inner join IRF on im.IRFId = IRF.IRFId                                
   left join UserList ulc on im.candidateEmail= ulc.EmailId                              
@@ -139,7 +139,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge 
   ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker           
   --,si.Uniqueid as SchedulerUniqueid,ul.EmailId as CandidateEmailId
-  ,iman.interviewDate RescheduleDate
+  ,iman.interviewDate RescheduleDate,ti.PerSuccessRate
   from InterviewMeetings im                                
   inner join IRF on im.IRFId = IRF.IRFId              
   join SeniorHR sh on sh.Clientid=IRF.ClientId            
@@ -187,7 +187,7 @@ else
   Case When IRF.IsNewSkillChannel=1 and ti.Surcharge=0 then 1 else 0 end as IsSurcharge
   ,itp.isVerified,itp.IsEmployed,itp.CompanyName,itp.EmploymentComment,itp.RedMarker      
  --,si.Uniqueid as SchedulerUniqueid
- ,iman.interviewDate RescheduleDate
+ ,iman.interviewDate RescheduleDate,ti.PerSuccessRate
   from InterviewMeetings im                                
   inner join IRF on im.IRFId = IRF.IRFId                                
   left join UserList ulc on im.candidateEmail= ulc.EmailId                              
