@@ -8700,54 +8700,55 @@ namespace Risebird.Web.Controllers
                 ViewBag.actiontype = actiontype;
                 ViewBag.IRFID = irfId;
                 string profileName = HttpContext.Session.GetString("profileName");
-                ViewBag.profile = profileName.Replace("\"", "");
-                if (profileName != null)
-                {
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
-                    {
-                        isAdminHR = true;
-                    }
-                    else if (profileName == "Interviewer")
-                    {
-                        isInterviewer = true;
-                    }
-                }
+               // ViewBag.profile = profileName.Replace("\"", "");
+                //if (profileName != null)
+                //{
+                //    profileName = profileName.Replace("\"", "");
+                //    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                //    {
+                //        isAdminHR = true;
+                //    }
+                //    else if (profileName == "Interviewer")
+                //    {
+                //        isInterviewer = true;
+                //    }
+                //}
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
               //  model.HeuristicsscoreDesc= ((Heuristicsscorelevel)model.Heuristicsscore).GetDescription();
                // model.JobLevelName= ((JobLevels)model.JobLevel).GetDescription();
                 await ReportSkillSetandSeperate(model);
-                if (model == null)
-                {
-                    if (isAdminHR)
-                    {
-                        return RedirectToAction("Index");
-                    }
-                    else if (isInterviewer)
-                    {
-                        return RedirectToAction("MyInterview");
-                    }
-                }
+                //if (model == null)
+                //{
+                //    if (isAdminHR)
+                //    {
+                //        return RedirectToAction("Index");
+                //    }
+                //    else if (isInterviewer)
+                //    {
+                //        return RedirectToAction("MyInterview");
+                //    }
+                //}
                 if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
                 {
                     model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
                     string output = Regex.Replace(model.InterviewerComment, "<.*?>", string.Empty);
                     model.InterviewerComment = output;
                 }
-                if (profileName == "Client")
-                {
-                    var client = await _userRepository.GetClientUserDetails(email);
-                    if (client != null)
-                    {
-                        model.IsQCRequired = client.IsQCRequired;
-                        model.IsRedoInterview = client.IsRedoInterview;
-                    }
-                }
-                else
-                {
-                    model.IsQCRequired = false;
-                }
+                //if (profileName == "Client")
+                //{
+                //    var client = await _userRepository.GetClientUserDetails(email);
+                //    if (client != null)
+                //    {
+                //        model.IsQCRequired = client.IsQCRequired;
+                //        model.IsRedoInterview = client.IsRedoInterview;
+                //    }
+                //}
+                //else
+                //{
+                //    model.IsQCRequired = false;
+                //}
+
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
@@ -8780,36 +8781,7 @@ namespace Risebird.Web.Controllers
                 
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
-                //if (TempData["SuccessErrorMessageQCForm"] != null)
-                //{
-                //    ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
-                //    TempData.Remove("SuccessErrorMessageQCForm");
-                //}
-                //if (isClient || isClientSelected)
-                //{
-                //    ViewBag.ClientDetails = "client";
-                //    if (model.IsProctor)
-                //    {
-                //        return PartialView("ClientProctorReport", model);
-                //    }
-                //    else
-                //    {
-                //        return View(model);
-                //    }
-                //}
-                //else
-                //{
-                //    if (model.IsProctor)
-                //    {
-                //        return View("ProctorReport", model);
-                //    }
-                //    else
-                //    {
-                //        return View(model);
-                //    }
-
-
-                //}
+               
                 return View(model);
             }
             catch (Exception ex)
