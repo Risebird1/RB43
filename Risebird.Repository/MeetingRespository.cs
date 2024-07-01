@@ -1665,7 +1665,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRFId, JDTiltle, IsGeneralSkillRequired,SkillSetsevaluate,JDTitleTwo from IRF where id = @id";
+                var query = "Select IRFId, JDTiltle, IsGeneralSkillRequired,SkillSetsevaluate,JDTitleTwo,Heuristicsscore from IRF where id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
