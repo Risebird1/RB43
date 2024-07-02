@@ -2777,7 +2777,7 @@ namespace Risebird.Web.Controllers
                                 recipientType = "Candidate";
                             }
 
-                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType,null,null,emailid);
+                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType,DateTime.Now.AddDays(-2), DateTime.Now, emailid);
                         }
 
                         ViewBag.recipientType = recipientType;
