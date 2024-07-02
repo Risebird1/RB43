@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using RestSharp;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
@@ -9,6 +11,7 @@ using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +25,7 @@ namespace Risebird.Web
         private readonly INotificationHelper _notificationHelper;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingInviteService _meetingInviteService;
-
+        private HttpClient _httpClienttwo;
         public MeetingInviteController(HttpClientHelper factory, IConfiguration configuration, INotificationHelper notificationHelper, IMeetingInviteService meetingInviteService, IApplicationErrorLogger applicationErrorLogger)
         {
             _httpClient = factory.GetHttpClient();
@@ -32,7 +35,7 @@ namespace Risebird.Web
             _applicationErrorLogger = applicationErrorLogger;
         }
 
-        [HttpPost]
+        [HttpGet]
         public JsonResult FetchTimeZones()
         {
             //Add TimeZone details
@@ -115,5 +118,136 @@ namespace Risebird.Web
                 return Json("Fail To send invite");
             }
         }
+
+        #region Teams Meeting Apis
+        public async Task<string> GenerateMeting()
+        {
+            try
+            {
+                var loggedinUser = string.Empty;
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    loggedinUser = HttpContext.Session.GetString("email")?.Trim();
+                    loggedinUser = loggedinUser.Replace("\"", "");
+                }
+                string TimeZoneDetails = "India Standard Time";
+                var selectTimeZone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneDetails);
+
+                OnlineMeeting _meeting = new OnlineMeeting();
+                _meeting.subject = "Test Data cration";
+                _meeting.body = new Body();
+                _meeting.body.content = "Nothing in messsage body";
+                _meeting.body.contentType = "HTML";
+                _meeting.start = new Start();
+                _meeting.start.dateTime = DateTime.Now.AddHours(5);
+                _meeting.start.timeZone = TimeZoneDetails;
+                _meeting.end = new End();
+                _meeting.end.dateTime = DateTime.Now.AddHours(6);
+                _meeting.end.timeZone = TimeZoneDetails;
+                _meeting.location = new Location();
+                _meeting.location.displayName = "Risebird Meeting";
+                _meeting.attendees = new List<Attendee>();
+                _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = "prashantindoliya@gmail.com", name = "" }, type = "required" });
+                _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = loggedinUser, name = "" }, type = "required" });
+                _meeting.isOnlineMeeting = true;
+                _meeting.onlineMeetingProvider = "teamsForBusiness";
+                var accountEmail = "interviews@Risebird492.onmicrosoft.com";
+                var result = await CreateTeamsMeetingClient(accountEmail, _meeting);
+                var meetingdetails = await GetOnlineMeetingId(result.onlineMeeting.joinUrl);
+                await UpdateOnlineMeetingAutoRecord(meetingdetails.value.id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return "";
+        }
+        public async Task<OnlineMeetingResponse> CreateTeamsMeetingClient(string accountEmail, OnlineMeeting data)
+        {
+            if (!string.IsNullOrEmpty(accountEmail))
+            {
+                var client = new RestClient();
+                var token = await GetAccessTokenAsync();
+                var requestUrl = $"https://graph.microsoft.com/v1.0/users/{accountEmail}/calendar/events";
+                var httpRequest = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                var request = new RestRequest(requestUrl, Method.Post);
+                request.AddHeader("Authorization", $"Bearer {token}");
+                request.AddHeader("Content-Type", "application/json");
+                request.AddJsonBody(data);
+                RestResponse response = await client.ExecuteAsync(request);
+                var content = response.Content;
+                var convertedResponse = JsonConvert.DeserializeObject<OnlineMeetingResponse>(content);
+                return convertedResponse;
+            }
+            return null;
+        }
+        public async Task<OnlineMeetingResult> GetOnlineMeetingId(string joinUrl)
+        {
+            if (!string.IsNullOrEmpty(joinUrl))
+            {
+                var client = new RestClient();
+                var token = await GetAccessTokenAsync();
+                var requestUrl = $"https://graph.microsoft.com/v1.0/me/onlineMeetings?$filter=JoinWebUrl%20eq%20'" + joinUrl + "'";
+                var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                var request = new RestRequest(requestUrl, Method.Get);
+                request.AddHeader("Authorization", $"Bearer {token}");
+                request.AddHeader("Content-Type", "application/json");
+                RestResponse response = await client.ExecuteAsync(request);
+                var content = response.Content;
+                var convertedResponse = JsonConvert.DeserializeObject<OnlineMeetingResult>(content);
+                return convertedResponse;
+            }
+            return null;
+        }
+        public async Task<string> UpdateOnlineMeetingAutoRecord(string meetingid)
+        {
+            if (!string.IsNullOrEmpty(meetingid))
+            {
+                var client = new RestClient();
+                var token = await GetAccessTokenAsync();
+                var requestUrl = $"https://graph.microsoft.com/v1.0/me/onlineMeetings/" + meetingid;
+                var httpRequest = new HttpRequestMessage(HttpMethod.Patch, requestUrl);
+                var request = new RestRequest(requestUrl, Method.Patch);
+                request.AddHeader("Authorization", $"Bearer {token}");
+                request.AddHeader("Content-Type", "application/json");
+                request.AddParameter("recordAutomatically", true);
+                RestResponse response = await client.ExecuteAsync(request);
+                var content = response.Content;
+                var convertedResponse = JsonConvert.DeserializeObject<OnlineMeetingResult>(content);
+            }
+            return "";
+        }
+        private async Task<string> GetAccessTokenAsync()
+        {
+            var values = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("client_id", "370e60c4-cdb4-4dad-8c27-3a0af77ac73f"),
+                new KeyValuePair<string, string>("client_secret", "GcH8Q~y1fOYOsRUmspKtPQZT6I0s13g3_oDjAcvA"),
+                new KeyValuePair<string, string>("scope",  "https://graph.microsoft.com/.default"),
+                new KeyValuePair<string, string>("grant_type", "client_credentials")
+            };
+            var client = new HttpClient();
+            var tenantId = "fb212e2c-ff2c-4f52-9a84-774d6f275cb4";
+            var requestUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
+            var requestContent = new FormUrlEncodedContent(values);
+            var response = await client.PostAsync(requestUrl, requestContent);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            dynamic tokenResponse = JsonConvert.DeserializeObject(responseBody);
+            return tokenResponse?.access_token;
+        }
+        public async Task<string> FetchMeetingRecording(string accountEmail, string meetingid)
+        {
+            var client = new RestClient();
+            var token = await GetAccessTokenAsync();
+            var requestUrl = $"https://graph.microsoft.com/v1.0/users/{accountEmail}/onlineMeetings/{meetingid}/recordings";
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            var request = new RestRequest(requestUrl, Method.Get);
+            request.AddHeader("Authorization", $"Bearer {token}");
+            request.AddHeader("Content-Type", "application/json");
+            RestResponse response = await client.ExecuteAsync(request);
+            return response.Content.ToString();
+        }
+        #endregion
     }
 }
