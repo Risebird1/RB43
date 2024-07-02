@@ -306,9 +306,19 @@
                                                     }
 
                                                     <div class="int-form-group">
-                                                       @Html.TextBoxFor(m => m.JDTiltle, new { @readonly = "readonly", @placeholder = "" })
-
-                                                        @Html.LabelFor(model => model.JDTiltle)
+@*                                                        @Html.TextBoxFor(m => m.JDTiltle, new { @readonly = "readonly", @placeholder = "" })
+*@
+                                                       @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @style = "background:#fff;top:-6px;" })
+                                                   
+                                                            @if (Model.JDTitleTwo!= null && Model.JDTitleTwo != "")
+                                                            {
+                                                                <div class="can-jdtitle"> @Model.JDTiltle and @Model.JDTitleTwo</div> 
+                                                            }
+                                                            else{
+                                                                <div class="can-jdtitle"> @Model.JDTiltle</div> 
+                                                            }
+            
+                                                            
 
                                                     </div>
 
@@ -329,7 +339,7 @@
 
 
                                             <!--proxy & communication start-->
-                                            <div class="col-md-5 wrap-nopadding">
+                                            <div class="col-md-5 wrap-nopadding" style="margin-bottom: 10px;">
                                                 @if (ViewBag.PageStatus != "PublicExternal")
                                                 {
 
@@ -375,7 +385,7 @@
                                                     <!--end of multiple location-->
                                                 }
                                             </div>
-                                            <div class="col-md-7 wrap-padding">
+                                            <div class="col-md-7 wrap-padding" style="margin-bottom: 10px;">
                                                 <div class="card" style="margin-bottom:10px;">
 
                                                     <label class="question" for="checkbox_two">
@@ -399,8 +409,11 @@
                                             </div>
                                             <!--proxy communication end-->
                                             <!--report start-->
-                                            <div class="card" style="margin-bottom:10px;">
+                                           <h1 style="font-size:18px;padding: 7px 10px;display:block;clear: both;background: #cddeed;margin: 20px 0px 20px 0px;color:#114874;font-weight: 400;"> Primary Skill Evaluation:<strong style="font-weight:500;"> @Model.JDTiltle</strong></h1>
+                                         <div class="mandatory-note"> Please fill the meeting status, interview status, questions & score rubric to complete the primary skill evaluation process</div>
 
+                                           <div class="card" style="margin-bottom:10px;">
+                                            
                                                 <label class="question" for="checkbox_two">
                                                     <label for="checkbox_two">
                                                         <i class="fa fa-user" aria-hidden="true"></i>
@@ -906,16 +919,19 @@
                                             </div>
                                             }*@
                                                 <!--tech score start-->
-
+                                                <hr/>
                                                 <!--Other skill set start-->
                                               @if (Model.SkillSetsevaluate > 1)
                                                 {
+
                                                  
-                                                    <div id="next-skill">
+                                                    <div id="next-skill" style="margin-top:20px;">
                                                       
-                                                        <h1 style="font-size:18px;padding:10px;display:block;">OTHER SKILL : @Model.JDTitleTwo</h1>
-                                                    <!--report start-->
-                                                    <div class="card" style="margin-bottom:10px;">
+                                                          <h1 style="font-size:18px;padding: 7px 10px;display:block;clear: both;background: #cddeed;margin: 20px 0px 20px 0px;color:#114874;font-weight: 400;">Other Skill Evaluation :<strong style="font-weight:500"> @Model.JDTitleTwo</strong></h1>
+                                                   
+                                                         <div class="mandatory-note"> Please fill the meeting status, interview status, questions & score rubric to complete the other skill evaluation process</div>
+                                                          <!--report start-->
+                                                    <div class="card" style="margin-bottom:10px;margin-top:10px;">
 
                                                         <label class="question" for="checkbox_two">
                                                             <label for="checkbox_two">
