@@ -223,7 +223,7 @@
                 <div class="row bl-bg" id="pdfdownload">
                     <div class="col-md-12">
                         <div class="mdc-card card bl-bg">
-                            <div>
+                            <div class="ai-report">
                                 <div>
                                     @if (!string.IsNullOrEmpty(Model.ClientAction))
                                     {
@@ -349,6 +349,27 @@
 
                                                 <h5 style="color:#445346;font-size:15px;">@Model.interviewDate</h5>
 
+                                                <div class="report-heading">
+                                                    Candidate Joined Time
+                                                </div>
+                                                @*<div class="ctime-on">
+                                                <div style="float:left">@Model.PerformedOn </div>
+                                                @if (Model.PerformedOn != null)
+                                                            {
+                                                    <a class="infos" href="#"><span class="candtime"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @Model.FirstPerformedOn</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @Model.PerformedOn</p></span></a>
+                                                            }
+                                                            </div>*@
+
+                                                 <div class="report-heading">
+                                                    Interviewer Joined Time
+                                                </div>
+                                                <div class="intime-on">
+                                                <div style="float:left">@Model.Joinedon </div>
+                                                    @if (Model.Joinedon != null)
+                                                {
+                                                        <a class="infos" href="#"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @Model.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @Model.Joinedon</p></span></a>
+                                                }
+                                                </div>
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 18px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
                                                
@@ -722,7 +743,18 @@
 
                                             </div>
                                             <div class="col-lg-9 col-md-7">
+
                                                 <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+
+                                                    <div>
+                                                        <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Sample Questions</h3>
+
+
+                                                         <div id="divquestionslist"></div>
+                                                    </div>
+
+
+
                                                     <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Questions Discussed</h3>
 
                                                     <div class="question">
@@ -1474,7 +1506,7 @@
     }
 </script>
 
-   </script>
+
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -1692,11 +1724,42 @@
 </script>
 <script>
     $(document).ready(function () {
+         GetquestionList();
         FetchCodesnippet();
     });
-    </script>
-<script>
-    
+
+
+    function GetquestionList() {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/GetSkillChannelSampleQuestions",
+            data: { irfid: $("#hidtxtirfid").val() },
+            success: function (data) {
+                bindquestionsData(data);
+            }
+        });
+    }
+    function bindquestionsData(data) {
+        var html = '';
+        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll;margin-bottom: 25px;"><table class="table mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
+        html += '  <thead>';
+        html += '  <tr>';
+        html += '  <th width="20%" class="table_heading" style="border-right: 1px #c5b1b1 solid !important;">Skill Name<span class="red">*</span></th>';
+        html += '  <th width="80%" class="table_heading">Sample Question<span class="red">*</span></th>';
+        html += '  </tr>';
+        html += '  </thead>';
+        html += '  <tbody>';
+        for (i = 0; i < data.length; i++) {
+            html += '   <tr>';
+            html += '  <td style="border-right: 1px #c5b1b1 solid !important;">' + data[i].skillName + '</td>';
+            html += '  <td>' + data[i].comment + '</td>';
+            html += '  </tr>';
+        }
+        html += '</tbody>';
+        html += ' </table></div>';
+        $("#divquestionslist").empty().html(html);
+    }
+
     function FetchCodesnippet() {
         var interviewid = $("#hidtxtinterviewid").val();
         $.ajax({

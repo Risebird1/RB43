@@ -10537,9 +10537,15 @@ section {
     margin: 10px auto;
     width: fit-content;
 }
-    /***** Media queries *****/
-    @media only screen and (min-width: 1920px) {
-        .rbpay .sb-scrollbar {
+.ai-report #reportForm #SkillTable.table th {
+    font-size: 15px !important;
+    background: #ded7d7 !important;
+    padding: 5px 8px;
+    border: 0px !important;
+}
+/***** Media queries *****/
+@media only screen and (min-width: 1920px) {
+    .rbpay .sb-scrollbar {
             position: absolute;
             right: -6px !important;
         }

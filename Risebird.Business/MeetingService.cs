@@ -1153,6 +1153,10 @@ namespace Risebird.Business
                     model.InterviewBiometryScore = interviewDetails.InterviewBiometryScore;
                     model.VideoLink = interviewDetails.VideoLink;
                     model.JDTiltle = interviewDetails.JDTiltle;
+                    model.Joinedon = interviewDetails.Joinedon;
+                    model.FirstJoinedon = interviewDetails.FirstJoinedon;
+                    model.FirstPerformedOn = interviewDetails.FirstPerformedOn;
+                    model.PerformedOn = interviewDetails.PerformedOn;
                     reportModel = model;
                 }
                 // joinability and Selectability
@@ -1254,6 +1258,10 @@ namespace Risebird.Business
                 reportModel.SkillSetsevaluate = irfDetails.SkillSetsevaluate;
                 reportModel.JDTitleTwo = interviewDetails.JDTitleTwo;
                 reportModel.Heuristicsscore = irfDetails.Heuristicsscore;
+                reportModel.Joinedon = interviewDetails.Joinedon;
+                reportModel.FirstJoinedon = interviewDetails.FirstJoinedon;
+                reportModel.FirstPerformedOn = interviewDetails.FirstPerformedOn;
+                reportModel.PerformedOn = interviewDetails.PerformedOn;
                 return reportModel;
             }
             catch (Exception e)
