@@ -2759,15 +2759,15 @@ namespace Risebird.Web.Controllers
                             ViewBag.ReturnBack = filter.returnBack;
                             recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType, filter.StartDate, filter.EndDate,emailid);
 
-                            //filter.SkillChannel = filter.SkillChannel == null ? filter.SkillChannel = recipients.Select(x => x.SkillChannelName).ToArray() : filter.SkillChannel = filter.SkillChannel;
-                            //filter.SentBy = filter.SentBy == null ? filter.SentBy = recipients.Select(x => x.SentBy).ToArray() : filter.SentBy = filter.SentBy;
-                            //filter.Recipient = filter.Recipient == null ? filter.Recipient = recipients.Select(x => x.email).ToArray() : filter.Recipient = filter.Recipient;
-                            //filter.Activity = filter.Activity == null ? filter.Activity = recipients.Select(x => x.latestEvent).ToArray() : filter.Activity = filter.Activity;
+                            filter.SkillChannel = filter.SkillChannel == null ? filter.SkillChannel = recipients.Select(x => x.SkillChannelName).ToArray() : filter.SkillChannel = filter.SkillChannel;
+                            filter.SentBy = filter.SentBy == null ? filter.SentBy = recipients.Select(x => x.SentBy).ToArray() : filter.SentBy = filter.SentBy;
+                            filter.Recipient = filter.Recipient == null ? filter.Recipient = recipients.Select(x => x.email).ToArray() : filter.Recipient = filter.Recipient;
+                            filter.Activity = filter.Activity == null ? filter.Activity = recipients.Select(x => x.latestEvent).ToArray() : filter.Activity = filter.Activity;
 
-                            //recipients = recipients.Where(c => filter.SkillChannel != null && filter.SkillChannel.Contains(c.SkillChannelName)
-                            //                        && ((filter.Activity != null && filter.Activity.Count() > 0) ? filter.Activity.Contains(c.latestEvent) : c.latestEvent == null)
-                            //                        && ((filter.SentBy != null && filter.SentBy.Count() > 0) ? filter.SentBy.Contains(c.SentBy) : c.SentBy == null)
-                            //                        && ((filter.Recipient != null && filter.Recipient.Count() > 0) ? filter.Recipient.Contains(c.email) : c.email == null)).ToList();
+                            recipients = recipients.Where(c => filter.SkillChannel != null && filter.SkillChannel.Contains(c.SkillChannelName)
+                                                    && ((filter.Activity != null && filter.Activity.Count() > 0) ? filter.Activity.Contains(c.latestEvent) : c.latestEvent == null)
+                                                    && ((filter.SentBy != null && filter.SentBy.Count() > 0) ? filter.SentBy.Contains(c.SentBy) : c.SentBy == null)
+                                                    && ((filter.Recipient != null && filter.Recipient.Count() > 0) ? filter.Recipient.Contains(c.email) : c.email == null)).ToList();
                         }
                         else
                         {
