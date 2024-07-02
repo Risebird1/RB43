@@ -1478,7 +1478,9 @@
                                                                                         <div>
                                                                                             <span id="btnPlus_@i" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
                                                                                             
-                                                                                            <span id="btnScreen_@i" title ="Screen Interviewer" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-minus"></i></span>
+                                                                                            <span id="btnScreen_@i" title ="Screen Interviewer" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute">
+                                                                                                <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
+                                                                                            </span>
                                                                                             
                                                                                             
                                                                                             @* @if (Model.IsClone)
