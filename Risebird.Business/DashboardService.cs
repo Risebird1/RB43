@@ -1018,11 +1018,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType)
+        public async Task<IEnumerable<Surcharges>> GetSurcharesDetails(int actionType,DateTime? StartDate,DateTime? EndDate)
         {
             try
             {
-                return await _dashboardRespository.GetSurcharesDetails(actionType);
+                return await _dashboardRespository.GetSurcharesDetails(actionType,StartDate,EndDate);
             }
             catch (Exception ex)
             {
@@ -1077,6 +1077,19 @@ namespace Risebird.Business
             {
                 var meetings = (await _dashboardRespository.GetNotSecheduleSeniorHRList(Emailid)).ToList();
                 return meetings ?? new List<MeetingVM>();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Surcharges>> GetPerSuccessRateDetails(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetPerSuccessRateDetails(InterviewId, IRFId, Type, UserId);
             }
             catch (Exception ex)
             {

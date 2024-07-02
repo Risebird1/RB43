@@ -3708,7 +3708,25 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     ViewBag.Type = actionType;
-;                   var surchaes = await _dashboardService.GetSurcharesDetails(actionType);
+                    DateTime? StartDate;
+                    DateTime? EndDate;
+                    if (HttpContext.Session.GetString("SurchargeFilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("SurchargeFilters"));
+                        StartDate = filter.StartDate;
+                        EndDate=filter.EndDate;
+                    }
+                    else
+                    {
+                        StartDate = DateTime.Now.AddMonths(-1);
+                        EndDate=DateTime.Now;
+                    }
+                         var surchaes = await _dashboardService.GetSurcharesDetails(actionType,StartDate,EndDate);
+                    surchaes = surchaes.Select(x =>
+                    {
+                        x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue?((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
+                        return x;
+                    }).ToList();
                     return View(surchaes);
                 }
                 else
@@ -3722,6 +3740,55 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> GetSurchargesDetails(SurchargeFilter filter,int actionType)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (filter != null)
+                    {
+                        HttpContext.Session.SetString("SurchargeFilters", JsonConvert.SerializeObject(filter));
+                    }
+                    return RedirectToAction("GetSurchargesDetails", "Dashboard", new { actionType });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetGetSurchargesDetailsFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("SurchargeFilters");
+                    return RedirectToAction("GetSurchargesDetails");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
         [HttpPost]
         public async Task<JsonResult> ApproveSurcharge(int InterviewId,int Surcharge,string SurchargeComment,string Type,int IRFId,int actionType,int UserId)
         {
@@ -3800,6 +3867,33 @@ namespace Risebird.Web.Controllers
                     var surchaes = await _dashboardService.GetSurcharesActivityTraker(InterviewId,IRFId, Type,UserId);
                     return PartialView("_GetSurchargesActivityTracker", surchaes);
                 }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        //Interviewer rate and Plan type
+        [HttpPost]
+        public async Task<IActionResult> GetPerSuccessRateDetails(int InterviewId, int IRFId, string Type, int UserId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var surchaes = await _dashboardService.GetPerSuccessRateDetails(InterviewId,IRFId,Type,UserId);
+                    foreach (var item in surchaes)
+                    {
+                        return Json(new { Heuristicsscore = item.Heuristicsscore, PerSuccessRate = item.PerSuccessRate });
+                    }
+                    return View();
+                }
+                
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
