@@ -8370,7 +8370,7 @@ namespace Risebird.Web.Controllers
                     Mail _mail1 = new Mail
                     {
                         TO = item.EmailId,
-                        Subject = "Skill Channel " + item.IRFName + " Feedback"
+                        Subject = "We Value Your Feedback on the " + JDTitle + "(" + item.IRFName + ") Interview Drive with Risebird"
                     };
                     var emailsend = await _notificationHelper.SendSkillChannelFeedbackNotification(_mail1, item.FirstName, dt, JDTitle, ReviewURL, clientlogolink);
                 }

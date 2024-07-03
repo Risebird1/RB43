@@ -1364,7 +1364,7 @@
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0", @max = max })
+                                                                                            @Html.TextBox("InterviewerCollection[0].Surcharge", null, new { @class = "form-control", @type = "number", @min = "0" })
                                                                                         }
 
                                                                                         @Html.ValidationMessageFor(m => m.InterviewerCollection[0].Surcharge, "", new { @class = "text-danger" })
@@ -1446,7 +1446,7 @@
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0", @max = max })
+                                                                                                @Html.TextBoxFor(m => m.InterviewerCollection[i].Surcharge, new { @class = "form-control", @type = "number", @min = "0" })
                                                                                             }
                                                                                             @Html.ValidationMessageFor(m => m.InterviewerCollection[i].Surcharge, "", new { @class = "text-danger" })
                                                                                         </td>

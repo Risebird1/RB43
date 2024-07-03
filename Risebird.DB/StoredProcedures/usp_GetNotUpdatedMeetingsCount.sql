@@ -30,7 +30,7 @@ declare @UnassignedInterviewsCount int = (select Count(distinct im.id) from Inte
 				join AssessmentGroup asg on asg.id = irf.AssessmentGroupId 
 				where ul.Emailid= @Emailid and confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )    
     
-declare @UnfilledMeetingStatusCount int = (select Count(im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
+declare @UnfilledMeetingStatusCount int = (select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
  left join UserList ulsh on ulsh.id=sh.Userid left join InterviewComments ic on ic.InterviewId= im.id
  left join UserList uli on uli.EmailId=im.interviewer
  left join UserList ulc on ulc.id=IRF.RisebirdHr
@@ -85,7 +85,7 @@ left join PaymentSLADetails ps on im.id=ps.Interviewid
 left join UserList ulc on ulc.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ulc.id 
 where cfd.Rating<=3 and Cast(interviewDate as Date)<= GETDATE() AND ul.EmailId=@Emailid)    
- declare @SuspeciousInterviewerCount int=(select distinct Count(si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.CreatedBy=@Emailid and si.SuspiciousStatus=1)    
+ declare @SuspeciousInterviewerCount int=(select  Count(distinct si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId join SeniorHr sh on ul.id=sh.Userid where si.CreatedBy=@Emailid and si.SuspiciousStatus=1)    
      
  declare @CancelledInterviewCount int = (select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
  left join UserList ulsh on ulsh.id=sh.Userid join UserList ul on ul.id=irf.RisebirdHr  where ul.Emailid= @Emailid and confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)    
@@ -226,7 +226,7 @@ set @OpenIssueCount =(Select Count(id) from RaisedIssues where Status='Open' and
 End
 set @UnassignedInterviewsCount  = (select Count(distinct im.id) from InterviewMeetings im  where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, @currentdate)<1 )    
     
-set @UnfilledMeetingStatusCount = (select Count(im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 )    
+set @UnfilledMeetingStatusCount = (select Count(distinct im.id) from InterviewMeetings im left join InterviewComments ic on ic.InterviewId= im.id where confirmationStatus=1 and interviewDate<@currentdate and (ic.MeetingStatus is null or ic.MeetingStatus=2) and DATEDIFF(DAY, interviewDate, @currentdate)<7 )    
     
  set @UnfilledCommentsCount = (select Count(im.id) from InterviewMeetings im  where confirmationStatus=1 and isAutoCancelled=1 and DATEDIFF(DAY, interviewDate, @currentdate)<7 )    
     

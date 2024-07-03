@@ -23,7 +23,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,cl.Name, 
+				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name, 
 				IRF.CalendlyLink,SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
 				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup from InterviewMeetings im 
 				join IRF on im.IRFId=irf.IRFId 
@@ -36,7 +36,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			end
 			else
 			begin
-				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,cl.Name,IRF.CalendlyLink,
+				select distinct im.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name,IRF.CalendlyLink,
 				SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
 				LEN(IRF.CalendlyLink)) as scheduleUniqueid, im.id as imid, irf.AssessmentGroupId, asg.AssessmentGroup 
 				from InterviewMeetings im 
@@ -48,7 +48,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		end
 		else
 		begin
-			select distinct im.*,irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId ,IRF.JDTiltle,cl.Name,
+			select distinct im.*,irf.*,cl.*, ulc.EmailId as ChannelOwner,IRF.Id as irfIntId ,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name,
 			IRF.CalendlyLink,SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  , 
 			LEN(IRF.CalendlyLink)) as scheduleUniqueid,im.id as imid, asg.AssessmentGroup from InterviewMeetings im join IRF on im.IRFId=irf.IRFId 
 			join Client cl on irf.ClientId=cl.id 
@@ -58,7 +58,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 
 			where confirmationStatus=1 and interviewer is null and DATEDIFF(DAY, interviewDate, GETDATE())<1 and ul.EmailId=@emailID 
 			union 
-			select distinct im.*,irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,IRF.JDTiltle,cl.Name, 
+			select distinct im.*,irf.*,cl.*, ul.EmailId as ChannelOwner,IRF.Id as irfIntId,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle,cl.Name, 
 			IRF.CalendlyLink, SUBSTRING(IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink))+2  ,
 			LEN(IRF.CalendlyLink)) as scheduleUniqueid,im.id as imid, asg.AssessmentGroup  from InterviewMeetings im
 			join IRF on im.IRFId=irf.IRFId 
@@ -74,7 +74,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from 
+				select distinct im.*,irf.*,cl.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from 
 				InterviewMeetings im 
 				join IRF on im.IRFId=irf.IRFId 
 				join Client cl on irf.ClientId=cl.id 
@@ -86,7 +86,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			end
 			else
 			begin
-				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				select distinct im.*,irf.*,cl.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				left join InterviewComments ic on ic.InterviewId= im.id 
 				left join UserList uli on uli.EmailId=im.interviewer
 				left join UserList ulc on ulc.id=IRF.RisebirdHr
@@ -110,13 +110,13 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 	begin
 		if (@Profile = 'SeniorHR' or @Profile = 'HR')
 		begin
-			select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			select distinct *,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 			join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid left join InterviewComments ic on ic.InterviewId=im.id 
 			where confirmationStatus=1 and isAutoCancelled=1 and DATEDIFF(DAY, interviewDate, GETDATE())<7 and ulsh.Emailid= @Emailid
 		end
 		else
 		begin
-			select distinct * from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+			select distinct *,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 			left join InterviewComments ic on ic.InterviewId=im.id 
 			where confirmationStatus=1 and isAutoCancelled=1 and DATEDIFF(DAY, interviewDate, GETDATE())<7
 		end
@@ -213,11 +213,12 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR')
 			begin
-				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and ulco.Emailid= @Emailid
+				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,ulco.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 left join UserList ulco on IRF.RisebirdHr=ulco.id where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and ulco.Emailid= @Emailid
 			end
 			else
 			begin
-				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
+				Select distinct im.IRFId,im.HRCoordinatorEmailId,ic.InterviewId,im.interviewDate,im.candidateName,im.candidateEmail,im.interviewer,ic.MeetingStatus,ic.InterviewStatus,cl.Name,im.id imid,IRF.id as irfIntId,uli.MobileNumber as InterviewerMobileNumber,imjt.Joinedon,ulco.EmailId as ChannelOwner from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id join InterviewComments ic on ic.InterviewId=im.id join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id left join PaymentSLADetails tq on tq.Interviewid=im.id and ISNULL(tq.isQcDone,0)=1 
+				left join UserList ulco on IRF.RisebirdHr=ulco.id
 				Outer Apply(Select Max(Joinedon) Joinedon from  InterviewMeetingsJoinTime left join UserList ulco on IRF.RisebirdHr=ulco.id where im.interviewer=interviewer and im.id=interviewid) imjt 
 				where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and ISNULL(im.RedoInterview,0)=0
 			end
@@ -389,14 +390,14 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select (ul.FirstName +' '+ ul.LastName) as SuspiciousName, ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy ,ip.ResumeLink as ResumeLink,
+				select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName, ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy ,ip.ResumeLink as ResumeLink,
 				si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber,si.Createddate as SuspiciousAddOn,ip.RedMarker,ul.IsActive from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				join SeniorHr sh on ul.id=sh.Userid
 				where si.CreatedBy=@Emailid and si.SuspiciousStatus=1
 			end
 			else
 			begin
-				select (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
+				select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
 				ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,
 				si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber,si.Createddate as SuspiciousAddOn,ip.RedMarker,ul.IsActive from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				where si.SuspiciousStatus=1
@@ -404,13 +405,13 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		end
 		else
 		begin
-			select (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
+			select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
 			ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber,si.Createddate as SuspiciousAddOn,ip.RedMarker,ul.IsActive 
 			from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				join SeniorHr sh on ul.id=sh.Userid
 				where si.CreatedBy=@Emailid and si.SuspiciousStatus=1
 			union 
-			select (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,ip.ResumeLink as ResumeLink,
+			select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,ip.ResumeLink as ResumeLink,
 			si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber,si.Createddate as SuspiciousAddOn,ip.RedMarker,ul.IsActive from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				join SeniorHr sh on ul.id=sh.Userid
 				where si.CreatedBy=@Emailid and si.SuspiciousStatus=1
