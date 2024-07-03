@@ -74,7 +74,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		begin
 			if (@Profile = 'SeniorHR' or @Profile = 'HR')
 			begin
-				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from 
+				select distinct im.*,irf.*,cl.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from 
 				InterviewMeetings im 
 				join IRF on im.IRFId=irf.IRFId 
 				join Client cl on irf.ClientId=cl.id 
@@ -86,7 +86,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 			end
 			else
 			begin
-				select distinct *,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
+				select distinct im.*,irf.*,cl.*,uli.MobileNumber as InterviewerMobileNumber,ulc.EmailId as ChannelOwner,IRF.Id as irfIntId,im.id as imid from InterviewMeetings im join IRF on im.IRFId=irf.IRFId join Client cl on irf.ClientId=cl.id 
 				left join InterviewComments ic on ic.InterviewId= im.id 
 				left join UserList uli on uli.EmailId=im.interviewer
 				left join UserList ulc on ulc.id=IRF.RisebirdHr
