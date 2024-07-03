@@ -2777,9 +2777,12 @@ namespace Risebird.Web.Controllers
                                 recipientType = "Candidate";
                             }
 
-                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType,DateTime.Now.AddDays(-2), DateTime.Now, emailid);
+                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType,DateTime.Now.AddDays(-2), DateTime.Now, emailid);                        
                         }
-
+                        if (recipients == null)
+                        {
+                            recipients = new List<MailRecipientActivityDetailsVM>();
+                        }
                         ViewBag.recipientType = recipientType;
 
                         ViewBag.UserProfile = profileName;
