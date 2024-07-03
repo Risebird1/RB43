@@ -10537,6 +10537,33 @@ section {
     margin: 10px auto;
     width: fit-content;
 }
+.can-jdtitle {
+    padding: 10px;
+    border: 1.5px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #888;
+    font-weight: 500;
+    transition: border-color 0.3s ease;
+    background: #fff;
+   /* position: relative;
+    margin: 0px 5px 0px 5px;
+    width: 32.2%;
+    float: left;*/
+}
+    .can-jdtitle:focus {
+        border: 2px #53a5f5 solid;
+    }
+.mandatory-note {
+    background: #f9e9e9ab;
+    padding: 3px 5px;
+    margin: 0px 0px 10px 0px;
+    color: #c12424;
+    font-weight: 400;
+    }
+    /***** Media queries *****/
+    @media only screen and (min-width: 1920px) {
+        .rbpay .sb-scrollbar {
 .ai-report #reportForm #SkillTable.table th {
     font-size: 15px !important;
     background: #ded7d7 !important;
