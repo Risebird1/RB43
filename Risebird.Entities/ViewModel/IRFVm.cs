@@ -391,6 +391,7 @@ namespace Risebird.Entities.ViewModel
         public int? urlCreationTimeElapsed { get; set; }
         public int ColdCandidateCount { get; set; }
         public int ClientIRFRatings { get; set; }
+        public string JDTitleTwo { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {

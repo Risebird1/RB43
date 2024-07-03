@@ -361,7 +361,7 @@
                     <div class="pull-right">
                         <div class="topheader-header">
                             <div class="topheader-link-wrap">
-                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InterviewerRiskIRFDetails", "Dashboard", new { uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                @* <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("InterviewerRiskIRFDetails", "Dashboard", new { uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
                                     <span class="topheader-link">
                                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="18" height="18" viewBox="0 0 256 256" xml:space="preserve">
                                         <defs>
@@ -377,7 +377,8 @@
                                     <div class="d-lg-inline-flex pad3">
                                        Interviewer Monitoring
                                     </div>
-                                </button>
+                                </button> *@
+
                                 @* @if (ViewBag.ClientId == 23)//Risebird
                                 {
                                 var templateUrl = "/Template/Index?emailId=" + @ViewBag.emailid + "&uniqueId=" + @ViewBag.id + "&type=pbc&profile=Client";
@@ -390,7 +391,7 @@
                                 </button>
 
                                 } *@
-                                @{
+                               @*  @{
                                     var templateUrl2 = "/Template/ListPb?emailId=" + @ViewBag.emailid + "&uniqueId=" + @ViewBag.id + "&type=pbc&profile=Client";
                                     <button title="Book interviews based on templates" type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@(templateUrl2)'" style="margin:5px 4px 5px 3px;">
                                         <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
@@ -407,12 +408,18 @@
                                         Candidate Feedback
                                     </div>
 
-                                </button>
+                                </button> *@
 
                                 <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
                                     <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
                                     <div class="d-lg-inline-flex pad3">
-                                        Skill Channel Stats
+                                        Interview Channel Stats
+                                    </div>
+                                </button>
+                                <button type="button" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("PublicSkillChannelDetails", "IRF", new { emailid = ViewBag.emailid, uniqueid = ViewBag.id })'" style="margin:5px 4px 5px 3px;">
+                                    <span class="topheader-link"><i class="fa fa-bar-chart" aria-hidden="true" style="color:#fff"></i></span>
+                                    <div class="d-lg-inline-flex pad3">
+                                        Interview Channel Stats(Multi-Stack)
                                     </div>
                                 </button>
                                 @if (ViewBag.ClientRole != "Client Admin")
