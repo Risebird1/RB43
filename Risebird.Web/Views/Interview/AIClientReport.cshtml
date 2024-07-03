@@ -352,22 +352,22 @@
                                                 <div class="report-heading">
                                                     Candidate Joined Time
                                                 </div>
-                                                @*<div class="ctime-on">
-                                                <div style="float:left">@Model.PerformedOn </div>
+                                               <div class="ctime-on" style="display:inline-block">
+                                                    <div style="float:left;color:#445346;font-size:15px;">@Model.PerformedOn </div>
                                                 @if (Model.PerformedOn != null)
                                                             {
                                                     <a class="infos" href="#"><span class="candtime"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @Model.FirstPerformedOn</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @Model.PerformedOn</p></span></a>
                                                             }
-                                                            </div>*@
+                                                   </div>
 
                                                  <div class="report-heading">
                                                     Interviewer Joined Time
                                                 </div>
-                                                <div class="intime-on">
-                                                <div style="float:left">@Model.Joinedon </div>
-                                                    @if (Model.Joinedon != null)
+                                                <div class="intime-on" style="display:inline-block">
+                                                    <div style="float:left;color:#445346;font-size:15px;">@Model.Joinedon </div>
+                                                  @if (Model.Joinedon != null)
                                                 {
-                                                        <a class="infos" href="#"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @Model.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @Model.Joinedon</p></span></a>
+                                                        <a class="infos" href="#" style="right: -25px;"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @Model.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @Model.Joinedon</p></span></a>
                                                 }
                                                 </div>
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
