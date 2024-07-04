@@ -25,5 +25,6 @@
         public bool IsCampaignActivity { get; set; }
         public string CampaignName { get; set; }
         public string OpenAIScreeningResponse { get; set; }
+        public string JDTitle { get; set; }
     }
 }

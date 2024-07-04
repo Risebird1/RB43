@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Risebird.Entities.Data.OpenAIModels;
+using static System.Net.WebRequestMethods;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
@@ -60,13 +61,23 @@ namespace Risebird.Web.Controllers
                             return View(JsonConvert.DeserializeObject<RunResult>(candidate.OpenAIScreeningResponseJson));
                         }
 
-                        var request = new CandidateScreeningRequest
+                        var request = new ScreeningRequest
                         {
                             //Skills = skills,
                             JDTitle = jdTitle,
                             ResumeLink = candidate.ResumeLink
                         };
-                        var response = await _assistantServiceHelper.ScreenCandidateAsync(request);
+                        //// https://portal.risebird.io/Interview/AIClientReport?InterviewId=296708&irfId=8717
+
+                        //var request = new ScreeningRequest
+                        //{
+                        //    //Skills = skills,
+                        //    //JDTitle = jdTitle,
+                        //    Type = ProfileNames.QualityController,
+                        //    ReportUrl = "https://portal.risebird.io/Interview/AIClientReport?InterviewId=296708&irfId=8717"
+                        //    //ResumeLink = candidate.ResumeLink
+                        //};
+                        var response = await _assistantServiceHelper.ScreenAsync(request);
 
                         var responseInJson = JsonConvert.SerializeObject(response);
                         //save the response in db
@@ -91,7 +102,7 @@ namespace Risebird.Web.Controllers
                         //using (var reader = new StreamReader(myWebClient.GetStreamAsync(resumeLink).Result))//new StreamReader(resumeFile.OpenReadStream())
                         //{
                         //    var resume = await reader.ReadToEndAsync();
-                        //    var request = new CandidateScreeningRequest
+                        //    var request = new ScreeningRequest
                         //    {
                         //        Skills = skills,
                         //        ResumeLink = resumeLink
@@ -145,13 +156,13 @@ namespace Risebird.Web.Controllers
                             return View(JsonConvert.DeserializeObject<RunResult>(interviewer.OpenAIScreeningResponse));
                         }
 
-                        var request = new CandidateScreeningRequest
+                        var request = new ScreeningRequest
                         {
                             //Skills = skills,
                             JDTitle = jdTitle,
                             ResumeLink = interviewer?.ResumeLink ?? resumeLink
                         };
-                        var response = await _assistantServiceHelper.ScreenCandidateAsync(request);
+                        var response = await _assistantServiceHelper.ScreenAsync(request);
 
                         var responseInJson = JsonConvert.SerializeObject(response);
                         //save the response in db

@@ -3549,9 +3549,9 @@ namespace Risebird.Web.Controllers
                         {
                             firstData = data.FirstOrDefault();
                         }
-                        if (firstData != null)
+                        var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
+                        if(firstData != null)
                         {
-                            var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
                             var candidateTimeline = new CandidateTimelineVM();
                             candidateTimeline.IsQCRequired = client.IsQCRequired;
                             candidateTimeline.IsRedoInterview = client.IsRedoInterview;
@@ -3646,6 +3646,8 @@ namespace Risebird.Web.Controllers
                             //add candidate to final model
                             model.Add(candidateTimeline);
                         }
+                        
+                        
                     }
 
                     var role = await _clientService.GetClientRoleByEmailId(emailid);

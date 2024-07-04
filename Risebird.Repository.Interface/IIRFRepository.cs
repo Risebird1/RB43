@@ -248,6 +248,8 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateCodeSnippetFile(int interviewid, string uploadedFileURL, List<SkillComment> model);
         Task<TransInterviewer> GetInterviewerOpenAIScreeningResults(int irfId, int userId);
         Task<bool> SaveInterviewerOpenAIScreeningResults(int irfId, int userId, string screeningResponseJson);
+        Task<IEnumerable<TransInterviewer>> GetTransInterviewersForOpenAIScreening();
+        Task<bool> SaveTransInterviewerOpenAIScreeningResults(int transInterviewerId, string screeningResponseJson);
         Task<IEnumerable<IRF>> GetAllIRFMultiStackDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid);
     }
 }
