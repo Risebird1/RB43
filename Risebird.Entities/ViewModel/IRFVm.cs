@@ -392,6 +392,8 @@ namespace Risebird.Entities.ViewModel
         public int ColdCandidateCount { get; set; }
         public int ClientIRFRatings { get; set; }
         public string JDTitleTwo { get; set; }
+        public int SelectedRejectMeetings { get; set; }
+        public int RejectSelectedMeetings { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {

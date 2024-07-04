@@ -249,8 +249,20 @@
                                                                     @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
                                                                 }% }
                                                             </td>
-                                                            <td></td>
-                                                            <td></td>
+                                                            <td>
+                                                                @item.SelectedRejectMeetings
+                                                                { @if (item.CompletedInterviews > 0)
+                                                                {
+                                                                    @((item.SelectedRejectMeetings * 100) / @item.CompletedInterviews)
+                                                                }% }
+                                                            </td>
+                                                            <td>
+                                                                @item.RejectSelectedMeetings
+                                                                { @if (item.CompletedInterviews > 0)
+                                                                {
+                                                                    @((item.RejectSelectedMeetings * 100) / @item.CompletedInterviews)
+                                                                }% }
+                                                            </td>
                                                             <td> @item.PendingCount </td>
                                                             <td>
                                                                 @item.ColdCandidateCount
