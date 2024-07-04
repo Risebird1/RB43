@@ -111,6 +111,8 @@
                                                 </tr>
                                             </tfoot>
                                             <tbody>
+                                                @if(Model!=null)
+                                                {
                                                 @foreach (var item in Model)
                                                 {
 
@@ -125,6 +127,11 @@
                                                     </tr>
 
 
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span>No data available</span>
                                                 }
                                             </tbody>
 

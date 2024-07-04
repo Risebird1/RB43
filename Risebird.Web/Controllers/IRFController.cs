@@ -9273,7 +9273,11 @@ namespace Risebird.Web.Controllers
                     {
                         var model = await _irfService.GetSkillChannelsCreatedUsingTemplates(emailid);
                         ViewBag.Profile = profileName;
-                        return View(model);
+                        if (model != null)
+                        {
+                            return View(model);
+                        }
+                        else { return View(); }
                     }
                     else
                     {
@@ -9555,7 +9559,7 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-
+        #region Multi-Stack
         public ActionResult Task()
         {
             return View();
@@ -9588,5 +9592,62 @@ namespace Risebird.Web.Controllers
             irfDetails.SkillTwoCollection = irfDetails.SkillCollection.Where(x => x.SkillSet == 2).ToList();
             irfDetails.SkillCollection = irfDetails.SkillCollection.Where(x => x.SkillSet == 1).ToList();
         }
+        [HttpGet]
+        public async Task<IActionResult> PublicMultiStackSkillChannelDetails(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            ViewBag.emailid = emailid;
+            ViewBag.uniqueid = uniqueid;
+            ViewBag.IsClientLogin = isClientLogin;
+            ViewBag.Type = "IRF";
+            if (!isClientLogin)
+            {
+                ViewBag.PageStatus = "Public";
+            }
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            var profileName = "Client";
+            ViewBag.profile = profileName;
+            var irfList = new List<IRF>();
+            if (HttpContext.Session.GetString("MultiStackSkillChannelDetailsFilters") == null)
+            {
+                irfList = (await _irfService.GetAllIRFMultiStackDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+            }
+            else
+            {
+                var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("MultiStackSkillChannelDetailsFilters"));
+                if (filter.StartDate != null && filter.EndDate != null)
+                {
+                    irfList = (await _irfService.GetAllIRFMultiStackDetailsIRF(filter.StartDate.Value, filter.EndDate.Value, profileName, emailid))?.ToList();
+                }
+                else
+                {
+                    irfList = (await _irfService.GetAllIRFMultiStackDetailsIRF(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(7), profileName, emailid))?.ToList();
+                }
+            }
+            return View(irfList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> PublicMultiStackSkillChannelDetails(SkillChannelDetailsFilter filter, string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            if (filter != null)
+            {
+                HttpContext.Session.SetString("MultiStackSkillChannelDetailsFilters", JsonConvert.SerializeObject(filter));
+            }
+            return RedirectToAction("PublicMultiStackSkillChannelDetails", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetPublicMultiStackSkillChannelDetailsFilter(string emailid, bool isClientLogin = false, string uniqueid = null)
+        {
+            try
+            {
+                HttpContext.Session.Remove("MultiStackSkillChannelDetailsFilters");
+                return RedirectToAction("PublicMultiStackSkillChannelDetails", new { emailid = emailid, uniqueid = uniqueid, isClientLogin = isClientLogin });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        #endregion
     }
 }
