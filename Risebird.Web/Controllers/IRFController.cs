@@ -9274,7 +9274,11 @@ namespace Risebird.Web.Controllers
                     {
                         var model = await _irfService.GetSkillChannelsCreatedUsingTemplates(emailid);
                         ViewBag.Profile = profileName;
-                        return View(model);
+                        if (model != null)
+                        {
+                            return View(model);
+                        }
+                        else { return View(); }
                     }
                     else
                     {

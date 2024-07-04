@@ -85,7 +85,7 @@ left join PaymentSLADetails ps on im.id=ps.Interviewid
 left join UserList ulc on ulc.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ulc.id 
 where cfd.Rating<=3 and Cast(interviewDate as Date)<= GETDATE() AND ul.EmailId=@Emailid)    
- declare @SuspeciousInterviewerCount int=(select  Count(distinct si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId join SeniorHr sh on ul.id=sh.Userid where si.CreatedBy=@Emailid and si.SuspiciousStatus=1)    
+ declare @SuspeciousInterviewerCount int=(select  Count(distinct si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.CreatedBy=@Emailid and si.SuspiciousStatus=1)    
      
  declare @CancelledInterviewCount int = (select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
  left join UserList ulsh on ulsh.id=sh.Userid join UserList ul on ul.id=irf.RisebirdHr  where ul.Emailid= @Emailid and confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)    
