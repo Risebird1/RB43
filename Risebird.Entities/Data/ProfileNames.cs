@@ -19,5 +19,6 @@ namespace Risebird.Entities.Data
         public static readonly string InterviewerManagement = "InterviewerManagement";
         public static readonly string SeniorInterviewerManagement = "SeniorInterviewerManagement";
         public static readonly string Recruiter = "Recruiter";      
+        public static readonly string Candidate = "Candidate";      
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -28,6 +29,9 @@ namespace Risebird.CommonHelper
         private readonly string baseUrl;
         private readonly string candidateScreenerAssistantId;
         private readonly string candidateResumesVectorStoreId;
+        private readonly string interviewerScreenerAssistantId;
+        private readonly string interviewerResumesVectorStoreId;
+        private readonly string reportQCAssistantId;
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
@@ -37,44 +41,61 @@ namespace Risebird.CommonHelper
             apiKey = _configuration["OpenAI:ApiKey"];
             baseUrl = _configuration["OpenAI:BaseUrl"];
             candidateScreenerAssistantId = _configuration["OpenAI:CandidateScreenerAssistantId"];
-            candidateResumesVectorStoreId = _configuration["OpenAI:CandidateResumesVectorStoreId"];//"vs_ryqG2ou94myQaS3TOatPEZwY";
+            candidateResumesVectorStoreId = _configuration["OpenAI:CandidateResumesVectorStoreId"];
+            interviewerScreenerAssistantId = _configuration["OpenAI:InterviewerScreenerAssistantId"];
+            interviewerResumesVectorStoreId = _configuration["OpenAI:InterviewerResumesVectorStoreId"];
+            reportQCAssistantId = _configuration["OpenAI:InterviewerReportQCAssistantId"];
         }
 
-        public async Task<RunResult> ScreenCandidateAsync(CandidateScreeningRequest requestModel)
+        public async Task<RunResult> ScreenAsync(ScreeningRequest requestModel)
         {
             try
             {
-                var fileId = await UploadFileAsync(requestModel.ResumeLink);
-                await AddFileToVectorStoreAsync(fileId);
-                var threadId = await CreateThreadAsync(requestModel);
-
-                //now create a run
-                var runId = await CreateRun(threadId);
-
-                string runStatus = string.Empty;
-                //retrieve a run
-                while(runStatus != "completed")
+                if(requestModel.Type != ProfileNames.QualityController)
                 {
-                    await Task.Delay(5000);
-                    runStatus = await RetrieveRun(runId, threadId);
-                    if (runStatus == "failed")
-                        break;
+                    var fileId = await UploadFileAsync(requestModel.ResumeLink);
+                    if(!string.IsNullOrEmpty(fileId))
+                    {
+                        await AddFileToVectorStoreAsync(fileId, requestModel.Type);
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
-                var messages = await ListRunMessages(threadId);
-                return messages;
-                //if (runStatus == "completed")
-                //{
-                //    //retrive messages list
-                //    var messages = await ListRunMessages(threadId);
-                //    return messages;
-                //    //return new CandidateScreeningResponse { Status = true, EvaluationResult = messages?.Data.Where };
-                //}
-                //else if(runStatus == "failed")
-                //{
-                //    return null;
-                //}
+                
+                var threadId = await CreateThreadAsync(requestModel);
+                string runId;
+                //now create a run
+                if (!string.IsNullOrEmpty(threadId))
+                {
+                    runId = await CreateRun(threadId, requestModel.Type);
+                }
+                else
+                {
+                    return null;
+                }
 
-                //return null;
+                if (!string.IsNullOrEmpty(runId))
+                {
+                    string runStatus = string.Empty;
+                    //retrieve a run
+                    while (runStatus != "completed")
+                    {
+                        await Task.Delay(5000);
+                        runStatus = await RetrieveRun(runId, threadId);
+                        if (runStatus == "failed")
+                            break;
+                    }
+                    var messages = await ListRunMessages(threadId);
+                    return messages;
+                }
+                else
+                {
+                    return null;
+                }
+                
+                
             }
             catch (Exception ex)
             {
@@ -83,14 +104,27 @@ namespace Risebird.CommonHelper
             }
         }
 
-        private async Task<string> CreateRun(string threadId)
+        private async Task<string> CreateRun(string threadId, string profileType)
         {
             try
             {
                 HttpClient client = new HttpClient();
+                string assistantId = string.Empty;
+                if(profileType == ProfileNames.Candidate)
+                {
+                    assistantId = candidateScreenerAssistantId;
+                }
+                else if(profileType == ProfileNames.Interviewer)
+                {
+                    assistantId = interviewerScreenerAssistantId;
+                }
+                else
+                {
+                    assistantId = reportQCAssistantId;
+                }
                 var requestBody = new
                 {
-                    assistant_id = candidateScreenerAssistantId
+                    assistant_id = assistantId//(profileType == ProfileNames.Candidate ? candidateScreenerAssistantId : interviewerScreenerAssistantId)
                     //response_format = new { type = "json_object" }
                 };
 
@@ -211,7 +245,7 @@ namespace Risebird.CommonHelper
             
         }
 
-        private async Task<bool> AddFileToVectorStoreAsync(string fileId)
+        private async Task<bool> AddFileToVectorStoreAsync(string fileId, string profileType)
         {
             try
             {
@@ -221,7 +255,7 @@ namespace Risebird.CommonHelper
                     file_id = fileId
                 };
 
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/vector_stores/{candidateResumesVectorStoreId}/files");
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/vector_stores/{(profileType == ProfileNames.Candidate ? candidateResumesVectorStoreId : interviewerResumesVectorStoreId)}/files");
 
                 // Add headers to the request
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
@@ -246,7 +280,7 @@ namespace Risebird.CommonHelper
             }
             
         }
-        private async Task<string> CreateThreadAsync(CandidateScreeningRequest requestModel)
+        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel)
         {
             try
             {
@@ -256,22 +290,50 @@ namespace Risebird.CommonHelper
                     Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, 
                 };
 
-
-                var threadRequest = new Thread
+                string queryContent = string.Empty;
+                if(requestModel.Type == ProfileNames.Candidate)
                 {
-                    messages = new List<Message>
+                    queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {requestModel.JDTitle}.";
+                }
+                else if(requestModel.Type == ProfileNames.Interviewer)
+                {
+                    queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {requestModel.JDTitle}.";
+                }
+                else if(requestModel.Type == ProfileNames.QualityController)
+                {
+                    queryContent = $"Use this URL to generate the output as per the instructions fed to the assistant: {requestModel.ReportUrl}";
+
+                }
+                var threadRequest = new Thread();
+                if (requestModel.Type == ProfileNames.Candidate || requestModel.Type == ProfileNames.Interviewer)
+                {
+                    threadRequest = new Thread
                     {
-                        new Message { role = "assistant", content = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {requestModel.JDTitle}."}//string.Join(",",requestModel.Skills)//{requestModel.Skills}//Python(must have) and DSA
-                    },
-                    tool_resources = new ToolResources()
-                    {
-                        file_search = new FileSearch
+                        messages = new List<Message>
                         {
-                            vector_store_ids = new List<string>() { candidateResumesVectorStoreId }
+                            new Message { role = "assistant", content = queryContent}
+                        },
+                        tool_resources = new ToolResources()
+                        {
+                            file_search = new FileSearch
+                            {
+                                vector_store_ids = new List<string>() { (requestModel.Type == ProfileNames.Candidate ? candidateResumesVectorStoreId : interviewerResumesVectorStoreId) }
+                            }
                         }
-                    }
-                };
-                var jsonContent = JsonConvert.SerializeObject(threadRequest);
+                    };
+                }
+                else if(requestModel.Type == ProfileNames.QualityController)
+                {
+                    threadRequest = new Thread
+                    {
+                        messages = new List<Message>
+                        {
+                            new Message { role = "assistant", content = queryContent}
+                        }
+                    };
+                }
+
+                string jsonContent = JsonConvert.SerializeObject(threadRequest);
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 request.Content = content;

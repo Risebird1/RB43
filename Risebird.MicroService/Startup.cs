@@ -137,6 +137,7 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IAzureStorageRepository, AzureStorageRepository>();
             builder.Services.AddScoped<IAzureStorageService, AzureStorageService>();
             builder.Services.AddScoped<IExcelHelper, ExcelHelper>();
+            builder.Services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
         }
 
 
