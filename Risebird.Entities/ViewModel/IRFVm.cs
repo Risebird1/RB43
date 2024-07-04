@@ -390,6 +390,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? AffindaEmbedUrlCreatedAt { get; set; }
         public int? urlCreationTimeElapsed { get; set; }
         public int ColdCandidateCount { get; set; }
+        public int ClientIRFRatings { get; set; }
     }
     public class SkillCahnnelDetailsVM
     {

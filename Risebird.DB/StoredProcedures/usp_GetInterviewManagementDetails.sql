@@ -44,7 +44,7 @@ outer apply(Select min(PerformedOn) FirstPerformedOn From PageClickDetails where
 outer Apply(Select top(1)ima.interviewDate,ica.MeetingStatus From InterviewMeetings ima join InterviewComments ica on ica.InterviewId=ima.id where im.IRFId=ima.IRFId and im.candidateEmail=ima.candidateEmail and ima.confirmationStatus=1 order by ima.Interviewdate desc) iman
 where im.InterviewDate>@startDateParam and im.InterviewDate<@endDateParam and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)  and IRF.ClientId=@Clientid    
 end    
-else if(@Role='SupportAdmin' or @Role='HR')    
+else if(@Role='SupportAdmin')    
 BEGIN      
 Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.FirstJoinedon, ic.MeetingStatus,tzme.Joinedcount as TotalCount,    
 im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,    
@@ -65,7 +65,7 @@ outer apply(Select min(PerformedOn) FirstPerformedOn From PageClickDetails where
 outer Apply(Select top(1)ima.interviewDate,ica.MeetingStatus From InterviewMeetings ima join InterviewComments ica on ica.InterviewId=ima.id where im.IRFId=ima.IRFId and im.candidateEmail=ima.candidateEmail and ima.confirmationStatus=1 order by ima.Interviewdate desc) iman
 where ulsh.Emailid= @Emailid and im.InterviewDate>@startDateParam and im.InterviewDate<@endDateParam and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)            
 END
-else if(@Role='SeniorHR')    
+else if(@Role='SeniorHR' or @Role='HR')    
 BEGIN      
 Select Distinct im.id,IRF.id as irfIntId,im.interviewDate,imj.Joinedon,imjf.FirstJoinedon, ic.MeetingStatus,tzme.Joinedcount as TotalCount,    
 im.IsMeetingNotificationSent,im.IsNotificationSentToEI,im.IsRescheduleNotificationSent,im.IsEmergency,im.EIAssigned,imc.PerformedOn,imcf.FirstPerformedOn,    
@@ -106,5 +106,5 @@ outer Apply(Select top(1)ima.interviewDate,ica.MeetingStatus From InterviewMeeti
 where im.InterviewDate>@startDateParam and im.InterviewDate<@endDateParam and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission)      
 END                
                 
-End
+End 
 Go

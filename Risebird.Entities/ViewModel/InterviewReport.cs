@@ -108,6 +108,12 @@ namespace Risebird.Entities.ViewModel
         public string AadharFileLink { get; set; }
         [Display(Name = "Interview Date")]
         public string interviewDate { get; set; }
+
+        public DateTime? Joinedon { get; set; }
+        public DateTime? PerformedOn { get; set; }
+
+        public DateTime? FirstJoinedon { get; set; }
+        public DateTime? FirstPerformedOn { get; set; }
         public bool IsClientUser { get; set; }
         public int Difficultylevel { get; set; }
         public int InterviewerLateJoin { get; set; }

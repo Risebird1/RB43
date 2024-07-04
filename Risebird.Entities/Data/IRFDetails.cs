@@ -9,5 +9,6 @@
         public bool IsGeneralSkillRequired { get; set; }
         public int SkillSetsevaluate { get; set; }
         public string JDTitleTwo { get; set; }
+        public int? Heuristicsscore { get; set; }
     }
 }
