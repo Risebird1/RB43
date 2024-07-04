@@ -8680,6 +8680,47 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<IEnumerable<TransInterviewer>> GetTransInterviewersForOpenAIScreening()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<TransInterviewer>(con, "usp_GetTransInterviewersForOpenAIScreening", null, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> SaveTransInterviewerOpenAIScreeningResults(int transInterviewerId, string screeningResponseJson)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@transInterviewerId", transInterviewerId);
+                    parameters.Add("@screeningResponseJson", screeningResponseJson);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveTransInterviewerOpenAIScreeningResults", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 } 
 
