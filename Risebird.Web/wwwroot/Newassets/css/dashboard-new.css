@@ -10570,6 +10570,17 @@ section {
     padding: 5px 8px;
     border: 0px !important;
 }
+.count {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background: #d2cece66;
+    display: inline-block;
+    border-radius: 100%;
+    line-height: 32px;
+    text-align: center;
+    color: grey;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
