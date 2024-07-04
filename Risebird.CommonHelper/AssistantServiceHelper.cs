@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -53,25 +54,47 @@ namespace Risebird.CommonHelper
                 if(requestModel.Type != ProfileNames.QualityController)
                 {
                     var fileId = await UploadFileAsync(requestModel.ResumeLink);
-                    await AddFileToVectorStoreAsync(fileId, requestModel.Type);
+                    if(!string.IsNullOrEmpty(fileId))
+                    {
+                        await AddFileToVectorStoreAsync(fileId, requestModel.Type);
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 
                 var threadId = await CreateThreadAsync(requestModel);
-
+                string runId;
                 //now create a run
-                var runId = await CreateRun(threadId, requestModel.Type);
-
-                string runStatus = string.Empty;
-                //retrieve a run
-                while(runStatus != "completed")
+                if (!string.IsNullOrEmpty(threadId))
                 {
-                    await Task.Delay(5000);
-                    runStatus = await RetrieveRun(runId, threadId);
-                    if (runStatus == "failed")
-                        break;
+                    runId = await CreateRun(threadId, requestModel.Type);
                 }
-                var messages = await ListRunMessages(threadId);
-                return messages;
+                else
+                {
+                    return null;
+                }
+
+                if (!string.IsNullOrEmpty(runId))
+                {
+                    string runStatus = string.Empty;
+                    //retrieve a run
+                    while (runStatus != "completed")
+                    {
+                        await Task.Delay(5000);
+                        runStatus = await RetrieveRun(runId, threadId);
+                        if (runStatus == "failed")
+                            break;
+                    }
+                    var messages = await ListRunMessages(threadId);
+                    return messages;
+                }
+                else
+                {
+                    return null;
+                }
+                
                 
             }
             catch (Exception ex)

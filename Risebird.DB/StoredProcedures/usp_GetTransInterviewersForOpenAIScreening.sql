@@ -9,8 +9,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 Create PROCEDURE [dbo].[usp_GetTransInterviewersForOpenAIScreening]     
-@irfId int,
-@userId int
 As
 Begin
 
