@@ -8721,6 +8721,32 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<IEnumerable<IRF>> GetAllIRFMultiStackDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@startDate", startDate);
+                    parameters.Add("@endDate", endDate);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    parameters.Add("@profile", profile);
+                    parameters.Add("@emailid", emailid);
+                    return await SqlMapper.QueryAsync<IRF>(con, "dbo.usp_GetIRFCandidateStatsIRFMultiStackCount", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 
