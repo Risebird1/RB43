@@ -57,7 +57,7 @@ declare @MissingVideoLink int = (select Count(im.id) from InterviewMeetings im j
 .Emailid= @Emailid)    
     
 declare @NotProcessedCandidateResume int = (Select count(cr.id) from CandidateResume cr join irf on irf.id = cr.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
- left join UserList ulsh on ulsh.id=sh.Userid where IsnUll(cr.Isprocessed,0)=0 and ulsh.Emailid= @Emailid)    
+ left join UserList ulsh on ulsh.id=sh.Userid join UserList ulc on ulc.id=irf.RisebirdHr where IsnUll(cr.Isprocessed,0)=0 and ulc.Emailid= @Emailid)    
     
 declare @QCPendingReportCount int = (Select Count(distinct im.id)  from InterviewMeetings im join InterviewComments ic on im.id=ic.InterviewId join IRF on IRF.IRFId=im.IRFId        
 join SeniorHr sh on sh.Clientid=irf.ClientId left join UserList ulsh on ulsh.id=sh.Userid join UserList uli on uli.EmailId=im.candidateEmail join  CandidatesMaster cm on cm.UserId=uli.id join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id   
@@ -85,7 +85,7 @@ left join PaymentSLADetails ps on im.id=ps.Interviewid
 left join UserList ulc on ulc.EmailId=im.candidateEmail            
 join CandidatesMaster cm on cm.UserId=ulc.id 
 where cfd.Rating<=3 and Cast(interviewDate as Date)<= GETDATE() AND ul.EmailId=@Emailid)    
- declare @SuspeciousInterviewerCount int=(select  Count(distinct si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where si.CreatedBy=@Emailid and si.SuspiciousStatus=1)    
+ declare @SuspeciousInterviewerCount int=(select  Count(distinct si.Id) from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId where  si.SuspiciousStatus=1)    
      
  declare @CancelledInterviewCount int = (select Count(distinct im.id) from InterviewMeetings im join irf on irf.IRFId = im.IRFId join SeniorHr sh on sh.Clientid=irf.ClientId              
  left join UserList ulsh on ulsh.id=sh.Userid join UserList ul on ul.id=irf.RisebirdHr  where ul.Emailid= @Emailid and confirmationStatus=2 and  CAST(interviewDate as DATE) >=CAST(@currentdate as DATE)    
