@@ -224,10 +224,10 @@
                                                     foreach (var item in Model)
                                                     {
                                                         <tr>
-                                                            <td>@item.IRFId</td>
+                                                            <td style="color: #23466f;">@item.IRFId</td>
                                                             <td> @item.JDTiltle </td>
                                                             <td> @item.JDTitleTwo </td>
-                                                            <td> @item.CandidateCount </td>
+                                                            <td class="text-center"> <span class="count">@item.CandidateCount</span> </td>
                                                             <td>
                                                                 @item.CompletedInterviews
                                                                 { @if (item.CandidateCount > 0)
@@ -236,18 +236,20 @@
                                                                 }% }
                                                             </td>
                                                             <td>
-                                                                @item.SelectedMeetings
+                                                                <span style="color: #28850d;font-weight:500">
+                                                                    @item.SelectedMeetings
                                                                 { @if (item.CompletedInterviews > 0)
                                                                 {
                                                                     @((item.SelectedMeetings * 100) / @item.CompletedInterviews)
-                                                                }% }
+                                                                }% }</span>
                                                             </td>
                                                             <td>
-                                                                @item.RejectedMeetings
+                                                                <span style="color: #bd1717;font-weight:500"> @item.RejectedMeetings
                                                                 { @if (item.CompletedInterviews > 0)
                                                                 {
                                                                     @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
-                                                                }% }
+                                                                    }% }
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 @item.SelectedRejectMeetings
@@ -263,7 +265,7 @@
                                                                     @((item.RejectSelectedMeetings * 100) / @item.CompletedInterviews)
                                                                 }% }
                                                             </td>
-                                                            <td> @item.PendingCount </td>
+                                                            <td><span class="count">@item.PendingCount</span> </td>
                                                             <td>
                                                                 @item.ColdCandidateCount
                                                                 { @if (item.CandidateCount > 0)
@@ -292,7 +294,19 @@
                                                                     @((item.FutureScheduledMeetings * 100) / @item.CandidateCount)
                                                                 }% }
                                                             </td>
-                                                            <td>@item.IRFStatus</td>
+                                                            <td>
+                                                                @if (item.IRFStatus == "Active")
+                                                                {
+                                                                    <span style="color: darkgreen;font-weight: 600;text-align:center"> <i class="fa fa-check-circle" style=" color: green; font-size: 14px;"></i>  @item.IRFStatus</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span style="color: #cd6b6b;font-weight: 600;text-align:center"><i class="fa fa-ban" style=" color: red; font-size: 14px;"></i> @item.IRFStatus</span>
+                                                                }
+
+                                                                
+                                                            
+                                                            </td>
                                                                 <td>
                                                                     @if (item.IsPaused)
                                                                     {
