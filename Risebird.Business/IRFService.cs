@@ -4011,5 +4011,18 @@ namespace Risebird.Business
             }
             return null;
         }
+        public async Task<IEnumerable<IRF>> GetAllIRFMultiStackDetailsIRF(DateTime startDate, DateTime endDate, string profile, string emailid)
+        {
+            try
+            {
+                var irfList = await _irfRepository.GetAllIRFMultiStackDetailsIRF(startDate, endDate, profile, emailid);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace Risebird.Entities.ViewModel
         public string VideoLink { get; set; }
         public string IRFName { get; set; }
         public string JDTiltle { get; set; }
+        public string ChannelOwner { get; set; }
     }
 }
