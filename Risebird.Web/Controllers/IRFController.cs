@@ -6757,7 +6757,6 @@ namespace Risebird.Web.Controllers
                     //    }
                     //}
 
-
                     return Json("Status updated successfully.");
                 }
                 else

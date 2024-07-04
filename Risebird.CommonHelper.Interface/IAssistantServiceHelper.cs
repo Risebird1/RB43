@@ -11,7 +11,7 @@ namespace Risebird.CommonHelper.Interface
 {
     public interface IAssistantServiceHelper
     {
-        //Task<CandidateScreeningResponse> ScreenCandidateAsync(CandidateScreeningRequest request);
-        Task<RunResult> ScreenCandidateAsync(CandidateScreeningRequest request);
+        //Task<CandidateScreeningResponse> ScreenCandidateAsync(ScreeningRequest request);
+        Task<RunResult> ScreenAsync(ScreeningRequest request);
     }
 }
