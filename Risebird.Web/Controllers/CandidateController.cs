@@ -3550,99 +3550,104 @@ namespace Risebird.Web.Controllers
                             firstData = data.FirstOrDefault();
                         }
                         var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
-                        var candidateTimeline = new CandidateTimelineVM();
-                        candidateTimeline.IsQCRequired = client.IsQCRequired;
-                        candidateTimeline.IsRedoInterview = client.IsRedoInterview;
-                        candidateTimeline.IsClientCancelInterview = client.IsClientCancelInterview;
-                        candidateTimeline.HREmail = firstData.HREmail;
-                        candidateTimeline.CandidateEmailId = firstData.EmailId;
-                        candidateTimeline.CandidateName = firstData.Name;
-                        candidateTimeline.IRFId = firstData.IRFId;
-                        candidateTimeline.InterviewId = firstData.InterviewId;
-                        candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
-                        candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
-                        candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
-                        //candidateTimeline.QCStatus = firstData.QCStatus;
-                        candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
-                        candidateTimeline.confirmationStatus = firstData.confirmationStatus;
-                        candidateTimeline.PrimarySkill = firstData.PrimarySkill;
-                        candidateTimeline.ProfileSource = firstData.ProfileSource;
-                        candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
-                        candidateTimeline.Phone = firstData.MobileNumber;
-                        candidateTimeline.interviewDate = firstData.interviewDate;
-                        candidateTimeline.IRFname = firstData.IRFName;
-                        candidateTimeline.imid = firstData.imid;
-                        candidateTimeline.CalendlyLink = firstData.CalendlyLink;
-                        candidateTimeline.ClientAction = firstData.ClientAction;
-                        candidateTimeline.NickName = firstData.InterviewerNickName;
-                        candidateTimeline.reportcount = _datavalue;
-                        candidateTimeline.Interviewer = firstData.Interviewer;
-                        candidateTimeline.WhatsappCount = firstData.WhatsappCount;
-                        candidateTimeline.StatusValue = firstData.StatusValue;
-                        candidateTimeline.LatestComment = firstData.LatestComment;
-                        candidateTimeline.SchedulerUniqueid = firstData.SchedulerUniqueid;
-                        candidateTimeline.MailCount = firstData.MailCount;
-                        candidateTimeline.CallsCount = firstData.CallsCount;
-                        candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
-                        candidateTimeline.RedoInterview = firstData.RedoInterview;
-                        candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
-                        candidateTimeline.CandidateId = firstData.CandidateId;
-                        candidateTimeline.IsQCDone = firstData.IsQCDone;
-                        candidateTimeline.zoomLink = firstData.zoomLink;
-                        candidateTimeline.HasEmailDroppedOrBounced = firstData.HasEmailDroppedOrBounced;
-                        //candidateTimeline.staffingAgency = firstData.staffingAgency;
-                        candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
-
-                        //schedule status
-                        if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
+                        if(firstData != null)
                         {
-                            scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
-                            var lastStatus = scheduleStatusData.Where(x => x.InterviewId == firstData.InterviewId).LastOrDefault();
-                            if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                            var candidateTimeline = new CandidateTimelineVM();
+                            candidateTimeline.IsQCRequired = client.IsQCRequired;
+                            candidateTimeline.IsRedoInterview = client.IsRedoInterview;
+                            candidateTimeline.IsClientCancelInterview = client.IsClientCancelInterview;
+                            candidateTimeline.HREmail = firstData.HREmail;
+                            candidateTimeline.CandidateEmailId = firstData.EmailId;
+                            candidateTimeline.CandidateName = firstData.Name;
+                            candidateTimeline.IRFId = firstData.IRFId;
+                            candidateTimeline.InterviewId = firstData.InterviewId;
+                            candidateTimeline.CurrentStatus = firstData.CurrentStatus != null ? firstData.CurrentStatus : string.Empty;
+                            candidateTimeline.CandidateMasterId = firstData.CandidateMasterId;
+                            candidateTimeline.CurrentInterviewStatus = firstData.CurrentInterviewStatus;
+                            //candidateTimeline.QCStatus = firstData.QCStatus;
+                            candidateTimeline.CurrentMeetingStatus = firstData.CurrentMeetingStatus;
+                            candidateTimeline.confirmationStatus = firstData.confirmationStatus;
+                            candidateTimeline.PrimarySkill = firstData.PrimarySkill;
+                            candidateTimeline.ProfileSource = firstData.ProfileSource;
+                            candidateTimeline.IsIRFArchived = firstData.IsIRFArchived;
+                            candidateTimeline.Phone = firstData.MobileNumber;
+                            candidateTimeline.interviewDate = firstData.interviewDate;
+                            candidateTimeline.IRFname = firstData.IRFName;
+                            candidateTimeline.imid = firstData.imid;
+                            candidateTimeline.CalendlyLink = firstData.CalendlyLink;
+                            candidateTimeline.ClientAction = firstData.ClientAction;
+                            candidateTimeline.NickName = firstData.InterviewerNickName;
+                            candidateTimeline.reportcount = _datavalue;
+                            candidateTimeline.Interviewer = firstData.Interviewer;
+                            candidateTimeline.WhatsappCount = firstData.WhatsappCount;
+                            candidateTimeline.StatusValue = firstData.StatusValue;
+                            candidateTimeline.LatestComment = firstData.LatestComment;
+                            candidateTimeline.SchedulerUniqueid = firstData.SchedulerUniqueid;
+                            candidateTimeline.MailCount = firstData.MailCount;
+                            candidateTimeline.CallsCount = firstData.CallsCount;
+                            candidateTimeline.IsReportBlocked = firstData.IsReportBlocked;
+                            candidateTimeline.RedoInterview = firstData.RedoInterview;
+                            candidateTimeline.IsColdCandidate = firstData.IsColdCandidate;
+                            candidateTimeline.CandidateId = firstData.CandidateId;
+                            candidateTimeline.IsQCDone = firstData.IsQCDone;
+                            candidateTimeline.zoomLink = firstData.zoomLink;
+                            candidateTimeline.HasEmailDroppedOrBounced = firstData.HasEmailDroppedOrBounced;
+                            //candidateTimeline.staffingAgency = firstData.staffingAgency;
+                            candidateTimeline.ScheduleStatus = new List<TimelineStatus>();
+
+                            //schedule status
+                            if (scheduleStatusData.FirstOrDefault().ScheduleStatusDate != DateTime.MinValue)
                             {
-                                candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
-                                candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                                scheduleStatusData = scheduleStatusData.OrderBy(x => x.ScheduleStatusDate);
+                                var lastStatus = scheduleStatusData.Where(x => x.InterviewId == firstData.InterviewId).LastOrDefault();
+                                if (lastStatus.ScheduleStatusValue == "Meeting Status" || lastStatus.ScheduleStatusValue == "Interview Status")
+                                {
+                                    candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusComments;
+                                    candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                                }
+                                else
+                                {
+                                    candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
+                                    candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                                }
+                            }
+                            if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
+                            {
+                                if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
+                                {
+                                    candidateTimeline.CurrentStatus = ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription();
+                                }
+                                else if (firstData.CurrentMeetingStatus.HasValue)
+                                {
+                                    candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
+                                }
+                            }
+                            if (firstData.confirmationStatus != 2)
+                            {
+                                if (firstData.interviewDate < DateTime.Now && firstData.CurrentMeetingStatus == 2)
+                                {
+                                    candidateTimeline.CurrentStatus = "Status Pending";
+                                }
+                                else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
+                                {
+                                    if (firstData.CurrentMeetingStatus != null)
+                                        candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
+                                }
+                                else if (firstData.CurrentMeetingStatus == 2)
+                                {
+                                    candidateTimeline.CurrentStatus = "Scheduled";
+                                }
+
                             }
                             else
                             {
-                                candidateTimeline.CurrentStatus = lastStatus.ScheduleStatusValue;
-                                candidateTimeline.CurrentStatusDate = lastStatus.ScheduleStatusDate;
+                                candidateTimeline.CurrentStatus = "Cancelled";
                             }
+                            //add candidate to final model
+                            model.Add(candidateTimeline);
                         }
-                        if (candidateTimeline.CurrentStatus == CandidateStatusOptions.QCPending.GetDescription())
-                        {
-                            if (firstData.CurrentInterviewStatus.HasValue && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.BorderLine && firstData.CurrentInterviewStatus.Value == (int)InterviewStatus.Selected)
-                            {
-                                candidateTimeline.CurrentStatus = ((InterviewStatus)firstData.CurrentInterviewStatus).GetDescription();
-                            }
-                            else if (firstData.CurrentMeetingStatus.HasValue)
-                            {
-                                candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
-                            }
-                        }
-                        if (firstData.confirmationStatus != 2)
-                        {
-                            if (firstData.interviewDate < DateTime.Now && firstData.CurrentMeetingStatus == 2)
-                            {
-                                candidateTimeline.CurrentStatus = "Status Pending";
-                            }
-                            else if (firstData.interviewDate < DateTime.Now && candidateTimeline.CurrentStatus == "Scheduled")
-                            {
-                                if (firstData.CurrentMeetingStatus != null)
-                                    candidateTimeline.CurrentStatus = ((MeetingStatus)firstData.CurrentMeetingStatus).GetDescription();
-                            }
-                            else if (firstData.CurrentMeetingStatus == 2)
-                            {
-                                candidateTimeline.CurrentStatus = "Scheduled";
-                            }
-
-                        }
-                        else
-                        {
-                            candidateTimeline.CurrentStatus = "Cancelled";
-                        }
-                        //add candidate to final model
-                        model.Add(candidateTimeline);
+                        
+                        
                     }
 
                     var role = await _clientService.GetClientRoleByEmailId(emailid);
