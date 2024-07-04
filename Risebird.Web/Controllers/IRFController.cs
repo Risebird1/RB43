@@ -6739,24 +6739,23 @@ namespace Risebird.Web.Controllers
                 if (result.Item1)
                 {
                     //if status = 1, send open interviews notification to the interviewer
-                    if (status == 1)
-                    {
-                        var unassignedInterviewMeetings = await _meetingService.GetUnassignedOpenInterviews(Irfid);
-                        List<string> interviewers = new List<string>
-                        {
-                            result.Item2
-                        };
-                        if (unassignedInterviewMeetings != null && unassignedInterviewMeetings.Count() > 0)
-                        {
-                            foreach (var meeting in unassignedInterviewMeetings)
-                            {
-                                await _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString(), meeting.irfIntId, meeting.imid);
+                    //if (status == 1)
+                    //{
+                    //    var unassignedInterviewMeetings = await _meetingService.GetUnassignedOpenInterviews(Irfid);
+                    //    List<string> interviewers = new List<string>
+                    //    {
+                    //        result.Item2
+                    //    };
+                    //    if (unassignedInterviewMeetings != null && unassignedInterviewMeetings.Count() > 0)
+                    //    {
+                    //        foreach (var meeting in unassignedInterviewMeetings)
+                    //        {
+                    //            await _notificationHelper.SendIRFBasedInterviewerMail(interviewers, meeting.interviewDate.ToString(), meeting.irfIntId, meeting.imid);
 
-                            }
+                    //        }
 
-                        }
-                    }
-
+                    //    }
+                    //}
 
                     return Json("Status updated successfully.");
                 }
