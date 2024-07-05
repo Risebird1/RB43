@@ -36,7 +36,7 @@ group by ca.IRFId, ca.CandidateMasterId,cm.UserId
                 
  Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus, 
 im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,
-im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact
  From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id  
  join UserList ul on ul.id=tt.UserId
  join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId
