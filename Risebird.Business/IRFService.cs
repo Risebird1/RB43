@@ -4024,11 +4024,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<IEnumerable<CandidateExcelData>> IRFMutliStackInterviewStatusDetailedView(string irfname, string type)
+        public async Task<IEnumerable<CandidateExcelData>> IRFMutliStackInterviewStatusDetailedView(string irfname, string type, DateTime startDate)
         {
             try
             {
-                var irfList = await _irfRepository.IRFMutliStackInterviewStatusDetailedView(irfname, type);
+                var irfList = await _irfRepository.IRFMutliStackInterviewStatusDetailedView(irfname, type, startDate);
                 return irfList;
             }
             catch (Exception e)

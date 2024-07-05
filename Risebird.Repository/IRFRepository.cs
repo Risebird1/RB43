@@ -8747,7 +8747,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<IEnumerable<CandidateExcelData>> IRFMutliStackInterviewStatusDetailedView(string irfname, string type)
+        public async Task<IEnumerable<CandidateExcelData>> IRFMutliStackInterviewStatusDetailedView(string irfname, string type, DateTime startDate)
         {
             try
             {
@@ -8756,6 +8756,8 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@irfname", irfname);
                     parameters.Add("@type", type);
+                    parameters.Add("@startdate", startDate);
+                    parameters.Add("@timenow", DateTime.Now);
                     return await SqlMapper.QueryAsync<CandidateExcelData>(con, "dbo.usp_GetIRFMutliStackInterviewStatusDetailedView", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }

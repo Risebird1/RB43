@@ -1,63 +1,74 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.CandidateExcelData>
 <div class="detail-section">
     <p class="skill-details-header">Interview Channel: @ViewBag.irfname <span style="color: darkcyan;">(@ViewBag.type)</span></p>
-<div class="second style-2" style="overflow-x:scroll">
-     
-        <table id="irfdetailedTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%" >
-        <thead>
-            <tr>
-                <th>Interview Date</th>
-                <th>Candidate Name</th>
-                <th>Candidate Emailid</th>
-                <th>POC</th>
-                <th>Interviewer</th>
-                <th>Tech Score(Primary)</th>
-                <th>Interview Status(Primary)</th>
-                <th>Tech Score(Secondary)</th>
-                <th>Interview Status(Secondary)</th>
-                <th>Combined Status</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th>Interview Date</th>
-                <th>Candidate Name</th>
-                <th>Candidate Emailid</th>
-                <th>POC</th>
-                <th>Interviewer</th>
-                <th>Tech Score(Primary)</th>
-                <th>Interview Status(Primary)</th>
-                <th>Tech Score(Secondary)</th>
-                <th>Interview Status(Secondary)</th>
-                <th>Combined Status</th>
+    <div class="second style-2" style="overflow-x:scroll">
 
-            </tr>
-        </tfoot>
-        <tbody>
-            @if (Model != null && Model.Count() > 0)
-            {
-                foreach (var item in Model)
+        <table id="irfdetailedTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Interview Date</th>
+                    <th>Candidate Name</th>
+                    <th>Candidate Emailid</th>
+                    <th>POC</th>
+                    <th>Interviewer</th>
+                    <th>Tech Score(Primary)</th>
+                    <th>Interview Status(Primary)</th>
+                    <th>Tech Score(Secondary)</th>
+                    <th>Interview Status(Secondary)</th>
+                    <th>Combined Status</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Interview Date</th>
+                    <th>Candidate Name</th>
+                    <th>Candidate Emailid</th>
+                    <th>POC</th>
+                    <th>Interviewer</th>
+                    <th>Tech Score(Primary)</th>
+                    <th>Interview Status(Primary)</th>
+                    <th>Tech Score(Secondary)</th>
+                    <th>Interview Status(Secondary)</th>
+                    <th>Combined Status</th>
+
+                </tr>
+            </tfoot>
+            <tbody>
+                @if (Model != null && Model.Count() > 0)
                 {
-                    <tr>
-                        <td>@item.interviewDate</td>
-                        <td>@item.candidateName</td>
-                        <td>@item.candidateEmail</td>
-                        <td>@item.ClientHrContact</td>
-                        <td>@item.InterviewerCodedName</td>
-                        <td>@item.TechScoreone</td>
-                        <td>@item.InterviewStatus</td>
-                        <td>@item.TechScoretwo</td>
-                        <td>@item.InterviewStatusTwo</td>
-                        @{
-                            var jdtitle = item.JDTiltle + ": " + item.InterviewStatus + " /" + item.JDTitleTwo + ": " + item.InterviewStatusTwo;
-                        }
-                        <td>@jdtitle</td>
-                    </tr>
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.interviewDate</td>
+                            <td>@item.candidateName</td>
+                            <td>@item.candidateEmail</td>
+                            <td>@item.ClientHrContact</td>
+                            <td>@item.InterviewerCodedName</td>
+                            <td>@item.TechScoreone</td>
+                            <td>@item.InterviewStatus</td>
+                            <td>@item.TechScoretwo</td>
+                            @if (item.InterviewStatusTwoDesc == "0")
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                <td>@item.InterviewStatusTwoDesc</td>
+                            }
+                            @{
+                                var jdtitle = item.JDTiltle + ": " + item.InterviewStatus + " /" + item.JDTitleTwo + ": ";
+                                if (item.InterviewStatusTwoDesc != "0")
+                                {
+                                    jdtitle = jdtitle + item.InterviewStatusTwoDesc;
+                                }
+                            }
+                            <td>@jdtitle</td>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
 </div>
 <script>
     function searchDetailedResult() {

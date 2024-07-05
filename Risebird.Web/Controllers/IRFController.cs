@@ -9653,7 +9653,22 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var irfList = (await _irfService.IRFMutliStackInterviewStatusDetailedView(irfname, type))?.ToList();
+                DateTime startDate = DateTime.Now.AddDays(-30);
+                if (HttpContext.Session.GetString("MultiStackSkillChannelDetailsFilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("MultiStackSkillChannelDetailsFilters"));
+                    startDate = filter.StartDate.Value;
+                }
+                var irfList = (await _irfService.IRFMutliStackInterviewStatusDetailedView(irfname, type, startDate))?.ToList();
+                irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                if (type == "SelectedRejected")
+                {
+                    type = "Primary Select Secondary Reject";
+                }
+                else if (type == "RejectedSelected")
+                {
+                    type = "Primary Reject Secondary Select";
+                }
                 ViewBag.irfname = irfname;
                 ViewBag.type = type;
                 return PartialView(irfList);
