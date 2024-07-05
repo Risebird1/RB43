@@ -22,8 +22,6 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  CandidateLatestStatus varchar(20)                
 );   
 
-if(@type='Completed')  
-begin  
 INSERT INTO @TemporaryCandidateTableVariable                      
 select ca.IRFId, ca.CandidateMasterId, cm.UserId,                  
 dbo.fn_CandidateLatestStatusForIrfMultiStackStats(cm.UserId, ca.IRFId, @startdate, @timenow)                
@@ -32,8 +30,10 @@ join CandidateStatus cs on  (ca.IRFId = cs.IRFId and ca.CandidateMasterId = cs.C
 join CandidatesMaster cm on cm.id=ca.CandidateMasterId    
 join IRF tt on tt.id=ca.IRFId 
 where tt.IRFId=@irfname
-group by ca.IRFId, ca.CandidateMasterId,cm.UserId                
-                
+group by ca.IRFId, ca.CandidateMasterId,cm.UserId    
+
+if(@type='Completed')  
+begin  
  Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus, 
 im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,
 im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact
@@ -50,5 +50,77 @@ im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as In
  and ic.InterviewStatus in(1,2,3,4,5)
  order by candidateEmail desc
 end  
+else if(@type='Selected')
+begin
+ Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus, 
+im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact
+ From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id  
+ join UserList ul on ul.id=tt.UserId
+ join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId
+ join InterviewComments ic on ic.Interviewid=im.id
+ left join InterviewCommentsExtension ice on ice.Interviewid=im.id  
+ left join UserList uli on uli.EmailId=im.interviewer
+ left join InterviewerProfile ip on ip.userid=uli.id
+ outer Apply (Select Sum(WeightageActual) as TechScoreone from TechSkillReport where skillset!=2 and Interviewid=im.id) techone
+ outer Apply (Select Sum(WeightageActual) as TechScoretwo from TechSkillReport where skillset=2 and Interviewid=im.id) techtwo
+ where tt.CandidateLatestStatus in ('BOTHSELECTED') and confirmationStatus=1 and Isnull(im.RedoInterview,0)=0
+ and ic.InterviewStatus in(2,4)
+ order by candidateEmail desc
+end
+else if(@type='Rejected')
+begin
+ Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus, 
+im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact
+ From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id  
+ join UserList ul on ul.id=tt.UserId
+ join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId
+ join InterviewComments ic on ic.Interviewid=im.id
+ left join InterviewCommentsExtension ice on ice.Interviewid=im.id  
+ left join UserList uli on uli.EmailId=im.interviewer
+ left join InterviewerProfile ip on ip.userid=uli.id
+ outer Apply (Select Sum(WeightageActual) as TechScoreone from TechSkillReport where skillset!=2 and Interviewid=im.id) techone
+ outer Apply (Select Sum(WeightageActual) as TechScoretwo from TechSkillReport where skillset=2 and Interviewid=im.id) techtwo
+ where tt.CandidateLatestStatus in ('BOTHREJECTED') and confirmationStatus=1 and Isnull(im.RedoInterview,0)=0
+ and ic.InterviewStatus in(3,5)
+ order by candidateEmail desc
+end
+else if(@type='SelectedRejected')
+begin
+ Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus, 
+im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact
+ From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id  
+ join UserList ul on ul.id=tt.UserId
+ join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId
+ join InterviewComments ic on ic.Interviewid=im.id
+ left join InterviewCommentsExtension ice on ice.Interviewid=im.id  
+ left join UserList uli on uli.EmailId=im.interviewer
+ left join InterviewerProfile ip on ip.userid=uli.id
+ outer Apply (Select Sum(WeightageActual) as TechScoreone from TechSkillReport where skillset!=2 and Interviewid=im.id) techone
+ outer Apply (Select Sum(WeightageActual) as TechScoretwo from TechSkillReport where skillset=2 and Interviewid=im.id) techtwo
+ where tt.CandidateLatestStatus in ('SELECTEDNREJECTED') and confirmationStatus=1 and Isnull(im.RedoInterview,0)=0
+ and ic.InterviewStatus in(2,4)
+ order by candidateEmail desc
+end
+else if(@type='RejectedSelected')
+begin
+ Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus, 
+im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact
+ From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id  
+ join UserList ul on ul.id=tt.UserId
+ join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId
+ join InterviewComments ic on ic.Interviewid=im.id
+ left join InterviewCommentsExtension ice on ice.Interviewid=im.id  
+ left join UserList uli on uli.EmailId=im.interviewer
+ left join InterviewerProfile ip on ip.userid=uli.id
+ outer Apply (Select Sum(WeightageActual) as TechScoreone from TechSkillReport where skillset!=2 and Interviewid=im.id) techone
+ outer Apply (Select Sum(WeightageActual) as TechScoretwo from TechSkillReport where skillset=2 and Interviewid=im.id) techtwo
+ where tt.CandidateLatestStatus in ('REJECTEDNSELECTED') and confirmationStatus=1 and Isnull(im.RedoInterview,0)=0
+ and ic.InterviewStatus in(3,5)
+ order by candidateEmail desc
+end
 END  
  GO
