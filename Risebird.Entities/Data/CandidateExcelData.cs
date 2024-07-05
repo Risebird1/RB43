@@ -56,6 +56,8 @@ namespace Risebird.Entities.Data
         public int numberOfTechStacks { get; set; }
         public IList<string> SkillListTwo { get; set; }
         public string JDTitleTwo { get; set; }
+        public int TechScoreone { get; set; }
+        public int TechScoretwo { get; set; }
 
     }
 }

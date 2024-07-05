@@ -9648,6 +9648,22 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> IRFMutliStackInterviewStatusDetailedView(string irfname, string type)
+        {
+            try
+            {
+                var irfList = (await _irfService.IRFMutliStackInterviewStatusDetailedView(irfname, type))?.ToList();
+                ViewBag.irfname = irfname;
+                ViewBag.type = type;
+                return PartialView(irfList);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return PartialView();
+            }
+        }
         #endregion
     }
 }

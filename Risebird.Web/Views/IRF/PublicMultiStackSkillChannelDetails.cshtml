@@ -71,11 +71,11 @@
                 </div>
                 <input type="hidden" value="@ViewBag.Type" id="hidtype" />
                 <div class="pull-left">
-                        @* @if (ViewBag.Type == "IRF")
-                        {
-                            <div class="feedback-tab" onclick="ChangeChanneldetails('DayStats','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Day Stats</strong></div>
-                            <div class="feedback-tab-ac" onclick="ChangeChanneldetails('IRF','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Skill Channel</strong></div>
-                        } *@
+                    @* @if (ViewBag.Type == "IRF")
+                    {
+                    <div class="feedback-tab" onclick="ChangeChanneldetails('DayStats','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Day Stats</strong></div>
+                    <div class="feedback-tab-ac" onclick="ChangeChanneldetails('IRF','@ViewBag.emailid','@ViewBag.uniqueid', '@ViewBag.IsClientLogin')"><strong>Skill Channel</strong></div>
+                    } *@
                 </div>
                 <div class="pull-right">
                     <div style="float:right">
@@ -131,58 +131,58 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                                <form action="@Url.Action("PublicMultiStackSkillChannelDetails","IRF",new { emailid=ViewBag.emailid, uniqueid = ViewBag.uniqueid, isClientLogin = ViewBag.IsClientLogin })" method="post" id="form" onsubmit="return checkfilterDate();">
-                                                    <div class="modal-body">
-                                                        <div class="row">
-                                                            <div class="col-md-6 col-sm-6 border-rv">
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                        Start Date
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                                    </div>
+                                            <form action="@Url.Action("PublicMultiStackSkillChannelDetails","IRF",new { emailid=ViewBag.emailid, uniqueid = ViewBag.uniqueid, isClientLogin = ViewBag.IsClientLogin })" method="post" id="form" onsubmit="return checkfilterDate();">
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                                    Start Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <div class="form-group">
-                                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                        End Date
-                                                                    </label>
-                                                                    <div class="col-md-12 col-sm-12">
-                                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                                    </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                                    End Date
+                                                                </label>
+                                                                <div class="col-md-12 col-sm-12">
+                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <div class="form-group">
-                                                                    <div>
-                                                                        <div class="col-md-12 col-sm-12 pull-right">
-                                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                                <font style="font-size:12px;"> Reset Filter</font>
-                                                                            </button>
-                                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                                <font style="font-size:12px;"> Apply Filter</font>
-                                                                            </button>
-                                                                        </div>
+                                                        </div>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <div class="form-group">
+                                                                <div>
+                                                                    <div class="col-md-12 col-sm-12 pull-right">
+                                                                        <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                            <font style="font-size:12px;"> Reset Filter</font>
+                                                                        </button>
+                                                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                            <font style="font-size:12px;"> Apply Filter</font>
+                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </form>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
 
                                 </div>
                                 <div class="scrollbar int-table" id="style-2">
-                                    <div id="tableID" class="second">
+                                    <div id="tableID" class="second" style="overflow-x:scroll">
                                         <table id="irfTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
                                                     <th>Skill Channel</th>
                                                     <th>JD Title (Primary)</th>
-                                                    <th>JD Title (Secondary)</th> 
+                                                    <th>JD Title (Secondary)</th>
                                                     <th>Total Candidates</th>
                                                     <th>Completed Interviews</th>
                                                     <th>Both Selected </th>
@@ -228,37 +228,39 @@
                                                             <td> @item.JDTiltle </td>
                                                             <td> @item.JDTitleTwo </td>
                                                             <td class="text-center"> <span class="count">@item.CandidateCount</span> </td>
-                                                            <td>
+                                                            <td onclick="interviewstatuslistdetails('@item.IRFId','Completed')">
                                                                 @item.CompletedInterviews
                                                                 { @if (item.CandidateCount > 0)
                                                                 {
                                                                     @((item.CompletedInterviews * 100) / @item.CandidateCount)
                                                                 }% }
                                                             </td>
-                                                            <td>
+                                                            <td onclick="interviewstatuslistdetails('@item.IRFId','Selected')">
                                                                 <span style="color: #28850d;font-weight:500">
                                                                     @item.SelectedMeetings
-                                                                { @if (item.CompletedInterviews > 0)
-                                                                {
-                                                                    @((item.SelectedMeetings * 100) / @item.CompletedInterviews)
-                                                                }% }</span>
-                                                            </td>
-                                                            <td>
-                                                                <span style="color: #bd1717;font-weight:500"> @item.RejectedMeetings
-                                                                { @if (item.CompletedInterviews > 0)
-                                                                {
-                                                                    @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
+                                                                    { @if (item.CompletedInterviews > 0)
+                                                                    {
+                                                                        @((item.SelectedMeetings * 100) / @item.CompletedInterviews)
                                                                     }% }
                                                                 </span>
                                                             </td>
-                                                            <td>
+                                                            <td onclick="interviewstatuslistdetails('@item.IRFId','Rejected')">
+                                                                <span style="color: #bd1717;font-weight:500">
+                                                                    @item.RejectedMeetings
+                                                                    { @if (item.CompletedInterviews > 0)
+                                                                    {
+                                                                        @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
+                                                                    }% }
+                                                                </span>
+                                                            </td>
+                                                            <td onclick="interviewstatuslistdetails('@item.IRFId','SelectedRejected')">
                                                                 @item.SelectedRejectMeetings
                                                                 { @if (item.CompletedInterviews > 0)
                                                                 {
                                                                     @((item.SelectedRejectMeetings * 100) / @item.CompletedInterviews)
                                                                 }% }
                                                             </td>
-                                                            <td>
+                                                            <td onclick="interviewstatuslistdetails('@item.IRFId','RejectedSelected')">
                                                                 @item.RejectSelectedMeetings
                                                                 { @if (item.CompletedInterviews > 0)
                                                                 {
@@ -304,38 +306,40 @@
                                                                     <span style="color: #cd6b6b;font-weight: 600;text-align:center"><i class="fa fa-ban" style=" color: red; font-size: 14px;"></i> @item.IRFStatus</span>
                                                                 }
 
-                                                                
-                                                            
+
+
                                                             </td>
-                                                                <td>
-                                                                    @if (item.IsPaused)
-                                                                    {
-                                                                        <button id="play" class="mdc-fab app-fab--absolute  " aria-label="Play" style="background:#319d31!important;">
-                                                                            <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
-                                                                        </button>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <button id="pause" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
-                                                                            <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
-                                                                        </button>
-                                                                    }
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Recruiter Stats">
-                                                                        <a href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
-                                                                            <span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="square" stroke-linejoin="arcs"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3" /><circle cx="12" cy="10" r="3" /><circle cx="12" cy="12" r="10" /></svg></span>
-                                                                        </a>
+                                                            <td>
+                                                                @if (item.IsPaused)
+                                                                {
+                                                                    <button id="play" class="mdc-fab app-fab--absolute  " aria-label="Play" style="background:#319d31!important;">
+                                                                        <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
                                                                     </button>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Client HR Stats">
-                                                                        <a href="@Url.Action("ClientHRStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
-                                                                            <span title="Client HR Stats" class="mdc-fab__icon material-icons"><svg fill="#FFF" height="16" width="16" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 297 297"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="m110.549,98.768c27.231,0 49.384-22.154 49.384-49.384 0.001-27.231-22.153-49.384-49.384-49.384s-49.384,22.153-49.384,49.384c0,27.231 22.154,49.384 49.384,49.384z"></path> <path d="m226.823,185.307c-30.794,0-55.846,25.053-55.846,55.846 0,30.794 25.053,55.846 55.846,55.846s55.846-25.053 55.846-55.846c0-30.793-25.052-55.846-55.846-55.846zm34.017,44.247l-36.494,36.494c-1.836,1.835-4.241,2.753-6.647,2.753-2.406,0-4.811-0.918-6.647-2.753l-18.247-18.247c-3.671-3.671-3.671-9.623 0-13.294 3.672-3.67 9.622-3.67 13.294,0l11.6,11.601 29.847-29.848c3.672-3.67 9.622-3.67 13.294,0 3.671,3.671 3.671,9.623-5.68434e-14,13.294z"></path> <path d="m206.751,172.72v-8.713c0-18.793-12.077-35.457-29.935-41.307l-.083-.027-26.121-4.325c-2.223-0.684-4.599,0.493-5.398,2.686l-29.638,81.319c-1.71,4.691-8.345,4.691-10.055,0l-29.638-81.319c-0.646-1.771-2.317-2.881-4.108-2.881-0.425,0-27.41,4.514-27.41,4.514-18.005,6-30.035,22.691-30.035,41.565v67.664c0,10.14 8.22,18.36 18.36,18.36h123.405c-0.382-2.984-0.601-6.017-0.601-9.103 0.001-32.361 21.671-59.74 51.257-68.433z"></path> <path d="m121.487,113.395c-1.157-1.26-2.848-1.895-4.558-1.895h-12.759c-1.711,0-3.402,0.634-4.558,1.895-1.791,1.951-2.051,4.769-0.779,6.972l6.82,10.282-3.193,26.934 6.287,16.725c0.613,1.682 2.992,1.682 3.605,0l6.287-16.725-3.193-26.934 6.82-10.282c1.272-2.203 1.012-5.021-0.779-6.972z"></path> </g> </g></svg></span>
-                                                                        </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button id="pause" class="mdc-fab app-fab--absolute trash-btn" aria-label="Pause">
+                                                                        <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                                     </button>
-                                                                </td>
+                                                                }
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Recruiter Stats">
+                                                                    <a href="@Url.Action("StaffingAgencyStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                        <span title="Recruiter Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="square" stroke-linejoin="arcs"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3" /><circle cx="12" cy="10" r="3" /><circle cx="12" cy="12" r="10" /></svg></span>
+                                                                    </a>
+                                                                </button>
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Client HR Stats">
+                                                                    <a href="@Url.Action("ClientHRStats", "Client", new {irfId = item.id, irfName = item.IRFId})" target="_blank">
+                                                                        <span title="Client HR Stats" class="mdc-fab__icon material-icons"><svg fill="#FFF" height="16" width="16" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 297 297"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="m110.549,98.768c27.231,0 49.384-22.154 49.384-49.384 0.001-27.231-22.153-49.384-49.384-49.384s-49.384,22.153-49.384,49.384c0,27.231 22.154,49.384 49.384,49.384z"></path> <path d="m226.823,185.307c-30.794,0-55.846,25.053-55.846,55.846 0,30.794 25.053,55.846 55.846,55.846s55.846-25.053 55.846-55.846c0-30.793-25.052-55.846-55.846-55.846zm34.017,44.247l-36.494,36.494c-1.836,1.835-4.241,2.753-6.647,2.753-2.406,0-4.811-0.918-6.647-2.753l-18.247-18.247c-3.671-3.671-3.671-9.623 0-13.294 3.672-3.67 9.622-3.67 13.294,0l11.6,11.601 29.847-29.848c3.672-3.67 9.622-3.67 13.294,0 3.671,3.671 3.671,9.623-5.68434e-14,13.294z"></path> <path d="m206.751,172.72v-8.713c0-18.793-12.077-35.457-29.935-41.307l-.083-.027-26.121-4.325c-2.223-0.684-4.599,0.493-5.398,2.686l-29.638,81.319c-1.71,4.691-8.345,4.691-10.055,0l-29.638-81.319c-0.646-1.771-2.317-2.881-4.108-2.881-0.425,0-27.41,4.514-27.41,4.514-18.005,6-30.035,22.691-30.035,41.565v67.664c0,10.14 8.22,18.36 18.36,18.36h123.405c-0.382-2.984-0.601-6.017-0.601-9.103 0.001-32.361 21.671-59.74 51.257-68.433z"></path> <path d="m121.487,113.395c-1.157-1.26-2.848-1.895-4.558-1.895h-12.759c-1.711,0-3.402,0.634-4.558,1.895-1.791,1.951-2.051,4.769-0.779,6.972l6.82,10.282-3.193,26.934 6.287,16.725c0.613,1.682 2.992,1.682 3.605,0l6.287-16.725-3.193-26.934 6.82-10.282c1.272-2.203 1.012-5.021-0.779-6.972z"></path> </g> </g></svg></span>
+                                                                    </a>
+                                                                </button>
+                                                            </td>
                                                         </tr>
                                                     }
                                                 }
                                             </tbody>
                                         </table>
+                                    </div>
+                                    <div id="divInterviewdetailsView">
                                     </div>
                                 </div>
 
@@ -366,8 +370,6 @@
             ApplySessionFilter();
         }
     });
-
-
     function ApplySessionFilter() {
         var strtDte = '@strtDte';
         var endDte = '@endDte';
@@ -378,7 +380,6 @@
         var form = $("#form").serialize();
     }
 </script>
-
 
 <script>
     function searchResult() {
@@ -603,4 +604,17 @@ else
 <script>
     $(".nav-tabs li.active").next('li').find('a').tab('show');
     $(".nav-tabs li.active").prev('li').find('a').tab('show');
+</script>
+<script>
+    function interviewstatuslistdetails(irfname, type) {
+        $.ajax({
+            type: "POST",
+            url: "/IRF/IRFMutliStackInterviewStatusDetailedView",
+            data: { irfname: irfname, type: type },
+            success: function (data) {
+                $("#divInterviewdetailsView").html('');
+                $("#divInterviewdetailsView").html(data);
+            }
+        });
+    }
 </script>
