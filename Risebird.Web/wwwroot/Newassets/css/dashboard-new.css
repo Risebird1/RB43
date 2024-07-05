@@ -10581,6 +10581,26 @@ section {
     text-align: center;
     color: grey;
 }
+.detail-section {
+    margin: 30px 0px 0px 0px;
+    background: #f0f0f0a3;
+    border: 2px #bbd2e4 solid;
+}
+.skill-details-header {
+    background: #bbd2e4;
+    padding: 5px 10px;
+    font-size: 17px;
+    text-align: center;
+    font-weight: 500;
+}
+.detail-section table.dataTable thead > tr > th, .detail-section table.dataTable tfoot > tr > th {
+    background: #dde4e9 !important;
+    font-size: 13px;
+}
+.detail-section .table-striped tbody tr:nth-of-type(even) {
+    background: #f3f4f5!important;
+   box-shadow:none!important;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

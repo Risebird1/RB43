@@ -1,7 +1,9 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.CandidateExcelData>
-<div class="second" style="overflow-x:scroll">
-    <p>Interview Channel: @ViewBag.irfname (@ViewBag.type)</p>
-    <table id="irfdetailedTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
+<div class="detail-section">
+    <p class="skill-details-header">Interview Channel: @ViewBag.irfname <span style="color: darkcyan;">(@ViewBag.type)</span></p>
+<div class="second style-2" style="overflow-x:scroll">
+     
+        <table id="irfdetailedTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%" >
         <thead>
             <tr>
                 <th>Interview Date</th>
@@ -56,6 +58,7 @@
         </tbody>
     </table>
 </div>
+</div>
 <script>
     function searchDetailedResult() {
         $('#irfdetailedTable').DataTable();
@@ -93,4 +96,15 @@
         });
     };
 </script>
+<style>
+    .detail-section {
+        margin: 30px 0px 0px 0px;
+        background: #f0f0f0;
+    }
 
+    .skill-details-header {
+        background: #bbd2e4;
+        padding: 5px 10px;
+        font-size: 17px;
+    }
+</style>
