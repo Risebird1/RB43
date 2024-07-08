@@ -82,7 +82,7 @@ namespace Risebird.Web.Controllers
                         var responseInJson = JsonConvert.SerializeObject(response);
                         //save the response in db
                         bool saveOperationResult = true;
-                        if(!string.IsNullOrEmpty(responseInJson))
+                        if(!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                         {
                             saveOperationResult = await _candidateService.SaveCandidateOpenAIScreeningResults(irfId, candidateMasterId, responseInJson);
                         }
@@ -167,7 +167,7 @@ namespace Risebird.Web.Controllers
                         var responseInJson = JsonConvert.SerializeObject(response);
                         //save the response in db
                         bool saveOperationResult = true;
-                        if (!string.IsNullOrEmpty(responseInJson))
+                        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                         {
                             saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson);
                         }
