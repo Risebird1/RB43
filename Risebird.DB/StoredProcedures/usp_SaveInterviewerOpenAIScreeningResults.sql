@@ -15,7 +15,10 @@ Create PROCEDURE [dbo].[usp_SaveInterviewerOpenAIScreeningResults]
 As
 Begin
 
-  update TransInterviewer set OpenAIScreeningResponse = @screeningResponseJson where irfid = @irfId and UserId = @userId
+if(@screeningResponseJson is not null and @screeningResponseJson != 'null')
+Begin
+	  update TransInterviewer set OpenAIScreeningResponse = @screeningResponseJson where irfid = @irfId and UserId = @userId
+End
 
 End
 GO
