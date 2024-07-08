@@ -1210,8 +1210,8 @@ namespace Risebird.Business
                     }
                     oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + email;
                     //oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
-                    
-                    if(!communicationMedium.HasValue || (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Email))
+
+                    if (!communicationMedium.HasValue || (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Email))
                     {
                         if (irf.BussinessType == "B2B")
                         {
@@ -1226,8 +1226,8 @@ namespace Risebird.Business
                         }
 
                     }
-                    
-                    
+
+
                     WhatsAppVM _whatsapp = new WhatsAppVM();
                     _whatsapp.Emailid = email;
                     _whatsapp.InterviewDate = primarySkill;
@@ -4016,6 +4016,19 @@ namespace Risebird.Business
             try
             {
                 var irfList = await _irfRepository.GetAllIRFMultiStackDetailsIRF(startDate, endDate, profile, emailid);
+                return irfList;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<CandidateExcelData>> IRFMutliStackInterviewStatusDetailedView(string irfname, string type, DateTime startDate)
+        {
+            try
+            {
+                var irfList = await _irfRepository.IRFMutliStackInterviewStatusDetailedView(irfname, type, startDate);
                 return irfList;
             }
             catch (Exception e)
