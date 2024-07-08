@@ -9661,6 +9661,10 @@ namespace Risebird.Web.Controllers
                 }
                 var irfList = (await _irfService.IRFMutliStackInterviewStatusDetailedView(irfname, type, startDate))?.ToList();
                 irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                foreach (var item in irfList)
+                {
+                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                }
                 if (type == "SelectedRejected")
                 {
                     type = "Primary Select Secondary Reject";
