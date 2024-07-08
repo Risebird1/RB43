@@ -15,7 +15,10 @@ Create PROCEDURE [dbo].[usp_SaveCandidateOpenAIScreeningResults]
 As
 Begin
 
- update Candidate set OpenAIScreeningResponseJson = @screeningResponseJson where irfid = @irfId and CandidateMasterId = @candidateMasterId
+if(@screeningResponseJson is not null and @screeningResponseJson != 'null')
+Begin
+	 update Candidate set OpenAIScreeningResponseJson = @screeningResponseJson where irfid = @irfId and CandidateMasterId = @candidateMasterId
+End
 
 End
 GO

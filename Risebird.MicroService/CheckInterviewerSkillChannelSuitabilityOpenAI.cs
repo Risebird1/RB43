@@ -51,7 +51,7 @@ namespace Risebird.MicroService
 
                     var responseInJson = JsonConvert.SerializeObject(response);
                     bool saveOperationResult = true;
-                    if (!string.IsNullOrEmpty(responseInJson))
+                    if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
                     {
                         saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
                     }
