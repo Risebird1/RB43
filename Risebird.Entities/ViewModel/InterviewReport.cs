@@ -386,6 +386,11 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Candidate Solution File")]
         public IFormFile CandidateFile { get; set; }
 
+        [Display(Name = "Candidate Solution URL")]
+        public string CandidateLinkTwo { get; set; }
+        [Display(Name = "Candidate Solution File")]
+        public IFormFile CandidateFileTwo { get; set; }
+
     }
     public class RBInterviewDetails
     {

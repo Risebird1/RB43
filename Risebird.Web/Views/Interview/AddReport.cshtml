@@ -505,6 +505,7 @@
 
                                             </div>
                                             <!--report end--->
+                                          
                                             <!--tech skill start-->
                                             <div class="card" style="margin-bottom:10px;">
 
@@ -779,6 +780,67 @@
 
                                             </div>*@
                                             <!--feedback record audio & upload video end-->
+                                            <!--candidate solution link start-->
+                                            <div class="card" style="margin-bottom:10px;">
+
+                                                <label class="question" for="checkbox_two">
+                                                    <label for="checkbox_two">
+                                                        <i class="fa fa-user" aria-hidden="true"></i>
+                                                        Candidate Solution Link
+                                                    </label>
+
+                                                </label>
+
+                                                <fieldset class="answer">
+                                                    <h4 class="pull-left" style="padding:0px 10px; color:grey">Please select : &nbsp; </h4>
+                                                    <div class="pull-left" style="display:flex;">
+                                                        <h3 style="font-size: 15px;font-weight: 500; color: darkgrey;border:0px;">Upload Candidate Solution File</h3>
+
+                                                        <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
+                                                            <div class="mdc-radio mdc-radio--touch">
+                                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                                <div class="mdc-radio__background">
+                                                                    <div class="mdc-radio__outer-circle"></div>
+                                                                    <div class="mdc-radio__inner-circle"></div>
+                                                                </div>
+                                                                <div class="mdc-radio__ripple"></div>
+                                                            </div>
+                                                        </div>
+
+
+
+                                                        <h3 style="font-size: 15px;font-weight: 500; color: darkgrey;border:0px;">Provide Candidate Solution URL</h3>
+
+                                                        <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
+                                                            <div class="mdc-radio mdc-radio--touch">
+                                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                                <div class="mdc-radio__background">
+                                                                    <div class="mdc-radio__outer-circle"></div>
+                                                                    <div class="mdc-radio__inner-circle"></div>
+                                                                </div>
+                                                                <div class="mdc-radio__ripple"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style="clear:both;border-top:1px #ccc solid">
+                                                        <div class="int-form-group" style="display:none" id="linkDiv">
+                                                            @Html.LabelFor(model => model.CandidateLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                            @Html.EditorFor(model => model.CandidateLink, new { htmlAttributes = new { @class = "form-control text-box single-line",@style="margin-top:40px!important" } })
+                                                            @Html.ValidationMessageFor(model => model.CandidateLink, "", new { @class = "text-danger" })
+
+                                                        </div>
+                                                        <div class="int-form-group" style="display:none" id="uploadDiv">
+                                                            @Html.LabelFor(model => model.CandidateFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                            @Html.TextBoxFor(model => model.CandidateFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf", @placeholder = "Only files with .pdf, .doc and .docx extentsions accepted",@style="margin-top:40px!important" })
+
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+
+                                            </div>
+
+                                            <!--candidate solution link start-->
                                             <!--question start--->
                                             @if (ViewBag.PageReport != "Insta")
                                             {
@@ -921,67 +983,7 @@
                                             <!--tech score start-->
 
 
-                                            <!--candidate solution link start-->
-                                            <div class="card" style="margin-bottom:10px;">
-
-                                                <label class="question" for="checkbox_two">
-                                                    <label for="checkbox_two">
-                                                        <i class="fa fa-user" aria-hidden="true"></i>
-                                                        Candidate Solution Link
-                                                    </label>
-                                                   
-                                                </label>
-
-                                                <fieldset class="answer">
-                                                    <h4 class="pull-left" style="padding:0px 10px; color:grey">Please select : &nbsp; </h4>
-                                                    <div class="pull-left" style="display:flex;">
-                                                        <h3 style="font-size: 15px;font-weight: 500; color: darkgrey;border:0px;">Upload Candidate Solution File</h3>
-
-                                                            <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
-                                                                </div>
-                                                            </div>
-
-
-
-                                                        <h3 style="font-size: 15px;font-weight: 500; color: darkgrey;border:0px;">Provide Candidate Solution URL</h3>
-
-                                                        <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
-                                                                <div class="mdc-radio mdc-radio--touch">
-                                                                    <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
-                                                                    <div class="mdc-radio__background">
-                                                                        <div class="mdc-radio__outer-circle"></div>
-                                                                        <div class="mdc-radio__inner-circle"></div>
-                                                                    </div>
-                                                                    <div class="mdc-radio__ripple"></div>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                            <div style="clear:both;border-top:1px #ccc solid">
-                                                            <div class="int-form-group" style="display:none" id="linkDiv">
-                                                            @Html.LabelFor(model => model.CandidateLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.CandidateLink, new { htmlAttributes = new { @class = "form-control text-box single-line",@style="margin-top:40px!important" } })
-                                                            @Html.ValidationMessageFor(model => model.CandidateLink, "", new { @class = "text-danger" })
-
-                                                        </div>
-                                                        <div class="int-form-group" style="display:none" id="uploadDiv">
-                                                            @Html.LabelFor(model => model.CandidateFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                            @Html.TextBoxFor(model => model.CandidateFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf", @placeholder = "Only files with .pdf, .doc and .docx extentsions accepted",@style="margin-top:40px!important" })
-
-                                                        </div>
-                                                        </div>
-                                                </fieldset>
-
-                                            </div>
-
-                                                 <!--candidate solution link start-->
+                                          
                                             <hr />
                                             <!--Other skill set start-->
                                             @if (Model.SkillSetsevaluate > 1)
@@ -1188,6 +1190,67 @@
                                                         </div>
                                                     }
                                                     <!--tech score start-->
+                                                    <!--candidate solution link start-->
+                                                    <div class="card" style="margin-bottom:10px;">
+
+                                                        <label class="question" for="checkbox_two">
+                                                            <label for="checkbox_two">
+                                                                <i class="fa fa-user" aria-hidden="true"></i>
+                                                                Candidate Solution Link
+                                                            </label>
+
+                                                        </label>
+
+                                                        <fieldset class="answer">
+                                                            <h4 class="pull-left" style="padding:0px 10px; color:grey">Please select : &nbsp; </h4>
+                                                            <div class="pull-left" style="display:flex;">
+                                                                <h3 style="font-size: 15px;font-weight: 500; color: darkgrey;border:0px;">Upload Candidate Solution File</h3>
+
+                                                                <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChangedTwo(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
+                                                                    </div>
+                                                                </div>
+
+
+
+                                                                <h3 style="font-size: 15px;font-weight: 500; color: darkgrey;border:0px;">Provide Candidate Solution URL</h3>
+
+                                                                <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
+                                                                    <div class="mdc-radio mdc-radio--touch">
+                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChangedTwo(this.value)">
+                                                                        <div class="mdc-radio__background">
+                                                                            <div class="mdc-radio__outer-circle"></div>
+                                                                            <div class="mdc-radio__inner-circle"></div>
+                                                                        </div>
+                                                                        <div class="mdc-radio__ripple"></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div style="clear:both;border-top:1px #ccc solid">
+                                                                <div class="int-form-group" style="display:none" id="linkDivTwo">
+                                                                    @Html.LabelFor(model => model.CandidateLinkTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                                    @Html.EditorFor(model => model.CandidateLinkTwo, new { htmlAttributes = new { @class = "form-control text-box single-line",@style="margin-top:40px!important" } })
+                                                                    @Html.ValidationMessageFor(model => model.CandidateLinkTwo, "", new { @class = "text-danger" })
+
+                                                                </div>
+                                                                <div class="int-form-group" style="display:none" id="uploadDivTwo">
+                                                                    @Html.LabelFor(model => model.CandidateFileTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                    @Html.TextBoxFor(model => model.CandidateFileTwo, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf", @placeholder = "Only files with .pdf, .doc and .docx extentsions accepted",@style="margin-top:40px!important" })
+
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+
+                                                    </div>
+
+                                                    <!--candidate solution link start-->
                                                     <!--question start--->
                                                     @if (ViewBag.PageReport != "Insta")
                                                     {
@@ -1688,6 +1751,18 @@
             document.getElementById("linkDiv").style.display = "block";
         }
     }
+
+       function RadioChangedTwo(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDivTwo").style.display = "block";
+            document.getElementById("linkDivTwo").style.display = "none";
+        }
+        else {
+            document.getElementById("uploadDivTwo").style.display = "none";
+            document.getElementById("linkDivTwo").style.display = "block";
+        }
+    }
+
 
     function CountProctoring(value) {
 
