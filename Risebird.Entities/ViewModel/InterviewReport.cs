@@ -381,7 +381,10 @@ namespace Risebird.Entities.ViewModel
         public IList<TechSkillReport> TechSkillTwoReportCollection { get; set; }
         public string JDTitleTwo { get; set; }
         public int? Heuristicsscore { get; set; }
-        
+        [Display(Name = "Candidate Solution URL")]
+        public string CandidateLink { get; set; }
+        [Display(Name = "Candidate Solution File")]
+        public IFormFile CandidateFile { get; set; }
 
     }
     public class RBInterviewDetails
