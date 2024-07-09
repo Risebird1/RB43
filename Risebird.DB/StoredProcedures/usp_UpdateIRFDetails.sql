@@ -264,18 +264,7 @@ FROM
   
 	SELECT cubd.*, ClientUser.RoleId as ClientRoleId FROM @ClientUserBulkData cubd left join ClientUser on cubd.ClientUserId= ClientUser.UserId  
  
-    --quality controllers
- --	delete from TransQualityController where IRFId=@id        
-
-	--INSERT INTO [dbo].[TransQualityController](  
-	--[IRFId] ,  
-	--[UserId],  
-	--[PerSuccessRate],
-	--[IsActive],
-	--[InterviewerId])  
-     
-	--SELECT qcbd.*, InterviewerProfile.id as InterviewerId FROM @QCBulkData qcbd left join InterviewerProfile on qcbd.UserId = InterviewerProfile.UserId  
- 
+   
     --HRs
 	delete from TransHR where IRFId=@id 
 	
@@ -285,14 +274,7 @@ FROM
    
 	SELECT hrbd.IRFId, HR.id as HRId FROM @HRBulkData hrbd left join HR on hrbd.UserId = HR.UserId  
 	
-	--IF EXISTS(Select 1 from IRFRecommendations where id = @idRecommendation)     
-	--BEGIN
-	--	update IRFRecommendations set 
-	--	[Status] = @RecommendationStatus, CategoryId = @RecommendationCategoryId, CompetencyLevelId = @RecommendationCompetencyLevelId, 
-	--	SeniorityLevelId = @RecommendationSeniorityLevelId,
-	--	CountryType = @RecommendationCountryType, ModifiedOn = @RecommendationModifiedOn where id = @idRecommendation
-		   
-	--END   
+	  
 	set @isSMEChanged = 0
 
 	if(@SkillChannelSME is not null and @SkillChannelSME > 0)
@@ -326,6 +308,10 @@ FROM
 
 		End
 		
+	
+	
+	End
+
 	Declare @imid TABLE  
 (  
    Id int 
@@ -340,8 +326,6 @@ where ti.IsActive=0 and ti.IRFId=@id and interviewDate>@timeNow
 					begin 
 					update InterviewMeetings set interviewer=null where id in(select id from @imid)
 					end
-	
-	End
   commit tran  
  end try  
  begin catch  

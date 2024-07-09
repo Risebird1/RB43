@@ -1,9 +1,17 @@
 using Aspose.Html;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Google.Apis.Drive.v3.Data;
+using iTextSharp.text.pdf.qrcode;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
@@ -13,6 +21,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository;
@@ -20,6 +29,9 @@ using Risebird.Repository.Interface;
 using Risebird.Web.Controllers.AzureMediaservice;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -54,6 +66,12 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewerService _interviewerService;
         private readonly IInterviewSchedulerRepository _interviewSchedulerRepository;
         private readonly IIRFService _irfService;
+        private readonly ICompositeViewEngine _viewEngine;
+        private readonly ITempDataProvider _tempDataProvider;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IConverter _converter;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
 
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -67,7 +85,11 @@ namespace Risebird.Web.Controllers
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
             IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
-            IZoomHelper zoomHelper, IInterviewerService interviewerService, IInterviewSchedulerRepository interviewSchedulerRepository, IIRFService irfService)
+            IZoomHelper zoomHelper, IInterviewerService interviewerService,
+            IInterviewSchedulerRepository interviewSchedulerRepository, 
+            IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
+            IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
+            IConverter converter, IAssistantServiceHelper assistantServiceHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -90,6 +112,12 @@ namespace Risebird.Web.Controllers
             _interviewerService = interviewerService;
             _interviewSchedulerRepository = interviewSchedulerRepository;
             _irfService = irfService;
+            _viewEngine = viewEngine;
+            _tempDataProvider = tempDataProvider;
+            _serviceProvider = serviceProvider;
+            _contextAccessor = contextAccessor;
+            _converter = converter;
+            _assistantServiceHelper = assistantServiceHelper;
         }
 
 
@@ -8682,7 +8710,7 @@ namespace Risebird.Web.Controllers
             }
             return sb.ToString();
         }
-        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null)
+        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null)
         {
             try
             {
@@ -8781,8 +8809,15 @@ namespace Risebird.Web.Controllers
 
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
-
-                return View(model);
+                if(isOpenAIQC.HasValue && isOpenAIQC.Value)
+                {
+                    //write code to return QC results
+                    return RedirectToAction("PerformQualityCheck", model);
+                }
+                else
+                {
+                    return View(model);
+                }
             }
             catch (Exception ex)
             {
@@ -8793,6 +8828,155 @@ namespace Risebird.Web.Controllers
 
         }
 
+        public async Task<IActionResult> PerformQualityCheck(InterviewReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
+
+                        //check if the candidate's screening is already done and saved in db(as json string)
+
+                        //var report = await _irfService.GetInterviewerOpenAIScreeningResults(model.id);
+
+
+                        //ViewBag.IRFName = model.IRFName;
+                        //ViewBag.SaveOperationResult = "NA";
+
+                        //if (report != null && !string.IsNullOrEmpty(report.OpenAIScreeningResponse))
+                        //{
+                        //    return View(JsonConvert.DeserializeObject<RunResult>(report.OpenAIScreeningResponse));
+                        //}
+
+
+                        // Render the partial view to a string
+                        var htmlContent = await RenderToStringAsync("AIClientReport", model);
+
+                        // Generate PDF from HTML content
+                        var pdfContent = GeneratePdf(htmlContent);
+                        string fileName = "AIClientReport_" + model.id.ToString() + ".pdf";
+
+                        
+
+                        // Upload PDF to Azure Blob Storage
+                        string uploadedFileURL = string.Empty;
+                        using (MemoryStream stream = new MemoryStream(pdfContent))
+                        {
+                            await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream); ;
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
+                            var blob = containerRef.GetBlockBlobReference(fileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                        }
+
+                        var request = new ScreeningRequest
+                        {
+                            Type = ProfileNames.QualityController,
+                            ReportUrl = uploadedFileURL
+                        };
+                        var response = await _assistantServiceHelper.ScreenAsync(request);
+
+                        var responseInJson = JsonConvert.SerializeObject(response);
+                        //save the response in db
+                        bool saveOperationResult = true;
+                        //if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        //{
+                        //    saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson);
+                        //}
+
+                        if (saveOperationResult)
+                        {
+                            ViewBag.SaveOperationResult = "Evaluation saved successfully.";
+                        }
+                        else
+                        {
+                            ViewBag.SaveOperationResult = "Failed to save the evaluation.";
+                        }
+
+                        return View(response);
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(null);
+            }
+        }
+        public byte[] GeneratePdf(string htmlContent)
+        {
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = DinkToPdf.ColorMode.Color,
+                Orientation = Orientation.Portrait,
+                PaperSize = DinkToPdf.PaperKind.A4,
+            };
+
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = htmlContent,
+                WebSettings = { DefaultEncoding = "utf-8" },
+                HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+            };
+
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+
+            return _converter.Convert(pdf);
+        }
+        public async Task<string> RenderToStringAsync(string viewName, object model)
+        {
+            var httpContext = _contextAccessor.HttpContext;
+            var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new ActionDescriptor());
+
+            using (var sw = new StringWriter())
+            {
+                var viewResult = _viewEngine.FindView(actionContext, viewName, false);
+
+                if (viewResult.View == null)
+                {
+                    throw new ArgumentNullException($"The view '{viewName}' was not found.");
+                }
+
+                var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = model
+                };
+
+                var tempData = new TempDataDictionary(actionContext.HttpContext, _tempDataProvider);
+
+                var viewContext = new ViewContext(
+                    actionContext,
+                    viewResult.View,
+                    viewDictionary,
+                    tempData,
+                    sw,
+                    new HtmlHelperOptions()
+                );
+
+                await viewResult.View.RenderAsync(viewContext);
+                return sw.ToString();
+            }
+        }
         #region Multi Skill Sets
         public async Task ReportSkillSetandCombine(InterviewReport model)
         {

@@ -160,7 +160,8 @@ namespace Risebird.Web.Controllers
                         {
                             //Skills = skills,
                             JDTitle = jdTitle,
-                            ResumeLink = interviewer?.ResumeLink ?? resumeLink
+                            ResumeLink = interviewer?.ResumeLink ?? resumeLink,
+                            Type =  ProfileNames.Interviewer
                         };
                         var response = await _assistantServiceHelper.ScreenAsync(request);
 
