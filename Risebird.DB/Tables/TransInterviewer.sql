@@ -16,6 +16,7 @@ CREATE TABLE [dbo].[TransInterviewer](
             [IsCampaignActivity][bit] null,
             [CampaignId][int] null,
             [OpenAIScreeningResponse][varchar](max) null,
+            [AIVerdict][varchar](20) null,
 			CONSTRAINT [FK_TIIRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
 			CONSTRAINT [FK_TI_InterviewerId] FOREIGN KEY (InterviewerId) REFERENCES Interviewer(id),
             [IsSurchargeApprove] [bit] NULL,
@@ -151,6 +152,16 @@ BEGIN
     Add OpenAIScreeningResponse varchar(max) null
 END
 
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIVerdict')
+      AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE TransInterviewer
+    Add AIVerdict varchar(20) null
+END
 
 END
 

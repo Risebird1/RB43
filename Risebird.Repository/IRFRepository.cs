@@ -742,7 +742,8 @@ namespace Risebird.Repository
                                     ClientAction = !string.IsNullOrEmpty(dt.Rows[i]["ClientAction"].ToString()) ? dt.Rows[i]["ClientAction"].ToString() : null,
                                     IsResumeRedactAttempted = !string.IsNullOrEmpty(dt.Rows[i]["IsResumeRedactAttempted"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsResumeRedactAttempted"]) : false,
                                     IsCampaignActivity = !string.IsNullOrEmpty(dt.Rows[i]["IsCampaignActivity"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsCampaignActivity"]) : false,
-                                    CampaignName = !string.IsNullOrEmpty(dt.Rows[i]["CampaignName"].ToString()) ? dt.Rows[i]["CampaignName"].ToString() : null
+                                    CampaignName = !string.IsNullOrEmpty(dt.Rows[i]["CampaignName"].ToString()) ? dt.Rows[i]["CampaignName"].ToString() : null,
+                                    AIVerdict = !string.IsNullOrEmpty(dt.Rows[i]["AIVerdict"].ToString()) ? dt.Rows[i]["AIVerdict"].ToString() : null
 
                                 });
                             }
