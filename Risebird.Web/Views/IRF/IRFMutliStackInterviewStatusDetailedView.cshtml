@@ -60,12 +60,20 @@
                             }
                             @{
                                 var jdtitle = item.JDTiltle + ": " + item.InterviewStatus + " /" + item.JDTitleTwo + ": ";
-                                if (item.InterviewStatusTwoDesc != "0")
-                                {
-                                    jdtitle = jdtitle + item.InterviewStatusTwoDesc;
-                                }
+
+                               
                             }
-                            <td>@jdtitle</td>
+                            <td>
+                                <p>@item.JDTiltle : @item.InterviewStatus</p>
+                                <p>
+                                    @item.JDTitleTwo:
+                                    @if (item.InterviewStatusTwoDesc != "0")
+                                    {
+                                    @item.InterviewStatusTwoDesc
+                                    }
+                                </p>
+                              </td>
+
                         </tr>
                     }
                 }
