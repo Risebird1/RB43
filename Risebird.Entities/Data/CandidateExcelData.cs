@@ -16,6 +16,7 @@ namespace Risebird.Entities.Data
             TechSkillReportTwoCollection = new List<TechSkillReport>();
         }
         public int id { get; set; }
+        public int Irfintid { get; set; }
         public string IRFId { get; set; }
         public DateTime? interviewDate { get; set; }
         public string candidateEmail { get; set; }
@@ -56,6 +57,7 @@ namespace Risebird.Entities.Data
         public int numberOfTechStacks { get; set; }
         public IList<string> SkillListTwo { get; set; }
         public string JDTitleTwo { get; set; }
-
+        public int TechScoreone { get; set; }
+        public int TechScoretwo { get; set; }
     }
 }

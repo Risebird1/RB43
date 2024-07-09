@@ -230,46 +230,46 @@
 
                                     <div class="addreport">
                                         <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
-                                            
-                                                    @Html.HiddenFor(x => Model.VideoLink)
-                                                    @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+
+                                            @Html.HiddenFor(x => Model.VideoLink)
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                            {
+
+                                                int appendTime = 0;
+                                                if (Model.ThumbnailTimeSeconds == 0)
+                                                {
+                                                    appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
+                                                    if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
                                                     {
-                                                        
-                                                        int appendTime = 0;
-                                                        if (Model.ThumbnailTimeSeconds == 0)
-                                                        {
-                                                            appendTime = Convert.ToInt16(configuration["ThumbnailTimeDefault"]);
-                                                            if (((Model.VideoDuration * 60) > 120) && appendTime > (Model.VideoDuration * 60))
-                                                            {
-                                                                appendTime = (Model.VideoDuration * 60) - 60;
-                                                            }
-                                                            else if ((Model.VideoDuration * 60) < 120)
-                                                            {
-                                                                appendTime = 0;
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            appendTime = Model.ThumbnailTimeSeconds;
-                                                        }
+                                                        appendTime = (Model.VideoDuration * 60) - 60;
+                                                    }
+                                                    else if ((Model.VideoDuration * 60) < 120)
+                                                    {
+                                                        appendTime = 0;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    appendTime = Model.ThumbnailTimeSeconds;
+                                                }
                                                 var src = Model.VideoLink + "#t=" + appendTime.ToString();
                                                 <div class="card" style="margin-bottom:0px;">
                                                     <div class="videoConplayer">
-                                                        
+
                                                         <video width="600" controls="controls" preload="metadata" class="vjs-tech">
                                                             <source src='@Model.VideoLink' type="video/mp4">
                                                         </video>
                                                     </div>
                                                 </div>
-                                                        @*@if(ViewBag.PageReport == "Insta")
-                                                    {
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                    <label style="width:100%; text-align:center">Note : If the video duration is less than 10 mins, its the shorter version of the entire Interview.</label>
-                                                    </div>
-                                                    }*@
-                                                      
-                                                    }
-                                             
+                                                @*@if(ViewBag.PageReport == "Insta")
+                                            {
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <label style="width:100%; text-align:center">Note : If the video duration is less than 10 mins, its the shorter version of the entire Interview.</label>
+                                            </div>
+                                            }*@
+
+                                            }
+
                                             <div class="card" style="margin-bottom:10px;">
 
                                                 <label class="question" for="checkbox_two">
@@ -306,19 +306,20 @@
                                                     }
 
                                                     <div class="int-form-group">
-@*                                                        @Html.TextBoxFor(m => m.JDTiltle, new { @readonly = "readonly", @placeholder = "" })
-*@
-                                                       @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @style = "background:#fff;top:-6px;" })
-                                                   
-                                                            @if (Model.JDTitleTwo!= null && Model.JDTitleTwo != "")
-                                                            {
-                                                                <div class="can-jdtitle"> @Model.JDTiltle and @Model.JDTitleTwo</div> 
-                                                            }
-                                                            else{
-                                                                <div class="can-jdtitle"> @Model.JDTiltle</div> 
-                                                            }
-            
-                                                            
+                                                        @*                                                        @Html.TextBoxFor(m => m.JDTiltle, new { @readonly = "readonly", @placeholder = "" })
+                                                        *@
+                                                        @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @style = "background:#fff;top:-6px;" })
+
+                                                        @if (Model.JDTitleTwo != null && Model.JDTitleTwo != "")
+                                                        {
+                                                            <div class="can-jdtitle"> @Model.JDTiltle and @Model.JDTitleTwo</div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="can-jdtitle"> @Model.JDTiltle</div>
+                                                        }
+
+
 
                                                     </div>
 
@@ -409,11 +410,11 @@
                                             </div>
                                             <!--proxy communication end-->
                                             <!--report start-->
-                                           <h1 style="font-size:18px;padding: 7px 10px;display:block;clear: both;background: #cddeed;margin: 20px 0px 20px 0px;color:#114874;font-weight: 400;"> Primary Skill Evaluation:<strong style="font-weight:500;"> @Model.JDTiltle</strong></h1>
-                                         <div class="mandatory-note"> Please fill the meeting status, interview status, questions & score rubric to complete the primary skill evaluation process</div>
+                                            <h1 style="font-size:18px;padding: 7px 10px;display:block;clear: both;background: #cddeed;margin: 20px 0px 20px 0px;color:#114874;font-weight: 400;"> Primary Skill Evaluation:<strong style="font-weight:500;"> @Model.JDTiltle</strong></h1>
+                                            <div class="mandatory-note"> Please fill the meeting status, interview status, questions & score rubric to complete the primary skill evaluation process</div>
 
-                                           <div class="card" style="margin-bottom:10px;">
-                                            
+                                            <div class="card" style="margin-bottom:10px;">
+
                                                 <label class="question" for="checkbox_two">
                                                     <label for="checkbox_two">
                                                         <i class="fa fa-user" aria-hidden="true"></i>
@@ -613,7 +614,6 @@
                                                 </div>
                                             }
                                             <!--tech score start-->
-                                        
                                             <!--feedback record audio & upload video start-->
                                             @* <div class="col-md-6 wrap-nopadding">
                                             <div class="card" style="margin-bottom:10px;">
@@ -918,19 +918,19 @@
 
                                             </div>
                                             }*@
-                                                <!--tech score start-->
-                                                <hr/>
-                                                <!--Other skill set start-->
-                                              @if (Model.SkillSetsevaluate > 1)
-                                                {
+                                            <!--tech score start-->
+                                            <hr />
+                                            <!--Other skill set start-->
+                                            @if (Model.SkillSetsevaluate > 1)
+                                            {
 
-                                                 
-                                                    <div id="next-skill" style="margin-top:20px;">
-                                                      
-                                                          <h1 style="font-size:18px;padding: 7px 10px;display:block;clear: both;background: #cddeed;margin: 20px 0px 20px 0px;color:#114874;font-weight: 400;">Other Skill Evaluation :<strong style="font-weight:500"> @Model.JDTitleTwo</strong></h1>
-                                                   
-                                                         <div class="mandatory-note"> Please fill the meeting status, interview status, questions & score rubric to complete the other skill evaluation process</div>
-                                                          <!--report start-->
+
+                                                <div id="next-skill" style="margin-top:20px;">
+
+                                                    <h1 style="font-size:18px;padding: 7px 10px;display:block;clear: both;background: #cddeed;margin: 20px 0px 20px 0px;color:#114874;font-weight: 400;">Other Skill Evaluation :<strong style="font-weight:500"> @Model.JDTitleTwo</strong></h1>
+
+                                                    <div class="mandatory-note"> Please fill the meeting status, interview status, questions & score rubric to complete the other skill evaluation process</div>
+                                                    <!--report start-->
                                                     <div class="card" style="margin-bottom:10px;margin-top:10px;">
 
                                                         <label class="question" for="checkbox_two">
@@ -1020,11 +1020,11 @@
                                                     </div>
                                                     <!--report end--->
                                                     <!--tech skill start-->
-                                                        <div class="card" style="margin-bottom:10px;">
-                                                            <label class="question" for="checkbox_two">
-                                                                <label for="checkbox_two">
-                                                                    <i class="fa fa-user" aria-hidden="true"></i>
-                                                                    TECH SKILL REPORT   <span class="strict-note">&nbsp;&nbsp;Strictly Avoid writing questions/comments that are not linked to desired score rubric. Kindly ask Scenario based questions and Coding is mandatory in all Technical interviews. . otherwise, Customer may apply penalty from 10-100%.</span>
+                                                    <div class="card" style="margin-bottom:10px;">
+                                                        <label class="question" for="checkbox_two">
+                                                            <label for="checkbox_two">
+                                                                <i class="fa fa-user" aria-hidden="true"></i>
+                                                                TECH SKILL REPORT   <span class="strict-note">&nbsp;&nbsp;Strictly Avoid writing questions/comments that are not linked to desired score rubric. Kindly ask Scenario based questions and Coding is mandatory in all Technical interviews. . otherwise, Customer may apply penalty from 10-100%.</span>
 
                                                             </label>
 
@@ -1122,13 +1122,12 @@
                                                                 </div>
                                                             </fieldset>
 
-                                            </div>
-                                            }
-                                                <!--tech score start-->
-                                                      
-                                                        <!--question start--->
-                                                        @if (ViewBag.PageReport != "Insta")
-                                                        {
+                                                        </div>
+                                                    }
+                                                    <!--tech score start-->
+                                                    <!--question start--->
+                                                    @if (ViewBag.PageReport != "Insta")
+                                                    {
 
                                                         <div class="card" style="margin-bottom:10px;">
 
@@ -1241,10 +1240,10 @@
                                                     <!--question end-->
 
 
-                                                    </div>
-                                                    <div class="next-skillHide">HIDE OTHER SKILL</div>
+                                                </div>
+                                                <div class="next-skillHide">HIDE OTHER SKILL</div>
                                                 <div class="next-skillShow" style="display:none">VIEW OTHER SKILLS</div>
-                                               }
+                                            }
                                             <!--Other skill set end-->
 
                                         </div>
@@ -1454,12 +1453,12 @@
     {
         <script>
             @*    function closeQuestionCollectionNotification() {
-    document.getElementById("QuestionNotificationModelPopup").style.display = "none";
-    } *@
-                                                                        function OpenQuestionCollectionNotification() {
-                                                                             document.getElementById("QuestionNotificationModelPopup").style.display = "block";
-                                                                        }
-                                                                        OpenQuestionCollectionNotification();
+        document.getElementById("QuestionNotificationModelPopup").style.display = "none";
+        } *@
+                function OpenQuestionCollectionNotification() {
+                    document.getElementById("QuestionNotificationModelPopup").style.display = "block";
+                }
+            OpenQuestionCollectionNotification();
         </script>
     }
 }
@@ -1505,7 +1504,24 @@
         }
         var hasDistinctParticipants = '@hasDistinctParticipants';
         if (hasDistinctParticipants != null && hasDistinctParticipants.toLowerCase() == 'false') {
-            document.getElementById("InterviewStatus").disabled = true;
+            document.getElementById("InterviewStatusTwo").disabled = true;
+        }
+        if ($("#SkillSetsevaluate").val() > 1) {
+            var meetingStatusTwo = document.getElementById('MeetingStatusTwo').value;
+            if (meetingStatusTwo == null || meetingStatusTwo == '') {
+                document.getElementById('InterviewerCommentTwo').disabled = true;
+                document.getElementById("interviewerCommentTwo_Error").innerHTML = "Select an appropriate value for Meeting Status  to add comments here.";
+                //interview status check
+                //document.getElementById("InterviewStatusTwo").value = '';
+                document.getElementById("InterviewStatusTwo").disabled = true;
+            }
+            else {
+                document.getElementById('InterviewerCommentTwo').disabled = false;
+                document.getElementById("interviewerCommentTwo_Error").innerHTML = "";
+                if (meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8) {
+                    document.getElementById("InterviewStatusTwo").disabled = true;
+                }
+            }
         }
     })
 
@@ -1599,228 +1615,228 @@
 
 <script src="~/js/ScoreChart/SetScoreChartValues.js"></script>
 <script>
-        function RadioChanged(val) {
-            if (val == 'Upload') {
-                document.getElementById("uploadDiv").style.display = "block";
-                document.getElementById("linkDiv").style.display = "none";
-                document.getElementById("PageVideoLink").value = '';
-            }
-            else {
-                document.getElementById("uploadDiv").style.display = "none";
-                document.getElementById("linkDiv").style.display = "block";
-                document.getElementById("VideoFile").value = '';
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("PageVideoLink").value = '';
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("VideoFile").value = '';
+        }
+    }
+
+    function CountProctoring(value) {
+
+        if (value == "" || value == null) {
+
+            return;
+        }
+
+        var proctoringItems = $('[id^="Proctoring_"]');
+        var proctoringTotal = 0;
+        for (i = 0; i < proctoringItems.length; i++) {
+            if (proctoringItems[i].value != null && proctoringItems[i].value != "") {
+                proctoringTotal += parseInt(proctoringItems[i].value);
             }
         }
 
-        function CountProctoring(value) {
-
-            if (value == "" || value == null) {
-
-                return;
-            }
-
-            var proctoringItems = $('[id^="Proctoring_"]');
-            var proctoringTotal = 0;
-            for (i = 0; i < proctoringItems.length; i++) {
-                if (proctoringItems[i].value != null && proctoringItems[i].value != "") {
-                    proctoringTotal += parseInt(proctoringItems[i].value);
-                }
-            }
-
-            $("#ProctoringCount").val(proctoringTotal);
+        $("#ProctoringCount").val(proctoringTotal);
 
 
-            if (parseInt(proctoringTotal) > 0) {
-                $("#ProctoringCount").css("border-color", "red");
-            }
-            else {
-                $("#ProctoringCount").css("border-color", "#E3E3E3");
-            }
+        if (parseInt(proctoringTotal) > 0) {
+            $("#ProctoringCount").css("border-color", "red");
+        }
+        else {
+            $("#ProctoringCount").css("border-color", "#E3E3E3");
+        }
+    }
+
+    function CalculateOverAll(id, value) {
+        var num = id.match(/(\d+)/);
+        var index = num[0];
+        value = parseInt(value);
+        if (isNaN(value)) {
+            value = 0;
+        }
+        var skillName;
+        if (id.includes("Tech")) {
+
+            skillName = "TechSkillReportCollection";
         }
 
-        function CalculateOverAll(id, value) {
-            var num = id.match(/(\d+)/);
-            var index = num[0];
-            value = parseInt(value);
-            if (isNaN(value)) {
-                value = 0;
+        else if (id.includes("General")) {
+
+            skillName = "SkillGeneralReportCollection";
+        }
+        else if (id.includes("Joinability")) {
+
+            skillName = "JoinabilityHRReportCollection";
+        }
+        else {
+
+            skillName = "SelectabilityEvaluatorReportCollection";
+        }
+        var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
+        var required = $("#" + reqLevelId).val();
+        //if (required <= value) {
+        //    var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+        //    $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
+        //    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
+
+        //}
+        //else {
+        //    var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+        //    var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
+        //    $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
+        //    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+        //}
+        var actualWeightage;
+        var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+        actualWeightage = CalculateOverAllScore(required, value, reqWeightage);
+        if (required <= value) {
+
+            $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
+            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
+
+        }
+        else {
+            $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
+            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+        }
+
+        var items = $('[id$="WeightageActual"]');
+        //var length = item.length;
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
+        }
+
+        SetTechReportChart('TechSkillReportCollection');
+
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+
+            average = totalCount / 4;
+            //SetChart();
+        }
+        else {
+            average = totalCount / 2;
+            //SetChartWithoutJoinabilitySelectability();
+        }
+        $("#OverallScore").val(average);
+
+    }
+
+    function CalculateTwoOverAll(id, value) {
+        var num = id.match(/(\d+)/);
+        var index = num[0];
+        value = parseInt(value);
+        if (isNaN(value)) {
+            value = 0;
+        }
+        var skillName;
+        if (id.includes("Tech")) {
+
+            skillName = "TechSkillTwoReportCollection";
+        }
+        var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
+        var required = $("#" + reqLevelId).val();
+        var actualWeightage;
+        var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+        actualWeightage = CalculateOverAllScore(required, value, reqWeightage);
+        if (required <= value) {
+            $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
+            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
+        }
+        else {
+            $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
+            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+        }
+        SetTechTwoReportCalculation('TechSkillTwoReportCollection');
+    }
+
+    $(document).ready(function () {
+        var proctoringItems = $('[id^="Proctoring_"]');
+        var proctoringTotal = 0;
+        for (i = 0; i < proctoringItems.length; i++) {
+            if (proctoringItems[i].value != null && proctoringItems[i].value != "") {
+                proctoringTotal += parseInt(proctoringItems[i].value);
             }
-            var skillName;
-            if (id.includes("Tech")) {
+        }
+        $("#ProctoringCount").val(proctoringTotal);
+        if (parseInt(proctoringTotal) > 0) {
+            $("#ProctoringCount").css("border-color", "red");
+        }
+        else {
+            $("#ProctoringCount").css("border-color", "");
+        }
 
-                skillName = "TechSkillReportCollection";
-            }
+        //shorter/better attempt
+        var weightageItems = $('[id$="WeightageActual"]');
+        for (i = 0; i < weightageItems.length; i++) {
+            var id = weightageItems[i].id;
+            var match = id.match(/\d+/g);
+            var digit = match[0];
 
-            else if (id.includes("General")) {
-
-                skillName = "SkillGeneralReportCollection";
-            }
-            else if (id.includes("Joinability")) {
-
-                skillName = "JoinabilityHRReportCollection";
-            }
-            else {
-
-                skillName = "SelectabilityEvaluatorReportCollection";
-            }
-            var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
-            var required = $("#" + reqLevelId).val();
-            //if (required <= value) {
-            //    var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            //    $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
-            //    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
-
+            var index = weightageItems[i].id.indexOf(digit);
+            var skillName = weightageItems[i].id.substring(0, index);
+            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+            //if (reqLevel <= actLevel) {
+            //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+            //    $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+            //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
             //}
             //else {
-            //    var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            //    var adjustedReqWeightage = Math.pow(0.5, (required - value)) * (reqWeightage);
-            //    $("#" + skillName + "_" + index + "__WeightageActual").val(adjustedReqWeightage);
-            //    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+            //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+            //    var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
+            //    $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
+            //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
+
             //}
+
             var actualWeightage;
-            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            actualWeightage = CalculateOverAllScore(required, value, reqWeightage);
-            if (required <= value) {
+            var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
+            actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
+            if (reqLevel <= actLevel) {
 
-                $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
-                $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
 
             }
             else {
-                $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
-                $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+                $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
             }
-
-            var items = $('[id$="WeightageActual"]');
-            //var length = item.length;
-            var totalCount = 0;
-
-            for (i = 0; i < items.length; i++) {
-                totalCount += parseInt(items[i].value);
-            }
-
-            SetTechReportChart('TechSkillReportCollection');
-
-            var average = 0;
-            if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
-
-                average = totalCount / 4;
-                //SetChart();
-            }
-            else {
-                average = totalCount / 2;
-                //SetChartWithoutJoinabilitySelectability();
-            }
-            $("#OverallScore").val(average);
 
         }
 
-        function CalculateTwoOverAll(id, value) {
-            var num = id.match(/(\d+)/);
-            var index = num[0];
-            value = parseInt(value);
-            if (isNaN(value)) {
-                value = 0;
-            }
-            var skillName;
-            if (id.includes("Tech")) {
 
-                skillName = "TechSkillTwoReportCollection";
-            }
-            var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
-            var required = $("#" + reqLevelId).val();
-            var actualWeightage;
-            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            actualWeightage = CalculateOverAllScore(required, value, reqWeightage);
-            if (required <= value) {
-                $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
-                $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
-            }
-            else {
-                $("#" + skillName + "_" + index + "__WeightageActual").val(actualWeightage);
-                $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
-            }
-            SetTechTwoReportCalculation('TechSkillTwoReportCollection');
+        var items = $('[id$="WeightageActual"]');
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
         }
 
-        $(document).ready(function () {
-            var proctoringItems = $('[id^="Proctoring_"]');
-            var proctoringTotal = 0;
-            for (i = 0; i < proctoringItems.length; i++) {
-                if (proctoringItems[i].value != null && proctoringItems[i].value != "") {
-                    proctoringTotal += parseInt(proctoringItems[i].value);
-                }
-            }
-            $("#ProctoringCount").val(proctoringTotal);
-            if (parseInt(proctoringTotal) > 0) {
-                $("#ProctoringCount").css("border-color", "red");
-            }
-            else {
-                $("#ProctoringCount").css("border-color", "");
-            }
-
-            //shorter/better attempt
-            var weightageItems = $('[id$="WeightageActual"]');
-            for (i = 0; i < weightageItems.length; i++) {
-                var id = weightageItems[i].id;
-                var match = id.match(/\d+/g);
-                var digit = match[0];
-
-                var index = weightageItems[i].id.indexOf(digit);
-                var skillName = weightageItems[i].id.substring(0, index);
-                var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
-                var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
-                //if (reqLevel <= actLevel) {
-                //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                //    $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
-                //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
-                //}
-                //else {
-                //    reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
-                //    var adjustedReqWeightage = Math.pow(0.5, (reqLevel - actLevel)) * (reqWeight);
-                //    $("#" + skillName + digit + "__WeightageActual").val(adjustedReqWeightage);
-                //    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
-
-                //}
-
-                var actualWeightage;
-                var reqWeightage = $("#" + skillName + digit + "__WeightageRequired").val();
-                actualWeightage = CalculateOverAllScore(reqLevel, actLevel, reqWeightage);
-                if (reqLevel <= actLevel) {
-
-                    $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
-                    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
-
-                }
-                else {
-                    $("#" + skillName + digit + "__WeightageActual").val(actualWeightage);
-                    $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
-                }
-
-            }
-
-
-            var items = $('[id$="WeightageActual"]');
-            var totalCount = 0;
-
-            for (i = 0; i < items.length; i++) {
-                totalCount += parseInt(items[i].value);
-            }
-
-            SetTechReportChart('TechSkillReportCollection');
+        SetTechReportChart('TechSkillReportCollection');
         SetTechTwoReportCalculation('TechSkillTwoReportCollection');
-            var average = 0;
-            if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
-                average = totalCount / 4;
-                //SetChart();
-            }
-            else {
-                average = totalCount / 2;
-                //SetChartWithoutJoinabilitySelectability();
-            }
-            $("#OverallScore").val(average);
+        var average = 0;
+        if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
+            average = totalCount / 4;
+            //SetChart();
+        }
+        else {
+            average = totalCount / 2;
+            //SetChartWithoutJoinabilitySelectability();
+        }
+        $("#OverallScore").val(average);
 
-        });
+    });
     function SetTechTwoReportCalculation(techCollectionIdStartsWith) {
         var idSelector = '[id^=' + '"' + techCollectionIdStartsWith + '"' + '][id$="WeightageActual"]';
         var techItems = $(idSelector);
@@ -1839,562 +1855,562 @@
             document.getElementById("totTechScore2").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
         }
     }
-        function AddRow() {
+    function AddRow() {
 
-            var $ttc = $("#QuestionsTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#QuestionsTable tr").length - 1;
+        var $ttc = $("#QuestionsTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#QuestionsTable tr").length - 1;
 
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
 
-            var rowCount = $('#QuestionsTable tr').length;
+        var rowCount = $('#QuestionsTable tr').length;
 
-            var finalIndex = rowCount - 1;
+        var finalIndex = rowCount - 1;
 
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
 
-            $tr.find("a").val("");
+        $tr.find("a").val("");
 
-            // add cloned row as last row
-            $("#QuestionsTable").find("tbody tr:last").after($tr);
+        // add cloned row as last row
+        $("#QuestionsTable").find("tbody tr:last").after($tr);
 
-            // Find the affected form
-            var $form = $tr.closest("FORM");
+        // Find the affected form
+        var $form = $tr.closest("FORM");
 
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
-          //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
-          // Check document for changes
-          //$.validator.unobtrusive.parse(document);
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+        //$("#QuestionsCollection_" + finalIndex + "__Comment").on("change", QuestionChanged("#QuestionsCollection_" + finalIndex + "__Comment", optionsData[0].Item1));
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
     }
     function AddRowTwo() {
 
-            var $ttc = $("#QuestionsTableTwo").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#QuestionsTableTwo tr").length - 1;
+        var $ttc = $("#QuestionsTableTwo").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#QuestionsTableTwo tr").length - 1;
 
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
 
-            var rowCount = $('#QuestionsTableTwo tr').length;
+        var rowCount = $('#QuestionsTableTwo tr').length;
 
-            var finalIndex = rowCount - 1;
+        var finalIndex = rowCount - 1;
 
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
 
-            $tr.find("a").val("");
+        $tr.find("a").val("");
 
-            // add cloned row as last row
-            $("#QuestionsTableTwo").find("tbody tr:last").after($tr);
+        // add cloned row as last row
+        $("#QuestionsTableTwo").find("tbody tr:last").after($tr);
 
-            // Find the affected form
-            var $form = $tr.closest("FORM");
+        // Find the affected form
+        var $form = $tr.closest("FORM");
 
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
     }
 
-        function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+    function DeleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
 
-            if ($(element).parents('tbody').find('tr').length === 1) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
 
-                alert('Must have atleast one Row');
-                return false;
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+            document.getElementById("btnUpload").disabled = false;
+
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    //name="ClientCollection[3].ClientUserId"
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+                }
+            }
+        }
+    }
+
+    function InterviewerChanged(val, id) {
+        var index = id.charAt(22);
+        var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetInterviewerSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+    }
+
+    function QuestionChanged(id, val) {
+        var num = id.match(/(\d+)/);
+
+        var index = num[0];//id.charAt(20);
+        var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
+
+        var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
+        var skillName = '';
+        if (questionSkillMappingArray != null) {
+            var questionIndex = questionSkillMappingArray.findIndex(checkQuestion);
+
+            function checkQuestion(question) {
+                return question.comment == val;
+            }
+            skillName = questionSkillMappingArray[questionIndex].skillName;
+            $("#" + skillElementid).val(skillName);
+        }
+    }
+    function QuestionChangedTwo(id, val) {
+        var num = id.match(/(\d+)/);
+
+        var index = num[0];//id.charAt(20);
+        var skillElementid = 'QuestionsTwoCollection_' + index + '__SkillName';
+
+        var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
+        var skillName = '';
+        if (questionSkillMappingArray != null) {
+            var questionIndex = questionSkillMappingArray.findIndex(checkQuestion);
+
+            function checkQuestion(question) {
+                return question.comment == val;
+            }
+            skillName = questionSkillMappingArray[questionIndex].skillName;
+            $("#" + skillElementid).val(skillName);
+        }
+    }
+
+
+    function MeetingStatusChanged(value) {
+        if (value != null && value != '') {
+            document.getElementById('InterviewerComment').disabled = false;
+            document.getElementById("interviewerComment_Error").innerHTML = "";
+
+        }
+        else {
+            document.getElementById('InterviewerComment').value = '';
+            document.getElementById('InterviewerComment').disabled = true;
+            document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status to add comments here.";
+
+        }
+        if (value != 2) {
+            document.getElementById("meetingStatus_Error").innerHTML = "";
+        }
+        //for dropped
+        if (value == 3) {
+            document.getElementById("meetingStatus_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped so early (5-10 mins) that a conclusive judgement regarding selection cannot be made.";
+
+        }
+        //for dropped with interview status
+        if (value == 6 || value == 7 || value == 8) {
+            document.getElementById("meetingStatus_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped but ran for a duration long enough (20 or more mins) to pass a conclusive judgement regarding selection.";
+
+        }
+
+
+        if (value != 4) {
+            if (value == 6) {
+                //dropped but selected
+                document.getElementById("InterviewStatus").value = '2';
+            }
+            else if (value == 7) {
+                //dropped but rejected
+                document.getElementById("InterviewStatus").value = '3';
+            }
+            else if (value == 8) {
+                //dropped but borderline
+                document.getElementById("InterviewStatus").value = '4';
             }
 
             else {
-                document.getElementById("btnUpload").disabled = false;
-
-                //var currentvalue = $(this).attr('value');
-                var closestRow = $(element).closest('tr');
-                var currentIndex = closestRow[0].sectionRowIndex;
-                var totalRows = $(element).parents('tbody').find('tr').length;
-                var maxIndex = totalRows - 1;
-                if (currentIndex == maxIndex) {
-                    $(element).closest('tr').remove();
-                }
-                //ClientCollection_1__ClientRoleId
-                else {
-                    $(element).closest('tr').remove();
-                    var startIndex = currentIndex + 1;
-                    var endIndex = maxIndex + 1;
-                    for (i = startIndex; i < endIndex; i++) {
-                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                        //name="ClientCollection[3].ClientUserId"
-                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
-
-                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
-                    }
-                }
+                document.getElementById("InterviewStatus").value = '';
             }
+            document.getElementById("InterviewStatus").disabled = true;
         }
-
-        function InterviewerChanged(val, id) {
-            var index = id.charAt(22);
-            var skillElementid = 'InterviewerCollection_' + index + '__PrimarySkill';
-            $.ajax({
-                type: "GET",
-                url: "/IRF/GetInterviewerSkills",
-                data: { 'id': val },
-                success: function (data) {
-                    $("#" + skillElementid).val(data);
-                }
-            });
+        else {
+            document.getElementById("InterviewStatus").disabled = false;
         }
+    }
 
-        function QuestionChanged(id, val) {
-            var num = id.match(/(\d+)/);
+    function MeetingStatusTwoChanged(value) {
+        if (value != null && value != '') {
+            document.getElementById('InterviewerCommentTwo').disabled = false;
+            document.getElementById("interviewerCommentTwo_Error").innerHTML = "";
 
-            var index = num[0];//id.charAt(20);
-            var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
-
-            var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
-            var skillName = '';
-            if (questionSkillMappingArray != null) {
-                var questionIndex = questionSkillMappingArray.findIndex(checkQuestion);
-
-                function checkQuestion(question) {
-                    return question.comment == val;
-                }
-                skillName = questionSkillMappingArray[questionIndex].skillName;
-                $("#" + skillElementid).val(skillName);
-            }
         }
-        function QuestionChangedTwo(id, val) {
-            var num = id.match(/(\d+)/);
+        else {
 
-            var index = num[0];//id.charAt(20);
-            var skillElementid = 'QuestionsTwoCollection_' + index + '__SkillName';
+            document.getElementById('InterviewerCommentTwo').value = '';
+            document.getElementById('InterviewerCommentTwo').disabled = true;
+            document.getElementById("interviewerCommentTwo_Error").innerHTML = "Select an appropriate value for Meeting Status to add comments here.";
 
-            var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
-            var skillName = '';
-            if (questionSkillMappingArray != null) {
-                var questionIndex = questionSkillMappingArray.findIndex(checkQuestion);
+        }
+        if (value != 2) {
+            document.getElementById("meetingStatusTwo_Error").innerHTML = "";
+        }
+        //for dropped
+        if (value == 3) {
+            document.getElementById("meetingStatusTwo_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped so early (5-10 mins) that a conclusive judgement regarding selection cannot be made.";
 
-                function checkQuestion(question) {
-                    return question.comment == val;
-                }
-                skillName = questionSkillMappingArray[questionIndex].skillName;
-                $("#" + skillElementid).val(skillName);
-            }
+        }
+        //for dropped with interview status
+        if (value == 6 || value == 7 || value == 8) {
+            document.getElementById("meetingStatusTwo_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped but ran for a duration long enough (20 or more mins) to pass a conclusive judgement regarding selection.";
+
         }
 
 
-        function MeetingStatusChanged(value) {
-            if (value != null && value != '') {
-                document.getElementById('InterviewerComment').disabled = false;
-                document.getElementById("interviewerComment_Error").innerHTML = "";
-
+        if (value != 4) {
+            if (value == 6) {
+                //dropped but selected
+                document.getElementById("InterviewStatusTwo").value = '2';
             }
+            else if (value == 7) {
+                //dropped but rejected
+                document.getElementById("InterviewStatusTwo").value = '3';
+            }
+            else if (value == 8) {
+                //dropped but borderline
+                document.getElementById("InterviewStatusTwo").value = '4';
+            }
+
             else {
-                document.getElementById('InterviewerComment').value = '';
-                document.getElementById('InterviewerComment').disabled = true;
-                document.getElementById("interviewerComment_Error").innerHTML = "Select an appropriate value for Meeting Status to add comments here.";
-
+                document.getElementById("InterviewStatusTwo").value = '';
             }
-            if (value != 2) {
-                document.getElementById("meetingStatus_Error").innerHTML = "";
-            }
-            //for dropped
-            if (value == 3) {
-                document.getElementById("meetingStatus_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped so early (5-10 mins) that a conclusive judgement regarding selection cannot be made.";
+            document.getElementById("InterviewStatusTwo").disabled = true;
+        }
+        else {
+            document.getElementById("InterviewStatusTwo").disabled = false;
+        }
+    }
 
-            }
-            //for dropped with interview status
-            if (value == 6 || value == 7 || value == 8) {
-                document.getElementById("meetingStatus_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped but ran for a duration long enough (20 or more mins) to pass a conclusive judgement regarding selection.";
+    function CheckConditions() {
 
-            }
+        return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckTechSkills() && CheckQuestionsCount() && InterviewStatusChangedValue() && Proxyvalidation()); //&& CheckQuestionsTiming()
+
+    }
+
+    function CheckLength(length) {
+        var comments = document.getElementById("InterviewerComment").value;
+        if (comments.length >= length) {
+            document.getElementById("interviewerComment_Error").innerHTML = "";
+            return true;
+        }
+        else {
+            //interviewerComment_Error
+            document.getElementById("InterviewerComment").focus();
+            document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of " + length + " characters.";
+            return false;
+        }
+    }
 
 
-            if (value != 4) {
-                if (value == 6) {
-                    //dropped but selected
-                    document.getElementById("InterviewStatus").value = '2';
-                }
-                else if (value == 7) {
-                    //dropped but rejected
-                    document.getElementById("InterviewStatus").value = '3';
-                }
-                else if (value == 8) {
-                    //dropped but borderline
-                    document.getElementById("InterviewStatus").value = '4';
-                }
 
-                else {
-                    document.getElementById("InterviewStatus").value = '';
-                }
-                document.getElementById("InterviewStatus").disabled = true;
-            }
-            else {
-                document.getElementById("InterviewStatus").disabled = false;
-            }
+    function InterviewStatusChangedValue() {
+        var msg = '';
+        var interviewStatusValue = document.getElementById("InterviewStatus").value;
+        if (interviewStatusValue == 2) {
+            msg = 'Are you sure you want to select the candidate for the interview';
+        }
+        else if (interviewStatusValue == 3) {
+            msg = 'Are you sure you want to reject the candidate for the interview';
+        }
+        if (window.confirm(msg)) {
+            return true;
+        }
+        else {
+            return false;
         }
 
-         function MeetingStatusTwoChanged(value) {
-            if (value != null && value != '') {
-                document.getElementById('InterviewerCommentTwo').disabled = false;
-                document.getElementById("interviewerCommentTwo_Error").innerHTML = "";
-
-            }
-            else {
-
-                document.getElementById('InterviewerCommentTwo').value = '';
-                document.getElementById('InterviewerCommentTwo').disabled = true;
-                document.getElementById("interviewerCommentTwo_Error").innerHTML = "Select an appropriate value for Meeting Status to add comments here.";
-
-            }
-            if (value != 2) {
-                document.getElementById("meetingStatusTwo_Error").innerHTML = "";
-            }
-            //for dropped
-            if (value == 3) {
-                document.getElementById("meetingStatusTwo_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped so early (5-10 mins) that a conclusive judgement regarding selection cannot be made.";
-
-            }
-            //for dropped with interview status
-            if (value == 6 || value == 7 || value == 8) {
-                document.getElementById("meetingStatusTwo_Error").innerHTML = "Kindly use this option only in the case when a meeting was dropped but ran for a duration long enough (20 or more mins) to pass a conclusive judgement regarding selection.";
-
-            }
-
-
-            if (value != 4) {
-                if (value == 6) {
-                    //dropped but selected
-                    document.getElementById("InterviewStatusTwo").value = '2';
-                }
-                else if (value == 7) {
-                    //dropped but rejected
-                    document.getElementById("InterviewStatusTwo").value = '3';
-                }
-                else if (value == 8) {
-                    //dropped but borderline
-                    document.getElementById("InterviewStatusTwo").value = '4';
-                }
-
-                else {
-                    document.getElementById("InterviewStatusTwo").value = '';
-                }
-                document.getElementById("InterviewStatusTwo").disabled = true;
-            }
-            else {
-                document.getElementById("InterviewStatusTwo").disabled = false;
+    }
+    function CheckInterviewerComments() {
+        var flag = true;
+        var counter = 0;
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        var interviewStatusValue = document.getElementById("InterviewStatus").value;
+        if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4 || interviewStatusValue == 3 || interviewStatusValue == 5) {
+            flag = CheckLength(250);
+            if (!flag) {
+                counter = counter + 1;
             }
         }
-
-        function CheckConditions() {
-
-            return (CheckInterviewStatus() && CheckMeetingStatus() && CheckInterviewerComments() && CheckQuestions() && CheckTechSkills() && CheckQuestionsCount() && InterviewStatusChangedValue() && Proxyvalidation()); //&& CheckQuestionsTiming()
-
-        }
-
-        function CheckLength(length) {
-            var comments = document.getElementById("InterviewerComment").value;
-            if (comments.length >= length) {
-                document.getElementById("interviewerComment_Error").innerHTML = "";
-                return true;
-            }
-            else {
-                //interviewerComment_Error
-                document.getElementById("InterviewerComment").focus();
-                document.getElementById("interviewerComment_Error").innerHTML = "Kindly enter a minimum of " + length + " characters.";
-                return false;
+        else if (interviewStatusValue == 1) {
+            flag = CheckLength(50);
+            if (!flag) {
+                counter = counter + 1;
             }
         }
-
-
-
-        function InterviewStatusChangedValue() {
-            var msg = '';
-            var interviewStatusValue = document.getElementById("InterviewStatus").value;
-            if (interviewStatusValue == 2) {
-                msg = 'Are you sure you want to select the candidate for the interview';
-            }
-            else if (interviewStatusValue == 3) {
-                msg = 'Are you sure you want to reject the candidate for the interview';
-            }
-            if (window.confirm(msg)) {
-                return true;
-            }
-            else {
-                return false;
-            }
-
-        }
-        function CheckInterviewerComments() {
-            var flag=true;
-            var counter=0;
-            var meetingStatusValue = document.getElementById("MeetingStatus").value;
-            var interviewStatusValue = document.getElementById("InterviewStatus").value;
-            if (meetingStatusValue == 6 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 4 || interviewStatusValue == 3 || interviewStatusValue == 5) {
-                flag= CheckLength(250);
-                if(!flag){
-                    counter=counter+1;
+        if ($("#SkillSetsevaluate").val() > 1) {
+            var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
+            var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
+            if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 5) {
+                flag = CheckLength(250);
+                if (!flag) {
+                    counter = counter + 1;
                 }
             }
             else if (interviewStatusValue == 1) {
-                flag= CheckLength(50);
-                if(!flag){
-                    counter=counter+1;
+                flag = CheckLength(50);
+                if (!flag) {
+                    counter = counter + 1;
                 }
             }
-           if($("#SkillSetsevaluate").val()>1){
-              var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
-                var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
-                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 5) {
-                    flag= CheckLength(250);
-                    if(!flag){
-                        counter=counter+1;
-                    }
+        }
+        if (counter > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    function CheckQuestionsTiming() {
+        var interviewStatusElem = document.getElementById("InterviewStatus");
+        if (interviewStatusElem.value == 2 || interviewStatusElem.value == 4) {
+            var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
+            var oldVal = $("#QuestionsCollection_0__Timing").val();
+            for (i = 0; i < questionItems.length; i++) {
+                var temp = $("#QuestionsCollection_" + i + "__Timing").val();
+                if (temp == null || temp == '') {
+                    document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60) and it should be in ascending order."
+                    return false;
                 }
-                else if (interviewStatusValue == 1) {
-                    flag= CheckLength(50);
-                    if(!flag){
-                        counter=counter+1;
+                if (i > 0) {
+                    if (parseInt(temp) < parseInt(oldVal)) {
+                        document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60) and it should be in ascending order.";
+                        return false;
                     }
+                    else
+                        oldVal = temp;
                 }
-           }
-           if(counter>0){
-               return false;
-           }
+            }
+            document.getElementById('QuestionsCollection_TimingError').innerHTML = "";
             return true;
         }
-
-        function CheckQuestionsTiming() {
-            var interviewStatusElem = document.getElementById("InterviewStatus");
-            if (interviewStatusElem.value == 2 || interviewStatusElem.value == 4) {
-                var questionItems = $('[id^="QuestionsCollection"][id$="Timing"]');
-                var oldVal = $("#QuestionsCollection_0__Timing").val();
-                for (i = 0; i < questionItems.length; i++) {
-                    var temp = $("#QuestionsCollection_" + i + "__Timing").val();
-                    if (temp == null || temp == '') {
-                        document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60) and it should be in ascending order."
-                        return false;
-                    }
-                    if (i > 0) {
-                        if (parseInt(temp) < parseInt(oldVal)) {
-                            document.getElementById('QuestionsCollection_TimingError').innerHTML = "Please fill exact timing of question discussed in seconds(value must be greater than 60) and it should be in ascending order.";
-                            return false;
-                        }
-                        else
-                            oldVal = temp;
-                    }
-                }
-                document.getElementById('QuestionsCollection_TimingError').innerHTML = "";
-                return true;
-            }
-            else
-                return true;
-        }
-
-        function CheckQuestions() {
-            var meetingStatusValue = document.getElementById("MeetingStatus").value;
-            var interviewStatusValue = document.getElementById("InterviewStatus").value;
-            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4 || interviewStatusValue == 5) {
-                var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
-                for (i = 0; i < questionItems.length; i++) {
-                    var temp = $("#QuestionsCollection_" + i + "__Comment").val();
-                    if (temp == null || temp == '') {
-                        document.getElementById('QuestionsCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
-                        document.getElementById('QuestionsCollection_CommentError').focus();
-                        return false;
-                    }
-                }
-            }
-            document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
-            if($("#SkillSetsevaluate").val()>1){
-                var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
-                var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
-                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo== 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
-                    var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
-                    for (i = 0; i < questionItemsTwo.length; i++) {
-                        var temp = $("#QuestionsTwoCollection_" + i + "__Comment").val();
-                        if (temp == null || temp == '') {
-                            document.getElementById('QuestionsTwoCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
-                            document.getElementById('QuestionsTwoCollection_CommentError').focus();
-                            return false;
-                        }
-                    }
-                }
-                document.getElementById('QuestionsTwoCollection_CommentError').innerHTML = "";
-            }
+        else
             return true;
-        }
+    }
 
-        function CheckQuestionsCount() {
-            var meetingStatusValue = document.getElementById("MeetingStatus").value;
-            if($("#SkillSetsevaluate").val()>1){
-                if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
-                var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
-                    if (questionItems == null || questionItems.length < 3) {
-                        alert('A minimum of 3 questions should be added.');
-                        return false;
-                    }
+    function CheckQuestions() {
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        var interviewStatusValue = document.getElementById("InterviewStatus").value;
+        if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4 || interviewStatusValue == 5) {
+            var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
+            for (i = 0; i < questionItems.length; i++) {
+                var temp = $("#QuestionsCollection_" + i + "__Comment").val();
+                if (temp == null || temp == '') {
+                    document.getElementById('QuestionsCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
+                    document.getElementById('QuestionsCollection_CommentError').focus();
+                    return false;
                 }
-                var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
-                if (meetingStatusValueTwo == 4 || meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8) {
-                    var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
-                    if (questionItemsTwo == null || questionItemsTwo.length < 3) {
-                        alert('A minimum of 3 questions should be added for other Skill set.');
+            }
+        }
+        document.getElementById('QuestionsCollection_CommentError').innerHTML = "";
+        if ($("#SkillSetsevaluate").val() > 1) {
+            var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
+            var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
+            if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
+                var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
+                for (i = 0; i < questionItemsTwo.length; i++) {
+                    var temp = $("#QuestionsTwoCollection_" + i + "__Comment").val();
+                    if (temp == null || temp == '') {
+                        document.getElementById('QuestionsTwoCollection_CommentError').innerHTML = "Please select a Question for all the added rows."
+                        document.getElementById('QuestionsTwoCollection_CommentError').focus();
                         return false;
                     }
                 }
             }
-            else{
-                if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
+            document.getElementById('QuestionsTwoCollection_CommentError').innerHTML = "";
+        }
+        return true;
+    }
+
+    function CheckQuestionsCount() {
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        if ($("#SkillSetsevaluate").val() > 1) {
+            if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
                 var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
-                    if (questionItems == null || questionItems.length < 5) {
-                        alert('A minimum of 5 questions should be added.');
-                        return false;
-                    }
+                if (questionItems == null || questionItems.length < 3) {
+                    alert('A minimum of 3 questions should be added.');
+                    return false;
                 }
             }
-             return true;
+            var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
+            if (meetingStatusValueTwo == 4 || meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8) {
+                var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
+                if (questionItemsTwo == null || questionItemsTwo.length < 3) {
+                    alert('A minimum of 3 questions should be added for other Skill set.');
+                    return false;
+                }
+            }
         }
+        else {
+            if (meetingStatusValue == 4 || meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8) {
+                var questionItems = $('[id^="QuestionsCollection"][id$="Comment"]');
+                if (questionItems == null || questionItems.length < 5) {
+                    alert('A minimum of 5 questions should be added.');
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 
-        function CheckMeetingStatus() {
-            var meetingStatusElem = document.getElementById("MeetingStatus");
-            if (meetingStatusElem.value == 2 || (meetingStatusElem.value == null || meetingStatusElem.value == '')) {
-                document.getElementById("meetingStatus_Error").innerHTML = "Kindly change the Meeting Status to an appropriate value.";
-                meetingStatusElem.focus();
+    function CheckMeetingStatus() {
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value == 2 || (meetingStatusElem.value == null || meetingStatusElem.value == '')) {
+            document.getElementById("meetingStatus_Error").innerHTML = "Kindly change the Meeting Status to an appropriate value.";
+            meetingStatusElem.focus();
+            return false;
+        }
+        else {
+            document.getElementById("meetingStatus_Error").innerHTML = "";
+        }
+        if ($("#SkillSetsevaluate").val() > 1) {
+            var meetingStatusElemTwo = document.getElementById("MeetingStatusTwo");
+            if (meetingStatusElem.valueTwo == 2 || (meetingStatusElemTwo.value == null || meetingStatusElemTwo.value == '')) {
+                document.getElementById("meetingStatusTwo_Error").innerHTML = "Kindly change the Meeting Status to an appropriate value.";
+                meetingStatusElemTwo.focus();
                 return false;
             }
             else {
-                document.getElementById("meetingStatus_Error").innerHTML = "";
+                document.getElementById("meetingStatusTwo_Error").innerHTML = "";
             }
-            if($("#SkillSetsevaluate").val()>1){
-                var meetingStatusElemTwo = document.getElementById("MeetingStatusTwo");
-                if (meetingStatusElem.valueTwo == 2 || (meetingStatusElemTwo.value == null || meetingStatusElemTwo.value == '')) {
-                    document.getElementById("meetingStatusTwo_Error").innerHTML = "Kindly change the Meeting Status to an appropriate value.";
-                    meetingStatusElemTwo.focus();
-                    return false;
-                }
-                else {
-                    document.getElementById("meetingStatusTwo_Error").innerHTML = "";
-                }
-            }
-            return true;
         }
+        return true;
+    }
 
-        function CheckInterviewStatus() {
-            var meetingStatusElem = document.getElementById("MeetingStatus");
-            if (meetingStatusElem.value == 4) {
-                var interviewStatusElem = document.getElementById("InterviewStatus");
-                if (interviewStatusElem.value == null || interviewStatusElem.value == '') {
-                    document.getElementById("interviewStatus_Error").innerHTML = "Kindly change the Interview Status to an appropriate value.";
-                    interviewStatusElem.focus();
+    function CheckInterviewStatus() {
+        var meetingStatusElem = document.getElementById("MeetingStatus");
+        if (meetingStatusElem.value == 4) {
+            var interviewStatusElem = document.getElementById("InterviewStatus");
+            if (interviewStatusElem.value == null || interviewStatusElem.value == '') {
+                document.getElementById("interviewStatus_Error").innerHTML = "Kindly change the Interview Status to an appropriate value.";
+                interviewStatusElem.focus();
+                return false;
+            }
+            else {
+                document.getElementById("interviewStatus_Error").innerHTML = '';
+            }
+        }
+        if ($("#SkillSetsevaluate").val() > 1) {
+            var meetingStatusElemTwo = document.getElementById("MeetingStatusTwo");
+            if (meetingStatusElemTwo.value == 4) {
+                var interviewStatusElemTwo = document.getElementById("InterviewStatusTwo");
+                if (interviewStatusElemTwo.value == null || interviewStatusElemTwo.value == '') {
+                    document.getElementById("interviewStatusTwo_Error").innerHTML = "Kindly change the Interview Status to an appropriate value.";
+                    interviewStatusElemTwo.focus();
                     return false;
                 }
                 else {
-                    document.getElementById("interviewStatus_Error").innerHTML = '';
+                    document.getElementById("interviewStatusTwo_Error").innerHTML = '';
                 }
             }
-            if($("#SkillSetsevaluate").val()>1){
-                var meetingStatusElemTwo = document.getElementById("MeetingStatusTwo");
-                if (meetingStatusElemTwo.value == 4) {
-                    var interviewStatusElemTwo = document.getElementById("InterviewStatusTwo");
-                    if (interviewStatusElemTwo.value == null || interviewStatusElemTwo.value == '') {
-                        document.getElementById("interviewStatusTwo_Error").innerHTML = "Kindly change the Interview Status to an appropriate value.";
-                        interviewStatusElemTwo.focus();
-                        return false;
-                    }
-                    else {
-                        document.getElementById("interviewStatusTwo_Error").innerHTML = '';
-                    }
-                }
-            }
-            return true;
         }
-        function CheckTechSkills() {
-            var meetingStatusValue = document.getElementById("MeetingStatus").value;
-            var interviewStatusValue = document.getElementById("InterviewStatus").value;
-            if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4 || interviewStatusValue == 5) {
-                var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
-                for (i = 0; i < questionItems.length; i++) {
-                    var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
+        return true;
+    }
+    function CheckTechSkills() {
+        var meetingStatusValue = document.getElementById("MeetingStatus").value;
+        var interviewStatusValue = document.getElementById("InterviewStatus").value;
+        if (meetingStatusValue == 6 || meetingStatusValue == 7 || meetingStatusValue == 8 || interviewStatusValue == 2 || interviewStatusValue == 3 || interviewStatusValue == 4 || interviewStatusValue == 5) {
+            var questionItems = $('[id^="TechSkillReportCollection"][id$="ActualLevelId"]');
+            for (i = 0; i < questionItems.length; i++) {
+                var temp = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
+                if (temp == null || temp == '') {
+                    document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
+                    document.getElementById('TechSkills_CommentError').focus();
+                    return false;
+                }
+            }
+        }
+        document.getElementById('TechSkills_CommentError').innerHTML = "";
+        if ($("#SkillSetsevaluate").val() > 1) {
+            var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
+            var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
+            if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
+                var questionItemsTwo = $('[id^="TechSkillTwoReportCollection"][id$="ActualLevelId"]');
+                for (i = 0; i < questionItemsTwo.length; i++) {
+                    var temp = $("#TechSkillTwoReportCollection_" + i + "__ActualLevelId").val();
                     if (temp == null || temp == '') {
-                        document.getElementById('TechSkills_CommentError').innerHTML = "Please select Actual Level for all the added rows."
-                        document.getElementById('TechSkills_CommentError').focus();
+                        document.getElementById('TechSkillsTwo_CommentError').innerHTML = "Please select Actual Level for all the added rows."
+                        document.getElementById('TechSkillsTwo_CommentError').focus();
                         return false;
                     }
                 }
             }
-            document.getElementById('TechSkills_CommentError').innerHTML = "";
-            if($("#SkillSetsevaluate").val()>1){
-                var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
-                var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
-                if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
-                    var questionItemsTwo = $('[id^="TechSkillTwoReportCollection"][id$="ActualLevelId"]');
-                    for (i = 0; i < questionItemsTwo.length; i++) {
-                        var temp = $("#TechSkillTwoReportCollection_" + i + "__ActualLevelId").val();
-                        if (temp == null || temp == '') {
-                            document.getElementById('TechSkillsTwo_CommentError').innerHTML = "Please select Actual Level for all the added rows."
-                            document.getElementById('TechSkillsTwo_CommentError').focus();
-                            return false;
-                        }
-                    }
-                }
-                document.getElementById('TechSkillsTwo_CommentError').innerHTML = "";
+            document.getElementById('TechSkillsTwo_CommentError').innerHTML = "";
+        }
+        return true;
+    }
+    $(document).ready(function () {
+        var count = '@ViewBag.QuestionsDiscussedCount';
+        if (count == null || parseInt(count) == 0) {
+            var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
+            var skillName = questionSkillMappingArray[0].skillName;
+            $("#QuestionsCollection_0__SkillName").val(skillName);
+            if ($("#SkillSetsevaluate").val() > 1) {
+                $("#QuestionsTwoCollection_0__SkillName").val(skillName);
             }
+        }
+    });
+    function Proxyvalidation() {
+        if ($('#isProxy').val() == "yes" || $('#isProxy').val() == "no") {
             return true;
         }
-        $(document).ready(function () {
-            var count = '@ViewBag.QuestionsDiscussedCount';
-            if (count == null || parseInt(count) == 0) {
-                var questionSkillMappingArray = @Html.Raw(Json.Serialize(Model.QuestionsSkillMapping));
-                var skillName = questionSkillMappingArray[0].skillName;
-                $("#QuestionsCollection_0__SkillName").val(skillName);
-                if($("#SkillSetsevaluate").val()>1){
-                   $("#QuestionsTwoCollection_0__SkillName").val(skillName);
-                }
-            }
-        });
-        function Proxyvalidation() {
-            if ($('#isProxy').val() == "yes" || $('#isProxy').val() == "no") {
-                return true;
-            }
-            swal.fire('Please select the proxy status of candidate in Proxy Candidate reporting section to submit the report successfully.');
-            return false;
-        }
+        swal.fire('Please select the proxy status of candidate in Proxy Candidate reporting section to submit the report successfully.');
+        return false;
+    }
 </script>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -2523,8 +2539,7 @@
         debugger;
         var MeetingStatus = jQuery("#MeetingStatus option:selected").val();
         var remainingCharElement = document.getElementById("remainingC");
-        if(remainingCharElement)
-        {
+        if (remainingCharElement) {
             if (MeetingStatus == 6 || MeetingStatus == 7) {
                 //$("#remainingC").style.display = 'block';
                 remainingCharElement.style.display = 'block';
@@ -2534,7 +2549,7 @@
                 remainingCharElement.style.display = 'none';
             }
         }
-        
+
     });
     $('#InterviewerComment').keyup(function () {
 
@@ -2548,9 +2563,9 @@
         }
     });
 
-    <!--other skill-->
+    <!--other skill-- >
 
-            ; (function () {
+                ; (function () {
 
         "use strict";
 
@@ -2736,13 +2751,13 @@
     })
 </script>
 <script>
-  
+
     $('.next-skillHide').click(function () {
         $('#next-skill').hide(0);
         $('.next-skillShow').show(0);
         $('.next-skillHide').hide(0);
     });
-   $('.next-skillShow').click(function () {
+    $('.next-skillShow').click(function () {
         $('#next-skill').show(0);
         $('.next-skillShow').hide(0);
         $('.next-skillHide').show(0);
