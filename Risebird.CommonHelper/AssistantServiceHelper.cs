@@ -32,6 +32,7 @@ namespace Risebird.CommonHelper
         private readonly string interviewerScreenerAssistantId;
         private readonly string interviewerResumesVectorStoreId;
         private readonly string reportQCAssistantId;
+        private readonly string reportQCVectorStoreId;
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
         {
@@ -45,25 +46,32 @@ namespace Risebird.CommonHelper
             interviewerScreenerAssistantId = _configuration["OpenAI:InterviewerScreenerAssistantId"];
             interviewerResumesVectorStoreId = _configuration["OpenAI:InterviewerResumesVectorStoreId"];
             reportQCAssistantId = _configuration["OpenAI:InterviewerReportQCAssistantId"];
+            reportQCVectorStoreId = _configuration["OpenAI:ReportQCVectorStoreId"];
         }
 
         public async Task<RunResult> ScreenAsync(ScreeningRequest requestModel)
         {
             try
             {
-                if(requestModel.Type != ProfileNames.QualityController)
+                string fileId;
+                if (requestModel.Type == ProfileNames.QualityController)
                 {
-                    var fileId = await UploadFileAsync(requestModel.ResumeLink);
-                    if(!string.IsNullOrEmpty(fileId))
-                    {
-                        await AddFileToVectorStoreAsync(fileId, requestModel.Type);
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    fileId = await UploadFileAsync(requestModel.ReportUrl);
+
                 }
-                
+                else
+                {
+                    fileId = await UploadFileAsync(requestModel.ResumeLink);
+                }
+                if (!string.IsNullOrEmpty(fileId))
+                {
+                    await AddFileToVectorStoreAsync(fileId, requestModel.Type);
+                }
+                else
+                {
+                    return null;
+                }
+
                 var threadId = await CreateThreadAsync(requestModel);
                 string runId;
                 //now create a run
@@ -212,19 +220,19 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
-        private async Task<string> UploadFileAsync(string resumeLink)
+        private async Task<string> UploadFileAsync(string url)
         {
 
             try
             {
                 using (HttpClient resumeClient = new HttpClient())
                 {
-                    var data = await resumeClient.GetByteArrayAsync(resumeLink);
+                    var data = await resumeClient.GetByteArrayAsync(url);
                     var fileContent = new ByteArrayContent(data);
                     var content = new MultipartFormDataContent
                     {
                         { new StringContent("assistants"), "purpose" },
-                        { fileContent, "file", resumeLink.Split("/").Last().Split("?")[0] }
+                        { fileContent, "file", url.Split("/").Last().Split("?")[0] }
                     };
 
                     HttpClient client = new HttpClient();
@@ -254,8 +262,20 @@ namespace Risebird.CommonHelper
                 {
                     file_id = fileId
                 };
-
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/vector_stores/{(profileType == ProfileNames.Candidate ? candidateResumesVectorStoreId : interviewerResumesVectorStoreId)}/files");
+                string vectorStoreId;
+                if(profileType == ProfileNames.Candidate)
+                {
+                    vectorStoreId = candidateResumesVectorStoreId;
+                }
+                else if(profileType == ProfileNames.Interviewer)
+                {
+                    vectorStoreId = interviewerResumesVectorStoreId;
+                }
+                else
+                {
+                    vectorStoreId = reportQCVectorStoreId;
+                }
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/vector_stores/{vectorStoreId}/files");
 
                 // Add headers to the request
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
@@ -301,7 +321,7 @@ namespace Risebird.CommonHelper
                 }
                 else if(requestModel.Type == ProfileNames.QualityController)
                 {
-                    queryContent = $"Use this URL to generate the output as per the instructions fed to the assistant: {requestModel.ReportUrl}";
+                    queryContent = $"Generate an output as per the instructions fed to the assistant.";
 
                 }
                 var threadRequest = new Thread();
@@ -329,6 +349,13 @@ namespace Risebird.CommonHelper
                         messages = new List<Message>
                         {
                             new Message { role = "assistant", content = queryContent}
+                        },
+                        tool_resources = new ToolResources()
+                        {
+                            file_search = new FileSearch
+                            {
+                                vector_store_ids = new List<string>() { (reportQCVectorStoreId) }
+                            }
                         }
                     };
                 }

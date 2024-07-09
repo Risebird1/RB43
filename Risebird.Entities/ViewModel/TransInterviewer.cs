@@ -26,5 +26,6 @@
         public string CampaignName { get; set; }
         public string OpenAIScreeningResponse { get; set; }
         public string JDTitle { get; set; }
+        public string AIVerdict { get; set; }
     }
 }
