@@ -59,5 +59,7 @@ namespace Risebird.Entities.Data
         public string JDTitleTwo { get; set; }
         public int TechScoreone { get; set; }
         public int TechScoretwo { get; set; }
+        public string CodeSnippet { get; set; }
+        public string CodeSnippetTwo { get; set; }
     }
 }

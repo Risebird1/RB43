@@ -30,8 +30,8 @@
                         {
                             @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                            
-                            @if(Model.AssessmentGroupArrayOld !=  null)
+
+                            @if (Model.AssessmentGroupArrayOld != null)
                             {
                                 for (int i = 0; i < Model.AssessmentGroupArrayOld.Count(); i++)
                                 {
@@ -68,7 +68,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text",@required="required" } })
+                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text", @readonly = "readonly" } })
                                         @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group dob">
@@ -96,9 +96,9 @@
                                         @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @*@Html.EditorFor(model => model.IsLeadInterviewer, new { htmlAttributes = new { id = "txt_IsLeadInterviewer", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
                                         @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]
-                                    {   new SelectListItem { Text = "No", Value = "false" },
+                                                 {   new SelectListItem { Text = "No", Value = "false" },
                                     new SelectListItem { Text = "Yes", Value = "true"} },
-                                    new { id = "drp_IsLeadINtr", @class = "select-css form-control text-box single-line" })
+                                                 new { id = "drp_IsLeadINtr", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsLeadInterviewer, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -125,7 +125,7 @@
 
                                         @Html.ValidationMessageFor(model => model.AssessmentGroupArray, "", new { @id = "err_assessmentgroup", @class = "text-danger" })
                                     </div>
-                                   
+
 
 
                                 </div>
@@ -147,7 +147,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label " })
-                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line", @readonly = "readonly" } })
                                         @Html.ValidationMessageFor(model => model.EmailId, "", new { @id = "err_txt_EmailId", @class = "text-danger" })
                                     </div>
 
@@ -178,23 +178,23 @@
                                         @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @*@Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { id = "txt_IsActive", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
                                         @Html.DropDownListFor(model => model.IsActive, new[]
-                                    {   new SelectListItem { Text = "No", Value = "false" },
+                                                 {   new SelectListItem { Text = "No", Value = "false" },
                                     new SelectListItem { Text = "Yes", Value = "true"} },
-                                    new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+                                                 new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.WhatsappNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Ex: 999999999",@style="margin-top: 10px!important;" })
+                                        @Html.TextBoxFor(model => model.WhatsappNumber, new { @class = "form-control text-box single-line", @type = "number", @maxlength = "10", @minlength = "10", @placeholder = "Ex: 999999999", @style = "margin-top: 10px!important;" })
                                     </div>
 
                                     @*<div class="form-group">
-                                        <div class="mandate">
-                                            @Html.LabelFor(model => model.OutsideIndiaServiceRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="required">*</span>
-                                        </div>
-                                        <select class="select-css form-control webkitEnabled" asp-for="OutsideIndiaServiceRate" asp-items="Model.OutsideIndiaServiceRateList"></select>
-                                        @Html.ValidationMessageFor(model => model.OutsideIndiaServiceRate, "", new { @class = "text-danger" })
-                                    </div>*@
+                                <div class="mandate">
+                                @Html.LabelFor(model => model.OutsideIndiaServiceRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="required">*</span>
+                                </div>
+                                <select class="select-css form-control webkitEnabled" asp-for="OutsideIndiaServiceRate" asp-items="Model.OutsideIndiaServiceRateList"></select>
+                                @Html.ValidationMessageFor(model => model.OutsideIndiaServiceRate, "", new { @class = "text-danger" })
+                                </div>*@
 
                                 </div>
                                 <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
@@ -213,9 +213,9 @@
                                         @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @*@Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { id = "txt_IsApproved", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
                                         @Html.DropDownListFor(model => model.IsApproved, new[]
-                                    {   new SelectListItem { Text = "No", Value = "false" },
+                                                 {   new SelectListItem { Text = "No", Value = "false" },
                                     new SelectListItem { Text = "Yes", Value = "true"} },
-                                    new { id = "drp_IsAppr", @class = "select-css form-control text-box single-line" })
+                                                 new { id = "drp_IsAppr", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsApproved, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -290,9 +290,9 @@
                                     <div>
                                         @Html.LabelFor(model => model.Isinstaavailable, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownListFor(model => model.Isinstaavailable, new[]
-                                    {   new SelectListItem { Text = "No", Value = "false" },
+                                                 {   new SelectListItem { Text = "No", Value = "false" },
                                     new SelectListItem { Text = "Yes", Value = "true"} },
-                                    new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
+                                                 new { id = "drp_IsActive", @class = "select-css form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.Isinstaavailable, "", new { @class = "text-danger" })
                                     </div>
 
@@ -528,10 +528,10 @@
 
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
+                                                                         viewBox="0 0 24 24">
                                                                         <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                     </svg>
                                                                     <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
@@ -576,10 +576,10 @@
                                                                     @Html.CheckBoxFor((x => x.InterviewerEducationDetails[i].AnyGap), new { @class = "mdc-checkbox__native-control" })
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -713,10 +713,10 @@
                                                                 @Html.CheckBox(("InterviewerProjectsDetails[0].IsPrimarySkillUsed"), new { @class = "mdc-checkbox__native-control" })
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
+                                                                         viewBox="0 0 24 24">
                                                                         <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                     </svg>
                                                                     <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
@@ -732,10 +732,10 @@
                                                                 @Html.CheckBox(("InterviewerProjectsDetails[0].IsCommercialProject"), new { @class = "mdc-checkbox__native-control" })
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
+                                                                         viewBox="0 0 24 24">
                                                                         <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                     </svg>
                                                                     <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
@@ -766,10 +766,10 @@
                                                                     @*<label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed)">Is Primary Skill Used</label>*@
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -785,10 +785,10 @@
                                                                     @*<label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject)">Is Commercial Project</label>*@
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -851,10 +851,10 @@
                                                                 @Html.CheckBox(("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays"), new { @class = "mdc-checkbox__native-control" })
                                                                 <div class="mdc-checkbox__background">
                                                                     <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
+                                                                         viewBox="0 0 24 24">
                                                                         <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                              fill="none"
+                                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                     </svg>
                                                                     <div class="mdc-checkbox__mixedmark"></div>
                                                                 </div>
@@ -884,10 +884,10 @@
                                                                     @Html.CheckBoxFor((x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays), new { @class = "mdc-checkbox__native-control" })
                                                                     <div class="mdc-checkbox__background">
                                                                         <svg class="mdc-checkbox__checkmark"
-                                                                 viewBox="0 0 24 24">
+                                                                             viewBox="0 0 24 24">
                                                                             <path class="mdc-checkbox__checkmark-path"
-                                                                      fill="none"
-                                                                      d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                  fill="none"
+                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
                                                                         </svg>
                                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                                     </div>
@@ -923,31 +923,31 @@
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountName, null, new { @class = "form-control text-box single-line", @readonly="readonly" })
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountName, null, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountNumber, null, new { @class = "form-control text-box single-line", @type = "number",@readonly="readonly"})
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.AccountNumber, null, new { @class = "form-control text-box single-line", @type = "number", @readonly = "readonly" })
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.IFSCCode, null, new { @class = "form-control text-box single-line",@readonly="readonly"})
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.IFSCCode, null, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.UPIId, null, new { @class = "form-control text-box single-line",@readonly="readonly"})
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.UPIId, null, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
-                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line",@readonly="readonly"})
+                                        @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                     </div>
                                 </div>
                             </div>
@@ -984,540 +984,540 @@
 
 </div>
 
-    <script>
-        //====== Age CalculationFunctiopn======//
+<script>
+    //====== Age CalculationFunctiopn======//
 
-        $(document).ready(function () {
-            $("#TagArray").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            //$("#AssessmentGroupArray").multiselect({
-            //    includeSelectAllOption: true,
-            //    selectedClass: 'active1',
-            //    buttonWidth: '100%',
-            //    maxHeight: 200
-            //});
+    $(document).ready(function () {
+        $("#TagArray").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200
+        });
+        //$("#AssessmentGroupArray").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '100%',
+        //    maxHeight: 200
+        //});
 
+        var BirthDate = $("#DOB").val();
+        var dob = new Date(BirthDate);
+        var today = new Date();
+        var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
+        document.getElementById("txt_Age").value = age.toString();
+        $("#DOB").change(function () {
             var BirthDate = $("#DOB").val();
             var dob = new Date(BirthDate);
             var today = new Date();
             var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
             document.getElementById("txt_Age").value = age.toString();
-            $("#DOB").change(function () {
-                var BirthDate = $("#DOB").val();
-                var dob = new Date(BirthDate);
-                var today = new Date();
-                var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
-                document.getElementById("txt_Age").value = age.toString();
-            });
-            $("#txt_EmailId").change(function () {
-                $.ajax({
-                    url: '/Interviewer/EmailIdVilidation',
-                    type: 'POST',
-                    data: { 'EmailId': $("#txt_EmailId").val().trim(), 'UserId': $("#hdn_UserId").val() },
-                    success: function (data) {
-                        if (data != "Not") {
-                            $("#err_txt_EmailId").text(data);
-                        }
+        });
+        $("#txt_EmailId").change(function () {
+            $.ajax({
+                url: '/Interviewer/EmailIdVilidation',
+                type: 'POST',
+                data: { 'EmailId': $("#txt_EmailId").val().trim(), 'UserId': $("#hdn_UserId").val() },
+                success: function (data) {
+                    if (data != "Not") {
+                        $("#err_txt_EmailId").text(data);
                     }
-                });
+                }
             });
         });
-    </script>
-    <script>
+    });
+</script>
+<script>
 
-        // ========== Add Row Methods  =========================================================//
+    // ========== Add Row Methods  =========================================================//
 
-        // Skills
+    // Skills
 
-        function addRowSkillDetails() {
+    function addRowSkillDetails() {
 
-            var table = document.getElementById("skillTable");
-            var rowCount = table.rows.length;
-            if (rowCount == 15) {
-                alert("Cannot add more than 14 Skills");
-                return;
+        var table = document.getElementById("skillTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 15) {
+            alert("Cannot add more than 14 Skills");
+            return;
+        }
+
+        var $ttc = $("#skillTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#skillTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#skillTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+    // For Certificate
+
+    function addRowCertificateDetails() {
+
+        var $ttc = $("#certificateTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#certificateTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#certificateTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+    // For Education
+    function addRowEducationDetails() {
+
+        var table = document.getElementById("educationTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 3) {
+            alert("Cannot add more than 2 rows");
+            return;
+        }
+
+        var $ttc = $("#educationTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#educationTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#educationTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+    // For Project
+    function addProjectTableRow() {
+        var table = document.getElementById("projectTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 4) {
+            alert("Cannot add more than 3 Pojects");
+            return;
+        }
+        var $ttc = $("#projectTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#projectTable tr").length - 1;
+
+        $tr.find("input,select,hidden, textarea").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        //$tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+        $tr.find("textarea").val("");
+
+        $tr.find("a").val("");
+        // add cloned row as last row
+        $("#projectTable").find("tbody tr:last").after($tr);
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+    // For Availability
+    function addAvailabilityDetails() {
+        var table = document.getElementById("availabilityDetailsTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 13) {
+            alert("Cannot add more than 12 rows");
+            return;
+        }
+        var $ttc = $("#availabilityDetailsTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#availabilityDetailsTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#availabilityDetailsTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+    //=========================== End of Add rows functions ====================//
+
+    //===========================Begin of delete rows functions ====================//
+
+    function deleteRowSkillDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+            document.getElementById("btnUpload").disabled = false;
+
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+
+                    var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
+                    elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                    elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
+
+                    var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
+                    elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                    elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
+
+                }
+
             }
 
-            var $ttc = $("#skillTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#skillTable tr").length - 1;
+        }
+    }
 
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
+    // for certficate and Project Lists
+    function deleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
 
-
-
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
-
-            $tr.find("a").val("");
-
-            // add cloned row as last row
-            $("#skillTable").find("tbody tr:last").after($tr);
-
-            // Find the affected form
-            var $form = $tr.closest("FORM");
-
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
-
-            // Check document for changes
-            //$.validator.unobtrusive.parse(document);
-
+            alert('Must have atleast one Row');
+            return false;
         }
 
-        // For Certificate
+        else {
+            document.getElementById("btnUpload").disabled = false;
 
-        function addRowCertificateDetails() {
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
 
-            var $ttc = $("#certificateTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#certificateTable tr").length - 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
 
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
 
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
 
-            $tr.find("a").val("");
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
 
-            // add cloned row as last row
-            $("#certificateTable").find("tbody tr:last").after($tr);
+                }
 
-            // Find the affected form
-            var $form = $tr.closest("FORM");
-
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
-
-            // Check document for changes
-            //$.validator.unobtrusive.parse(document);
-
-        }
-
-        // For Education
-        function addRowEducationDetails() {
-
-            var table = document.getElementById("educationTable");
-            var rowCount = table.rows.length;
-            if (rowCount == 3) {
-                alert("Cannot add more than 2 rows");
-                return;
             }
 
-            var $ttc = $("#educationTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#educationTable tr").length - 1;
+        }
+    }
+    function deleteRowEducationDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
 
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
-
-
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
-
-            $tr.find("a").val("");
-
-            // add cloned row as last row
-            $("#educationTable").find("tbody tr:last").after($tr);
-
-            // Find the affected form
-            var $form = $tr.closest("FORM");
-
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
-
-            // Check document for changes
-            //$.validator.unobtrusive.parse(document);
-
+            alert('Must have atleast one Row');
+            return false;
         }
 
-        // For Project
-        function addProjectTableRow() {
-            var table = document.getElementById("projectTable");
-            var rowCount = table.rows.length;
-            if (rowCount == 4) {
-                alert("Cannot add more than 3 Pojects");
-                return;
+        else {
+            document.getElementById("btnUpload").disabled = false;
+
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
             }
-            var $ttc = $("#projectTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#projectTable tr").length - 1;
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
 
-            $tr.find("input,select,hidden, textarea").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
 
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
 
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
 
-            // reset fields in the new row
-            $tr.find("select").val("");
-            //$tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
-            $tr.find("textarea").val("");
+                    var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
+                    elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                    elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
 
-            $tr.find("a").val("");
-            // add cloned row as last row
-            $("#projectTable").find("tbody tr:last").after($tr);
-            // Find the affected form
-            var $form = $tr.closest("FORM");
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
-            // Check document for changes
-            //$.validator.unobtrusive.parse(document);
+                    var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
+                    elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                    elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
 
-        }
+                    var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
+                    elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
+                    elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
 
-        // For Availability
-        function addAvailabilityDetails() {
-            var table = document.getElementById("availabilityDetailsTable");
-            var rowCount = table.rows.length;
-            if (rowCount == 13) {
-                alert("Cannot add more than 12 rows");
-                return;
+                }
+
             }
-            var $ttc = $("#availabilityDetailsTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#availabilityDetailsTable tr").length - 1;
-
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
-
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
-
-            $tr.find("a").val("");
-
-            // add cloned row as last row
-            $("#availabilityDetailsTable").find("tbody tr:last").after($tr);
-
-            // Find the affected form
-            var $form = $tr.closest("FORM");
-
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
-
-            // Check document for changes
-            //$.validator.unobtrusive.parse(document);
 
         }
-        //=========================== End of Add rows functions ====================//
+    }
+    function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
 
-        //===========================Begin of delete rows functions ====================//
+            alert('Must have atleast one Row');
+            return false;
+        }
 
-        function deleteRowSkillDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix) {
-            if ($(element).parents('tbody').find('tr').length === 1) {
+        else {
+            document.getElementById("btnUpload").disabled = false;
 
-                alert('Must have atleast one Row');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+
+                }
+
+            }
+
+        }
+    }
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("ResumeLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("File").value = '';
+
+        }
+
+    }
+    function Checkvalidation() {
+        var techSkillItems = $('[id^="InterviewerSkill"]');
+        //var oldVal = $("#QuestionsCollection_0__Timing").val();
+        for (i = 0; i < techSkillItems.length; i++) {
+            //var temp = $("#QuestionsCollection_" + i + "__Timing").val();
+            var temp = $("#" + techSkillItems[i].id).val();
+            if (temp == null || temp == '') {
+                document.getElementById('SkillCollection_Error').innerHTML = "Please fill all the details under the Interviewer Skills Details section.";
+                $("#" + techSkillItems[i].id).focus();
                 return false;
             }
 
-            else {
-                document.getElementById("btnUpload").disabled = false;
-
-                //var currentvalue = $(this).attr('value');
-                var closestRow = $(element).closest('tr');
-                var currentIndex = closestRow[0].sectionRowIndex;
-                var totalRows = $(element).parents('tbody').find('tr').length;
-                var maxIndex = totalRows - 1;
-                if (currentIndex == maxIndex) {
-                    $(element).closest('tr').remove();
-                }
-                //ClientCollection_1__ClientRoleId
-                else {
-                    $(element).closest('tr').remove();
-                    var startIndex = currentIndex + 1;
-                    var endIndex = maxIndex + 1;
-                    for (i = startIndex; i < endIndex; i++) {
-                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-
-                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
-
-                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
-
-                        var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
-                        elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
-                        elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
-
-                        var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
-                        elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
-                        elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
-
-                    }
-
-                }
-
-            }
         }
-
-        // for certficate and Project Lists
-        function deleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
-            if ($(element).parents('tbody').find('tr').length === 1) {
-
-                alert('Must have atleast one Row');
-                return false;
-            }
-
-            else {
-                document.getElementById("btnUpload").disabled = false;
-
-                //var currentvalue = $(this).attr('value');
-                var closestRow = $(element).closest('tr');
-                var currentIndex = closestRow[0].sectionRowIndex;
-                var totalRows = $(element).parents('tbody').find('tr').length;
-                var maxIndex = totalRows - 1;
-                if (currentIndex == maxIndex) {
-                    $(element).closest('tr').remove();
-                }
-                //ClientCollection_1__ClientRoleId
-                else {
-                    $(element).closest('tr').remove();
-                    var startIndex = currentIndex + 1;
-
-                    var endIndex = maxIndex + 1;
-                    for (i = startIndex; i < endIndex; i++) {
-                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-
-                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
-
-                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
-
-                    }
-
-                }
-
-            }
-        }
-        function deleteRowEducationDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
-            if ($(element).parents('tbody').find('tr').length === 1) {
-
-                alert('Must have atleast one Row');
-                return false;
-            }
-
-            else {
-                document.getElementById("btnUpload").disabled = false;
-
-                var closestRow = $(element).closest('tr');
-                var currentIndex = closestRow[0].sectionRowIndex;
-                var totalRows = $(element).parents('tbody').find('tr').length;
-                var maxIndex = totalRows - 1;
-                if (currentIndex == maxIndex) {
-                    $(element).closest('tr').remove();
-                }
-                //ClientCollection_1__ClientRoleId
-                else {
-                    $(element).closest('tr').remove();
-                    var startIndex = currentIndex + 1;
-                    var endIndex = maxIndex + 1;
-                    for (i = startIndex; i < endIndex; i++) {
-                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-
-                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
-
-                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
-                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
-                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
-
-                        var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
-                        elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
-                        elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
-
-                        var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
-                        elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
-                        elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
-
-                        var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
-                        elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
-                        elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
-
-                    }
-
-                }
-
-            }
-        }
-        function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
-            if ($(element).parents('tbody').find('tr').length === 1) {
-
-                alert('Must have atleast one Row');
-                return false;
-            }
-
-            else {
-                document.getElementById("btnUpload").disabled = false;
-
-                var closestRow = $(element).closest('tr');
-                var currentIndex = closestRow[0].sectionRowIndex;
-                var totalRows = $(element).parents('tbody').find('tr').length;
-                var maxIndex = totalRows - 1;
-                if (currentIndex == maxIndex) {
-                    $(element).closest('tr').remove();
-                }
-                //ClientCollection_1__ClientRoleId
-                else {
-                    $(element).closest('tr').remove();
-                    var startIndex = currentIndex + 1;
-                    var endIndex = maxIndex + 1;
-                    for (i = startIndex; i < endIndex; i++) {
-                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
-                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
-                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-
-                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
-
-                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
-                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
-                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
-
-
-                    }
-
-                }
-
-            }
-        }
-        function RadioChanged(val) {
-            if (val == 'Upload') {
-                document.getElementById("uploadDiv").style.display = "block";
-                document.getElementById("linkDiv").style.display = "none";
-                document.getElementById("ResumeLink").value = '';
-
-            }
-            else {
-                document.getElementById("uploadDiv").style.display = "none";
-                document.getElementById("linkDiv").style.display = "block";
-                document.getElementById("File").value = '';
-
-            }
-
-        }
-        function Checkvalidation() {
-            var techSkillItems = $('[id^="InterviewerSkill"]');
-            //var oldVal = $("#QuestionsCollection_0__Timing").val();
-            for (i = 0; i < techSkillItems.length; i++) {
-                //var temp = $("#QuestionsCollection_" + i + "__Timing").val();
-                var temp = $("#" + techSkillItems[i].id).val();
-                if (temp == null || temp == '') {
-                    document.getElementById('SkillCollection_Error').innerHTML = "Please fill all the details under the Interviewer Skills Details section.";
-                    $("#" + techSkillItems[i].id).focus();
-                    return false;
-                }
-
-            }
-            document.getElementById('SkillCollection_Error').innerHTML = "";
-            return true;
-            //if ($(".multiselect-selected-text").text() != "None selected" || $(".multiselect-selected-text").text() != "") {
-            //    return true;
-            //}
-            //return false;
-        }
-                //function CheckvalidationforProfile() {
-                //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
-                //    //    $("#err_assessmentgroup").text("");
-                //    //    return true;
-                //    //}
-                //    //$(".multiselect-selected-text").focus();
-                //    //$("#err_assessmentgroup").text("Select Atleast one Assessment group.");
-                //    //return false;
-                //    if ($(".badge").length > 0) {
-                //        $("#err_assessmentgroup").text("");
-                //        return true;
-                //    }
-                //    $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
-                //    return false;
-                //}
-    </script>
+        document.getElementById('SkillCollection_Error').innerHTML = "";
+        return true;
+        //if ($(".multiselect-selected-text").text() != "None selected" || $(".multiselect-selected-text").text() != "") {
+        //    return true;
+        //}
+        //return false;
+    }
+    //function CheckvalidationforProfile() {
+    //    //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
+    //    //    $("#err_assessmentgroup").text("");
+    //    //    return true;
+    //    //}
+    //    //$(".multiselect-selected-text").focus();
+    //    //$("#err_assessmentgroup").text("Select Atleast one Assessment group.");
+    //    //return false;
+    //    if ($(".badge").length > 0) {
+    //        $("#err_assessmentgroup").text("");
+    //        return true;
+    //    }
+    //    $("#err_assessmentgroup").text("Select Atleast one Assessment group.");
+    //    return false;
+    //}
+</script>
 
