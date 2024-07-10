@@ -798,7 +798,7 @@
 
                                                         <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
                                                             <div class="mdc-radio mdc-radio--touch">
-                                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                                <input class="mdc-radio__native-control" type="radio" id="CandidateSoultion" name="CandidateSoultion" value="Upload" onclick="RadioChanged(this.value)">
                                                                 <div class="mdc-radio__background">
                                                                     <div class="mdc-radio__outer-circle"></div>
                                                                     <div class="mdc-radio__inner-circle"></div>
@@ -813,7 +813,7 @@
 
                                                         <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
                                                             <div class="mdc-radio mdc-radio--touch">
-                                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                                <input class="mdc-radio__native-control" type="radio" checked="checked" id="CandidateSoultion" name="CandidateSoultion" value="Link" onclick="RadioChanged(this.value)">
                                                                 <div class="mdc-radio__background">
                                                                     <div class="mdc-radio__outer-circle"></div>
                                                                     <div class="mdc-radio__inner-circle"></div>
@@ -823,10 +823,10 @@
                                                         </div>
                                                     </div>
                                                     <div style="clear:both;border-top:1px #ccc solid">
-                                                        <div class="int-form-group" style="display:none" id="linkDiv">
-                                                            @Html.LabelFor(model => model.CandidateLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.CandidateLink, new { htmlAttributes = new { @class = "form-control text-box single-line",@style="margin-top:40px!important" } })
-                                                            @Html.ValidationMessageFor(model => model.CandidateLink, "", new { @class = "text-danger" })
+                                                        <div class="int-form-group" id="linkDiv">
+                                                            @Html.LabelFor(model => model.CodeSnippet, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                            @Html.EditorFor(model => model.CodeSnippet, new { htmlAttributes = new { @class = "form-control text-box single-line",@style="margin-top:40px!important" } })
+                                                            @Html.ValidationMessageFor(model => model.CodeSnippet, "", new { @class = "text-danger" })
 
                                                         </div>
                                                         <div class="int-form-group" style="display:none" id="uploadDiv">
@@ -1208,7 +1208,7 @@
 
                                                                 <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
                                                                     <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChangedTwo(this.value)">
+                                                                        <input class="mdc-radio__native-control" type="radio" id="CandidateSoultionTwo" name="CandidateSoultionTwo" value="Upload" onclick="RadioChangedTwo(this.value)">
                                                                         <div class="mdc-radio__background">
                                                                             <div class="mdc-radio__outer-circle"></div>
                                                                             <div class="mdc-radio__inner-circle"></div>
@@ -1223,7 +1223,7 @@
 
                                                                 <div class="mdc-touch-target-wrapper" style="top:-15px;position: relative; margin: 0px 10px;">
                                                                     <div class="mdc-radio mdc-radio--touch">
-                                                                        <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChangedTwo(this.value)">
+                                                                        <input class="mdc-radio__native-control" type="radio" checked="checked" id="CandidateSoultionTwo" name="CandidateSoultionTwo" value="Link" onclick="RadioChangedTwo(this.value)">
                                                                         <div class="mdc-radio__background">
                                                                             <div class="mdc-radio__outer-circle"></div>
                                                                             <div class="mdc-radio__inner-circle"></div>
@@ -1233,10 +1233,10 @@
                                                                 </div>
                                                             </div>
                                                             <div style="clear:both;border-top:1px #ccc solid">
-                                                                <div class="int-form-group" style="display:none" id="linkDivTwo">
-                                                                    @Html.LabelFor(model => model.CandidateLinkTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                                    @Html.EditorFor(model => model.CandidateLinkTwo, new { htmlAttributes = new { @class = "form-control text-box single-line",@style="margin-top:40px!important" } })
-                                                                    @Html.ValidationMessageFor(model => model.CandidateLinkTwo, "", new { @class = "text-danger" })
+                                                                <div class="int-form-group" id="linkDivTwo">
+                                                                    @Html.LabelFor(model => model.CodeSnippetTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                                    @Html.EditorFor(model => model.CodeSnippetTwo, new { htmlAttributes = new { @class = "form-control text-box single-line",@style="margin-top:40px!important" } })
+                                                                    @Html.ValidationMessageFor(model => model.CodeSnippetTwo, "", new { @class = "text-danger" })
 
                                                                 </div>
                                                                 <div class="int-form-group" style="display:none" id="uploadDivTwo">

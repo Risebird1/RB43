@@ -387,7 +387,7 @@ namespace Risebird.Entities.ViewModel
         public IFormFile CandidateFile { get; set; }
 
         [Display(Name = "Candidate Solution URL")]
-        public string CandidateLinkTwo { get; set; }
+        public string CodeSnippetTwo { get; set; }
         [Display(Name = "Candidate Solution File")]
         public IFormFile CandidateFileTwo { get; set; }
 
