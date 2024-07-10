@@ -370,6 +370,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Rate Candidate's Communication Skills(out of 10)")]
         [Required(ErrorMessage = "This field is required.")]
         public int CommunicationalProficiency { get; set; }
+        [Display(Name = "Candidate Solution URL")]
         public string CodeSnippet { get; set; }
         public bool IsQCDone { get; set; }
         public int SkillSetsevaluate { get; set; }
@@ -381,7 +382,12 @@ namespace Risebird.Entities.ViewModel
         public IList<TechSkillReport> TechSkillTwoReportCollection { get; set; }
         public string JDTitleTwo { get; set; }
         public int? Heuristicsscore { get; set; }
-        
+        [Display(Name = "Candidate Solution File")]
+        public IFormFile CandidateFile { get; set; }
+        [Display(Name = "Candidate Solution URL")]
+        public string CodeSnippetTwo { get; set; }
+        [Display(Name = "Candidate Solution File")]
+        public IFormFile CandidateFileTwo { get; set; }
 
     }
     public class RBInterviewDetails

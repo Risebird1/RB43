@@ -1,4 +1,6 @@
-﻿using Microsoft.ApplicationInsights.Extensibility;
+﻿using DinkToPdf.Contracts;
+using DinkToPdf;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -91,6 +93,7 @@ builder.Services.AddHsts(options =>
 builder.Services.AddSingleton<HttpClientHelper>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 builder.Services.AddScoped<INotificationHelper, NotificationHelper>();
 builder.Services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
 builder.Services.AddScoped<IUserService, UserService>();

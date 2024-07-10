@@ -1349,6 +1349,16 @@ namespace Risebird.Repository
                         reportDetails.InterviewerCommentTwo = "";
                     }
                     parameters.Add("@InterviewerCommentTwo", reportDetails.InterviewerCommentTwo);
+                    if (string.IsNullOrWhiteSpace(reportDetails.CodeSnippet))
+                    {
+                        reportDetails.CodeSnippet = "";
+                    }
+                    if (string.IsNullOrWhiteSpace(reportDetails.CodeSnippetTwo))
+                    {
+                        reportDetails.CodeSnippetTwo = "";
+                    }
+                    parameters.Add("@CodeSnippet", reportDetails.CodeSnippet);
+                    parameters.Add("@CodeSnippetTwo", reportDetails.CodeSnippetTwo);
 
                     DynamicParameters parametersPoints = new DynamicParameters();
 

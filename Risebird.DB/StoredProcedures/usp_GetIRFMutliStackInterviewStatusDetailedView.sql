@@ -36,7 +36,7 @@ if(@type='Completed')
 begin    
  Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,   
 im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,  
-im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid  
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid,im.CodeSnippet,im.CodeSnippetTwo  
  From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id    
  join UserList ul on ul.id=tt.UserId  
  join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId  
@@ -54,7 +54,7 @@ else if(@type='Selected')
 begin  
  Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,   
 im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,  
-im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid  
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid,im.CodeSnippet,im.CodeSnippetTwo  
  From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id    
  join UserList ul on ul.id=tt.UserId  
  join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId  
@@ -72,7 +72,7 @@ else if(@type='Rejected')
 begin  
  Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,   
 im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,  
-im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid  
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid,im.CodeSnippet,im.CodeSnippetTwo  
  From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id    
  join UserList ul on ul.id=tt.UserId  
  join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId  
@@ -90,7 +90,7 @@ else if(@type='SelectedRejected')
 begin  
  Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,   
 im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,  
-im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid  
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid,im.CodeSnippet,im.CodeSnippetTwo  
  From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id    
  join UserList ul on ul.id=tt.UserId  
  join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId  
@@ -108,7 +108,7 @@ else if(@type='RejectedSelected')
 begin  
  Select distinct cast(im.confirmationStatus as int) confirmationStatus, ic.MeetingStatus, ic.InterviewStatus,   
 im.interviewDate,ice.InterviewStatus as InterviewStatusTwo,  
-im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid  
+im.candidateEmail,im.candidateName,IRF.JDTiltle,IRF.JDTitleTwo,ip.NickName as InterviewerCodedName,techone.TechScoreone,techtwo.TechScoretwo,im.ClientHrContact,im.id,IRF.id as Irfintid,im.CodeSnippet,im.CodeSnippetTwo  
  From IRF join @TemporaryCandidateTableVariable tt on tt.IRFId=IRF.id    
  join UserList ul on ul.id=tt.UserId  
  join InterviewMeetings im on im.IRFId=IRF.IRFId and im.candidateEmail=ul.EmailId  
