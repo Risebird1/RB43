@@ -16,6 +16,8 @@
                     <th>Interview Status(Primary)</th>
                     <th>Tech Score(Secondary)</th>
                     <th>Interview Status(Secondary)</th>
+                    <th>Candidate Solution(Primary)</th>
+                    <th>Candidate Solution(Secondary)</th>
                     <th>Combined Status</th>
                 </tr>
             </thead>
@@ -105,8 +107,18 @@
 
                                 </td>
                             }
-                            <td><a target="_blank" href="@item.CodeSnippet">Solution</a></td>
-                            <td><a target="_blank" href="@item.CodeSnippetTwo">Solution</a></td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.CodeSnippet))
+                                {
+                                    <a target="_blank" href="@item.CodeSnippet">Solution</a>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.CodeSnippetTwo))
+                                {
+                                    <a target="_blank" href="@item.CodeSnippetTwo">Solution</a>
+                                }
+                            </td>
                             <td>
                                 <p>
                                     @item.JDTiltle :
