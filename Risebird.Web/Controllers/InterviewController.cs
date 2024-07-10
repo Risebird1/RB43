@@ -86,7 +86,7 @@ namespace Risebird.Web.Controllers
             IUserRepository userRepository, IUserService userService, IWhatsAppHelper whatsAppHelper, ICandidateService candidateService,
             IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IZoomHelper zoomHelper, IInterviewerService interviewerService,
-            IInterviewSchedulerRepository interviewSchedulerRepository, 
+            IInterviewSchedulerRepository interviewSchedulerRepository,
             IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
             IConverter converter, IAssistantServiceHelper assistantServiceHelper)
@@ -3277,6 +3277,44 @@ namespace Risebird.Web.Controllers
                             //    System.IO.File.Delete(path);
                             //    System.IO.File.Delete(outputFileName);
                             //}
+                        }
+                        if (model.CandidateFile != null)
+                        {
+                            Guid _guid = Guid.NewGuid();
+                            string outputFileName = model.CandidateFile.FileName.Replace(" ", "_");
+                            outputFileName = outputFileName + _guid.ToString();
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CandidateFile);
+                            FileInfo fi = new FileInfo(outputFileName);
+                            if (fi.Extension.ToLower() == ".txt")
+                            {
+                                await _azureStorageHelper.InsertResumeBlob(outputFileName, "codesnippet", model.CandidateFile, fi.Extension.ToLower());
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("codesnippet");
+                                var blob = containerRef.GetBlockBlobReference(outputFileName);
+                                var uploadedFileURL = blob.Uri.ToString();
+                                if (!string.IsNullOrEmpty(uploadedFileURL))
+                                {
+                                    model.CodeSnippet = uploadedFileURL;
+                                }
+                            }
+                        }
+                        if (model.CandidateFileTwo != null)
+                        {
+                            Guid _guid = Guid.NewGuid();
+                            string outputFileName = model.CandidateFileTwo.FileName.Replace(" ", "_");
+                            outputFileName = outputFileName + _guid.ToString();
+                            var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.CandidateFileTwo);
+                            FileInfo fi = new FileInfo(outputFileName);
+                            if (fi.Extension.ToLower() == ".txt")
+                            {
+                                await _azureStorageHelper.InsertResumeBlob(outputFileName, "codesnippet", model.CandidateFileTwo, fi.Extension.ToLower());
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("codesnippet");
+                                var blob = containerRef.GetBlockBlobReference(outputFileName);
+                                var uploadedFileURL = blob.Uri.ToString();
+                                if (!string.IsNullOrEmpty(uploadedFileURL))
+                                {
+                                    model.CodeSnippetTwo = uploadedFileURL;
+                                }
+                            }
                         }
                         model.InterviewerComment = System.Web.HttpUtility.HtmlEncode(model.InterviewerComment);
                         await ReportSkillSetandCombine(model);
@@ -8723,7 +8761,7 @@ namespace Risebird.Web.Controllers
                 var email = HttpContext.Session.GetString("email");
                 email = email?.Replace("\"", "");
                 ViewBag.EmailId = email;
-               // bool isAdminHR = false;
+                // bool isAdminHR = false;
                 bool isInterviewer = false;
                 ViewBag.actiontype = actiontype;
                 ViewBag.IRFID = irfId;
@@ -8809,7 +8847,7 @@ namespace Risebird.Web.Controllers
 
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
-                if(isOpenAIQC.HasValue && isOpenAIQC.Value)
+                if (isOpenAIQC.HasValue && isOpenAIQC.Value)
                 {
                     //write code to return QC results
                     return RedirectToAction("PerformQualityCheck", model);
@@ -8860,7 +8898,7 @@ namespace Risebird.Web.Controllers
                         var pdfContent = GeneratePdf(htmlContent);
                         string fileName = "AIClientReport_" + model.id.ToString() + ".pdf";
 
-                        
+
 
                         // Upload PDF to Azure Blob Storage
                         string uploadedFileURL = string.Empty;

@@ -87,6 +87,7 @@ SELECT [InterviewMeetings].id as imid
   ,InterviewComments.CommunicationalProficiency
   ,Case when IRF.Clientid=177 then ISNull(psd.isQcDone,1) else 1 end IsQC
   ,[InterviewMeetings].CodeSnippet
+  ,[InterviewMeetings].CodeSnippetTwo
 FROM [dbo].[InterviewMeetings]    
 inner join     
 IRF on [InterviewMeetings].IRFId = IRF.IRFId    

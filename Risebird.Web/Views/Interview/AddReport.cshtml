@@ -505,7 +505,6 @@
 
                                             </div>
                                             <!--report end--->
-                                          
                                             <!--tech skill start-->
                                             <div class="card" style="margin-bottom:10px;">
 
@@ -825,14 +824,14 @@
                                                     <div style="clear:both;border-top:1px #ccc solid">
                                                         <div class="int-form-group" id="linkDiv">
                                                             @Html.LabelFor(model => model.CodeSnippet, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.CodeSnippet, new { htmlAttributes = new { @class = "form-control text-box single-line",@style="margin-top:40px!important" } })
+                                                            @Html.EditorFor(model => model.CodeSnippet, new { htmlAttributes = new { @class = "form-control text-box single-line", @style = "margin-top:40px!important" } })
                                                             @Html.ValidationMessageFor(model => model.CodeSnippet, "", new { @class = "text-danger" })
 
                                                         </div>
                                                         <div class="int-form-group" style="display:none" id="uploadDiv">
                                                             @Html.LabelFor(model => model.CandidateFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                            @Html.TextBoxFor(model => model.CandidateFile, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf", @placeholder = "Only files with .pdf, .doc and .docx extentsions accepted",@style="margin-top:40px!important" })
+                                                            @Html.TextBoxFor(model => model.CandidateFile, new { type = "file", @class = "choose-file", @accept = ".txt", @placeholder = "Only files with .txt extentsions accepted", @style = "margin-top:40px!important" })
 
                                                         </div>
                                                     </div>
@@ -983,7 +982,7 @@
                                             <!--tech score start-->
 
 
-                                          
+
                                             <hr />
                                             <!--Other skill set start-->
                                             @if (Model.SkillSetsevaluate > 1)
@@ -1235,14 +1234,14 @@
                                                             <div style="clear:both;border-top:1px #ccc solid">
                                                                 <div class="int-form-group" id="linkDivTwo">
                                                                     @Html.LabelFor(model => model.CodeSnippetTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                                    @Html.EditorFor(model => model.CodeSnippetTwo, new { htmlAttributes = new { @class = "form-control text-box single-line",@style="margin-top:40px!important" } })
+                                                                    @Html.EditorFor(model => model.CodeSnippetTwo, new { htmlAttributes = new { @class = "form-control text-box single-line", @style = "margin-top:40px!important" } })
                                                                     @Html.ValidationMessageFor(model => model.CodeSnippetTwo, "", new { @class = "text-danger" })
 
                                                                 </div>
                                                                 <div class="int-form-group" style="display:none" id="uploadDivTwo">
                                                                     @Html.LabelFor(model => model.CandidateFileTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                                    @Html.TextBoxFor(model => model.CandidateFileTwo, new { type = "file", @class = "choose-file", @accept = ".doc, .docx, .pdf", @placeholder = "Only files with .pdf, .doc and .docx extentsions accepted",@style="margin-top:40px!important" })
+                                                                    @Html.TextBoxFor(model => model.CandidateFileTwo, new { type = "file", @class = "choose-file", @accept = ".txt", @placeholder = "Only files with .txt extentsions accepted", @style = "margin-top:40px!important" })
 
                                                                 </div>
                                                             </div>
@@ -1752,7 +1751,7 @@
         }
     }
 
-       function RadioChangedTwo(val) {
+    function RadioChangedTwo(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDivTwo").style.display = "block";
             document.getElementById("linkDivTwo").style.display = "none";
@@ -2701,7 +2700,7 @@
 
     <!--other skill-- >
 
-                ; (function () {
+                    ; (function () {
 
         "use strict";
 
