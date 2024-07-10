@@ -1251,10 +1251,10 @@ namespace Risebird.Business
                 reportModel.CommunicationalProficiency = interviewDetails.CommunicationalProficiency;
                 reportModel.IsQCDone = interviewDetails.IsQC;
                 reportModel.CodeSnippet = interviewDetails.CodeSnippet;
+                reportModel.CodeSnippetTwo = interviewDetails.CodeSnippetTwo;
                 reportModel.SkillSetsevaluate = irfDetails.SkillSetsevaluate;
                 reportModel.JDTitleTwo = interviewDetails.JDTitleTwo;
                 reportModel.Heuristicsscore = irfDetails.Heuristicsscore;
-                
                 return reportModel;
             }
             catch (Exception e)
@@ -3905,7 +3905,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = await _meetingRespository.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt,emailId, IRFId);
+                var result = await _meetingRespository.SaveSurchargeInterviewDetailsById(interviewid, surchargecomment, surchargeamt, emailId, IRFId);
                 if (result)
                 {
                     var activityTrackerModel = new ActivityTrackerVM();
