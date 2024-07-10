@@ -31,6 +31,8 @@
                     <th>Interview Status(Primary)</th>
                     <th>Tech Score(Secondary)</th>
                     <th>Interview Status(Secondary)</th>
+                    <th>Candidate Solution(Primary)</th>
+                    <th>Candidate Solution(Secondary)</th>
                     <th>Combined Status</th>
 
                 </tr>
@@ -47,28 +49,30 @@
                             <td>@item.ClientHrContact</td>
                             <td>@item.InterviewerCodedName</td>
                             <td><a target="_blank" href="@item.ReportLink">Report</a></td>
-                             <td><span class="count">@item.TechScoreone</span></td>
+                            <td><span class="count">@item.TechScoreone</span></td>
                             <td>
-                                @if(item.InterviewStatus == "Marginally Selected"){
+                                @if (item.InterviewStatus == "Marginally Selected")
+                                {
                                     <span style="color:green"> @item.InterviewStatus</span>
                                 }
                                 else if (item.InterviewStatus == "Strongly Selected")
                                 {
-                                      <span style="color:green"> @item.InterviewStatus</span>
+                                    <span style="color:green"> @item.InterviewStatus</span>
                                 }
                                 else if (item.InterviewStatus == "Marginally Rejected")
                                 {
-                                     <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                    <span style="color:#bd1717"> @item.InterviewStatus</span>
                                 }
                                 else if (item.InterviewStatus == "Proxy")
                                 {
-                                                 <span style="color:#deb61b"> @item.InterviewStatus</span>
+                                    <span style="color:#deb61b"> @item.InterviewStatus</span>
                                 }
-                                else{
-                                       <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                else
+                                {
+                                    <span style="color:#bd1717"> @item.InterviewStatus</span>
                                 }
-                                
-                               </td>
+
+                            </td>
                             <td><span class="count">@item.TechScoretwo</span></td>
                             @if (item.InterviewStatusTwoDesc == "0")
                             {
@@ -77,82 +81,83 @@
                             else
                             {
                                 <td>
-                                    
+
                                     @if (item.InterviewStatusTwoDesc == "Marginally Selected")
                                     {
                                         <span style="color:green"> @item.InterviewStatusTwoDesc</span>
                                     }
                                     else if (item.InterviewStatus == "Strongly Selected")
                                     {
-                                      <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                        <span style="color:green"> @item.InterviewStatusTwoDesc</span>
                                     }
                                     else if (item.InterviewStatus == "Marginally Rejected")
                                     {
-                                      <span style="color:#bd1717"> @item.InterviewStatusTwoDesc</span>
+                                        <span style="color:#bd1717"> @item.InterviewStatusTwoDesc</span>
                                     }
                                     else if (item.InterviewStatus == "Proxy")
                                     {
-                                     <span style="color:#deb61b"> @item.InterviewStatusTwoDesc</span>
+                                        <span style="color:#deb61b"> @item.InterviewStatusTwoDesc</span>
                                     }
                                     else
                                     {
-                                    <span style="color:#bd1717">  @item.InterviewStatusTwoDesc</span>
+                                        <span style="color:#bd1717">  @item.InterviewStatusTwoDesc</span>
                                     }
-  
-                                   </td>
-                            }
-                            @{
-                                var jdtitle = item.JDTiltle + ": " + item.InterviewStatus + " /" + item.JDTitleTwo + ": ";
 
-                               
+                                </td>
                             }
+                            <td><a target="_blank" href="@item.CodeSnippet">Solution</a></td>
+                            <td><a target="_blank" href="@item.CodeSnippetTwo">Solution</a></td>
                             <td>
-                                <p>@item.JDTiltle : 
-                                    @if(item.InterviewStatus == "Marginally Selected"){
-                                    <span style="color:green"> @item.InterviewStatus</span>
-                                }
-                                else if (item.InterviewStatus == "Strongly Selected")
-                                {
-                                      <span style="color:green"> @item.InterviewStatus</span>
-                                }
-                                else if (item.InterviewStatus == "Marginally Rejected")
-                                {
-                                     <span style="color:#bd1717"> @item.InterviewStatus</span>
-                                }
-                                else if (item.InterviewStatus == "Proxy")
-                                {
-                                                 <span style="color:#deb61b"> @item.InterviewStatus</span>
-                                }
-                                else{
-                                       <span style="color:#bd1717"> @item.InterviewStatus</span>
-                                }</p>
+                                <p>
+                                    @item.JDTiltle :
+                                    @if (item.InterviewStatus == "Marginally Selected")
+                                    {
+                                        <span style="color:green"> @item.InterviewStatus</span>
+                                    }
+                                    else if (item.InterviewStatus == "Strongly Selected")
+                                    {
+                                        <span style="color:green"> @item.InterviewStatus</span>
+                                    }
+                                    else if (item.InterviewStatus == "Marginally Rejected")
+                                    {
+                                        <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                    }
+                                    else if (item.InterviewStatus == "Proxy")
+                                    {
+                                        <span style="color:#deb61b"> @item.InterviewStatus</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                    }
+                                </p>
                                 <p>
                                     @item.JDTitleTwo:
                                     @if (item.InterviewStatusTwoDesc != "0")
                                     {
                                         @if (item.InterviewStatusTwoDesc == "Marginally Selected")
                                         {
-                                                        <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                            <span style="color:green"> @item.InterviewStatusTwoDesc</span>
                                         }
                                         else if (item.InterviewStatus == "Strongly Selected")
                                         {
-                                                      <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                            <span style="color:green"> @item.InterviewStatusTwoDesc</span>
                                         }
                                         else if (item.InterviewStatus == "Marginally Rejected")
                                         {
-                                                      <span style="color:#bd1717"> @item.InterviewStatusTwoDesc</span>
+                                            <span style="color:#bd1717"> @item.InterviewStatusTwoDesc</span>
                                         }
                                         else if (item.InterviewStatus == "Proxy")
                                         {
-                                                     <span style="color:#deb61b"> @item.InterviewStatusTwoDesc</span>
+                                            <span style="color:#deb61b"> @item.InterviewStatusTwoDesc</span>
                                         }
                                         else
                                         {
-                                                    <span style="color:#bd1717">  @item.InterviewStatusTwoDesc</span>
+                                            <span style="color:#bd1717">  @item.InterviewStatusTwoDesc</span>
                                         }
                                     }
                                 </p>
-                              </td>
+                            </td>
 
                         </tr>
                     }
