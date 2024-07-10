@@ -1312,49 +1312,57 @@
     }
 </script>
 <script>
+    var clickverification = 0;
     function checkEmailidExist() {
         var interviewer = $("#txt_evEmailId").val().trim();
-        $.ajax({
-            url: '/Interviewer/GetInterviwerExists',
-            type: 'POST',
-            data: { 'interviewer': interviewer },
-            success: function (result) {
-                if (result) {
-                    swal.fire(result);
-                }
-                else {
-                    var mobilenumber = $("#txt_evmobile").val();
-                    var candidateEmailid = $("#txt_evEmailId").val();
-                    if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
-                        if (mobilenumber.trim().length == 10) {
-                            $.ajax({
-                                url: '/Aadhaar/EvVerification',
-                                type: 'POST',
-                                data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
-                                success: function (result) {
-                                    if (result.message == null) {
-                                        document.getElementById("divEVverification").style.display = "none";
-                                        document.getElementById("divEVverified").style.display = "block";
-                                        $("#txt_MobileNumber").val(result.mobileNumber);
-                                        $("#txt_EmailId").val(result.candidateEmail);
-                                        $("#CompanyName").val(result.companyName);
-                                        $("#isVerified").val(result.isVerified);
-                                        $("#IsEmployed").val(result.isemployed);
-                                        $("#DOB").val(result.dob);
-                                    } else {
-                                        swal.fire(result.message);
+        if (clickverification == 0) {
+            clickverification = 1;
+            $.ajax({
+                url: '/Interviewer/GetInterviwerExists',
+                type: 'POST',
+                data: { 'interviewer': interviewer },
+                success: function (result) {
+                    if (result) {
+                        swal.fire(result);
+                        clickverification = 0;
+                    }
+                    else {
+                        var mobilenumber = $("#txt_evmobile").val();
+                        var candidateEmailid = $("#txt_evEmailId").val();
+                        if (mobilenumber.trim() != '' && candidateEmailid.trim() != '') {
+                            if (mobilenumber.trim().length == 10) {
+                                $.ajax({
+                                    url: '/Aadhaar/EvVerification',
+                                    type: 'POST',
+                                    data: { mobilenumber: mobilenumber, candidateemail: candidateEmailid },
+                                    success: function (result) {
+                                        if (result.message == null) {
+                                            document.getElementById("divEVverification").style.display = "none";
+                                            document.getElementById("divEVverified").style.display = "block";
+                                            $("#txt_MobileNumber").val(result.mobileNumber);
+                                            $("#txt_EmailId").val(result.candidateEmail);
+                                            $("#CompanyName").val(result.companyName);
+                                            $("#isVerified").val(result.isVerified);
+                                            $("#IsEmployed").val(result.isemployed);
+                                            $("#DOB").val(result.dob);
+                                        } else {
+                                            swal.fire(result.message);
+                                            clickverification = 0;
+                                        }
                                     }
-                                }
-                            });
-                        } else {
-                            swal.fire("Please enter valid 10 digit Mobile Number.");
-                        }
+                                });
+                            } else {
+                                swal.fire("Please enter valid 10 digit Mobile Number.");
+                                clickverification = 0;
+                            }
 
-                    } else {
-                        swal.fire("Please enter Mobile Number and Email Address.");
+                        } else {
+                            swal.fire("Please enter Mobile Number and Email Address.");
+                            clickverification = 0;
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 </script>
