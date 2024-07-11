@@ -54,6 +54,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [CodeSnippet][varchar] (200),
     [IsDeleted][bit],
     [IsSurchargeApprove] [bit] NULL,
+    [CodeSnippetTwo][varchar] (200),
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -397,6 +398,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewMeetings
     Add IsSurchargeApprove bit null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CodeSnippetTwo')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    Alter table InterviewMeetings 
+    Add CodeSnippetTwo varchar(200)
 END
 END
 GO

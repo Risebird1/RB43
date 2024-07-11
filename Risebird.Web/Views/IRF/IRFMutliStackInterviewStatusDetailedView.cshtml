@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.CandidateExcelData>
-<div class="detail-section">
+<div id="anchor" class="detail-section">
     <p class="skill-details-header">Interview Channel: @ViewBag.irfname <span style="color: darkcyan;">(@ViewBag.type)</span></p>
     <div class="second style-2" style="overflow-x:scroll">
 
@@ -16,6 +16,8 @@
                     <th>Interview Status(Primary)</th>
                     <th>Tech Score(Secondary)</th>
                     <th>Interview Status(Secondary)</th>
+                    <th>Candidate Solution(Primary)</th>
+                    <th>Candidate Solution(Secondary)</th>
                     <th>Combined Status</th>
                 </tr>
             </thead>
@@ -31,6 +33,8 @@
                     <th>Interview Status(Primary)</th>
                     <th>Tech Score(Secondary)</th>
                     <th>Interview Status(Secondary)</th>
+                    <th>Candidate Solution(Primary)</th>
+                    <th>Candidate Solution(Secondary)</th>
                     <th>Combined Status</th>
 
                 </tr>
@@ -47,25 +51,126 @@
                             <td>@item.ClientHrContact</td>
                             <td>@item.InterviewerCodedName</td>
                             <td><a target="_blank" href="@item.ReportLink">Report</a></td>
-                            <td>@item.TechScoreone</td>
-                            <td>@item.InterviewStatus</td>
-                            <td>@item.TechScoretwo</td>
+                            <td><span class="count">@item.TechScoreone</span></td>
+                            <td>
+                                @if (item.InterviewStatus == "Marginally Selected")
+                                {
+                                    <span style="color:green"> @item.InterviewStatus</span>
+                                }
+                                else if (item.InterviewStatus == "Strongly Selected")
+                                {
+                                    <span style="color:green"> @item.InterviewStatus</span>
+                                }
+                                else if (item.InterviewStatus == "Marginally Rejected")
+                                {
+                                    <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                }
+                                else if (item.InterviewStatus == "Proxy")
+                                {
+                                    <span style="color:#deb61b"> @item.InterviewStatus</span>
+                                }
+                                else
+                                {
+                                    <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                }
+
+                            </td>
+                            <td><span class="count">@item.TechScoretwo</span></td>
                             @if (item.InterviewStatusTwoDesc == "0")
                             {
                                 <td></td>
                             }
                             else
                             {
-                                <td>@item.InterviewStatusTwoDesc</td>
+                                <td>
+
+                                    @if (item.InterviewStatusTwoDesc == "Marginally Selected")
+                                    {
+                                        <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                    }
+                                    else if (item.InterviewStatus == "Strongly Selected")
+                                    {
+                                        <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                    }
+                                    else if (item.InterviewStatus == "Marginally Rejected")
+                                    {
+                                        <span style="color:#bd1717"> @item.InterviewStatusTwoDesc</span>
+                                    }
+                                    else if (item.InterviewStatus == "Proxy")
+                                    {
+                                        <span style="color:#deb61b"> @item.InterviewStatusTwoDesc</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#bd1717">  @item.InterviewStatusTwoDesc</span>
+                                    }
+
+                                </td>
                             }
-                            @{
-                                var jdtitle = item.JDTiltle + ": " + item.InterviewStatus + " /" + item.JDTitleTwo + ": ";
-                                if (item.InterviewStatusTwoDesc != "0")
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.CodeSnippet))
                                 {
-                                    jdtitle = jdtitle + item.InterviewStatusTwoDesc;
+                                    <a target="_blank" href="@item.CodeSnippet">Solution</a>
                                 }
-                            }
-                            <td>@jdtitle</td>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.CodeSnippetTwo))
+                                {
+                                    <a target="_blank" href="@item.CodeSnippetTwo">Solution</a>
+                                }
+                            </td>
+                            <td>
+                                <p>
+                                    @item.JDTiltle :
+                                    @if (item.InterviewStatus == "Marginally Selected")
+                                    {
+                                        <span style="color:green"> @item.InterviewStatus</span>
+                                    }
+                                    else if (item.InterviewStatus == "Strongly Selected")
+                                    {
+                                        <span style="color:green"> @item.InterviewStatus</span>
+                                    }
+                                    else if (item.InterviewStatus == "Marginally Rejected")
+                                    {
+                                        <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                    }
+                                    else if (item.InterviewStatus == "Proxy")
+                                    {
+                                        <span style="color:#deb61b"> @item.InterviewStatus</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#bd1717"> @item.InterviewStatus</span>
+                                    }
+                                </p>
+                                <p>
+                                    @item.JDTitleTwo:
+                                    @if (item.InterviewStatusTwoDesc != "0")
+                                    {
+                                        @if (item.InterviewStatusTwoDesc == "Marginally Selected")
+                                        {
+                                            <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                        }
+                                        else if (item.InterviewStatus == "Strongly Selected")
+                                        {
+                                            <span style="color:green"> @item.InterviewStatusTwoDesc</span>
+                                        }
+                                        else if (item.InterviewStatus == "Marginally Rejected")
+                                        {
+                                            <span style="color:#bd1717"> @item.InterviewStatusTwoDesc</span>
+                                        }
+                                        else if (item.InterviewStatus == "Proxy")
+                                        {
+                                            <span style="color:#deb61b"> @item.InterviewStatusTwoDesc</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color:#bd1717">  @item.InterviewStatusTwoDesc</span>
+                                        }
+                                    }
+                                </p>
+                            </td>
+
                         </tr>
                     }
                 }
