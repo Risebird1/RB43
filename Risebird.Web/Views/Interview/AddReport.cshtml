@@ -392,7 +392,7 @@
                                                     <label class="question" for="checkbox_two">
                                                         <label for="checkbox_two">
                                                             <i class="fa fa-user" aria-hidden="true"></i>
-                                                            COMMUNICATION SKILL
+                                                            COMMUNICATION SCORE
                                                         </label>
 
                                                     </label>
@@ -823,13 +823,13 @@
                                                     </div>
                                                     <div style="clear:both;border-top:1px #ccc solid">
                                                         <div class="int-form-group" id="linkDiv">
-                                                            @Html.LabelFor(model => model.CodeSnippet, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                                            @Html.EditorFor(model => model.CodeSnippet, new { htmlAttributes = new { @class = "form-control text-box single-line", @style = "margin-top:40px!important" } })
+                                                            @Html.LabelFor(model => model.CodeSnippet, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label",@style="font-weight:500!important;font-size:13px;" })
+                                                            @Html.EditorFor(model => model.CodeSnippet, new { htmlAttributes = new { @class = "text-box single-line", @style = "margin-top:40px!important" } })
                                                             @Html.ValidationMessageFor(model => model.CodeSnippet, "", new { @class = "text-danger" })
 
                                                         </div>
                                                         <div class="int-form-group" style="display:none" id="uploadDiv">
-                                                            @Html.LabelFor(model => model.CandidateFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.LabelFor(model => model.CandidateFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="font-weight:500!important;font-size:13px;" })
 
                                                             @Html.TextBoxFor(model => model.CandidateFile, new { type = "file", @class = "choose-file", @accept = ".txt", @placeholder = "Only files with .txt extentsions accepted", @style = "margin-top:40px!important" })
 
