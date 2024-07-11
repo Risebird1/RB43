@@ -10601,6 +10601,16 @@ section {
     background: #f3f4f5!important;
    box-shadow:none!important;
 }
+#divInterviewdetailsView .dataTables_filter input {
+    position: relative;
+    right: 55px;
+}
+.excel-file-dn {
+    float: right;
+    position: relative;
+    top: 45px;
+    margin: 0px 10px 0px 15px;
+}
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {

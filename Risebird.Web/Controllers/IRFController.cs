@@ -9648,8 +9648,8 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> IRFMutliStackInterviewStatusDetailedView(string irfname, string type)
+        [HttpGet]
+        public async Task<IActionResult> IRFMutliStackInterviewStatusDetailedView(int irfid, string irfname, string type)
         {
             try
             {
@@ -9675,12 +9675,156 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.irfname = irfname;
                 ViewBag.type = type;
+                ViewBag.irfid = irfid;
                 return PartialView(irfList);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return PartialView();
+            }
+        }
+        [HttpGet]
+        public async Task<FileContentResult> IRFMutliStackInterviewStatusDetailedExcel(string irfname, string type)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("SkillChannelDetails");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_MutliStackInterview_" + irfname + ".xlsx";
+            try
+            {
+                DateTime startDate = DateTime.Now.AddDays(-30);
+                if (type == "Primary Select Secondary Reject")
+                {
+                    type = "SelectedRejected";
+                }
+                else if (type == "Primary Reject Secondary Select")
+                {
+                    type = "RejectedSelected";
+                }
+                if (HttpContext.Session.GetString("MultiStackSkillChannelDetailsFilters") != null)
+                {
+                    var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("MultiStackSkillChannelDetailsFilters"));
+                    startDate = filter.StartDate.Value;
+                }
+                var irfList = (await _irfService.IRFMutliStackInterviewStatusDetailedView(irfname, type, startDate))?.ToList();
+                irfList = irfList.Select(x => { x.InterviewStatus = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(x.InterviewStatusTwo)).GetDescription(); return x; }).ToList();
+                foreach (var item in irfList)
+                {
+                    item.ReportLink = "https://" + Request.Host.ToString() + "/Interview/ExecutiveReport?interviewId=" + item.id + "&irfId=" + item.Irfintid + "&isClient=true";
+                }
+
+                Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:AI1"].Style.WrapText = true;
+                int startColumn = 1; int endColumn = 15;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 40;
+                }
+                Sheet.Cells[1, 1].Value = "Interview Date";
+                Sheet.Cells[1, 2].Value = "Candidate Name";
+                Sheet.Cells[1, 3].Value = "Candidate Emailid";
+                Sheet.Cells[1, 4].Value = "POC";
+                Sheet.Cells[1, 5].Value = "Interviewer";
+                Sheet.Cells[1, 6].Value = "Report";
+                Sheet.Cells[1, 7].Value = "Tech Score(Primary)";
+                Sheet.Cells[1, 8].Value = "Interview Status(Primary)";
+                Sheet.Cells[1, 9].Value = "Tech Score(Secondary)";
+                Sheet.Cells[1, 10].Value = "Interview Status(Secondary)";
+                Sheet.Cells[1, 11].Value = "Candidate Solution(Primary)";
+                Sheet.Cells[1, 12].Value = "Candidate Solution(Secondary)";
+                Sheet.Cells[1, 13].Value = "Combined Status";
+
+                int i = 2;
+                if (irfList.Count() > 0)
+                {
+                    foreach (var item in irfList)
+                    {
+                        Sheet.Cells[i, 1].Value = item.interviewDate;
+                        Sheet.Cells[i, 2].Value = item.candidateName;
+                        Sheet.Cells[i, 3].Value = item.candidateEmail;
+                        Sheet.Cells[i, 4].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 5].Value = item.InterviewerCodedName;
+                        if (!string.IsNullOrEmpty(item.ReportLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 6].Hyperlink = new Uri(item.ReportLink, UriKind.Absolute);
+                                Sheet.Cells[i, 6].Value = "Report";
+                                Sheet.Cells[i, 6].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 6].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 6].Value = "No Report";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 6].Value = "No Report";
+                        }
+                        Sheet.Cells[i, 7].Value = item.TechScoreone;
+                        Sheet.Cells[i, 8].Value = item.InterviewStatus;
+                        Sheet.Cells[i, 9].Value = item.TechScoretwo;
+                        Sheet.Cells[i, 10].Value = item.InterviewStatusTwo;
+                        Sheet.Cells[i, 11].Value = item.CodeSnippet;
+                        if (!string.IsNullOrEmpty(item.CodeSnippet))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.CodeSnippet, UriKind.Absolute);
+                                Sheet.Cells[i, 11].Value = "Solution File";
+                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 11].Value = "";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 11].Value = "";
+                        }
+                        if (!string.IsNullOrEmpty(item.CodeSnippetTwo))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 12].Hyperlink = new Uri(item.CodeSnippetTwo, UriKind.Absolute);
+                                Sheet.Cells[i, 12].Value = "Solution File";
+                                Sheet.Cells[i, 12].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 12].Value = "";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 12].Value = "";
+                        }
+                        if (item.InterviewStatusTwoDesc == "0")
+                        {
+                            item.InterviewStatusTwoDesc = "";
+                        }
+                        Sheet.Cells[i, 13].Value = item.JDTiltle + ": " + item.InterviewStatus + " / " + item.JDTitleTwo + ": " + item.InterviewStatusTwoDesc;
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
             }
         }
         #endregion

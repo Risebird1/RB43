@@ -280,7 +280,7 @@
                                                                     <thead>
                                                                         <tr>
                                                                             <th width="20%" class="table_heading">User <span class="red">*</span></th>
-                                                                            @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                            @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
                                                                             {
                                                                                 <th width="20%" class="table_heading">Email</th>
                                                                             }
@@ -297,7 +297,7 @@
                                                                         @if (Model.InterviewerCollection == null || Model.InterviewerCollection.Count() == 0)
                                                                         {
                                                                             <tr>
-                                                                                @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                                @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
                                                                                 {
                                                                                     <td colspan="6">No Interviewer</td>
                                                                                 }
@@ -317,7 +317,7 @@
                                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
                                                                                     </td>
-                                                                                    @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                                    @if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
                                                                                     {
                                                                                         <td>
                                                                                             @Html.TextBoxFor(m => m.InterviewerCollection[i].EmailId, new { @class = "form-control", @readonly = "readonly" })
@@ -331,7 +331,7 @@
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        if (ViewBag.profileName != "Client" && ViewBag.profileName != "Public")
+                                                                                        if (ViewBag.profileName != "Client" && ViewBag.profileName != "Interviewer" && ViewBag.profileName != "Public")
                                                                                         {
                                                                                             if (!Model.InterviewerCollection[i].IsResumeRedactAttempted && string.IsNullOrEmpty(Model.InterviewerCollection[i].ResumeLink))
                                                                                             {
@@ -349,8 +349,6 @@
                                                                                             {
                                                                                                 <td></td>
                                                                                             }
-
-
                                                                                         }
                                                                                         else
                                                                                         {
@@ -962,53 +960,52 @@
         }
     }
     function AddRowSkillTwoCollection() {
-            var table = document.getElementById("SkillTable2");
-            var rowCount = table.rows.length;
+        var table = document.getElementById("SkillTable2");
+        var rowCount = table.rows.length;
 
-            var $ttc = $("#SkillTable2").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#SkillTable2 tr").length - 1;
+        var $ttc = $("#SkillTable2").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#SkillTable2 tr").length - 1;
 
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
 
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
 
-            $tr.find("a").val("");
+        $tr.find("a").val("");
 
-            // add cloned row as last row
-            $("#SkillTable2").find("tbody tr:last").after($tr);
+        // add cloned row as last row
+        $("#SkillTable2").find("tbody tr:last").after($tr);
 
-            // Find the affected form
-            var $form = $tr.closest("FORM");
+        // Find the affected form
+        var $form = $tr.closest("FORM");
 
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
 
-            // Check document for changes
-            // $.validator.unobtrusive.parse(document);
-            // document.getElementById("btnUpload").disabled = false;
-        }
+        // Check document for changes
+        // $.validator.unobtrusive.parse(document);
+        // document.getElementById("btnUpload").disabled = false;
+    }
     function CheckConditions() {
-        var inCorrectCount=0;
+        var inCorrectCount = 0;
         var skillArray = ["SkillCollection"];
-         if ($("#SkillSetsevaluate").val() == 2)
-           {
-               skillArray.push("SkillTwoCollection");
-           }
+        if ($("#SkillSetsevaluate").val() == 2) {
+            skillArray.push("SkillTwoCollection");
+        }
 
         for (i = 0; i < skillArray.length; i++) {
             var total = 0;
@@ -1022,16 +1019,16 @@
                     var labelName = "Tech Skills";
                 }
                 document.getElementById(skillArray[i] + "_WeightageErrorDown").innerHTML = "Weightage total for " + labelName + " should be equal to 100.";
-                inCorrectCount=inCorrectCount+1;
+                inCorrectCount = inCorrectCount + 1;
             }
             else {
                 document.getElementById(skillArray[i] + "_WeightageError").innerHTML = "";
                 document.getElementById(skillArray[i] + "_WeightageErrorDown").innerHTML = "";
             }
         }
-        if(inCorrectCount==0){
+        if (inCorrectCount == 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -1238,27 +1235,27 @@
                 html += '   <tr>';
                 html += '  <td>' + data[i].skillName + '</td>';
         @* html += '  <td>' + data[i].comment + '</td>';*@
-                 html += '<td>';
-            html += ' <div>';
-            if (data[i].comment != null && data[i].comment != "") {
-                if (data[i].comment.length > 40) {
-                    html += '<div class="article">';
-                    html += '<p style="margin-bottom:0px;">' + data[i].comment.substring(0, 50) + '</p>';
-                    html += '<p class="moretext_' + data[i].id + ' moretext">' + data[i].comment + '</p>';
-                    html += '</div>';
+                    html += '<td>';
+                html += ' <div>';
+                if (data[i].comment != null && data[i].comment != "") {
+                    if (data[i].comment.length > 40) {
+                        html += '<div class="article">';
+                        html += '<p style="margin-bottom:0px;">' + data[i].comment.substring(0, 50) + '</p>';
+                        html += '<p class="moretext_' + data[i].id + ' moretext">' + data[i].comment + '</p>';
+                        html += '</div>';
+                    }
+                    else {
+                        html += '<div class="article"><p>' + data[i].comment.substring(0, data[i].comment.length) + '</p></div>';
+                    }
                 }
                 else {
-                    html += '<div class="article"><p>' + data[i].comment.substring(0, data[i].comment.length) + '</p></div>';
+                    html += '<div></div>';
                 }
-            }
-            else {
-                html += '<div></div>';
-            }
-            html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
-            html += '</div>';
-            html += ' </td>';
-            html += '  <td style="text-align:center"><div><span  onclick="DeleteSampleQuestion(' + data[i].id + ')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
-            html += '  </tr>';
+                html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
+                html += '</div>';
+                html += ' </td>';
+                html += '  <td style="text-align:center"><div><span  onclick="DeleteSampleQuestion(' + data[i].id + ')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
+                html += '  </tr>';
             }
             html += '</tbody>';
             html += ' </table></div>';
@@ -1564,7 +1561,7 @@ else
     });
 </script>
 <script>
-      function moreless(id) {
+    function moreless(id) {
         $('.moretext_' + id).slideToggle();
         if ($('#read_' + id).val() == 'Readmore') {
             $('#read_' + id).empty().html('Read more');
