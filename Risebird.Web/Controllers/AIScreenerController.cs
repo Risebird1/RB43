@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Risebird.Entities.Data.OpenAIModels;
 using static System.Net.WebRequestMethods;
+using Risebird.Entities.ViewModel;
 //using System.Web.Mvc;
 
 namespace Risebird.Web.Controllers
@@ -130,7 +131,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> ScreenInterviewer(string jdTitle, int irfId, int userId, string irfName, string resumeLink = null)
+        public async Task<IActionResult> ScreenInterviewer(string jdTitle, int irfId, int userId, string irfName, string resumeLink = null, bool isRedo = false)
         {
             try
             {
@@ -140,18 +141,19 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
+                        var interviewer = new TransInterviewer();
+                        //check if the interviewer's screening is already done and saved in db(as json string)
+                        
+                        interviewer = await _irfService.GetInterviewerOpenAIScreeningResults(irfId, userId);
 
-                        //check if the candidate's screening is already done and saved in db(as json string)
-
-                        var interviewer = await _irfService.GetInterviewerOpenAIScreeningResults(irfId, userId);
 
                         ViewBag.InterviewerEmail = interviewer?.EmailId;
-                        ViewBag.JobTitle = jdTitle;
                         ViewBag.ResumeLink = interviewer?.ResumeLink;
                         ViewBag.IRFName = irfName;
                         ViewBag.SaveOperationResult = "NA";
+                        ViewBag.JobTitle = jdTitle;
 
-                        if (interviewer != null && !string.IsNullOrEmpty(interviewer.OpenAIScreeningResponse))
+                        if (interviewer != null && !string.IsNullOrEmpty(interviewer.OpenAIScreeningResponse) && !isRedo)
                         {
                             return View(JsonConvert.DeserializeObject<RunResult>(interviewer.OpenAIScreeningResponse));
                         }
