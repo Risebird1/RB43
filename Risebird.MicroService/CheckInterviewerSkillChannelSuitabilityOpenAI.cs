@@ -42,20 +42,42 @@ namespace Risebird.MicroService
             {
                 //get transinterviewers for whom screening needs to be done
                 var interviewers = await _irfRepository.GetTransInterviewersForOpenAIScreening();
-                foreach (var item in interviewers)
+
+                Parallel.ForEach(interviewers, item =>
                 {
-                    //call screening function
-                    var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer});
-
-                    //save the response to db
-
-                    var responseInJson = JsonConvert.SerializeObject(response);
-                    bool saveOperationResult = true;
-                    if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                    if (!string.IsNullOrEmpty(item.ResumeLink))
                     {
-                        saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                        var response = _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer }).Result;
+
+                        //save the response to db
+
+                        var responseInJson = JsonConvert.SerializeObject(response);
+                        bool saveOperationResult = true;
+                        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        {
+                            saveOperationResult = _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson).Result;
+                        }
                     }
-                }
+                });
+                //foreach (var item in interviewers)
+                //{
+                //    //call screening function
+                //    if(!string.IsNullOrEmpty(item.ResumeLink))
+                //    {
+                //        var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer });
+
+                //        //save the response to db
+
+                //        var responseInJson = JsonConvert.SerializeObject(response);
+                //        bool saveOperationResult = true;
+                //        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                //        {
+                //            saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                //        }
+
+                //    }
+                    
+                //}
             }
             catch (Exception ex)
             {
