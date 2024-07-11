@@ -55,7 +55,7 @@ Begin
 					   ,[interviewDuration] = @interviewDuration
 					   ,[candidateEmail] = @candidateEmail
 					   ,[candidateName] = @candidateName
-					   ,[ClientHrContact] = @ClientHrContact
+					   ,[ClientHrContact] = ISNULL(@ClientHrContact,ClientHrContact)
 					   ,[resumeLink] = @resumeLink
 					   ,[confirmationStatus] = @comfirmationStatus
 					   ,[zoomLink] = @zoomLink
