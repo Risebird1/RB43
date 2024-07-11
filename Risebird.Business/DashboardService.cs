@@ -1097,5 +1097,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<TransInterviewer>> GetTransInterviewersWithNegativeAIVerdict()
+        {
+            try
+            {
+                return await _dashboardRespository.GetTransInterviewersWithNegativeAIVerdict();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
