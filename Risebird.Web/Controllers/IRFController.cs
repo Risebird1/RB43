@@ -9648,8 +9648,8 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> IRFMutliStackInterviewStatusDetailedView(string irfname, string type)
+        [HttpGet]
+        public async Task<IActionResult> IRFMutliStackInterviewStatusDetailedView(int irfid, string irfname, string type)
         {
             try
             {
@@ -9675,6 +9675,7 @@ namespace Risebird.Web.Controllers
                 }
                 ViewBag.irfname = irfname;
                 ViewBag.type = type;
+                ViewBag.irfid = irfid;
                 return PartialView(irfList);
             }
             catch (Exception ex)

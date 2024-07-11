@@ -137,5 +137,25 @@ outer Apply (Select Sum(WeightageActual) as TechScoretwo from TechSkillReport wh
 where CTE.CandidateLatestStatus in ('REJECTEDNSELECTED') 
 order by im.interviewdate desc  
 end  
+else if(@type='ColdCandidate')
+begin
+Select RTRIM(LTRIM(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,''))) as candidateName,ul.emailid as candidateEmail,ul.MobileNumber,LatestStatus.StatusValue,ca.ClientHRAttemptContact as ClientHrContact
+from @TemporaryCandidateTableVariable tt join UserList ul on ul.id=tt.Userid
+join Candidate ca on ca.CandidateMasterId=tt.CandidateMasterId and ca.IRFId=tt.IRFId
+outer Apply (Select top 1 csm.StatusValue from CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status  where cs.candidateid=tt.CandidateMasterId and cs.IRFId=tt.IRFId order by Date desc) LatestStatus
+where CandidateLatestStatus='COLDCANDIDATE'
+end
+else if(@type='NotScheduled')
+begin
+Select RTRIM(LTRIM(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,''))) as candidateName,ul.emailid as candidateEmail,ul.MobileNumber,LatestStatus.StatusValue,ca.ClientHRAttemptContact as ClientHrContact
+from @TemporaryCandidateTableVariable tt join UserList ul on ul.id=tt.Userid
+join Candidate ca on ca.CandidateMasterId=tt.CandidateMasterId and ca.IRFId=tt.IRFId
+outer Apply (Select top 1 csm.StatusValue from CandidateStatus cs join CandidateStatusOptionsMst csm on csm.id=cs.Status  where cs.candidateid=tt.CandidateMasterId and cs.IRFId=tt.IRFId order by Date desc) LatestStatus
+where CandidateLatestStatus='NOTSCHEDULED'
+end
+else if(@type='Reschedule')
+begin
+Select 'RESCHEDULE'
+end
 END 
  GO
