@@ -229,19 +229,39 @@ namespace Risebird.CommonHelper
                 {
                     var data = await resumeClient.GetByteArrayAsync(url);
                     var fileContent = new ByteArrayContent(data);
-                    var content = new MultipartFormDataContent
+                    string fcName;
+                    try
                     {
-                        { new StringContent("assistants"), "purpose" },
-                        { fileContent, "file", url.Split("/").Last().Split("?")[0] }
-                    };
+                        fcName = url.Split("/").Last().Split("?")[0];
+                    }
+                    catch (Exception)
+                    {
 
-                    HttpClient client = new HttpClient();
-                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-                    var response = await client.PostAsync($"{baseUrl}/files", content);
-                    var responseContent = await response.Content.ReadAsStringAsync();
+                        fcName = url.Split("/").Last();
+                    }
+                    if(!string.IsNullOrEmpty(fcName) && fcName.Split(".").Last() != "doc")
+                    {
+                        var content = new MultipartFormDataContent
+                        {
+                            { new StringContent("assistants"), "purpose" },
+                            { fileContent, "file", fcName }
+                        };
 
-                    var fileResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
-                    return fileResponse["id"].ToString();
+                        HttpClient client = new HttpClient();
+                        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                        var response = await client.PostAsync($"{baseUrl}/files", content);
+                        response.EnsureSuccessStatusCode();
+
+                        var responseContent = await response.Content.ReadAsStringAsync();
+
+                        var fileResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
+                        return fileResponse["id"].ToString();
+                    }
+                    else 
+                    { 
+                        return null; 
+                    }
+                    
                 }
             }
             catch (Exception ex)
