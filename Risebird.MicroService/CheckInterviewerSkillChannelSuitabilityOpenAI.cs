@@ -34,7 +34,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("CheckInterviewerSkillChannelSuitabilityOpenAI")]
-        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)//0 */15 * * * *
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)//0 */15 * * * *
         {
             log.LogInformation($"C# Timer trigger function started executing  at: {DateTime.Now}");
 
@@ -45,30 +45,38 @@ namespace Risebird.MicroService
 
                 Parallel.ForEach(interviewers, item =>
                 {
-                    var response = _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer }).Result;
-
-                    //save the response to db
-
-                    var responseInJson = JsonConvert.SerializeObject(response);
-                    bool saveOperationResult = true;
-                    if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                    if (!string.IsNullOrEmpty(item.ResumeLink))
                     {
-                        saveOperationResult = _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson).Result;
+                        var response = _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer }).Result;
+
+                        //save the response to db
+
+                        var responseInJson = JsonConvert.SerializeObject(response);
+                        bool saveOperationResult = true;
+                        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        {
+                            saveOperationResult = _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson).Result;
+                        }
                     }
                 });
                 //foreach (var item in interviewers)
                 //{
                 //    //call screening function
-                //    var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer});
-
-                //    //save the response to db
-
-                //    var responseInJson = JsonConvert.SerializeObject(response);
-                //    bool saveOperationResult = true;
-                //    if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                //    if(!string.IsNullOrEmpty(item.ResumeLink))
                 //    {
-                //        saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                //        var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer });
+
+                //        //save the response to db
+
+                //        var responseInJson = JsonConvert.SerializeObject(response);
+                //        bool saveOperationResult = true;
+                //        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                //        {
+                //            saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                //        }
+
                 //    }
+                    
                 //}
             }
             catch (Exception ex)

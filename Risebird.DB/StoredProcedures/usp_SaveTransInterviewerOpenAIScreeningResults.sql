@@ -8,13 +8,28 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE [dbo].[usp_SaveTransInterviewerOpenAIScreeningResults]     
-@transInterviewerId int,
-@screeningResponseJson varchar(max)
-As
+Create PROCEDURE [dbo].[usp_SaveTransInterviewerOpenAIScreeningResults]       
+@transInterviewerId int,  
+@screeningResponseJson varchar(max)  
+As  
+Begin  
+  
+if(@screeningResponseJson is not null and @screeningResponseJson != 'null' and LOWER(@screeningResponseJson) LIKE '%verdict%')
 Begin
+	  update TransInterviewer set OpenAIScreeningResponse = @screeningResponseJson where id = @transInterviewerId 
 
-  update TransInterviewer set OpenAIScreeningResponse = @screeningResponseJson where id = @transInterviewerId
 
-End
-GO
+	  UPDATE TransInterviewer
+		SET AIVerdict = CASE 
+		-- Check if the substring after 'verdict' (excluding 'Annotation' or 'Annotations') contains 'no', 'not', or 'doesn't'
+		WHEN LOWER(REPLACE(REPLACE(SUBSTRING(OpenAIScreeningResponse, CHARINDEX('verdict', LOWER(OpenAIScreeningResponse)) + 7, 50), 'annotation', ''), 'annotations', '')) LIKE '%no%' OR
+			 LOWER(REPLACE(REPLACE(SUBSTRING(OpenAIScreeningResponse, CHARINDEX('verdict', LOWER(OpenAIScreeningResponse)) + 7, 50), 'annotation', ''), 'annotations', '')) LIKE '%not%' OR
+			 LOWER(REPLACE(REPLACE(SUBSTRING(OpenAIScreeningResponse, CHARINDEX('verdict', LOWER(OpenAIScreeningResponse)) + 7, 50), 'annotation', ''), 'annotations', '')) LIKE '%doesn''t%'
+		THEN 'No'
+		ELSE 'Yes'
+
+		END
+		WHERE id = @transInterviewerId  
+End  
+  
+End  
