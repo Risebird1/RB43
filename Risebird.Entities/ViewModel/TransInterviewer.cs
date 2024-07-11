@@ -27,5 +27,9 @@
         public string OpenAIScreeningResponse { get; set; }
         public string JDTitle { get; set; }
         public string AIVerdict { get; set; }
+        public string ChannelOwner { get; set; }
+        public string ClientHr { get; set; }
+        public string IRFName { get; set; }
+
     }
 }

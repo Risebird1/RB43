@@ -15,9 +15,22 @@ Create PROCEDURE [dbo].[usp_SaveInterviewerOpenAIScreeningResults]
 As
 Begin
 
-if(@screeningResponseJson is not null and @screeningResponseJson != 'null')
+if(@screeningResponseJson is not null and @screeningResponseJson != 'null' and LOWER(@screeningResponseJson) LIKE '%verdict%')
 Begin
 	  update TransInterviewer set OpenAIScreeningResponse = @screeningResponseJson where irfid = @irfId and UserId = @userId
+
+
+	  UPDATE TransInterviewer
+		SET AIVerdict = CASE 
+		-- Check if the substring after 'verdict' (excluding 'Annotation' or 'Annotations') contains 'no', 'not', or 'doesn't'
+		WHEN LOWER(REPLACE(REPLACE(SUBSTRING(OpenAIScreeningResponse, CHARINDEX('verdict', LOWER(OpenAIScreeningResponse)) + 7, 50), 'annotation', ''), 'annotations', '')) LIKE '%no%' OR
+			 LOWER(REPLACE(REPLACE(SUBSTRING(OpenAIScreeningResponse, CHARINDEX('verdict', LOWER(OpenAIScreeningResponse)) + 7, 50), 'annotation', ''), 'annotations', '')) LIKE '%not%' OR
+			 LOWER(REPLACE(REPLACE(SUBSTRING(OpenAIScreeningResponse, CHARINDEX('verdict', LOWER(OpenAIScreeningResponse)) + 7, 50), 'annotation', ''), 'annotations', '')) LIKE '%doesn''t%'
+		THEN 'No'
+		ELSE 'Yes'
+
+		END
+		WHERE irfid = @irfId and UserId = @userId 
 End
 
 End

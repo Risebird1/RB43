@@ -1952,5 +1952,24 @@ namespace Risebird.Repository
             return null;
         }
 
+
+        public async Task<IEnumerable<TransInterviewer>> GetTransInterviewersWithNegativeAIVerdict()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<TransInterviewer>(con, "usp_GetTransInterviewersWithNegativeAIVerdict", null, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
