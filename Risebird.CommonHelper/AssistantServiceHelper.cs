@@ -63,16 +63,16 @@ namespace Risebird.CommonHelper
                 {
                     fileId = await UploadFileAsync(requestModel.ResumeLink);
                 }
-                if (!string.IsNullOrEmpty(fileId))
-                {
-                    await AddFileToVectorStoreAsync(fileId, requestModel.Type);
-                }
-                else
-                {
-                    return null;
-                }
+                //if (!string.IsNullOrEmpty(fileId))
+                //{
+                //    await AddFileToVectorStoreAsync(fileId, requestModel.Type);
+                //}
+                //else
+                //{
+                //    return null;
+                //}
 
-                var threadId = await CreateThreadAsync(requestModel);
+                var threadId = await CreateThreadAsync(requestModel, fileId);
                 string runId;
                 //now create a run
                 if (!string.IsNullOrEmpty(threadId))
@@ -320,7 +320,7 @@ namespace Risebird.CommonHelper
             }
             
         }
-        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel)
+        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel, string fileId)
         {
             try
             {
@@ -357,7 +357,9 @@ namespace Risebird.CommonHelper
                         {
                             file_search = new FileSearch
                             {
-                                vector_store_ids = new List<string>() { (requestModel.Type == ProfileNames.Candidate ? candidateResumesVectorStoreId : interviewerResumesVectorStoreId) }
+                                //vector_store_ids = new List<string>() { (requestModel.Type == ProfileNames.Candidate ? candidateResumesVectorStoreId : interviewerResumesVectorStoreId) }
+                                vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
+
                             }
                         }
                     };
@@ -374,7 +376,8 @@ namespace Risebird.CommonHelper
                         {
                             file_search = new FileSearch
                             {
-                                vector_store_ids = new List<string>() { (reportQCVectorStoreId) }
+                                //vector_store_ids = new List<string>() { (reportQCVectorStoreId) },
+                                vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId} } }
                             }
                         }
                     };
@@ -403,11 +406,18 @@ namespace Risebird.CommonHelper
 
 
     }
+
+    public class VectorStore
+    {
+        public List<string> file_ids { get; set; }
+        
+    }
     public class Message
     {
         public string role { get; set; }
         public string content { get; set; }
     }
+
 
     public class Thread
     {
@@ -422,6 +432,7 @@ namespace Risebird.CommonHelper
     public class FileSearch
     {
         public List<string> vector_store_ids { get; set; }
+        public List<VectorStore> vector_stores { get; set; }
     }
     public class MetaData
     {
