@@ -399,14 +399,21 @@ namespace Risebird.CommonHelper
 
         }
 
-        public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFileStream = null, Stream transcriptStream = null, string contentType = null)
+        public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFileStream = null, Stream transcriptStream = null, string contentType = null, bool? isOpenAiQc = false)
         {
             CloudBlockBlob blob;
             blob = GetCloudBlockBlobClient(containerName, filename);
             if (blobFile != null)
             {
+                if(isOpenAiQc.HasValue && isOpenAiQc.Value)
+                {
+                    await blob.UploadFromStreamAsync(blobFile);
+                }
+                else
+                {
+                    await blob.UploadFromStreamAsync(blobFileStream);
+                }
                 //await blob.UploadFromStreamAsync(blobFile);
-                await blob.UploadFromStreamAsync(blobFileStream);
             }
             else if (blobFileStream != null)
             {
