@@ -123,7 +123,7 @@ begin try
         
   UPDATE [dbo].[InterviewMeetings]        
     SET [interviewDate] = @interviewDate        
-    ,[ClientHrContact]=@ClientHrContact        
+    ,[ClientHrContact]=ISNull(@ClientHrContact,ClientHrContact)        
     ,[confirmationStatus] = @comfirmationStatus        
     ,[resumeLink] = @resumeLink        
     ,[zoomLink]=@zoomLink        
