@@ -9648,7 +9648,7 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> IRFMutliStackInterviewStatusDetailedView(int irfid, string irfname, string type)
         {
             try
