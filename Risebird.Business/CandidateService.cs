@@ -562,7 +562,7 @@ namespace Risebird.Business
             {
                 return await _candidateRepository.SaveCandidateOpenAIScreeningResults(irfId, candidateMasterId, screeningResponseJson);
             }
-            catch (SqlTypeException ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;

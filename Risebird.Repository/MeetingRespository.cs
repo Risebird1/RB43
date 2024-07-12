@@ -7382,5 +7382,48 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+
+        public async Task<string> GetOpenAIReportQC(int interviewId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetOpenAIReportQC", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> SaveOpenAIReportQC(int interviewId, string openAIQcResponseJson)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    parameters.Add("@openAIQcResponseJson", openAIQcResponseJson);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveOpenAIReportQC", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }
