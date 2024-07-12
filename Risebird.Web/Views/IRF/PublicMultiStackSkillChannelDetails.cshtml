@@ -618,7 +618,7 @@ else
 <script>
     function interviewstatuslistdetails(irfid, irfname, type) {
         $.ajax({
-            type: "Get",
+            type: "POST",
             url: "/IRF/IRFMutliStackInterviewStatusDetailedView",
             data: { irfid: irfid, irfname: irfname, type: type },
             success: function (data) {
