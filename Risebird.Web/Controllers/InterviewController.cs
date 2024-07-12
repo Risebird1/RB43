@@ -1,6 +1,7 @@
 using Aspose.Html;
-//using DinkToPdf;
-//using DinkToPdf.Contracts;
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using HtmlToPdfConverterCore;
 using Google.Apis.Drive.v3.Data;
 using iTextSharp.text.pdf.qrcode;
 using Microsoft.AspNetCore.Authorization;
@@ -70,7 +71,7 @@ namespace Risebird.Web.Controllers
         private readonly ITempDataProvider _tempDataProvider;
         private readonly IServiceProvider _serviceProvider;
         private readonly IHttpContextAccessor _contextAccessor;
-        //private readonly IConverter _converter;
+        private readonly IConverter _converter;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
 
         //private static List<MeetingVM> _modelDetails;
@@ -89,7 +90,7 @@ namespace Risebird.Web.Controllers
             IInterviewSchedulerRepository interviewSchedulerRepository,
             IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
-             IAssistantServiceHelper assistantServiceHelper)//IConverter converter,
+            IConverter converter, IAssistantServiceHelper assistantServiceHelper)//IConverter converter,
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -116,7 +117,7 @@ namespace Risebird.Web.Controllers
             _tempDataProvider = tempDataProvider;
             _serviceProvider = serviceProvider;
             _contextAccessor = contextAccessor;
-            //_converter = converter;
+            _converter = converter;
             _assistantServiceHelper = assistantServiceHelper;
         }
 
@@ -8850,7 +8851,8 @@ namespace Risebird.Web.Controllers
                 if (isOpenAIQC.HasValue && isOpenAIQC.Value)
                 {
                     //write code to return QC results
-                    return RedirectToAction("PerformQualityCheck", model);
+                    var qcResult = await PerformQualityCheck(model);
+                    return View("PerformQualityCheck", qcResult);
                 }
                 else
                 {
@@ -8866,155 +8868,171 @@ namespace Risebird.Web.Controllers
 
         }
 
-        //public async Task<IActionResult> PerformQualityCheck(InterviewReport model)
-        //{
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //        {
-        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-        //            profileName = profileName.Replace("\"", "");
-        //            if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
-        //            {
+        public async Task<RunResult> PerformQualityCheck(InterviewReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
+                    {
 
-        //                //check if the candidate's screening is already done and saved in db(as json string)
+                        //check if the qc is already done and saved in db(as json string)
 
-        //                //var report = await _irfService.GetInterviewerOpenAIScreeningResults(model.id);
-
-
-        //                //ViewBag.IRFName = model.IRFName;
-        //                //ViewBag.SaveOperationResult = "NA";
-
-        //                //if (report != null && !string.IsNullOrEmpty(report.OpenAIScreeningResponse))
-        //                //{
-        //                //    return View(JsonConvert.DeserializeObject<RunResult>(report.OpenAIScreeningResponse));
-        //                //}
+                        var qcResult = await _meetingService.GetOpenAIReportQC(model.InterviewId);
 
 
-        //                // Render the partial view to a string
-        //                var htmlContent = await RenderToStringAsync("AIClientReport", model);
+                        //ViewBag.IRFName = model.IRFName;
+                        //ViewBag.SaveOperationResult = "NA";
 
-        //                // Generate PDF from HTML content
-        //                var pdfContent = GeneratePdf(htmlContent);
-        //                string fileName = "AIClientReport_" + model.id.ToString() + ".pdf";
+                        if (!string.IsNullOrEmpty(qcResult))
+                        {
+                            return JsonConvert.DeserializeObject<RunResult>(qcResult);
+                        }
+
+
+                        // Render the partial view to a string
+                        var htmlContent = await RenderToStringAsync("AIClientReport", model);
+
+                        // Generate PDF from HTML content
+                        var pdfContent = GeneratePdf(htmlContent);
+                        string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
 
 
 
-        //                // Upload PDF to Azure Blob Storage
-        //                string uploadedFileURL = string.Empty;
-        //                using (MemoryStream stream = new MemoryStream(pdfContent))
-        //                {
-        //                    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream); ;
-        //                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
-        //                    var blob = containerRef.GetBlockBlobReference(fileName);
-        //                    uploadedFileURL = blob.Uri.ToString();
-        //                }
+                        // Upload PDF to Azure Blob Storage
+                        string uploadedFileURL = string.Empty;
+                        using (MemoryStream stream = new MemoryStream(pdfContent))
+                        {
+                            await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
+                            var blob = containerRef.GetBlockBlobReference(fileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                        }
 
-        //                var request = new ScreeningRequest
-        //                {
-        //                    Type = ProfileNames.QualityController,
-        //                    ReportUrl = uploadedFileURL
-        //                };
-        //                var response = await _assistantServiceHelper.ScreenAsync(request);
+                        var request = new ScreeningRequest
+                        {
+                            Type = ProfileNames.QualityController,
+                            ReportUrl = uploadedFileURL
+                        };
+                        var response = await _assistantServiceHelper.ScreenAsync(request);
 
-        //                var responseInJson = JsonConvert.SerializeObject(response);
-        //                //save the response in db
-        //                bool saveOperationResult = true;
-        //                //if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
-        //                //{
-        //                //    saveOperationResult = await _irfService.SaveInterviewerOpenAIScreeningResults(irfId, userId, responseInJson);
-        //                //}
+                        var responseInJson = JsonConvert.SerializeObject(response);
+                        //save the response in db
+                        bool saveOperationResult = true;
+                        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        {
+                            saveOperationResult = await _meetingService.SaveOpenAIReportQC(model.InterviewId, responseInJson);
+                        }
 
-        //                if (saveOperationResult)
-        //                {
-        //                    ViewBag.SaveOperationResult = "Evaluation saved successfully.";
-        //                }
-        //                else
-        //                {
-        //                    ViewBag.SaveOperationResult = "Failed to save the evaluation.";
-        //                }
+                        //if (saveOperationResult)
+                        //{
+                        //    ViewBag.SaveOperationResult = "Evaluation saved successfully.";
+                        //}
+                        //else
+                        //{
+                        //    ViewBag.SaveOperationResult = "Failed to save the evaluation.";
+                        //}
 
-        //                return View(response);
+                        return response;
 
-        //            }
-        //            else
-        //            {
-        //                return RedirectToAction("SignOut", "Session");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("SignOut", "Session");
-        //        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
 
-        //    }
-        //    catch (System.Exception ex)
-        //    {
+            }
+            catch (System.Exception ex)
+            {
 
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return Json(null);
-        //    }
-        //}
-        //public byte[] GeneratePdf(string htmlContent)
-        //{
-        //    var globalSettings = new GlobalSettings
-        //    {
-        //        ColorMode = DinkToPdf.ColorMode.Color,
-        //        Orientation = Orientation.Portrait,
-        //        PaperSize = DinkToPdf.PaperKind.A4,
-        //    };
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public byte[] GeneratePdf(string htmlContent)
+        {
+            try
+            {
+                var globalSettings = new GlobalSettings
+                {
+                    ColorMode = DinkToPdf.ColorMode.Color,
+                    Orientation = Orientation.Portrait,
+                    PaperSize = DinkToPdf.PaperKind.A4,
+                };
 
-        //    var objectSettings = new ObjectSettings
-        //    {
-        //        PagesCount = true,
-        //        HtmlContent = htmlContent,
-        //        WebSettings = { DefaultEncoding = "utf-8" },
-        //        HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
-        //        FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
-        //    };
+                var objectSettings = new ObjectSettings
+                {
+                    PagesCount = true,
+                    HtmlContent = htmlContent,
+                    WebSettings = { DefaultEncoding = "utf-8" },
+                    HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
+                    FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }
+                };
 
-        //    var pdf = new HtmlToPdfDocument()
-        //    {
-        //        GlobalSettings = globalSettings,
-        //        Objects = { objectSettings }
-        //    };
+                var pdf = new HtmlToPdfDocument()
+                {
+                    GlobalSettings = globalSettings,
+                    Objects = { objectSettings }
+                };
 
-        //    return _converter.Convert(pdf);
-        //}
-        //public async Task<string> RenderToStringAsync(string viewName, object model)
-        //{
-        //    var httpContext = _contextAccessor.HttpContext;
-        //    var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new ActionDescriptor());
+                return _converter.Convert(pdf);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<string> RenderToStringAsync(string viewName, object model)
+        {
+            try
+            {
+                var httpContext = _contextAccessor.HttpContext;
+                var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(), new ActionDescriptor());
 
-        //    using (var sw = new StringWriter())
-        //    {
-        //        var viewResult = _viewEngine.FindView(actionContext, viewName, false);
+                using (var sw = new StringWriter())
+                {
+                    var viewResult = _viewEngine.FindView(actionContext, viewName, false);
 
-        //        if (viewResult.View == null)
-        //        {
-        //            throw new ArgumentNullException($"The view '{viewName}' was not found.");
-        //        }
+                    if (viewResult.View == null)
+                    {
+                        throw new ArgumentNullException($"The view '{viewName}' was not found.");
+                    }
 
-        //        var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
-        //        {
-        //            Model = model
-        //        };
+                    var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                    {
+                        Model = model
+                    };
 
-        //        var tempData = new TempDataDictionary(actionContext.HttpContext, _tempDataProvider);
+                    var tempData = new TempDataDictionary(actionContext.HttpContext, _tempDataProvider);
 
-        //        var viewContext = new ViewContext(
-        //            actionContext,
-        //            viewResult.View,
-        //            viewDictionary,
-        //            tempData,
-        //            sw,
-        //            new HtmlHelperOptions()
-        //        );
+                    var viewContext = new ViewContext(
+                        actionContext,
+                        viewResult.View,
+                        viewDictionary,
+                        tempData,
+                        sw,
+                        new HtmlHelperOptions()
+                    );
 
-        //        await viewResult.View.RenderAsync(viewContext);
-        //        return sw.ToString();
-        //    }
-        //}
+                    await viewResult.View.RenderAsync(viewContext);
+                    return sw.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         #region Multi Skill Sets
         public async Task ReportSkillSetandCombine(InterviewReport model)
         {

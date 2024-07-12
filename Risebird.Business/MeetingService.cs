@@ -4251,6 +4251,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> SaveOpenAIReportQC(int interviewId, string openAIQcResponseJson)
+        {
+            try
+            {
+                return await _meetingRespository.SaveOpenAIReportQC(interviewId, openAIQcResponseJson);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<string> GetOpenAIReportQC(int interviewId)
+        {
+            try
+            {
+                return await _meetingRespository.GetOpenAIReportQC(interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
 
