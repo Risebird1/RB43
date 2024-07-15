@@ -8,16 +8,6 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_OpenInterviews'))
-BEGIN
-    DROP PROCEDURE dbo.usp_OpenInterviews
-END
-
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
 Create PROCEDURE [dbo].[usp_OpenInterviews]     
 @emailID varchar(200),      
 @timeNow datetime      
@@ -43,7 +33,5 @@ left join PlanTypeChargesMaster pm on pm.CountryType=IRF.JobCountry and pm.PlanT
 where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID and im.interviewDate>=@timeNow and tirf.IsActive=1   and  ul.IsActive=1    
 END       
      
-
-GO 
 
 GO 
