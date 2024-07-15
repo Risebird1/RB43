@@ -243,6 +243,9 @@ namespace Risebird.Business.Interface
         Task<bool> AssignYourSelfForMyQCInterviws(string emailId, int id);
         Task<List<MeetingVM>> GetMyQCInterviews(string emailId);
         Task<List<DMInstructionVM>> GetMyDMInstruction(string emailId);
-      
+        Task<bool> SaveOpenAIReportQC(int interviewId, string openAIQcResponseJson);
+        Task<string> GetOpenAIReportQC(int interviewId);
+
+
     }
 }
