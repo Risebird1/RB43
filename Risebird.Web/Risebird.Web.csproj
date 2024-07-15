@@ -24,6 +24,7 @@
     <PackageReference Include="Aspose.HTML" Version="24.5.0" />
     <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
+    <PackageReference Include="HtmlToPdfConverter.Core" Version="2.0.0" />
     <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="MediaToolkit" Version="1.1.0.1" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
