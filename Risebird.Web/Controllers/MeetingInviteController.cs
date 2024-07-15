@@ -10,6 +10,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -136,7 +137,7 @@ namespace Risebird.Web
                 OnlineMeeting _meeting = new OnlineMeeting();
                 _meeting.subject = "Test Data cration";
                 _meeting.body = new Body();
-                _meeting.body.content = "Nothing in messsage body";
+                _meeting.body.content = "Nothing in messsage body : Final";
                 _meeting.body.contentType = "HTML";
                 _meeting.start = new Start();
                 _meeting.start.dateTime = DateTime.Now.AddHours(5);
@@ -154,7 +155,8 @@ namespace Risebird.Web
                 var accountEmail = "interviews@Risebird492.onmicrosoft.com";
                 var result = await CreateTeamsMeetingClient(accountEmail, _meeting);
                 var meetingdetails = await GetOnlineMeetingId(result.onlineMeeting.joinUrl);
-                await UpdateOnlineMeetingAutoRecord(meetingdetails.value.id);
+                var meetingid = meetingdetails.value?.FirstOrDefault().id;
+                await UpdateOnlineMeetingAutoRecord(meetingid);
             }
             catch (Exception ex)
             {
@@ -186,9 +188,10 @@ namespace Risebird.Web
         {
             if (!string.IsNullOrEmpty(joinUrl))
             {
+                string userid = "c09f7f50-fd00-4e7e-80da-2a464ca71cbb";
                 var client = new RestClient();
                 var token = await GetAccessTokenAsync();
-                var requestUrl = $"https://graph.microsoft.com/v1.0/me/onlineMeetings?$filter=JoinWebUrl%20eq%20'" + joinUrl + "'";
+                var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/onlineMeetings?$filter=JoinWebUrl%20eq%20'" + joinUrl + "'";
                 var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
                 var request = new RestRequest(requestUrl, Method.Get);
                 request.AddHeader("Authorization", $"Bearer {token}");
@@ -204,9 +207,10 @@ namespace Risebird.Web
         {
             if (!string.IsNullOrEmpty(meetingid))
             {
+                string userid = "c09f7f50-fd00-4e7e-80da-2a464ca71cbb";
                 var client = new RestClient();
                 var token = await GetAccessTokenAsync();
-                var requestUrl = $"https://graph.microsoft.com/v1.0/me/onlineMeetings/" + meetingid;
+                var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/onlineMeetings/" + meetingid;
                 var httpRequest = new HttpRequestMessage(HttpMethod.Patch, requestUrl);
                 var request = new RestRequest(requestUrl, Method.Patch);
                 request.AddHeader("Authorization", $"Bearer {token}");
@@ -236,11 +240,11 @@ namespace Risebird.Web
             dynamic tokenResponse = JsonConvert.DeserializeObject(responseBody);
             return tokenResponse?.access_token;
         }
-        public async Task<string> FetchMeetingRecording(string accountEmail, string meetingid)
+        public async Task<string> FetchMeetingRecording(string userid, string meetingid)
         {
             var client = new RestClient();
             var token = await GetAccessTokenAsync();
-            var requestUrl = $"https://graph.microsoft.com/v1.0/users/{accountEmail}/onlineMeetings/{meetingid}/recordings";
+            var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/onlineMeetings/{meetingid}/recordings";
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
             var request = new RestRequest(requestUrl, Method.Get);
             request.AddHeader("Authorization", $"Bearer {token}");
