@@ -8852,6 +8852,11 @@ namespace Risebird.Web.Controllers
                 {
                     //write code to return QC results
                     var qcResult = await PerformQualityCheck(model);
+                    ViewBag.CandidateEmail = model.CandidateEmail;
+                    ViewBag.Interviewer = model.Interviewer;
+                    ViewBag.InterviewDate = model.interviewDate;
+                    ViewBag.IRFName = model.IRFName;
+                    ViewBag.JdTitle = model.JDTiltle;
                     return View("PerformQualityCheck", qcResult);
                 }
                 else
