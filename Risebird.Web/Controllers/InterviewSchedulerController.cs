@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
@@ -31,12 +32,13 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IZoomHelper _zoomHelper;
         private readonly string candidateDashboard;
+        private readonly ITeamsMeetingHelper _iteamsMeetingHelper;
 
         public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice,
             IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper,
             IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings,
             INotificationHelper notificationHelper, IRBMeetHelper rBMeetHelper,
-            ICandidateService candidateService, IZoomHelper zoomHelper)
+            ICandidateService candidateService, IZoomHelper zoomHelper, ITeamsMeetingHelper iteamsMeetingHelper)
         {
             _interviewSchedulerservice = interviewSchedulerservice;
             _azureStorageHelper = azureStorageHelper;
@@ -48,6 +50,7 @@ namespace Risebird.Web.Controllers
             candidateDashboard = _configuration["CandidateDashBoard:UseDashboard"];
             _candidateService = candidateService;
             _zoomHelper = zoomHelper;
+            _iteamsMeetingHelper = iteamsMeetingHelper;
         }
         public IActionResult Index()
         {
@@ -485,6 +488,7 @@ namespace Risebird.Web.Controllers
                     //string meetingLink;// = string.Empty;
                     var zoomLink = new InstaZoomMeetingResponse();
                     var rbMeetingLinkResponse = new RBMeetCreateMeetingResponse();
+                    var teamsMeeting = new MetingResponse();
                     if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
                     {
                         zoomLink = await CreateZoomMeeting(model.Name, jdDetails.JDTiltle, indianTime, jdDetails.InterviewDuration);
@@ -494,10 +498,19 @@ namespace Risebird.Web.Controllers
                             ModelState.AddModelError(string.Empty, "The selected slot for the meeting is currently unavailable. Kindly choose another slot.");
                             return View(model);
                         }
+                        zoomLink.meetingid = zoomLink.id.ToString();
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                     {
                         rbMeetingLinkResponse = await _rBMeetHelper.CreateMeeting("Risebird", model.Name, indianTime);
+                    }
+                    else if (model.MeetingPlatform == MeetingPlatforms.TeamsMeet)
+                    {
+                        var subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle;
+                        teamsMeeting = await _iteamsMeetingHelper.CreateTeamsMeeting(subject, indianTime, jdDetails.InterviewDuration, "India Standard Time");
+                        zoomLink.meetingid = teamsMeeting.meetingId;
+                        zoomLink.join_url = teamsMeeting.joinUrl;
+                        zoomLink.accountemail = teamsMeeting.accountEmail;
                     }
                     string textreminder = string.Empty;
                     if (!model.reschedulerequest)
@@ -510,9 +523,9 @@ namespace Risebird.Web.Controllers
                     }
                     bool result = false;
                     int interviewId = 0;
-                    if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                    if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom || model.MeetingPlatform == MeetingPlatforms.TeamsMeet)
                     {
-                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.id.ToString(), interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue, out interviewId, zoomLink.accountemail);
+                        result = _risebirdMeetings.AddOrUpdateMeeting(indianTime, "60", model.Name, model.Email, model.Resume, zoomLink.join_url, model.InterviewChannelId, zoomLink.meetingid, interviewOnDevice, textreminder, model.StaffingAgiencies, model.HRCoordinator, model.TimeZoneoffset, model.TimeZonesValue, out interviewId, zoomLink.accountemail);
                     }
                     else if (model.MeetingPlatform == MeetingPlatforms.RisebirdMeet)
                     {
@@ -586,7 +599,7 @@ namespace Risebird.Web.Controllers
                                 CC = model.StaffingAgiencies + ";" + model.HRCoordinator,//zoomLink.accountemail,
                                 Subject = model.ClientName + " Interview - " + model.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                             };
-                            if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom)
+                            if (string.IsNullOrEmpty(model.MeetingPlatform) || model.MeetingPlatform == MeetingPlatforms.Zoom || model.MeetingPlatform == MeetingPlatforms.TeamsMeet)
                             {
                                 _ = await _notificationHelper.SendInterviewInvite(_mail, model.Email, zoomLink.join_url, model.StaffingAgiencies, model.HRCoordinator, accountEmail, interviewdatetime, model.Name, timezonevalue, model.ClientName, model.TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), model._IRFDetails?.LogoLink, model._IRFDetails?.CompanyLink);
                             }
