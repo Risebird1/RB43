@@ -1494,6 +1494,10 @@
                                                                                             <span id="btnScreen_@i" title ="Screen Interviewer" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId')" class="mdc-fab app-fab--absolute">
                                                                                                 <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
                                                                                             </span>
+                                                                                            __
+                                                                                            <span id="regenerateBtn_@i" title="Screen Interviewer(Regenerate)" onclick="ScreenInterviewer( this.id, '@Model.JDTiltle', '@Model.id', '@Model.IRFId', true)" class="mdc-fab app-fab--absolute">
+                                                                                                <i class="fa fa-user"></i><i class="fas fa-search" style="font-size: 9px;position: relative;left: 0px; top: 2px;"></i>
+                                                                                            </span>
                                                                                             
                                                                                             
                                                                                             @* @if (Model.IsClone)
@@ -2139,8 +2143,9 @@
 
 </script>
 <script>
-    function ScreenInterviewer(elementId, jdTitle, irfId, irfName)
+    function ScreenInterviewer(elementId, jdTitle, irfId, irfName, isRedo = false)
     {
+        debugger;
         var index = -1;
         const results = elementId.match(/-?\d+(\.\d+)?/g);
         if (results)
@@ -2154,10 +2159,10 @@
             var userId = document.getElementById('InterviewerCollection_' + index + '__UserId').value;
             
             var resumeLink = encodeURIComponent(document.getElementById('InterviewerCollection_' + index + '__ResumeLink').href);
-            //var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
-            var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
+            var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
+            //var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
             
-            var newTabUrl = actionUrl + '?jdTitle=' + jdTitle + '&irfId=' + irfId  + '&irfName=' + irfName + '&userId=' + userId + '&resumeLink=' + resumeLink;
+            var newTabUrl = actionUrl + '?jdTitle=' + jdTitle + '&irfId=' + irfId  + '&irfName=' + irfName + '&userId=' + userId + '&resumeLink=' + resumeLink + '&isRedo=' + isRedo;
             window.open(newTabUrl, '_blank');
 
         }
@@ -3983,7 +3988,10 @@
             var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
             return parts[1] + "_" + (++parts[2]); // build new id
         });
-
+        $tr.find("span[id^='regenerateBtn']").attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)$/); // extract parts __(\D+)
+            return parts[1] + "_" + (++parts[2]); // build new id
+        });
         $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
             var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value

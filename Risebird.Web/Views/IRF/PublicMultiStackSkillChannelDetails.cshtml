@@ -228,78 +228,68 @@
                                                             <td> @item.JDTiltle </td>
                                                             <td> @item.JDTitleTwo </td>
                                                             <td class="text-center"> <span class="count">@item.CandidateCount</span> </td>
-                                                            <td style="color:#2680c7;cursor:pointer" onclick="interviewstatuslistdetails('@item.id','@item.IRFId','Completed')">
-                                                                <a style="cursor:pointer" href="#anchor">
-                                                                    @item.CompletedInterviews
-                                                                    { @if (item.CandidateCount > 0)
-                                                                    {
-                                                                        @((item.CompletedInterviews * 100) / @item.CandidateCount)
-                                                                    }%
-                                                                </a>}
+                                                                    <td style="color:#2680c7;cursor:pointer" onclick="interviewstatuslistdetails('@item.IRFId','Completed')">
+                                                               <a style="cursor:pointer" href="#anchor"> @item.CompletedInterviews
+                                                                { @if (item.CandidateCount > 0)
+                                                                {
+                                                                    @((item.CompletedInterviews * 100) / @item.CandidateCount)
+                                                                    }% }</a>
                                                             </td>
-                                                            <td onclick="interviewstatuslistdetails('@item.id','@item.IRFId','Selected')">
+                                                            <td  onclick="interviewstatuslistdetails('@item.IRFId','Selected')">
                                                                 <span style="color: #28850d;font-weight:500;cursor:pointer">
-                                                                    <a style="color: #28850d;font-weight:500;cursor:pointer" href="#anchor">
-                                                                        @item.SelectedMeetings
-                                                                        { @if (item.CompletedInterviews > 0)
-                                                                        {
-                                                                            @((item.SelectedMeetings * 100) / @item.CompletedInterviews)
-                                                                        }%
-                                                                    </a>}
+                                                                                   <a style="color: #28850d;font-weight:500;cursor:pointer" href="#anchor">  @item.SelectedMeetings
+                                                                    { @if (item.CompletedInterviews > 0)
+                                                                    {
+                                                                        @((item.SelectedMeetings * 100) / @item.CompletedInterviews)
+                                                                        }% }</a>
                                                                 </span>
                                                             </td>
-                                                            <td onclick="interviewstatuslistdetails('@item.id','@item.IRFId','Rejected')">
+                                                            <td onclick="interviewstatuslistdetails('@item.IRFId','Rejected')">
                                                                 <span style="color: #bd1717;font-weight:500;cursor:pointer">
-                                                                    <a style="color: #bd1717;font-weight:500;cursor:pointer" href="#anchor">
-                                                                        @item.RejectedMeetings
-                                                                        { @if (item.CompletedInterviews > 0)
-                                                                        {
-                                                                            @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
-                                                                        }%
-                                                                    </a> }
+                                                                                   <a style="color: #bd1717;font-weight:500;cursor:pointer" href="#anchor">  @item.RejectedMeetings
+                                                                    { @if (item.CompletedInterviews > 0)
+                                                                    {
+                                                                        @((item.RejectedMeetings * 100) / @item.CompletedInterviews)
+                                                                        }%}</a> 
                                                                 </span>
                                                             </td>
-                                                            <td style="color:#2680c7;cursor:pointer" onclick="interviewstatuslistdetails('@item.id','@item.IRFId','SelectedRejected')">
-                                                                <a style="color:#2680c7;cursor:pointer" href="#anchor">
-                                                                    @item.SelectedRejectMeetings
-                                                                    { @if (item.CompletedInterviews > 0)
-                                                                    {
-                                                                        @((item.SelectedRejectMeetings * 100) / @item.CompletedInterviews)
-                                                                    }%
-                                                                </a>}
+                                                                    <td style="color:#2680c7;cursor:pointer" onclick="interviewstatuslistdetails('@item.IRFId','SelectedRejected')">
+                                                                                <a style="color:#2680c7;cursor:pointer" href="#anchor"> @item.SelectedRejectMeetings
+                                                                { @if (item.CompletedInterviews > 0)
+                                                                {
+                                                                    @((item.SelectedRejectMeetings * 100) / @item.CompletedInterviews)
+                                                                }% </a>}
                                                             </td>
-                                                            <td style="color:#2680c7;cursor:pointer" onclick="interviewstatuslistdetails('@item.id','@item.IRFId','RejectedSelected')">
-                                                                <a style="color:#2680c7;cursor:pointer" href="#anchor">
-                                                                    @item.RejectSelectedMeetings
-                                                                    { @if (item.CompletedInterviews > 0)
-                                                                    {
-                                                                        @((item.RejectSelectedMeetings * 100) / @item.CompletedInterviews)
-                                                                    }%
-                                                                </a>}
+                                                                    <td style="color:#2680c7;cursor:pointer" onclick="interviewstatuslistdetails('@item.IRFId','RejectedSelected')">
+                                                                                <a style="color:#2680c7;cursor:pointer" href="#anchor"> @item.RejectSelectedMeetings
+                                                                { @if (item.CompletedInterviews > 0)
+                                                                {
+                                                                    @((item.RejectSelectedMeetings * 100) / @item.CompletedInterviews)
+                                                                }% </a>}
                                                             </td>
                                                             <td><span class="count">@item.PendingCount</span> </td>
-                                                            <td style="color:#2680c7;cursor:pointer" onclick="interviewstatuslistdetails('@item.id','@item.IRFId','ColdCandidate')">
+                                                                    <td style="color:#2680c7;cursor:pointer">
                                                                 @item.ColdCandidateCount
                                                                 { @if (item.CandidateCount > 0)
                                                                 {
                                                                     @((item.ColdCandidateCount * 100) / @item.CandidateCount)
                                                                 }% }
                                                             </td>
-                                                            <td style="color:#2680c7;cursor:pointer" onclick="interviewstatuslistdetails('@item.id','@item.IRFId','NotScheduled')">
+                                                                    <td style="color:#2680c7;cursor:pointer">
                                                                 @item.NotScheduledCount
                                                                 { @if (item.CandidateCount > 0)
                                                                 {
                                                                     @((item.NotScheduledCount * 100) / @item.CandidateCount)
                                                                 }% }
                                                             </td>
-                                                            <td style="color:#2680c7">
+                                                                    <td style="color:#2680c7;cursor:pointer">
                                                                 @item.ReScheduledCount
                                                                 { @if (item.CandidateCount > 0)
                                                                 {
                                                                     @((item.ReScheduledCount * 100) / @item.CandidateCount)
                                                                 }% }
                                                             </td>
-                                                            <td style="color:#2680c7">
+                                                                    <td style="color:#2680c7;cursor:pointer">
                                                                 @item.FutureScheduledMeetings
                                                                 { @if (item.CandidateCount > 0)
                                                                 {
@@ -616,11 +606,11 @@ else
     $(".nav-tabs li.active").prev('li').find('a').tab('show');
 </script>
 <script>
-    function interviewstatuslistdetails(irfid, irfname, type) {
+    function interviewstatuslistdetails(irfname, type) {
         $.ajax({
             type: "POST",
             url: "/IRF/IRFMutliStackInterviewStatusDetailedView",
-            data: { irfid: irfid, irfname: irfname, type: type },
+            data: { irfname: irfname, type: type },
             success: function (data) {
                 $("#divInterviewdetailsView").html('');
                 $("#divInterviewdetailsView").html(data);

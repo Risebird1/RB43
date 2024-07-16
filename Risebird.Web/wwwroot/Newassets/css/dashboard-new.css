@@ -10603,13 +10603,22 @@ section {
 }
 #divInterviewdetailsView .dataTables_filter input {
     position: relative;
-    right: 55px;
+    right: -19px;
+}
+#divInterviewdetailsView div.dataTables_wrapper div.dataTables_filter label {
+    position: relative;
+    right: 70px;
 }
 .excel-file-dn {
-    float: right;
-    position: relative;
-    top: 45px;
-    margin: 0px 10px 0px 15px;
+ float: right;
+ position: relative;
+ top: 45px;
+ margin: 0px 10px 0px 15px;
+ z-index: 1000;
+ }
+.excel-file-dn .fa-file-excel:before {
+content: "\f1c3" !important;
+font-family: 'Font Awesome 5 Free';
 }
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
