@@ -4,5 +4,6 @@
     {
         public static readonly string Zoom = "Zoom";
         public static readonly string RisebirdMeet = "Risebird Meet";
+        public static readonly string TeamsMeet = "Teams";
     }
 }
