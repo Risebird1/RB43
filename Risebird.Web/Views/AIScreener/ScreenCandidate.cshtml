@@ -41,28 +41,23 @@
                 <div class="mdc-card card bl-bg">
                     <div class="mdc-card-wrapper__text-section">
                         <div class="student-profile py-4">
-                                        <div class="container">
+                            <div class="container resume-screen-con">
                                             <div class="row">
-                                                <div class="col-lg-4">
-                                                    <div class="card shadow-sm">
+                                                <div class="col-lg-12">
+                                                    <div class="card shadow-sm" style="margin-bottom:0px;">
                                                         <div class="card-header bg-transparent text-center">
                                                             <h3>@ViewBag.CandidateEmail</h3>
-                                                            <div class="light-grey-text">Job Title: @ViewBag.JobTitle</div>
-                                                            @*<div class="light-grey-text" style="padding-top:10px;margin-bottom:0px;font-size: 18px;">Total Score</div>
-                                                            <div class="final-score-wrapper gradient-2">
-                                                                <div class="final-score white-text">76 <span>%</span></div>
-                                                                <div class="light-grey-text" style="font-weight:bold;color: #8769ab !important;font-size: 18px;">of 100</div>
-                                                            </div>*@
+                                                            <div class="light-grey-text" style="font-size:17px;">Job Title: @ViewBag.JobTitle</div>
+
+                                                <div class="mb-10 summary resume-view-btn"><a class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space resume-view" style="font-size:12px;padding: 2px 25px !important;height:35px!important;border-radius:5px!important" href="@ViewBag.ResumeLink" target="_blank" class="card-link">View Resume</a> </div>
+
+                                                          
 
                                                         </div>
-                                                        <div class="card-body">
-                                                            <div class="mb-10 summary"><strong class="pr-1">Resume:</strong><a style="font-size:14px;padding:0px 10px;" href="@ViewBag.ResumeLink" target="_blank" class="card-link">View Resume</a> </div>
-                                                            <div class="mb-0 summary"><strong class="pr-1">Verdict:</strong> </div>
-
-                                                        </div>
+                                                        
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-12">
                                                     <div class="card shadow-sm">
 
                                                         <div class="card-body pt-0">
