@@ -24,12 +24,13 @@ namespace Risebird.MicroService
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IZoomHelper _zoomHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly ITeamsMeetingHelper _iteamsMeetingHelper;
 
         private readonly string ContainerName;
         private readonly string TranscriptsContainer;
         //private readonly string SASConnectionString;
 
-        public ZoomService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper)
+        public ZoomService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper, ITeamsMeetingHelper iteamsMeetingHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -40,7 +41,7 @@ namespace Risebird.MicroService
             ContainerName = _configuration["SASURLSettings:ContainerName"];
             TranscriptsContainer = _configuration["SASURLSettings:TranscriptsContainer"];
             //SASConnectionString = _configuration["SASURLSettings:ConnectionString"];
-
+            _iteamsMeetingHelper = iteamsMeetingHelper;
 
         }
         [FunctionName("ZoomService")]
@@ -53,6 +54,8 @@ namespace Risebird.MicroService
                 var pendingVideoMeetings = await _meetingRespository.GetPendingVideoMeetings();
 
                 var pendingRBMeetings = pendingVideoMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, "[a-zA-Z]")).ToList();
+
+                var pendingTeamsMeetings = pendingVideoMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, @"^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$")).ToList();
 
                 var pendingZoomMeetings = pendingVideoMeetings.Except(pendingRBMeetings).ToList();
 
@@ -271,6 +274,28 @@ namespace Risebird.MicroService
                     }
                 });
 
+                // Teams : fetch video link and dump in db
+                Parallel.ForEach(pendingTeamsMeetings, meeting =>
+                {
+                    try
+                    {
+                        string videoSasUrl = string.Empty;
+                        int? videoDuration = null;
+                        videoSasUrl = _iteamsMeetingHelper.GetTeamMeetingVideo(meeting.ZoomMeetingId).Result;
+                        if (!string.IsNullOrEmpty(videoSasUrl))
+                        {
+                            //insert the SAS URL of the video, transcript and video duration in the database table
+                            _ = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl).Result;
+                            log.LogInformation($"Teams : Video link url updated in database for meeting with Id {meeting.ZoomMeetingId} at: {DateTime.Now}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        log.LogError($"Zoom : Video upload error for meeting with id: {meeting.imid} and ZoomMeetingId: {meeting.ZoomMeetingId} at: {DateTime.Now}, Message : {ex.Message}");
+                        return;
+                    }
+                });
                 log.LogInformation($"C# Zoom Service function(Video Upload) executed at: {DateTime.Now}");
             }
             catch (Exception ex)

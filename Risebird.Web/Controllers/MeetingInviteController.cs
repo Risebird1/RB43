@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -251,7 +252,7 @@ namespace Risebird.Web
         }
         public async Task VideoURlFetch()
         {
-            var meetingid = string.Empty;
+            var meetingid = "MSpjMDlmN2Y1MC1mZDAwLTRlN2UtODBkYS0yYTQ2NGNhNzFjYmIqMCoqMTk6bWVldGluZ19PVEE1WkRBeU5ERXRNVEpqT1MwME1XWTBMV0V4TXpRdE9XSTFZMlE0TW1FMk5UZGhAdGhyZWFkLnYy";
             var userid = "c09f7f50-fd00-4e7e-80da-2a464ca71cbb";
             var token = await GetAccessTokenAsync();
             var videourl = await UploadRecodingToAzure(meetingid, userid, token);
@@ -270,6 +271,7 @@ namespace Risebird.Web
             {
                 Guid _guid = Guid.NewGuid();
                 var filename = _guid.ToString() + ".mp4";
+                filename = filename.Replace("-", "");
                 var ContainerName = "azurevideos";
                 string uploadedVideoUrl = string.Empty;
                 uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(filename, ContainerName, null, s);
@@ -278,6 +280,7 @@ namespace Risebird.Web
                 {
                     videoSasUrl = uploadedVideoUrl + "?" + sas;
                 }
+                var rawEmail = _azureStorageHelper.GetBlobData(ContainerName, filename);
             }
             return videoSasUrl;
         }
@@ -295,4 +298,5 @@ namespace Risebird.Web
         }
         #endregion
     }
+
 }
