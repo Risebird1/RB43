@@ -152,7 +152,20 @@
                                                                 <td>₹ 0 </td>
                                                             }*@
                                                             <td> @item.interviewDuration (minimum)</td>
-                                                            <td> @item.candidateName</td>
+                                                            <td>
+                                                                <span> @item.candidateName</span>
+                                                                <span>
+                                                                    @if (item.JDTiltle != null && item.JDTiltle != "")
+                                                                    {
+                                                                        <span class="pskill" style="font-weight: 600;font-size: 14px; display: block;">
+                                                                            <span style="font-size: 13px;color: grey;padding: 0px 4px 0px 0px;">JD Title : </span>@item.JDTiltle
+                                                                        </span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                    }
+                                                                </span>
+                                                            </td>
                                                             <td>
                                                                 <button type="button" class="clickhere_btn pull-left">
                                                                     <span data-toggle="tooltip" data-placement="top" title="" onclick="openSkillpopup(@item.irfIntId)" data-original-title="Click here to add Interviewer"><font style="font-family: Roboto, sans-serif; font-size:12px;">Click Here</font></span>
