@@ -9790,7 +9790,7 @@ option {
     position: fixed;
     z-index: 999;
     bottom: 0;
-    display: none;
+    display: block;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.6);
     font-size: 12px;
@@ -10620,6 +10620,15 @@ section {
 content: "\f1c3" !important;
 font-family: 'Font Awesome 5 Free';
 }
+.resume-screen-con {
+    padding: 0px 50px;
+}
+.resume-view-btn {
+    position: absolute;
+    right: 35px;
+    bottom: 20px;
+}
+
 /***** Media queries *****/
 @media only screen and (min-width: 1920px) {
     .rbpay .sb-scrollbar {
@@ -11051,7 +11060,9 @@ font-family: 'Font Awesome 5 Free';
             width: 100%;
             left: 0px;
         }
-
+        .resume-screen-con {
+            padding: 0px 0px!important;
+        }
         .campaignForm {
             width: 100% !important;
             margin: 30px 0px 0px 0px !important;
@@ -11491,6 +11502,7 @@ font-family: 'Font Awesome 5 Free';
         .selected-priority .journey td.interview-com, .journey td.interview-com {
             max-width: 300px;
         }
+
     }
 
     @media only screen and (max-width:991px) {
@@ -11507,7 +11519,11 @@ font-family: 'Font Awesome 5 Free';
         .calibrationbtn-mob {
             padding-right: 31px !important;
         }
-
+        .resume-view-btn {
+            position: inherit !important;
+            margin: 10px auto!important;
+            width: 160px!important;
+        }
         .nodata {
             text-align: center;
             font-size: 17px !important;
@@ -11610,6 +11626,7 @@ font-family: 'Font Awesome 5 Free';
         .recommendation .multiselect.dropdown-toggle:after {
             left: 1% !important;
         }
+       
     }
 
 
@@ -11617,7 +11634,9 @@ font-family: 'Font Awesome 5 Free';
         .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
             font-size: 11px !important;
         }
-
+        .resume-screen-con {
+            padding: 0px 0px!important;
+        }
         .report-int-codename {
             font-size: 13px !important;
         }
@@ -12072,6 +12091,9 @@ font-family: 'Font Awesome 5 Free';
         .task-container .table-h {
             height: 200px !important;
             overflow-y: scroll !important;
+        }
+        .resume-screen-con {
+            padding: 0px 0px !important;
         }
     }
 
@@ -12742,6 +12764,9 @@ font-family: 'Font Awesome 5 Free';
         .time-txt {
             font-size: 13px;
         }
+        .resume-screen-con {
+            padding: 0px 0px !important;
+        }
     }
 
     @media only screen and (max-width: 480px) {
@@ -12755,7 +12780,10 @@ font-family: 'Font Awesome 5 Free';
             .report-tooltip {
             display: none !important;
         }
-
+   
+        .resume-screen-con {
+            padding: 0px 0px!important;
+        }
        .note-card {
            height:95px;
         }
@@ -13029,6 +13057,7 @@ font-family: 'Font Awesome 5 Free';
             width: 100%;
             position: relative;
         }
+
     }
 
     @media only screen and (max-width: 415px) {
@@ -19577,10 +19606,10 @@ div.tagsinput {
     .topheader-header {
         right: 0px !important;
     }
-  
-        .topheader-header [data-tooltip]:before {
-            left: -270px;
-        }
+   
+    .topheader-header [data-tooltip]:before {
+        left: -270px;
+    }
     .calibrationbtn-mob {
         top: -62px!important;
         left: 106px!important;

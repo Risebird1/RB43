@@ -14,7 +14,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -249,9 +251,9 @@ namespace Risebird.Web
             dynamic tokenResponse = JsonConvert.DeserializeObject(responseBody);
             return tokenResponse?.access_token;
         }
-        public async Task VideoURlFetch()
+        public async Task VideoURlFetch(string meetingid)
         {
-            var meetingid = string.Empty;
+            //var meetingid = "MSpjMDlmN2Y1MC1mZDAwLTRlN2UtODBkYS0yYTQ2NGNhNzFjYmIqMCoqMTk6bWVldGluZ19PVEE1WkRBeU5ERXRNVEpqT1MwME1XWTBMV0V4TXpRdE9XSTFZMlE0TW1FMk5UZGhAdGhyZWFkLnYy";
             var userid = "c09f7f50-fd00-4e7e-80da-2a464ca71cbb";
             var token = await GetAccessTokenAsync();
             var videourl = await UploadRecodingToAzure(meetingid, userid, token);
@@ -261,7 +263,6 @@ namespace Risebird.Web
             string videoSasUrl = string.Empty;
             var recordingUrl = await FetchMeetingRecording(userid, meetingid, token);
             var client = new RestClient();
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, recordingUrl);
             var request = new RestRequest(recordingUrl, Method.Get);
             request.AddHeader("Authorization", $"Bearer {token}");
             request.AddHeader("Content-Type", "application/json");
@@ -271,6 +272,7 @@ namespace Risebird.Web
             {
                 Guid _guid = Guid.NewGuid();
                 var filename = _guid.ToString() + ".mp4";
+                filename = filename.Replace("-", "");
                 var ContainerName = "azurevideos";
                 string uploadedVideoUrl = string.Empty;
                 uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(filename, ContainerName, null, s);
@@ -279,6 +281,7 @@ namespace Risebird.Web
                 {
                     videoSasUrl = uploadedVideoUrl + "?" + sas;
                 }
+                var rawEmail = _azureStorageHelper.GetBlobData(ContainerName, filename);
             }
             return videoSasUrl;
         }
@@ -286,7 +289,6 @@ namespace Risebird.Web
         {
             var client = new RestClient();
             var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/onlineMeetings/{meetingid}/recordings";
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
             var request = new RestRequest(requestUrl, Method.Get);
             request.AddHeader("Authorization", $"Bearer {token}");
             request.AddHeader("Content-Type", "application/json");
@@ -297,4 +299,5 @@ namespace Risebird.Web
         }
         #endregion
     }
+
 }
