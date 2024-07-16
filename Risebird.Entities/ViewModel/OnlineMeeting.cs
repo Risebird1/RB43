@@ -62,6 +62,8 @@ namespace Risebird.Entities.ViewModel
         public string joinUrl { get; set; }
         public string id { get; set; }
         public string meetingCode { get; set; }
+        public string meetingId { get; set; }
+        public string recordingContentUrl { get; set; }
     }
     public class OnlineMeetingResponse
     {
@@ -69,6 +71,14 @@ namespace Risebird.Entities.ViewModel
     }
     public class OnlineMeetingResult
     {
-        public MetingResponse value { get; set; }
+        public List<MetingResponse> value { get; set; }
+    }
+    public class OnlineMeetingUpdate
+    {
+        public bool recordAutomatically { get; set; }
+    }
+    public class OnlineMeetingRecording
+    {
+        public List<MetingResponse> value { get; set; }
     }
 }
