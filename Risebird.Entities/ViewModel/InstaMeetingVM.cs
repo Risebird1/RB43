@@ -124,6 +124,7 @@ namespace Risebird.Entities.ViewModel
         public string join_url { get; set; }
         public DateTime InterviewDate { get; set; }
         public string accountemail { get; set; }
+        public string meetingid { get; set; }
     }
     public class ZoomAccountDetailsVM
     {

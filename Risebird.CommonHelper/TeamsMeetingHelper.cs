@@ -121,6 +121,7 @@ namespace Risebird.CommonHelper
                 //End: Update Online Meeting to start video recording automatically
                 meetingResponse.joinUrl = joinUrl;
                 meetingResponse.meetingId = meetingid;
+                meetingResponse.accountEmail = accountEmail;
                 return meetingResponse;
             }
             catch (Exception ex)
