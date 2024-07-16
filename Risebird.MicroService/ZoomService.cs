@@ -58,6 +58,7 @@ namespace Risebird.MicroService
                 var pendingTeamsMeetings = pendingVideoMeetings.Where(x => Regex.IsMatch(x.ZoomMeetingId, @"^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$")).ToList();
 
                 var pendingZoomMeetings = pendingVideoMeetings.Except(pendingRBMeetings).ToList();
+                pendingZoomMeetings = pendingZoomMeetings.Except(pendingTeamsMeetings).ToList();
 
                 //get jwt authentication token 
                 //string token = _zoomHelper.ZoomToken();

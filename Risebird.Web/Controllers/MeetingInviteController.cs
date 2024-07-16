@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -250,9 +251,9 @@ namespace Risebird.Web
             dynamic tokenResponse = JsonConvert.DeserializeObject(responseBody);
             return tokenResponse?.access_token;
         }
-        public async Task VideoURlFetch()
+        public async Task VideoURlFetch(string meetingid)
         {
-            var meetingid = "MSpjMDlmN2Y1MC1mZDAwLTRlN2UtODBkYS0yYTQ2NGNhNzFjYmIqMCoqMTk6bWVldGluZ19PVEE1WkRBeU5ERXRNVEpqT1MwME1XWTBMV0V4TXpRdE9XSTFZMlE0TW1FMk5UZGhAdGhyZWFkLnYy";
+            //var meetingid = "MSpjMDlmN2Y1MC1mZDAwLTRlN2UtODBkYS0yYTQ2NGNhNzFjYmIqMCoqMTk6bWVldGluZ19PVEE1WkRBeU5ERXRNVEpqT1MwME1XWTBMV0V4TXpRdE9XSTFZMlE0TW1FMk5UZGhAdGhyZWFkLnYy";
             var userid = "c09f7f50-fd00-4e7e-80da-2a464ca71cbb";
             var token = await GetAccessTokenAsync();
             var videourl = await UploadRecodingToAzure(meetingid, userid, token);
