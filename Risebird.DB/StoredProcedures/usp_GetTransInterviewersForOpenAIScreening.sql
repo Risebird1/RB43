@@ -12,7 +12,7 @@ Create PROCEDURE [dbo].[usp_GetTransInterviewersForOpenAIScreening]
 As
 Begin
 
- select distinct top 100 ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
+ select distinct top 3 ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
  irf.JDTiltle as JDTitle, irf.CreatedOn from TransInterviewer ti
  join IRF on irf.id = ti.irfId
  join InterviewerProfile ipr on ipr.id = ti.InterviewerId
