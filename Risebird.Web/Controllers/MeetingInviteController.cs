@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EllipticCurve.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -10,6 +11,8 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -26,13 +29,18 @@ namespace Risebird.Web
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingInviteService _meetingInviteService;
         private HttpClient _httpClienttwo;
-        public MeetingInviteController(HttpClientHelper factory, IConfiguration configuration, INotificationHelper notificationHelper, IMeetingInviteService meetingInviteService, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IAzureStorageHelper _azureStorageHelper;
+        private readonly ISASUrlHelper _sasUrlHelper;
+
+        public MeetingInviteController(HttpClientHelper factory, IConfiguration configuration, INotificationHelper notificationHelper, IMeetingInviteService meetingInviteService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper)
         {
             _httpClient = factory.GetHttpClient();
             _configuration = configuration;
             _notificationHelper = notificationHelper;
             _meetingInviteService = meetingInviteService;
             _applicationErrorLogger = applicationErrorLogger;
+            _azureStorageHelper = azureStorageHelper;
+            _sasUrlHelper = sasUrlHelper;
         }
 
         [HttpGet]
@@ -136,25 +144,26 @@ namespace Risebird.Web
                 OnlineMeeting _meeting = new OnlineMeeting();
                 _meeting.subject = "Test Data cration";
                 _meeting.body = new Body();
-                _meeting.body.content = "Nothing in messsage body";
+                _meeting.body.content = "Nothing in messsage body : Final";
                 _meeting.body.contentType = "HTML";
                 _meeting.start = new Start();
-                _meeting.start.dateTime = DateTime.Now.AddHours(5);
+                _meeting.start.dateTime = DateTime.Now.AddMinutes(1);
                 _meeting.start.timeZone = TimeZoneDetails;
                 _meeting.end = new End();
-                _meeting.end.dateTime = DateTime.Now.AddHours(6);
+                _meeting.end.dateTime = DateTime.Now.AddMinutes(10);
                 _meeting.end.timeZone = TimeZoneDetails;
                 _meeting.location = new Location();
                 _meeting.location.displayName = "Risebird Meeting";
                 _meeting.attendees = new List<Attendee>();
-                _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = "prashantindoliya@gmail.com", name = "" }, type = "required" });
-                _meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = loggedinUser, name = "" }, type = "required" });
+                //_meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = "prashantindoliya@gmail.com", name = "" }, type = "required" });
+                //_meeting.attendees.Add(new Attendee { emailAddress = new EmailAddress { address = loggedinUser, name = "" }, type = "required" });
                 _meeting.isOnlineMeeting = true;
                 _meeting.onlineMeetingProvider = "teamsForBusiness";
                 var accountEmail = "interviews@Risebird492.onmicrosoft.com";
                 var result = await CreateTeamsMeetingClient(accountEmail, _meeting);
                 var meetingdetails = await GetOnlineMeetingId(result.onlineMeeting.joinUrl);
-                await UpdateOnlineMeetingAutoRecord(meetingdetails.value.id);
+                var meetingid = meetingdetails.value?.FirstOrDefault().id;
+                await UpdateOnlineMeetingAutoRecord(meetingid);
             }
             catch (Exception ex)
             {
@@ -186,9 +195,10 @@ namespace Risebird.Web
         {
             if (!string.IsNullOrEmpty(joinUrl))
             {
+                string userid = "c09f7f50-fd00-4e7e-80da-2a464ca71cbb";
                 var client = new RestClient();
                 var token = await GetAccessTokenAsync();
-                var requestUrl = $"https://graph.microsoft.com/v1.0/me/onlineMeetings?$filter=JoinWebUrl%20eq%20'" + joinUrl + "'";
+                var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/onlineMeetings?$filter=JoinWebUrl%20eq%20'" + joinUrl + "'";
                 var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
                 var request = new RestRequest(requestUrl, Method.Get);
                 request.AddHeader("Authorization", $"Bearer {token}");
@@ -204,14 +214,17 @@ namespace Risebird.Web
         {
             if (!string.IsNullOrEmpty(meetingid))
             {
+                string userid = "c09f7f50-fd00-4e7e-80da-2a464ca71cbb";
                 var client = new RestClient();
                 var token = await GetAccessTokenAsync();
-                var requestUrl = $"https://graph.microsoft.com/v1.0/me/onlineMeetings/" + meetingid;
+                var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/onlineMeetings/" + meetingid;
                 var httpRequest = new HttpRequestMessage(HttpMethod.Patch, requestUrl);
                 var request = new RestRequest(requestUrl, Method.Patch);
                 request.AddHeader("Authorization", $"Bearer {token}");
                 request.AddHeader("Content-Type", "application/json");
-                request.AddParameter("recordAutomatically", true);
+                OnlineMeetingUpdate model = new OnlineMeetingUpdate();
+                model.recordAutomatically = true;
+                request.AddJsonBody(model);
                 RestResponse response = await client.ExecuteAsync(request);
                 var content = response.Content;
                 var convertedResponse = JsonConvert.DeserializeObject<OnlineMeetingResult>(content);
@@ -236,17 +249,51 @@ namespace Risebird.Web
             dynamic tokenResponse = JsonConvert.DeserializeObject(responseBody);
             return tokenResponse?.access_token;
         }
-        public async Task<string> FetchMeetingRecording(string accountEmail, string meetingid)
+        public async Task VideoURlFetch()
+        {
+            var meetingid = string.Empty;
+            var userid = "c09f7f50-fd00-4e7e-80da-2a464ca71cbb";
+            var token = await GetAccessTokenAsync();
+            var videourl = await UploadRecodingToAzure(meetingid, userid, token);
+        }
+        public async Task<string> UploadRecodingToAzure(string meetingid, string userid, string token)
+        {
+            string videoSasUrl = string.Empty;
+            var recordingUrl = await FetchMeetingRecording(userid, meetingid, token);
+            var client = new RestClient();
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, recordingUrl);
+            var request = new RestRequest(recordingUrl, Method.Get);
+            request.AddHeader("Authorization", $"Bearer {token}");
+            request.AddHeader("Content-Type", "application/json");
+            RestResponse response = await client.ExecuteAsync(request);
+            var content = response.RawBytes;
+            using (Stream s = new MemoryStream(content))
+            {
+                Guid _guid = Guid.NewGuid();
+                var filename = _guid.ToString() + ".mp4";
+                var ContainerName = "azurevideos";
+                string uploadedVideoUrl = string.Empty;
+                uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(filename, ContainerName, null, s);
+                var sas = _sasUrlHelper.CreateSasUrl(ContainerName);
+                if (!string.IsNullOrEmpty(uploadedVideoUrl) && !string.IsNullOrEmpty(sas))
+                {
+                    videoSasUrl = uploadedVideoUrl + "?" + sas;
+                }
+            }
+            return videoSasUrl;
+        }
+        public async Task<string> FetchMeetingRecording(string userid, string meetingid, string token)
         {
             var client = new RestClient();
-            var token = await GetAccessTokenAsync();
-            var requestUrl = $"https://graph.microsoft.com/v1.0/users/{accountEmail}/onlineMeetings/{meetingid}/recordings";
+            var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/onlineMeetings/{meetingid}/recordings";
             var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
             var request = new RestRequest(requestUrl, Method.Get);
             request.AddHeader("Authorization", $"Bearer {token}");
             request.AddHeader("Content-Type", "application/json");
             RestResponse response = await client.ExecuteAsync(request);
-            return response.Content.ToString();
+            var content = response.Content;
+            var convertedResponse = JsonConvert.DeserializeObject<OnlineMeetingRecording>(content);
+            return convertedResponse.value?.FirstOrDefault().recordingContentUrl;
         }
         #endregion
     }
