@@ -261,7 +261,6 @@ namespace Risebird.Web
             string videoSasUrl = string.Empty;
             var recordingUrl = await FetchMeetingRecording(userid, meetingid, token);
             var client = new RestClient();
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, recordingUrl);
             var request = new RestRequest(recordingUrl, Method.Get);
             request.AddHeader("Authorization", $"Bearer {token}");
             request.AddHeader("Content-Type", "application/json");
@@ -286,7 +285,6 @@ namespace Risebird.Web
         {
             var client = new RestClient();
             var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/onlineMeetings/{meetingid}/recordings";
-            var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
             var request = new RestRequest(requestUrl, Method.Get);
             request.AddHeader("Authorization", $"Bearer {token}");
             request.AddHeader("Content-Type", "application/json");
