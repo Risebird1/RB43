@@ -5,7 +5,7 @@ CREATE TABLE [dbo].[TransInterviewer](
 			[id] [int] IDENTITY(1,1) NOT NULL,
 			[IRFId] [int] NOT NULL,
 			[InterviewerId] [int] NOT NULL,	
-            [IsActive] [bit] NOT NULL DEFAULT 1,
+            [IsActive] [bit] NULL,
             [ClientAction] [Varchar](12) NULL,
             [IsAvailable] [bit] NOT NULL DEFAULT 1,
             [IsSMEVerified] [bit] NULL,
@@ -42,7 +42,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'TransInterviewer'))
 BEGIN
     ALTER TABLE TransInterviewer
-    Add IsActive bit not null default 1
+    Add IsActive bit 
 END
 IF NOT EXISTS(
     SELECT *

@@ -34,7 +34,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("CheckInterviewerSkillChannelSuitabilityOpenAI")]
-        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer, ILogger log)//0 */15 * * * *
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)//0 */15 * * * *
         {
             log.LogInformation($"C# Timer trigger function started executing  at: {DateTime.Now}");
 

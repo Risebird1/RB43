@@ -51,8 +51,8 @@ Begin
   
 	if not exists(select top 1 id from TransInterviewer where IRFId =@IRFId and UserId = @UserId)
 	Begin
-	Insert into TransInterviewer(IRFId,InterviewerId,UserId,IsAvailable,PerSuccessRate, [Source])   
-    values(@IRFId,@InterviewerId,@UserId,1, (select FlatRate from IRF where id=@IRFId), @rsc)  
+	Insert into TransInterviewer(IRFId,InterviewerId,UserId, IsActive, IsAvailable,PerSuccessRate, [Source])   
+    values(@IRFId,@InterviewerId,@UserId, 0, 1, (select FlatRate from IRF where id=@IRFId), @rsc)  
 	End
     
   
