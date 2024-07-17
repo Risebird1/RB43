@@ -138,6 +138,7 @@ namespace Risebird.MicroService
             builder.Services.AddScoped<IAzureStorageService, AzureStorageService>();
             builder.Services.AddScoped<IExcelHelper, ExcelHelper>();
             builder.Services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
+            builder.Services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
         }
 
 
