@@ -2145,7 +2145,6 @@
 <script>
     function ScreenInterviewer(elementId, jdTitle, irfId, irfName, isRedo = false)
     {
-        debugger;
         var index = -1;
         const results = elementId.match(/-?\d+(\.\d+)?/g);
         if (results)
@@ -2159,8 +2158,8 @@
             var userId = document.getElementById('InterviewerCollection_' + index + '__UserId').value;
             
             var resumeLink = encodeURIComponent(document.getElementById('InterviewerCollection_' + index + '__ResumeLink').href);
-            var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
-            //var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
+            //var actionUrl = "https://localhost:44329/AIScreener/ScreenInterviewer";
+            var actionUrl = "https://portal.risebird.io/AIScreener/ScreenInterviewer";
             
             var newTabUrl = actionUrl + '?jdTitle=' + jdTitle + '&irfId=' + irfId  + '&irfName=' + irfName + '&userId=' + userId + '&resumeLink=' + resumeLink + '&isRedo=' + isRedo;
             window.open(newTabUrl, '_blank');
