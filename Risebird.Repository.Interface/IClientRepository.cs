@@ -52,5 +52,6 @@ namespace Risebird.Repository.Interface
         Task<DynamicRatesDTO> GenerateDynamicRateByCurrentTimeOfWeek(int clientId, int margin);
         Task<bool> VerifyClientAuthenticity(int irfId, string emailId);
         Task<IEnumerable<string>> GetClientUsersByClientId(int clientId);
+        Task<Client> GetClientByTalentId(string tenantId);
     }
 }
