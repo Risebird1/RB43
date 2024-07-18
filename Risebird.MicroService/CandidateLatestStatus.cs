@@ -53,7 +53,7 @@ namespace Risebird.MicroService
                 var tenantId = req.Headers["tenant-id"].ToString();
                 
                 //check if the tenant Id belongs to the client
-                bool isAuthorizedTenant = false;
+                bool isAuthorizedTenant = true;
                 if (isAuthorizedTenant)
                 {
                     string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
