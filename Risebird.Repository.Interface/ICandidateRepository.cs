@@ -42,5 +42,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId);
         Task<Candidate> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId);
         Task<bool> SaveCandidateOpenAIScreeningResults(int irfId, int candidateMasterId, string screeningResponseJson);
+        Task<CandidateStatus> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId);
     }
 }
