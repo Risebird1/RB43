@@ -72,41 +72,50 @@ namespace Risebird.MicroService
                                 {
                                     var model = new List<CandidateLatestStatusResponse>();
                                     var irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim());
-                                    //Update according to client user role based
-                                    var result = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
-                                    foreach (var item in result)
+                                    if (irfid > 0)
                                     {
-                                        var executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={irfid}&isClient=true";
-                                        model.Add(new CandidateLatestStatusResponse()
+                                        //Update according to client user role based
+                                        var result = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
+                                        foreach (var item in result)
                                         {
-                                            interviewDate = item.interviewDate,
-                                            currentStatus = item.CandidateLatestStatus,
-                                            candidateEmailId = item.candidateEmail,
-                                            skillChannelId = item.IRFId,
-                                            requestedBy = reqData.requestedBy,
-                                            retrievedAt = DateTime.Now,
-                                            interviewer = item.InterviewerCodedName,
-                                            reportUrl = executiveurl
-                                        });
-                                    }
-                                    if (reqData.type == "Alldata")
-                                    {
-                                        //Get skill channel all Candidate Info and return
-                                        return new OkObjectResult(model);
-                                    }
-                                    else if (reqData.type == "DateRange")
-                                    {
-                                        if (reqData.startDate != null && reqData.endDate != null)
+                                            var executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={irfid}&isClient=true";
+                                            model.Add(new CandidateLatestStatusResponse()
+                                            {
+                                                interviewDate = item.interviewDate,
+                                                currentStatus = item.CandidateLatestStatus,
+                                                candidateEmailId = item.candidateEmail,
+                                                skillChannelId = item.IRFId,
+                                                requestedBy = reqData.requestedBy,
+                                                retrievedAt = DateTime.Now,
+                                                interviewer = item.InterviewerCodedName,
+                                                reportUrl = executiveurl
+                                            });
+                                        }
+                                        if (reqData.type == "Alldata")
                                         {
-                                            //Get Skill channel candidate info with daterange candidate
-                                            model = model.Where(x => x.interviewDate > reqData.startDate && x.interviewDate < reqData.endDate)?.ToList();
+                                            //Get skill channel all Candidate Info and return
                                             return new OkObjectResult(model);
                                         }
+                                        else if (reqData.type == "DateRange")
+                                        {
+                                            if (reqData.startDate != null && reqData.endDate != null)
+                                            {
+                                                //Get Skill channel candidate info with daterange candidate
+                                                model = model.Where(x => x.interviewDate > reqData.startDate && x.interviewDate < reqData.endDate)?.ToList();
+                                                return new OkObjectResult(model);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            return new BadRequestObjectResult("Invalid type");
+                                        }
                                     }
+                                    return new BadRequestObjectResult("Invalid skillChannelId");
                                 }
                             }
                         }
-                        return new BadRequestResult();
+                        return new BadRequestObjectResult("Json Payload is invalid");
+                        //return new BadRequestResult();
                     }
                     return new UnauthorizedResult();
                 }
