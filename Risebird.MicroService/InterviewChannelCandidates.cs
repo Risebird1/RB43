@@ -72,6 +72,7 @@ namespace Risebird.MicroService
                                 {
                                     var model = new List<CandidateLatestStatusResponse>();
                                     var irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim());
+                                    //Update according to client user role based
                                     var result = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
                                     foreach (var item in result)
                                     {
