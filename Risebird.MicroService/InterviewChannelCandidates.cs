@@ -14,6 +14,8 @@ using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using static Risebird.Entities.Data.RchilliResumeMapFields;
 using Risebird.Business;
+using Risebird.Repository.Interface;
+using System.Linq;
 
 namespace Risebird.MicroService
 {
@@ -23,14 +25,18 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IClientService _clientService;
+        private readonly ICandidateService _candidateService;
+        private readonly IIRFRepository _irfRepository;
 
-        public InterviewChannelCandidates(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IInterviewerService interviewerService,
-            IApplicationErrorLogger applicationErrorLogger, IClientService clientService)
+        public InterviewChannelCandidates(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger,
+            IClientService clientService, ICandidateService candidateService, IIRFRepository irfRepository)
         {
             _httpRequestHelper = httpRequestHelper;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _clientService = clientService;
+            _candidateService = candidateService;
+            _irfRepository = irfRepository;
         }
         [FunctionName("InterviewChannel/Candidates")]
         public async Task<IActionResult> Run(
@@ -65,19 +71,25 @@ namespace Risebird.MicroService
                             {
                                 if (!string.IsNullOrEmpty(reqData.type))
                                 {
-                                    //candidateData = (await _candidateService.GetCandidateTimelinebyDateStatus(DateTime.Now.AddDays(-200), DateTime.Now.AddDays(15), dataType, emailid)).ToList();
+                                    var irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim());
+                                    var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
+                                    foreach (var item in model)
+                                    {
+
+                                    }
                                     if (reqData.type == "Alldata")
                                     {
                                         //Get skill channel all Candidate Info and return
-                                        return new OkObjectResult("");
+                                        return new OkObjectResult(model);
                                     }
                                     else if (reqData.type == "DateRange")
                                     {
                                         if (reqData.startDate != null && reqData.endDate != null)
                                         {
                                             //Get Skill channel candidate info with daterange candidate
-                                            return new OkObjectResult("");
+                                            model = model.Where(x => x.interviewDate > reqData.startDate && x.interviewDate < reqData.endDate)?.ToList();
                                         }
+                                        return new OkObjectResult(model);
                                     }
                                 }
                             }
