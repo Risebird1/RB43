@@ -12,10 +12,9 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
-using Risebird.Business;
 using Risebird.Repository.Interface;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Risebird.MicroService
 {
@@ -71,11 +70,23 @@ namespace Risebird.MicroService
                             {
                                 if (!string.IsNullOrEmpty(reqData.type))
                                 {
+                                    var model = new List<CandidateLatestStatusResponse>();
                                     var irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim());
-                                    var model = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
-                                    foreach (var item in model)
+                                    var result = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
+                                    foreach (var item in result)
                                     {
-
+                                        var executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={irfid}&isClient=true";
+                                        model.Add(new CandidateLatestStatusResponse()
+                                        {
+                                            interviewDate = item.interviewDate,
+                                            currentStatus = item.CandidateLatestStatus,
+                                            candidateEmailId = item.candidateEmail,
+                                            skillChannelId = item.IRFId,
+                                            requestedBy = reqData.requestedBy,
+                                            retrievedAt = DateTime.Now,
+                                            interviewer = item.InterviewerCodedName,
+                                            reportUrl = executiveurl
+                                        });
                                     }
                                     if (reqData.type == "Alldata")
                                     {
@@ -88,8 +99,8 @@ namespace Risebird.MicroService
                                         {
                                             //Get Skill channel candidate info with daterange candidate
                                             model = model.Where(x => x.interviewDate > reqData.startDate && x.interviewDate < reqData.endDate)?.ToList();
+                                            return new OkObjectResult(model);
                                         }
-                                        return new OkObjectResult(model);
                                     }
                                 }
                             }
