@@ -15,6 +15,7 @@ using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System.Linq;
 using System.Collections.Generic;
+using Risebird.CommonHelper;
 
 namespace Risebird.MicroService
 {
@@ -78,6 +79,14 @@ namespace Risebird.MicroService
                                         var result = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
                                         foreach (var item in result)
                                         {
+                                            if (item.InterviewStatusTwo != null && item.InterviewStatusTwo > 0)
+                                            {
+                                                item.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(item.InterviewStatusTwo)).GetDescription();
+                                            }
+                                            if (!string.IsNullOrWhiteSpace(item.InterviewStatusTwoDesc))
+                                            {
+                                                item.CandidateLatestStatus = item.CandidateLatestStatus + " and " + item.InterviewStatusTwoDesc;
+                                            }
                                             var executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={irfid}&isClient=true";
                                             model.Add(new CandidateLatestStatusResponse()
                                             {
