@@ -15,5 +15,6 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string currentStatusUpdatedAt { get; set; }
         public string retrievedAt { get; set; }
         public string interviewDate { get; set; }
+        public string reportUrl { get; set; }
     }
 }

@@ -22,6 +22,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace Risebird.MicroService
 {
@@ -66,9 +67,32 @@ namespace Risebird.MicroService
 
                         if (reqData == null || string.IsNullOrEmpty(reqData.skillChannelId) || string.IsNullOrEmpty(reqData.candidateEmailId) || string.IsNullOrEmpty(reqData.requestedBy))
                         {
+                            var details = new Dictionary<string, string>();
+                            if(reqData == null)
+                            {
+                                details.Add("body", "Request Body is null.");
+                            }
+                            if (string.IsNullOrEmpty(reqData.skillChannelId))
+                            {
+                                details.Add("skillChannelId", "This field is required.");
+                            }
+                            if (string.IsNullOrEmpty(reqData.candidateEmailId))
+                            {
+                                details.Add("candidateEmailId", "This field is required.");
+                            }
+                            if (string.IsNullOrEmpty(reqData.requestedBy))
+                            {
+                                details.Add("requestedBy", "This field is required.");
+                            }
+                            var errorResponse = new ErrorResponse
+                            {
+                                Error = "Invalid request parameters",
+                                Details = details
+                            };
+                            
                             log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
 
-                            return new BadRequestResult();
+                            return new BadRequestObjectResult(errorResponse);
                         }
 
                         CandidateStatus candidateStatus = await _candidateRepository.GetCandidateLatestStatusForApi(reqData.skillChannelId, reqData.candidateEmailId);
@@ -79,8 +103,8 @@ namespace Risebird.MicroService
                             {
                                 skillChannelId = reqData.skillChannelId,
                                 candidateEmailId = reqData.requestedBy,
-                                retrievedAt = DateTime.Now.ToString(),
-                                currentStatusUpdatedAt = candidateStatus.Date.ToString(),
+                                retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                currentStatusUpdatedAt = candidateStatus.Date.ToString("yyyy-MM-ddTHH:mm:ssZ"),
 
                             };
                             if (candidateStatus.Status == (int)CandidateStatusOptions.MeetingStatus || candidateStatus.Status == (int)CandidateStatusOptions.InterviewStatus)
@@ -94,10 +118,13 @@ namespace Risebird.MicroService
                             if (candidateStatus.InterviewId.HasValue && candidateStatus.InterviewId.Value > 0)
                             {
                                 response.interviewDate = candidateStatus.interviewDate.ToString();
+                                var executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={candidateStatus.InterviewId.Value}&irfId={candidateStatus.IRFId}&isClient=true";
+                                response.reportUrl = executiveurl;
                             }
                             else
                             {
-                                response.interviewDate = "NA";
+                                response.interviewDate = string.Empty;
+                                response.reportUrl = string.Empty;
                             }
                             var result = JsonConvert.SerializeObject(response);
                             log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
@@ -113,7 +140,19 @@ namespace Risebird.MicroService
                     }
                     else
                     {
-                        return new BadRequestResult();
+                        var details = new Dictionary<string, string>
+                        {
+                            { "body", "Request Body is null." }
+                        };
+                        var errorResponse = new ErrorResponse
+                        {
+                            Error = "Invalid request.",
+                            Details = details
+                        };
+
+                        log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
+
+                        return new BadRequestObjectResult(errorResponse);
                     }
                     
                     
@@ -126,6 +165,12 @@ namespace Risebird.MicroService
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function threw exception with message {ex.Message} at {DateTime.Now}");
+                //var errorResponse = new ErrorResponseBasic
+                //{
+                //    Error = "Invalid request parameters",
+                //    Details = "An unexpected error occurred. Please try again later."
+                //};
+                //return new InternalServerErrorResult(errorResponse);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
