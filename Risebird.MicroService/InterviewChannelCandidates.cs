@@ -94,12 +94,15 @@ namespace Risebird.MicroService
                                 return new BadRequestObjectResult(errorResponse);
                             }
 
-                            var model = new List<CandidateLatestStatusResponse>();
+                            var model = new CandidateInfoResponse();
                             var irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim());
                             if (irfid > 0)
                             {
                                 //Update according to client user role based
                                 var result = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
+                                model.skillChannelId = reqData.skillChannelId;
+                                model.requestedBy = reqData.requestedBy;
+                                model.retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
                                 foreach (var item in result)
                                 {
                                     if (item.InterviewStatusTwo != null && item.InterviewStatusTwo > 0)
@@ -134,14 +137,11 @@ namespace Risebird.MicroService
                                     {
                                         executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={irfid}&isClient=true";
                                     }
-                                    model.Add(new CandidateLatestStatusResponse()
+                                    model.result.Add(new CandidateStatusResponse()
                                     {
                                         interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                         currentStatus = item.CandidateLatestStatus,
                                         candidateEmailId = item.candidateEmail,
-                                        skillChannelId = item.IRFId,
-                                        requestedBy = reqData.requestedBy,
-                                        retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                         interviewer = item.InterviewerCodedName,
                                         reportUrl = executiveurl
                                     });
@@ -156,7 +156,7 @@ namespace Risebird.MicroService
                                     if (reqData.startDate != null && reqData.endDate != null)
                                     {
                                         //Get Skill channel candidate info with daterange candidate
-                                        model = model.Where(x => !string.IsNullOrWhiteSpace(x.interviewDate) && Convert.ToDateTime(x.interviewDate) > reqData.startDate && Convert.ToDateTime(x.interviewDate) < reqData.endDate)?.ToList();
+                                        model.result = model.result.Where(x => !string.IsNullOrWhiteSpace(x.interviewDate) && Convert.ToDateTime(x.interviewDate) > reqData.startDate && Convert.ToDateTime(x.interviewDate) < reqData.endDate)?.ToList();
                                         return new OkObjectResult(model);
                                     }
                                     else
