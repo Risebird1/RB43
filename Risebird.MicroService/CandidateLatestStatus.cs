@@ -70,14 +70,14 @@ namespace Risebird.MicroService
 
                     log.LogInformation(requestBody);
 
-                    if(!string.IsNullOrEmpty(requestBody))
+                    if (!string.IsNullOrEmpty(requestBody))
                     {
                         CandidateLatestStatusRequest reqData = JsonConvert.DeserializeObject<CandidateLatestStatusRequest>(requestBody);
 
                         if (reqData == null || string.IsNullOrEmpty(reqData.skillChannelId) || string.IsNullOrEmpty(reqData.candidateEmailId) || string.IsNullOrEmpty(reqData.requestedBy))
                         {
                             var details = new Dictionary<string, string>();
-                            if(reqData == null)
+                            if (reqData == null)
                             {
                                 details.Add("body", "Request Body is null.");
                             }
@@ -98,23 +98,24 @@ namespace Risebird.MicroService
                                 Error = "Invalid request parameters.",
                                 Details = details
                             };
-                            
+
                             log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
 
                             return new BadRequestObjectResult(errorResponse);
                         }
 
                         CandidateStatus candidateStatus = await _candidateRepository.GetCandidateLatestStatusForApi(reqData.skillChannelId, reqData.candidateEmailId);
-                        
+
                         if (candidateStatus != null)
                         {
                             var response = new CandidateLatestStatusResponse
                             {
                                 skillChannelId = reqData.skillChannelId,
-                                candidateEmailId = reqData.requestedBy,
+                                candidateEmailId = reqData.candidateEmailId,
                                 retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                 currentStatusUpdatedAt = candidateStatus.Date.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-
+                                requestedBy = reqData.requestedBy,
+                                interviewer = candidateStatus.interviewer
                             };
                             if (candidateStatus.Status == (int)CandidateStatusOptions.MeetingStatus || candidateStatus.Status == (int)CandidateStatusOptions.InterviewStatus)
                             {
@@ -163,8 +164,8 @@ namespace Risebird.MicroService
 
                         return new BadRequestObjectResult(errorResponse);
                     }
-                    
-                    
+
+
                 }
 
                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
