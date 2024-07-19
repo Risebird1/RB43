@@ -111,7 +111,7 @@ namespace Risebird.MicroService
                                     }
                                     if (item.MeetingStatusTwo != null)
                                     {
-                                        if (item.MeetingStatusTwo != 4)
+                                        if (item.MeetingStatusTwo == 4)
                                         {
                                             if (!string.IsNullOrWhiteSpace(item.InterviewStatusTwoDesc))
                                             {
@@ -161,7 +161,7 @@ namespace Risebird.MicroService
                                     }
                                     else
                                     {
-                                        details.Add("DateFileds", "Date Fields are invalid");
+                                        details.Add("DateFields", "Date Fields are invalid");
                                         var errorResponse = new ErrorResponse
                                         {
                                             Error = "Invalid request parameters",
