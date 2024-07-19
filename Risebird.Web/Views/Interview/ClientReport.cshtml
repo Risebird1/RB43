@@ -684,7 +684,15 @@
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
                                                                 <div class="skillBackground skill-round-xlarge skill-small">
-                                                                    <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">@Model.TechSkillReportCollection[i].WeightageActual  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                                    
+                                                                    @if(@Model.TechSkillReportCollection[i].WeightageRequired * 50 /100 < @Model.TechSkillReportCollection[i].WeightageActual){
+                                                                      <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                      <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+ 
+                                                                    }
                                                                 </div>
                                                             </div>
                                                         }
@@ -885,7 +893,15 @@
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)
                                                                         <div class="skillBackground skill-round-xlarge skill-small">
-                                                                            <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">@Model.TechSkillTwoReportCollection[i].WeightageActual  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
+                                                                           @if(@Model.TechSkillTwoReportCollection[i].WeightageRequired * 50 /100 < @Model.TechSkillTwoReportCollection[i].WeightageActual){
+
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                             <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
+  
+                                                                            }
                                                                         </div>
                                                                     </div>
                                                                 }
@@ -1432,6 +1448,7 @@
            else{
                $('#totTechScore').addClass('more')
            }
+
         }
     }
     function SetTechTwoReportCalculation(techCollectionIdStartsWith) {
@@ -1483,24 +1500,7 @@
         });
     });
 </script>
-<script>
-    function addColor() {
-        var udata = document.getElementById("totTechScore").value;
 
-        if (udata > 0) {
-            document.getElementById("totTechScore").style.color = 'green';
-        }
-        else
-            if (udata < 0) {
-                document.getElementById("totTechScore").style.color = 'red';
-            }
-            else
-                if (udata === 0) {
-                    document.getElementById("totTechScore").style.color = '#1456a8';
-                }
-        
-    };
-</script>
 <script>
     function ClientInterviewRating(interviewid, Reportsnippet) {
         $.ajax({
