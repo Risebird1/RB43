@@ -29,8 +29,12 @@
     .tox-notifications-container {
         display: none
     }
-
-    .interviewercomment {
+    .less{
+        color:red!important
+    }
+    .more{
+        color:green!important;
+    }    .interviewercomment {
         width: auto;
         overflow: hidden;
     }
@@ -648,7 +652,10 @@
                                                         <span class="totScore">
                                                             @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                             {
+                                                               
+                                                             
                                                                 <strong id="totTechScore"></strong>
+                                                                
                                                             }
                                                             else
                                                             {
@@ -1383,7 +1390,9 @@
             totalCount += parseInt(items[i].value);
         }
         SetTechReportCalculation('TechSkillReportCollection');
+         
         SetTechTwoReportCalculation('TechSkillTwoReportCollection');
+      
         var average = 0;
         if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
             average = totalCount / 4;
@@ -1415,7 +1424,14 @@
                     totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
                 }
             }
-            document.getElementById("totTechScore").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+            var score1 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
+            document.getElementById("totTechScore").innerHTML = score1 + '%';
+            if (score1 < 60) {
+               $('#totTechScore').addClass('less')
+           }
+           else{
+               $('#totTechScore').addClass('more')
+           }
         }
     }
     function SetTechTwoReportCalculation(techCollectionIdStartsWith) {
@@ -1433,7 +1449,14 @@
                     totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
                 }
             }
-            document.getElementById("totTechScore2").innerHTML = (parseFloat(totalTechSkillScore).toFixed(2)).toString() + '%';
+             var score2 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
+            document.getElementById("totTechScore2").innerHTML = score2 + '%';
+             if (score2 < 60) {
+               $('#totTechScore2').addClass('less')
+           }
+           else{
+               $('#totTechScore2').addClass('more')
+           }
         }
     }
 </script>
@@ -1459,6 +1482,24 @@
             $(this).toggleClass("open").next().slideToggle(300);
         });
     });
+</script>
+<script>
+    function addColor() {
+        var udata = document.getElementById("totTechScore").value;
+
+        if (udata > 0) {
+            document.getElementById("totTechScore").style.color = 'green';
+        }
+        else
+            if (udata < 0) {
+                document.getElementById("totTechScore").style.color = 'red';
+            }
+            else
+                if (udata === 0) {
+                    document.getElementById("totTechScore").style.color = '#1456a8';
+                }
+        
+    };
 </script>
 <script>
     function ClientInterviewRating(interviewid, Reportsnippet) {
