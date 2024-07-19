@@ -41,7 +41,7 @@ namespace Risebird.MicroService
             _candidateService = candidateService;
             _irfRepository = irfRepository;
         }
-        [FunctionName("InterviewChannel/Candidates")]
+        [FunctionName("InterviewChannelCandidates")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
