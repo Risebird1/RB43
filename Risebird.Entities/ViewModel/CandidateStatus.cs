@@ -34,6 +34,7 @@ namespace Risebird.Entities.ViewModel
         public int? confirmationStatus { get; set; }
         public bool IsReportBlocked { get; set; }
         public bool RedoInterview { get; set; }
+        public DateTime? interviewDate { get; set; }
 
     }
 }

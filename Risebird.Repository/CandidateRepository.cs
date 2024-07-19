@@ -1381,5 +1381,26 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<CandidateStatus> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@skillChannelName", skillChannelName);
+                dynamicParameters.Add("@candidateEmailId", candidateEmailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await SqlMapper.QueryAsync<CandidateStatus>(con, "usp_GetCandidateLatestStatusForApi", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results?.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
