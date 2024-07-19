@@ -122,6 +122,7 @@ namespace Risebird.CommonHelper
                 meetingResponse.joinUrl = joinUrl;
                 meetingResponse.meetingId = meetingid;
                 meetingResponse.accountEmail = accountEmail;
+                meetingResponse.id = result?.onlineMeeting?.id;
                 return meetingResponse;
             }
             catch (Exception ex)
@@ -172,6 +173,42 @@ namespace Risebird.CommonHelper
                     return videoSasUrl;
                 }
                 //End : Upload Video over azure blob and get blob URL
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return "";
+        }
+        public async Task<string> DeleteTeamMeetingandEvent(string meetingid, string eventid)
+        {
+            try
+            {
+                string userid = "c09f7f50-fd00-4e7e-80da-2a464ca71cbb";
+                var token = await GetAccessTokenAsync();
+                var client = new RestClient();
+                //Start : Delete Online meeting 
+                if (!string.IsNullOrWhiteSpace(meetingid))
+                {
+                    var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/onlineMeetings/{meetingid}";
+                    var request = new RestRequest(requestUrl, Method.Delete);
+                    request.AddHeader("Authorization", $"Bearer {token}");
+                    request.AddHeader("Content-Type", "application/json");
+                    RestResponse response = await client.ExecuteAsync(request);
+                    var content = response.Content;
+                }
+                //End : Delete Online meeting 
+                //Start : Delete Calender Event
+                if (!string.IsNullOrWhiteSpace(eventid))
+                {
+                    var requestUrl = $"https://graph.microsoft.com/v1.0/users/{userid}/events/{eventid}";
+                    var request = new RestRequest(requestUrl, Method.Delete);
+                    request.AddHeader("Authorization", $"Bearer {token}");
+                    request.AddHeader("Content-Type", "application/json");
+                    RestResponse response = await client.ExecuteAsync(request);
+                    var content = response.Content;
+                }
+                //End : Delete Calender Event
             }
             catch (Exception ex)
             {

@@ -30,6 +30,7 @@ CREATE TABLE [dbo].[Client](
             [isCandidateportal][bit] Null,
             [IsPlanFlixable][bit] null,
             [PlanType][int]null,
+            [tenantId][varchar](50) NULL,
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -298,6 +299,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add PlanType int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'tenantId')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add tenantId varchar(50)
 END
 
 END

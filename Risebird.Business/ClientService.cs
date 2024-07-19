@@ -670,6 +670,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<Client> GetClientByTalentId(string tenantId)
+        {
+            try
+            {
+                return await _clientRepository.GetClientByTalentId(tenantId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
     }
 }

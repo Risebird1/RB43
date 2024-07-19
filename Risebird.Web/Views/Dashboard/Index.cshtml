@@ -419,11 +419,10 @@
                 <div class="col-md-12">
                     <div class="dashboard-view">
                         <span class="dashboard-iconcolor"></span>
-                   <span style="float:left"> <a onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'"><span class="pull-left">911 Dashboard</span></a></span> <span style="float:left;padding: 0px 5px;">/</span>
-                     @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "SeniorInterviewerManagement")
+@*                   <span style="float:left"> <a onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'"><span class="pull-left">911 Dashboard</span></a></span> <span style="float:left;padding: 0px 5px;">/</span>*@                     @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "Quality Controller" || ViewBag.ProfileName == "SeniorInterviewerManagement")
    
                     { 
-                  <span style="float:left"> <a onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'"><span class="pull-left">New Dashboard</span></a></span>
+                  <span style="float:left"> <a onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'"><span class="pull-left">Emergency Dashboard</span></a></span>
 
                     }
                    </div>
