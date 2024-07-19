@@ -32,14 +32,16 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly ICandidateRepository _candidateRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IClientService _clientService;
 
         public CandidateLatestStatus(IHttpRequestHelper httpRequestHelper, IConfiguration configuration, IInterviewerService interviewerService,
-            IApplicationErrorLogger applicationErrorLogger, ICandidateRepository candidateRepository)
+            IApplicationErrorLogger applicationErrorLogger, ICandidateRepository candidateRepository, IClientService clientService)
         {
             _httpRequestHelper = httpRequestHelper;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _candidateRepository = candidateRepository;
+            _clientService = clientService;
             //employementapikey = _configuration["EmploymentVerfication:apikey"];
         }
 
@@ -52,9 +54,16 @@ namespace Risebird.MicroService
             {
                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function invoked at {DateTime.Now}");
                 var tenantId = req.Headers["tenant-id"].ToString();
-                
-                //check if the tenant Id belongs to the client
-                bool isAuthorizedTenant = true;
+
+                bool isAuthorizedTenant = false;
+                var clientDetails = await _clientService.GetClientByTalentId(tenantId);
+                if (clientDetails != null)
+                {
+                    if (clientDetails.id > 0)
+                    {
+                        isAuthorizedTenant = true;
+                    }
+                }
                 if (isAuthorizedTenant)
                 {
                     string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
