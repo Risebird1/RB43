@@ -16,6 +16,7 @@ using Risebird.Repository.Interface;
 using System.Linq;
 using System.Collections.Generic;
 using Risebird.CommonHelper;
+using Microsoft.Azure.Documents.SystemFunctions;
 
 namespace Risebird.MicroService
 {
@@ -91,12 +92,12 @@ namespace Risebird.MicroService
                                             var executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={irfid}&isClient=true";
                                             model.Add(new CandidateLatestStatusResponse()
                                             {
-                                                interviewDate = item.interviewDate,
+                                                interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                                 currentStatus = item.CandidateLatestStatus,
                                                 candidateEmailId = item.candidateEmail,
                                                 skillChannelId = item.IRFId,
                                                 requestedBy = reqData.requestedBy,
-                                                retrievedAt = DateTime.Now,
+                                                retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                                 interviewer = item.InterviewerCodedName,
                                                 reportUrl = executiveurl
                                             });
@@ -111,7 +112,7 @@ namespace Risebird.MicroService
                                             if (reqData.startDate != null && reqData.endDate != null)
                                             {
                                                 //Get Skill channel candidate info with daterange candidate
-                                                model = model.Where(x => x.interviewDate > reqData.startDate && x.interviewDate < reqData.endDate)?.ToList();
+                                                model = model.Where(x => !string.IsNullOrWhiteSpace(x.interviewDate) && Convert.ToDateTime(x.interviewDate) > reqData.startDate && Convert.ToDateTime(x.interviewDate) < reqData.endDate)?.ToList();
                                                 return new OkObjectResult(model);
                                             }
                                         }
