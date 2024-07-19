@@ -111,7 +111,7 @@ namespace Risebird.MicroService
                                     }
                                     if (item.MeetingStatusTwo != null)
                                     {
-                                        if (item.MeetingStatusTwo != 4)
+                                        if (item.MeetingStatusTwo == 4)
                                         {
                                             if (!string.IsNullOrWhiteSpace(item.InterviewStatusTwoDesc))
                                             {
