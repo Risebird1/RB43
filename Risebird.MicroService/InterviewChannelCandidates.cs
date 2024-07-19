@@ -106,9 +106,26 @@ namespace Risebird.MicroService
                                     {
                                         item.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(item.InterviewStatusTwo)).GetDescription();
                                     }
-                                    if (!string.IsNullOrWhiteSpace(item.InterviewStatusTwoDesc))
+                                    if (item.MeetingStatusTwo != null)
                                     {
-                                        item.CandidateLatestStatus = item.CandidateLatestStatus + " and " + item.InterviewStatusTwoDesc;
+                                        if (item.MeetingStatusTwo != 4)
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(item.InterviewStatusTwoDesc))
+                                            {
+                                                item.CandidateLatestStatus = item.CandidateLatestStatus + " and " + item.InterviewStatusTwoDesc;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (item.MeetingStatusTwo > 0)
+                                            {
+                                                item.MeetingStatusTwoDesc = ((MeetingStatus)Convert.ToInt32(item.MeetingStatusTwo)).GetDescription();
+                                            }
+                                            if (!string.IsNullOrWhiteSpace(item.MeetingStatusTwoDesc))
+                                            {
+                                                item.CandidateLatestStatus = item.CandidateLatestStatus + " and " + item.MeetingStatusTwoDesc;
+                                            }
+                                        }
                                     }
                                     //Check for meeting status complete
                                     var executiveurl = string.Empty;
@@ -141,6 +158,16 @@ namespace Risebird.MicroService
                                         //Get Skill channel candidate info with daterange candidate
                                         model = model.Where(x => !string.IsNullOrWhiteSpace(x.interviewDate) && Convert.ToDateTime(x.interviewDate) > reqData.startDate && Convert.ToDateTime(x.interviewDate) < reqData.endDate)?.ToList();
                                         return new OkObjectResult(model);
+                                    }
+                                    else
+                                    {
+                                        details.Add("DateFileds", "Date Fields are invalid");
+                                        var errorResponse = new ErrorResponse
+                                        {
+                                            Error = "Invalid request parameters",
+                                            Details = details
+                                        };
+                                        return new BadRequestObjectResult(errorResponse);
                                     }
                                 }
                                 else
