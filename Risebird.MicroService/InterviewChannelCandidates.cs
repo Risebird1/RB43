@@ -87,6 +87,7 @@ namespace Risebird.MicroService
                                             {
                                                 item.CandidateLatestStatus = item.CandidateLatestStatus + " and " + item.InterviewStatusTwoDesc;
                                             }
+                                            //Check for meeting status complete
                                             var executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={irfid}&isClient=true";
                                             model.Add(new CandidateLatestStatusResponse()
                                             {
