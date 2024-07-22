@@ -1287,7 +1287,7 @@ namespace Risebird.Repository
                                     //VideoLink = dt.Rows[i]["VideoLink"] != null ? dt.Rows[i]["VideoLink"].ToString() : null,
                                     //confirmationStatus = dt.Rows[i]["confirmationStatus"] != null ? dt.Rows[i]["confirmationStatus"].ToString() : null,
                                     //CommunicationalProficiency = !string.IsNullOrEmpty(dt.Rows[i]["CommunicationalProficiency"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CommunicationalProficiency"]) : 0,
-                                    CandidateType = CandidateSingleSourceTruthTypes.NotScheduled
+                                    CandidateType = (dt.Rows[i]["CandidateLatestStatus"] !=null && dt.Rows[i]["CandidateLatestStatus"].ToString() == "NOTSCHEDULED") ? CandidateSingleSourceTruthTypes.NotScheduled : CandidateSingleSourceTruthTypes.Cold
                                 });
                             }
                             _resultVM.AddRange(listCandidates);
