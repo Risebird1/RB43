@@ -6255,7 +6255,28 @@ namespace Risebird.Web.Controllers
                         i++;
                     }
 
+                    i++;
 
+                    foreach (var item in model.Where(x => x.CandidateType == CandidateSingleSourceTruthTypes.Cold))
+                    {
+
+                        Sheet.Cells[i, 1].Value = item.candidateName;
+                        Sheet.Cells[i, 2].Value = item.candidateEmail;
+                        Sheet.Cells[i, 3].Value = item.MobileNumber ?? string.Empty;
+
+                        Sheet.Cells[i, 4].Value = item.ResumeLink;
+                        Sheet.Cells[i, 5].Value = item.JDTiltle;
+                        Sheet.Cells[i, 6].Value = item.IRFId;
+
+                        Sheet.Cells[i, 7].Value = item.AddedOnDate.HasValue ? item.AddedOnDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 8].Value = item.InvitationSentOnDate.HasValue ? item.InvitationSentOnDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 9].Value = item.FirstScheduledOnDate.HasValue ? item.FirstScheduledOnDate.Value.ToString() : string.Empty;
+                        Sheet.Cells[i, 10].Value = string.Empty;
+                        Sheet.Cells[i, 11].Value = string.Empty;
+                        Sheet.Cells[i, 12].Value = item.CandidateLatestStatus;
+
+                        i++;
+                    }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 }
                 else
