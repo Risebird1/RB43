@@ -100,7 +100,7 @@ namespace Risebird.MicroService
                             {
                                 //Update according to client user role based
                                 var result = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
-                                model.skillChannelId = reqData.skillChannelId;
+
                                 model.requestedBy = reqData.requestedBy;
                                 model.retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
                                 foreach (var item in result)
@@ -139,11 +139,13 @@ namespace Risebird.MicroService
                                     }
                                     model.result.Add(new CandidateStatusResponse()
                                     {
+                                        skillChannelId = item.IRFId,
                                         interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                        currentStatus = item.CandidateLatestStatus,
                                         candidateEmailId = item.candidateEmail,
                                         interviewer = item.InterviewerCodedName,
-                                        reportUrl = executiveurl
+                                        reportUrl = executiveurl,
+                                        communicationScore = 0,
+                                        videoUrl = ""
                                     });
                                 }
                                 if (reqData.type == "Alldata")
