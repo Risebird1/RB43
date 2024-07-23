@@ -30,6 +30,8 @@
         public string ChannelOwner { get; set; }
         public string ClientHr { get; set; }
         public string IRFName { get; set; }
+        public int CampaignId { get; set; }
+        public bool IsSurchargeApprove { get; set; }
 
     }
 }

@@ -71,8 +71,15 @@ namespace Risebird.CommonHelper
                 //{
                 //    return null;
                 //}
-
-                var threadId = await CreateThreadAsync(requestModel, fileId);
+                string threadId= string.Empty;
+                if (!string.IsNullOrEmpty(fileId))
+                {
+                    threadId = await CreateThreadAsync(requestModel, fileId);
+                }
+                else
+                {
+                    return null;
+                }
                 string runId;
                 //now create a run
                 if (!string.IsNullOrEmpty(threadId))
