@@ -13,12 +13,18 @@ As
 Begin
 
  select distinct top 3 ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
- irf.JDTiltle as JDTitle, irf.CreatedOn from TransInterviewer ti
+ irf.JDTiltle as JDTitle, irf.CreatedOn 
+ into #TempTable
+ from TransInterviewer ti
  join IRF on irf.id = ti.irfId
  join InterviewerProfile ipr on ipr.id = ti.InterviewerId
  join UserList ul on ul.id = ipr.UserId
- where ti.IsActive = 1 and OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
+ where ti.IsActive = 1 and OpenAIScreeningResponse is null and ResumeLink is not null 
+ and (IsAIScreeningAtempted is null or IsAIScreeningAtempted = 0)--irfid = @irfId and ti.UserId = @userId
  order by irf.CreatedOn desc
 
+ update TransInterviewer set IsAIScreeningAtempted = 1 where id in (select id from #TempTable)
+
+ select * from #TempTable
 End
 GO

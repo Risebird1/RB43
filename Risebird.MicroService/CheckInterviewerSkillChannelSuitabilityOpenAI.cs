@@ -34,7 +34,7 @@ namespace Risebird.MicroService
         }
 
         [FunctionName("CheckInterviewerSkillChannelSuitabilityOpenAI")]
-        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)//0 */15 * * * *
+        public async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo myTimer, ILogger log)//0 */5 * * * *
         {
             log.LogInformation($"C# Timer trigger function started executing  at: {DateTime.Now}");
 
@@ -67,13 +67,16 @@ namespace Risebird.MicroService
                         var response = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { JDTitle = item.JDTitle, ResumeLink = item.ResumeLink, Type = ProfileNames.Interviewer });
 
                         //save the response to db
-
-                        var responseInJson = JsonConvert.SerializeObject(response);
-                        bool saveOperationResult = true;
-                        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                        if(response != null)
                         {
-                            saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                            var responseInJson = JsonConvert.SerializeObject(response);
+                            bool saveOperationResult = true;
+                            if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                            {
+                                saveOperationResult = await _irfRepository.SaveTransInterviewerOpenAIScreeningResults(item.id, responseInJson);
+                            }
                         }
+                        
 
                     }
 

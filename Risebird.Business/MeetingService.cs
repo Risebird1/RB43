@@ -4276,6 +4276,18 @@ namespace Risebird.Business
             }
             return null;
         }
+        public async Task<int> checkInterviewEditable(int meetingid)
+        {
+            try
+            {
+                return await _meetingRespository.checkInterviewEditable(meetingid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
+        }
     }
 }
 
