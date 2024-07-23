@@ -289,5 +289,6 @@ namespace Risebird.Repository.Interface
         Task<List<DMInstructionVM>> GetMyDMInstruction(string emailId);
         Task<string> GetOpenAIReportQC(int interviewId);
         Task<bool> SaveOpenAIReportQC(int interviewId, string openAIQcResponseJson);
+        Task<int> checkInterviewEditable(int meetingid);
     }
 }

@@ -1277,6 +1277,13 @@ namespace Risebird.Web.Controllers
                             meetingUpdated.QCInterviewer = meetingUpdated.QCInterviewer.Trim();
                         }
                         string zoomMeetingId = string.Empty;
+                        //Check interview meeting status
+                        var checkeditable = await _meetingService.checkInterviewEditable(meetingUpdated.imid);
+                        if (checkeditable == 2)
+                        {
+                            TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting is cancelled already, you can't edit this meeting!";
+                            return RedirectToAction("Edit", new { id = meetingUpdated.imid });
+                        }
                         if (!string.IsNullOrEmpty(meetingUpdated.zoomLink))
                         {
                             try

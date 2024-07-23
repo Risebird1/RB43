@@ -7425,5 +7425,24 @@ namespace Risebird.Repository
             }
             return false;
         }
+        public async Task<int> checkInterviewEditable(int meetingid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", meetingid);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_checkInterviewEditable", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
+        }
     }
 }
