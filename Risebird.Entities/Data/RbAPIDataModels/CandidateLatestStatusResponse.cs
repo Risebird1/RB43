@@ -13,10 +13,10 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string requestedBy { get; set; }
         public string currentStatus { get; set; }
         public string currentStatusUpdatedAt { get; set; }
-        public string retrievedAt { get; set; }
-        public string interviewDate { get; set; }
         public string interviewer { get; set; }
         public string reportUrl { get; set; }
+        public string retrievedAt { get; set; }
+        public string interviewDate { get; set; }
     }
     public class CandidateInfoResponse
     {
@@ -63,4 +63,5 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string question { get; set; }
         public string rating { get; set; }
     }
+    
 }

@@ -2159,16 +2159,25 @@ namespace Risebird.Repository
                         interviewerDt.Columns.Add("IsActive", typeof(bool));
                         interviewerDt.Columns.Add("IsAvailable", typeof(bool));
                         interviewerDt.Columns.Add("Source", typeof(string));
+                        interviewerDt.Columns.Add("IsCampaignActivity", typeof(bool));
+                        interviewerDt.Columns.Add("CampaignId", typeof(int));
+                        interviewerDt.Columns.Add("OpenAIScreeningResponse", typeof(string));
+                        interviewerDt.Columns.Add("AIVerdict", typeof(string));
+                        interviewerDt.Columns.Add("IsSurchargeApprove", typeof(bool));
 
                         foreach (var item in irfDetails.InterviewerCollection)
                         {
                             if (irfDetails.IsNewSkillChannel)
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge, item.IsActive, item.IsAvailable, item.Source);
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.Surcharge,
+                                    item.IsActive, item.IsAvailable, item.Source, item.IsCampaignActivity, item.CampaignId,
+                                    item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
                             }
                             else
                             {
-                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive, item.IsAvailable, item.Source);
+                                interviewerDt.Rows.Add(irfDetails.id, item.UserId, item.PerSuccessRate, item.IsActive,
+                                    item.IsAvailable, item.Source, item.IsCampaignActivity, item.CampaignId,
+                                    item.OpenAIScreeningResponse, item.AIVerdict, item.IsSurchargeApprove);
                             }
                         }
                     }

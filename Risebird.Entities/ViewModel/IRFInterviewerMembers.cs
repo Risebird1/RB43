@@ -46,6 +46,9 @@ namespace Risebird.Entities.ViewModel
         public DateTime? AGAvailabilityModifiedAt { get; set; }
         public string ClientAction { get; set; }
         public string CampaignName { get; set; }
+        public int UserId { get; set; }
+        public string IRFName { get; set; }
+        public string AIVerdict { get; set; }
     }
     public class AssessmentIRFListVM
     {
