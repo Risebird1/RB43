@@ -95,7 +95,7 @@ namespace Risebird.MicroService
                             }
                             var errorResponse = new ErrorResponse
                             {
-                                Error = "Invalid request parameters",
+                                Error = "Invalid request parameters.",
                                 Details = details
                             };
 

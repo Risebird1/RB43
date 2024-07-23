@@ -56,8 +56,8 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,
 	@SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,
 	@TechSkillBulkData AS [dbo].[TransTechSkill2_TableType] READONLY,
-	@InterviewerBulkData AS [dbo].[TransInterviewer_TableTypeV2] READONLY,--[dbo].[TransInterviewer_TableType]
-	@InterviewerSurchargeBulkData AS [dbo].[TransInterviewerSurcharge_TableTypeV2] READONLY, --[dbo].[TransInterviewerSurcharge_TableType]
+	@InterviewerBulkData AS [dbo].[TransInterviewer_TableTypeV3] READONLY,--[dbo].[TransInterviewer_TableType]
+	@InterviewerSurchargeBulkData AS [dbo].[TransInterviewerSurcharge_TableTypeV3] READONLY, --[dbo].[TransInterviewerSurcharge_TableType]
 	@EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,
 	@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 	--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
@@ -207,9 +207,15 @@ BEGIN
 	[InterviewerId],
 	[Source],
 	[ModifiedBy],
-	[IsSurchargeApprove])  
+	[IsSurchargeApprove],
+	[IsCampaignActivity],
+	[CampaignId],
+	[OpenAIScreeningResponse],
+	[AIVerdict])  
     
-	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source], @ModifiedBy as InterviewerId,NULL as IsSurchargeApprove FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source],
+	@ModifiedBy, NULL as IsSurchargeApprove, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict
+	FROM @InterviewerSurchargeBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
 	Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)
 	SELECT 
     0 AS InterviewId,
@@ -235,9 +241,16 @@ FROM
 	[IsAvailable],
 	[InterviewerId],
 	[Source],
-	[ModifiedBy])  
+	[ModifiedBy],
+	[IsCampaignActivity],
+	[CampaignId],
+	[OpenAIScreeningResponse],
+	[AIVerdict],
+	[IsSurchargeApprove])  
     
-	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId, ibd.[Source], @ModifiedBy FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
+	SELECT ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId,
+	ibd.[Source], @ModifiedBy, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict, ibd.IsSurchargeApprove
+	FROM @InterviewerBulkData ibd left join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId  
   
  End
 	
