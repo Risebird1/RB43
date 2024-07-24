@@ -149,7 +149,7 @@ namespace Risebird.MicroService
                                 }
                                 //Check for meeting status complete
                                 var executiveurl = string.Empty;
-                                var meetingstatus = !string.IsNullOrWhiteSpace(item.MeetingStatus) ? Convert.ToInt32(item.MeetingStatus) : 0;
+                                var meetingstatus = !string.IsNullOrWhiteSpace(item.MeetingStatus.ToString()) ? Convert.ToInt32(item.MeetingStatus) : 0;
                                 if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
                                 {
                                     executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={item.irfintid}&isClient=true";
