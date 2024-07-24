@@ -1,5 +1,6 @@
 ﻿using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Risebird.Business;
@@ -36,6 +37,7 @@ namespace Risebird.MicroService
             builder.Services.AddSingleton<AuthenticationService>();
 
             builder.Services.AddSingleton<HttpClientHelper>();
+            //builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
             //builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddScoped<INotificationHelper, NotificationHelper>();
             builder.Services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
