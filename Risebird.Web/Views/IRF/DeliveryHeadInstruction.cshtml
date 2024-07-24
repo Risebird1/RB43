@@ -1234,14 +1234,14 @@
             for (i = 0; i < data.length; i++) {
                 html += '   <tr>';
                 html += '  <td>' + data[i].skillName + '</td>';
-        @* html += '  <td>' + data[i].comment + '</td>';*@
+        
                     html += '<td>';
                 html += ' <div>';
                 if (data[i].comment != null && data[i].comment != "") {
-                    if (data[i].comment.length > 40) {
+                    if (data[i].comment.length > 100) {
                         html += '<div class="article">';
-                        html += '<p style="margin-bottom:0px;">' + data[i].comment.substring(0, 50) + '</p>';
-                        html += '<p class="moretext_' + data[i].id + ' moretext">' + data[i].comment + '</p>';
+                        html += '<p style="margin-bottom:0px;">' + data[i].comment.substring(0, 100) + '</p>';
+                        html += '<p class="moretext_' + data[i].id + ' moretext">' + data[i].comment.substring(100, data[i].comment.length) + '</p>';
                         html += '</div>';
                     }
                     else {
