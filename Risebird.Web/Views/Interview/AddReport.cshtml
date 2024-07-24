@@ -543,17 +543,22 @@
                                                                         <tr style="background:#fff">
 
                                                                             <td>
-                                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "text-box single-line", @style = "width:150px", @readonly = "readonly" })
+                                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "text-box single-line", @style = "width:160px", @readonly = "readonly" })
 
                                                                             </td>
                                                                             <td>
-                                                                                <div class="techinfocontainer">
-                                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:285px", @readonly = "readonly" })
+                                                                                <div class="tooltipskill pull-left">
+                                                                                    <span class="tooltipskilltext">@Model.TechSkillReportCollection[i].SkillName</span>
+                                                                                   
+                                                                                   @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:270px", @readonly = "readonly" })
+                                                                                   
+                                                                                </div>
+                                                                                <div class="techinfocontainer pull-left">
                                                                                     <i class="fa fa-info-circle techinfoicon tooltipquestion">
                                                                                         <span class="tooltiptext">
-                                                                                            <p>Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
-                                                                                            <p>Natureofquestion: @Model.TechSkillReportCollection[i].Natureofquestion</p>
-                                                                                            <p>Timelimit: @Model.TechSkillReportCollection[i].Timelimit</p>
+                                                                                            <p style="margin-bottom:7px;">Concepts: @Model.TechSkillReportCollection[i].Concepts</p>
+                                                                                            <p style="margin-bottom:7px;">Natureofquestion: @Model.TechSkillReportCollection[i].Natureofquestion</p>
+                                                                                            <p style="margin-bottom:7px;">Timelimit: @Model.TechSkillReportCollection[i].Timelimit</p>
                                                                                         </span>
                                                                                     </i>
                                                                                 </div>
@@ -854,7 +859,7 @@
                                                         </label>
 
                                                     </label>
-                                                    <fieldset class="answer">
+                                                    <fieldset class="answer question-discussed">
                                                         <div class="table-responsive-sm interviewreport">
                                                             <table class="table table-bordered mbn" id="QuestionsTable" style="border-top: 1px #f8f7f7 solid !important;border-bottom:1px #f8f7f7 solid !important;">
                                                                 <thead>
@@ -873,16 +878,18 @@
                                                                             <td>
                                                                                 @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
                                                                                 {
+                                                                                   
                                                                                     <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank"><input type="text" class="select-css  text-box single-line" /></a>
                                                                                 }
                                                                                 else
                                                                                 {
-
+                                                                                    
                                                                                     @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
                                                                                 }
 
                                                                             </td>
-                                                                            <td>
+                                                                            <td class="tooltipskill">
+                                                                                <span class="tooltipskilltext">@Model.QuestionsCollection[0].SkillName</span>
                                                                                 @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @readonly = "readonly" })
 
                                                                             </td>
@@ -906,11 +913,12 @@
                                                                     {
                                                                         for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                                         {
-                                                                            <tr style="cursor:pointer">
+                                                                            <tr  style="cursor:pointer">
                                                                                 <td>
 
                                                                                     @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
                                                                                     {
+                                                                                       
                                                                                         @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
                                                                                     }
                                                                                     else
@@ -922,7 +930,8 @@
                                                                                     }
 
                                                                                 </td>
-                                                                                <td>
+                                                                                <td class="tooltipskill">
+                                                                                    <span class="tooltipskilltext">@Model.QuestionsCollection[0].SkillName</span>
                                                                                     @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "text-box single-line", @readonly = "readonly" })
                                                                                 </td>
                                                                                 <td>
@@ -1124,8 +1133,13 @@
 
                                                                                     </td>
                                                                                     <td>
-                                                                                        <div class="techinfocontainer">
+                                                                                        <div class="tooltipskill pull-left">
+                                                                                            <span class="tooltipskilltext">@Model.TechSkillTwoReportCollection[i].SkillName</span>
+                                                                                       
                                                                                             @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:285px", @readonly = "readonly" })
+                                                                                           
+                                                                                        </div>
+                                                                                         <div class="techinfocontainer">
                                                                                             <i class="fa fa-info-circle techinfoicon tooltipquestion">
                                                                                                 <span class="tooltiptext">
                                                                                                     <p>Concepts: @Model.TechSkillTwoReportCollection[i].Concepts</p>
@@ -1264,7 +1278,7 @@
                                                                 </label>
 
                                                             </label>
-                                                            <fieldset class="answer">
+                                                            <fieldset class="answer question-discussed">
                                                                 <div class="table-responsive-sm interviewreport">
                                                                     <table class="table table-bordered mbn" id="QuestionsTableTwo" style="border-top: 1px #f8f7f7 solid !important;border-bottom:1px #f8f7f7 solid !important;">
                                                                         <thead>
@@ -1281,13 +1295,13 @@
                                                                             {
                                                                                 <tr style="background:#fff">
                                                                                     <td>
+                                                                                       
                                                                                         @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
                                                                                         {
                                                                                             <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank"><input type="text" class="select-css  text-box single-line" /></a>
                                                                                         }
                                                                                         else
                                                                                         {
-
                                                                                             @Html.DropDownList("QuestionsTwoCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)" })
                                                                                         }
 
@@ -1320,13 +1334,14 @@
                                                                                         <td>
 
                                                                                             @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsTwoCollection[i].Comment))
-                                                                                            {
+                                                                                            {  
                                                                                                 @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
                                                                                             }
                                                                                             else
                                                                                             {
                                                                                                 var newList = new List<SelectListItem>();
                                                                                                 newList.Add(new SelectListItem() { Value = Model.QuestionsTwoCollection[i].Comment, Text = Model.QuestionsTwoCollection[i].Comment });
+                                                                                             
                                                                                                 @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                             }
