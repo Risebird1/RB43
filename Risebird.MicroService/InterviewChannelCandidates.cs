@@ -194,10 +194,10 @@ namespace Risebird.MicroService
                                     _skills.Add(new SkillDetails
                                     {
                                         isPrimary = false,
-                                        skillName = item.JDTiltle,
+                                        skillName = item.JDTitleTwo,
                                         status = item.InterviewStatusTwoDesc,
-                                        techscore = item.TechScoreone,
-                                        interviewerComment = item.InterviewerComment,
+                                        techscore = item.TechScoretwo,
+                                        interviewerComment = item.InterviewerCommentTwo,
                                         questions = _questions
                                     });
                                 }
