@@ -130,7 +130,10 @@ namespace Risebird.MicroService
                             }
                             //Update according to client user role based
                             var result = await _candidateService.FetchInterviewChannelCandidateInformation(irfid, clientDetails.id, reqData.requestedBy, reqData.startDate, reqData.endDate);
-
+                            if (result == null)
+                            {
+                                result = new List<InterviewChannelDetails>();
+                            }
                             model.requestedBy = reqData.requestedBy;
                             model.retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
                             foreach (var item in result)

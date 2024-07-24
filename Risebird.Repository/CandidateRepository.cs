@@ -1414,7 +1414,7 @@ namespace Risebird.Repository
                     var skillListsTwo = new List<string>();
                     DataSet dataset = new DataSet();
                     SqlDataAdapter adapter = new SqlDataAdapter();
-                    adapter.SelectCommand = new SqlCommand("usp_GetIRFCandidateStatsForExcelDownLoadV2", con);//usp_GetIRFCandidateStatsForExcelDownLoadV2//usp_GetIRFCandidateStatsForExcelDownLoad
+                    adapter.SelectCommand = new SqlCommand("usp_FetchInterviewChannelCandidateInformation", con);
                     adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
                     adapter.SelectCommand.CommandTimeout = 600;
                     adapter.SelectCommand.Parameters.AddWithValue("@irfId", irfid);
