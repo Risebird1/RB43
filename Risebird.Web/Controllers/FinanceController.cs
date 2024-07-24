@@ -557,70 +557,77 @@ namespace Risebird.Web.Controllers
                 resultset = resultset.Where(x => x.Date >= st && x.Date <= se.AddDays(1)).ToList();
                 resultset = resultset.Union(model1).ToList();
             }
-            StringBuilder sb = new StringBuilder();
-            sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Payment for</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
-            foreach (var item in resultset)
+            if (resultset.Count > 0)
             {
-                sb.Append("<tr>");
-                sb.Append("<td>" + item.Date.ToString() + "</td>");
-                sb.Append("<td>" + item.Comment + "</td>");
-                sb.Append("<td>" + item.Type + "</td>");
-                if (item.Status == "Advance")
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<table cellspacing='0' width='100%'><thead><tr><th>Date</th><th>Payment for</th><th>Type</th><th>Status</th><th>Total Amount</th><th>Payable Amount</th></tr></thead><tbody>");
+                foreach (var item in resultset)
                 {
-                    sb.Append("<td>" + item.Status + "</td>");
-                }
-                else
-                {
-                    sb.Append("<td>Paid</td>");
-                }
-                sb.Append("<td>" + item.Points + "</td>");
-                if (item.Status != "Advance")
-                {
-                    sb.Append("<td>" + Math.Round(item.Points - item.Points * .1) + "</td>");
-                }
-                else
-                {
+                    sb.Append("<tr>");
+                    sb.Append("<td>" + item.Date.ToString() + "</td>");
+                    sb.Append("<td>" + item.Comment + "</td>");
+                    sb.Append("<td>" + item.Type + "</td>");
+                    if (item.Status == "Advance")
+                    {
+                        sb.Append("<td>" + item.Status + "</td>");
+                    }
+                    else
+                    {
+                        sb.Append("<td>Paid</td>");
+                    }
                     sb.Append("<td>" + item.Points + "</td>");
+                    if (item.Status != "Advance")
+                    {
+                        sb.Append("<td>" + Math.Round(item.Points - item.Points * .1) + "</td>");
+                    }
+                    else
+                    {
+                        sb.Append("<td>" + item.Points + "</td>");
+                    }
+                    sb.Append("</tr>");
                 }
-                sb.Append("</tr>");
-            }
-            sb.Append("<tbody></table>");
+                sb.Append("<tbody></table>");
 
-            var commentvalue = st.ToString() + " to " + se.ToString();
-            var _Amount = Convert.ToInt32(resultset.Where(x => x.Status != "Advance").Sum(x => x.Points * .9) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points));
-            amount = _Amount.ToString();
-            var totalAmount = resultset.Where(x => x.Status != "Advance").Sum(x => x.Points) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points);
-            var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), totalAmount, "Done", commentvalue);
-            if (string.IsNullOrEmpty(paymenthistory))
-                paymenthistory = "0";
-            var model = await _meetingService.RBConfirmPayment(id, index, st, se.AddDays(1), Convert.ToInt32(paymenthistory));
-            //Start:Send email to Interviewer
-            Mail _mail = new Mail
-            {
-                TO = email,
-                CC = "finance@risebird.io",
-                Subject = "RiseBird: Finance Team has done payment"
-            };
-            var emailsend = await _notificationHelper.RBFNPaymentConfirmationNotification(_mail, amount, sb);
-            //End:Send email to Interviewer
-            WhatsAppVM _whatsApp = new WhatsAppVM();
-            _whatsApp.Emailid = email;
-            _whatsApp.InterviewDate = amount;
-            _whatsApp.Event = "Payment Notification";
-            var result = _whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
-            if (emailsend == "Mail sent successfully.")
-            {
+                var commentvalue = st.ToString() + " to " + se.ToString();
+                var _Amount = Convert.ToInt32(resultset.Where(x => x.Status != "Advance").Sum(x => x.Points * .9) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points));
+                amount = _Amount.ToString();
+                var totalAmount = resultset.Where(x => x.Status != "Advance").Sum(x => x.Points) - resultset.Where(x => x.Status == "Advance").Sum(x => x.Points);
+                var paymenthistory = await _meetingService.InsertPaymentHistory(email, Convert.ToInt32(amount), totalAmount, "Done", commentvalue);
+                if (string.IsNullOrEmpty(paymenthistory))
+                    paymenthistory = "0";
+                var model = await _meetingService.RBConfirmPayment(id, index, st, se.AddDays(1), Convert.ToInt32(paymenthistory));
+                //Start:Send email to Interviewer
+                Mail _mail = new Mail
+                {
+                    TO = email,
+                    CC = "finance@risebird.io",
+                    Subject = "RiseBird: Finance Team has done payment"
+                };
+                var emailsend = await _notificationHelper.RBFNPaymentConfirmationNotification(_mail, amount, sb);
+                //End:Send email to Interviewer
+                WhatsAppVM _whatsApp = new WhatsAppVM();
+                _whatsApp.Emailid = email;
+                _whatsApp.InterviewDate = amount;
+                _whatsApp.Event = "Payment Notification";
+                var result = _whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
+                if (emailsend == "Mail sent successfully.")
+                {
 
-            }
-            if (model == "Success")
-            {
-                return Json("Payment has been done  Successfully!");
-                // TempData["PaymentMessage"] = "Payment paid Successfully";
+                }
+                if (model == "Success")
+                {
+                    return Json("Payment has been done  Successfully!");
+                    // TempData["PaymentMessage"] = "Payment paid Successfully";
+                }
+                else
+                {
+                    return Json("Failed to pay the payment");
+                    //TempData["PaymentMessage"] = "Fail To pay the payment";
+                }
             }
             else
             {
                 return Json("Failed to pay the payment");
-                //TempData["PaymentMessage"] = "Fail To pay the payment";
             }
 
             //return RedirectToAction("FNPayment");

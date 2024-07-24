@@ -1333,6 +1333,12 @@
                                                                                     @*@Html.HiddenFor(m => m.InterviewerCollection[0].UserId)*@
                                                                                     @Html.Hidden("InterviewerCollection[0].Source", new { Value = Model.LoggedEmail })
                                                                                 </td>
+                                                                                @Html.Hidden("InterviewerCollection[0].IsCampaignActivity")
+                                                                                @Html.Hidden("InterviewerCollection[0].CampaignId")
+                                                                                @Html.Hidden("InterviewerCollection[0].OpenAIScreeningResponse")
+                                                                                @Html.Hidden("InterviewerCollection[0].AIVerdict")
+                                                                                @Html.Hidden("InterviewerCollection[0].IsSurchargeApprove")
+
                                                                                 <td class="cadName">
                                                                                     @*<a onclick="" data-tooltip="">No Resume</a>*@
                                                                                     <a href="" target="_blank" id="InterviewerCollection_0__ResumeLink" data-tooltip="">Resume</a>
@@ -1406,6 +1412,11 @@
                                                                                         @Html.DropDownListFor(m => m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, "Select", new { @class = "form-control select-css interviewersDrpDwn", @style = "width:200px;", @onchange = "InterviewerChanged(this.value, this.id)", @disabled = "disabled", data_initial_value = Model.InterviewerCollection[i].UserId, data_initial_text = Model.InterviewerCollection[i].EmailId })
                                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].UserId)
                                                                                         @Html.HiddenFor(m => m.InterviewerCollection[i].Source)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].IsCampaignActivity)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].CampaignId)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].OpenAIScreeningResponse)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].AIVerdict)
+                                                                                        @Html.HiddenFor(m => m.InterviewerCollection[i].IsSurchargeApprove)
 
 
                                                                                     </td>
