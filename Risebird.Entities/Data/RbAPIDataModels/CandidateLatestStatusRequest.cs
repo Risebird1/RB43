@@ -12,6 +12,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string candidateEmailId { get; set; }
         public string requestedBy { get; set; }
         public string type { get; set; }
+        public string status { get; set; }
         public DateTime? startDate { get; set; }
         public DateTime? endDate { get; set; }
     }
