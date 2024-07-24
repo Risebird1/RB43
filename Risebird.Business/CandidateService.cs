@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -573,6 +574,18 @@ namespace Risebird.Business
             try
             {
                 return await _candidateRepository.GetCandidateOpenAIScreeningResults(irfId, candidateMasterId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<InterviewChannelDetails>> FetchInterviewChannelCandidateInformation(int irfid, int id, string requestedBy, DateTime? startDate, DateTime? endDate)
+        {
+            try
+            {
+                return await _candidateRepository.FetchInterviewChannelCandidateInformation(irfid, id, requestedBy, startDate, endDate);
             }
             catch (Exception ex)
             {
