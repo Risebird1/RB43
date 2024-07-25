@@ -201,31 +201,17 @@ namespace Risebird.MicroService
                                         questions = _questions
                                     });
                                 }
-                                if (!string.IsNullOrWhiteSpace(reqData.status))
+                                model.result.Add(new CandidateStatusResponse()
                                 {
-                                    if (item.InterviewStatus != null)
-                                    {
-                                        //completed
-                                    }
-                                    if (item.CandidateLatestStatus == "FUTURESCHEDULE")
-                                    {
-                                        //Schdeuled
-                                    }
-                                }
-                                else
-                                {
-                                    model.result.Add(new CandidateStatusResponse()
-                                    {
-                                        skillChannelId = item.IRFId,
-                                        interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                        candidateEmailId = item.candidateEmail,
-                                        interviewer = item.InterviewerCodedName,
-                                        reportUrl = executiveurl,
-                                        communicationScore = item.CommunicationalProficiency,
-                                        videoUrl = item.VideoLink,
-                                        skills = _skills
-                                    });
-                                }
+                                    skillChannelId = item.IRFId,
+                                    interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                    candidateEmailId = item.candidateEmail,
+                                    interviewer = item.InterviewerCodedName,
+                                    reportUrl = executiveurl,
+                                    communicationScore = item.CommunicationalProficiency,
+                                    videoUrl = item.VideoLink,
+                                    skills = _skills
+                                });
                             }
                             if (reqData.type == "Alldata" || reqData.type == "DateRange")
                             {
