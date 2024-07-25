@@ -19,6 +19,7 @@ using Risebird.CommonHelper;
 using Microsoft.Azure.Documents.SystemFunctions;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Risebird.MicroService
 {
@@ -73,10 +74,6 @@ namespace Risebird.MicroService
                         {
                             if (string.IsNullOrEmpty(reqData.skillChannelId) || string.IsNullOrEmpty(reqData.type) || string.IsNullOrEmpty(reqData.requestedBy))
                             {
-                                if (string.IsNullOrEmpty(reqData.skillChannelId))
-                                {
-                                    details.Add("skillChannelId", "This field is required.");
-                                }
                                 if (string.IsNullOrEmpty(reqData.type))
                                 {
                                     details.Add("type", "This field is required.");
@@ -84,6 +81,27 @@ namespace Risebird.MicroService
                                 if (string.IsNullOrEmpty(reqData.requestedBy))
                                 {
                                     details.Add("requestedBy", "This field is required.");
+                                }
+                                if (!string.IsNullOrEmpty(reqData.type))
+                                {
+                                    if (reqData.type == "Alldata")
+                                    {
+                                        if (string.IsNullOrEmpty(reqData.skillChannelId))
+                                        {
+                                            details.Add("skillChannelId", "This field is required.");
+                                        }
+                                    }
+                                    else if (reqData.type == "DateRange")
+                                    {
+                                        if (reqData.startDate == null || reqData.endDate == null)
+                                        {
+                                            details.Add("DateFields", "Date Fields are invalid");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        details.Add("type", "type is invalid");
+                                    }
                                 }
                                 var errorResponse = new ErrorResponse
                                 {
@@ -95,98 +113,131 @@ namespace Risebird.MicroService
                             }
 
                             var model = new CandidateInfoResponse();
-                            var irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim());
-                            if (irfid > 0)
+                            var irfid = 0;
+                            if (!string.IsNullOrEmpty(reqData.skillChannelId))
                             {
-                                //Update according to client user role based
-                                var result = await _candidateService.GetIRFCandidateStatsForExcelDownLoad(irfid);
-                                model.skillChannelId = reqData.skillChannelId;
-                                model.requestedBy = reqData.requestedBy;
-                                model.retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
-                                foreach (var item in result)
+                                irfid = _irfRepository.GetIRFIdByIRFName(reqData.skillChannelId.Trim());
+                                if (irfid == 0)
                                 {
-                                    if (item.InterviewStatusTwo != null && item.InterviewStatusTwo > 0)
+                                    details.Add("skillChannelId", "skillChannelId is invalid");
+                                    var errorResponse = new ErrorResponse
                                     {
-                                        item.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(item.InterviewStatusTwo)).GetDescription();
+                                        Error = "Invalid request parameters",
+                                        Details = details
+                                    };
+                                    return new BadRequestObjectResult(errorResponse);
+                                }
+                            }
+                            //Update according to client user role based
+                            var result = await _candidateService.FetchInterviewChannelCandidateInformation(irfid, clientDetails.id, reqData.requestedBy, reqData.startDate, reqData.endDate);
+                            if (result == null)
+                            {
+                                result = new List<InterviewChannelDetails>();
+                            }
+                            model.requestedBy = reqData.requestedBy;
+                            model.retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                            foreach (var item in result)
+                            {
+                                if (item.InterviewStatusTwo != null && item.InterviewStatusTwo > 0)
+                                {
+                                    item.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(item.InterviewStatusTwo)).GetDescription();
+                                }
+                                if (item.MeetingStatusTwo > 0)
+                                {
+                                    item.MeetingStatusTwoDesc = ((MeetingStatus)Convert.ToInt32(item.MeetingStatusTwo)).GetDescription();
+                                    if (string.IsNullOrEmpty(item.InterviewStatusTwoDesc))
+                                    {
+                                        item.InterviewStatusTwoDesc = item.MeetingStatusTwoDesc;
                                     }
-                                    if (item.MeetingStatusTwo != null)
+                                }
+                                //Check for meeting status complete
+                                var executiveurl = string.Empty;
+                                var meetingstatus = !string.IsNullOrWhiteSpace(item.MeetingStatus.ToString()) ? Convert.ToInt32(item.MeetingStatus) : 0;
+                                if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
+                                {
+                                    executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={item.irfintid}&isClient=true";
+                                }
+                                //Create JD Based Info
+                                List<SkillDetails> _skills = new List<SkillDetails>();
+                                var _questions = new List<QuestionCommentsDetails>();
+                                foreach (var _question in item.questions.Where(x => x.skillSet == 1).ToList())
+                                {
+                                    _questions.Add(new QuestionCommentsDetails
                                     {
-                                        if (item.MeetingStatusTwo == 4)
-                                        {
-                                            if (!string.IsNullOrWhiteSpace(item.InterviewStatusTwoDesc))
-                                            {
-                                                item.CandidateLatestStatus = item.CandidateLatestStatus + " and " + item.InterviewStatusTwoDesc;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (item.MeetingStatusTwo > 0)
-                                            {
-                                                item.MeetingStatusTwoDesc = ((MeetingStatus)Convert.ToInt32(item.MeetingStatusTwo)).GetDescription();
-                                            }
-                                            if (!string.IsNullOrWhiteSpace(item.MeetingStatusTwoDesc))
-                                            {
-                                                item.CandidateLatestStatus = item.CandidateLatestStatus + " and " + item.MeetingStatusTwoDesc;
-                                            }
-                                        }
-                                    }
-                                    //Check for meeting status complete
-                                    var executiveurl = string.Empty;
-                                    var meetingstatus = !string.IsNullOrWhiteSpace(item.MeetingStatus) ? Convert.ToInt32(item.MeetingStatus) : 0;
-                                    if (meetingstatus == 4 || meetingstatus == 6 || meetingstatus == 7 || meetingstatus == 8)
-                                    {
-                                        executiveurl = $"https://portal.risebird.io/Interview/ExecutiveReport?interviewId={item.id}&irfId={irfid}&isClient=true";
-                                    }
-                                    model.result.Add(new CandidateStatusResponse()
-                                    {
-                                        interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                        currentStatus = item.CandidateLatestStatus,
-                                        candidateEmailId = item.candidateEmail,
-                                        interviewer = item.InterviewerCodedName,
-                                        reportUrl = executiveurl
+                                        question = _question.question,
+                                        skillName = _question.skillName,
+                                        rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
                                     });
                                 }
-                                if (reqData.type == "Alldata")
+                                _skills.Add(new SkillDetails
                                 {
-                                    //Get skill channel all Candidate Info and return
-                                    return new OkObjectResult(model);
-                                }
-                                else if (reqData.type == "DateRange")
+                                    isPrimary = true,
+                                    skillName = item.JDTiltle,
+                                    status = item.CandidateLatestStatus,
+                                    techscore = item.TechScoreone,
+                                    interviewerComment = item.InterviewerComment,
+                                    questions = _questions
+                                });
+                                //In case of multiStack
+                                if (item.numberOfTechStacks == 2)
                                 {
-                                    if (reqData.startDate != null && reqData.endDate != null)
+                                    _questions = new List<QuestionCommentsDetails>();
+                                    foreach (var _question in item.questions.Where(x => x.skillSet == 2).ToList())
                                     {
-                                        //Get Skill channel candidate info with daterange candidate
-                                        model.result = model.result.Where(x => !string.IsNullOrWhiteSpace(x.interviewDate) && Convert.ToDateTime(x.interviewDate) > reqData.startDate && Convert.ToDateTime(x.interviewDate) < reqData.endDate)?.ToList();
-                                        return new OkObjectResult(model);
-                                    }
-                                    else
-                                    {
-                                        details.Add("DateFields", "Date Fields are invalid");
-                                        var errorResponse = new ErrorResponse
+                                        _questions.Add(new QuestionCommentsDetails
                                         {
-                                            Error = "Invalid request parameters",
-                                            Details = details
-                                        };
-                                        return new BadRequestObjectResult(errorResponse);
+                                            question = _question.question,
+                                            skillName = _question.skillName,
+                                            rating = ((QuestionsLevel)Convert.ToInt32(_question.rating)).GetDescription()
+                                        });
+                                    }
+                                    _skills.Add(new SkillDetails
+                                    {
+                                        isPrimary = false,
+                                        skillName = item.JDTitleTwo,
+                                        status = item.InterviewStatusTwoDesc,
+                                        techscore = item.TechScoretwo,
+                                        interviewerComment = item.InterviewerCommentTwo,
+                                        questions = _questions
+                                    });
+                                }
+                                if (!string.IsNullOrWhiteSpace(reqData.status))
+                                {
+                                    if (item.InterviewStatus != null)
+                                    {
+                                        //completed
+                                    }
+                                    if (item.CandidateLatestStatus == "FUTURESCHEDULE")
+                                    {
+                                        //Schdeuled
                                     }
                                 }
                                 else
                                 {
-                                    return new BadRequestObjectResult("Invalid type");
+                                    model.result.Add(new CandidateStatusResponse()
+                                    {
+                                        skillChannelId = item.IRFId,
+                                        interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                        candidateEmailId = item.candidateEmail,
+                                        interviewer = item.InterviewerCodedName,
+                                        reportUrl = executiveurl,
+                                        communicationScore = item.CommunicationalProficiency,
+                                        videoUrl = item.VideoLink,
+                                        skills = _skills
+                                    });
                                 }
+                            }
+                            if (reqData.type == "Alldata" || reqData.type == "DateRange")
+                            {
+                                //Get skill channel all Candidate Info and return
+                                return new OkObjectResult(model);
                             }
                             else
                             {
-                                details.Add("skillChannelId", "skillChannelId is invalid");
-                                var errorResponse = new ErrorResponse
-                                {
-                                    Error = "Invalid request parameters",
-                                    Details = details
-                                };
-                                return new BadRequestObjectResult(errorResponse);
+                                details.Add("type", "type is invalid.");
                             }
                         }
-                        if (reqData == null)
+                        else
                         {
                             details.Add("body", "Request Body is null.");
                         }
