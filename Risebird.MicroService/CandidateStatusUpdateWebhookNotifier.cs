@@ -40,94 +40,99 @@ namespace Risebird.MicroService
 
             try
             {
-                var successfullyDeliveredCandidates = new List<int>();
-                //get transinterviewers for whom screening needs to be done
                 var webHookData = await _candidateRepository.GetCandidateStatusForWebHook();
-                foreach (var data in webHookData.Where(x=>x.Status.ToLower() == "scheduled"))
-                {
 
-                    try
+                if(webHookData != null && webHookData.Count() > 0)
+                {
+                    var successfullyDeliveredCandidates = new List<int>();
+
+                    foreach (var data in webHookData.Where(x => x.Status.ToLower() == "scheduled"))
                     {
-                        using (HttpClient client = new HttpClient())
+
+                        try
                         {
-
-                            var requestBody = new
+                            using (HttpClient client = new HttpClient())
                             {
-                                skillChannelId = data.IRFId,
-                                candidateEmailId = data.CandidateEmailId,
-                                currentStatus = data.Status
 
-                            };
+                                var requestBody = new
+                                {
+                                    skillChannelId = data.IRFId,
+                                    candidateEmailId = data.CandidateEmailId,
+                                    currentStatus = data.Status
 
-                            var request = new HttpRequestMessage(HttpMethod.Post, $"https://matching-staging.turing.com/api_/service-accounts-actions/webhooks/risebird/interview-scheduled")
-                            {
-                                Headers = { { "Content-Type", "application/json" }, { "service-account-token", "2|S9XfGcUNPwmgkbdmlrKa2CehENFDy0Ax" } }
-                            };
+                                };
 
-                            var jsonContent = JsonConvert.SerializeObject(requestBody);
-                            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                                var request = new HttpRequestMessage(HttpMethod.Post, $"https://matching-staging.turing.com/api_/service-accounts-actions/webhooks/risebird/interview-scheduled")
+                                {
+                                    Headers = { { "Content-Type", "application/json" }, { "service-account-token", "2|S9XfGcUNPwmgkbdmlrKa2CehENFDy0Ax" } }
+                                };
 
-                            request.Content = content;
+                                var jsonContent = JsonConvert.SerializeObject(requestBody);
+                                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                            var response = await client.SendAsync(request);
+                                request.Content = content;
 
-                            response.EnsureSuccessStatusCode();
-                            successfullyDeliveredCandidates.Add(data.id);
-                            var responseContent = await response.Content.ReadAsStringAsync();
+                                var response = await client.SendAsync(request);
 
+                                response.EnsureSuccessStatusCode();
+                                successfullyDeliveredCandidates.Add(data.id);
+                                var responseContent = await response.Content.ReadAsStringAsync();
+
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    }
-
-                }
-                foreach (var data in webHookData.Where(x => x.Status.ToLower() == "completed"))
-                {
-
-                    try
-                    {
-                        using (HttpClient client = new HttpClient())
+                        catch (Exception ex)
                         {
-
-                            var requestBody = new
-                            {
-                                skillChannelId = data.IRFId,
-                                candidateEmailId = data.CandidateEmailId,
-                                currentStatus = data.Status
-
-                            };
-
-                            var request = new HttpRequestMessage(HttpMethod.Post, $"https://matching-staging.turing.com/api_/service-accounts-actions/webhooks/risebird/interview-result")
-                            {
-                                Headers = { { "Content-Type", "application/json" }, { "service-account-token", "2|S9XfGcUNPwmgkbdmlrKa2CehENFDy0Ax" } }
-                            };
-
-                            var jsonContent = JsonConvert.SerializeObject(requestBody);
-                            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-                            request.Content = content;
-
-                            var response = await client.SendAsync(request);
-
-                            response.EnsureSuccessStatusCode();
-                            successfullyDeliveredCandidates.Add(data.id);
-                            var responseContent = await response.Content.ReadAsStringAsync();
-
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
+
                     }
-                    catch (Exception ex)
+                    foreach (var data in webHookData.Where(x => x.Status.ToLower() == "completed"))
                     {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                        try
+                        {
+                            using (HttpClient client = new HttpClient())
+                            {
+
+                                var requestBody = new
+                                {
+                                    skillChannelId = data.IRFId,
+                                    candidateEmailId = data.CandidateEmailId,
+                                    currentStatus = data.Status
+
+                                };
+
+                                var request = new HttpRequestMessage(HttpMethod.Post, $"https://matching-staging.turing.com/api_/service-accounts-actions/webhooks/risebird/interview-result")
+                                {
+                                    Headers = { { "Content-Type", "application/json" }, { "service-account-token", "2|S9XfGcUNPwmgkbdmlrKa2CehENFDy0Ax" } }
+                                };
+
+                                var jsonContent = JsonConvert.SerializeObject(requestBody);
+                                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                                request.Content = content;
+
+                                var response = await client.SendAsync(request);
+
+                                response.EnsureSuccessStatusCode();
+                                successfullyDeliveredCandidates.Add(data.id);
+                                var responseContent = await response.Content.ReadAsStringAsync();
+
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
+
                     }
 
+                    if (successfullyDeliveredCandidates != null && successfullyDeliveredCandidates.Count() > 0)
+                    {
+                        await _candidateRepository.DeleteDeliveredCandidateStatusForWebHook(successfullyDeliveredCandidates);
+                    }
                 }
-
-                if(successfullyDeliveredCandidates != null && successfullyDeliveredCandidates.Count()>0)
-                {
-                    await _candidateRepository.DeleteDeliveredCandidateStatusForWebHook(successfullyDeliveredCandidates);
-                }
+                
 
             }
             catch (Exception ex)
