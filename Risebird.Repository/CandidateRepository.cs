@@ -1603,5 +1603,59 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public async Task<IEnumerable<CandidateStatusWebHookData>> GetCandidateStatusForWebHook()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync<CandidateStatusWebHookData>(con, "usp_GetCandidateStatusForWebHook", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> DeleteDeliveredCandidateStatusForWebHook(List<int> data)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable dataDt = new DataTable();
+                    dataDt.Columns.Add("id", typeof(int));
+                    
+                    foreach (var item in data)
+                    {
+                        dataDt.Rows.Add(item);
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_CandidateWebHookDataBulkDelete", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@CandidateWebHookBulkData", SqlDbType.Structured));
+                    cmd.Parameters["@CandidateWebHookBulkData"].Value = dataDt;
+                    con.Open();
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }
