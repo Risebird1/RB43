@@ -185,7 +185,6 @@ namespace Risebird.MicroService
                                 videoUrl = result.VideoLink,
                                 requestedBy = reqData.requestedBy,
                                 retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                currentStatus = result.CandidateLatestStatus,
                                 skills = _skills
                             };
                             //if (result.CandidateLatestStatus == "FUTURESCHEDULE")
