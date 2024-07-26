@@ -12,7 +12,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string skillChannelId { get; set; }
         public string candidateEmailId { get; set; }
         public string requestedBy { get; set; }
-        public string currentStatus { get; set; }
+        //public string currentStatus { get; set; }
         //public string currentStatusUpdatedAt { get; set; }
         public string interviewer { get; set; }
         public string reportUrl { get; set; }
