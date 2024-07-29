@@ -201,30 +201,34 @@ namespace Risebird.MicroService
                                         questions = _questions
                                     });
                                 }
-                                if (!string.IsNullOrWhiteSpace(reqData.status))
+                                model.result.Add(new CandidateStatusResponse()
                                 {
-                                    if (item.InterviewStatus != null)
-                                    {
-                                        //completed
-                                    }
-                                    if (item.CandidateLatestStatus == "FUTURESCHEDULE")
-                                    {
-                                        //Schdeuled
-                                    }
+                                    skillChannelId = item.IRFId,
+                                    interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                    candidateEmailId = item.candidateEmail,
+                                    interviewer = item.InterviewerCodedName,
+                                    reportUrl = executiveurl,
+                                    communicationScore = item.CommunicationalProficiency,
+                                    videoUrl = item.VideoLink,
+                                    skills = _skills
+                                });
+                            }
+                            if (!string.IsNullOrWhiteSpace(reqData.status))
+                            {
+                                if (reqData.status == "Completed")
+                                {
+                                    var _select = model.result.Where(x => x.skills.Any(y => y.status.Contains("Select"))).ToList();
+                                    var _reject = model.result.Where(x => x.skills.Any(y => y.status.Contains("Reject"))).ToList();
+                                    var _proxy = model.result.Where(x => x.skills.Any(y => y.status.Contains("Proxy"))).ToList();
+                                    var items = _select.Union(_reject).Union(_proxy);
                                 }
-                                else
+                                else if (reqData.status == "Scheduled")
                                 {
-                                    model.result.Add(new CandidateStatusResponse()
-                                    {
-                                        skillChannelId = item.IRFId,
-                                        interviewDate = item.interviewDate?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                        candidateEmailId = item.candidateEmail,
-                                        interviewer = item.InterviewerCodedName,
-                                        reportUrl = executiveurl,
-                                        communicationScore = item.CommunicationalProficiency,
-                                        videoUrl = item.VideoLink,
-                                        skills = _skills
-                                    });
+                                    var items = model.result.Where(x => x.skills.Any(y => y.status.Contains("FUTURESCHEDULE"))).ToList();
+                                }
+                                else if (reqData.status == "Pending")
+                                {
+                                    var items = model.result.Where(x => x.skills.Any(y => y.status.Contains("Pending"))).ToList();
                                 }
                             }
                             if (reqData.type == "Alldata" || reqData.type == "DateRange")
