@@ -9065,12 +9065,20 @@ namespace Risebird.Web.Controllers
             foreach (var item in model.TechSkillReportCollection)
             {
                 item.SkillSet = 1;
+                if (item.ActualLevelId == 0)
+                {
+                    item.ActualLevelId = 1;
+                }
             }
             if (model.SkillSetsevaluate > 1)
             {
                 foreach (var item in model.TechSkillTwoReportCollection)
                 {
                     item.SkillSet = 2;
+                    if (item.ActualLevelId == 0)
+                    {
+                        item.ActualLevelId = 1;
+                    }
                     model.TechSkillReportCollection.Add(item);
                 }
             }

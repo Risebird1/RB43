@@ -213,6 +213,24 @@ namespace Risebird.MicroService
                                     skills = _skills
                                 });
                             }
+                            if (!string.IsNullOrWhiteSpace(reqData.status))
+                            {
+                                if (reqData.status == "Completed")
+                                {
+                                    var _select = model.result.Where(x => x.skills.Any(y => y.status.Contains("Select"))).ToList();
+                                    var _reject = model.result.Where(x => x.skills.Any(y => y.status.Contains("Reject"))).ToList();
+                                    var _proxy = model.result.Where(x => x.skills.Any(y => y.status.Contains("Proxy"))).ToList();
+                                    var items = _select.Union(_reject).Union(_proxy);
+                                }
+                                else if (reqData.status == "Scheduled")
+                                {
+                                    var items = model.result.Where(x => x.skills.Any(y => y.status.Contains("FUTURESCHEDULE"))).ToList();
+                                }
+                                else if (reqData.status == "Pending")
+                                {
+                                    var items = model.result.Where(x => x.skills.Any(y => y.status.Contains("Pending"))).ToList();
+                                }
+                            }
                             if (reqData.type == "Alldata" || reqData.type == "DateRange")
                             {
                                 //Get skill channel all Candidate Info and return
