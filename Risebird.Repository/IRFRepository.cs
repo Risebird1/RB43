@@ -8699,6 +8699,8 @@ namespace Risebird.Repository
                 {
                     var result = await SqlMapper.QueryAsync<TransInterviewer>(con, "usp_GetTransInterviewersForOpenAIScreening", null, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
+                    //var result = await SqlMapper.QueryAsync<TransInterviewer>(con, "usp_GetTransInterviewersForOpenAIScreeningTestDataTempSP", null, commandTimeout: 600,
+                    //    commandType: CommandType.StoredProcedure);
                     return result;
                 }
 
@@ -8781,6 +8783,27 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public async Task<bool> SaveInterviewerConvertedFromDocResumeLink(int transInterviewerId, string convertedResumeLink)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@transInterviewerId", transInterviewerId);
+                    parameters.Add("@convertedResumeLink", convertedResumeLink);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_SaveInterviewerConvertedFromDocResumeLink", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
         }
     }
 }

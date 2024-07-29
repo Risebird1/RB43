@@ -20,7 +20,9 @@
     <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.4.1" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
     <PackageReference Include="Sendgrid" Version="9.28.1" />
+    <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="26.2.5" />
     <PackageReference Include="System.Runtime.Caching" Version="7.0.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
     <PackageReference Include="Twilio" Version="6.2.0" />
   </ItemGroup>
 
