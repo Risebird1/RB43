@@ -12,12 +12,15 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string skillChannelId { get; set; }
         public string candidateEmailId { get; set; }
         public string requestedBy { get; set; }
-        public string currentStatus { get; set; }
-        public string currentStatusUpdatedAt { get; set; }
+        //public string currentStatus { get; set; }
+        //public string currentStatusUpdatedAt { get; set; }
         public string interviewer { get; set; }
         public string reportUrl { get; set; }
         public string retrievedAt { get; set; }
         public string interviewDate { get; set; }
+        public string videoUrl { get; set; }
+        public int communicationScore { get; set; }
+        public List<SkillDetails> skills { get; set; }
     }
     public class CandidateInfoResponse
     {
