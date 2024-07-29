@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
+using Microsoft.AspNetCore.Http;
 //using Microsoft.Azure.Management.Media;
 //using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Extensions.Configuration;
@@ -7,10 +8,18 @@ using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using Risebird.CommonHelper.Interface;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.DocIORenderer;
+using Syncfusion.Pdf;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+
+
 namespace Risebird.CommonHelper
 {
     public class AzureStorageHelper : IAzureStorageHelper
@@ -27,7 +36,6 @@ namespace Risebird.CommonHelper
         private readonly string _AMSSubscriptionId;
         private readonly string _AMSResourceGroup;
         private readonly string _AMSAccountName;
-
         //private static CloudMediaContext _context = null;
         //private const string AdaptiveStreamingTransformName = "MyTransformWithAdaptiveStreamingPreset";
         //private const string OutputFolderName = @"Output";
@@ -1286,6 +1294,204 @@ namespace Risebird.CommonHelper
             }
             return entities;
         }
+
+        public async Task<bool> IsDocFileAsync(string url)
+        {
+            try
+            {
+                //using (HttpClient client = new HttpClient())
+                //{
+                //    var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+                //    if (response.IsSuccessStatusCode)
+                //    {
+                //        var contentType = response.Content.Headers.ContentType?.MediaType;
+                //        var contentDisposition = response.Content.Headers.ContentDisposition?.FileName;
+
+                //        if (contentType == "application/msword" ||
+                //            (contentDisposition != null && contentDisposition.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)))
+                //        {
+                //            return true;
+                //        }
+                //    }
+                //}
+                if (url.EndsWith(".doc"))
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking the resume format: {ex.Message}");
+            }
+            return false;
+        }
+        public async Task<string> DownloadAndConvertFromDocToPdfAsync(string url)
+        {
+            try
+            {
+                string localPath = string.Empty;
+                using (HttpClient client = new HttpClient())
+                {
+                    var response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        localPath = Path.GetTempFileName();
+                        using (var fs = new FileStream(localPath, FileMode.Create, FileAccess.Write))
+                        {
+                            await response.Content.CopyToAsync(fs);
+                        }
+                        //return localPath;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(localPath))
+                {
+                    Console.WriteLine("Failed to download the resume.");
+                    return null;
+                }
+
+                // Convert .doc to .pdf
+                //Document doc = new Document(localPath);
+                //string pdfPath = Path.ChangeExtension(localPath, ".pdf");
+                //doc.Save(pdfPath);
+
+
+                string pdfPath = Path.ChangeExtension(localPath, ".pdf");
+                //using (var document = DocX.Load(localPath))
+                //{
+                //    //var pdfDoc = new PdfDocument();
+                //    var pdfDoc = new PdfDocument();
+                //    var pdfPage = pdfDoc.AddPage();
+                //    var graphics = XGraphics.FromPdfPage(pdfPage);
+                //    var font = new XFont("Arial", 12, XFontStyle.Regular);
+                //    var yPoint = 0;
+
+                //    foreach (var paragraph in document.Paragraphs)
+                //    {
+                //        graphics.DrawString(paragraph.Text, font, XBrushes.Black, new XRect(0, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
+                //        yPoint += 20; // Move to the next line
+                //    }
+
+                //    pdfDoc.Save(pdfPath);
+                //}
+                //using (FileStream stream = new FileStream(localPath, FileMode.Open, FileAccess.Read))
+                //{
+                //    HWPFDocument doc = new HWPFDocument(stream);
+                //    PdfDocument pdfDoc = new PdfDocument();
+                //    PdfPage pdfPage = pdfDoc.AddPage();
+                //    XGraphics graphics = XGraphics.FromPdfPage(pdfPage);
+                //    XFont font = new XFont("Arial", 12, XFontStyle.Regular);
+
+                //    Range range = doc.GetRange();
+                //    var text = range.Text;
+                //    var yPoint = 0;
+
+                //    foreach (var line in text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                //    {
+                //        graphics.DrawString(line, font, XBrushes.Black, new XRect(0, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
+                //        yPoint += 20; // Move to the next line
+                //    }
+
+                //    pdfDoc.Save(pdfPath);
+                //}
+
+                //using (Converter converterGr = new Converter(localPath))
+                //{
+                //    PdfConvertOptions options = new PdfConvertOptions();
+                //    converterGr.Convert(pdfPath, options);
+                //}
+
+
+                ///use the follwing
+                using (FileStream inputStream = new FileStream(localPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    WordDocument document = new WordDocument();
+                    document.Open(inputStream, FormatType.Doc);
+
+                    // Convert Word document to PDF
+                    using (DocIORenderer renderer = new DocIORenderer())
+                    {
+                        renderer.Settings.AutoTag = true;
+                        using (PdfDocument pdfDocument = renderer.ConvertToPDF(document))
+                        {
+                            // Save the PDF document
+                            using (FileStream outputFileStream = new FileStream(pdfPath, FileMode.Create, FileAccess.ReadWrite))
+                            {
+                                pdfDocument.Save(outputFileStream);
+                            }
+                        }
+                    }
+                }
+
+                //Document document = new Document();
+                //document.LoadFromFile(localPath);
+                //document.SaveToFile(pdfPath, FileFormat.PDF);
+
+
+                //var appWord = new Microsoft.Office.Interop.Word.Application();
+                //if (appWord.Documents != null)
+                //{
+                //    //yourDoc is your word document
+                //    //var wordDocument = appWord.Documents.Open(yourDoc);
+                //    var wordDocument = appWord.Documents.Open(localPath);
+                //    //string pdfDocName = "pdfDocument.pdf";
+                //    if (wordDocument != null)
+                //    {
+                //        wordDocument.ExportAsFixedFormat(pdfPath,
+                //        Microsoft.Office.Interop.Word.WdExportFormat.wdExportFormatPDF);
+                //        wordDocument.Close();
+                //    }
+                //    appWord.Quit();
+                //}
+
+                //string htmlContent = ExtractTextFromDoc(localPath);
+
+                //var converter = new SynchronizedConverter(new PdfTools());
+                //var doc = new HtmlToPdfDocument()
+                //{
+                //    GlobalSettings = new GlobalSettings
+                //    {
+                //        ColorMode = ColorMode.Color,
+                //        Orientation = Orientation.Portrait,
+                //        PaperSize = PaperKind.A4,
+                //        Out = pdfPath
+                //    },
+                //    Objects = {
+                //    new ObjectSettings
+                //    {
+                //        HtmlContent = htmlContent
+                //    }
+                //}
+                //};
+                //converter.Convert(doc);
+
+                string uploadedFileUri = string.Empty;
+
+                // Upload the converted .pdf back to Azure Blob Storage
+                // Read the file content into a byte array
+                byte[] fileContent = File.ReadAllBytes(pdfPath);
+
+                // Create a MemoryStream from the byte array
+                using (Stream memoryStream = new MemoryStream(fileContent))
+                {
+                    uploadedFileUri = await InsertBlobCloudCompare(url.Split("/").Last().Split(".").First() + ".pdf", "resumes", blobFileStream: memoryStream, contentType: "application/pdf");
+                }
+
+
+                //Console.WriteLine("File converted and uploaded successfully.");
+
+                // Cleanup temporary files
+                File.Delete(localPath);
+                File.Delete(pdfPath);
+                return uploadedFileUri;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error downloading the resume: {ex.Message}");
+            }
+            return null;
+        }
+        
     }
 
 }

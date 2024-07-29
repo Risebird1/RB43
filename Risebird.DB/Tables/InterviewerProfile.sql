@@ -47,6 +47,7 @@ CREATE TABLE [dbo].[InterviewerProfile](
     [IsResumeRedactAttempted][bit] Null,
     [IsResumeRedactFailed][bit] Null,
     [AssessmentGroupId] [varchar](500) null,
+    [ConvertedFromDocResumeLink] [varchar](2000) null,
 	CONSTRAINT [UC_InterviewerProfile] UNIQUE (NickName),
 	CONSTRAINT [FK_InterviewerProfile] FOREIGN KEY (UserId) REFERENCES UserList(id),
 	CONSTRAINT [PK_InterviewerProfile] PRIMARY KEY CLUSTERED 
@@ -426,6 +427,15 @@ AND Object_ID = Object_ID(N'InterviewerProfile'))
 BEGIN
 	alter table InterviewerProfile
 	Add IsResumeRedactFailed bit null
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ConvertedFromDocResumeLink')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add ConvertedFromDocResumeLink varchar(2000)
 END
 
 End
