@@ -1378,6 +1378,19 @@ namespace Risebird.Business
                 {
                     reportModel.InterviewStatus = (int)InterviewStatus.BorderLine;
                 }
+                //MultiStatck
+                if (reportModel.MeetingStatusTwo == (int)MeetingStatus.DroppedSelected)
+                {
+                    reportModel.InterviewStatusTwo = (int)InterviewStatus.Selected;
+                }
+                else if (reportModel.MeetingStatusTwo == (int)MeetingStatus.DroppedRejected)
+                {
+                    reportModel.InterviewStatusTwo = (int)InterviewStatus.Rejected;
+                }
+                else if (reportModel.MeetingStatusTwo == (int)MeetingStatus.DroppedBorderLine)
+                {
+                    reportModel.InterviewStatusTwo = (int)InterviewStatus.BorderLine;
+                }
                 var result = await _meetingRespository.AddInterviewReport(reportModel, emailId);
                 if (result)
                 {
