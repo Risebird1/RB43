@@ -32,6 +32,7 @@
         public string IRFName { get; set; }
         public int CampaignId { get; set; }
         public bool IsSurchargeApprove { get; set; }
+        public string ConvertedFromDocResumeLink { get; set; }
 
     }
 }
