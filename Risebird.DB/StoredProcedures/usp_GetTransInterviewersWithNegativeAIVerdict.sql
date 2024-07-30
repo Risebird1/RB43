@@ -12,7 +12,7 @@ Create PROCEDURE [dbo].[usp_GetTransInterviewersWithNegativeAIVerdict]
 As
 Begin
 
- select distinct top 100 ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
+ select distinct ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
  irf.JDTiltle as JDTitle, irf.CreatedOn, ti.UserId, ulr.EmailId as ChannelOwner, --ti.OpenAIScreeningResponse, 
  cl.[Name] as CompanyName, ulc.EmailId as ClientHr, irf.irfid as IRFName
  from TransInterviewer ti

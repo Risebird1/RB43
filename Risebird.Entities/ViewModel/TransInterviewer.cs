@@ -1,4 +1,6 @@
-﻿namespace Risebird.Entities.ViewModel
+﻿using System;
+
+namespace Risebird.Entities.ViewModel
 {
     public class TransInterviewer
     {
@@ -33,6 +35,7 @@
         public int CampaignId { get; set; }
         public bool IsSurchargeApprove { get; set; }
         public string ConvertedFromDocResumeLink { get; set; }
+        public DateTime CreatedOn { get; set; }
 
     }
 }
