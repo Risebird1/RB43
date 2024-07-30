@@ -6891,7 +6891,7 @@ namespace Risebird.Repository
                     var parameters = new DynamicParameters();
                     parameters.Add("@actionstatus", actionstatus);
                     var result = await SqlMapper.QueryAsync<PaymentSLAVM>(con, "usp_GetPaymentSlacompliance", parameters, commandType: CommandType.StoredProcedure);
-                    return result;
+                    return result.OrderByDescending(x => x.InterviewDate).ToList(); ;
                 }
             }
             catch (SqlException ex)
