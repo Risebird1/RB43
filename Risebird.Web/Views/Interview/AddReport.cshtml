@@ -549,9 +549,9 @@
                                                                             <td>
                                                                                 <div class="tooltipskill pull-left">
                                                                                     <span class="tooltipskilltext">@Model.TechSkillReportCollection[i].SkillName</span>
-                                                                                   
-                                                                                   @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:270px", @readonly = "readonly" })
-                                                                                   
+
+                                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:270px", @readonly = "readonly" })
+
                                                                                 </div>
                                                                                 <div class="techinfocontainer pull-left">
                                                                                     <i class="fa fa-info-circle techinfoicon tooltipquestion">
@@ -828,13 +828,13 @@
                                                     </div>
                                                     <div style="clear:both;border-top:1px #ccc solid">
                                                         <div class="int-form-group" id="linkDiv">
-                                                            @Html.LabelFor(model => model.CodeSnippet, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label",@style="font-weight:500!important;font-size:13px;" })
+                                                            @Html.LabelFor(model => model.CodeSnippet, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label", @style = "font-weight:500!important;font-size:13px;" })
                                                             @Html.EditorFor(model => model.CodeSnippet, new { htmlAttributes = new { @class = "text-box single-line", @style = "margin-top:40px!important" } })
                                                             @Html.ValidationMessageFor(model => model.CodeSnippet, "", new { @class = "text-danger" })
 
                                                         </div>
                                                         <div class="int-form-group" style="display:none" id="uploadDiv">
-                                                            @Html.LabelFor(model => model.CandidateFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="font-weight:500!important;font-size:13px;" })
+                                                            @Html.LabelFor(model => model.CandidateFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-weight:500!important;font-size:13px;" })
 
                                                             @Html.TextBoxFor(model => model.CandidateFile, new { type = "file", @class = "choose-file", @accept = ".txt", @placeholder = "Only files with .txt extentsions accepted", @style = "margin-top:40px!important" })
 
@@ -878,12 +878,12 @@
                                                                             <td>
                                                                                 @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
                                                                                 {
-                                                                                   
+
                                                                                     <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank"><input type="text" class="select-css  text-box single-line" /></a>
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    
+
                                                                                     @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "select-css  text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
                                                                                 }
 
@@ -913,12 +913,12 @@
                                                                     {
                                                                         for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                                         {
-                                                                            <tr  style="cursor:pointer">
+                                                                            <tr style="cursor:pointer">
                                                                                 <td>
 
                                                                                     @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsCollection[i].Comment))
                                                                                     {
-                                                                                       
+
                                                                                         @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
                                                                                     }
                                                                                     else
@@ -1135,11 +1135,11 @@
                                                                                     <td>
                                                                                         <div class="tooltipskill pull-left">
                                                                                             <span class="tooltipskilltext">@Model.TechSkillTwoReportCollection[i].SkillName</span>
-                                                                                       
+
                                                                                             @Html.TextBoxFor(m => m.TechSkillTwoReportCollection[i].SkillName, new { @class = "text-box single-line", @style = "width:285px", @readonly = "readonly" })
-                                                                                           
+
                                                                                         </div>
-                                                                                         <div class="techinfocontainer">
+                                                                                        <div class="techinfocontainer">
                                                                                             <i class="fa fa-info-circle techinfoicon tooltipquestion">
                                                                                                 <span class="tooltiptext">
                                                                                                     <p>Concepts: @Model.TechSkillTwoReportCollection[i].Concepts</p>
@@ -1247,13 +1247,13 @@
                                                             </div>
                                                             <div style="clear:both;border-top:1px #ccc solid">
                                                                 <div class="int-form-group" id="linkDivTwo">
-                                                                    @Html.LabelFor(model => model.CodeSnippetTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label",@style="font-weight:500!important" })
+                                                                    @Html.LabelFor(model => model.CodeSnippetTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label", @style = "font-weight:500!important" })
                                                                     @Html.EditorFor(model => model.CodeSnippetTwo, new { htmlAttributes = new { @class = "text-box single-line", @style = "margin-top:40px!important" } })
                                                                     @Html.ValidationMessageFor(model => model.CodeSnippetTwo, "", new { @class = "text-danger" })
 
                                                                 </div>
                                                                 <div class="int-form-group" style="display:none" id="uploadDivTwo">
-                                                                    @Html.LabelFor(model => model.CandidateFileTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label",@style="font-weight:500!important"})
+                                                                    @Html.LabelFor(model => model.CandidateFileTwo, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-weight:500!important" })
 
                                                                     @Html.TextBoxFor(model => model.CandidateFileTwo, new { type = "file", @class = "choose-file", @accept = ".txt", @placeholder = "Only files with .txt extentsions accepted", @style = "margin-top:40px!important" })
 
@@ -1295,7 +1295,7 @@
                                                                             {
                                                                                 <tr style="background:#fff">
                                                                                     <td>
-                                                                                       
+
                                                                                         @if (Model.QuestionsList == null || Model.QuestionsList.Count() == 0)
                                                                                         {
                                                                                             <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFId, irf = Model.IRFName })" target="_blank"><input type="text" class="select-css  text-box single-line" /></a>
@@ -1334,14 +1334,14 @@
                                                                                         <td>
 
                                                                                             @if (Model.QuestionsList.Select(x => x.Value).Contains(Model.QuestionsTwoCollection[i].Comment))
-                                                                                            {  
+                                                                                            {
                                                                                                 @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "select-css text-box single-line", @onchange = "QuestionChangedTwo(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
                                                                                             }
                                                                                             else
                                                                                             {
                                                                                                 var newList = new List<SelectListItem>();
                                                                                                 newList.Add(new SelectListItem() { Value = Model.QuestionsTwoCollection[i].Comment, Text = Model.QuestionsTwoCollection[i].Comment });
-                                                                                             
+
                                                                                                 @Html.DropDownListFor(m => m.QuestionsTwoCollection[i].Comment, newList, new { @class = "select-css  text-box single-line", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                             }
@@ -1658,7 +1658,7 @@
             else {
                 document.getElementById('InterviewerCommentTwo').disabled = false;
                 document.getElementById("interviewerCommentTwo_Error").innerHTML = "";
-                if (meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8) {
+                if (meetingStatusTwo == 6 || meetingStatusTwo == 7 || meetingStatusTwo == 8) {
                     document.getElementById("InterviewStatusTwo").disabled = true;
                 }
             }
@@ -2351,7 +2351,7 @@
                     counter = counter + 1;
                 }
             }
-            else if (interviewStatusValue == 1) {
+            else if (interviewStatusValueTwo == 1) {
                 flag = CheckLength(50);
                 if (!flag) {
                     counter = counter + 1;
@@ -2409,7 +2409,7 @@
         if ($("#SkillSetsevaluate").val() > 1) {
             var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
             var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
-            if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
+            if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 1 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
                 var questionItemsTwo = $('[id^="QuestionsTwoCollection"][id$="Comment"]');
                 for (i = 0; i < questionItemsTwo.length; i++) {
                     var temp = $("#QuestionsTwoCollection_" + i + "__Comment").val();
@@ -2528,7 +2528,7 @@
         if ($("#SkillSetsevaluate").val() > 1) {
             var meetingStatusValueTwo = document.getElementById("MeetingStatusTwo").value;
             var interviewStatusValueTwo = document.getElementById("InterviewStatusTwo").value;
-            if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
+            if (meetingStatusValueTwo == 6 || meetingStatusValueTwo == 7 || meetingStatusValueTwo == 8 || interviewStatusValueTwo == 1 || interviewStatusValueTwo == 2 || interviewStatusValueTwo == 3 || interviewStatusValueTwo == 4 || interviewStatusValueTwo == 5) {
                 var questionItemsTwo = $('[id^="TechSkillTwoReportCollection"][id$="ActualLevelId"]');
                 for (i = 0; i < questionItemsTwo.length; i++) {
                     var temp = $("#TechSkillTwoReportCollection_" + i + "__ActualLevelId").val();
@@ -2715,7 +2715,7 @@
 
     <!--other skill-- >
 
-                    ; (function () {
+                        ; (function () {
 
         "use strict";
 
