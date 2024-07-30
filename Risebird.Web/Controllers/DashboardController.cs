@@ -3922,7 +3922,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     
-                    if (profileName == "Admin" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" ||  profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         ViewBag.Profile = profileName;
                         var model = await _dashboardService.GetTransInterviewersWithNegativeAIVerdict();
