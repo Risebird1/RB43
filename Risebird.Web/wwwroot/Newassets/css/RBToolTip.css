@@ -1,7 +1,9 @@
 ﻿.tooltipquestion {
     position: relative;
 }
-
+.tooltipskill {
+    position: relative;
+}
 .tooltiptext {
     position: absolute;
     left: 8%;
@@ -11,6 +13,17 @@
     padding: 10px 15px;
     border-radius: 7px;
     visibility: hidden;
+}
+.tooltipskilltext {
+    position: absolute;
+    left: 8%;
+    background-color: #b9b1b1;
+    color: #fff;
+    white-space: nowrap;
+    padding: 6px 15px;
+    border-radius: 7px;
+    visibility: hidden;
+    font-size:12px;
 }
 
     .tooltiptext::before {
@@ -22,6 +35,15 @@
         border: 15px solid;
         border-color: #000 #0000 #0000 #0000;
     }
+.tooltipskilltext::before {
+    content: "";
+    position: absolute;
+    left: 35%;
+    top: 100%;
+    transform: translateX(-50%);
+    border: 5px solid;
+    border-color: #b9b1b1 #0000 #0000 #0000;
+}
 
 .tooltipquestion:hover .tooltiptext {
     visibility: visible;
@@ -29,7 +51,16 @@
     opacity: 0.8;
     z-index: 1;
 }
-
+.question-discussed .tooltipskill:hover .tooltipskilltext {
+    top: -45%!important;
+}
+    .tooltipskill:hover .tooltipskilltext {
+    visibility: visible;
+    top: -60%;
+    opacity: 0.8;
+    z-index: 1;
+    left:0px!important;
+}
 .techinfocontainer {
     display: -ms-flexbox;
     display: flex;

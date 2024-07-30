@@ -59,7 +59,7 @@ namespace Risebird.MicroService
                             {
                                 //var request = new HttpRequestMessage(HttpMethod.Get, $"https://portal.risebird.io/Interview/AIClientReport?interviewId={item.id}&irfId={item.irfIntId}&isOpenAIQC={true}&isBackgroudJobRequest={true}");
                                 var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:44329//Interview/AIClientReport?interviewId={item.id}&irfId={item.irfIntId}&isOpenAIQC={true}&isBackgroudJobRequest={true}");
-                                //{
+//{
                                 //    //Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },
                                 //};
 
@@ -94,7 +94,7 @@ namespace Risebird.MicroService
         //public async Task<bool> PerformQualityCheck(InterviewReport model)
         //{
         //    try
-        //    {
+//    {
         //        // Render the partial view to a string
         //        var htmlContent = await RenderToStringAsync("AIClientReport", model);
 
@@ -102,12 +102,13 @@ namespace Risebird.MicroService
         //        var pdfContent = GeneratePdf(htmlContent);
         //        string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
 
+//        private readonly string ContainerName;
 
 
         //        // Upload PDF to Azure Blob Storage
         //        string uploadedFileURL = string.Empty;
         //        using (MemoryStream stream = new MemoryStream(pdfContent))
-        //        {
+//        {
         //            await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
         //            var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
         //            var blob = containerRef.GetBlockBlobReference(fileName);
@@ -127,7 +128,7 @@ namespace Risebird.MicroService
         //        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
         //        {
         //            saveOperationResult = await _meetingService.SaveOpenAIReportQC(model.InterviewId, responseInJson);
-        //        }
+//        }
 
         //        //if (saveOperationResult)
         //        //{
@@ -196,10 +197,10 @@ namespace Risebird.MicroService
         //            if (viewResult.View == null)
         //            {
         //                throw new ArgumentNullException($"The view '{viewName}' was not found.");
-        //            }
+//            }
 
         //            var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
-        //            {
+//            {
         //                Model = model
         //            };
 
@@ -216,13 +217,13 @@ namespace Risebird.MicroService
 
         //            await viewResult.View.RenderAsync(viewContext);
         //            return sw.ToString();
-        //        }
-        //    }
+//        }
+//    }
         //    catch (Exception ex)
         //    {
         //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
         //        return null;
         //    }
-        //}
+//}
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,9 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateExcelData>> GetIRFCandidateStatsForExcelDownLoad(int irfId);
         Task<Candidate> GetCandidateOpenAIScreeningResults(int irfId, int candidateMasterId);
         Task<bool> SaveCandidateOpenAIScreeningResults(int irfId, int candidateMasterId, string screeningResponseJson);
-        Task<CandidateStatus> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId);
+        Task<InterviewChannelDetails> GetCandidateLatestStatusForApi(string skillChannelName, string candidateEmailId, string requestedByClientUser);
+        Task<IEnumerable<InterviewChannelDetails>> FetchInterviewChannelCandidateInformation(int irfid, int id, string requestedBy, DateTime? startDate, DateTime? endDate);
+        Task<IEnumerable<CandidateStatusWebHookData>> GetCandidateStatusForWebHook();
+        Task<bool> DeleteDeliveredCandidateStatusForWebHook(List<int> data);
     }
 }

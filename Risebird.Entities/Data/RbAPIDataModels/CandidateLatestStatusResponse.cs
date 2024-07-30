@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,12 +12,15 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string skillChannelId { get; set; }
         public string candidateEmailId { get; set; }
         public string requestedBy { get; set; }
-        public string currentStatus { get; set; }
-        public string currentStatusUpdatedAt { get; set; }
+        //public string currentStatus { get; set; }
+        //public string currentStatusUpdatedAt { get; set; }
         public string interviewer { get; set; }
         public string reportUrl { get; set; }
         public string retrievedAt { get; set; }
         public string interviewDate { get; set; }
+        public string videoUrl { get; set; }
+        public int communicationScore { get; set; }
+        public List<SkillDetails> skills { get; set; }
     }
     public class CandidateInfoResponse
     {
@@ -24,19 +28,83 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         {
             result = new List<CandidateStatusResponse>();
         }
-        public string skillChannelId { get; set; }
         public string requestedBy { get; set; }
         public string retrievedAt { get; set; }
         public List<CandidateStatusResponse> result { get; set; }
     }
     public class CandidateStatusResponse
     {
+        public CandidateStatusResponse()
+        {
+            skills = new List<SkillDetails>();
+        }
+        public string skillChannelId { get; set; }
         public string candidateEmailId { get; set; }
-        public string currentStatus { get; set; }
-        public string currentStatusUpdatedAt { get; set; }
         public string interviewDate { get; set; }
         public string interviewer { get; set; }
         public string reportUrl { get; set; }
+        public string videoUrl { get; set; }
+        public int communicationScore { get; set; }
+        public List<SkillDetails> skills { get; set; }
     }
-    
+    public class SkillDetails
+    {
+        public SkillDetails()
+        {
+            questions = new List<QuestionCommentsDetails>();
+        }
+        public string skillName { get; set; }
+        public bool isPrimary { get; set; }
+        public string status { get; set; }
+        public int techscore { get; set; }
+        public string interviewerComment { get; set; }
+        public List<QuestionCommentsDetails> questions { get; set; }
+    }
+    public class QuestionCommentsDetails
+    {
+        public string question { get; set; }
+        public string rating { get; set; }
+        public string skillName { get; set; }
+    }
+    public class QuestionDetailsSet
+    {
+        public string question { get; set; }
+        public int rating { get; set; }
+        public string skillName { get; set; }
+        public int skillSet { get; set; }
+    }
+    public class InterviewChannelDetails
+    {
+        public InterviewChannelDetails()
+        {
+            questions = new List<QuestionDetailsSet>();
+        }
+        public int id { get; set; }
+        public int irfintid { get; set; }
+        public string IRFId { get; set; }
+        public DateTime? interviewDate { get; set; }
+        public string candidateEmail { get; set; }
+        public string JDTiltle { get; set; }
+        public int? MeetingStatus { get; set; }
+        public int? InterviewStatus { get; set; }
+        public string confirmationStatus { get; set; }
+        public string InterviewerComment { get; set; }
+        public string VideoLink { get; set; }
+        public int CommunicationalProficiency { get; set; }
+        public string CandidateLatestStatus { get; set; }
+        public string ReportLink { get; set; }
+        public string InterviewerCodedName { get; set; }
+
+        public int? MeetingStatusTwo { get; set; }
+        public int? InterviewStatusTwo { get; set; }
+        public string InterviewerCommentTwo { get; set; }
+        public string MeetingStatusTwoDesc { get; set; }
+        public string InterviewStatusTwoDesc { get; set; }
+        public int numberOfTechStacks { get; set; }
+
+        public string JDTitleTwo { get; set; }
+        public int TechScoreone { get; set; }
+        public int TechScoretwo { get; set; }
+        public List<QuestionDetailsSet> questions { get; set; }
+    }
 }
