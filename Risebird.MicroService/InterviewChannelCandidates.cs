@@ -72,7 +72,7 @@ namespace Risebird.MicroService
                         var details = new Dictionary<string, string>();
                         if (reqData != null)
                         {
-                            if (string.IsNullOrEmpty(reqData.skillChannelId) || string.IsNullOrEmpty(reqData.type) || string.IsNullOrEmpty(reqData.requestedBy))
+                            if (string.IsNullOrEmpty(reqData.type) || string.IsNullOrEmpty(reqData.requestedBy))
                             {
                                 if (string.IsNullOrEmpty(reqData.type))
                                 {
@@ -111,7 +111,37 @@ namespace Risebird.MicroService
                                 log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
                                 return new BadRequestObjectResult(errorResponse);
                             }
-
+                            if (!string.IsNullOrEmpty(reqData.type))
+                            {
+                                if (reqData.type == "Alldata")
+                                {
+                                    if (string.IsNullOrEmpty(reqData.skillChannelId))
+                                    {
+                                        details.Add("skillChannelId", "This field is required.");
+                                    }
+                                }
+                                else if (reqData.type == "DateRange")
+                                {
+                                    if (reqData.startDate == null || reqData.endDate == null)
+                                    {
+                                        details.Add("DateFields", "Date Fields are invalid");
+                                    }
+                                }
+                                else
+                                {
+                                    details.Add("type", "type is invalid");
+                                }
+                                if (details.Count > 0)
+                                {
+                                    var errorResponse = new ErrorResponse
+                                    {
+                                        Error = "Invalid request parameters",
+                                        Details = details
+                                    };
+                                    log.LogInformation($"CandidateLatestStatus : C# HTTP trigger function executed at {DateTime.Now}");
+                                    return new BadRequestObjectResult(errorResponse);
+                                }
+                            }
                             var model = new CandidateInfoResponse();
                             var irfid = 0;
                             if (!string.IsNullOrEmpty(reqData.skillChannelId))
@@ -217,18 +247,18 @@ namespace Risebird.MicroService
                             {
                                 if (reqData.status == "Completed")
                                 {
-                                    var _select = model.result.Where(x => x.skills.Any(y => y.status.Contains("Select"))).ToList();
-                                    var _reject = model.result.Where(x => x.skills.Any(y => y.status.Contains("Reject"))).ToList();
-                                    var _proxy = model.result.Where(x => x.skills.Any(y => y.status.Contains("Proxy"))).ToList();
-                                    var items = _select.Union(_reject).Union(_proxy);
+                                    var _select = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Select") : false)).ToList();
+                                    var _reject = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Reject") : false)).ToList();
+                                    var _proxy = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Proxy") : false)).ToList();
+                                    model.result = _select.Union(_reject).Union(_proxy).ToList();
                                 }
                                 else if (reqData.status == "Scheduled")
                                 {
-                                    var items = model.result.Where(x => x.skills.Any(y => y.status.Contains("FUTURESCHEDULE"))).ToList();
+                                    model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("FUTURESCHEDULE") : false)).ToList();
                                 }
                                 else if (reqData.status == "Pending")
                                 {
-                                    var items = model.result.Where(x => x.skills.Any(y => y.status.Contains("Pending"))).ToList();
+                                    model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Pending") : false)).ToList();
                                 }
                             }
                             if (reqData.type == "Alldata" || reqData.type == "DateRange")
