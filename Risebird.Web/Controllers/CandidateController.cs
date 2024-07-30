@@ -1,4 +1,5 @@
 ﻿using Aspose.Html;
+using ExcelDataReader.Log;
 using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +17,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -3550,7 +3552,7 @@ namespace Risebird.Web.Controllers
                             firstData = data.FirstOrDefault();
                         }
                         var _datavalue = data.Select(x => x.InterviewId).Distinct().Count();
-                        if(firstData != null)
+                        if (firstData != null)
                         {
                             var candidateTimeline = new CandidateTimelineVM();
                             candidateTimeline.IsQCRequired = client.IsQCRequired;
@@ -3646,8 +3648,8 @@ namespace Risebird.Web.Controllers
                             //add candidate to final model
                             model.Add(candidateTimeline);
                         }
-                        
-                        
+
+
                     }
 
                     var role = await _clientService.GetClientRoleByEmailId(emailid);
@@ -6369,7 +6371,6 @@ namespace Risebird.Web.Controllers
 
             return View(candidateList);
         }
-
 
 
     }
