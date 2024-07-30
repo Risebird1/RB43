@@ -8890,82 +8890,62 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                var qcResult = await _meetingService.GetOpenAIReportQC(model.InterviewId);
+
+
+                //ViewBag.IRFName = model.IRFName;
+                //ViewBag.SaveOperationResult = "NA";
+
+                if (!string.IsNullOrEmpty(qcResult))
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
-                    {
-
-                        //check if the qc is already done and saved in db(as json string)
-
-                        var qcResult = await _meetingService.GetOpenAIReportQC(model.InterviewId);
-
-
-                        //ViewBag.IRFName = model.IRFName;
-                        //ViewBag.SaveOperationResult = "NA";
-
-                        if (!string.IsNullOrEmpty(qcResult))
-                        {
-                            return JsonConvert.DeserializeObject<RunResult>(qcResult);
-                        }
-
-
-                        // Render the partial view to a string
-                        var htmlContent = await RenderToStringAsync("AIClientReport", model);
-
-                        // Generate PDF from HTML content
-                        var pdfContent = GeneratePdf(htmlContent);
-                        string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
-
-
-
-                        // Upload PDF to Azure Blob Storage
-                        string uploadedFileURL = string.Empty;
-                        using (MemoryStream stream = new MemoryStream(pdfContent))
-                        {
-                            await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
-                            var blob = containerRef.GetBlockBlobReference(fileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                        }
-
-                        var request = new ScreeningRequest
-                        {
-                            Type = ProfileNames.QualityController,
-                            ReportUrl = uploadedFileURL
-                        };
-                        var response = await _assistantServiceHelper.ScreenAsync(request);
-
-                        var responseInJson = JsonConvert.SerializeObject(response);
-                        //save the response in db
-                        bool saveOperationResult = true;
-                        if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
-                        {
-                            saveOperationResult = await _meetingService.SaveOpenAIReportQC(model.InterviewId, responseInJson);
-                        }
-
-                        //if (saveOperationResult)
-                        //{
-                        //    ViewBag.SaveOperationResult = "Evaluation saved successfully.";
-                        //}
-                        //else
-                        //{
-                        //    ViewBag.SaveOperationResult = "Failed to save the evaluation.";
-                        //}
-
-                        return response;
-
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return JsonConvert.DeserializeObject<RunResult>(qcResult);
                 }
-                else
+
+
+                // Render the partial view to a string
+                var htmlContent = await RenderToStringAsync("AIClientReport", model);
+
+                // Generate PDF from HTML content
+                var pdfContent = GeneratePdf(htmlContent);
+                string fileName = "AIClientReport_" + model.InterviewId.ToString() + "_" + DateTime.Now.ToString() + ".pdf";
+
+
+
+                // Upload PDF to Azure Blob Storage
+                string uploadedFileURL = string.Empty;
+                using (MemoryStream stream = new MemoryStream(pdfContent))
                 {
-                    return null;
+                    await _azureStorageHelper.InsertBlobCloudCompare(fileName, "aiqc", blobFile: stream, isOpenAiQc: true);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("aiqc");
+                    var blob = containerRef.GetBlockBlobReference(fileName);
+                    uploadedFileURL = blob.Uri.ToString();
                 }
+
+                var request = new ScreeningRequest
+                {
+                    Type = ProfileNames.QualityController,
+                    ReportUrl = uploadedFileURL
+                };
+                var response = await _assistantServiceHelper.ScreenAsync(request);
+
+                var responseInJson = JsonConvert.SerializeObject(response);
+                //save the response in db
+                bool saveOperationResult = true;
+                if (!string.IsNullOrEmpty(responseInJson) && responseInJson != "null")
+                {
+                    saveOperationResult = await _meetingService.SaveOpenAIReportQC(model.InterviewId, responseInJson);
+                }
+
+                //if (saveOperationResult)
+                //{
+                //    ViewBag.SaveOperationResult = "Evaluation saved successfully.";
+                //}
+                //else
+                //{
+                //    ViewBag.SaveOperationResult = "Failed to save the evaluation.";
+                //}
+
+                return response;
 
             }
             catch (System.Exception ex)
