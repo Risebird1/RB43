@@ -8756,7 +8756,9 @@ namespace Risebird.Web.Controllers
             }
             return sb.ToString();
         }
-        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null)
+
+        [HttpGet]
+        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null, bool? isBackgroudJobRequest = null)
         {
             try
             {
@@ -8859,6 +8861,10 @@ namespace Risebird.Web.Controllers
                 {
                     //write code to return QC results
                     var qcResult = await PerformQualityCheck(model);
+                    if(isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value)
+                    {
+                        return new OkResult();
+                    }
                     ViewBag.CandidateEmail = model.CandidateEmail;
                     ViewBag.Interviewer = model.Interviewer;
                     ViewBag.InterviewDate = model.interviewDate;
