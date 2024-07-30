@@ -84,14 +84,14 @@ namespace Risebird.MicroService
                                 }
                                 if (!string.IsNullOrEmpty(reqData.type))
                                 {
-                                    if (reqData.type == "Alldata")
+                                    if (reqData.type.ToLower() == "alldata")
                                     {
                                         if (string.IsNullOrEmpty(reqData.skillChannelId))
                                         {
                                             details.Add("skillChannelId", "This field is required.");
                                         }
                                     }
-                                    else if (reqData.type == "DateRange")
+                                    else if (reqData.type.ToLower() == "daterange")
                                     {
                                         if (reqData.startDate == null || reqData.endDate == null)
                                         {
@@ -113,14 +113,14 @@ namespace Risebird.MicroService
                             }
                             if (!string.IsNullOrEmpty(reqData.type))
                             {
-                                if (reqData.type == "Alldata")
+                                if (reqData.type.ToLower() == "alldata")
                                 {
                                     if (string.IsNullOrEmpty(reqData.skillChannelId))
                                     {
                                         details.Add("skillChannelId", "This field is required.");
                                     }
                                 }
-                                else if (reqData.type == "DateRange")
+                                else if (reqData.type.ToLower() == "daterange")
                                 {
                                     if (reqData.startDate == null || reqData.endDate == null)
                                     {
@@ -245,23 +245,23 @@ namespace Risebird.MicroService
                             }
                             if (!string.IsNullOrWhiteSpace(reqData.status))
                             {
-                                if (reqData.status == "Completed")
+                                if (reqData.status.ToLower() == "completed")
                                 {
                                     var _select = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Select") : false)).ToList();
                                     var _reject = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Reject") : false)).ToList();
                                     var _proxy = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Proxy") : false)).ToList();
                                     model.result = _select.Union(_reject).Union(_proxy).ToList();
                                 }
-                                else if (reqData.status == "Scheduled")
+                                else if (reqData.status.ToLower() == "scheduled")
                                 {
                                     model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("FUTURESCHEDULE") : false)).ToList();
                                 }
-                                else if (reqData.status == "Pending")
+                                else if (reqData.status.ToLower() == "pending")
                                 {
                                     model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Pending") : false)).ToList();
                                 }
                             }
-                            if (reqData.type == "Alldata" || reqData.type == "DateRange")
+                            if (reqData.type.ToLower() == "alldata" || reqData.type.ToLower() == "daterange")
                             {
                                 //Get skill channel all Candidate Info and return
                                 return new OkObjectResult(model);
