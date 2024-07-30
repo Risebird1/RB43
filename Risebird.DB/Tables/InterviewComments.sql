@@ -50,6 +50,7 @@ CREATE TABLE [dbo].[InterviewComments](
     [ReportAcceptedBy][varchar](200) NULL,
     [CommunicationalProficiency][int]NULL,
     [OpenAIQCResponse][varchar](max) NULL,
+    [IsAIQCAtempted][bit] NULL,
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
  CONSTRAINT [PK_InterviewComments] PRIMARY KEY CLUSTERED 
@@ -277,6 +278,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE InterviewComments
     Add OpenAIQCResponse varchar(max)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsAIQCAtempted')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add IsAIQCAtempted bit null
 END
 
 End
