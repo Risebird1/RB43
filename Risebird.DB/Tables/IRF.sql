@@ -60,6 +60,7 @@ CREATE TABLE [dbo].[IRF](
             [DMApprovedBy] [varchar](150)Null,
             [SkillSetsevaluate] [int]Null,
             [JDTitleTwo] [VARCHAR](150) null,
+            [IsVideoRequired] [bit] null,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -535,6 +536,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add JDTitleTwo VARCHAR(150)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsVideoRequired')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsVideoRequired bit
 END
 
 END

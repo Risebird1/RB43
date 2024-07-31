@@ -40,6 +40,7 @@ Create PROCEDURE [dbo].[usp_EditSkillChannelCreatedFromTemplate]
 @IsCandidateavailability bit,
 @IsMeetingAutoCancelled bit,
 @IsMeetingNotificationSend bit,
+@IsVideoRequired bit,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
 @InterviewerBulkData AS [dbo].[TransInterviewer_TableType] READONLY,  
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  
@@ -93,6 +94,7 @@ begin try
  ,[IsCandidateavailability]=@IsCandidateavailability
 ,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled
 ,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
+,[IsVideoRequired]=@IsVideoRequired
  Where id =@id          
       
    
