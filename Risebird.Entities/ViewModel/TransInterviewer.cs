@@ -36,6 +36,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsSurchargeApprove { get; set; }
         public string ConvertedFromDocResumeLink { get; set; }
         public DateTime CreatedOn { get; set; }
+        public string InterviewerProfileAddedBy { get; set; }
 
     }
 }
