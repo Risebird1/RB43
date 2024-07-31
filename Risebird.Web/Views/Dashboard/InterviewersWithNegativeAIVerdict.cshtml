@@ -61,6 +61,8 @@
                                                 <tr>
                                                     <th>Interviewer</th>
                                                     <th>Skill Channel</th>
+                                                    <th>Added By</th>
+                                                    <th>Status(Is Active)</th>
                                                     <th>Created On</th>
                                                     <th>JD Title</th>
                                                     <th>Resume</th>
@@ -75,6 +77,8 @@
                                                 <tr>
                                                     <th>Interviewer</th>
                                                     <th>Skill Channel</th>
+                                                    <th>Added By</th>
+                                                    <th>Status(Is Active)</th>
                                                     <th>Created On</th>
                                                     <th>JD Title</th>
                                                     <th>Resume</th>
@@ -95,7 +99,23 @@
                                                         <tr>
                                                             <td>@item.EmailId</td>
                                                             <td>@item.IRFName</td>
-                                                            <td>@item.CreatedOn.ToString()</td>
+                                                            @if(!string.IsNullOrEmpty(item.InterviewerProfileAddedBy))
+                                                            {
+                                                                <td>@item.InterviewerProfileAddedBy</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            @if(item.IsActive)
+                                                            {
+                                                                <td>Active</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td></td>
+                                                            }
+                                                            <td>@item.CreatedOn</td>
                                                             <td>@item.JDTitle</td>
                                                             @if (!string.IsNullOrEmpty(item.ResumeLink))
                                                             {
@@ -123,6 +143,12 @@
                                                                             <span title="Screen Resume(Regenerate)" class="mdc-fab__icon material-icons"><svg style="position:relative;top: -4px;left: -4px;" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16"><path fill="#fff" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h7v1a1 1 0 0 1-1 1H6zm7-3H6v-2h7v2z"></path></svg><img src="~/img/regenerate.png" style="max-width:13px!important;position:relative;left:-9px"/></span>
                                                                         </span>
                                                                     </a>
+
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete" style="width:27px!important;height:27px!important">
+                                                                        <span onclick="javascript:RemoveInterviewerFromSkillChannel('@item.EmailId', '@item.IRFId');" title="Delete" class="mdc-fab__icon material-icons">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
+                                                                        </span>
+                                                                    </button>
                                                                 </div>
 
                                                             </td>
@@ -210,7 +236,7 @@
     };
 
 </script>
-
+<script src="~/js/common.js"></script>
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();

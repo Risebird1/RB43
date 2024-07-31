@@ -22,12 +22,12 @@ function moreless(id) {
 function RemoveInterviewerFromSkillChannel(interviewerEmail, irfid) {
     swal.fire({
         title: 'Are you sure?',
-        text: 'Want to remove interviewer from the Skill channel interviews',
+        text: 'Want to remove interviewer ' + interviewerEmail + ' from the Skill channel interviews?',
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, Remove it!',
+        confirmButtonText: 'Yes, Remove!',
         preConfirm: function () {
             return new Promise(function (resolve, reject) {
                 $.ajax({
@@ -52,7 +52,7 @@ function RemoveInterviewerFromSkillChannel(interviewerEmail, irfid) {
                 confirmButtonText: 'Close!',
                 allowOutsideClick: false
             }).then(function () {
-                location.reload(true);
+                //location.reload(true);
             })
         }
         else if (result.dismiss === 'cancel') {

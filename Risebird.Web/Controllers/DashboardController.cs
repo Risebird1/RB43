@@ -3911,7 +3911,7 @@ namespace Risebird.Web.Controllers
         /// Gets active skills channel Interviewers whose AI verdict is negative i.e, not suitable.
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> InterviewersWithNegativeAIVerdict()
+        public async Task<IActionResult> InterviewersWithAIVerdict()
         {
             try
             {
@@ -3926,7 +3926,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.Profile = profileName;
                         var model = await _dashboardService.GetTransInterviewersWithNegativeAIVerdict();
-                        return View(model);
+                        return View("InterviewersWithNegativeAIVerdict", model);
                     }
                     else
                     {
