@@ -8,13 +8,13 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-Create PROCEDURE [dbo].[usp_GetTransInterviewersWithNegativeAIVerdict]     
+Create PROCEDURE [dbo].[usp_GetTransInterviewersWithNegativeAIVerdict]  --has currently been changed to both positive and negative verdict   
 As
 Begin
 
  select distinct ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
  irf.JDTiltle as JDTitle, irf.CreatedOn, ti.UserId, ulr.EmailId as ChannelOwner, --ti.OpenAIScreeningResponse, 
- cl.[Name] as CompanyName, ulc.EmailId as ClientHr, irf.irfid as IRFName
+ cl.[Name] as CompanyName, ulc.EmailId as ClientHr, irf.irfid as IRFName, ipr.CreatedBy as InterviewerProfileAddedBy, ti.IsActive
  from TransInterviewer ti
  join IRF on irf.id = ti.irfId
  join InterviewerProfile ipr on ipr.id = ti.InterviewerId
@@ -22,7 +22,7 @@ Begin
  join UserList ulr on ulr.id = irf.RisebirdHr
  join Client cl on cl.id = irf.ClientId
  join UserList ulc on ulc.id = irf.BillingOwner
- where ti.IsActive = 1 and  AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
+ where AIVerdict in ('Yes','No')--ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
  order by irf.CreatedOn desc
 
 End
