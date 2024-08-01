@@ -35,7 +35,8 @@ Create PROCEDURE [dbo].[usp_UpdateClient]
 @Reportsnippet int,
 @IsTranscript bit,
 @IsPlanFlixable bit,
-@PlanType int
+@PlanType int,
+@IsVideoRequired bit
 AS          
 Begin          
       
@@ -69,6 +70,7 @@ SET
   ,[IsTranscript]=@IsTranscript
   ,[IsPlanFlixable]=@IsPlanFlixable
   ,[PlanType]=@PlanType
+  ,[IsVideoRequired]=@IsVideoRequired
 WHERE          
       Id = @id          
 End     

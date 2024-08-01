@@ -636,6 +636,7 @@ namespace Risebird.Repository
                             _resultVM.DMApproved = !string.IsNullOrEmpty(dt.Rows[0]["DMApproved"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["DMApproved"]) : false;
                             _resultVM.SkillSetsevaluate = !string.IsNullOrEmpty(dt.Rows[0]["SkillSetsevaluate"].ToString()) ? Convert.ToInt32(dt.Rows[0]["SkillSetsevaluate"]) : 1;
                             _resultVM.JDTitleTwo = !string.IsNullOrEmpty(dt.Rows[0]["JDTitleTwo"].ToString()) ? dt.Rows[0]["JDTitleTwo"].ToString() : null;
+                            _resultVM.IsVideoRequired = !string.IsNullOrEmpty(dt.Rows[0]["IsVideoRequired"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsVideoRequired"]) : false;
 
                         }
                     }
@@ -1388,6 +1389,8 @@ namespace Risebird.Repository
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@FlatRate", SqlDbType.Int));
                     cmdCreateIRF.Parameters["@FlatRate"].Value = irfDetails.FlatRate;
 
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsVideoRequired", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@IsVideoRequired"].Value = irfDetails.IsVideoRequired;
 
                     //cmdCreateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdCreateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
@@ -2359,6 +2362,9 @@ namespace Risebird.Repository
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = irfDetails.IsNewSkillChannel;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsVideoRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsVideoRequired"].Value = irfDetails.IsVideoRequired;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
@@ -6512,6 +6518,9 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsNewSkillChannel", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsNewSkillChannel"].Value = true;
 
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsVideoRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsVideoRequired"].Value = irfDetails.IsVideoRequired;
+
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
                     flatRateParam.DbType = DbType.Int16;
@@ -6755,6 +6764,8 @@ namespace Risebird.Repository
                     cmdUpdateIRF.Parameters["@IsMeetingAutoCancelled"].Value = irfDetails.IsMeetingAutoCancelled;
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMeetingNotificationSend", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsMeetingNotificationSend"].Value = irfDetails.IsMeetingNotificationSend;
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsVideoRequired", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsVideoRequired"].Value = irfDetails.IsVideoRequired;
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@CreatedFromTemplateId", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@CreatedFromTemplateId"].Value = irfDetails.CreatedFromTemplateId;
 
