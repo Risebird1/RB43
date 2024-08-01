@@ -129,6 +129,6 @@ namespace Risebird.Entities.Data
         public int Heuristicsscore { get; set; }
         public string PreReportUsername { get; set; }
         public string PreReportPassword { get; set; }
-
+        public bool IsVideoRequired { get; set; }
     }
 }
