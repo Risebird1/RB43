@@ -130,7 +130,7 @@ Begin
     
    select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;              
               
-   delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId              
+   --delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId              
               
    delete from TransInterviewerEducation where InterviewerProfileId=@v_ProfileId              
               
@@ -265,7 +265,30 @@ Declare @v_User_Id int;
    --@OutsideIndiaProductRate              
         
  select @InterviewerProfileId=(select id from InterviewerProfile where UserId=@v_User_Id)    
-     
+
+ declare @primaryAg varchar(7) = (select top 1 value from string_split(@AssessmentGroupId,','))
+ declare @primaryAgSkill varchar(75) = (select top 1 Trim(value) from AssessmentGroup ag cross apply string_split(PrimarySkills,',')  where id = @primaryAg)
+ declare @skillId int = (select top 1 id from Skill where [Name] like '%' + @primaryAgSkill + '%')
+  
+  INSERT INTO [dbo].[TransInterviewerSkill]
+		(InterviewerProfileId, 
+		SkillId,  
+		Category, 
+		Ip, 
+		Level, 
+		SkillExperience, 
+		Nature)
+ Values 
+		(@InterviewerProfileId, 
+		 @skillId,
+		 1, 
+		 1, 
+		 1,
+		 1,
+		 1);
+
+
+
  if exists(select id from InterviewerRecommendation where Userid = @v_User_Id)    
  begin    
   update InterviewerRecommendation set     

@@ -252,41 +252,41 @@ namespace Risebird.Repository
                 }
 
                 //To Add Skills
-                foreach (var item in interviewerProfile.InterviewerSkill)
-                {
-                    DynamicParameters Params = new DynamicParameters();
-                    Params.Add("@InterviewerProfileId", ProfileId);
-                    Params.Add("@SkillId", item.SkillId);
-                    Params.Add("@Category", item.Category);
-                    Params.Add("@Ip", item.Ip);
-                    Params.Add("@Level", item.Level);
-                    Params.Add("@SkillExperience", item.SkillExperience);
-                    Params.Add("@Nature", item.Nature);
+                //foreach (var item in interviewerProfile.InterviewerSkill)
+                //{
+                //    DynamicParameters Params = new DynamicParameters();
+                //    Params.Add("@InterviewerProfileId", ProfileId);
+                //    Params.Add("@SkillId", item.SkillId);
+                //    Params.Add("@Category", item.Category);
+                //    Params.Add("@Ip", item.Ip);
+                //    Params.Add("@Level", item.Level);
+                //    Params.Add("@SkillExperience", item.SkillExperience);
+                //    Params.Add("@Nature", item.Nature);
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerSkills", Params,
-                        commandType: CommandType.StoredProcedure);
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerSkills", Params,
+                //        commandType: CommandType.StoredProcedure);
 
-                    }
-                }
+                //    }
+                //}
 
-                foreach (var item in interviewerProfile.InterviewerCertificateDetails)
-                {
-                    DynamicParameters Params = new DynamicParameters();
-                    Params.Add("@InterviewerProfileId", ProfileId);
-                    Params.Add("@CertificateID", item.CertificateID);
-                    Params.Add("@CertificateName", item.CertificateName);
-                    Params.Add("@Version", item.Version);
-                    Params.Add("@ExpiryDate", item.Expirydate);
+                //foreach (var item in interviewerProfile.InterviewerCertificateDetails)
+                //{
+                //    DynamicParameters Params = new DynamicParameters();
+                //    Params.Add("@InterviewerProfileId", ProfileId);
+                //    Params.Add("@CertificateID", item.CertificateID);
+                //    Params.Add("@CertificateName", item.CertificateName);
+                //    Params.Add("@Version", item.Version);
+                //    Params.Add("@ExpiryDate", item.Expirydate);
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerCertificate", Params,
-                       commandType: CommandType.StoredProcedure);
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerCertificate", Params,
+                //       commandType: CommandType.StoredProcedure);
 
-                    }
-                }
+                //    }
+                //}
 
                 //foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
                 //{
@@ -316,59 +316,59 @@ namespace Risebird.Repository
                 //    }
                 //}
 
-                foreach (var item in interviewerProfile.InterviewerEducationDetails)
-                {
-                    DynamicParameters Params = new DynamicParameters();
-                    Params.Add("@InterviewerProfileId", ProfileId);
-                    Params.Add("@EducationType", item.EducationType);
-                    Params.Add("@Degree", item.Degree);
-                    Params.Add("@EducationMode", item.EducationMode);
-                    Params.Add("@CollegeType", item.CollegeType);
-                    Params.Add("@UniversityName", item.UniversityName);
-                    Params.Add("@PassOutYear", item.PassOutYear);
-                    Params.Add("@AnyGap", item.AnyGap);
+                //foreach (var item in interviewerProfile.InterviewerEducationDetails)
+                //{
+                //    DynamicParameters Params = new DynamicParameters();
+                //    Params.Add("@InterviewerProfileId", ProfileId);
+                //    Params.Add("@EducationType", item.EducationType);
+                //    Params.Add("@Degree", item.Degree);
+                //    Params.Add("@EducationMode", item.EducationMode);
+                //    Params.Add("@CollegeType", item.CollegeType);
+                //    Params.Add("@UniversityName", item.UniversityName);
+                //    Params.Add("@PassOutYear", item.PassOutYear);
+                //    Params.Add("@AnyGap", item.AnyGap);
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        _ = SqlMapper.Query<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
-                        commandType: CommandType.StoredProcedure);
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        _ = SqlMapper.Query<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
+                //        commandType: CommandType.StoredProcedure);
 
-                    }
-                }
+                //    }
+                //}
 
-                foreach (var item in interviewerProfile.InterviewerProjectsDetails)
-                {
-                    DynamicParameters Params = new DynamicParameters();
-                    Params.Add("@InterviewerProfileId", ProfileId);
-                    Params.Add("@TechnologyEnvironment", item.TechnologyEnvironment);
-                    Params.Add("@IsPrimarySkillUsed", item.IsPrimarySkillUsed);
-                    Params.Add("@Description", item.Description);
-                    Params.Add("@IsCommercialProject", item.IsCommercialProject);
-                    Params.Add("@NatureOfProject", item.NatureOfProject);
+                //foreach (var item in interviewerProfile.InterviewerProjectsDetails)
+                //{
+                //    DynamicParameters Params = new DynamicParameters();
+                //    Params.Add("@InterviewerProfileId", ProfileId);
+                //    Params.Add("@TechnologyEnvironment", item.TechnologyEnvironment);
+                //    Params.Add("@IsPrimarySkillUsed", item.IsPrimarySkillUsed);
+                //    Params.Add("@Description", item.Description);
+                //    Params.Add("@IsCommercialProject", item.IsCommercialProject);
+                //    Params.Add("@NatureOfProject", item.NatureOfProject);
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerProjects", Params,
-                        commandType: CommandType.StoredProcedure);
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerProjects", Params,
+                //        commandType: CommandType.StoredProcedure);
 
-                    }
-                }
+                //    }
+                //}
 
-                foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
-                {
-                    DynamicParameters Params = new DynamicParameters();
-                    Params.Add("@InterviewerProfileId", ProfileId);
-                    Params.Add("@Weekday", item.Weekday);
-                    Params.Add("@Weekend", item.Weekend);
-                    Params.Add("@IsAvailableOnPublicHolidays", item.IsAvailableOnPublicHolidays);
+                //foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
+                //{
+                //    DynamicParameters Params = new DynamicParameters();
+                //    Params.Add("@InterviewerProfileId", ProfileId);
+                //    Params.Add("@Weekday", item.Weekday);
+                //    Params.Add("@Weekend", item.Weekend);
+                //    Params.Add("@IsAvailableOnPublicHolidays", item.IsAvailableOnPublicHolidays);
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerAvailability", Params,
-                        commandType: CommandType.StoredProcedure);
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        _ = SqlMapper.Query<int>(con, "usp_AddInterviewerAvailability", Params,
+                //        commandType: CommandType.StoredProcedure);
 
-                    }
-                }
+                //    }
+                //}
 
                 //add interviewer account details
                 DynamicParameters paramsAccount = new DynamicParameters();
