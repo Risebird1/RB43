@@ -261,6 +261,8 @@ namespace Risebird.Entities.ViewModel
         public int DisSkillSetsevaluate { get; set; }
         [DisplayName("Job Title")]
         public string JDTitleTwo { get; set; }
+        [DisplayName("Interviewer Video Required")]
+        public bool IsVideoRequired { get; set; }
     }
     public class InterviewerIds
     {

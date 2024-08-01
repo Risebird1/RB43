@@ -62,7 +62,8 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
 	@ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
 	--@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,
 	@HRBulkData AS [dbo].[TransHR_TableType] READONLY,
-	@IsNewSkillChannel bit = null
+	@IsNewSkillChannel bit = null,
+	@IsVideoRequired bit
 	--@FixedAmount int = null
 	--@idRecommendation int,
 	--@RecommendationStatus bit,
@@ -123,6 +124,7 @@ BEGIN
 	,[IsMeetingNotificationSend]=@IsMeetingNotificationSend
 	,[IsLocked]=@IsLocked
 	,[JDTitleTwo]=@JDTitleTwo
+	,[IsVideoRequired]=@IsVideoRequired
 	--,[InterviewDuration]=@InterviewDuration
 	--,[IsFixedInterviewduration]=@IsFixedInterviewduration
 	--,[FixedAmount] = @FixedAmount

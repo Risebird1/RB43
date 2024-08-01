@@ -1897,6 +1897,23 @@
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-4 col-sm-4 pull-left">
+                                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.IsVideoRequired, new { @class = "mdc-checkbox__native-control" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark"
+                                                                             viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                @Html.LabelFor(model => model.IsVideoRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                                <i style="margin-right:-4vw" title="Interviewer Video on at time of interview." class="fa fa-info-circle"></i>
+                                                            </div>
+                                                        </div>
+                                                            <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                     <div class="mdc-checkbox">
                                                                         @*@{
@@ -1980,6 +1997,7 @@
                                             @Html.HiddenFor(model => model.IsCandidateavailability)
                                             @Html.HiddenFor(model => model.IsMeetingAutoCancelled)
                                             @Html.HiddenFor(model => model.IsMeetingNotificationSend)
+                                            @Html.HiddenFor(model => model.IsVideoRequired)
                                             //@Html.HiddenFor(model=>model.InterviewDuration)
                                             @Html.HiddenFor(model => model.MeetingPlatform)
                                         }
