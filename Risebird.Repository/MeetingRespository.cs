@@ -886,7 +886,7 @@ namespace Risebird.Repository
                     //dynamicParameters.Add("@EmailId", interviewerMail);
                     //var results = await con.QueryAsync<int>(query, dynamicParameters);
 
-                    var videoquery = "Select ISNULL(IRF.IsVideoRequired,0) from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where id=@meetingid";
+                    var videoquery = "Select ISNULL(IRF.IsVideoRequired,0) from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@meetingid";
                     var videodynamicParameters = new DynamicParameters();
                     videodynamicParameters.Add("@meetingid", meetingid);
                     var videoresults = await con.QueryAsync<bool>(videoquery, videodynamicParameters);
