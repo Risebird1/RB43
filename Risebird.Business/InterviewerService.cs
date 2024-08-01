@@ -205,9 +205,9 @@ namespace Risebird.Business
                     interviewerProfile.RemovedAssessmentGroups = string.Join(",", removedAssessmentGroupArray);
                 }
                 //Edit Method
-                interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();
-                interviewerProfile.InterviewerProjectsDetails = interviewerProfile.InterviewerProjectsDetails.Where(x => x.NatureOfProject != null).ToList();
-                interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
+                //interviewerProfile.InterviewerEducationDetails = interviewerProfile.InterviewerEducationDetails.Where(x => x.CollegeType != null).ToList();
+                //interviewerProfile.InterviewerProjectsDetails = interviewerProfile.InterviewerProjectsDetails.Where(x => x.NatureOfProject != null).ToList();
+                //interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
                 interviewerProfile.IndiaProductRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate * 1.5);
                 interviewerProfile.OutsideIndiaServiceRate = Convert.ToInt32(interviewerProfile.IndiaServiceRate + 150);
                 interviewerProfile.OutsideIndiaProductRate = Convert.ToInt32(interviewerProfile.OutsideIndiaServiceRate * 1.5);
@@ -322,22 +322,22 @@ namespace Risebird.Business
 
                 // Get all the List from DB
 
-                List<TransInterviewerSkill> SkillList = _interviewerRepository.GetSkills(ProfileId).Result.ToList();
-                List<TransInterviewerCertificate> CertificateList = _interviewerRepository.GetCertificateList(ProfileId).Result.ToList();
-                List<TransInterviewerEducation> EducationList = _interviewerRepository.GetEducationList(ProfileId).Result.ToList();
-                //List<InterviewerProfessional> ProfessionalList = _interviewerRepository.GetProfessionalList(ProfileId).Result.ToList();
-                List<TransInterviewerProjects> ProjectsList = _interviewerRepository.GetProjectsList(ProfileId).Result.ToList();
-                List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
+                //List<TransInterviewerSkill> SkillList = _interviewerRepository.GetSkills(ProfileId).Result.ToList();
+                //List<TransInterviewerCertificate> CertificateList = _interviewerRepository.GetCertificateList(ProfileId).Result.ToList();
+                //List<TransInterviewerEducation> EducationList = _interviewerRepository.GetEducationList(ProfileId).Result.ToList();
+                ////List<InterviewerProfessional> ProfessionalList = _interviewerRepository.GetProfessionalList(ProfileId).Result.ToList();
+                //List<TransInterviewerProjects> ProjectsList = _interviewerRepository.GetProjectsList(ProfileId).Result.ToList();
+                //List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
                 TransInterviewerAccDetails AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result;
 
                 // Assign the Lists to model
 
-                ProfileModel.InterviewerSkill = SkillList;
-                ProfileModel.InterviewerCertificateDetails = CertificateList;
-                ProfileModel.InterviewerEducationDetails = EducationList;
+                //ProfileModel.InterviewerSkill = SkillList;
+                //ProfileModel.InterviewerCertificateDetails = CertificateList;
+                //ProfileModel.InterviewerEducationDetails = EducationList;
                 //ProfileModel.InterviewerProfessionalDetails = ProfessionalList;
-                ProfileModel.InterviewerProjectsDetails = ProjectsList;
-                ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
+                //ProfileModel.InterviewerProjectsDetails = ProjectsList;
+                //ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
                 ProfileModel.InterviewerAccDetails = AccDetailsList;
                 ProfileModel.IsEdit = true;
                 if (!string.IsNullOrEmpty(ProfileModel.AssessmentGroupId))
