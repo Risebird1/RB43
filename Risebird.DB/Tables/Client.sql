@@ -31,6 +31,7 @@ CREATE TABLE [dbo].[Client](
             [IsPlanFlixable][bit] null,
             [PlanType][int]null,
             [tenantId][varchar](50) NULL,
+            [IsVideoRequired][bit] NULL,
  CONSTRAINT [PK_Client] PRIMARY KEY CLUSTERED 					
 (					
 	[id] ASC				
@@ -308,6 +309,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Client
     Add tenantId varchar(50)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsVideoRequired')
+      AND Object_ID = Object_ID(N'Client'))
+BEGIN
+    ALTER TABLE Client
+    Add IsVideoRequired bit
 END
 
 END
