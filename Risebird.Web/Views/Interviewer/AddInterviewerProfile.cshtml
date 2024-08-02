@@ -34,13 +34,13 @@
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
-                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_evmobile", @class = "form-control text-box single-line", @maxlenght = "10" , @readonly = "readonly"} })
+                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_evmobile", @class = "form-control text-box single-line", @maxlenght = "10"} })
                                     </div>
                                     <div class="form-group">
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
-                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_evEmailId", @class = "form-control text-box single-line",@readonly = "readonly" } })
+                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_evEmailId", @class = "form-control text-box single-line" } })
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +96,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text", @required = "required" } })
+                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text",  @readonly = "readonly" } })
                                             @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
                                         </div>
                                         <div class="form-group dob">
@@ -162,7 +162,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line", @readonly = "readonly" } })
                                             @Html.ValidationMessageFor(model => model.EmailId, "", new { @id = "err_txt_EmailId", @class = "text-danger" })
                                         </div>
                                         <div class="form-group">
