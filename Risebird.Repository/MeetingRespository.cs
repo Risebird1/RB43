@@ -892,7 +892,7 @@ namespace Risebird.Repository
                     var videoresults = await con.QueryAsync<bool>(videoquery, videodynamicParameters);
                     if (videoresults.FirstOrDefault())
                     {
-                        return "This Interview requires Mandate Video ON ! Keep your video on for this interview and earn an extra 10% of the base pay (Approx ₹50 for offshore or ₹100 for onsite). No payment if your video is off. Unassign 4 hours before if you can't comply. Use a virtual background. Your data is 100% Secure.";
+                        return "Interview assigned Successfully, This Interview requires Mandate Video ON ! Keep your video on for this interview and earn an extra 10% of the base pay (Approx ₹50 for offshore or ₹100 for onsite). No payment if your video is off. Unassign 4 hours before if you can't comply. Use a virtual background. Your data is 100% Secure.";
                     }
                     else
                     {
