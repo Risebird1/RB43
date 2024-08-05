@@ -132,17 +132,17 @@ Begin
               
    --delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId              
               
-   delete from TransInterviewerEducation where InterviewerProfileId=@v_ProfileId              
+   --delete from TransInterviewerEducation where InterviewerProfileId=@v_ProfileId              
               
    --delete from TransInterviewerProfessional where InterviewerProfileId=@v_ProfileId              
               
-   delete from TransInterviewerProjects where InterviewerProfileId=@v_ProfileId              
+   --delete from TransInterviewerProjects where InterviewerProfileId=@v_ProfileId              
               
-   delete from TransInterviewerAvailability where InterviewerProfileId=@v_ProfileId              
+   --delete from TransInterviewerAvailability where InterviewerProfileId=@v_ProfileId              
               
-   delete from TransInterviewerAccDetails where InterviewerProfileId=@v_ProfileId              
+   --delete from TransInterviewerAccDetails where InterviewerProfileId=@v_ProfileId              
               
-   delete from TransInterviewerCertificate where InterviewerProfileId=@v_ProfileId           
+   --delete from TransInterviewerCertificate where InterviewerProfileId=@v_ProfileId           
           
    select @InterviewerProfileId=@v_ProfileId     
       
