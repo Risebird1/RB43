@@ -16,8 +16,9 @@ ON InterviewComments
 FOR UPDATE
 AS
 BEGIN
- Declare @id int
+ Declare @id int, @interviewId int, @candiateEmailId varchar(200), @irfName varchar(25), @status varchar(50), @meetingStatus int
  Select @id = Id from inserted
+ Select @meetingStatus = MeetingStatus from InterviewComments where id = @id
 
  insert into InterviewCommentsHistory
  (id,	InterviewId,	InterviewStatus	,InterviewerComment	,FraudCheckStatus,	HRComment,	QCStatus,	QCComment,
@@ -34,6 +35,19 @@ BEGIN
  MoveToCP,	CandidateAvailable,	IsLock,	ClientUserid,	ThumbnailTimeSeconds,	VideoDuration,	InterviewerNickName,
  CreatedOn,	ModifiedOn,	CreatedBy,	ModifiedBy, DATEADD(minute, 330, getdate()), ModifiedBy, 'Updated'
  from InterviewComments where id = @id )
+
+
+ if(@meetingStatus in (4, 6, 7, 8))
+ Begin
+	Select @interviewId = InterviewId from InterviewComments where id = @id
+
+	Select @candiateEmailId = candidateEmail from InterviewMeetings where id = @interviewId
+
+	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
+
+	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, null 
+ End
+ 
 
 END
 

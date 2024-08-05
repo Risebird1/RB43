@@ -614,65 +614,65 @@ namespace Risebird.Web.Controllers
         {
             //=========Availability============
 
-            var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            model.WeekDayList = new SelectList(Weekday, "ID", "Name");
+            //var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))
+            //              select new { ID = (int)s, Name = s.GetDescription() };
+            //model.WeekDayList = new SelectList(Weekday, "ID", "Name");
 
-            var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            model.WeekEndList = new SelectList(Weekend, "ID", "Name");
+            //var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
+            //              select new { ID = (int)s, Name = s.GetDescription() };
+            //model.WeekEndList = new SelectList(Weekend, "ID", "Name");
 
-            //=========Project============
+            ////=========Project============
 
-            var NatureOfProject = from NatureOfProject s in Enum.GetValues(typeof(NatureOfProject))
-                                  select new { ID = (int)s, Name = s.GetDescription() };
-            model.NatureOfProjectList = new SelectList(NatureOfProject, "ID", "Name");
+            //var NatureOfProject = from NatureOfProject s in Enum.GetValues(typeof(NatureOfProject))
+            //                      select new { ID = (int)s, Name = s.GetDescription() };
+            //model.NatureOfProjectList = new SelectList(NatureOfProject, "ID", "Name");
 
-            //=========Education============
+            ////=========Education============
 
-            var graduationType = from GraduationType s in Enum.GetValues(typeof(GraduationType))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-            model.GraduationTypeList = new SelectList(graduationType, "ID", "Name");
+            //var graduationType = from GraduationType s in Enum.GetValues(typeof(GraduationType))
+            //                     select new { ID = (int)s, Name = s.GetDescription() };
+            //model.GraduationTypeList = new SelectList(graduationType, "ID", "Name");
 
-            var EducationMode = from EducationMode s in Enum.GetValues(typeof(EducationMode))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-            model.EducationModeList = new SelectList(EducationMode, "ID", "Name");
+            //var EducationMode = from EducationMode s in Enum.GetValues(typeof(EducationMode))
+            //                    select new { ID = (int)s, Name = s.GetDescription() };
+            //model.EducationModeList = new SelectList(EducationMode, "ID", "Name");
 
-            var Degree = from Entities.Enum.Degree s in Enum.GetValues(typeof(Entities.Enum.Degree))
-                         select new { ID = (int)s, Name = s.GetDescription() };
-            model.DegreeList = new SelectList(Degree, "ID", "Name");
+            //var Degree = from Entities.Enum.Degree s in Enum.GetValues(typeof(Entities.Enum.Degree))
+            //             select new { ID = (int)s, Name = s.GetDescription() };
+            //model.DegreeList = new SelectList(Degree, "ID", "Name");
 
-            var collegeType = from CollegeType s in Enum.GetValues(typeof(CollegeType))
-                              select new { ID = (int)s, Name = s.GetDescription() };
-            model.CollegeTypeList = new SelectList(collegeType, "ID", "Name");
+            //var collegeType = from CollegeType s in Enum.GetValues(typeof(CollegeType))
+            //                  select new { ID = (int)s, Name = s.GetDescription() };
+            //model.CollegeTypeList = new SelectList(collegeType, "ID", "Name");
 
-            ViewBag.Years = new SelectList(Enumerable.Range(DateTime.Today.Year - 50, 51).Select(x => new SelectListItem()
-            { Text = x.ToString(), Value = x.ToString() }), "Value", "Text");
+            //ViewBag.Years = new SelectList(Enumerable.Range(DateTime.Today.Year - 50, 51).Select(x => new SelectListItem()
+            //{ Text = x.ToString(), Value = x.ToString() }), "Value", "Text");
 
 
-            var Skillset = await _skillService.GetSkills();
-            if (Skillset != null)
-            {
-                Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
-            }
-            model.SkillTypeList = new SelectList(Skillset, "id", "Name");
+            //var Skillset = await _skillService.GetSkills();
+            //if (Skillset != null)
+            //{
+            //    Skillset = Skillset.OrderBy(x => !string.IsNullOrEmpty(x.Name) ? x.Name.Trim() : "").ToList();
+            //}
+            //model.SkillTypeList = new SelectList(Skillset, "id", "Name");
 
-            var SkillCategory = from SkillCategory s in Enum.GetValues(typeof(SkillCategory))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillCategoryList = new SelectList(SkillCategory, "ID", "Name");
-            var SkillExpertiseLevel = from SkillExpertiseLevel s in Enum.GetValues(typeof(SkillExpertiseLevel))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillExpertiseLevelList = new SelectList(SkillExpertiseLevel, "ID", "Name");
-            var SkillIP = from SkillIP s in Enum.GetValues(typeof(SkillIP))
+            //var SkillCategory = from SkillCategory s in Enum.GetValues(typeof(SkillCategory))
+            //                    select new { ID = (int)s, Name = s.GetDescription() };
+            //model.SkillCategoryList = new SelectList(SkillCategory, "ID", "Name");
+            //var SkillExpertiseLevel = from SkillExpertiseLevel s in Enum.GetValues(typeof(SkillExpertiseLevel))
+            //                          select new { ID = (int)s, Name = s.GetDescription() };
+            //model.SkillExpertiseLevelList = new SelectList(SkillExpertiseLevel, "ID", "Name");
+            //var SkillIP = from SkillIP s in Enum.GetValues(typeof(SkillIP))
 
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillIPList = new SelectList(SkillIP, "ID", "Name");
-            var SkillYearsOfExperience = from SkillYearsOfExperience s in Enum.GetValues(typeof(SkillYearsOfExperience))
-                                         select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillYearsOfExperienceList = new SelectList(SkillYearsOfExperience, "ID", "Name");
-            var SkillNature = from SkillNature s in Enum.GetValues(typeof(SkillNature))
-                              select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillNatureList = new SelectList(SkillNature, "ID", "Name");
+            //              select new { ID = (int)s, Name = s.GetDescription() };
+            //model.SkillIPList = new SelectList(SkillIP, "ID", "Name");
+            //var SkillYearsOfExperience = from SkillYearsOfExperience s in Enum.GetValues(typeof(SkillYearsOfExperience))
+            //                             select new { ID = (int)s, Name = s.GetDescription() };
+            //model.SkillYearsOfExperienceList = new SelectList(SkillYearsOfExperience, "ID", "Name");
+            //var SkillNature = from SkillNature s in Enum.GetValues(typeof(SkillNature))
+            //                  select new { ID = (int)s, Name = s.GetDescription() };
+            //model.SkillNatureList = new SelectList(SkillNature, "ID", "Name");
 
             //=========Personal============
 
@@ -688,12 +688,12 @@ namespace Risebird.Web.Controllers
             model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
 
 
-            var dayTimeSlot = from DayTimeSlot s in Enum.GetValues(typeof(DayTimeSlot))
-                              select new { ID = (int)s, Name = s.GetDescription() };
-            model.DayTimeSlotList = new SelectList(dayTimeSlot, "ID", "Name");
-            var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            model.DaySlotList = new SelectList(daySlot, "ID", "Name");
+            //var dayTimeSlot = from DayTimeSlot s in Enum.GetValues(typeof(DayTimeSlot))
+            //                  select new { ID = (int)s, Name = s.GetDescription() };
+            //model.DayTimeSlotList = new SelectList(dayTimeSlot, "ID", "Name");
+            //var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
+            //              select new { ID = (int)s, Name = s.GetDescription() };
+            //model.DaySlotList = new SelectList(daySlot, "ID", "Name");
             var Assessmentgroup = _interviewerService.FetchAssessmentGroups();
 
             var selectList = new List<SelectListItem>();

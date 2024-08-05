@@ -3911,7 +3911,7 @@ namespace Risebird.Web.Controllers
         /// Gets active skills channel Interviewers whose AI verdict is negative i.e, not suitable.
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> InterviewersWithAIVerdict()
+        public async Task<IActionResult> InterviewersWithNegativeAIVerdict()
         {
             try
             {

@@ -34,7 +34,7 @@
                                         <div class="mandate">
                                             @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                         </div>
-                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_evmobile", @class = "form-control text-box single-line", @maxlenght = "10" } })
+                                        @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_evmobile", @class = "form-control text-box single-line", @maxlenght = "10"} })
                                     </div>
                                     <div class="form-group">
                                         <div class="mandate">
@@ -96,7 +96,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text", @required = "required" } })
+                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { id = "txt_MobileNumber", @class = "form-control text-box single-line", @type = "text",  @readonly = "readonly" } })
                                             @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
                                         </div>
                                         <div class="form-group dob">
@@ -162,7 +162,7 @@
                                             <div class="mandate">
                                                 @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                             </div>
-                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line" } })
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { id = "txt_EmailId", @class = "form-control text-box single-line", @readonly = "readonly" } })
                                             @Html.ValidationMessageFor(model => model.EmailId, "", new { @id = "err_txt_EmailId", @class = "text-danger" })
                                         </div>
                                         <div class="form-group">
@@ -325,337 +325,8 @@
                                     </div>
                                 </div>
                                 <!-- INterviewer personal Details End-->
-                                <!-- Interviewer Skill Details Start-->
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interviewer Skill Details </h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive-sm">
-                                            <table class="table table-bordered mbn" id="skillTable">
-                                                <thead class="tableHeaderClass">
-                                                    <tr>
-                                                        <th width="20%" class="table_heading">Skill Name <span class="red">*</span> </th>
-                                                        <th width="15%" class="table_heading">Category </th>
-                                                        <th width="15%" class="table_heading">IP</th>
-                                                        <th width="15%" class="table_heading">Level</th>
-                                                        <th width="5%" class="table_heading">Year of Experince </th>
-                                                        <th width="20%" class="table_heading">Nature</th>
-                                                        <th width="10%" class="table_heading text-center"> Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="tableBody">
-
-                                                    @if (Model.InterviewerSkill == null || Model.InterviewerSkill.Count() == 0)
-                                                    {
-                                                        <tr>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, "Select", new { @class = "select-css form-control text-box single-line", @required = "required" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].Category", (SelectList)Model.SkillCategoryList, "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].Ip", (SelectList)Model.SkillIPList, "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].Level", (SelectList)Model.SkillExpertiseLevelList, "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].SkillExperience", (SelectList)Model.SkillYearsOfExperienceList, "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].Nature", (SelectList)Model.SkillNatureList, "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            </td>
-                                                            <td class="action text-center">
-                                                                <span id="btnPlus" onclick="addRowSkillDetails()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'InterviewerSkill','SkillId','Category','Ip','Level','SkillExperience', 'Nature')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                            </td>
-                                                        </tr>
-                                                    }
-
-                                                </tbody>
-                                            </table>
-                                            <label class="text-danger" id="SkillCollection_Error" style="color:red; margin-left:815px"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--Interviewer Skill Details end -->
-                                <!-- Interviewer Certificate Details Start-->
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interviewer Certificate Details</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive-sm">
-                                            <table class="table table-bordered mbn" id="certificateTable">
-                                                <thead class="tableHeaderClass">
-                                                    <tr>
-                                                        <th width="20%" class="table_heading">Certificate ID </th>
-                                                        <th width="20%" class="table_heading">Certificate Name</th>
-                                                        <th width="30%" class="table_heading">Version </th>
-                                                        <th width="20%" class="table_heading">Expiry date</th>
-                                                        <th width="10%" class="table_heading text-center">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="tableBody">
-                                                    @if (Model.InterviewerCertificateDetails == null || Model.InterviewerCertificateDetails.Count() == 0)
-                                                    {
-                                                        <tr>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].CertificateID, null, new { @class = "form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].CertificateName, null, new { @class = "form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Version, null, new { @class = "form-control text-box single-line" })
-                                                            </td>
-                                                            <td class="expiry">
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Expirydate, null, new { @class = "form-control text-box single-line", type = "date" })
-                                                            </td>
-                                                            <td class="action text-center">
-                                                                <span id="btnPlus" onclick="addRowCertificateDetails()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRow(this, 'InterviewerCertificateDetails','CertificateID','CertificateName','Version','Expirydate')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                            </td>
-                                                        </tr>
-                                                    }
-
-                                                </tbody>
-                                            </table>
-                                            <label class="text-danger" id="Certification_Error" style="color:red; margin-left:815px"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--Interviewer Certificate  Details end -->
-                                <!-- Educational Details Start-->
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Educational Details</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive-sm">
-                                            <table class="table table-bordered mbn" id="educationTable">
-                                                <thead class="tableHeaderClass">
-                                                    <tr>
-                                                        <th width="10%" class="table_heading">Educational Type </th>
-                                                        <th width="15%" class="table_heading">Degree</th>
-                                                        <th width="20%" class="table_heading">Education Mode</th>
-                                                        <th width="10%" class="table_heading">College Type</th>
-                                                        <th width="20%" class="table_heading">University Name</th>
-                                                        <th width="10%" class="table_heading">Pass Out Year</th>
-                                                        <th width="5%" class="table_heading">Any Gap</th>
-                                                        <th width="10%" class="table_heading text-center">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="tableBody">
-                                                    @if (Model.InterviewerEducationDetails == null || Model.InterviewerEducationDetails.Count() == 0)
-                                                    {
-                                                        <tr>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerEducationDetails[0].EducationType", (SelectList)Model.GraduationTypeList, "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerEducationDetails[0].Degree", (SelectList)Model.DegreeList, "Select", new { @class = "select-css  form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerEducationDetails[0].EducationMode", (SelectList)Model.EducationModeList, "Select", new { @class = "select-css  form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerEducationDetails[0].CollegeType", (SelectList)Model.CollegeTypeList, "Select", new { @class = "select-css  form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBox("InterviewerEducationDetails[0].UniversityName", null, new { @class = "form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerEducationDetails[0].PassOutYear", (SelectList)ViewBag.Years, "Select", new { @class = "select-css  form-control text-box single-line" })
-                                                                @*@Html.TextBox("InterviewerEducationDetails[0].PassOutYear", null, new { id = "txt_PassOutYear", @class = "form-control text-box single-line" })*@
-                                                            </td>
-                                                            <td>
-                                                                <div class="mdc-checkbox">
-                                                                    @Html.CheckBox(("InterviewerEducationDetails[0].AnyGap"), new { @class = "mdc-checkbox__native-control" })
-                                                                    <div class="mdc-checkbox__background">
-                                                                        <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
-                                                                            <path class="mdc-checkbox__checkmark-path"
-                                                                                  fill="none"
-                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                        </svg>
-                                                                        <div class="mdc-checkbox__mixedmark"></div>
-                                                                    </div>
-                                                                    <div class="mdc-checkbox__ripple"></div>
-                                                                    <label for="@Html.Name("InterviewerEducationDetails[0].AnyGap")" class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label"></label>
-                                                                </div>
-                                                            </td>
-                                                            <td class="action text-center">
-                                                                <span id="btnPlus" onclick="addRowEducationDetails()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'InterviewerEducationDetails','EducationType','Degree','EducationMode','CollegeType','UniversityName', 'PassOutYear', 'AnyGap')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                            </td>
-                                                        </tr>
-                                                    }
-
-
-                                                </tbody>
-                                            </table>
-
-                                            <label class="text-danger" id="Education_Error" style="color:red; margin-left:815px"></label>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <!-- Educational Details End-->
-                                <!-- Project Details start-->
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Project Details</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive-sm">
-                                            <table class="table table-bordered mbn" id="projectTable">
-                                                <thead>
-                                                    <tr class="tableHeaderClass">
-
-                                                        <th width="10%" class="table_heading">Is Primary Skill used In Recent Project</th>
-                                                        <th width="50%" class="table_heading">Project Description</th>
-                                                        <th width="10%" class="table_heading">Is Commercial Project</th>
-                                                        <th width="20%" class="table_heading">Nature of Project</th>
-                                                        <th width="10%" class="table_heading text-center">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.InterviewerProjectsDetails == null || Model.InterviewerProjectsDetails.Count() == 0)
-                                                    {
-                                                        <tr>
-
-                                                            <td>
-                                                                <div class="mdc-checkbox">
-                                                                    @Html.CheckBox(("InterviewerProjectsDetails[0].IsPrimarySkillUsed"), new { @class = "mdc-checkbox__native-control" })
-                                                                    <div class="mdc-checkbox__background">
-                                                                        <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
-                                                                            <path class="mdc-checkbox__checkmark-path"
-                                                                                  fill="none"
-                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                        </svg>
-                                                                        <div class="mdc-checkbox__mixedmark"></div>
-                                                                    </div>
-                                                                    <div class="mdc-checkbox__ripple"></div>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { @class = "form-control text-box single-line", @style = "height:50px;" })
-                                                            </td>
-                                                            <td>
-                                                                <div class="mdc-checkbox">
-                                                                    @Html.CheckBox(("InterviewerProjectsDetails[0].IsCommercialProject"), new { @class = "mdc-checkbox__native-control" })
-                                                                    <div class="mdc-checkbox__background">
-                                                                        <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
-                                                                            <path class="mdc-checkbox__checkmark-path"
-                                                                                  fill="none"
-                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                        </svg>
-                                                                        <div class="mdc-checkbox__mixedmark"></div>
-                                                                    </div>
-                                                                    <div class="mdc-checkbox__ripple"></div>
-                                                                    @*<label for="@Html.Name("InterviewerProjectsDetails[0].IsCommercialProject")">Is Commercial Project</label>*@
-
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerProjectsDetails[0].NatureOfProject", (SelectList)Model.NatureOfProjectList, "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            </td>
-                                                            <td class="action text-center">
-                                                                <span id="btnPlus" onclick="addProjectTableRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRow(this, 'InterviewerProjectsDetails','IsPrimarySkillUsed','Description','IsCommercialProject','NatureOfProject')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                            </td>
-                                                        </tr>
-                                                    }
-
-
-                                                </tbody>
-                                            </table>
-
-                                            <label class="text-danger" id="ProjectDetails_Error" style="color:red; margin-left:815px"></label>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <!-- Project details end-->
-                                <!-- Availability Details start-->
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Availability Details</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive-sm">
-                                            <table class="table table-bordered mbn" id="availabilityDetailsTable">
-                                                <thead class="tableHeaderClass">
-                                                    <tr>
-                                                        <th width="40%" class="table_heading">Week Day</th>
-                                                        <th width="40%" class="table_heading">Week End</th>
-                                                        <th width="10%" class="table_heading">Is Available On Public Holidays</th>
-                                                        <th width="10%" class="table_heading text-center">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.InterviewerAvailabilityDetails == null || Model.InterviewerAvailabilityDetails.Count() == 0)
-                                                    {
-                                                        <tr>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList, "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, "Select", new { @class = "select-css form-control text-box single-line" })
-                                                            </td>
-                                                            <td>
-                                                                @*<div class="checkbox checkbox-danger">*@
-                                                                <div class="mdc-checkbox">
-                                                                    @Html.CheckBox("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays", new { @class = "mdc-checkbox__native-control form-control text-box single-line" })
-                                                                    <div class="mdc-checkbox__background">
-                                                                        <svg class="mdc-checkbox__checkmark"
-                                                                             viewBox="0 0 24 24">
-                                                                            <path class="mdc-checkbox__checkmark-path"
-                                                                                  fill="none"
-                                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                        </svg>
-                                                                        <div class="mdc-checkbox__mixedmark"></div>
-                                                                    </div>
-                                                                    <div class="mdc-checkbox__ripple"></div>
-                                                                    @*<label for="@Html.Name("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")">Is Available On Public Holidays</label>*@
-                                                                    @*</div>*@
-                                                                </div>
-                                                            </td>
-                                                            <td class="action text-center">
-                                                                <span id="btnPlus" onclick="addAvailabilityDetails()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday', 'Weekend', 'IsAvailableOnPublicHolidays')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
-                                                            </td>
-                                                        </tr>
-                                                    }
-
-
-
-                                                </tbody>
-                                            </table>
-                                            <label class="text-danger" id="Availability_Error" style="color:red; margin-left:815px"></label>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <!-- Availabality Details end-->
+                                
+                                
                                 <!-- Account Details start-->
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -732,12 +403,12 @@
 
     $(document).ready(function () {
 
-        $("#TagArray").multiselect({
+        @* $("#TagArray").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
             maxHeight: 200
-        });
+        }); *@
         //$("#AssessmentGroupArray").multiselect({
         //    includeSelectAllOption: true,
         //    selectedClass: 'active1',
@@ -1242,7 +913,7 @@
 
     }
     function Checkvalidation() {
-        var techSkillItems = $('[id^="InterviewerSkill"]');
+        @* var techSkillItems = $('[id^="InterviewerSkill"]');
         //var oldVal = $("#QuestionsCollection_0__Timing").val();
         for (i = 0; i < techSkillItems.length; i++) {
             //var temp = $("#QuestionsCollection_" + i + "__Timing").val();
@@ -1253,12 +924,12 @@
                 return false;
             }
 
-        }
+        } *@
         checkEmailid();
         if (emailidvalidation != "") {
             return false;
         }
-        document.getElementById('SkillCollection_Error').innerHTML = "";
+        //document.getElementById('SkillCollection_Error').innerHTML = "";
         //if ($(".multiselect-selected-text").text() != "None selected" && $(".multiselect-selected-text").text() != "") {
         //    return true;
         //}

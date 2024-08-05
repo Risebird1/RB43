@@ -881,13 +881,26 @@ namespace Risebird.Repository
                         con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid }, commandType: Text);
 
 
-                    var query = "Select videoConfirmation from InterviewerProfile where videoConfirmation=1 and UserId=(select Id from userList where Emailid=@Emailid)";
-                    var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("@EmailId", interviewerMail);
-                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    //var query = "Select videoConfirmation from InterviewerProfile where videoConfirmation=1 and UserId=(select Id from userList where Emailid=@Emailid)";
+                    //var dynamicParameters = new DynamicParameters();
+                    //dynamicParameters.Add("@EmailId", interviewerMail);
+                    //var results = await con.QueryAsync<int>(query, dynamicParameters);
+
+                    var videoquery = "Select ISNULL(IRF.IsVideoRequired,0) from InterviewMeetings im join IRF on im.IRFId=IRF.IRFId where im.id=@meetingid";
+                    var videodynamicParameters = new DynamicParameters();
+                    videodynamicParameters.Add("@meetingid", meetingid);
+                    var videoresults = await con.QueryAsync<bool>(videoquery, videodynamicParameters);
+                    if (videoresults.FirstOrDefault())
+                    {
+                        return "Interview assigned Successfully, This Interview requires Mandate Video ON ! Keep your video on for this interview and earn an extra 10% of the base pay (Approx ₹50 for offshore or ₹100 for onsite). No payment if your video is off. Unassign 4 hours before if you can't comply. Use a virtual background. Your data is 100% Secure.";
+                    }
+                    else
+                    {
+                        return "Interview assigned Successfully.";
+                    }
                     //if (results.FirstOrDefault() == 1)
                     //{
-                    return "We recommend to the interviewer to keep their video on throughout the interview. On keeping your Video On, you will be paid 10% of the Base Pay, which is close to 50 for Offshore & 100 for Onsite Interviews.Kindly use a Virtual Background, if keeping your Video ON. Rest assured your data is 100% private and you will never be mapped to your current company.";
+                    //return "We recommend to the interviewer to keep their video on throughout the interview. On keeping your Video On, you will be paid 10% of the Base Pay, which is close to 50 for Offshore & 100 for Onsite Interviews.Kindly use a Virtual Background, if keeping your Video ON. Rest assured your data is 100% private and you will never be mapped to your current company.";
                     //}
                     //else
                     //{

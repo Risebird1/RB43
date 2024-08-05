@@ -14,7 +14,8 @@ Begin
 
  select distinct ti.id, ResumeLink, ul.EmailId, irf.id as IRFId, 
  irf.JDTiltle as JDTitle, irf.CreatedOn, ti.UserId, ulr.EmailId as ChannelOwner, --ti.OpenAIScreeningResponse, 
- cl.[Name] as CompanyName, ulc.EmailId as ClientHr, irf.irfid as IRFName, ipr.CreatedBy as InterviewerProfileAddedBy, ti.IsActive
+ cl.[Name] as CompanyName, ulc.EmailId as ClientHr, irf.irfid as IRFName, 
+ ipr.CreatedBy as InterviewerProfileAddedBy, ti.IsActive, ti.AIVerdict
  from TransInterviewer ti
  join IRF on irf.id = ti.irfId
  join InterviewerProfile ipr on ipr.id = ti.InterviewerId
@@ -22,7 +23,7 @@ Begin
  join UserList ulr on ulr.id = irf.RisebirdHr
  join Client cl on cl.id = irf.ClientId
  join UserList ulc on ulc.id = irf.BillingOwner
- where AIVerdict in ('Yes','No')--ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
+ where AIVerdict in ('No')-- 'Yes',ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
  order by irf.CreatedOn desc
 
 End
