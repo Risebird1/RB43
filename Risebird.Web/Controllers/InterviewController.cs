@@ -8206,14 +8206,14 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ResetPaymentSlaDetailsFilter(SkillChannelDetailsFilter filter, string actionstatus, int returnBack)
+        public async Task<IActionResult> ResetPaymentSlaDetailsFilter(string actionstatus, int returnBack)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     HttpContext.Session.Remove("PaymentSlaDetailsFilters");
-                    return RedirectToAction("PaymentSlaDetails");
+                    return RedirectToAction("PaymentSlaDetails", new { actionstatus = actionstatus, returnBack = returnBack });
                 }
                 else
                 {
