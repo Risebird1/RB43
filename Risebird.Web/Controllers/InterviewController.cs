@@ -8206,7 +8206,7 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ResetPaymentSlaDetailsFilter()
+        public async Task<IActionResult> ResetPaymentSlaDetailsFilter(SkillChannelDetailsFilter filter, string actionstatus, int returnBack)
         {
             try
             {
