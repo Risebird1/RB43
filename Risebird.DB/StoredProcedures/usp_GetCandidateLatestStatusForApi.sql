@@ -27,7 +27,9 @@ DECLARE @TemporaryCandidateTableVariable TABLE (
  UserId int,         
  CandidateLatestStatus varchar(20),      
  InterviewId int null,      
- interviewDate datetime null  
+ interviewDate datetime null,
+ addedOn datetime null,
+ statusUpdatedAt datetime null  
 );     
   
 DECLARE @TemporaryCandidateTableFinal TABLE (                    
@@ -36,11 +38,13 @@ DECLARE @TemporaryCandidateTableFinal TABLE (
  UserId int,         
  CandidateLatestStatus varchar(20),      
  InterviewId int null,      
- interviewDate datetime null  
+ interviewDate datetime null,
+ addedOn datetime null,
+ statusUpdatedAt datetime null
 ); 
 
 INSERT INTO @TemporaryCandidateTableVariable      
-Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate   
+Select distinct ca.IRFId,ca.CandidateMasterId,cm.UserId,la.LatestStatus,la.interviewId,la.interviewDate, la.addedOn, la.statusUpdatedAt   
 from Candidate ca
 --InterviewMeetings im
 --join IRF on IRF.IRFId=ca.IRFId  
@@ -88,8 +92,10 @@ CASE
     WHEN CandidateLatestStatus like '%FUTURESCHEDULE%' THEN 'SCHEDULED'
     ELSE CandidateLatestStatus
 END AS CandidateLatestStatus,
-ipr.NickName as InterviewerCodedName ,PrimarySkill.TechScore,SecondarySkill.TechScoreTwo,IRF.SkillSetsevaluate     
-from @TemporaryCandidateTableVariable tctv      
+ipr.NickName as InterviewerCodedName ,PrimarySkill.TechScore,SecondarySkill.TechScoreTwo,IRF.SkillSetsevaluate,
+addedOn, statusUpdatedAt
+--from @TemporaryCandidateTableVariable tctv   
+from @TemporaryCandidateTableFinal tctv
 join InterviewMeetings im on im.id = tctv.InterviewId      
 join IRF on IRF.IRFId=im.IRFId       
 join InterviewComments ic on ic.InterviewId=im.id      
