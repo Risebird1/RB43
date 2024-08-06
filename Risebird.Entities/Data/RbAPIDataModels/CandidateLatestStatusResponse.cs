@@ -109,7 +109,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public int TechScoreone { get; set; }
         public int TechScoretwo { get; set; }
         public List<QuestionDetailsSet> questions { get; set; }
-        public DateTime createdOn { get; set; }
+        public DateTime? createdOn { get; set; }
         public DateTime? currentStatusUpdatedAt { get; set; }
     }
 }

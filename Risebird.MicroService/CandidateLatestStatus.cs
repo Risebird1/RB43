@@ -187,8 +187,8 @@ namespace Risebird.MicroService
                                 requestedBy = reqData.requestedBy,
                                 retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                                 skills = _skills,
-                                createdOn = result.createdOn.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                currentStatusUpdatedAt = result.currentStatusUpdatedAt.HasValue ? result.currentStatusUpdatedAt.Value.ToString("yyyy-MM-ddTHH:mm:ssZ") : null
+                                createdOn = result.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                currentStatusUpdatedAt = result.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
                             };
                             //if (result.CandidateLatestStatus == "FUTURESCHEDULE")
                             //{
