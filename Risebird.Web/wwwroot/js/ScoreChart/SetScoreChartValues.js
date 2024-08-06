@@ -983,6 +983,9 @@ function CalculateOverAllScore(requiredLevel, actualLevel, requiredWeightage) {
         if (actualLevel == 1 && requiredLevel > 1) {
             actualWeightage = 0;
         }
+        else if (actualLevel == 7 && requiredLevel > 1) {
+            actualWeightage = 0;
+        }
         else if (requiredLevel <= actualLevel) {
             actualWeightage = requiredWeightage;
         }
