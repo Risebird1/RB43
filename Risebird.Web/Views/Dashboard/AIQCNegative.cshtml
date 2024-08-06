@@ -154,6 +154,11 @@
                                                                     </button>
                                                                 </a>
                                                             }
+                                                            <a target="_blank" href="@Url.Action("AIClientReport", "Interview" , new { InterviewId = item.InterviewId, irfId=item.irfIntId, isOpenAIQC = true})" title="Generate QC Report" style="text-decoration:none;">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="AI Client Interview Report QC" style="margin: 0px 3px;">
+                                                                    <span title="Generate QC Report" class="mdc-fab__icon material-icons"><img src="~/img/qc-icon.png" style="width:16px;" /></span>
+                                                                </button>
+                                                            </a>
                                                         </td>
                                                     </tr>
                                                 }
