@@ -13,7 +13,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string candidateEmailId { get; set; }
         public string requestedBy { get; set; }
         //public string currentStatus { get; set; }
-        //public string currentStatusUpdatedAt { get; set; }
+        public string currentStatusUpdatedAt { get; set; }
         public string interviewer { get; set; }
         public string reportUrl { get; set; }
         public string retrievedAt { get; set; }
@@ -21,6 +21,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string videoUrl { get; set; }
         public int communicationScore { get; set; }
         public List<SkillDetails> skills { get; set; }
+        public string createdOn { get; set; }
     }
     public class CandidateInfoResponse
     {
@@ -106,5 +107,7 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public int TechScoreone { get; set; }
         public int TechScoretwo { get; set; }
         public List<QuestionDetailsSet> questions { get; set; }
+        public DateTime createdOn { get; set; }
+        public DateTime? currentStatusUpdatedAt { get; set; }
     }
 }

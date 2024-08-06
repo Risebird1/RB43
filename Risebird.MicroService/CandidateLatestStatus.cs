@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Risebird.CommonHelper;
+//using Microsoft.Azure.Documents.SystemFunctions;
 
 namespace Risebird.MicroService
 {
@@ -185,7 +186,9 @@ namespace Risebird.MicroService
                                 videoUrl = result.VideoLink,
                                 requestedBy = reqData.requestedBy,
                                 retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                                skills = _skills
+                                skills = _skills,
+                                createdOn = result.createdOn.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                currentStatusUpdatedAt = result.currentStatusUpdatedAt.HasValue ? result.currentStatusUpdatedAt.Value.ToString("yyyy-MM-ddTHH:mm:ssZ") : null
                             };
                             //if (result.CandidateLatestStatus == "FUTURESCHEDULE")
                             //{
