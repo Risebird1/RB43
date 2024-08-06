@@ -1110,5 +1110,17 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<IEnumerable<AINegativeVerdictQCReports>> GetAIQCNegativeVerdictReports()
+        {
+            try
+            {
+                return await _dashboardRespository.GetAIQCNegativeVerdictReports();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

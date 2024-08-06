@@ -23,7 +23,7 @@ Begin
  join UserList ulr on ulr.id = irf.RisebirdHr
  join Client cl on cl.id = irf.ClientId
  join UserList ulc on ulc.id = irf.BillingOwner
- where AIVerdict in ('Yes','No')--ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
+ where AIVerdict in ('No')-- 'Yes',ti.IsActive = 1 and  --AIVerdict='No' --OpenAIScreeningResponse is null--irfid = @irfId and ti.UserId = @userId
  order by irf.CreatedOn desc
 
 End
