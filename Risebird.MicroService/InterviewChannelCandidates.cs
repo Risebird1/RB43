@@ -240,7 +240,9 @@ namespace Risebird.MicroService
                                     reportUrl = executiveurl,
                                     communicationScore = item.CommunicationalProficiency,
                                     videoUrl = item.VideoLink,
-                                    skills = _skills
+                                    skills = _skills,
+                                    createdOn = item.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                    currentStatusUpdatedAt = item.currentStatusUpdatedAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")
                                 });
                             }
                             if (!string.IsNullOrWhiteSpace(reqData.status))
@@ -254,7 +256,7 @@ namespace Risebird.MicroService
                                 }
                                 else if (reqData.status.ToLower() == "scheduled")
                                 {
-                                    model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("FUTURESCHEDULE") : false)).ToList();
+                                    model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("SCHEDULED") : false)).ToList();
                                 }
                                 else if (reqData.status.ToLower() == "pending")
                                 {
