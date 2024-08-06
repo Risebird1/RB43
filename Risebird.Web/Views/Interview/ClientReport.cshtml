@@ -29,12 +29,16 @@
     .tox-notifications-container {
         display: none
     }
-    .less{
-        color:red!important
+
+    .less {
+        color: red !important
     }
-    .more{
-        color:green!important;
-    }    .interviewercomment {
+
+    .more {
+        color: green !important;
+    }
+
+    .interviewercomment {
         width: auto;
         overflow: hidden;
     }
@@ -62,9 +66,6 @@
     #InsightsDetailsView {
         margin-top: 30px !important;
     }
-
-  
-
 
 </style>
 
@@ -252,7 +253,7 @@
                                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                         <div class="row">
                                             <div class="col-lg-3 col-md-5 clientnfo">
-                                            @*@if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                @*@if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                             {
                                             <div>
 
@@ -289,8 +290,8 @@
                                             }
                                             </div>
                                             }
-                                            *@ 
-                                            @if (ViewBag.profile != "Interviewer")
+                                            *@
+                                                @if (ViewBag.profile != "Interviewer")
                                                 {
                                                     @if (Model.resumeLink != null && Model.resumeLink != "")
 
@@ -652,10 +653,10 @@
                                                         <span class="totScore">
                                                             @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                             {
-                                                               
-                                                             
+
+
                                                                 <strong id="totTechScore"></strong>
-                                                                
+
                                                             }
                                                             else
                                                             {
@@ -684,14 +685,18 @@
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
                                                                 <div class="skillBackground skill-round-xlarge skill-small">
-                                                                    
-                                                                    @if(@Model.TechSkillReportCollection[i].WeightageRequired * 50 /100 < @Model.TechSkillReportCollection[i].WeightageActual){
-                                                                      <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                                    @if (Model.TechSkillReportCollection[i].ActualLevelId == 7)
+                                                                    {
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillReportCollection[i].WeightageActual</span>  / 0</span></div>
+                                                                    }
+                                                                    else if (@Model.TechSkillReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillReportCollection[i].WeightageActual)
+                                                                    {
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
                                                                     }
                                                                     else
                                                                     {
-                                                                      <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
- 
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+
                                                                     }
                                                                 </div>
                                                             </div>
@@ -787,7 +792,7 @@
                                         @if (Model.SkillSetsevaluate > 1)
                                         {
                                             <div class="row">
-                                                
+
 
                                                 <div id="next-skill">
                                                     <div class="col-lg-12 col-md-12 skill-divider"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span style="text-transform:none!important">Other Skills: @Model.JDTitleTwo </span></h2></div>
@@ -893,14 +898,19 @@
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)
                                                                         <div class="skillBackground skill-round-xlarge skill-small">
-                                                                           @if(@Model.TechSkillTwoReportCollection[i].WeightageRequired * 50 /100 < @Model.TechSkillTwoReportCollection[i].WeightageActual){
+                                                                            @if (Model.TechSkillTwoReportCollection[i].ActualLevelId == 7)
+                                                                            {
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / 0</span></div>
+                                                                            }
+                                                                            else if (@Model.TechSkillTwoReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillTwoReportCollection[i].WeightageActual)
+                                                                            {
 
                                                                                 <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
                                                                             }
                                                                             else
                                                                             {
-                                                                             <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
-  
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
+
                                                                             }
                                                                         </div>
                                                                     </div>
@@ -1314,12 +1324,12 @@
             document.getElementById("InterviewStatus").disabled = true;
         }
     })
-        $(document).ready(function () {
+    $(document).ready(function () {
         document.getElementById("int-cmnt").innerHTML = $('#int-cmnt').text();
         document.getElementById("read-int-cmnt").innerHTML = $('#read-int-cmnt').text();
         document.getElementById("int-cmntTwo").innerHTML = $('#int-cmntTwo').text();
         document.getElementById("read-int-cmntTwo").innerHTML = $('#read-int-cmntTwo').text();
-        })
+    })
 </script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -1406,9 +1416,9 @@
             totalCount += parseInt(items[i].value);
         }
         SetTechReportCalculation('TechSkillReportCollection');
-         
+
         SetTechTwoReportCalculation('TechSkillTwoReportCollection');
-      
+
         var average = 0;
         if ('@Model.IsJoinabilitySelectabilityRequired' == "True") {
             average = totalCount / 4;
@@ -1443,11 +1453,11 @@
             var score1 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
             document.getElementById("totTechScore").innerHTML = score1 + '%';
             if (score1 < 60) {
-               $('#totTechScore').addClass('less')
-           }
-           else{
-               $('#totTechScore').addClass('more')
-           }
+                $('#totTechScore').addClass('less')
+            }
+            else {
+                $('#totTechScore').addClass('more')
+            }
 
         }
     }
@@ -1457,7 +1467,7 @@
         var totalTechSkillScore = 0;
         if (techItems != null) {
             var techItemsLength = 0;
-                techItemsLength = techItems.length;
+            techItemsLength = techItems.length;
             for (i = 0; i < techItemsLength; i++) {
                 var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
                 var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
@@ -1466,14 +1476,14 @@
                     totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
                 }
             }
-             var score2 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
+            var score2 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
             document.getElementById("totTechScore2").innerHTML = score2 + '%';
-             if (score2 < 60) {
-               $('#totTechScore2').addClass('less')
-           }
-           else{
-               $('#totTechScore2').addClass('more')
-           }
+            if (score2 < 60) {
+                $('#totTechScore2').addClass('less')
+            }
+            else {
+                $('#totTechScore2').addClass('more')
+            }
         }
     }
 </script>
@@ -1682,13 +1692,13 @@
 </script>
 
 <script>
- 
-    $('.next-skillHide').click(function() {
+
+    $('.next-skillHide').click(function () {
         $('#next-skill').hide(0);
         $('.next-skillShow').show(0);
         $('.next-skillHide').hide(0);
     });
-         $('.next-skillShow').click(function() {
+    $('.next-skillShow').click(function () {
         $('#next-skill').show(0);
         $('.next-skillShow').hide(0);
         $('.next-skillHide').show(0);

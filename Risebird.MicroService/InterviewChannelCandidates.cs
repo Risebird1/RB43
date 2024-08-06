@@ -249,18 +249,18 @@ namespace Risebird.MicroService
                             {
                                 if (reqData.status.ToLower() == "completed")
                                 {
-                                    var _select = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Select") : false)).ToList();
-                                    var _reject = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Reject") : false)).ToList();
-                                    var _proxy = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Proxy") : false)).ToList();
+                                    var _select = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.ToLower().Contains("select") : false)).ToList();
+                                    var _reject = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.ToLower().Contains("reject") : false)).ToList();
+                                    var _proxy = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.ToLower().Contains("proxy") : false)).ToList();
                                     model.result = _select.Union(_reject).Union(_proxy).ToList();
                                 }
                                 else if (reqData.status.ToLower() == "scheduled")
                                 {
-                                    model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("SCHEDULED") : false)).ToList();
+                                    model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.ToLower().Contains("scheduled") : false)).ToList();
                                 }
                                 else if (reqData.status.ToLower() == "pending")
                                 {
-                                    model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.Contains("Pending") : false)).ToList();
+                                    model.result = model.result.Where(x => x.skills.Any(y => !string.IsNullOrWhiteSpace(y.status) ? y.status.ToLower().Contains("pending") : false)).ToList();
                                 }
                             }
                             if (reqData.type.ToLower() == "alldata" || reqData.type.ToLower() == "daterange")
