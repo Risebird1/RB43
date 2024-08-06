@@ -1423,7 +1423,7 @@ namespace Risebird.Repository
                     adapter.SelectCommand.Parameters.AddWithValue("@candidateEmailId", candidateEmailId);
                     adapter.SelectCommand.Parameters.AddWithValue("@requestedByClientUser", requestedByClientUser);
                     adapter.SelectCommand.Parameters.AddWithValue("@timeNow", DateTime.Now);
-                    
+
                     adapter.Fill(dataset);
 
                     //find the value of number of tech stacks heres
@@ -1569,6 +1569,8 @@ namespace Risebird.Repository
                                     numberOfTechStacks = !string.IsNullOrEmpty(dt.Rows[i]["SkillSetsevaluate"].ToString()) ? Convert.ToInt32(dt.Rows[i]["SkillSetsevaluate"]) : 1,
                                     InterviewerCommentTwo = !string.IsNullOrEmpty(dt.Rows[i]["InterviewerCommentTwo"].ToString()) ? dt.Rows[i]["InterviewerCommentTwo"].ToString() : null,
 
+                                    createdOn = !string.IsNullOrEmpty(dt.Rows[i]["addedOn"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["addedOn"].ToString()) : null,
+                                    currentStatusUpdatedAt = !string.IsNullOrEmpty(dt.Rows[i]["statusUpdatedAt"].ToString()) ? Convert.ToDateTime(dt.Rows[i]["statusUpdatedAt"].ToString()) : null,
                                 });
                             }
                             _resultVM = listCandidates;
@@ -1633,7 +1635,7 @@ namespace Risebird.Repository
                 {
                     DataTable dataDt = new DataTable();
                     dataDt.Columns.Add("id", typeof(int));
-                    
+
                     foreach (var item in data)
                     {
                         dataDt.Rows.Add(item);

@@ -20,6 +20,8 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string interviewDate { get; set; }
         public string videoUrl { get; set; }
         public int communicationScore { get; set; }
+        public DateTime createdOn { get; set; }
+        public DateTime? currentStatusUpdatedAt { get; set; }
         public List<SkillDetails> skills { get; set; }
         public string createdOn { get; set; }
     }
@@ -46,6 +48,8 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string reportUrl { get; set; }
         public string videoUrl { get; set; }
         public int communicationScore { get; set; }
+        public string createdOn { get; set; }
+        public string currentStatusUpdatedAt { get; set; }
         public List<SkillDetails> skills { get; set; }
     }
     public class SkillDetails

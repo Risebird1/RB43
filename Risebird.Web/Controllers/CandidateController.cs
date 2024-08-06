@@ -6371,7 +6371,6 @@ namespace Risebird.Web.Controllers
 
             return View(candidateList);
         }
-        
 
     }
 }
