@@ -42,6 +42,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList;
 
+
 namespace Risebird.Web.Controllers
 {
 
@@ -8157,15 +8158,77 @@ namespace Risebird.Web.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(actionstatus))
                     {
-                        actionstatus = "";
-                    }
+                        actionstatus = "";                       
+                        }
                     ViewBag.actionstatus = actionstatus;
                     var model = await _meetingService.FetchPaymentSlaDetails(actionstatus);
+                    if (HttpContext.Session.GetString("PaymentSlaDetailsFilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<SkillChannelDetailsFilter>(HttpContext.Session.GetString("PaymentSlaDetailsFilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            filter.EndDate = filter.EndDate?.AddDays(1);
+                            model = model.Where(m => m.CreatedOn >= filter.StartDate && m.CreatedOn <= filter.EndDate).ToList();
+
+
+                        }
+
+                        
+                    }
+                    else
+                    {
+                        DateTime StartDate = DateTime.Now.AddMonths(-1);
+                        DateTime EndDate = DateTime.Now.AddDays(1);
+                        model = model.Where(m => m.CreatedOn >= StartDate && m.CreatedOn <= EndDate).ToList();
+                    }
+                    
                     return View(model);
                 }
             }
             return RedirectToAction("SignOut", "Session");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> PaymentSlaDetails(SkillChannelDetailsFilter filter,string actionstatus, int returnBack)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                if (filter != null)
+                {
+                    HttpContext.Session.SetString("PaymentSlaDetailsFilters", JsonConvert.SerializeObject(filter));
+                }
+                return RedirectToAction("PaymentSlaDetails", new { actionstatus = actionstatus, returnBack = returnBack });
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetPaymentSlaDetailsFilter(string actionstatus, int returnBack)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("PaymentSlaDetailsFilters");
+                    return RedirectToAction("PaymentSlaDetails", new { actionstatus = actionstatus, returnBack = returnBack });
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+
         public async Task SetPaymentSLADropDown(PaymentSLAVM model)
         {
             var _paymentSlab = new List<PaymentSlabsVM>();
