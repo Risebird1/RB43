@@ -151,6 +151,11 @@
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
                                                                         </span>
                                                                     </button>
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Stats" style="width:27px!important;height:27px!important">
+                                                                        <a href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.IRFId, irfName = item.IRFName})" target="_blank">
+                                                                            <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
+                                                                        </a>
+                                                                    </button>
                                                                 </div>
 
                                                             </td>
