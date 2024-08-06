@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 Create Procedure usp_FetchInterviewChannelCandidateInformation 
 @irfId int =0,       
-@clientid int=177,      
+@clientid int,      
 @ClientUser varchar(200),      
 @timeNow datetime,           
 @startdate datetime=null,      
