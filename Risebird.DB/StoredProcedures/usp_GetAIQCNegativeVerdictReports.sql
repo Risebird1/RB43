@@ -1,0 +1,29 @@
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetAIQCNegativeVerdictReports'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetAIQCNegativeVerdictReports
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+Create PROCEDURE [dbo].[usp_GetAIQCNegativeVerdictReports]  
+@timeNow datetime
+As
+Begin
+
+ 
+	Select im.id as InterviewId, IRF.id as irfIntId, im.interviewDate,IRF.IRFId,
+	im.candidateName, im.candidateEmail, im.interviewer, ul.MobileNumber as InterviewerMobileNumber,
+	uli.EmailId as ChannelOwner, ic.InterviewStatus,
+	im.confirmationStatus, ic.MeetingStatus
+	from InterviewMeetings im 
+	join IRF on IRF.IRFId=im.IRFId
+	join [dbo].[InterviewComments] ic on im.id = ic.InterviewId
+	join UserList ul on ul.EmailId=im.candidateEmail
+	join UserList uli on uli.id= irf.RisebirdHr
+	where  ic.AIVerdict in ('No')
+
+End
+GO
