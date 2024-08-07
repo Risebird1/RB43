@@ -37,6 +37,7 @@ namespace Risebird.Entities.ViewModel
         public string ConvertedFromDocResumeLink { get; set; }
         public DateTime CreatedOn { get; set; }
         public string InterviewerProfileAddedBy { get; set; }
+        public string SkillChannelAssessmentGroup { get; set; }
 
     }
 }
