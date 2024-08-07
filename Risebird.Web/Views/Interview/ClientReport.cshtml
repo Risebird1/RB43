@@ -687,7 +687,7 @@
                                                                 <div class="skillBackground skill-round-xlarge skill-small">
                                                                     @if (Model.TechSkillReportCollection[i].ActualLevelId == 7)
                                                                     {
-                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillReportCollection[i].WeightageActual</span>  / 0</span></div>
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">Not Tested</span></div>
                                                                     }
                                                                     else if (@Model.TechSkillReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillReportCollection[i].WeightageActual)
                                                                     {
@@ -900,7 +900,7 @@
                                                                         <div class="skillBackground skill-round-xlarge skill-small">
                                                                             @if (Model.TechSkillTwoReportCollection[i].ActualLevelId == 7)
                                                                             {
-                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / 0</span></div>
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">Not Tested</span></div>
                                                                             }
                                                                             else if (@Model.TechSkillTwoReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillTwoReportCollection[i].WeightageActual)
                                                                             {
