@@ -8821,7 +8821,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null, bool? isBackgroudJobRequest = null)
+        public async Task<IActionResult> AIClientReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false, bool isQC = false, string actiontype = null, string uniqueid = null, string publicEmailId = null, bool? isOpenAIQC = null, bool? isBackgroudJobRequest = null, bool? regenerateAIQC = null)
         {
             try
             {
@@ -8923,7 +8923,7 @@ namespace Risebird.Web.Controllers
                 if (isOpenAIQC.HasValue && isOpenAIQC.Value)
                 {
                     //write code to return QC results
-                    var qcResult = await PerformQualityCheck(model);
+                    var qcResult = await PerformQualityCheck(model, regenerateAIQC);
                     if(isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value)
                     {
                         return new OkResult();
@@ -8949,20 +8949,24 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public async Task<RunResult> PerformQualityCheck(InterviewReport model)
+        public async Task<RunResult> PerformQualityCheck(InterviewReport model, bool? regenerateAIQC = null)
         {
             try
             {
-                var qcResult = await _meetingService.GetOpenAIReportQC(model.InterviewId);
-
-
-                //ViewBag.IRFName = model.IRFName;
-                //ViewBag.SaveOperationResult = "NA";
-
-                if (!string.IsNullOrEmpty(qcResult))
+                if(regenerateAIQC == null || (regenerateAIQC.HasValue && regenerateAIQC.Value == false))
                 {
-                    return JsonConvert.DeserializeObject<RunResult>(qcResult);
+                    var qcResult = await _meetingService.GetOpenAIReportQC(model.InterviewId);
+
+
+                    //ViewBag.IRFName = model.IRFName;
+                    //ViewBag.SaveOperationResult = "NA";
+
+                    if (!string.IsNullOrEmpty(qcResult))
+                    {
+                        return JsonConvert.DeserializeObject<RunResult>(qcResult);
+                    }
                 }
+                
 
 
                 // Render the partial view to a string
