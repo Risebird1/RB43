@@ -293,7 +293,11 @@
                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
                                                                  <div class="skillBackground skill-round-xlarge skill-small">
-                                                                @if (TechSkill_Score == 0)
+                                                                 @if (Model.TechSkillReportCollection[i].ActualLevelId == 7)
+                                                                {
+                                                                  <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">Not Tested</span></div>
+                                                                }
+                                                                else if (TechSkill_Score == 0)
                                                                 {
                                                                  <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@TechSkill_Score %</span></div>
                                                                 }
@@ -453,7 +457,11 @@
                                                                 @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)
                                                                 <div class="skillBackground skill-round-xlarge skill-small">
-                                                                    @if (TechSkill_Score == 0)
+                                                                    @if (Model.TechSkillTwoReportCollection[i].ActualLevelId == 7)
+                                                                {
+                                                                  <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">Not Tested</span></div>
+                                                                }
+                                                                else if (TechSkill_Score == 0)
                                                                     {
                                                                         <div class="skill-center skill-round-xlarge skill-teal" style="display:contents;width:@TechSkill_Score%"><span class="ratecount" style="right:-350px;">@TechSkill_Score %</span></div>
                                                                     }
