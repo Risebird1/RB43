@@ -38,15 +38,20 @@
     .readmore {
         height: auto !important;
     }
-     .less{
-        color:red!important
+
+    .less {
+        color: red !important
     }
-    .more{
-        color:green!important;
-    }    .interviewercomment {
+
+    .more {
+        color: green !important;
+    }
+
+    .interviewercomment {
         width: auto;
         overflow: hidden;
     }
+
     input[type=number]::-webkit-inner-spin-button {
         opacity: 1
     }
@@ -66,9 +71,6 @@
     #InsightsDetailsView {
         margin-top: 30px !important;
     }
-
-  
-
 
 </style>
 
@@ -255,7 +257,7 @@
                                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                         <div class="row">
                                             <div class="col-lg-3 col-md-5 clientnfo">
-                                            @*@if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
+                                                @*@if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                             {
                                             <div>
 
@@ -292,8 +294,8 @@
                                             }
                                             </div>
                                             }
-                                            *@ 
-                                            @if (ViewBag.profile != "Interviewer")
+                                            *@
+                                                @if (ViewBag.profile != "Interviewer")
                                                 {
                                                     @if (Model.resumeLink != null && Model.resumeLink != "")
 
@@ -362,36 +364,39 @@
                                                 </div>
                                                 <div class="ctime-on" style="display:inline-block">
                                                     <div style="float:left;color:#4f9959;font-size:15px;font-weight:500">@Model.PerformedOn </div>
-                                                @if (Model.PerformedOn != null)
-                                                            {
+                                                    @if (Model.PerformedOn != null)
+                                                    {
                                                         <a class="infos" href="#" style="right: -25px;"><span class="candtime"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @Model.FirstPerformedOn</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @Model.PerformedOn</p></span></a>
-                                                            }
-                                                   </div>
+                                                    }
+                                                </div>
 
-                                                 <div class="report-heading">
+                                                <div class="report-heading">
                                                     Interviewer Joined Time
                                                 </div>
                                                 <div class="intime-on" style="display:inline-block">
                                                     <div style="float:left;color:#4f9959;font-size:15px;font-weight:500">@Model.Joinedon </div>
-                                                  @if (Model.Joinedon != null)
-                                                {
+                                                    @if (Model.Joinedon != null)
+                                                    {
                                                         <a class="infos" href="#" style="right: -25px;"><span class="time"><p style="color:darkblue"><b style="color: #673AB7;">First Attempt:</b> @Model.FirstJoinedon</p><p style="color:darkgreen"><b style="color: green;">Last Attempt:</b> @Model.Joinedon</p></span></a>
-                                                }
+                                                    }
                                                 </div>
                                                 <div class="report-int-codename" style="color:green;margin: 10px 0px 0px 0px;font-size:15px;">Interviewer Coded Name: </div>
                                                 <c style="color:red;text-decoration:underline;cursor:pointer;font-size: 18px;line-height:40px;" onclick="InsightsDetails('@Model.Interviewer','@Model.IRFName','Client','@Model.NickName')">( @Model.NickName )</c>
-                                               
-                                                          <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">Interviewer Late Join : 
-                                                             @if(Model.InterviewerLateJoin != 0){
-                                                              <span style="color:green">Yes</span>
-                                                             }
-                                                             else{
-                                                              <span style="color:#000">No</span>
-                                                             }
-                                                              </div>
-                                                              <div class="report-heading" style="margin:0px 0px 10px 0px; top:0px;font-size:15px;">Candidate rating the interviewer:<span style="color:green;padding:0px 3px; font-weight:bold;">@Model.Rating</span><span style="font-weight:bold;color:#000"> / 5 </span></div>
 
-                                                
+                                                <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">
+                                                    Interviewer Late Join :
+                                                    @if (Model.InterviewerLateJoin != 0)
+                                                    {
+                                                        <span style="color:green">Yes</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style="color:#000">No</span>
+                                                    }
+                                                </div>
+                                                <div class="report-heading" style="margin:0px 0px 10px 0px; top:0px;font-size:15px;">Candidate rating the interviewer:<span style="color:green;padding:0px 3px; font-weight:bold;">@Model.Rating</span><span style="font-weight:bold;color:#000"> / 5 </span></div>
+
+
                                                 @if (Model.CommunicationalProficiency != 0)
                                                 {
                                                     <div style="margin-top:10px">
@@ -425,24 +430,25 @@
                                                         <h3>
                                                             <div class="pull-left"><img style="width:30px;left:-11px; top:-2px; position:relative;background: #f5f5f5;padding:4px;" src="/img/detail-icon.png">Interview Video</div>
                                                             <div class="pull-right">
-                                                             <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px"><font style="color: #9b9494;padding: 0px;">Plan Type : </font>
-                                                             @{
+                                                                <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px">
+                                                                    <font style="color: #9b9494;padding: 0px;">Plan Type : </font>
+                                                                    @{
                                                                         var plantypevalue = Model.Heuristicsscore.HasValue ? ((Heuristicsscorelevel)Convert.ToInt32(Model.Heuristicsscore)).GetDescription() : string.Empty;
                                                                     }
 
                                                                     @plantypevalue
 
 
-                                                                    
-                                                                 
-                                                                 
-                                                                 
-                                                             </span>
-                                                             <span style="padding: 0px 5px;background: #a4b8b7;display: inline-block;margin: 0px 5px;height: 2px;background: #a4b8b7;top: -4px;left: 1px;transform: rotate(90deg); width: 11px;position: relative;"></span>
-                                                                             <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;"><font style="color: #9b9494;padding: 0px">Interview Duration : </font>@Model.VideoDuration (mins) </span>
+
+
+
+
+                                                                </span>
+                                                                <span style="padding: 0px 5px;background: #a4b8b7;display: inline-block;margin: 0px 5px;height: 2px;background: #a4b8b7;top: -4px;left: 1px;transform: rotate(90deg); width: 11px;position: relative;"></span>
+                                                                <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;"><font style="color: #9b9494;padding: 0px">Interview Duration : </font>@Model.VideoDuration (mins) </span>
                                                             </div>
                                                         </h3>
-                                                       
+
                                                         <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
                                                             <div>
                                                                 @Html.HiddenFor(x => Model.VideoLink)
@@ -674,28 +680,29 @@
                                                         }
                                                     </div>
                                                 }
-                                                      <div class="level-div">
-                                                                         <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px;">Seniority : </font>@Model.JobLevelName </span>
-                                                                 <span style="padding: 0px 5px;background: #a4b8b7;display: inline-block;margin: 0px 5px;height: 2px;background: #a4b8b7;top: -2px;left: 1px;transform: rotate(90deg); width: 11px;position: relative;"></span>
-                                                                         <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px">Difficulty Level : </font><span>@Model.Difficultylevel</span>%</span>
-                                                                </div>
+                                                <div class="level-div">
+                                                    <span class="pull-left" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px;">Seniority : </font>@Model.JobLevelName </span>
+                                                    <span style="padding: 0px 5px;background: #a4b8b7;display: inline-block;margin: 0px 5px;height: 2px;background: #a4b8b7;top: -2px;left: 1px;transform: rotate(90deg); width: 11px;position: relative;"></span>
+                                                    <span class="pull-right" style="color:green;font-size: 14px;line-height:25px;padding:0px;font-weight:bold;"><font style="color: #9b9494;padding: 0px">Difficulty Level : </font><span>@Model.Difficultylevel</span>%</span>
+                                                </div>
                                             </div>
-                                           
+
                                             <div class="col-lg-3 col-md-5 clientnfo">
-                                             @if (!string.IsNullOrEmpty(Model.CodeSnippet))
+                                                @if (!string.IsNullOrEmpty(Model.CodeSnippet))
                                                 {
                                                     <div class="clearfix" style="margin: 20px 0px 0px 0px;padding-bottom: 20px;">
                                                         <h3>
                                                             <img style="width:30px;left:-5px; top:-4px; position:relative;" src="/img/code-output.png">Candidate Solution:
                                                         </h3>
                                                         <div style="margin:15px 0px 10px 0px;">
-                                                          <div id="div_aicodesnippets">
+                                                            <div id="div_aicodesnippets">
                                                             </div>
-                                                    @*<div><a style="text-decoration:none!important;" href="@Model.CodeSnippet" target="_blank"><span style="background: #42a5f5;color: #fff;padding: 3px 10px 6px 10px;border-radius:3px;text-decoration:none">Click here to view code snippet</span></a></div>*@                                                        </div>
+                                                            @*<div><a style="text-decoration:none!important;" href="@Model.CodeSnippet" target="_blank"><span style="background: #42a5f5;color: #fff;padding: 3px 10px 6px 10px;border-radius:3px;text-decoration:none">Click here to view code snippet</span></a></div>*@
+                                                        </div>
                                                     </div>
 
                                                 }
-                                               else
+                                                else
                                                 {
                                                     <div class="clearfix" style="margin: 20px 0px 0px 0px;padding-bottom: 20px;">
                                                         <h3>
@@ -743,12 +750,17 @@
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
                                                                 <div class="skillBackground skill-round-xlarge skill-small">
-                                                                    @if(@Model.TechSkillReportCollection[i].WeightageRequired * 50 /100 < @Model.TechSkillReportCollection[i].WeightageActual){
+                                                                    @if (Model.TechSkillReportCollection[i].ActualLevelId == 7)
+                                                                    {
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">Not Tested</span></div>
+                                                                    }
+                                                                    else if (@Model.TechSkillReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillReportCollection[i].WeightageActual)
+                                                                    {
                                                                         <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
                                                                     }
                                                                     else
                                                                     {
-                                                                       <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
+                                                                        <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillReportCollection[i].WeightageActual</span>  / @Model.TechSkillReportCollection[i].WeightageRequired</span></div>
 
                                                                     }
                                                                 </div>
@@ -766,7 +778,7 @@
                                                         <h3>@*<svg style="margin-right:5px;" width="32" height="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path fill="#969191" d="M14 22.5L11.2 19H6a1 1 0 0 1-1-1V7.103a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1h-5.2L14 22.5zm1.839-5.5H21V8.103H7V17H12.161L14 19.298 15.839 17zM2 2h17v2H3v11H1V3a1 1 0 0 1 1-1z" /> </g> </svg>*@<img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">Sample Questions</h3>
 
 
-                                                         <div id="divquestionslist"></div>
+                                                        <div id="divquestionslist"></div>
                                                     </div>
 
 
@@ -856,7 +868,7 @@
                                         @if (Model.SkillSetsevaluate > 1)
                                         {
                                             <div class="row">
-                                                
+
 
                                                 <div id="next-skill">
                                                     <div class="col-lg-12 col-md-12 skill-divider"> <hr> <h2 style="font-size:15px!important;letter-spacing:normal"><span style="text-transform:none!important">Other Skills: @Model.JDTitleTwo </span></h2></div>
@@ -962,13 +974,17 @@
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)
                                                                         <div class="skillBackground skill-round-xlarge skill-small">
-                                                                         @if(@Model.TechSkillTwoReportCollection[i].WeightageRequired * 50 /100 < @Model.TechSkillTwoReportCollection[i].WeightageActual){
-
+                                                                            @if (Model.TechSkillTwoReportCollection[i].ActualLevelId == 7)
+                                                                            {
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount">Not Tested</span></div>
+                                                                            }
+                                                                            else if (@Model.TechSkillTwoReportCollection[i].WeightageRequired * 50 / 100 < @Model.TechSkillTwoReportCollection[i].WeightageActual)
+                                                                            {
                                                                                 <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:green">@Model.TechSkillTwoReportCollection[i].WeightageActual</span>  / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
                                                                             }
                                                                             else
                                                                             {
-                                                                              <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillTwoReportCollection[i].WeightageActual</span> / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
+                                                                                <div class="skill-round-xlarge skill-teal" style="width:@TechSkill_Score%"><span class="ratecount"><span style="color:red">@Model.TechSkillTwoReportCollection[i].WeightageActual</span> / @Model.TechSkillTwoReportCollection[i].WeightageRequired</span></div>
 
                                                                             }
                                                                         </div>
@@ -1383,12 +1399,12 @@
             document.getElementById("InterviewStatus").disabled = true;
         }
     })
-        $(document).ready(function () {
+    $(document).ready(function () {
         document.getElementById("int-cmnt").innerHTML = $('#int-cmnt').text();
         document.getElementById("read-int-cmnt").innerHTML = $('#read-int-cmnt').text();
         document.getElementById("int-cmntTwo").innerHTML = $('#int-cmntTwo').text();
         document.getElementById("read-int-cmntTwo").innerHTML = $('#read-int-cmntTwo').text();
-        })
+    })
 </script>
 <script src="https://www.amcharts.com/lib/4/core.js"></script>
 <script src="https://www.amcharts.com/lib/4/charts.js"></script>
@@ -1508,14 +1524,14 @@
                 }
             }
             var score1 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
-             document.getElementById("totTechScore").innerHTML = score1 + '%';
-           document.getElementById("totTechScore").innerHTML = score1 + '%';
-           if (score1 < 60) {
-               $('#totTechScore').addClass('less')
-           }
-           else{
-               $('#totTechScore').addClass('more')
-           }
+            document.getElementById("totTechScore").innerHTML = score1 + '%';
+            document.getElementById("totTechScore").innerHTML = score1 + '%';
+            if (score1 < 60) {
+                $('#totTechScore').addClass('less')
+            }
+            else {
+                $('#totTechScore').addClass('more')
+            }
         }
     }
     function SetTechTwoReportCalculation(techCollectionIdStartsWith) {
@@ -1524,7 +1540,7 @@
         var totalTechSkillScore = 0;
         if (techItems != null) {
             var techItemsLength = 0;
-                techItemsLength = techItems.length;
+            techItemsLength = techItems.length;
             for (i = 0; i < techItemsLength; i++) {
                 var requiredWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageRequired").value;
                 var actualWeightage = document.getElementById(techCollectionIdStartsWith + "_" + i + "__WeightageActual").value;
@@ -1533,14 +1549,14 @@
                     totalTechSkillScore = totalTechSkillScore + parseFloat(actualWeightage);
                 }
             }
-             var score2 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
-             document.getElementById("totTechScore2").innerHTML = score2 + '%';
+            var score2 = (parseFloat(totalTechSkillScore).toFixed(2)).toString();
+            document.getElementById("totTechScore2").innerHTML = score2 + '%';
             if (score2 < 60) {
-               $('#totTechScore2').addClass('less')
-           }
-           else{
-               $('#totTechScore2').addClass('more')
-           }
+                $('#totTechScore2').addClass('less')
+            }
+            else {
+                $('#totTechScore2').addClass('more')
+            }
         }
     }
 </script>
@@ -1749,13 +1765,13 @@
 </script>
 
 <script>
- 
-    $('.next-skillHide').click(function() {
+
+    $('.next-skillHide').click(function () {
         $('#next-skill').hide(0);
         $('.next-skillShow').show(0);
         $('.next-skillHide').hide(0);
     });
-         $('.next-skillShow').click(function() {
+    $('.next-skillShow').click(function () {
         $('#next-skill').show(0);
         $('.next-skillShow').hide(0);
         $('.next-skillHide').show(0);
@@ -1763,7 +1779,7 @@
 </script>
 <script>
     $(document).ready(function () {
-         GetquestionList();
+        GetquestionList();
         FetchCodesnippet();
     });
 
