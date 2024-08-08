@@ -118,7 +118,7 @@ namespace Risebird.Entities.ViewModel
         // [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
         //[Required(ErrorMessage = "Please enter a valid Mobile Number.")]
         public string MobileNumber { get; set; }
-
+        public bool IsVideoRequired { get; set; }
         public string InterviewerMobile { get; set; }
 
         public DateTime dtCreatedOn { get; set; }
